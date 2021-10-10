@@ -3,4 +3,6 @@
 
 void hello();
 
+void process();
+
 #endif //BEYOND_RGB_BACKEND_LIBRARY_H
