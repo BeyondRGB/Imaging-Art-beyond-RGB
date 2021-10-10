@@ -2,7 +2,7 @@
 // Created by ThinkPad41 on 10/10/2021.
 //
 
-#include "SpectralCalibrator.h"
+#include "../header/SpectralCalibrator.h"
 
 void SpectralCalibrator::execute(CallBackFunction func) {
     func("SpectralCalibration");

@@ -6,7 +6,7 @@
 #define BEYOND_RGB_BACKEND_COLORMANAGEDCALIBRATOR_H
 
 
-#include "header/ImgProcessingComponent.h"
+#include "ImgProcessingComponent.h"
 
 class ColorManagedCalibrator : public ImgProcessingComponent{
 public:

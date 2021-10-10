@@ -2,7 +2,7 @@
 // Created by ThinkPad41 on 10/10/2021.
 //
 
-#include "ColorManagedCalibrator.h"
+#include "../header/ColorManagedCalibrator.h"
 
 void ColorManagedCalibrator::execute(CallBackFunction func) {
     func("Color Managed Calibration");
