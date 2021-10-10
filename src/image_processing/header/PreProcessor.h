@@ -7,9 +7,7 @@
 
 
 #include "ImgProcessingComponent.h"
-using namespace std;
-#include <memory>
-#include <vector>
+
 
 class PreProcessor: public ImgProcessingComponent {
 
@@ -20,10 +18,9 @@ private:
 
 
 public:
-    PreProcessor(ImgProcessingComponent* components[], int num_components);
-    void execute();
+    explicit PreProcessor(const vector<shared_ptr<ImgProcessingComponent>>& components);
+    void execute(callback func) override;
 
-    PreProcessor(const vector<shared_ptr<ImgProcessingComponent>>& components, int num_components);
 };
 
 

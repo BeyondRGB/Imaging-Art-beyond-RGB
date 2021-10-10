@@ -6,6 +6,12 @@
 #ifndef BEYOND_RGB_BACKEND_IMGPROCESSINGCOMPONENT_H
 #define BEYOND_RGB_BACKEND_IMGPROCESSINGCOMPONENT_H
 
+#include <iostream>
+using namespace std;
+#include <memory>
+#include <vector>
+
+typedef void (*callback)(string);
 
 class ImgProcessingComponent {
 public:
@@ -14,7 +20,7 @@ public:
      * Must be defined by inheritors of this class to preform the execution of
      * processing for that particular component
      */
-    virtual void execute() = 0;
+    virtual void execute(callback func) = 0;
 };
 
 
