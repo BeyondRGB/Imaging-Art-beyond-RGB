@@ -8,7 +8,7 @@
 
 #include "ImgProcessingComponent.h"
 
-class ImageProcessor: ImgProcessingComponent{
+class ImageProcessor: public ImgProcessingComponent{
 private:
     vector<shared_ptr<ImgProcessingComponent>> components;
     CallBackFunction callback_func;
