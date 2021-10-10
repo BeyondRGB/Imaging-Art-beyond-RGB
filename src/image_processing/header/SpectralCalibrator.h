@@ -6,7 +6,7 @@
 #define BEYOND_RGB_BACKEND_SPECTRALCALIBRATOR_H
 
 
-#include "header/ImgProcessingComponent.h"
+#include "ImgProcessingComponent.h"
 
 class SpectralCalibrator : public ImgProcessingComponent{
 public:

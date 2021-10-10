@@ -8,8 +8,8 @@
 #include "src/image_processing/header/FlatFeildor.h"
 #include "src/image_processing/header/PixelRegestor.h"
 #include "src/image_processing/header/ImageCalibrator.h"
-#include "src/image_processing/ColorManagedCalibrator.h"
-#include "src/image_processing/SpectralCalibrator.h"
+#include "src/image_processing/header/ColorManagedCalibrator.h"
+#include "src/image_processing/header/SpectralCalibrator.h"
 
 #include <iostream>
 
