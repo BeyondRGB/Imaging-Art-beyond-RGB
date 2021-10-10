@@ -4,7 +4,7 @@
 
 #include "../header/ChannelSelector.h"
 
-void ChannelSelector::execute(callback func) {
+void ChannelSelector::execute(CallBackFunction func) {
     func("Channel Selection");
     //TODO add channel section logic here
 }

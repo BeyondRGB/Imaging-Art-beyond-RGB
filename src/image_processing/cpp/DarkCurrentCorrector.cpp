@@ -4,7 +4,7 @@
 
 #include "../header/DarkCurrentCorrector.h"
 
-void DarkCurrentCorrector::execute(callback callback_func) {
-    callback_func("DarkCurrentCorrector");
+void DarkCurrentCorrector::execute(CallBackFunction func) {
+    func("DarkCurrentCorrector");
     //TODO add Dark current correction logic here
 }

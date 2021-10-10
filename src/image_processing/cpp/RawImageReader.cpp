@@ -4,7 +4,7 @@
 
 #include "../header/RawImageReader.h"
 
-void RawImageReader::execute(callback callback_func) {
-    callback_func("Reading In Raw Image Data!");
+void RawImageReader::execute(CallBackFunction func) {
+    func("Reading In Raw Image Data!");
     //TODO add Image Reading logic here
 }

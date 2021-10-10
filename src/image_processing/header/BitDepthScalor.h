@@ -11,7 +11,7 @@
 class BitDepthScalor : public ImgProcessingComponent {
 
 public:
-    void execute(callback func) override;
+    void execute(CallBackFunction func) override;
 };
 
 

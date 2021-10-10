@@ -4,7 +4,7 @@
 
 #include "../header/PixelRegestor.h"
 
-void PixelRegestor::execute(callback func) {
+void PixelRegestor::execute(CallBackFunction func) {
     func("Pixel Registration");
     //TODO add Pixel Registration logic here
 }

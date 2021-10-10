@@ -4,7 +4,7 @@
 
 #include "../header/FlatFeildor.h"
 
-void FlatFeildor::execute(callback func) {
+void FlatFeildor::execute(CallBackFunction func) {
     func("Flat Fielding");
     //TODO add FlatFeilding logic here
 }
