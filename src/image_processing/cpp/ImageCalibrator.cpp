@@ -10,9 +10,14 @@ ImageCalibrator::ImageCalibrator(const vector<shared_ptr<ImgProcessingComponent>
     }
 }
 void ImageCalibrator::execute(CallBackFunction func) {
-    func("Starting Image Calibration");
+    this->callback_func = func;
+    this->callback_func("Starting Image Calibration");
     for(auto  & component : this->components){
-        component->execute(func);
+        component->execute(std::bind(&ImageCalibrator::my_callback, this, placeholders::_1));
     }
-    func("Image Calibration Done!!!");
+    this->callback_func("Image Calibration Done!!!");
+}
+
+void ImageCalibrator::my_callback(string str) {
+    this->callback_func("ImageCalibrator->" + str);
 }
