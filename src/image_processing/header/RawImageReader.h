@@ -11,7 +11,7 @@
 class RawImageReader: public ImgProcessingComponent {
 
 public:
-    void execute();
+    void execute(callback func) override;
 };
 
 
