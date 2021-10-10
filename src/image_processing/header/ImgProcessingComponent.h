@@ -11,8 +11,8 @@ using namespace std;
 #include <memory>
 #include <vector>
 
-typedef void (*callback)(string);
-
+//typedef void (*CallBackFunction)(string);
+typedef std::function<void(string)> CallBackFunction;
 class ImgProcessingComponent {
 public:
     /**
@@ -20,7 +20,7 @@ public:
      * Must be defined by inheritors of this class to preform the execution of
      * processing for that particular component
      */
-    virtual void execute(callback func) = 0;
+    virtual void execute(CallBackFunction func) = 0;
 };
 
 

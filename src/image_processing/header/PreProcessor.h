@@ -12,14 +12,13 @@
 class PreProcessor: public ImgProcessingComponent {
 
 private:
-
-    int num_components;
     vector<shared_ptr<ImgProcessingComponent>> components;
-
+    CallBackFunction callback_func;
 
 public:
     explicit PreProcessor(const vector<shared_ptr<ImgProcessingComponent>>& components);
-    void execute(callback func) override;
+    void execute(CallBackFunction func) override;
+    void my_callback(string str);
 
 };
 

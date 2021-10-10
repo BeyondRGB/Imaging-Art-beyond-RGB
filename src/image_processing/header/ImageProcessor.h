@@ -11,9 +11,11 @@
 class ImageProcessor: ImgProcessingComponent{
 private:
     vector<shared_ptr<ImgProcessingComponent>> components;
+    CallBackFunction callback_func;
 public:
     ImageProcessor(const vector<shared_ptr<ImgProcessingComponent>>& components);
-    void execute(callback func) override;
+    void execute(CallBackFunction func) override;
+    void my_callback(string str);
 };
 
 
