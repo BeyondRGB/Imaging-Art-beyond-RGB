@@ -11,11 +11,23 @@
 #include "src/image_processing/header/ColorManagedCalibrator.h"
 #include "src/image_processing/header/SpectralCalibrator.h"
 
-#include <iostream>
+#include "lib/rapidjson/document.h"
+using namespace rapidjson;
+
+
 
 
 void hello() {
     std::cout << "Hello From the Library!" << std::endl;
+}
+
+void testJson(const char *json){
+    std::cout << "TestJson" << std::endl;
+    //const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
+    Document d;
+    d.Parse(json);
+    std::cout << json << std::endl;
+    std::cout << "What did we find: (" << d["Me"].GetString() << ")" <<std::endl;
 }
 
 void testCallBack(string str){
