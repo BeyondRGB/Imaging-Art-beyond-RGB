@@ -16,7 +16,7 @@
     "name": "pxd5295",
     "email": "pxd5295@rit.edu"
   },
-  "license": "GPL3",
+  "license": "GPL-3.0-or-later",
   "config": {
     "forge": {
       "packagerConfig": {},
