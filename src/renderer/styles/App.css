@@ -1,0 +1,49 @@
+.App {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.StartPage {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  margin: 0 auto;
+
+  display: grid;
+  gap: .5rem;
+
+  /* Explicit grid */
+  grid-template-areas: 
+  "Menu Nav Nav"
+  "Menu Buttons Buttons"
+  "Menu Buttons Buttons";
+
+  /* grid-template-rows: repeat(3, auto); */
+  grid-template-rows: 7% auto auto;
+  grid-template-columns: 13% auto auto;
+  /* grid-template-columns: repeat(3, auto); */
+}
+
+.StartPage > .top-nav {
+  grid-area: Nav;
+  background-color: aqua;
+}
+
+.StartPage > .side-menu {
+  grid-area: Menu;
+  background-color: chartreuse;
+  height: 100%;
+}
+
+.StartPage > .start-buttons {
+  grid-area: Buttons;
+  background-color: crimson;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap: 1rem;
+}
+
+#button {
+}
