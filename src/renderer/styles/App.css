@@ -1,10 +1,32 @@
-.App {
-  width: 100%;
-  height: 100%;
-  margin: 0;
+:root {
+  --nav-color: rgb(255, 197, 197);
+  --menu-color: rgb(177, 255, 181);
+  --box-color: rgb(201, 200, 255);
+  --menu-width: 4rem;
+  --menu-width-exp: 20rem;
+  --icon-mr: 80%;
 }
 
-.StartPage {
+@media (min-width: 900px) {
+  :root {
+    --icon-mr: 90%;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --menu-width: 6rem;
+  }
+}
+
+@media (min-width: 1500px) {
+  :root {
+    --menu-width: 5%;
+    --menu-width-exp: 21%;
+  }
+}
+
+.App {
   width: 100%;
   height: 100%;
   text-align: center;
@@ -15,35 +37,81 @@
 
   /* Explicit grid */
   grid-template-areas: 
-  "Menu Nav Nav"
-  "Menu Buttons Buttons"
-  "Menu Buttons Buttons";
+  "Nav Nav Nav"
+  "Menu Box Box"
+  "Menu Box Box";
 
   /* grid-template-rows: repeat(3, auto); */
-  grid-template-rows: 7% auto auto;
-  grid-template-columns: 13% auto auto;
+  grid-template-rows: 7% /*nav*/
+                      auto 
+                      auto;
+                      
+  grid-template-columns: var(--menu-width) /*Menu*/
+                        3fr 
+                        3fr;
   /* grid-template-columns: repeat(3, auto); */
 }
 
-.StartPage > .top-nav {
+.App > .top-nav {
   grid-area: Nav;
-  background-color: aqua;
+  background-color: var(--nav-color);
+  @apply font-extrabold text-xl;
 }
 
-.StartPage > .side-menu {
-  grid-area: Menu;
-  background-color: chartreuse;
+.App > .side-menu {
+  grid-area: Nav-start / Menu-start / Menu-end / Box-Start;
+  background-color: var(--menu-color);
   height: 100%;
+  z-index: 1;
+  @apply w-[var(--menu-width)] flex flex-col text-black 
+        shadow-lg rounded-r-lg hover:bg-yellow-200 
+        hover:w-[var(--menu-width-exp)]
+        transition-all hover:shadow-2xl hover:rounded-r-3xl pb-2 duration-300;
 }
 
-.StartPage > .start-buttons {
-  grid-area: Buttons;
-  background-color: crimson;
+.App > .LaunchPage {
+  grid-area: Box;
+  background-color: var(--box-color);
   display:flex;
   justify-content:center;
   align-items:center;
-  gap: 1rem;
+  @apply w-[100%];
 }
 
-#button {
+.start-button {
+  @apply bg-blue-500 w-1/2 h-[12%] rounded-lg text-white text-xl active:bg-blue-600 select-none
+          flex flex-col justify-center align-middle;
+}
+
+.menu-icon {
+  @apply h-14 flex items-center justify-center mx-2 bg-gray-400 shadow-lg
+        hover:bg-gray-50 rounded-lg m-1 transition-all duration-500 py-1 
+        group-hover:items-center group-hover:justify-start hover:rounded-2xl
+        hover:shadow-2xl;
+}
+
+.menu-items {
+  @apply flex flex-col h-full;
+}
+
+.menu-icon:last-child {
+  @apply mt-auto;
+}
+
+.icon-text {
+  transform: scale(0);
+  @apply absolute select-none text-lg group-hover:scale-100 group-hover:relative 
+        transition-all px-2 leading-5 ml-2 duration-500;
+}
+
+.logo-text {
+  transform: scale(0);
+  @apply absolute mt-12 select-none text-lg group-hover:scale-100 transition-all duration-300;
+}
+.icon {
+  @apply fill-current group-hover:ml-4;
+}
+
+.logo {
+  @apply flex justify-center align-middle py-10;
 }
