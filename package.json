@@ -1,22 +1,26 @@
 {
-  "name": "beyond-rgb-frontend",
-  "productName": "beyond-rgb-frontend",
+  "name": "svelte-js-rollup-test",
+  "productName": "svelte-js-rollup-test",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": ".webpack/main",
+  "main": "src/main/index.js",
   "scripts": {
-    "dev": "electron-forge start",
-    "build": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "dev": "concurrently -k \"npm:svelte-dev\" \"npm:electron-dev\"",
+    "package": "npm run svelte-build && electron-forge package",
+    "build": "npm run svelte-build && electron-forge make",
+    "publish": "npm run svelte-build && electron-forge publish",
+    "lint": "echo \"No linting configured\"",
+    "electron-dev": "cross-env ELEC_ENV=dev electron-forge start",
+    "svelte-build": "rollup -c",
+    "svelte-dev": "rollup -c -w",
+    "svelte-start": "sirv public"
   },
   "keywords": [],
   "author": {
     "name": "pxd5295",
     "email": "pxd5295@rit.edu"
   },
-  "license": "GPL-3.0-or-later",
+  "license": "MIT",
   "config": {
     "forge": {
       "packagerConfig": {},
@@ -24,7 +28,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "electron_forge_test"
+            "name": "svelte_js_rollup_test"
           }
         },
         {
@@ -41,26 +45,11 @@
           "name": "@electron-forge/maker-rpm",
           "config": {}
         }
-      ],
-      "plugins": [
-        [
-          "@electron-forge/plugin-webpack",
-          {
-            "mainConfig": ".configs/webpack.main.config.js",
-            "renderer": {
-              "config": ".configs/webpack.renderer.config.js",
-              "entryPoints": [
-                {
-                  "html": "./src/renderer/index.html",
-                  "js": "./src/renderer/renderer.ts",
-                  "name": "main_window"
-                }
-              ]
-            }
-          }
-        ]
       ]
     }
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.61",
@@ -68,33 +57,26 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.61",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
-    "@electron-forge/plugin-webpack": "6.0.0-beta.61",
-    "@types/lodash": "^4.14.175",
-    "@types/react": "^17.0.30",
-    "@types/react-dom": "^17.0.9",
-    "@types/react-router-dom": "^5.3.1",
-    "@typescript-eslint/eslint-plugin": "^4.0.1",
-    "@typescript-eslint/parser": "^4.0.1",
-    "@vercel/webpack-asset-relocator-loader": "1.7.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
     "autoprefixer": "^10.3.7",
-    "css-loader": "^6.0.0",
-    "electron": "15.2.0",
-    "eslint": "^7.6.0",
-    "eslint-plugin-import": "^2.20.0",
-    "fork-ts-checker-webpack-plugin": "^6.0.1",
-    "lodash": "^4.17.21",
-    "node-loader": "^2.0.0",
-    "postcss-loader": "^6.2.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-icons": "^4.3.1",
-    "react-router-dom": "^5.3.0",
-    "style-loader": "^3.0.0",
-    "tailwindcss": "^2.2.17",
-    "ts-loader": "^9.2.2",
-    "typescript": "^4.0.2"
-  },
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "concurrently": "^6.3.0",
+    "cross-env": "^7.0.3",
+    "electron": "15.3.0",
+    "electron-reload": "^2.0.0-alpha.1",
+    "postcss": "^8.3.11",
+    "postcss-load-config": "^3.1.0",
+    "prettier": "^2.4.1",
+    "prettier-plugin-svelte": "^2.4.0",
+    "rollup": "^2.58.0",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-livereload": "^2.0.5",
+    "rollup-plugin-svelte": "^7.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "sirv-cli": "^1.0.14",
+    "svelte": "^3.44.0",
+    "svelte-awesome": "^2.4.2",
+    "svelte-preprocess": "^4.9.8",
+    "tailwindcss": "^2.2.17"
   }
 }
