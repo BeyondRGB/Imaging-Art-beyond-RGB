@@ -7,8 +7,6 @@
   import Icon from 'svelte-awesome';
 
   import MenuItem from './MenuItem.svelte';
-
-  console.log(menuOptions);
 </script>
 
 <main>
@@ -36,7 +34,10 @@
 		background-color: var(--menu-color);
 		height: 100%;
 		z-index: 1;
-    transition: width 300ms ease;
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 400ms;
+    /* transition: width 400ms ease; */
 		@apply w-[var(--menu-width)] flex flex-col text-black
 					shadow-lg rounded-r-lg overflow-hidden;
 	}
@@ -54,7 +55,7 @@
   }
 
   .item-icon {
-    margin: 0 1.75vw;
+    @apply ml-[1.75vw];
   }
 
   .item {
@@ -77,7 +78,7 @@
   }
 
   .item-text {
-    @apply hidden ml-4 whitespace-nowrap;
+    @apply hidden ml-4 whitespace-nowrap select-none;
   }
 
 </style>

@@ -1,14 +1,14 @@
 <script>
-	import { pageId } from './stores';
-
-	import Navbar from './components/Navbar.svelte';
-	import Menu from './components/Menu.svelte';
-	import Page from './components/Page.svelte';
-
-	import Launch from './pages/Launch.svelte';
-	import ManagedRgb from './pages/ManagedRgb.svelte';
-	import SpectralOverlay from './pages/SpectralOverlay.svelte';
-	import Preprocess from './pages/Preprocess.svelte';
+	import { pageId } from './stores'
+	import Navbar from './components/Navbar.svelte'
+	import Menu from './components/Menu.svelte'
+	import Page from './components/Page.svelte'
+	import Launch from './pages/Launch.svelte'
+	import ManagedRgb from './pages/ManagedRgb.svelte'
+	import SpectralOverlay from './pages/SpectralOverlay.svelte'
+	import Preprocess from './pages/Preprocess.svelte'
+	import ColorTarget from './pages/ColorTarget.svelte';
+	import Process from './pages/Process.svelte';
 
   import { beer, refresh, comment, codeFork, camera, ban } from 'svelte-awesome/icons';
 
@@ -17,10 +17,12 @@
 		{ text: 'Spectral Overlay', component: SpectralOverlay, icon: refresh, isShown: true },
 		{ text: 'Home',  component: Launch, icon: camera, isShown: true },
 		{ text: 'Settings', component: Launch, icon: comment, isShown: true },
-		{ text: 'Preprocessing', component: Preprocess, icon: comment, isShown: false }
+		{ text: 'Preprocessing', component: Preprocess, icon: comment, isShown: false },
+		{ text: 'Color Target', component: ColorTarget, icon: codeFork, isShown: false },
+		{ text: 'Process', component: Process, icon: codeFork, isShown: false }
 	];
 
-	pageId.set(2);
+	pageId.set(4);
 
 	$: selectedPage = menuOptions[$pageId];
 </script>
@@ -52,13 +54,12 @@
 	main {
 		height: 100%;
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-		background-color: rgb(206, 143, 203);
 	}
 	:root {
 		--nav-color: rgb(255, 197, 197);
 		--menu-color: rgb(177, 255, 181);
 		--box-color: rgb(201, 200, 255);
-		--menu-width: 4rem;
+		--menu-width: 6%;
 		--menu-width-exp: 20rem;
 		--icon-mr: 80%;
 	}
@@ -71,7 +72,7 @@
 
 	@media (min-width: 1200px) {
 		:root {
-			--menu-width: 6rem;
+			--menu-width: 5%;
 		}
 	}
 

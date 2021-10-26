@@ -6,16 +6,6 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-
-// Errors if live changes are made to index.js
-if (process.env.ELEC_ENV === 'dev') {
-  require('electron-reload')(path.join(__dirname, '../renderer'), {
-    electron: path.join(__dirname, '../../node_modules', '.bin', 'electron'),
-    awaitWriteFinish: true,
-    hardResetMethod: 'exit'
-  });
-}
-
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -25,11 +15,15 @@ const createWindow = () => {
   });
 
   // and load the index.html of the app.
-  // mainWindow.loadFile(path.join(__dirname, 'index.html'));
-  mainWindow.loadFile(path.join(__dirname, '../../public/index.html'));
+  if (process.env.ELEC_ENV === 'dev'){
+    mainWindow.loadURL('http://localhost:3000');
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+  } else {
+    mainWindow.loadFile(path.join(__dirname, '../../public/index.html'));
+    // mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
+  }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
