@@ -9,7 +9,7 @@
 <style lang="postcss">
   .page {
 		grid-area: Box;
-		background-color: var(--box-color);
+		background-color: rgb(201, 200, 255);
 		display:flex;
 		justify-content:center;
 		align-items:center;
