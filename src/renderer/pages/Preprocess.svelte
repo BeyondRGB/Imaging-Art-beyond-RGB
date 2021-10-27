@@ -34,6 +34,6 @@
   }
 
   .next {
-    @apply mb-12 bg-blue-600 rounded-md self-center text-gray-200 text-lg px-4 py-2 mt-auto;
+    @apply mb-12 bg-blue-500 rounded-md self-center text-gray-200 text-lg px-4 py-2 mt-auto;
   }
 </style>

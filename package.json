@@ -1,8 +1,8 @@
 {
-  "name": "svelte-js-rollup-test",
-  "productName": "svelte-js-rollup-test",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "name": "beyond-rgb",
+  "productName": "Beyond RGB",
+  "version": "0.0.1",
+  "description": "Spectral image calibration on a dime",
   "main": "src/main/index.js",
   "scripts": {
     "dev": "concurrently -k \"npm:svelte-dev\" \"npm:electron-dev\"",
@@ -29,7 +29,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "svelte_js_rollup_test"
+            "name": "BeyondRGB"
           }
         },
         {
