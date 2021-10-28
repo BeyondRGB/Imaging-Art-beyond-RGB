@@ -24,14 +24,13 @@
       </div>
       <button class="add">+</button>
     </div>
-    <button class="next" on:click={() => pageId.set(6)}>Confirm -></button>
+    <button class="next" on:click={() => pageId.set($pageId+1)}>Confirm -></button>
   </div>
 </main>
 
-<style>
+<style lang="postcss">
   main {
-    background-color: azure;
-    @apply flex bg-purple-300 w-full;
+    @apply flex w-full;
   }
 
   .image {
