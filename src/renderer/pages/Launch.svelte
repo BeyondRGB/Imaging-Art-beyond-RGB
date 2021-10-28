@@ -3,7 +3,7 @@
 </script>
 
 <main>
-  <button on:click={() => pageId.set(4)}>Proccess</button>
+  <button on:click={() => pageId.set($pageId+2)}>Proccess</button>
   <button>View</button>
 </main>
 

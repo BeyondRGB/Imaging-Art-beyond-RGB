@@ -24,7 +24,7 @@
       Advanced:
       [WIP]
     </div>
-    <button class="next" on:click={() => pageId.set(5)}>Next</button>
+    <button class="next" on:click={() => pageId.set($pageId+1)}>Next</button>
   </div>
 </main>
 

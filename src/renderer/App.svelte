@@ -1,25 +1,31 @@
 <script>
 	import { pageId } from './stores'
+	// Components
 	import Navbar from './components/Navbar.svelte'
 	import Menu from './components/Menu.svelte'
 	import Page from './components/Page.svelte'
+	// Pages
 	import Launch from './pages/Launch.svelte'
 	import ManagedRgb from './pages/ManagedRgb.svelte'
 	import SpectralOverlay from './pages/SpectralOverlay.svelte'
 	import Preprocess from './pages/Preprocess.svelte'
 	import ColorTarget from './pages/ColorTarget.svelte';
 	import Process from './pages/Process.svelte';
+	import Reports from './pages/Reports.svelte'
+	import SpectralPicker from './pages/SpectralPicker.svelte';
 
-  import { beer, refresh, comment, codeFork, camera, ban } from 'svelte-awesome/icons';
+  import { photo, fileImageO, home, cog, ban, fileText, eyedropper } from 'svelte-awesome/icons';
 
 	const menuOptions = [
-		{ text: 'Color Managed RGB Image', component: ManagedRgb, icon: ban, isShown: true },
-		{ text: 'Spectral Overlay', component: SpectralOverlay, icon: refresh, isShown: true },
-		{ text: 'Home',  component: Launch, icon: camera, isShown: true },
-		{ text: 'Settings', component: Launch, icon: comment, isShown: true },
-		{ text: 'Preprocessing', component: Preprocess, icon: comment, isShown: false },
-		{ text: 'Color Target', component: ColorTarget, icon: codeFork, isShown: false },
-		{ text: 'Process', component: Process, icon: codeFork, isShown: false }
+		{ text: 'Color Managed RGB Image', component: ManagedRgb, icon: photo, isShown: true }, //0
+		{ text: 'Spectral Overlay', component: SpectralOverlay, icon: fileImageO, isShown: true }, //1
+		{ text: 'Reports', component: Reports, icon: fileText, isShown: true }, //2
+		{ text: 'Spectral Picker', component: SpectralPicker, icon: eyedropper, isShown: true }, //3
+		{ text: 'Home',  component: Launch, icon: home, isShown: true }, //4
+		{ text: 'Settings', component: Launch, icon: cog, isShown: true }, //5
+		{ text: 'Preprocessing', component: Preprocess, icon: home, isShown: false }, //6
+		{ text: 'Color Target', component: ColorTarget, icon: home, isShown: false }, //7
+		{ text: 'Process', component: Process, icon: home, isShown: false }, //8
 	];
 
 	pageId.set(4);
@@ -32,7 +38,7 @@
 		<Navbar menuOptions={menuOptions}/>
 
 		<Menu
-			icon={beer}
+			icon={ban}
 			menuOptions={menuOptions}
 			selectedPage={selectedPage.text}
 		/>
