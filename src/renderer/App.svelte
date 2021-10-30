@@ -1,65 +1,120 @@
 <script>
-	import { pageId } from './stores'
+	import { currentPage } from "./stores";
 	// Components
-	import Navbar from './components/Navbar.svelte'
-	import Menu from './components/Menu.svelte'
-	import Page from './components/Page.svelte'
+	import Navbar from "./components/Navbar.svelte";
+	import Menu from "./components/Menu.svelte";
+	import Page from "./components/Page.svelte";
 	// Pages
-	import Launch from './pages/Launch.svelte'
-	import ManagedRgb from './pages/ManagedRgb.svelte'
-	import SpectralOverlay from './pages/SpectralOverlay.svelte'
-	import Preprocess from './pages/Preprocess.svelte'
-	import ColorTarget from './pages/ColorTarget.svelte';
-	import Process from './pages/Process.svelte';
-	import Reports from './pages/Reports.svelte'
-	import SpectralPicker from './pages/SpectralPicker.svelte';
+	import Home from "././pages/Home.svelte";
+	import ManagedRgb from "./pages/ManagedRgb.svelte";
+	import SpectralOverlay from "./pages/SpectralOverlay.svelte";
+	import Preprocess from "./pages/Preprocess.svelte";
+	import ColorTarget from "./pages/ColorTarget.svelte";
+	import Process from "./pages/Process.svelte";
+	import Reports from "./pages/Reports.svelte";
+	import SpectralPicker from "./pages/SpectralPicker.svelte";
 
-  import { photo, fileImageO, home, cog, ban, fileText, eyedropper } from 'svelte-awesome/icons';
+	import {
+		photo,
+		fileImageO,
+		home,
+		cog,
+		ban,
+		fileText,
+		eyedropper,
+	} from "svelte-awesome/icons";
 
-	const menuOptions = [
-		{ text: 'Color Managed RGB Image', component: ManagedRgb, icon: photo, isShown: true }, //0
-		{ text: 'Spectral Overlay', component: SpectralOverlay, icon: fileImageO, isShown: true }, //1
-		{ text: 'Reports', component: Reports, icon: fileText, isShown: true }, //2
-		{ text: 'Spectral Picker', component: SpectralPicker, icon: eyedropper, isShown: true }, //3
-		{ text: 'Home',  component: Launch, icon: home, isShown: true }, //4
-		{ text: 'Settings', component: Launch, icon: cog, isShown: true }, //5
-		{ text: 'Preprocessing', component: Preprocess, icon: home, isShown: false }, //6
-		{ text: 'Color Target', component: ColorTarget, icon: home, isShown: false }, //7
-		{ text: 'Process', component: Process, icon: home, isShown: false }, //8
-	];
+	const routes = {
+		Home: {
+			text: "Home",
+			component: Home,
+			icon: home,
+			isShown: true,
+			default: true,
+		},
+		RGB: {
+			text: "Color Managed RGB Image",
+			component: ManagedRgb,
+			icon: photo,
+			isShown: true,
+		},
+		SpecOverlay: {
+			text: "Spectral Overlay",
+			component: SpectralOverlay,
+			icon: fileImageO,
+			isShown: true,
+		},
+		Reports: {
+			text: "Reports",
+			component: Reports,
+			icon: fileText,
+			isShown: true,
+		},
+		SpecPicker: {
+			text: "Spectral Picker",
+			component: SpectralPicker,
+			icon: eyedropper,
+			isShown: true,
+		},
+		Settings: {
+			text: "Settings",
+			component: Home,
+			icon: cog,
+			isShown: true,
+			default: true,
+		},
+		Preprocessing: {
+			text: "Preprocessing",
+			component: Preprocess,
+			icon: home,
+			isShown: false,
+		},
+		ColorTarget: {
+			text: "Color Target",
+			component: ColorTarget,
+			icon: home,
+			isShown: false,
+		},
+		Process: {
+			text: "Process",
+			component: Process,
+			icon: home,
+			isShown: false,
+		},
+	};
 
-	pageId.set(4);
+	currentPage.set("Home");
 
-	$: selectedPage = menuOptions[$pageId];
+	$: selectedPage = routes[$currentPage];
 </script>
 
 <main>
 	<div class="app">
-		<Navbar menuOptions={menuOptions}/>
+		<Navbar {routes} />
 
-		<Menu
-			icon={ban}
-			menuOptions={menuOptions}
-			selectedPage={selectedPage.text}
-		/>
+		<Menu icon={ban} {routes} selectedPage={selectedPage.text} />
 
-		<Page selectedPage={selectedPage.component}/>
-	</div>	
+		<Page selectedPage={selectedPage.component} />
+	</div>
 </main>
 
 <style global lang="postcss">
-  @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-
-	html, body {
+	@tailwind base;
+	@tailwind components;
+	@tailwind utilities;
+	0,
+	0,
+	1,
+	1 html,
+	body {
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
 	}
 	main {
 		height: 100%;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+			Helvetica, Arial, sans-serif;
 	}
 	:root {
 		--nav-color: rgb(255, 197, 197);
@@ -95,22 +150,24 @@
 		margin: 0 auto;
 
 		display: grid;
-		gap: .5rem;
+		gap: 0.5rem;
 
 		/* Explicit grid */
-		grid-template-areas: 
-		"Navbar Navbar Navbar"
-		"Menu Box Box"
-		"Menu Box Box";
+		grid-template-areas:
+			"Navbar Navbar Navbar"
+			"Menu Box Box"
+			"Menu Box Box";
 
 		/* grid-template-rows: repeat(3, auto); */
-		grid-template-rows: 7%
-												auto 
-												auto;
-												
-		grid-template-columns: var(--menu-width)
-													3fr 
-													3fr;
+		grid-template-rows:
+			7%
+			auto
+			auto;
+
+		grid-template-columns:
+			var(--menu-width)
+			3fr
+			3fr;
 		/* grid-template-columns: repeat(3, auto); */
 	}
 

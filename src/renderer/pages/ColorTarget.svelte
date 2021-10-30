@@ -1,7 +1,7 @@
 <script>
-  let rows = ""
+  let rows = "";
 
-  import { pageId } from '../stores';
+  import { currentPage } from "../stores";
 </script>
 
 <main>
@@ -14,17 +14,19 @@
           Color Target
           <div class="input-group">
             <lable class="row-lable">Rows:</lable>
-            <input bind:value={rows} placeholder="Placeholder..."/>
+            <input bind:value={rows} placeholder="Placeholder..." />
           </div>
           <div class="input-group">
             <lable class="row-lable">Columns:</lable>
-            <input bind:value={rows} placeholder="Placeholder..."/>
+            <input bind:value={rows} placeholder="Placeholder..." />
           </div>
         </div>
       </div>
       <button class="add">+</button>
     </div>
-    <button class="next" on:click={() => pageId.set($pageId+1)}>Confirm -></button>
+    <button class="next" on:click={() => currentPage.set("Process")}
+      >Confirm -></button
+    >
   </div>
 </main>
 
@@ -73,5 +75,4 @@
   .side {
     @apply flex flex-col;
   }
-
 </style>

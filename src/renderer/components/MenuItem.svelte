@@ -3,11 +3,10 @@
   export let text;
   export let onClick;
 
-  import Icon from 'svelte-awesome';
+  import Icon from "svelte-awesome";
 </script>
 
-<li class="menu-item align-middle">
-</li>
+<li class="menu-item align-middle" />
 
 <style lang="postcss">
 </style>

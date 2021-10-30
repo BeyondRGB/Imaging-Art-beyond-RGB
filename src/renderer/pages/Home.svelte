@@ -1,16 +1,16 @@
 <script>
-  import { pageId } from '../stores';
+  import { currentPage } from "../stores";
 </script>
 
 <main>
-  <button on:click={() => pageId.set($pageId+2)}>Proccess</button>
-  <button>View</button>
+  <button on:click={() => currentPage.set("Preprocessing")}>Proccess</button>
+  <button on:click={() => currentPage.set("SpecOverlay")}>View</button>
 </main>
 
 <style lang="postcss">
   main {
     background-color: var(--box-color);
-    @apply w-full h-full flex flex-col items-center justify-center gap-4;  
+    @apply w-full h-full flex flex-col items-center justify-center gap-4;
   }
 
   button {

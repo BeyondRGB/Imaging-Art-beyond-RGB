@@ -1,11 +1,8 @@
 <script>
-
 </script>
 
-<main>
+<main />
+Reports
 
-</main>
-  Reports
 <style>
-
 </style>

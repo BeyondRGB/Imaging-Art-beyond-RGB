@@ -5,8 +5,8 @@
 <div>
   <label class="group">
     <p>{label}</p>
-    <input type="checkbox" class="peer"/>
-    <span></span>
+    <input type="checkbox" class="peer" />
+    <span />
   </label>
 </div>
 

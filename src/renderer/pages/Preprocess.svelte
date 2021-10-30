@@ -1,30 +1,27 @@
 <script>
   let files;
   let outputFiles;
-  import { pageId } from '../stores';
 
+  import { currentPage } from "../stores";
+
+  import Sorter from "../components/Sorter.svelte";
   import FileSelector from "../components/fileSelector.svelte";
-  $: console.log(files)
+  $: console.log(files);
 </script>
 
 <main>
   <div class="settings">
-    <FileSelector 
-      title="Select Files:"
-    />
-    <FileSelector 
-      title="Export Destination:"
-      directory
-    />
+    <FileSelector title="Select Files:" />
+    <FileSelector title="Export Destination:" directory />
     <div>
       Specify File Roles:
-      [WIP]
+      <Sorter />
     </div>
-    <div>
-      Advanced:
-      [WIP]
-    </div>
-    <button class="next" on:click={() => pageId.set($pageId+1)}>Next</button>
+    <br />
+    <div>Advanced: [WIP]</div>
+    <button class="next" on:click={() => currentPage.set("ColorTarget")}
+      >Next</button
+    >
   </div>
 </main>
 

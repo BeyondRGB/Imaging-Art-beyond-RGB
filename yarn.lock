@@ -4182,6 +4182,11 @@ svelte-awesome@^2.4.2:
   resolved "https://registry.npmjs.org/svelte-awesome/-/svelte-awesome-2.4.2.tgz"
   integrity sha512-VV1xhTU+L5ZZSfoAYlBNOcvfvkVPrPMbFrsuTdGo7xjEpWnDfslftfWSXeILSGIhQYsq7TXIfBa/PnEbHUNRaw==
 
+svelte-dnd-action@^0.9.11:
+  version "0.9.11"
+  resolved "https://registry.yarnpkg.com/svelte-dnd-action/-/svelte-dnd-action-0.9.11.tgz#7ef6b014f8af3443dd5cfb711a75428b1364e449"
+  integrity sha512-hkuBs8rT0yVD0Xq9p9GxeHN1zYD8r7oZO872VQHg7DJe3cAYwus4WXpx3DNYZiTcLcIOmDw3BVNdKvAl/B6VPg==
+
 svelte-hmr@^0.14.7:
   version "0.14.7"
   resolved "https://registry.yarnpkg.com/svelte-hmr/-/svelte-hmr-0.14.7.tgz#7fa8261c7b225d9409f0a86f3b9ea5c3ca6f6607"
@@ -4198,6 +4203,11 @@ svelte-preprocess@^4.9.8:
     magic-string "^0.25.7"
     sorcery "^0.10.0"
     strip-indent "^3.0.0"
+
+svelte-simple-modal@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/svelte-simple-modal/-/svelte-simple-modal-1.0.3.tgz#dbc75abc056e56acf208398357ae24c18a2caf20"
+  integrity sha512-rW2kGUbw1/JEDBTR63L5XUu0+iW2Iij6Oi78ZiI+cDVicR9qANUwSwzCLtknK5Wb/RBxdsDl62mBKfrHcqeEnQ==
 
 svelte@^3.44.0:
   version "3.44.0"

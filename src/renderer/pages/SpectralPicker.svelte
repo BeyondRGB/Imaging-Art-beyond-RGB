@@ -1,5 +1,4 @@
 <script>
-
 </script>
 
 <main>
@@ -7,15 +6,9 @@
     <div id="image">Image</div>
     <div id="side">
       Settings
-      <div id="brush">
-        Brush Size
-      </div>
-      <div id="refl-spec">
-        Reflectance Spectrum
-      </div>
-      <div id="compare">
-        Compare Estimated and Reference
-      </div>
+      <div id="brush">Brush Size</div>
+      <div id="refl-spec">Reflectance Spectrum</div>
+      <div id="compare">Compare Estimated and Reference</div>
     </div>
   </div>
   <div id="chart">Chart</div>
