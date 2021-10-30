@@ -1,17 +1,13 @@
 <script>
-  import Switch from "../components/Switch.svelte"
+  import Switch from "../components/Switch.svelte";
 </script>
 
 <main>
   <div id="image">Image</div>
   <div id="side">
     Settings
-    <div id="view-options">
-      View Options
-    </div>
-    <div id="metadata">
-      Metadata
-    </div>
+    <div id="view-options">View Options</div>
+    <div id="metadata">Metadata</div>
   </div>
 </main>
 

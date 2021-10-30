@@ -9,7 +9,7 @@ Docs:
     - [Video (2min 11sec)](https://www.youtube.com/watch?v=rv3Yq-B8qp4)
 > - [Tailwindcss - v2](https://tailwindcss.com/docs) (Style)
     - [Video (2min 20sec)](https://www.youtube.com/watch?v=mr15Xzb1Ook)
-> - [Vite - v2](https://vitejs.dev/guide/) (Bundle)
+> - [Vite - v2](https://vitejs.dev/guide/) (Bundler/Dev Server)
     - [Video (9min 55sec)](https://www.youtube.com/watch?v=5IG4UmULyoA)
 > - [Electron Forge - v6](https://www.electronforge.io/) (Build)
     - [Video (11min 11sec)](https://www.youtube.com/watch?v=3yqDxhR2XxE)
@@ -23,12 +23,12 @@ Docs:
 ## Starting Development
 
 `yarn dev` *or npm run dev*
-starts development environment using vite's dev server
+starts development environment by starting vite's dev server and electron app in dev mode
 
 ## Preview Application
 
-`yarn dev` *or npm run dev*
-builds svelte for production and starts electron app
+`yarn preview` *or npm run preview*
+builds svelte for production and starts electron app in dev mode
 
 ## Building Executable
 

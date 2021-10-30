@@ -1,14 +1,14 @@
 <script>
-	export let menuOptions;
-	import { pageId } from '../stores';
+	export let routes;
+	import { currentPage } from "../stores";
 </script>
 
 <div class="navbar">
-  {menuOptions[$pageId].text}
+	{routes[$currentPage].text}
 </div>
 
 <style lang="postcss">
-  .navbar {
+	.navbar {
 		grid-area: Navbar;
 		background-color: var(--nav-color);
 		@apply font-extrabold text-xl text-center;

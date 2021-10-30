@@ -1,12 +1,23 @@
 <script>
-  import { pageId } from '../stores';
+  import { currentPage } from "../stores";
+
+  import { getContext } from "svelte";
+  import ExportOptions from "../components/ExportOptions.svelte";
+
+  const { open } = getContext("simple-modal");
+
+  const openModal = () => {
+    open(ExportOptions);
+  };
 </script>
 
 <main>
   <div id="image">Image</div>
   <div id="stepper">
-    Steps 
-    <button on:click={() => pageId.set(1)} class="bg-blue-500 rounded-md px-2 py-1">[Next]</button>
+    Steps
+    <button on:click={openModal} class="bg-blue-500 rounded-md px-2 py-1"
+      >[Next]</button
+    >
   </div>
 </main>
 

@@ -1,14 +1,14 @@
 <script>
-  import Switch from "../components/Switch.svelte"
+  import Switch from "../components/Switch.svelte";
 </script>
 
 <main>
   <div id="image">Image</div>
   <div id="side">
     Settings
-    <Switch label="Truecolor"/>
-    {#each [1,2,3,4,5,6,7,8,9,10] as channel}
-      <Switch label={`Channel ${channel}`}/>
+    <Switch label="Truecolor" />
+    {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as channel}
+      <Switch label={`Channel ${channel}`} />
     {/each}
   </div>
 </main>
