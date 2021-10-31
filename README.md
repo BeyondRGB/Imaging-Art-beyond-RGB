@@ -2,7 +2,7 @@
 
 Electron + Svelte + Tailwindcss + Vite + Electron Forge
 
-[Live Demo](https://dev.d2m0gyo8ptlels.amplifyapp.com/)
+[Live Demo](https://dev.d2m0gyo8ptlels.amplifyapp.com/) (Works best on Chrome)
 
 Docs: 
 > - [Electron - v15.3.0](https://www.electronjs.org/docs/latest/) (Desktop)
