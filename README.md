@@ -2,6 +2,8 @@
 
 Electron + Svelte + Tailwindcss + Vite + Electron Forge
 
+[Live Demo](https://dev.d2m0gyo8ptlels.amplifyapp.com/)
+
 Docs: 
 > - [Electron - v15.3.0](https://www.electronjs.org/docs/latest/) (Desktop)
     - [Video (1min 48sec)](https://www.youtube.com/watch?v=m3OjWNFREJo)

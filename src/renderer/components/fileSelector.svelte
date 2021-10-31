@@ -41,7 +41,7 @@
   button {
     grid-area: button;
     z-index: 1;
-    @apply bg-blue-500 rounded-md px-2 py-1 active:bg-blue-400 transition-all
+    @apply bg-blue-500 rounded-md active:bg-blue-400 transition-all
             hover:bg-red-200 text-white font-bold py-2 px-4 w-full inline-flex items-center;
   }
 

@@ -1,5 +1,5 @@
 <script>
-  import DList from "./DList.svelte";
+  import DList from "@components/DList.svelte";
   let items = [
     { id: 1, name: "item1" },
     { id: 2, name: "item2" },
