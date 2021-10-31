@@ -1,5 +1,5 @@
 <script>
-  import Switch from "../components/Switch.svelte";
+  import Switch from "@components/Switch.svelte";
 </script>
 
 <main>

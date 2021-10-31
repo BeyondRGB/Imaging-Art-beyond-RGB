@@ -2,7 +2,7 @@
   import { currentPage } from "../stores";
 
   import { getContext } from "svelte";
-  import ExportOptions from "../components/ExportOptions.svelte";
+  import ExportOptions from "@components/ExportOptions.svelte";
 
   const { open } = getContext("simple-modal");
 

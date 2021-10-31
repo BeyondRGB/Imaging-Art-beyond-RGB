@@ -1,18 +1,18 @@
 <script>
 	import { currentPage } from "./stores";
 	// Components
-	import Navbar from "./components/Navbar.svelte";
-	import Menu from "./components/Menu.svelte";
-	import Page from "./components/Page.svelte";
+	import Navbar from "@components/Navbar.svelte";
+	import Menu from "@components/Menu.svelte";
+	import Page from "@components/Page.svelte";
 	// Pages
-	import Home from "././pages/Home.svelte";
-	import ManagedRgb from "./pages/ManagedRgb.svelte";
-	import SpectralOverlay from "./pages/SpectralOverlay.svelte";
-	import Preprocess from "./pages/Preprocess.svelte";
-	import ColorTarget from "./pages/ColorTarget.svelte";
-	import Process from "./pages/Process.svelte";
-	import Reports from "./pages/Reports.svelte";
-	import SpectralPicker from "./pages/SpectralPicker.svelte";
+	import Home from "@pages/Home.svelte";
+	import ManagedRgb from "@pages/ManagedRgb.svelte";
+	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
+	import Preprocess from "@pages/Preprocess.svelte";
+	import ColorTarget from "@pages/ColorTarget.svelte";
+	import Process from "@pages/Process.svelte";
+	import Reports from "@pages/Reports.svelte";
+	import SpectralPicker from "@pages/SpectralPicker.svelte";
 
 	import {
 		photo,
@@ -102,10 +102,7 @@
 	@tailwind base;
 	@tailwind components;
 	@tailwind utilities;
-	0,
-	0,
-	1,
-	1 html,
+	html,
 	body {
 		width: 100%;
 		height: 100%;

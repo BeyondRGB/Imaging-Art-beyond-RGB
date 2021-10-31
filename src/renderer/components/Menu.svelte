@@ -5,8 +5,6 @@
   import { currentPage } from "../stores";
 
   import Icon from "svelte-awesome";
-
-  import MenuItem from "./MenuItem.svelte";
 </script>
 
 <main>
@@ -64,20 +62,26 @@
 					shadow-lg rounded-r-lg overflow-hidden;
   }
 
+  /* Logo */
   logo {
     @apply pb-12 pt-2;
   }
 
+  .logo-text {
+    @apply whitespace-nowrap select-none absolute -left-64 duration-200 text-2xl;
+  }
+
+  .logo-icon {
+    @apply duration-200 mt-6 pb-2;
+  }
+
+  /* main */
   main:hover {
     @apply w-[var(--menu-width-exp)] shadow-2xl rounded-r-3xl bg-green-300;
   }
 
   .list {
     @apply flex flex-col list-none m-0 items-center h-[100vh];
-  }
-
-  .item:last-child {
-    margin-top: auto;
   }
 
   main:hover .item-text {
@@ -88,6 +92,15 @@
     @apply left-4 transition-all duration-700 ease-in-out;
   }
 
+  /* Menu Item */
+  .item {
+    @apply w-full flex items-center h-20 bg-gray-400;
+  }
+
+  .item:last-child {
+    margin-top: auto;
+  }
+
   .item:hover {
     filter: grayscale(0%) opacity(1);
     background: var(--bg-secondary);
@@ -95,23 +108,11 @@
     @apply transition-all ease-in duration-200;
   }
 
-  .item {
-    @apply w-full flex items-center h-20 bg-gray-400;
-  }
-
   .item-text {
     @apply ml-4 whitespace-nowrap select-none opacity-0 duration-200;
   }
 
-  .logo-text {
-    @apply whitespace-nowrap select-none absolute -left-64 duration-200 text-2xl;
-  }
-
   .item-icon {
     @apply ml-[2vw] duration-200;
-  }
-
-  .logo-icon {
-    @apply duration-200 mt-6 pb-2;
   }
 </style>

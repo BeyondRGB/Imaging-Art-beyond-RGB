@@ -4,8 +4,8 @@
 
   import { currentPage } from "../stores";
 
-  import Sorter from "../components/Sorter.svelte";
-  import FileSelector from "../components/fileSelector.svelte";
+  import Sorter from "@components/Sorter.svelte";
+  import FileSelector from "@components/FileSelector.svelte";
   $: console.log(files);
 </script>
 
