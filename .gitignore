@@ -32,7 +32,9 @@
 *.app
 
 # Jetbrains
-CMakeLists.txt
 .idea/*
 cmake-build-debug
 cmake-build-release
+
+# VCPKG
+vcpkg/*
