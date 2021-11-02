@@ -7,4 +7,5 @@
 void ChannelSelector::execute(CallBackFunction func) {
     func("Channel Selection");
     //TODO add channel section logic here
+    sleep_for(seconds(5));
 }

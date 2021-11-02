@@ -10,9 +10,17 @@
 using namespace std;
 #include <memory>
 #include <vector>
+#include <functional>
+
+
+
+#include <chrono>
+#include <thread>
+using namespace std::this_thread; // sleep_for, sleep_until
+using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 //typedef void (*CallBackFunction)(string);
-typedef std::function<void(string)> CallBackFunction;
+typedef function<void(string)> CallBackFunction;
 class ImgProcessingComponent {
 public:
     /**

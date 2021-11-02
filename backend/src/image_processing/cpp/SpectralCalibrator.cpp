@@ -7,4 +7,5 @@
 void SpectralCalibrator::execute(CallBackFunction func) {
     func("SpectralCalibration");
     //TODO add Spectral Calibration logic here
+    sleep_for(seconds(5));
 }

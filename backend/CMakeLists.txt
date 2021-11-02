@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)  
-include(vcpkg/scripts/buildsystems/vcpkg.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
 
 

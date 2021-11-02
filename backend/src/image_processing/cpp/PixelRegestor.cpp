@@ -7,4 +7,5 @@
 void PixelRegestor::execute(CallBackFunction func) {
     func("Pixel Registration");
     //TODO add Pixel Registration logic here
+    sleep_for(seconds(5));
 }
