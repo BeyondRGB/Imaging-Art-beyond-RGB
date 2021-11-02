@@ -7,4 +7,5 @@
 void RawImageReader::execute(CallBackFunction func) {
     func("Reading In Raw Image Data!");
     //TODO add Image Reading logic here
+    sleep_for(seconds(5));
 }

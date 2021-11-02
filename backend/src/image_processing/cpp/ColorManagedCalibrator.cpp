@@ -7,4 +7,5 @@
 void ColorManagedCalibrator::execute(CallBackFunction func) {
     func("Color Managed Calibration");
     //TODO add Color Manged Calibration logic here
+    sleep_for(seconds(5));
 }

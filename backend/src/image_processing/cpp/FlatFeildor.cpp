@@ -7,4 +7,5 @@
 void FlatFeildor::execute(CallBackFunction func) {
     func("Flat Fielding");
     //TODO add FlatFeilding logic here
+    sleep_for(seconds(5));
 }
