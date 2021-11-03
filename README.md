@@ -4,6 +4,7 @@
 
 # Project Origens
 This project started as a senior project for the Software Engenering program at RIT. **Add More info here**
+#### Team
 - Tristan Knox
 - Jacob O'Neil
 - Andrew Hammerston
