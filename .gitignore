@@ -37,4 +37,11 @@ cmake-build-debug
 cmake-build-release
 
 # VCPKG
-vcpkg/*
+vcpkg/
+
+# BUILD
+build/
+
+# VS
+.vs/
+CMakeSettings.json
