@@ -1,8 +1,11 @@
 <script>
+  import PageTransitions from "@components/PageTransitions.svelte";
 </script>
 
-<main />
-Reports
+<PageTransitions>
+  <main />
+  Reports
+</PageTransitions>
 
 <style>
 </style>

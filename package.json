@@ -6,12 +6,13 @@
   "main": "src/main/index.js",
   "scripts": {
     "dev": "concurrently -k \"npm:svelte-dev\" \"npm:electron-dev\"",
-    "package": "npm run svelte-build && electron-forge package",
-    "build": "npm run svelte-build && electron-forge make",
+    "make": "npm run svelte-build && electron-forge make",
+    "build": "npm run svelte-build && electron-forge package",
     "publish": "npm run svelte-build && electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "preview": "npm run svelte-build && electron-forge start",
     "electron-dev": "cross-env ELEC_ENV=dev electron-forge start",
+    "electron-preview": "electron-forge start",
     "svelte-build": "vite build",
     "svelte-dev": "vite",
     "svelte-start": "vite preview"
@@ -63,6 +64,7 @@
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "electron": "15.3.0",
+    "panzoom": "^9.4.2",
     "postcss": "^8.3.11",
     "postcss-load-config": "^3.1.0",
     "prettier": "^2.4.1",

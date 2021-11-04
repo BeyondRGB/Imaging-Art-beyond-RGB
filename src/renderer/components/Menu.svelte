@@ -11,7 +11,7 @@
   <ul class="list">
     <logo>
       <div class="logo-icon">
-        <Icon data={icon} scale="2" />
+        <Icon data={icon} scale="2.5" />
       </div>
       <span class="logo-text">Beyond RGB</span>
     </logo>
@@ -43,8 +43,8 @@
 
 <style lang="postcss">
   :root {
-    --text-secondary: rgb(255, 255, 255);
-    --bg-secondary: rgb(45, 87, 78);
+    --text-secondary: rgb(0, 0, 0);
+    --bg-secondary: rgb(147, 197, 253);
     --transition-speed: 600ms;
   }
 
@@ -53,7 +53,7 @@
     background-color: var(--menu-color);
     height: 100%;
     z-index: 1;
-    transition-property: all;
+    transition-property: width, border-radius, box-shadow;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 400ms;
     transition-delay: 100ms;
@@ -64,11 +64,12 @@
 
   /* Logo */
   logo {
-    @apply pb-12 pt-2;
+    @apply pb-12 pt-2 relative justify-center text-center w-full;
   }
 
   .logo-text {
-    @apply whitespace-nowrap select-none absolute -left-64 duration-200 text-2xl;
+    transition-property: left, position;
+    @apply whitespace-nowrap select-none absolute -left-48 duration-200 text-2xl;
   }
 
   .logo-icon {
@@ -77,7 +78,7 @@
 
   /* main */
   main:hover {
-    @apply w-[var(--menu-width-exp)] shadow-2xl rounded-r-3xl bg-green-300;
+    @apply w-[var(--menu-width-exp)] shadow-2xl rounded-r-3xl;
   }
 
   .list {
@@ -85,27 +86,33 @@
   }
 
   main:hover .item-text {
-    @apply opacity-100;
+    @apply opacity-100 transition-opacity ease-linear;
   }
 
   main:hover .logo-text {
-    @apply left-4 transition-all duration-700 ease-in-out;
+    transition-property: left, position;
+    @apply left-0 absolute duration-1000 w-full;
   }
 
   /* Menu Item */
   .item {
-    @apply w-full flex items-center h-20 bg-gray-400;
+    @apply w-full flex items-center h-20 transition-colors duration-500;
   }
 
-  .item:last-child {
+  .item:first-of-type {
+    @apply border-t-[.0625rem];
+  }
+
+  .item:last-of-type {
     margin-top: auto;
+    @apply border-b-0;
   }
 
   .item:hover {
     filter: grayscale(0%) opacity(1);
     background: var(--bg-secondary);
     color: var(--text-secondary);
-    @apply transition-all ease-in duration-200;
+    @apply transition-colors duration-500;
   }
 
   .item-text {
@@ -113,6 +120,6 @@
   }
 
   .item-icon {
-    @apply ml-[2vw] duration-200;
+    @apply ml-[1.75vw] duration-200;
   }
 </style>

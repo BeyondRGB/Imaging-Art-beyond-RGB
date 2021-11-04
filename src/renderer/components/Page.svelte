@@ -12,10 +12,6 @@
 <style lang="postcss">
 	.page {
 		grid-area: Box;
-		background-color: rgb(201, 200, 255);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		@apply w-[100%];
+		@apply w-full h-full;
 	}
 </style>
