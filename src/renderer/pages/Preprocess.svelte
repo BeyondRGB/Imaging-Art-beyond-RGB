@@ -6,28 +6,32 @@
 
   import Sorter from "@components/Sorter.svelte";
   import FileSelector from "@components/FileSelector.svelte";
+  import PageTransitions from "@components/PageTransitions.svelte";
+
   $: console.log(files);
 </script>
 
-<main>
-  <div class="settings">
-    <FileSelector title="Select Files:" />
-    <FileSelector title="Export Destination:" directory />
-    <div>
-      Specify File Roles:
-      <Sorter />
+<PageTransitions>
+  <main>
+    <div class="settings">
+      <FileSelector title="Select Files:" />
+      <FileSelector title="Export Destination:" directory />
+      <div>
+        Specify File Roles:
+        <Sorter />
+      </div>
+      <br />
+      <div>Advanced: [WIP]</div>
+      <button class="next" on:click={() => currentPage.set("ColorTarget")}
+        >Next</button
+      >
     </div>
-    <br />
-    <div>Advanced: [WIP]</div>
-    <button class="next" on:click={() => currentPage.set("ColorTarget")}
-      >Next</button
-    >
-  </div>
-</main>
+  </main>
+</PageTransitions>
 
 <style lang="postcss">
   main {
-    @apply w-full px-[10%] py-[5%] flex items-start justify-center;
+    @apply w-full px-[10%] pt-[5%] items-start justify-center;
   }
 
   .next {

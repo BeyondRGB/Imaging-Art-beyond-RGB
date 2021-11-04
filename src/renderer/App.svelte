@@ -19,7 +19,7 @@
 		fileImageO,
 		home,
 		cog,
-		ban,
+		github,
 		fileText,
 		eyedropper,
 	} from "svelte-awesome/icons";
@@ -92,7 +92,7 @@
 	<div class="app">
 		<Navbar {routes} />
 
-		<Menu icon={ban} {routes} selectedPage={selectedPage.text} />
+		<Menu icon={github} {routes} />
 
 		<Page selectedPage={selectedPage.component} />
 	</div>
@@ -107,6 +107,8 @@
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
+		background-color: rgb(249, 250, 251);
+		@apply overflow-hidden;
 	}
 	main {
 		height: 100%;
@@ -114,9 +116,9 @@
 			Helvetica, Arial, sans-serif;
 	}
 	:root {
-		--nav-color: rgb(255, 197, 197);
-		--menu-color: rgb(177, 255, 181);
-		--box-color: rgb(201, 200, 255);
+		--nav-color: rgb(243, 244, 246);
+		--menu-color: rgb(209, 213, 219);
+		--box-color: rgb(249, 250, 251);
 		--menu-width: 6%;
 		--menu-width-exp: 20rem;
 		--icon-mr: 80%;
@@ -147,7 +149,7 @@
 		margin: 0 auto;
 
 		display: grid;
-		gap: 0.5rem;
+		gap: 0rem;
 
 		/* Explicit grid */
 		grid-template-areas:

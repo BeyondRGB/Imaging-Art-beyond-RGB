@@ -2,41 +2,42 @@
   let rows = "";
 
   import { currentPage } from "../stores";
+  import PageTransitions from "@components/PageTransitions.svelte";
+  import CanvasImage from "@components/CanvasImage.svelte";
 </script>
 
-<main>
-  <div class="image">Image</div>
-  <div class="side">
-    <div class="settings">
-      Settings
-      <div class="box">
-        <div class="color-target">
-          Color Target
-          <div class="input-group">
-            <lable class="row-lable">Rows:</lable>
-            <input bind:value={rows} placeholder="Placeholder..." />
-          </div>
-          <div class="input-group">
-            <lable class="row-lable">Columns:</lable>
-            <input bind:value={rows} placeholder="Placeholder..." />
+<PageTransitions>
+  <main>
+    <!-- <img src="placeholder.jpg" alt="background image" /> -->
+    <CanvasImage />
+    <div class="side">
+      <div class="settings">
+        Settings
+        <div class="box">
+          <div class="color-target">
+            Color Target
+            <div class="input-group">
+              <lable class="row-lable">Rows:</lable>
+              <input bind:value={rows} placeholder="Placeholder..." />
+            </div>
+            <div class="input-group">
+              <lable class="row-lable">Columns:</lable>
+              <input bind:value={rows} placeholder="Placeholder..." />
+            </div>
           </div>
         </div>
+        <button class="add">+</button>
       </div>
-      <button class="add">+</button>
+      <button class="next" on:click={() => currentPage.set("Process")}
+        >Confirm -></button
+      >
     </div>
-    <button class="next" on:click={() => currentPage.set("Process")}
-      >Confirm -></button
-    >
-  </div>
-</main>
+  </main>
+</PageTransitions>
 
 <style lang="postcss">
   main {
     @apply flex w-full;
-  }
-
-  .image {
-    @apply bg-yellow-600 h-[80%] min-w-[75%] self-center ml-2;
   }
 
   .settings {
@@ -44,7 +45,7 @@
   }
 
   .box {
-    @apply bg-green-200 rounded-md shadow-md w-full;
+    @apply bg-gray-200 rounded-md shadow-md w-full;
   }
 
   .color-target {

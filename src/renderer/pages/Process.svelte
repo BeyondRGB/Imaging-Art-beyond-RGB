@@ -1,34 +1,56 @@
 <script>
   import { currentPage } from "../stores";
+  import Stepper from "../components/Stepper.svelte";
 
   import { getContext } from "svelte";
   import ExportOptions from "@components/ExportOptions.svelte";
+  import PageTransitions from "@components/PageTransitions.svelte";
+  import CanvasImage from "@components/CanvasImage.svelte";
+  let steps = [
+    {
+      title: "Preprocess",
+      status: "pending",
+    },
+    {
+      title: "Process",
+      status: "pending",
+    },
+    {
+      title: "Export",
+      status: "pending",
+    },
+  ];
+  let activeStep = 0;
 
   const { open } = getContext("simple-modal");
 
   const openModal = () => {
     open(ExportOptions);
   };
+
+  $: if (activeStep === 3) {
+    openModal();
+  }
 </script>
 
-<main>
-  <div id="image">Image</div>
-  <div id="stepper">
-    Steps
-    <button on:click={openModal} class="bg-blue-500 rounded-md px-2 py-1"
-      >[Next]</button
+<PageTransitions>
+  <main>
+    <div id="image">
+      <CanvasImage />
+    </div>
+    <button
+      on:click={() => (steps[activeStep++].status = "success")}
+      class="bg-blue-500 rounded-md px-2 py-1">[Next]</button
     >
-  </div>
-</main>
+    <Stepper bind:steps />
+  </main>
+</PageTransitions>
 
 <style lang="postcss">
   main {
-    @apply flex flex-col w-full justify-center;
+    @apply flex flex-col w-full;
   }
   #image {
-    @apply bg-yellow-600 h-[80%] min-w-[75%] self-center;
-  }
-  #stepper {
-    @apply bg-red-400 h-[17%] mt-auto mb-[1%];
+    @apply self-center w-[110vh];
   }
 </style>

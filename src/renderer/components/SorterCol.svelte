@@ -1,7 +1,5 @@
 <script>
-  import DList from "@components/DList.svelte";
-  import HeapBox from "@components/HeapBox.svelte";
-  import SorterCol from "@components/SorterCol.svelte";
+  import DragBox from "@components/DragBox.svelte";
   let items = [
     { id: 1, name: "item1" },
     { id: 2, name: "item2" },
@@ -29,25 +27,25 @@
 </script>
 
 <main>
-  <div id="heap">
-    <HeapBox items={[...items, ...items1, ...items2, ...items3]} />
+  <div>
+    <span>Image</span>
+    <DragBox items={[]} strict />
   </div>
-  <div id="cols">
-    <SorterCol />
-    <SorterCol />
-    <SorterCol />
-    <SorterCol />
+  <div>
+    <span>White Field</span>
+    <DragBox items={[]} strict />
+  </div>
+  <div>
+    <span>Dark Field</span>
+    <DragBox items={[]} strict />
   </div>
 </main>
 
 <style lang="postcss">
   main {
-    @apply flex flex-col justify-center items-center;
+    @apply flex flex-col gap-2;
   }
-  #cols {
-    @apply flex gap-2;
-  }
-  #heap {
-    @apply mb-2;
+  div {
+    @apply flex w-full bg-blue-200 rounded-lg p-1;
   }
 </style>
