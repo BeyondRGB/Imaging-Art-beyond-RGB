@@ -3,8 +3,9 @@
   import { flip } from "svelte/animate";
   export let items;
   export let strict;
+  export let colId;
 
-  const flipDurationMs = 100;
+  const flipDurationMs = 150;
   function handleDndConsider(e) {
     items = e.detail.items;
   }
@@ -16,7 +17,7 @@
 <main>
   <section
     class={strict ? "strict" : ""}
-    use:dndzone={{ items, flipDurationMs, type: "files" }}
+    use:dndzone={{ items, flipDurationMs }}
     on:consider={handleDndConsider}
     on:finalize={handleDndFinalize}
   >
@@ -33,21 +34,22 @@
 
 <style lang="postcss">
   main {
-    @apply w-full;
+    @apply w-full flex;
   }
   section {
-    @apply h-full rounded-lg w-[5vw] p-1 min-h-[2.2rem];
+    @apply flex h-12 rounded-lg w-full p-1 min-h-[2.2rem];
   }
+
   card {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     border: 1px solid #333333;
-    @apply mb-1 rounded-xl bg-gray-50;
+    @apply rounded-xl bg-gray-50 text-base mb-1 flex justify-center py-1 px-1 w-full;
+  }
+
+  .strict card:first-child {
+    @apply bg-green-200 text-black;
   }
 
   .strict .selected:nth-child(n + 2) {
-    @apply bg-red-600 text-white;
+    @apply bg-red-500 text-white;
   }
 </style>
