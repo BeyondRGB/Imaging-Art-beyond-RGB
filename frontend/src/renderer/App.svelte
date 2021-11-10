@@ -1,5 +1,5 @@
 <script>
-	import { currentPage } from "./stores";
+	import { currentPage, appSettings } from "./stores";
 	// Components
 	import Navbar from "@components/Navbar.svelte";
 	import Menu from "@components/Menu.svelte";
@@ -13,6 +13,7 @@
 	import Process from "@pages/Process.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
+	import Settings from "@pages/Settings.svelte";
 
 	import {
 		photo,
@@ -58,7 +59,7 @@
 		},
 		Settings: {
 			text: "Settings",
-			component: Home,
+			component: Settings,
 			icon: cog,
 			isShown: true,
 			default: true,
@@ -84,17 +85,26 @@
 	};
 
 	currentPage.set("Home");
-
+	let theme = "";
 	$: selectedPage = routes[$currentPage];
+	$: theme = $appSettings ? "dark" : "";
+	$: console.log(theme);
+	$: if (theme !== "") {
+		document.documentElement.classList.add(theme);
+		document.body.classList.add(theme);
+	} else {
+		document.documentElement.classList.remove("dark");
+		document.body.classList.remove("dark");
+	}
 </script>
 
-<main>
+<main class={theme}>
 	<div class="app">
 		<Navbar {routes} />
 
 		<Menu icon={github} {routes} />
 
-		<Page selectedPage={selectedPage.component} />
+		<Page selectedPage={selectedPage.component} pageName={selectedPage.text} />
 	</div>
 </main>
 
@@ -102,13 +112,13 @@
 	@tailwind base;
 	@tailwind components;
 	@tailwind utilities;
+	@tailwind variants;
 	html,
 	body {
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
-		background-color: rgb(249, 250, 251);
-		@apply overflow-hidden;
+		@apply bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border-red-600;
 	}
 	main {
 		height: 100%;
@@ -116,30 +126,12 @@
 			Helvetica, Arial, sans-serif;
 	}
 	:root {
-		--nav-color: rgb(243, 244, 246);
-		--menu-color: rgb(209, 213, 219);
-		--box-color: rgb(249, 250, 251);
-		--menu-width: 6%;
-		--menu-width-exp: 20rem;
 		--icon-mr: 80%;
 	}
 
 	@media (min-width: 900px) {
 		:root {
 			--icon-mr: 90%;
-		}
-	}
-
-	@media (min-width: 1200px) {
-		:root {
-			--menu-width: 5%;
-		}
-	}
-
-	@media (min-width: 1500px) {
-		:root {
-			--menu-width: 5%;
-			--menu-width-exp: 21%;
 		}
 	}
 
@@ -170,8 +162,29 @@
 		/* grid-template-columns: repeat(3, auto); */
 	}
 
-	.start-button {
-		@apply bg-blue-500 w-1/2 h-[12%] rounded-lg text-white text-xl active:bg-blue-600 select-none
-						flex flex-col justify-center align-middle;
+	button {
+		@apply hover:bg-blue-600 bg-blue-400 text-gray-50 rounded-md self-center text-lg px-4 py-2
+						transition-all hover:rounded-lg dark:bg-blue-700 dark:hover:bg-blue-600 dark:hover:text-gray-800
+						active:scale-95 shadow-md;
+	}
+
+	/* width */
+	::-webkit-scrollbar {
+		@apply relative transition-all w-1;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		@apply bg-transparent;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		@apply bg-gray-600;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-gray-500;
 	}
 </style>

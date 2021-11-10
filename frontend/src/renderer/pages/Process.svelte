@@ -1,10 +1,9 @@
 <script>
-  import { currentPage } from "../stores";
+  import { modal } from "../stores";
   import Stepper from "../components/Stepper.svelte";
-
+  import { bind } from "svelte-simple-modal";
   import { getContext } from "svelte";
   import ExportOptions from "@components/ExportOptions.svelte";
-  import PageTransitions from "@components/PageTransitions.svelte";
   import CanvasImage from "@components/CanvasImage.svelte";
   let steps = [
     {
@@ -25,7 +24,8 @@
   const { open } = getContext("simple-modal");
 
   const openModal = () => {
-    open(ExportOptions);
+    //modal.set(bind(ExportOptions), {}, { closeButton: false });
+    open(ExportOptions, {}, { closeButton: false });
   };
 
   $: if (activeStep === 3) {
@@ -33,18 +33,16 @@
   }
 </script>
 
-<PageTransitions>
-  <main>
-    <div id="image">
-      <CanvasImage />
-    </div>
-    <button
-      on:click={() => (steps[activeStep++].status = "success")}
-      class="bg-blue-500 rounded-md px-2 py-1">[Next]</button
-    >
-    <Stepper bind:steps />
-  </main>
-</PageTransitions>
+<main>
+  <div id="image">
+    <CanvasImage />
+  </div>
+  <button
+    on:click={() => (steps[activeStep++].status = "success")}
+    class="bg-blue-500 rounded-md px-2 py-1">[Next]</button
+  >
+  <Stepper bind:steps />
+</main>
 
 <style lang="postcss">
   main {

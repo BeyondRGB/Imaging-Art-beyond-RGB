@@ -14,7 +14,7 @@
     "electron-dev": "cross-env ELEC_ENV=dev electron-forge start",
     "electron-preview": "electron-forge start",
     "svelte-build": "vite build",
-    "svelte-dev": "vite",
+    "svelte-dev": "cross-env TAILWIND_MODE=watch vite",
     "svelte-start": "vite preview"
   },
   "keywords": [],

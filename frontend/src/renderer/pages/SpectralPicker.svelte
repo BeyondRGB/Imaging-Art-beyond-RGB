@@ -1,35 +1,49 @@
 <script>
-  import PageTransitions from "@components/PageTransitions.svelte";
   import CanvasImage from "@components/CanvasImage.svelte";
 </script>
 
-<PageTransitions>
-  <main>
-    <div class="flex w-full justify-center h-full">
-      <div id="image">
-        <CanvasImage />
+<main>
+  <div class="flex w-full justify-center h-full">
+    <div id="image">
+      <CanvasImage />
+    </div>
+    <div id="side">
+      <div
+        class="box dark:bg-gray-800 bg-gray-100 text-black dark:text-gray-200 ring-1 ring-gray-300 dark:ring-gray-900"
+        id="brush"
+      >
+        Brush Size <p>[WIP]</p>
       </div>
-      <div id="side">
-        <div id="brush">Brush Size</div>
-        <div id="refl-spec">Reflectance Spectrum</div>
-        <div id="compare">Compare Estimated and Reference</div>
+      <div
+        class="box dark:bg-gray-800 bg-gray-100 text-black dark:text-gray-200 ring-1 ring-gray-300 dark:ring-gray-900"
+        id="refl-spec"
+      >
+        Reflectance Spectrum
+        <p>[WIP]</p>
+      </div>
+      <div
+        class="box dark:bg-gray-800 bg-gray-100 text-black dark:text-gray-200 ring-1 ring-gray-300 dark:ring-gray-900"
+        id="compare"
+      >
+        Compare Estimated and Reference
+        <p>[WIP]</p>
       </div>
     </div>
-    <div id="chart">Chart</div>
-  </main>
-</PageTransitions>
+  </div>
+  <div id="chart">Chart</div>
+</main>
 
 <style lang="postcss">
   main {
     @apply flex w-full justify-center flex-col;
   }
   #image {
-    @apply w-[75%] self-center mx-2;
+    @apply w-[70%] self-center mx-2 mt-1;
   }
   #side {
     @apply w-[25%];
   }
-  #brush {
+  /* #brush {
     @apply bg-gray-200 h-[15%] m-2;
   }
   #refl-spec {
@@ -37,8 +51,12 @@
   }
   #compare {
     @apply bg-gray-200 h-[15%] m-2;
-  }
+  } */
   #chart {
-    @apply bg-gray-300 h-auto m-2;
+    @apply bg-gray-300 h-full m-2;
+  }
+
+  .box {
+    @apply h-[15%] m-2 shadow-md px-2 pt-1 bg-gray-200;
   }
 </style>

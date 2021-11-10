@@ -42,7 +42,7 @@
   });
 </script>
 
-<main>
+<main class="dark:ring-gray-600">
   <div id="image-canvas">
     <canvas bind:this={canvas} />
   </div>
@@ -55,7 +55,7 @@
   main {
     display: table;
     overflow: hidden;
-    @apply w-full;
+    @apply w-full ring-1 ring-gray-800;
   }
   canvas {
     @apply block w-full;

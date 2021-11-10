@@ -1,51 +1,28 @@
 <script>
   import DragBox from "@components/DragBox.svelte";
-  let items = [
-    { id: 1, name: "item1" },
-    { id: 2, name: "item2" },
-    { id: 3, name: "item3" },
-    { id: 4, name: "item4" },
-  ];
-  let items1 = [
-    { id: 5, name: "item5" },
-    { id: 6, name: "item6" },
-    { id: 7, name: "item7" },
-    { id: 8, name: "item8" },
-  ];
-  let items2 = [
-    { id: 9, name: "item9" },
-    { id: 10, name: "item10" },
-    { id: 11, name: "item11" },
-    { id: 12, name: "item12" },
-  ];
-  let items3 = [
-    { id: 13, name: "item13" },
-    { id: 14, name: "item14" },
-    { id: 15, name: "item15" },
-    { id: 16, name: "item16" },
-  ];
+  export let colId;
 </script>
 
 <main>
   <div>
     <span>Image</span>
-    <DragBox items={[]} strict />
+    <DragBox items={[]} strict {colId} />
   </div>
   <div>
     <span>White Field</span>
-    <DragBox items={[]} strict />
+    <DragBox items={[]} strict {colId} />
   </div>
   <div>
     <span>Dark Field</span>
-    <DragBox items={[]} strict />
+    <DragBox items={[]} strict {colId} />
   </div>
 </main>
 
 <style lang="postcss">
   main {
-    @apply flex flex-col gap-2;
+    @apply gap-2;
   }
   div {
-    @apply flex w-full bg-blue-200 rounded-lg p-1;
+    @apply w-full bg-blue-200 rounded-lg p-1;
   }
 </style>
