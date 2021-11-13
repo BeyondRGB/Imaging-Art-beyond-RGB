@@ -1,6 +1,6 @@
 # Beyond-RGB-Backend
 
-The backend for this projects is a sockated localhost server that listens for commands from the front end and spins off processing threads as tasks come in.
+The backend for this projects is a WebSocket localhost server that listens for commands from the front end and spins off processing threads as tasks come in.
 
 # Dev Env Setup
 
@@ -20,6 +20,18 @@ The following describes the steps needed to get the back end environment of this
   - ```cd Imaging-Art-beyond-RGB\backend\build\Debug```
   - run ```app.exe``` you should see ```BeyondRBG Backend Started: listening on port 9002```, if so your all set up and the back end is currently running. ```ctr+c``` to terminate the program.
 
-### Mac OS
+### Mac OS Backend
+- Setup Environment
+  - Install the Brew package manager.
+  - ```brew install cmake```
+  - ```brew install pkg-config```
+  - ```sh config_environ.sh```
+    - This downloads vcpkg and installs all the backend dependencies.
+    - This will take some time.
+- Update Environment (when needed)
+  - ```sh config_environ.sh```
+- Compile
+  - ```sh macOS_build.sh```
+
 
 ### Linux

@@ -25,3 +25,6 @@ target_include_directories(app PUBLIC ${headers})
 #----------------------------------------------------
 target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
+
+# Need the c++ standard explicitly stated for compiling on OSX.
+set_property(TARGET app PROPERTY CXX_STANDARD 11)
