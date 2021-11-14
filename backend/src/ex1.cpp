@@ -33,49 +33,75 @@ void process_image(char *file) {
 	imr.recycle();
 }
 
+
 void write_tiff(LibRaw* imr) {
 	int width = imr->imgdata.sizes.iwidth;
 	int height = imr->imgdata.sizes.iheight;
-	int sampleperpixel = 3; // Number of channels
+
+	int samples_per_pixel = 3; // Number of channels
+	//int image_row_len = width * samples_per_pixel;
+	//int image_row_bytes = image_row_len * 2;
 
 	printf("Width: %d\r\nHeight: %d\r\n", width, height);
 
 	TIFF* img_out = TIFFOpen("output.tiff", "w");
-	printf("Width: %d\r\nHeight: %d\r\n", width, height);
-	TIFFClose(img_out);
 
 	TIFFSetField(img_out, TIFFTAG_IMAGEWIDTH, width);
 	TIFFSetField(img_out, TIFFTAG_IMAGELENGTH, height);
-	TIFFSetField(img_out, TIFFTAG_SAMPLESPERPIXEL, sampleperpixel);
+	TIFFSetField(img_out, TIFFTAG_SAMPLESPERPIXEL, samples_per_pixel);
 	TIFFSetField(img_out, TIFFTAG_BITSPERSAMPLE, 16);
 
 	TIFFSetField(img_out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
+
+	/* Write all channel data in one array instead of separating the channels. */
 	TIFFSetField(img_out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
+
+	/* Indicate that the image is RGB. We'll need to do grayscale, perhaps 
+	 * as channels, or separate images in the same file. */
 	TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 
-	int row_l = width * sampleperpixel;
-	int row_i, x, y, i;
-	unsigned short* image_row = (unsigned short *) _TIFFmalloc(TIFFScanlineSize(img_out));;
+	/* The written data needs to be broken up into "Strips" to make buffering easier 
+	 * for TIFF readers. Rows-per-strip needs to be tagged, this is the number of 
+	 * physical pixel rows of the image written in each strip. A strip size of 8kB is 
+	 * recommended (I wonder if this is for computing standars/capabilities wayback 
+	 * when). Anyway, since the data type of the return and estimate rows-per-strip 
+	 * values are uint32: we cannot break our image row up (less than one), and our image 
+	 * rows are more than 8kB, so the closest to the recommended we can do is one row 
+	 * per strip. */
+	int rows_per_strip = TIFFDefaultStripSize(img_out, 1);
+	TIFFSetField(img_out, TIFFTAG_ROWSPERSTRIP, rows_per_strip);
+	printf("Rows per strip: %d\r\n", rows_per_strip);
 
-	TIFFSetField(img_out, TIFFTAG_ROWSPERSTRIP, TIFFDefaultStripSize(img_out, row_l));
-
+	/* The buffer for each strip to be copied to and then written to disk. 
+	 * If rows-per-strip is one, scanline size should equate to the number
+	 * of bytes for one physical pixel row of the image, and the number of
+	 * strips should equal the height of the image. */
+	tmsize_t scanline_size = TIFFScanlineSize(img_out);
+	unsigned short* sample_row = (unsigned short *) _TIFFmalloc(scanline_size);
+	printf("Scanline Size: %lld\r\n", scanline_size);
+	
+	int col, x, y, i;
 	for( y = 0; y < height; y++) {
-		row_i = 0;
+		col = 0;
 		for( x = 0; x < width; x++) {
 			i = x * y;
-			image_row[row_i++] = imr->imgdata.image[i][0];
-			image_row[row_i++] = imr->imgdata.image[i][1];
-			image_row[row_i++] = imr->imgdata.image[i][2];
-			//image_row[row_i++] = imr->imgdata.image[i][3];
+			/* 12 bit -> 16 bit: 2^16/2^12 = 16*/
+			/* Red    */ sample_row[col++] = imr->imgdata.image[i][0] * 16;
+			/* Green1 */ sample_row[col++] = imr->imgdata.image[i][1] * 16;
+			/* Blue   */ sample_row[col++] = imr->imgdata.image[i][2] * 16;
+			/* Green2 */ //sample_row[col++] = imr->imgdata.image[i][3];
 		}
-		if (TIFFWriteScanline(img_out, image_row, y, 0) < 0)
+		if( y % 100 == 0 )
+			printf("Row% 4d:% 5d bytes\r\n", y, col * 2);
+		if (TIFFWriteScanline(img_out, sample_row, y, 0) < 0)
     		break;
 
 	}
+	printf("Row% 4d:% 5d bytes\r\n", y, col * 2);
 
 	TIFFClose(img_out);
-	if (image_row)
-    	_TIFFfree(image_row);
+	if (sample_row)
+    	_TIFFfree(sample_row);
 
 }
 

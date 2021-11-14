@@ -43,5 +43,9 @@ vcpkg/
 build/
 
 # VS
+.vscode/
 .vs/
 CMakeSettings.json
+
+# macOS thumbnails
+.DS_Store
