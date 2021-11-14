@@ -8,8 +8,13 @@ project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
 #------------------------------------------
 find_package(websocketpp CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
-find_package(LibRaw REQUIRED)
 find_package(TIFF REQUIRED)
+
+# LCMS is needed for LibRAW. For some reason on 
+# OSX and Linux, this dependency needs to be explicitly
+# found and linked. LCMS was added in dependencies.txt.
+find_package(lcms REQUIRED) # Little Color Management System
+find_package(LibRaw REQUIRED)
 
 #   Find all Header and Source files
 #file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/*.h")
@@ -35,9 +40,9 @@ target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
 
 target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
 target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
-target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES})
+target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
 
 
 # Need the c++ standard explicitly stated for compiling on OSX.
-set_property(TARGET app PROPERTY CXX_STANDARD 11)
+set_property(TARGET app PROPERTY CXX_STANDARD 17)
