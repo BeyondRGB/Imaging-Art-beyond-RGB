@@ -9,9 +9,7 @@ project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
 find_package(websocketpp CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
 find_package(LibRaw REQUIRED)
-# find_package(tiff REQUIRED)
-find_path(TIFF_INCLUDE_DIR tiffio.h)
-find_library(TIFF_LIBRARY tiff)
+find_package(TIFF REQUIRED)
 
 #   Find all Header and Source files
 #file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/*.h")
@@ -33,7 +31,7 @@ target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
 
 target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
-target_link_libraries(app PRIVATE ${TIFF_LIBRARY})
+target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
 
 target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
 target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
