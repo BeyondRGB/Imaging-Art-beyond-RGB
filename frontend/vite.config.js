@@ -7,7 +7,8 @@ export default defineConfig({
   base: "./",
   alias: {
     "@components": path.resolve(__dirname, 'src/renderer/components'),
-    "@pages": path.resolve(__dirname, 'src/renderer/pages')
+    "@pages": path.resolve(__dirname, 'src/renderer/pages'),
+    "@util": path.resolve(__dirname, 'src/renderer/util')
   },
   build: {
     outDir: "public"

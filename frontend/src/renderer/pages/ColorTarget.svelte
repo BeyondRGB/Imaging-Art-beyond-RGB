@@ -3,6 +3,8 @@
 
   import { currentPage } from "../stores";
   import CanvasImage from "@components/CanvasImage.svelte";
+
+  import { draggable } from "svelte-drag";
 </script>
 
 <main>

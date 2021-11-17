@@ -124,27 +124,33 @@
             on:click={handleCloseCol(column.id)}
             class="dark:hover:bg-red-400/50">X</button
           >
-          <item>
-            {#each column.fields as field (field.name)}
-              <span>{field.name}</span>
-              <itemBox
-                class={"strict"}
-                use:dndzone={{ items: field.items, flipDurationMs }}
-                on:consider={(e) => handleDndConsider(column.id, field.name, e)}
-                on:finalize={(e) => handleDndFinalize(column.id, field.name, e)}
-              >
-                {#each field.items as item (item.id)}
-                  <card
-                    animate:flip={{ duration: flipDurationMs }}
-                    class={items.length > 1 ? "selected" : ""}
-                    style=""
+          <div class="flex">
+            {#each ["A", "B"] as letter}
+              <item>
+                {#each column.fields as field (field.name)}
+                  <span>{field.name} {letter}</span>
+                  <itemBox
+                    class={"strict"}
+                    use:dndzone={{ items: field.items, flipDurationMs }}
+                    on:consider={(e) =>
+                      handleDndConsider(column.id, field.name, e)}
+                    on:finalize={(e) =>
+                      handleDndFinalize(column.id, field.name, e)}
                   >
-                    {item.name}
-                  </card>
+                    {#each field.items as item (item.id)}
+                      <card
+                        animate:flip={{ duration: flipDurationMs }}
+                        class={items.length > 1 ? "selected" : ""}
+                        style=""
+                      >
+                        {item.name}
+                      </card>
+                    {/each}
+                  </itemBox>
                 {/each}
-              </itemBox>
+              </item>
             {/each}
-          </item>
+          </div>
         </div>
       {/each}
     </section>

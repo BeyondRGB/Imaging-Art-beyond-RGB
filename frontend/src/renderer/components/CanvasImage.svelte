@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import panzoom from "panzoom";
   let image;
+  let panZoom = false;
 
   let canvas;
 
@@ -33,11 +34,13 @@
         image.height // dheight
       );
 
-      panzoom(canvas, {
-        bounds: true,
-        boundsPadding: 1,
-        minZoom: 1,
-      });
+      if (panZoom) {
+        panzoom(canvas, {
+          bounds: true,
+          boundsPadding: 1,
+          minZoom: 1,
+        });
+      }
     };
   });
 </script>

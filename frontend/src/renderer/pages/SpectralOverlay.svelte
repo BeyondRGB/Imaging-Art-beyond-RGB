@@ -1,11 +1,11 @@
 <script>
   import Switch from "@components/Switch.svelte";
-  import CanvasImage from "@components/CanvasImage.svelte";
+  import Canvas from "@components/SpectralCanvas.svelte";
 </script>
 
 <main>
   <div id="image">
-    <CanvasImage />
+    <Canvas />
   </div>
   <div id="side">
     <Switch label="Truecolor" />
@@ -20,7 +20,7 @@
     @apply flex w-full justify-center;
   }
   #image {
-    @apply w-[75%] self-center mx-2 shadow-md;
+    @apply w-[68vw] self-center mx-2 shadow-md;
   }
   #side {
     @apply w-[25%] self-center shadow-md mr-2;

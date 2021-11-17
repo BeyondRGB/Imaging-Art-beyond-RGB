@@ -2,7 +2,7 @@
 # Imaging-Art-beyond-RGB
 
 ## Beyond RGB Frontend
-![Electron- 15.3.0](https://badgen.net/badge/Electron/15.3.0/blue)  ![Svelte - 3.44.0](https://badgen.net/badge/Svelte/3.44.0/orange) ![Tailwindcss - 2.2.17](https://badgen.net/badge/Tailwindcss/2.2.17/purple) ![Vite- 2.6.11](https://badgen.net/badge/Vite/2.6.11/green) ![Electron Forge - 6.0.0-beta.61](https://badgen.net/badge/Electron%20Forge/6.0.0-beta.61/red)
+![Electron- 15.3.0](https://badgen.net/badge/Electron/v15.3.0/blue)  ![Svelte - 3.44.0](https://badgen.net/badge/Svelte/v3.44.0/orange) ![Tailwindcss - 2.2.17](https://badgen.net/badge/Tailwindcss/v2.2.17/purple) ![Vite- 2.6.11](https://badgen.net/badge/Vite/v2.6.11/green) ![Electron Forge - 6.0.0-beta.61](https://badgen.net/badge/Electron%20Forge/v6.0.0-beta.61/red)
 
 [**Live Demo**](https://dev.d2m0gyo8ptlels.amplifyapp.com/) *(Works best on Chrome)*
 

@@ -1,10 +1,22 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+var child = require('child_process').execFile;
+var executablePath = path.join(__dirname, '../../lib/app.exe')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
+
+// Start Backend Server
+child(executablePath, function (err, data) {
+  if (err) {
+    console.error(err);
+    return;
+  }
+
+  console.log(data.toString());
+});
 
 const createWindow = () => {
   // Create the browser window.
@@ -15,7 +27,7 @@ const createWindow = () => {
   });
 
   // and load the index.html of the app.
-  if (process.env.ELEC_ENV === 'dev'){
+  if (process.env.ELEC_ENV === 'dev') {
     mainWindow.loadURL('http://localhost:3000');
     // Open the DevTools.
     mainWindow.webContents.openDevTools();

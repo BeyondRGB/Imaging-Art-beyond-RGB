@@ -1,37 +1,8 @@
 <script>
 	export let selectedPage;
-	export let pageName;
 	import Modal from "svelte-simple-modal";
 	import { fade } from "svelte/transition";
-	import { getContext, onMount } from "svelte";
 	import { modal } from "../stores.js";
-	import Settings from "@pages/Settings.svelte";
-
-	let prevPage;
-	let prevName;
-	// $: {
-	// 	if (pageName === "Settings") {
-	// 		openModal(Settings);
-	// 		selectedPage = prevPage;
-	// 	}
-
-	// 	prevPage = selectedPage;
-	// 	prevName = pageName;
-	// }
-	// const { open } = getContext("modal");
-
-	// const openModal = (page) => {
-	// 	open(page, {}, { closeButton: true });
-	// };
-
-	// const openModal = (page) => {
-	// 	modal.set(page);
-	// 	//open(ExportOptions, {}, { closeButton: false });
-	// };
-
-	// $: if (activeStep === 3) {
-	//   openModal();
-	// }
 	$: console.log($modal);
 </script>
 

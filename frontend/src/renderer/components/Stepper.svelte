@@ -6,7 +6,13 @@
 
 <main>
   {#each steps as step, index}
-    <div id="step" class={step.status}><span>{step.title}</span></div>
+    <div id="step" class={step.status}>
+      {#if step.subTitle === "none"}
+        <h3>{step.title}</h3>
+      {:else}
+        <h3>{step.subTitle}</h3>
+      {/if}
+    </div>
   {/each}
 </main>
 
@@ -17,8 +23,11 @@
   div {
     @apply bg-gray-50 rounded-full flex justify-center w-24 h-24;
   }
-  span {
+  h3 {
     @apply text-xl my-auto;
+  }
+  span {
+    @apply my-auto;
   }
   .success {
     @apply bg-green-300;

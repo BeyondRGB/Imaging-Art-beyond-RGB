@@ -26,7 +26,7 @@
 	}
 
 	nav {
-		@apply border-b-2 flex justify-center items-center;
+		@apply border-b-2 flex justify-center items-center select-none;
 	}
 
 	h1 {
