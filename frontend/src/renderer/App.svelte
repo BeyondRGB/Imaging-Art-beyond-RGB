@@ -85,11 +85,16 @@
 	};
 
 	currentPage.set("Home");
-	let theme = "";
+	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+	darkThemeMq.addEventListener("change", (e) => {
+		appSettings.set(e.matches);
+	});
+	// $: appSettings.set(window.matchMedia("(prefers-color-scheme: dark)").matches);
+
 	$: selectedPage = routes[$currentPage];
 	$: theme = $appSettings ? "dark" : "";
-	$: console.log(theme);
 	$: if (theme !== "") {
+		console.log("Theme Change");
 		document.documentElement.classList.add(theme);
 		document.body.classList.add(theme);
 	} else {
@@ -104,7 +109,7 @@
 
 		<Menu icon={github} {routes} />
 
-		<Page selectedPage={selectedPage.component} pageName={selectedPage.text} />
+		<Page selectedPage={selectedPage.component} />
 	</div>
 </main>
 
@@ -118,7 +123,7 @@
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
-		@apply bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border-red-600;
+		@apply bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border-red-600 select-none;
 	}
 	main {
 		height: 100%;

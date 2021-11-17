@@ -5,7 +5,7 @@
 </script>
 
 <main>
-  <div class="dark:text-gray-500">
+  <div id="welcome" class="dark:text-gray-500">
     <h2>Welcome to</h2>
     <h1>Beyond RGB</h1>
     <h3>Get started below</h3>
@@ -48,7 +48,7 @@
     @apply text-base pt-4;
   }
 
-  div {
+  #welcome {
     @apply text-black text-opacity-40 absolute mb-[30%] flex flex-col justify-center items-center gap-1 select-none;
   }
 
