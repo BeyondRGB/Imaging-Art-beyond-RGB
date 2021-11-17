@@ -5,10 +5,8 @@ extern "C" {
 }
 //#include <libraw/libraw.h>
 
-void find_maxs(LibRaw* imr);
-void write_tiff(uchar* im, int width, int height);
-void write_tiff2(LibRaw* imr);
-void raw_testing(LibRaw* im);
+void write_tiff(ushort* im, int width, int height, int scale);
+int getScaleValue(ushort* im, int width, int height, int channels);
 
 void process_image(char *file) {
 
@@ -25,6 +23,12 @@ void process_image(char *file) {
 	/* Unpack raw data into structures for processing. */
 	im.unpack();
 
+	im.imgdata.params.no_auto_bright = 1;
+	im.imgdata.params.no_auto_scale = 1;
+	im.imgdata.params.use_auto_wb = 0;
+	im.imgdata.params.use_camera_wb = 0;
+	im.imgdata.params.output_bps = 16;
+
 	/* Call dcraw_process() with default settings. */
 	int ec = 0;
 	im.dcraw_process();
@@ -35,8 +39,10 @@ void process_image(char *file) {
 	printf("procIm channels: %hu\r\n", procIm->colors);
 	printf("procIm byte or short (8 or 16 bits): %hu\r\n", procIm->bits);
 
+	int scale = getScaleValue((ushort*) procIm->data, procIm->width, procIm->height, 3);
+
 	/* Pass the processed bitmap to libtiff for writing. */
-	write_tiff((uchar*) procIm->data, procIm->width, procIm->height);
+	write_tiff((ushort*) procIm->data, procIm->width, procIm->height, scale);
 
 	im.dcraw_clear_mem(procIm);
 
@@ -44,7 +50,49 @@ void process_image(char *file) {
 	im.recycle();
 }
 
-void write_tiff(uchar* im, int width, int height) {
+int getScaleValue(ushort* im, int width, int height, int channels) {
+	int scale = 1;
+	uint16_t max = 0;
+	
+	int ch, x, y, i, ix, iy;
+
+	for( y = 0; y < height; y++) {
+		iy = y * width * channels;
+
+		for( x = 0; x < width; x++) {
+			ix = x * channels;
+			
+			for( ch = 0; ch < channels; ch++) {
+				i = iy + ix + ch;
+
+				if(im[i] > max)
+					max = im[i];
+
+			}
+		}
+	}
+
+	int current_bits = 16;
+	for (i = 15; i > 0; i--) {
+		if (max >> i != 0)
+			break;
+	}
+	current_bits = i + 1;
+
+	/*	
+	final pixel value = <current pixel value> X scale 
+	final pixel value = <current pixel value> X (2^16 / 2^<current bit depth>) 
+	final pixel value = <current pixel value> X 2^(16 - <current bit depth>) 
+	*/ scale = (int) pow(2, 16 - current_bits);
+
+	printf("Max pixel value: %hu\r\n", max);
+	printf("Current bit depth: %d\r\n", current_bits);
+	printf("Need to scale by: %d\r\n", scale);
+
+	return scale;
+}
+
+void write_tiff(ushort* im, int width, int height, int scale) {
 	int samples_per_pixel = 3; // Number of channels
 
 	printf("Width: %d\r\nHeight: %d\r\n", width, height);
@@ -58,7 +106,7 @@ void write_tiff(uchar* im, int width, int height) {
 	TIFFSetField(img_out, TIFFTAG_SAMPLESPERPIXEL, samples_per_pixel);
 
 	/* We'll do 16 bits, dcraw_process() defaults to 8 bits. */
-	TIFFSetField(img_out, TIFFTAG_BITSPERSAMPLE, 8);
+	TIFFSetField(img_out, TIFFTAG_BITSPERSAMPLE, 16);
 	
 	/* Image rotation. */
 	TIFFSetField(img_out, TIFFTAG_ORIENTATION, ORIENTATION_TOPLEFT);
@@ -87,7 +135,7 @@ void write_tiff(uchar* im, int width, int height) {
 	 * of bytes for one physical pixel row of the image, and the number of
 	 * strips should equal the height of the image. */
 	tmsize_t scanline_size = TIFFScanlineSize(img_out);
-	uchar* sample_row = (uchar *) _TIFFmalloc(scanline_size);
+	ushort* sample_row = (ushort *) _TIFFmalloc(scanline_size);
 	printf("Scanline Size: %lld\r\n", scanline_size);
 
 	int col, x, y, i;
@@ -95,17 +143,17 @@ void write_tiff(uchar* im, int width, int height) {
 		col = 0;
 		for( x = 0; x < width; x++) {
 			i = (y * width * samples_per_pixel) + (x * samples_per_pixel);
-			/* R */ sample_row[col++] = im[i + 0];
-			/* G */ sample_row[col++] = im[i + 1];
-			/* B */ sample_row[col++] = im[i + 2];
+			/* R */ sample_row[col++] = im[i + 0] * scale;
+			/* G */ sample_row[col++] = im[i + 1] * scale;
+			/* B */ sample_row[col++] = im[i + 2] * scale;
 		}
 		if( y % 100 == 0 )
-			printf("Row% 4d:% 5d bytes  |  i: %d\r\n", y, col, i);
+			printf("Row%4d:%5d bytes  |  i: %d\r\n", y, col*2, i);
 		if (TIFFWriteScanline(img_out, sample_row, y, 0) < 0)
     		break;
 
 	}
-	printf("Row% 4d:% 5d bytes  |  i: %d\r\n", y, col, i);
+	printf("Row%4d:%5d bytes  |  i: %d\r\n", y, col*2, i);
 
 	TIFFClose(img_out);
 	if (sample_row)
