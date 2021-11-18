@@ -1,6 +1,6 @@
 <script>
-  import { sendMessage, messageStore } from "../stores";
-  import Stepper from "../components/Stepper.svelte";
+  import { sendMessage, messageStore } from "@util/stores";
+  import Stepper from "@components/Stepper.svelte";
   import { getContext } from "svelte";
   import ExportOptions from "@components/ExportOptions.svelte";
   import CanvasImage from "@components/CanvasImage.svelte";

@@ -26,9 +26,6 @@
   h3 {
     @apply text-xl my-auto;
   }
-  span {
-    @apply my-auto;
-  }
   .success {
     @apply bg-green-300;
   }

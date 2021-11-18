@@ -1,4 +1,7 @@
 <script>
+  import placeholder from "@assets/placeholder.jpg";
+  import placeholder1 from "@assets/placeholderAlt1.jpg";
+  import placeholder2 from "@assets/placeholderAlt2.jpg";
   import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
   import panzoom from "panzoom";
   import { draggable } from "svelte-drag";
@@ -50,7 +53,7 @@
           key: "my-key-1",
           tileSource: {
             type: "image",
-            url: "placeholder.jpg",
+            url: placeholder,
             buildPyramid: false,
           },
           shown: true,
@@ -59,7 +62,7 @@
           key: "my-key-2",
           tileSource: {
             type: "image",
-            url: "placeholderAlt1.jpg",
+            url: placeholder1,
             buildPyramid: false,
           },
         },
@@ -67,7 +70,7 @@
           key: "my-key-3",
           tileSource: {
             type: "image",
-            url: "placeholderAlt2.jpg",
+            url: placeholder2,
             buildPyramid: false,
           },
         },
@@ -172,5 +175,8 @@
     background-repeat: no-repeat;
     background-clip: content-box;
     @apply h-full;
+  }
+  #seadragon-viewer {
+    cursor: crosshair;
   }
 </style>

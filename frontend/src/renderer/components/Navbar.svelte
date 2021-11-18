@@ -1,6 +1,6 @@
 <script>
 	export let routes;
-	import { currentPage } from "../stores";
+	import { currentPage } from "@util/stores";
 	import { fade } from "svelte/transition";
 </script>
 

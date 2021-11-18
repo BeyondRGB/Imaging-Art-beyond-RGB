@@ -2,7 +2,7 @@
 	export let selectedPage;
 	import Modal from "svelte-simple-modal";
 	import { fade } from "svelte/transition";
-	import { modal } from "../stores.js";
+	import { modal } from "@util/stores.js";
 	$: console.log($modal);
 </script>
 

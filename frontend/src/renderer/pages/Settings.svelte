@@ -1,8 +1,8 @@
 <script>
   import Switch from "@components/Switch.svelte";
-  import { appSettings } from "../stores";
+  import { appSettings } from "@util/stores";
   import { getContext } from "svelte";
-  import { modal } from "../stores";
+  import { modal } from "@util/stores";
 
   function handle() {
     modal.set(null);
