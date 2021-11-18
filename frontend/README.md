@@ -1,4 +1,3 @@
-
 # Imaging-Art-beyond-RGB
 
 ## Beyond RGB Frontend
