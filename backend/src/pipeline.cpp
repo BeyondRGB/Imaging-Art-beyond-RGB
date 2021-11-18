@@ -1,16 +1,14 @@
 #include "pipeline.h"
 
-Pipeline::Pipeline(server* s, websocketpp::connection_hdl hdl, message_ptr msg, int pipelineNumber) {
-    server_m = s;
-    connectionHandle_m = hdl;
-    msg_m = msg;
+Pipeline::Pipeline(CommunicationObj coms_obj, int pipelineNumber){
+    coms_m = coms_obj;
     num_m = pipelineNumber;
 };
 
 void Pipeline::callback(string msg) {
     msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
     cout << "MSG: " << msg << endl;
-    server_m->send(connectionHandle_m, msg, msg_m->get_opcode());
+    coms_m.send_msg(msg);
 
 };
 

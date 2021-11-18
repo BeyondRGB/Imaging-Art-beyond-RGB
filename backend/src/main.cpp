@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "pipeline.h"
+#include "server/comunication_obj.h"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 
@@ -24,13 +25,14 @@ typedef server::message_ptr message_ptr;
 
 static int pipeline_count = 0;
 
-void startPipeline(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
-    Pipeline pipeline(s, hdl, msg, ++pipeline_count);
+void startPipeline(CommunicationObj coms_obj) {
+    Pipeline pipeline(coms_obj, ++pipeline_count);
     pipeline.executePipeline();
 }
 
 // Define a callback to handle incoming messages
 void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
+    CommunicationObj coms_obj(s, hdl, msg);
     std::cout << "on_message called with hdl: " << hdl.lock().get()
         << " and message: " << msg->get_payload()
         << std::endl;
@@ -44,7 +46,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 
     if (msg->get_payload() == "processImg") {
         //Pipeline pipeline(s, hdl, msg);
-        std::thread pipeline_thread(startPipeline, s, hdl, msg);
+        std::thread pipeline_thread(startPipeline, coms_obj);
         pipeline_thread.detach();
     }
     else {
