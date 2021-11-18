@@ -1,5 +1,5 @@
 <script>
-	import { currentPage, appSettings } from "./stores";
+	import { currentPage, appSettings } from "@util/stores";
 	// Components
 	import Navbar from "@components/Navbar.svelte";
 	import Menu from "@components/Menu.svelte";

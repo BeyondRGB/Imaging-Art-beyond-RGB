@@ -8,7 +8,8 @@ export default defineConfig({
   alias: {
     "@components": path.resolve(__dirname, 'src/renderer/components'),
     "@pages": path.resolve(__dirname, 'src/renderer/pages'),
-    "@util": path.resolve(__dirname, 'src/renderer/util')
+    "@util": path.resolve(__dirname, 'src/renderer/util'),
+    "@assets": path.resolve(__dirname, 'src/renderer/assets')
   },
   build: {
     outDir: "public"

@@ -1,5 +1,5 @@
 <script>
-  import { currentPage } from "../stores";
+  import { currentPage } from "@util/stores";
   import { angleDoubleDown } from "svelte-awesome/icons";
   import Icon from "svelte-awesome";
 </script>

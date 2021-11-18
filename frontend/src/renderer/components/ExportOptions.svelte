@@ -1,5 +1,5 @@
 <script>
-  import { currentPage, modal } from "../stores";
+  import { currentPage, modal } from "@util/stores";
   import { getContext } from "svelte";
   const { close } = getContext("simple-modal");
 

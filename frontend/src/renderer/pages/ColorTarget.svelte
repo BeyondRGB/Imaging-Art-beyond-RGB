@@ -1,7 +1,7 @@
 <script>
   let rows = "";
 
-  import { currentPage } from "../stores";
+  import { currentPage } from "@util/stores";
   import CanvasImage from "@components/CanvasImage.svelte";
 
   import { draggable } from "svelte-drag";

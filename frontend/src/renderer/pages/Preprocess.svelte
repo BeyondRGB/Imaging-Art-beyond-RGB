@@ -2,7 +2,7 @@
   let files;
   let outputFiles;
 
-  import { currentPage } from "../stores";
+  import { currentPage } from "@util/stores";
 
   import Sorter from "@components/Sorter.svelte";
   import FileSelector from "@components/FileSelector.svelte";

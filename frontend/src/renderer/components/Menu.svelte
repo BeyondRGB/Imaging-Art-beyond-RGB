@@ -2,7 +2,7 @@
   export let routes;
   export let icon;
 
-  import { currentPage, modal } from "../stores";
+  import { currentPage, modal } from "@util/stores";
   import Icon from "svelte-awesome";
 
   function handleClick(newPage) {
