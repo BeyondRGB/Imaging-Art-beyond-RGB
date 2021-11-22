@@ -10,7 +10,7 @@ namespace tiff_util {
 		TIFF* img_out;
 
 		/* Open file for writing. */
-		img_out = TIFFOpen(data->filename, "w");
+		img_out = TIFFOpen(data->filename.c_str(), "w");
 		if(!img_out) return cannot_open_for_writing;
 
 		/* Write tiff header tags. */
