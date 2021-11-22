@@ -1,3 +1,4 @@
+#include <math.h>
 #include <memory>
 #include <libraw.h>
 extern "C" {
@@ -7,6 +8,7 @@ extern "C" {
 
 void write_tiff(ushort* im, int width, int height, int scale);
 int getScaleValue(ushort* im, int width, int height, int channels);
+int getScaleValueByFreq(ushort* im, int width, int height, int channels);
 
 void process_image(char *file) {
 
@@ -14,6 +16,14 @@ void process_image(char *file) {
 
 	/* Create an image processor. */
 	LibRaw im;
+	im.imgdata.params.output_bps = 16;
+	im.imgdata.params.no_auto_bright = 1;
+	im.imgdata.params.no_auto_scale = 1;
+	im.imgdata.params.use_auto_wb = 0;
+	im.imgdata.params.use_camera_wb = 0;
+	im.imgdata.params.use_camera_matrix = 0;
+	im.imgdata.params.fbdd_noiserd = 0;
+	im.imgdata.params.use_rawspeed = 1;
 
 	/* Open the file. */
 	im.open_file(file);
@@ -22,12 +32,6 @@ void process_image(char *file) {
 
 	/* Unpack raw data into structures for processing. */
 	im.unpack();
-
-	im.imgdata.params.no_auto_bright = 1;
-	im.imgdata.params.no_auto_scale = 1;
-	im.imgdata.params.use_auto_wb = 0;
-	im.imgdata.params.use_camera_wb = 0;
-	im.imgdata.params.output_bps = 16;
 
 	/* Call dcraw_process() with default settings. */
 	int ec = 0;
@@ -39,7 +43,7 @@ void process_image(char *file) {
 	printf("procIm channels: %hu\r\n", procIm->colors);
 	printf("procIm byte or short (8 or 16 bits): %hu\r\n", procIm->bits);
 
-	int scale = getScaleValue((ushort*) procIm->data, procIm->width, procIm->height, 3);
+	int scale = getScaleValueByFreq((ushort*) procIm->data, procIm->width, procIm->height, 3);
 
 	/* Pass the processed bitmap to libtiff for writing. */
 	write_tiff((ushort*) procIm->data, procIm->width, procIm->height, scale);
@@ -65,8 +69,10 @@ int getScaleValue(ushort* im, int width, int height, int channels) {
 			for( ch = 0; ch < channels; ch++) {
 				i = iy + ix + ch;
 
-				if(im[i] > max)
+				if(im[i] > max) {
 					max = im[i];
+					printf("Max found on ch%d at (%d,%d): %hu\r\n", ch, x, y, max);
+				}
 
 			}
 		}
@@ -87,6 +93,52 @@ int getScaleValue(ushort* im, int width, int height, int channels) {
 
 	printf("Max pixel value: %hu\r\n", max);
 	printf("Current bit depth: %d\r\n", current_bits);
+	printf("Need to scale by: %d\r\n", scale);
+
+	return scale;
+}
+
+int getScaleValueByFreq(ushort* im, int width, int height, int channels) {
+	int bit_freq[3][16] = {0};
+	
+	int ch, x, y, i, ix, iy;
+	ushort val;
+	for( y = 0; y < height; y++) {
+		iy = y * width * channels;
+
+		for( x = 0; x < width; x++) {
+			ix = x * channels;
+			
+			for( ch = 0; ch < channels; ch++) {
+				i = iy + ix + ch;
+				val = im[i];
+				
+				if(val) {
+					for (i = 15; i > 0; i--) {
+						if (val >> i != 0)
+							break;
+					}
+					bit_freq[ch][i]++;
+				}
+				else {
+					bit_freq[ch][0]++;
+				}
+			}
+		}
+	}
+
+	printf("Bit frequency: \r\n     | %9s | %9s | %9s\r\n", "Red", "Green", "Blue");
+	for( i=0; i<16; i++)
+		printf("  %2d | %9d | %9d | %9d\r\n", i + 1, bit_freq[0][i], bit_freq[1][i], bit_freq[2][i]);
+
+	/*	
+	final pixel value = <current pixel value> X scale 
+	final pixel value = <current pixel value> X (2^16 / 2^<current bit depth>) 
+	final pixel value = <current pixel value> X 2^(16 - <current bit depth>) 
+	*/int scale = 1;
+
+	//printf("Max pixel value: %hu\r\n", max);
+	//printf("Current bit depth: %d\r\n", current_bits);
 	printf("Need to scale by: %d\r\n", scale);
 
 	return scale;
@@ -148,12 +200,12 @@ void write_tiff(ushort* im, int width, int height, int scale) {
 			/* B */ sample_row[col++] = im[i + 2] * scale;
 		}
 		if( y % 100 == 0 )
-			printf("Row%4d:%5d bytes  |  i: %d\r\n", y, col*2, i);
+			printf("Progress: %3d%%\r", (y * 100) / height);
 		if (TIFFWriteScanline(img_out, sample_row, y, 0) < 0)
     		break;
 
 	}
-	printf("Row%4d:%5d bytes  |  i: %d\r\n", y, col*2, i);
+	printf("Progress: 100%%\r\n");
 
 	TIFFClose(img_out);
 	if (sample_row)
@@ -163,9 +215,15 @@ void write_tiff(ushort* im, int width, int height, int scale) {
 
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	printf("Main started\r\n");
-	const char* im1 = "nikon_targets_2.NEF";
+
+	const char* im1;
+	if(argc > 1)
+		im1 = argv[1];
+	else
+		im1 = "nikon_targets_2.NEF";
+
 	process_image((char*)im1);
 	return 0;
 }

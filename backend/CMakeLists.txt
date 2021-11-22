@@ -45,4 +45,4 @@ target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
 
 # Need the c++ standard explicitly stated for compiling on OSX.
-set_property(TARGET app PROPERTY CXX_STANDARD 17)
+set_property(TARGET app PROPERTY CXX_STANDARD 20)
