@@ -1,7 +1,7 @@
 #ifndef WRITE_TIFF_HPP
 #define WRITE_TIFF_HPP
 
-#include "../btrgb.hpp"
+#include "btrgb.hpp"
 
 extern "C" {
     #include <tiffio.h>
