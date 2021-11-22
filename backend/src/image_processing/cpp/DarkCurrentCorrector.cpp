@@ -4,7 +4,7 @@
 
 #include "../header/DarkCurrentCorrector.h"
 
-void DarkCurrentCorrector::execute(CallBackFunction func) {
+void DarkCurrentCorrector::execute(CallBackFunction func, ArtObject* images) {
     func("DarkCurrentCorrector");
     //TODO add Dark current correction logic here
     sleep_for(seconds(5));

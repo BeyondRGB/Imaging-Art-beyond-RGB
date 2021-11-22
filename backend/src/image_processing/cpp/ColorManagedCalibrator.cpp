@@ -4,7 +4,7 @@
 
 #include "../header/ColorManagedCalibrator.h"
 
-void ColorManagedCalibrator::execute(CallBackFunction func) {
+void ColorManagedCalibrator::execute(CallBackFunction func, ArtObject* images) {
     func("Color Managed Calibration");
     //TODO add Color Manged Calibration logic here
     sleep_for(seconds(5));

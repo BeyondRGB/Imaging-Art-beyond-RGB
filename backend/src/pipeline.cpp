@@ -1,3 +1,4 @@
+#include "image_util/ArtObject.hpp"
 #include "pipeline.h"
 
 Pipeline::Pipeline(server* s, websocketpp::connection_hdl hdl, message_ptr msg, int pipelineNumber) {
@@ -43,6 +44,13 @@ shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
 void Pipeline::executePipeline() {
     callback("I got your msg");
     shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
-    pipeline->execute(std::bind(&Pipeline::callback, this, placeholders::_1));
+    
+    ArtObject* images = new ArtObject();
+    images->newImage("test", "nikon_targets_2.NEF");
+
+    pipeline->execute(std::bind(&Pipeline::callback, this, placeholders::_1), images);
+
+    images->outputImageAsTIFF("test");
+    delete images;
 
 };

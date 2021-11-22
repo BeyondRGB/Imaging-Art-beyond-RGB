@@ -10,11 +10,11 @@ PreProcessor::PreProcessor(const vector<shared_ptr<ImgProcessingComponent>>& com
     }
 }
 
-void PreProcessor::execute(CallBackFunction func) {
+void PreProcessor::execute(CallBackFunction func, ArtObject* images) {
     this->callback_func = func;
     this->callback_func("Starting PreProcessor");
     for(const auto& component : this->components){
-        component->execute(std::bind(&PreProcessor::my_callback, this, placeholders::_1));
+        component->execute(std::bind(&PreProcessor::my_callback, this, placeholders::_1), images);
     }
     this->callback_func("PreProcessor Done!!!");
 }
