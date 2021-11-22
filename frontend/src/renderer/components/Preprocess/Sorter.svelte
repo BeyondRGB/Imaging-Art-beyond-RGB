@@ -1,6 +1,6 @@
 <script>
-  import HeapBox from "@components/HeapBox.svelte";
-  import SorterCol from "@components/SorterCol.svelte";
+  import HeapBox from "@components/Preprocess/HeapBox.svelte";
+  import SorterCol from "@components/Preprocess/SorterCol.svelte";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";

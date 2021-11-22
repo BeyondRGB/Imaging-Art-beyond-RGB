@@ -1,6 +1,6 @@
 <script>
   import Switch from "@components/Switch.svelte";
-  import Canvas from "@components/SpectralCanvas.svelte";
+  import Canvas from "@components/SpectralOverlay/SpectralCanvas.svelte";
 </script>
 
 <main>

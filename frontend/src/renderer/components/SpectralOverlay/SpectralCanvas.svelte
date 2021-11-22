@@ -135,8 +135,12 @@
     class="bg-red-400 cursor-not-allowed"
     disabled>useCanvas: {useCanvas}</button
   >
-  <button on:click={() => (showNavigator = !showNavigator)}
-    >showNavigator: {showNavigator}</button
+  <button
+    on:click={() => {
+      showNavigator = !showNavigator;
+      destroy();
+      makeViewer();
+    }}>showNavigator: {showNavigator}</button
   >
   <button on:click={() => handleCurtain(2)}>curtain 2</button>
 
