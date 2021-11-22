@@ -5,7 +5,7 @@
 #include <vector>
 #include <unordered_map>
 
-#include "btrgb.hpp"
+#include "../btrgb.hpp"
 
 
 typedef enum { 
@@ -40,6 +40,10 @@ public:
 
     /* To do, add parameter for photometric tiff tag: RGB, or grayscale. */
     void outputImageAsTIFF(std::string key);
+
+    /* Iterators over all image entries. */
+    std::unordered_map<std::string, btrgb::image*>::iterator begin() noexcept {return images.begin();};
+    std::unordered_map<std::string, btrgb::image*>::iterator end() noexcept {return images.end();};
 
     ArtObjStatus exit_status() const {return status;};
 

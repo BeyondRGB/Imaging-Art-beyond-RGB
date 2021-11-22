@@ -1,17 +1,21 @@
-//
-// Created by ThinkPad41 on 10/10/2021.
-//
-
 #ifndef BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 #define BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 
+#include <math.h>
+#include <memory>
+#include <libraw.h>
 
 #include "ImgProcessingComponent.h"
 
 class RawImageReader: public ImgProcessingComponent {
 
+private:
+    LibRaw rawReader;
+
 public:
-    void execute(CallBackFunction func) override;
+    RawImageReader();
+    ~RawImageReader();
+    void execute(CallBackFunction func, ArtObject* images) override;
 };
 
 

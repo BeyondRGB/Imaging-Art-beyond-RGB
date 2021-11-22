@@ -1,5 +1,5 @@
 #ifndef BTRGB_HPP
-#define BTRGN_HPP
+#define BTRGB_HPP
 
 #include <string>
 

@@ -17,7 +17,7 @@ private:
 
 public:
     explicit PreProcessor(const vector<shared_ptr<ImgProcessingComponent>>& components);
-    void execute(CallBackFunction func) override;
+    void execute(CallBackFunction func, ArtObject* images) override;
     void my_callback(string str);
 
 };

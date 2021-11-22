@@ -10,11 +10,11 @@ ImageProcessor::ImageProcessor(const vector<shared_ptr<ImgProcessingComponent>> 
         this->components.push_back(component);
     }
 }
-void ImageProcessor::execute(CallBackFunction func) {
+void ImageProcessor::execute(CallBackFunction func, ArtObject* images) {
     this->callback_func = func;
     this->callback_func("Starting Image Processor");
     for(auto  & component : this->components){
-        component->execute(std::bind(&ImageProcessor::my_callback, this, placeholders::_1));
+        component->execute(std::bind(&ImageProcessor::my_callback, this, placeholders::_1), images);
     }
     this->callback_func("Image Processing Done!!!");
 }

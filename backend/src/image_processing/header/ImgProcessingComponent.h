@@ -19,6 +19,8 @@ using namespace std;
 using namespace std::this_thread; // sleep_for, sleep_until
 using namespace std::chrono; // nanoseconds, system_clock, seconds
 
+#include "../../image_util/ArtObject.hpp"
+
 //typedef void (*CallBackFunction)(string);
 typedef function<void(string)> CallBackFunction;
 class ImgProcessingComponent {
@@ -28,7 +30,7 @@ public:
      * Must be defined by inheritors of this class to preform the execution of
      * processing for that particular component
      */
-    virtual void execute(CallBackFunction func) = 0;
+    virtual void execute(CallBackFunction func, ArtObject* images) = 0;
 };
 
 

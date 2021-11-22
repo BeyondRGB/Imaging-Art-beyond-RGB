@@ -11,6 +11,8 @@ ArtObject::ArtObject() {
  */
 ArtObject::~ArtObject() {
     for( const auto& [key, value] : this->images ) {
+        if(value->bitmap)
+            delete value->bitmap;
         delete value;
     }
 }

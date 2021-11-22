@@ -10,7 +10,7 @@
 
 class ColorManagedCalibrator : public ImgProcessingComponent{
 public:
-    void execute(CallBackFunction func) override;
+    void execute(CallBackFunction func, ArtObject* images) override;
     void my_callback(string str);
 };
 

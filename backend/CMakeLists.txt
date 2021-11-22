@@ -17,9 +17,8 @@ find_package(lcms REQUIRED) # Little Color Management System
 find_package(LibRaw REQUIRED)
 
 #   Find all Header and Source files
-#file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/*.h")
-#file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
-file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/ex1.cpp")
+file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/*.h")
+file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 
 #   Print out all Header and Source files found
 message(STATUS "Headers: ${HEADERS}")
