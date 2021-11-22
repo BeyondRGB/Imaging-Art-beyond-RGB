@@ -59,6 +59,7 @@ void RawImageReader::execute(CallBackFunction func, ArtObject* images) {
         /* Allocate memory for the processed image.
          * Bits per pixel should always return as 16 since that is what we configured up top. */
         this->rawReader.get_mem_image_format(&width, &height, &channels, &bits_per_pixel);
+        func("RAW image: width=" + std::to_string(width) + " height=" + std::to_string(height) + " channels=" + std::to_string(channels));
         bitmap = new btrgb::pixel[height * width * channels];
 
         /* Copy image data into bitmap. */

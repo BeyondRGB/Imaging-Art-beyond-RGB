@@ -9,6 +9,9 @@ namespace tiff_util {
 		status s = none;
 		TIFF* img_out;
 
+		if( ! data->filename.ends_with(".tiff") )
+			data->filename.append(".tiff");
+
 		/* Open file for writing. */
 		img_out = TIFFOpen(data->filename.c_str(), "w");
 		if(!img_out) return cannot_open_for_writing;
@@ -54,10 +57,9 @@ namespace tiff_util {
 
 		/* Indicate that the image is RGB. We'll need to do grayscale, perhaps 
 		* as channels, or separate images in the same file. */
-		/*
+		
 		TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-		*/
-		TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+		//TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
 
 		/* The written data needs to be broken up into "Strips" to make buffering easier 
 		* for TIFF readers. Rows-per-strip needs to be tagged, this is the number of 
