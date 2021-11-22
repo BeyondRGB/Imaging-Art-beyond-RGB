@@ -1,5 +1,5 @@
 <script>
-  import DragBox from "@components/DragBox.svelte";
+  import DragBox from "@components/Preprocess/DragBox.svelte";
   export let colId;
 </script>
 

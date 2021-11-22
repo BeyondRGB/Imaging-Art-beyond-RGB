@@ -9,7 +9,6 @@
 	import ManagedRgb from "@pages/ManagedRgb.svelte";
 	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
 	import Preprocess from "@pages/Preprocess.svelte";
-	import ColorTarget from "@pages/ColorTarget.svelte";
 	import Process from "@pages/Process.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
@@ -24,6 +23,7 @@
 		fileText,
 		eyedropper,
 	} from "svelte-awesome/icons";
+	import { onDestroy } from "svelte";
 
 	const routes = {
 		Home: {
@@ -70,12 +70,6 @@
 			icon: home,
 			isShown: false,
 		},
-		ColorTarget: {
-			text: "Color Target",
-			component: ColorTarget,
-			icon: home,
-			isShown: false,
-		},
 		Process: {
 			text: "Process",
 			component: Process,
@@ -101,6 +95,12 @@
 		document.documentElement.classList.remove("dark");
 		document.body.classList.remove("dark");
 	}
+
+	onDestroy(() => {
+		darkThemeMq.removeEventListener("change", (e) => {
+			appSettings.set(e.matches);
+		});
+	});
 </script>
 
 <main class={theme}>

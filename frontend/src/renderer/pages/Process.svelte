@@ -1,8 +1,8 @@
 <script>
   import { sendMessage, messageStore } from "@util/stores";
-  import Stepper from "@components/Stepper.svelte";
+  import Stepper from "@components/Process/Stepper.svelte";
   import { getContext } from "svelte";
-  import ExportOptions from "@components/ExportOptions.svelte";
+  import ExportOptions from "@components/Process/ExportOptions.svelte";
   import CanvasImage from "@components/CanvasImage.svelte";
 
   let messageList = [];

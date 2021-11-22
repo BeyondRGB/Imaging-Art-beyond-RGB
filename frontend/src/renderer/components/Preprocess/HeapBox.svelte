@@ -1,5 +1,5 @@
 <script>
-  import DragBox from "@components/DragBox.svelte";
+  import DragBox from "@components/Preprocess/DragBox.svelte";
 
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
