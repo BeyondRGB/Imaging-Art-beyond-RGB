@@ -15,7 +15,7 @@
 #include "image_processing/header/SpectralCalibrator.h"
 
 #include <iostream>
-using namespace std;
+//using namespace std;
 
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_THREAD_
@@ -37,8 +37,8 @@ private:
 	message_ptr msg_m;
 	int num_m;
 
-	void callback(string msg);
-	shared_ptr<ImgProcessingComponent> pipelineSetup();
+	void callback(std::string msg);
+	std::shared_ptr<ImgProcessingComponent> pipelineSetup();
 
 public:
 	Pipeline(server* s, websocketpp::connection_hdl hdl, message_ptr msg, int count);
