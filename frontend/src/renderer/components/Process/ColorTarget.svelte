@@ -1,5 +1,6 @@
 <script>
   let rows = "";
+  let cols = "";
 
   import { currentPage } from "@util/stores";
   import CanvasImage from "@components/CanvasImage.svelte";
@@ -16,15 +17,23 @@
     <div class="settings">
       Settings
       <div class="box">
-        <div class="color-target">
+        <div class="color-target dark:bg-gray-600">
           Color Target
           <div class="input-group">
             <lable class="row-lable">Rows:</lable>
-            <input bind:value={rows} placeholder="Placeholder..." />
+            <input
+              class="dark:bg-gray-700"
+              bind:value={rows}
+              placeholder="Placeholder..."
+            />
           </div>
           <div class="input-group">
             <lable class="row-lable">Columns:</lable>
-            <input bind:value={rows} placeholder="Placeholder..." />
+            <input
+              class="dark:bg-gray-700"
+              bind:value={cols}
+              placeholder="Placeholder..."
+            />
           </div>
         </div>
       </div>
@@ -38,11 +47,11 @@
 
 <style lang="postcss">
   main {
-    @apply flex w-full;
+    @apply flex w-full h-full;
   }
 
   #image {
-    @apply w-[75%] self-center mx-2;
+    @apply w-[70%] mx-2 h-full;
   }
 
   .settings {
@@ -74,10 +83,10 @@
   }
 
   .next {
-    @apply mb-12 mt-auto;
+    @apply mt-auto;
   }
 
   .side {
-    @apply flex flex-col;
+    @apply flex flex-col h-[90%];
   }
 </style>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import CanvasImage from "@components/CanvasImage.svelte";
 </script>
 

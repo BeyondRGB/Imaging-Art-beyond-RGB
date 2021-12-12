@@ -1,17 +1,18 @@
-<script>
-	export let routes;
+<script lang="ts">
+	export let routes: any[];
 	import { currentPage } from "@util/stores";
 	import { fade } from "svelte/transition";
 </script>
 
 {#if $currentPage !== "Home"}
 	<main
-		class="bg-gray-100 dark:bg-gray-800"
+		class="bg-gray-50/75 dark:bg-gray-700/50"
 		in:fade={{ duration: 350, delay: 350 }}
 		out:fade={{ duration: 350 }}
 	>
+		<!-- in:fade={{ duration: 350, delay: 350 }} out:fade={{ duration: 350 }} -->
 		{#key $currentPage}
-			<nav in:fade={{ duration: 350, delay: 350 }} out:fade={{ duration: 350 }}>
+			<nav>
 				<h1 class="text-gray-900 dark:text-white">
 					{routes[$currentPage].text}
 				</h1>
@@ -26,7 +27,7 @@
 	}
 
 	nav {
-		@apply border-b-2 flex justify-center items-center h-full;
+		@apply flex justify-center items-center h-full;
 	}
 
 	h1 {

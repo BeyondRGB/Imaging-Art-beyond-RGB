@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { currentPage, appSettings } from "@util/stores";
 	// Components
 	import Navbar from "@components/Navbar.svelte";
@@ -13,6 +13,7 @@
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
+	import Demo from "@pages/Demo.svelte";
 
 	import {
 		photo,
@@ -22,10 +23,11 @@
 		github,
 		fileText,
 		eyedropper,
+		infoCircle,
 	} from "svelte-awesome/icons";
 	import { onDestroy } from "svelte";
 
-	const routes = {
+	const routes: any = {
 		Home: {
 			text: "Home",
 			component: Home,
@@ -57,6 +59,13 @@
 			icon: eyedropper,
 			isShown: true,
 		},
+		Demo: {
+			text: "Demo",
+			component: Demo,
+			icon: infoCircle,
+			isShown: true,
+			default: true,
+		},
 		Settings: {
 			text: "Settings",
 			component: Settings,
@@ -79,11 +88,12 @@
 	};
 
 	currentPage.set("Home");
+
 	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+	appSettings.set(darkThemeMq.matches);
 	darkThemeMq.addEventListener("change", (e) => {
 		appSettings.set(e.matches);
 	});
-	// $: appSettings.set(window.matchMedia("(prefers-color-scheme: dark)").matches);
 
 	$: selectedPage = routes[$currentPage];
 	$: theme = $appSettings ? "dark" : "";
@@ -123,7 +133,8 @@
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
-		@apply bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border-red-600 select-none;
+		@apply bg-white dark:bg-gray-800 dark:border-gray-600 border-red-600 select-none
+						dark:text-gray-50;
 	}
 	main {
 		height: 100%;
@@ -168,9 +179,10 @@
 	}
 
 	button {
-		@apply hover:bg-blue-600 bg-blue-400 text-gray-50 rounded-md self-center text-lg px-4 py-2
-						transition-all hover:rounded-lg dark:bg-blue-700 dark:hover:bg-blue-600 dark:hover:text-gray-800
-						active:scale-95 shadow-md;
+		@apply hover:bg-blue-200 bg-gray-100 text-gray-900 dark:text-white rounded-lg self-center text-base px-3 py-1
+						transition-all dark:bg-gray-600 dark:hover:bg-blue-500 dark:hover:text-white
+						active:scale-95 shadow-sm dark:ring-gray-500 ring-1 ring-gray-300 dark:focus:ring-blue-500
+						focus:ring-2 focus:ring-blue-300;
 	}
 
 	/* width */

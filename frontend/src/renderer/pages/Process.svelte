@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
   import { sendMessage, messageStore } from "@util/stores";
   import Stepper from "@components/Process/Stepper.svelte";
   import { getContext } from "svelte";
   import ExportOptions from "@components/Process/ExportOptions.svelte";
   import CanvasImage from "@components/CanvasImage.svelte";
 
-  let messageList = [];
+  let messageList: string[] = [];
   $: messageList = [...messageList, $messageStore];
   $: {
     const re = /->([a-z A-Z]+)->([a-z A-Z]+)/;
@@ -69,18 +69,6 @@
     on:click={() => (steps[activeStep++].status = "success")}
     class="bg-blue-500 rounded-md px-2 py-1">[Next]</button
   >
-  <div>
-    <button id="send" on:click={() => sendMessage("processImg")}
-      >Send to Server</button
-    >
-    <div id="listbox">
-      <ul>
-        {#each messageList as message}
-          <li>{message}</li>
-        {/each}
-      </ul>
-    </div>
-  </div>
   <Stepper bind:steps />
 </main>
 
@@ -96,8 +84,5 @@
     @apply bg-gray-50 w-full h-8 rounded-lg text-sm active:bg-blue-500 select-none
           flex flex-col justify-center items-center border-2 hover:bg-blue-200 transition-all duration-500
           hover:rounded-2xl text-gray-700;
-  }
-  #listbox {
-    @apply h-20 bg-gray-400 overflow-auto flex flex-col-reverse mx-2 my-1;
   }
 </style>

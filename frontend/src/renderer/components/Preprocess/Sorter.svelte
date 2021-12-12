@@ -1,81 +1,61 @@
-<script>
+<script lang="ts">
   import HeapBox from "@components/Preprocess/HeapBox.svelte";
   import SorterCol from "@components/Preprocess/SorterCol.svelte";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
-  import { fade } from "svelte/transition";
-  let items = [
-    { id: 1, name: "item1" },
-    { id: 2, name: "item2" },
-    { id: 3, name: "item3" },
-    { id: 4, name: "item4" },
-    { id: 5, name: "item5" },
-    { id: 6, name: "item6" },
-    { id: 7, name: "item7" },
-    { id: 8, name: "item8" },
-    { id: 9, name: "item9" },
-    { id: 10, name: "item10" },
-    { id: 11, name: "item11" },
-    { id: 12, name: "item12" },
-    { id: 13, name: "item13" },
-    { id: 14, name: "item14" },
-    { id: 15, name: "item15" },
-    { id: 16, name: "item16" },
+  let items: any[] = [
+    { id: 1, name: "photo1.cr2" },
+    { id: 2, name: "photo2.cr2" },
+    { id: 3, name: "photo3.cr2" },
+    { id: 4, name: "photo4.cr2" },
+    { id: 5, name: "photo5.cr2" },
+    { id: 6, name: "photo6.cr2" },
+    { id: 7, name: "photo7.cr2" },
+    { id: 8, name: "photo8.cr2" },
+    { id: 9, name: "photo9.cr2" },
+    { id: 10, name: "photo10.cr2" },
+    { id: 11, name: "photo11.cr2" },
+    { id: 12, name: "photo12.cr2" },
+    { id: 13, name: "photo13.cr2" },
+    { id: 14, name: "photo14.cr2" },
+    { id: 15, name: "photo15.cr2" },
+    { id: 16, name: "photo16.cr2" },
   ];
 
-  let columns = [
+  let columns: any[] = [
     {
       id: 20,
       name: "Art 1",
       fields: [
-        { name: "Image", items: [] },
-        { name: "Whitefield", items: [] },
-        { name: "Darkfield", items: [] },
-      ],
-    },
-    {
-      id: 21,
-      name: "Art 2",
-      fields: [
-        { name: "Image", items: [] },
-        { name: "Whitefield", items: [] },
-        { name: "Darkfield", items: [] },
-      ],
-    },
-    {
-      id: 22,
-      name: "Art 3",
-      fields: [
-        { name: "Image", items: [] },
-        { name: "Whitefield", items: [] },
-        { name: "Darkfield", items: [] },
+        { name: "ImageA", items: [] },
+        { name: "WhitefieldA", items: [] },
+        { name: "DarkfieldA", items: [] },
       ],
     },
   ];
 
   const flipDurationMs = 150;
-  function handleDndConsiderCol(e) {
-    console.log(e.detail);
+  function handleDndConsiderCol(e: CustomEvent) {
     columns = e.detail.items;
   }
-  function handleDndFinalizeCol(e) {
+  function handleDndFinalizeCol(e: CustomEvent) {
     columns = e.detail.items;
   }
 
-  function handleDndConsider(cid, field, e) {
+  function handleDndConsider(cid: number, field: string, e: CustomEvent) {
     const colIdx = columns.findIndex((c) => c.id === cid);
     const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
     columns[colIdx].fields[fieldIdx].items = e.detail.items;
     columns = [...columns];
   }
-  function handleDndFinalize(cid, field, e) {
+  function handleDndFinalize(cid: number, field: string, e: CustomEvent) {
     const colIdx = columns.findIndex((c) => c.id === cid);
     const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
     columns[colIdx].fields[fieldIdx].items = e.detail.items;
     columns = [...columns];
   }
 
-  function handleCloseCol(cid) {
+  function handleCloseCol(cid: number) {
     const colIdx = columns.findIndex((c) => c.id === cid);
     columns.splice(colIdx, 1);
     console.log(columns);
@@ -89,9 +69,9 @@
         id: Date.now(),
         name: `Art ${columns.length + 1}`,
         fields: [
-          { name: "Image", items: [] },
-          { name: "Whitefield", items: [] },
-          { name: "Darkfield", items: [] },
+          { name: "ImageA", items: [] },
+          { name: "WhitefieldA", items: [] },
+          { name: "DarkfieldA", items: [] },
         ],
       },
     ];
@@ -110,8 +90,8 @@
     >
     <section
       use:dndzone={{ items: columns, flipDurationMs, type: "col" }}
-      on:consider={handleDndConsiderCol}
-      on:finalize={handleDndFinalizeCol}
+      on:consider={(e) => handleDndConsiderCol(e)}
+      on:finalize={(e) => handleDndFinalizeCol(e)}
     >
       {#each columns as column (column.id)}
         <div
@@ -121,35 +101,33 @@
           <h1>{column.name}</h1>
           <button
             id="removeBtn"
-            on:click={handleCloseCol(column.id)}
+            on:click={() => handleCloseCol(column.id)}
             class="dark:hover:bg-red-400/50">X</button
           >
           <div class="flex">
-            {#each ["A", "B"] as letter}
-              <item>
-                {#each column.fields as field (field.name)}
-                  <span>{field.name} {letter}</span>
-                  <itemBox
-                    class={"strict"}
-                    use:dndzone={{ items: field.items, flipDurationMs }}
-                    on:consider={(e) =>
-                      handleDndConsider(column.id, field.name, e)}
-                    on:finalize={(e) =>
-                      handleDndFinalize(column.id, field.name, e)}
-                  >
-                    {#each field.items as item (item.id)}
-                      <card
-                        animate:flip={{ duration: flipDurationMs }}
-                        class={items.length > 1 ? "selected" : ""}
-                        style=""
-                      >
-                        {item.name}
-                      </card>
-                    {/each}
-                  </itemBox>
-                {/each}
-              </item>
-            {/each}
+            <item>
+              {#each column.fields as field (field.name)}
+                <span>{field.name}</span>
+                <itemBox
+                  class={"strict"}
+                  use:dndzone={{ items: field.items, flipDurationMs }}
+                  on:consider={(e) =>
+                    handleDndConsider(column.id, field.name, e)}
+                  on:finalize={(e) =>
+                    handleDndFinalize(column.id, field.name, e)}
+                >
+                  {#each field.items as item (item.name)}
+                    <card
+                      animate:flip={{ duration: flipDurationMs }}
+                      class={items.length > 1 ? "selected" : ""}
+                      style=""
+                    >
+                      {item.name}
+                    </card>
+                  {/each}
+                </itemBox>
+              {/each}
+            </item>
           </div>
         </div>
       {/each}
@@ -200,11 +178,12 @@
   }
 
   button {
-    @apply py-0 bg-transparent right-0 top-0 transition-all text-gray-400 absolute shadow-none;
+    @apply py-0 bg-transparent right-0 top-0 transition-all text-gray-400 absolute shadow-none
+          ring-0;
   }
 
   #removeBtn {
-    @apply px-1 hover:text-red-400 hover:bg-red-400/25 text-base;
+    @apply px-2 hover:text-red-400 hover:bg-red-400/25 text-base;
   }
 
   #addBtn {

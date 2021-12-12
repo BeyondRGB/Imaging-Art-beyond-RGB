@@ -1,6 +1,6 @@
-<script>
+<script lang="ts">
   import DragBox from "@components/Preprocess/DragBox.svelte";
-  export let colId;
+  export let colId: number;
 </script>
 
 <main>

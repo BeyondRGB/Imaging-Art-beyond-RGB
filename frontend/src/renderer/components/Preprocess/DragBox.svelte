@@ -3,7 +3,7 @@
   import { flip } from "svelte/animate";
   export let items;
   export let strict;
-  export let colId;
+  // export let colId;
 
   const flipDurationMs = 150;
   function handleDndConsider(e) {
@@ -26,7 +26,9 @@
         animate:flip={{ duration: flipDurationMs }}
         class={items.length > 1 ? "selected" : ""}
       >
-        {item.name}
+        <span>
+          {item.name}
+        </span>
       </card>
     {/each}
   </section>
