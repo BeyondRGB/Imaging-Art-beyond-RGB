@@ -1,11 +1,11 @@
-<script>
-  export let routes;
-  export let icon;
+<script lang="ts">
+  export let routes: any;
+  export let icon: any;
 
   import { currentPage, modal } from "@util/stores";
   import Icon from "svelte-awesome";
 
-  function handleClick(newPage) {
+  function handleClick(newPage: any[]) {
     if (newPage[0] === "Settings") {
       console.log("Settings to Settings", newPage[1]);
       modal.set(newPage[1].component);
@@ -15,11 +15,11 @@
   }
 </script>
 
-<main class="dark:bg-gray-900 bg-gray-300 dark:text-white text-gray-800">
+<main class="dark:bg-gray-700 bg-gray-200 dark:text-white text-gray-800">
   <ul class="list">
     <logo>
       <div class="logo-icon">
-        <Icon data={icon} scale="2.5" />
+        <Icon data={icon} scale={2.5} />
       </div>
       <span class="logo-text">Beyond RGB</span>
     </logo>
@@ -28,15 +28,15 @@
         <button
           class="item dark:text-gray-50 text-gray-800 dark:hover:text-gray-50"
           on:click={() => handleClick(item)}
-          disabled={($currentPage !== "RGB") &
-          ($currentPage !== "SpecOverlay") &
-          ($currentPage !== "Reports") &
-          ($currentPage !== "SpecPicker")
+          disabled={$currentPage !== "RGB" &&
+          $currentPage !== "SpecOverlay" &&
+          $currentPage !== "Reports" &&
+          $currentPage !== "SpecPicker"
             ? !item[1].default
             : false}
         >
           <div class="item-icon">
-            <Icon data={item[1].icon} scale="1.5" />
+            <Icon data={item[1].icon} scale={1.5} />
           </div>
           <span class="item-text">{item[1].text}</span>
         </button>
@@ -54,7 +54,7 @@
   @media (min-width: 1200px) {
     :root {
       --menu-width: 5vw;
-      --menu-width-exp: 20vw;
+      --menu-width-exp: 25vw;
     }
   }
 
@@ -104,12 +104,12 @@
   .item {
     @apply w-full flex items-center h-20 transition-colors duration-500 bg-transparent
             p-0 disabled:hover:bg-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed
-            disabled:hover:text-gray-50 active:scale-100 shadow-none;
+            disabled:hover:text-gray-50 active:scale-100 shadow-none ring-0;
   }
 
-  .item:first-of-type {
+  /* .item:first-of-type {
     @apply border-t-[.0625rem];
-  }
+  } */
 
   .item:last-of-type {
     margin-top: auto;

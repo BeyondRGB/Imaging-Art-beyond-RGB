@@ -1,7 +1,6 @@
-<script>
+<script lang="ts">
   import Switch from "@components/Switch.svelte";
   import { appSettings } from "@util/stores";
-  import { getContext } from "svelte";
   import { modal } from "@util/stores";
 
   function handle() {

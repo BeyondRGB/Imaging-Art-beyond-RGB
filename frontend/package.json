@@ -51,6 +51,7 @@
     }
   },
   "dependencies": {
+    "@types/openseadragon": "^2.4.8",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
@@ -60,12 +61,12 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.30",
+    "@tsconfig/svelte": "^2.0.1",
     "autoprefixer": "^10.3.7",
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "electron": "15.3.0",
     "openseadragon": "^2.4.2",
-    "panzoom": "^9.4.2",
     "postcss": "^8.3.11",
     "postcss-load-config": "^3.1.0",
     "prettier": "^2.4.1",
@@ -77,6 +78,8 @@
     "svelte-preprocess": "^4.9.8",
     "svelte-simple-modal": "^1.0.3",
     "tailwindcss": "^2.2.17",
-    "vite": "^2.6.11"
+    "typescript": "^4.5.2",
+    "vite": "^2.6.11",
+    "vite-tsconfig-paths": "^3.3.17"
   }
 }

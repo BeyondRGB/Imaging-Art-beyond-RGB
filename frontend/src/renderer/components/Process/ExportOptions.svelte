@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
   import { currentPage, modal } from "@util/stores";
   import { getContext } from "svelte";
   const { close } = getContext("simple-modal");
 
-  function handle(page) {
+  function handle(page: string) {
     modal.set(null);
     close();
     currentPage.set(page);

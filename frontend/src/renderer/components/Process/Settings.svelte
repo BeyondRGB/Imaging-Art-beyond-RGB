@@ -1,9 +1,7 @@
-<script>
-  let files;
-  let outputFiles;
-  export let nextTab;
-
-  import { currentPage } from "@util/stores";
+<script lang="ts">
+  let files: string[];
+  let outputDir: string;
+  export let nextTab: any;
 
   import Sorter from "@components/Preprocess/Sorter.svelte";
   import FileSelector from "@components/Preprocess/FileSelector.svelte";

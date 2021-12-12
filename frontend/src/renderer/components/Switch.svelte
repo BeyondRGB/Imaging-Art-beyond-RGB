@@ -1,6 +1,6 @@
-<script>
-  export let label = "Placeholder...";
-  export let checked = false;
+<script lang="ts">
+  export let label: string = "Placeholder...";
+  export let checked: boolean = false;
 </script>
 
 <div class="bg-gray-100 dark:bg-gray-600 dark:text-white">
@@ -24,7 +24,7 @@
     @apply w-8 h-5 flex items-center flex-shrink-0 ml-2 p-0.5 rounded-full 
           duration-300 ease-in-out after:w-4 after:h-4  
           after:rounded-full after:shadow-md after:duration-300 
-          peer-checked:after:translate-x-3 group-hover:after:translate-x-0.5 ring ring-2;
+          peer-checked:after:translate-x-3 group-hover:after:translate-x-0.5 ring-2;
   }
 
   label {

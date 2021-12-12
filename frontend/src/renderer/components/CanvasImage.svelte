@@ -1,7 +1,6 @@
 <script>
   import placeholder from "@assets/placeholder.jpg";
   import { onMount } from "svelte";
-  import panzoom from "panzoom";
   let image;
   let panZoom = false;
 
@@ -34,14 +33,6 @@
         image.width, // dwidth
         image.height // dheight
       );
-
-      if (panZoom) {
-        panzoom(canvas, {
-          bounds: true,
-          boundsPadding: 1,
-          minZoom: 1,
-        });
-      }
     };
   });
 </script>
@@ -59,9 +50,9 @@
   main {
     display: table;
     overflow: hidden;
-    @apply w-full ring-1 ring-gray-800;
+    @apply w-full;
   }
   canvas {
-    @apply block w-full;
+    @apply block w-full ring-1 ring-gray-800;
   }
 </style>
