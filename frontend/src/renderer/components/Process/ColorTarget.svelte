@@ -4,6 +4,7 @@
 
   import { currentPage } from "@util/stores";
   import CanvasImage from "@components/CanvasImage.svelte";
+  import SelectBtn from "@components/SelectBtn.svelte";
 
   import { draggable } from "svelte-drag";
 </script>
@@ -16,6 +17,7 @@
   <div class="side">
     <div class="settings">
       Settings
+      <SelectBtn />
       <div class="box">
         <div class="color-target dark:bg-gray-600">
           Color Target

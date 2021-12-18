@@ -9,12 +9,12 @@
     "make": "npm run svelte-build && electron-forge make",
     "build": "npm run svelte-build && electron-forge package",
     "publish": "npm run svelte-build && electron-forge publish",
-    "lint": "echo \"No linting configured\"",
+    "lint": "echo \"No linting configured :D\"",
     "preview": "npm run svelte-build && electron-forge start",
     "electron-dev": "cross-env ELEC_ENV=dev electron-forge start",
     "electron-preview": "electron-forge start",
+    "svelte-dev": "vite",
     "svelte-build": "vite build",
-    "svelte-dev": "cross-env TAILWIND_MODE=watch vite",
     "svelte-start": "vite preview"
   },
   "keywords": [],
@@ -51,7 +51,6 @@
     }
   },
   "dependencies": {
-    "@types/openseadragon": "^2.4.8",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
@@ -60,14 +59,16 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.61",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
+    "@floating-ui/dom": "^0.1.7",
     "@sveltejs/vite-plugin-svelte": "^1.0.0-next.30",
     "@tsconfig/svelte": "^2.0.1",
-    "autoprefixer": "^10.3.7",
+    "@types/openseadragon": "^2.4.8",
+    "autoprefixer": "^10.4.0",
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
     "electron": "15.3.0",
     "openseadragon": "^2.4.2",
-    "postcss": "^8.3.11",
+    "postcss": "^8.4.5",
     "postcss-load-config": "^3.1.0",
     "prettier": "^2.4.1",
     "prettier-plugin-svelte": "^2.4.0",
@@ -77,7 +78,7 @@
     "svelte-drag": "^2.1.0",
     "svelte-preprocess": "^4.9.8",
     "svelte-simple-modal": "^1.0.3",
-    "tailwindcss": "^2.2.17",
+    "tailwindcss": "^3.0.2",
     "typescript": "^4.5.2",
     "vite": "^2.6.11",
     "vite-tsconfig-paths": "^3.3.17"
