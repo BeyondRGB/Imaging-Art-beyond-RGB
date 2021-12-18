@@ -127,15 +127,15 @@
 
 <style lang="postcss">
   main {
-    @apply w-full relative ring-1 ring-gray-800;
+    @apply w-full relative ring-1 ring-gray-800 bg-gray-900/50;
   }
 
   #seadragon-viewer {
-    @apply h-[80vh];
+    @apply h-[90vh];
   }
 
   button {
-    @apply absolute right-0 z-50;
+    @apply absolute right-0 z-10;
   }
   #draggable {
     @apply bg-transparent w-6 absolute z-[1];

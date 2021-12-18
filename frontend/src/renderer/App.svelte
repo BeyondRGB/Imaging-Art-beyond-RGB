@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { currentPage, appSettings } from "@util/stores";
 	// Components
-	import Navbar from "@components/Navbar.svelte";
+	// import Navbar from "@components/Navbar.svelte";
 	import Menu from "@components/Menu.svelte";
 	import Page from "@components/Page.svelte";
 	// Pages
@@ -36,7 +36,7 @@
 			default: true,
 		},
 		RGB: {
-			text: "Color Managed RGB Image",
+			text: "Managed RGB",
 			component: ManagedRgb,
 			icon: photo,
 			isShown: true,
@@ -90,13 +90,16 @@
 	currentPage.set("Home");
 
 	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-	appSettings.set(darkThemeMq.matches);
+	appSettings.set({
+		theme: darkThemeMq.matches,
+		sideNav: $appSettings.sideNav,
+	});
 	darkThemeMq.addEventListener("change", (e) => {
-		appSettings.set(e.matches);
+		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
 	});
 
 	$: selectedPage = routes[$currentPage];
-	$: theme = $appSettings ? "dark" : "";
+	$: theme = $appSettings.theme ? "dark" : "";
 	$: if (theme !== "") {
 		console.log("Theme Change");
 		document.documentElement.classList.add(theme);
@@ -108,14 +111,14 @@
 
 	onDestroy(() => {
 		darkThemeMq.removeEventListener("change", (e) => {
-			appSettings.set(e.matches);
+			appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
 		});
 	});
 </script>
 
 <main class={theme}>
-	<div class="app">
-		<Navbar {routes} />
+	<div class="app {theme} {$appSettings.sideNav ? 'sideMenu' : ''}">
+		<!-- <Navbar {routes} /> -->
 
 		<Menu icon={github} {routes} />
 
@@ -141,48 +144,25 @@
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 			Helvetica, Arial, sans-serif;
 	}
-	:root {
-		--icon-mr: 80%;
-	}
-
-	@media (min-width: 900px) {
-		:root {
-			--icon-mr: 90%;
-		}
-	}
 
 	.app {
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
 
-		display: grid;
-		gap: 0rem;
+		@apply flex flex-col-reverse;
+	}
 
-		/* Explicit grid */
-		grid-template-areas:
-			"Navbar Navbar Navbar"
-			"Menu Box Box"
-			"Menu Box Box";
-
-		/* grid-template-rows: repeat(3, auto); */
-		grid-template-rows:
-			7%
-			auto
-			auto;
-
-		grid-template-columns:
-			var(--menu-width)
-			3fr
-			3fr;
-		/* grid-template-columns: repeat(3, auto); */
+	.sideMenu {
+		@apply flex flex-row;
 	}
 
 	button {
-		@apply hover:bg-blue-200 bg-gray-100 text-gray-900 dark:text-white rounded-lg self-center text-base px-3 py-1
-						transition-all dark:bg-gray-600 dark:hover:bg-blue-500 dark:hover:text-white
-						active:scale-95 shadow-sm dark:ring-gray-500 ring-1 ring-gray-300 dark:focus:ring-blue-500
-						focus:ring-2 focus:ring-blue-300;
+		@apply hover:bg-blue-200 bg-gray-100 text-gray-900 dark:text-white rounded-lg 
+						self-center text-base px-3 py-1 transition-all dark:bg-gray-600 
+						dark:hover:bg-blue-500 dark:hover:text-white active:scale-95 shadow-sm 
+						dark:ring-gray-500 ring-1 ring-gray-300 dark:focus:ring-blue-500 focus:ring-2 
+						focus:ring-blue-300 duration-300;
 	}
 
 	/* width */

@@ -49,9 +49,13 @@
   }
 
   button {
-    @apply bg-gray-100/25 w-[60%] h-[12%] rounded-md text-2xl flex flex-col justify-center 
-            items-center border-0 hover:bg-gray-100/75 transition-all duration-500
-            hover:rounded-2xl text-gray-700 ring-0;
+    @apply bg-gray-100/25 w-[60%] h-[12%] rounded-md text-2xl flex flex-col 
+            justify-center items-center border-0 hover:bg-gray-100/75 
+            transition-all duration-500 hover:rounded-2xl text-gray-700 ring-0;
+  }
+
+  button:last-of-type {
+    @apply mb-[20vh];
   }
 
   h1 {
@@ -62,13 +66,10 @@
     pointer-events: none;
     @apply h-[10vh];
   }
-  /* h3 {
-    @apply text-base;
-  } */
 
   #welcome {
-    @apply text-black text-opacity-40 absolute mb-[60vh] flex flex-col justify-center 
-            items-center gap-2;
+    @apply text-black text-opacity-40 flex flex-col justify-center 
+            items-center gap-2 pb-[4vh];
   }
 
   #getting-started {

@@ -2,10 +2,11 @@ import { writable } from 'svelte/store';
 
 // Stores
 export const currentPage = writable(null);
-export const appSettings = writable(false);
+export const appSettings = writable({ theme: false, sideNav: false });
 export const modal = writable(null);
+// Webstocket Stores
 export const messageStore = writable('');
-export const connectionState = writable('Not Connected')
+export const connectionState = writable('Not Connected');
 
 // Websocket
 const socket = new WebSocket('ws://localhost:9002');
@@ -13,7 +14,7 @@ const socket = new WebSocket('ws://localhost:9002');
 function connect() {
   socket.addEventListener('open', function (event) {
     console.log("Connected!");
-    connectionState.set("Connected")
+    connectionState.set("Connected");
   });
 
   socket.addEventListener('close', function (event) {
@@ -26,7 +27,7 @@ function connect() {
 
   socket.addEventListener('error', function (event) {
     console.log("Error");
-    connectionState.set("Closed - Error")
+    connectionState.set("Closed - Error");
     socket.close();
   });
 
@@ -40,4 +41,4 @@ export const sendMessage = (message) => {
   if (socket.readyState === 1) {
     socket.send(message);
   }
-}
+};

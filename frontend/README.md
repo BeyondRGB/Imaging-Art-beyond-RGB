@@ -1,7 +1,7 @@
 # Imaging-Art-beyond-RGB
 
 ## Beyond RGB Frontend
-![Electron- 15.3.0](https://badgen.net/badge/Electron/v15.3.0/blue)  ![Svelte - 3.44.0](https://badgen.net/badge/Svelte/v3.44.0/orange) ![Tailwindcss - 2.2.17](https://badgen.net/badge/Tailwindcss/v2.2.17/purple) ![Vite- 2.6.11](https://badgen.net/badge/Vite/v2.6.11/green) ![Electron Forge - 6.0.0-beta.61](https://badgen.net/badge/Electron%20Forge/v6.0.0-beta.61/red)
+![Electron - 15.3.0](https://badgen.net/badge/Electron/v15.3.0/cyan)  ![Svelte - 3.44.2](https://badgen.net/badge/Svelte/v3.44.2/orange) ![Typescript - 4.5.3](https://badgen.net/badge/Typescript/v4.5.3/blue) ![Tailwindcss - 3.0.2](https://badgen.net/badge/Tailwindcss/v3.0.2/purple) ![Vite - 2.7.1](https://badgen.net/badge/Vite/v2.7.1/green) ![Electron Forge - 6.0.0-beta.61](https://badgen.net/badge/Electron%20Forge/v6.0.0-beta.61/red)
 
 [**Live Demo**](https://dev.d2m0gyo8ptlels.amplifyapp.com/) *(Works best on Chrome)*
 
@@ -11,6 +11,8 @@
 >  -  [Electron](https://www.electronjs.org/docs/latest/) (Desktop) - [Video (1min 48sec)](https://www.youtube.com/watch?v=m3OjWNFREJo)
 >
 >  -  [Svelte](https://svelte.dev/docs) (Display) - [Video (2min 11sec)](https://www.youtube.com/watch?v=rv3Yq-B8qp4)
+>
+>  -  [Typescript](https://www.typescriptlang.org/docs/) (Code) - [Video (2min 24sec)](https://www.youtube.com/watch?v=zQnBQ4tB3ZA)
 >
 >  -  [Tailwindcss](https://tailwindcss.com/docs) (Style) - [Video (2min 20sec)](https://www.youtube.com/watch?v=mr15Xzb1Ook)
 >
@@ -28,7 +30,7 @@
 
   
 
-`yarn` *or* `npm install`
+`npm install` 
 
   >downloads and installs node_modules 
 
@@ -36,7 +38,7 @@
 
   
 
-`yarn dev` *or* `npm run dev`
+`npm run dev` 
 
 >starts development environment by starting vite's dev server and electron app in dev mode
 
@@ -46,7 +48,7 @@
 
   
 
-`yarn preview` *or* `npm run preview`
+`npm run preview`
 
 >builds svelte for production and starts electron app in dev mode
 
@@ -56,7 +58,7 @@
 
   
 
-`yarn build` *or* `npm run build`
+`npm run build`  
 
 >builds svelte and electron for production
 
@@ -66,7 +68,7 @@
 
   
 
-`yarn make` *or* `npm run make`
+`npm run make`  
 
 >builds svelte and electron for production and packages into an installer
 
