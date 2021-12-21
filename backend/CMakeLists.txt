@@ -16,6 +16,10 @@ find_package(TIFF REQUIRED)
 find_package(lcms REQUIRED) # Little Color Management System
 find_package(LibRaw REQUIRED)
 
+# Pthreads & OpenMP on Linux
+find_package(Threads REQUIRED)
+find_package(OpenMP REQUIRED)
+
 #   Find all Header and Source files
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/*.h")
 file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
@@ -41,7 +45,9 @@ target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
 target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
-
+# Pthreads & OpenMP on Linux
+target_link_libraries(app PRIVATE Threads::Threads)
+target_link_libraries(app PRIVATE OpenMP::OpenMP_CXX)
 
 # Need the c++ standard explicitly stated for compiling on OSX.
 set_property(TARGET app PROPERTY CXX_STANDARD 20)
