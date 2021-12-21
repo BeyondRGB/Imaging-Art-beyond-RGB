@@ -4,7 +4,7 @@
 
 #include "../header/PixelRegestor.h"
 
-void PixelRegestor::execute(CallBackFunction func, ArtObject* images) {
+void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Pixel Registration");
     //TODO add Pixel Registration logic here
     sleep_for(seconds(5));

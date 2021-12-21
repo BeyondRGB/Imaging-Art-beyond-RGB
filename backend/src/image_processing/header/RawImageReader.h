@@ -11,11 +11,12 @@ class RawImageReader: public ImgProcessingComponent {
 
 private:
     LibRaw rawReader;
+    void configPostProcParams();
 
 public:
     RawImageReader();
     ~RawImageReader();
-    void execute(CallBackFunction func, ArtObject* images) override;
+    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 };
 
 
