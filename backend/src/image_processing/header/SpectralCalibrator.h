@@ -11,7 +11,7 @@
 class SpectralCalibrator : public ImgProcessingComponent{
 public:
     void execute(CallBackFunction func, ArtObject* images) override;
-    void my_callback(string str);
+    void my_callback(std::string str);
 };
 
 
