@@ -7,7 +7,7 @@
 #define BEYOND_RGB_BACKEND_IMGPROCESSINGCOMPONENT_H
 
 #include <iostream>
-using namespace std;
+//using namespace std;
 #include <memory>
 #include <vector>
 #include <functional>
@@ -22,7 +22,7 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 #include "../../image_util/ArtObject.hpp"
 
 //typedef void (*CallBackFunction)(string);
-typedef function<void(string)> CallBackFunction;
+typedef std::function<void(std::string)> CallBackFunction;
 class ImgProcessingComponent {
 public:
     /**
