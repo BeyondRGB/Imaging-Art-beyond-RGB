@@ -1,44 +1,40 @@
-#include "write_tiff.hpp"
+#include "LibTiffWriter.hpp"
 
-namespace tiff_util {
-	static void write_tags(TIFF* img_out, int width, int height, int channels);
-	static status write_image(TIFF* img_out, unsigned short* bitmap, int width, int height, int channels);
-	
-	/* Writes a tiff file give a data structure. */
-	status write(btrgb::image* data) {
-		status s = none;
-		TIFF* img_out;
+namespace btrgb {
+    
+    LibTiffWriter::LibTiffWriter() {}
+    LibTiffWriter::~LibTiffWriter() {}
 
-		if( ! data->filename.ends_with(".tiff") )
-			data->filename.append(".tiff");
+    void LibTiffWriter::write(image* im) {
 
-		/* Open file for writing. */
-		img_out = TIFFOpen(data->filename.c_str(), "w");
-		if(!img_out) return cannot_open_for_writing;
+        std::string fname = im->filename();
+        if (!fname.ends_with(".tiff"))
+            fname += ".tiff";
 
-		/* Write tiff header tags. */
-		write_tags(img_out, data->width, data->height, data->channels);
+        write(im, fname);
+    }
 
-		/* Write bitmap data to tiff in strips. */
-		s = write_image(img_out, data->bitmap, data->width, data->height, data->channels);
-		if(s != none) {
-			TIFFClose(img_out);
-			return s;
-		}
+    void LibTiffWriter::write(image* im, std::string& filename) {
+        TIFF* img_out;
+        int width = im->width();
+        int height = im->height();
+        int channels = im->channels();
 
-		/* Close the tiff file. */
-		TIFFClose(img_out);
+        /* Keep as pointer for pointer arithmetic instead 
+         * of array index arithmetic. */
+        unsigned short* bitmap = im->bitmap();
 
-		return s;
-	}
 
-	/*
-	 * This function is void because the only errors TIFFSetField can have
-	 * are from invalid values (all values are statically typed here) or 
-	 * a tag cannot be modified after writing (all tags are set in this function
-	 * which is called before writing bitmap data).
-	 */
-	static void write_tags(TIFF* img_out, int width, int height, int channels) {
+
+        /* ==============[ Open tiff file for writing ]================== */
+
+		img_out = TIFFOpen(filename.c_str(), "w");
+		if(!img_out) 
+            throw LibTiff_OpenFileFailed();
+
+
+
+		/* =================[ Write tiff header tags ]================== */
 
 		TIFFSetField(img_out, TIFFTAG_IMAGEWIDTH, width);
 		TIFFSetField(img_out, TIFFTAG_IMAGELENGTH, height);
@@ -57,7 +53,6 @@ namespace tiff_util {
 
 		/* Indicate that the image is RGB. We'll need to do grayscale, perhaps 
 		* as channels, or separate images in the same file. */
-		
 		TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 		//TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
 
@@ -76,14 +71,9 @@ namespace tiff_util {
 		*/
 		TIFFSetField(img_out, TIFFTAG_ROWSPERSTRIP, 1);
 
-	}
 
-	/*
-	 * Returns tiff_util::status value of "none" on success.
-	 * Returns tiff_util::status value of "failed_to_write_strip" if TIFFWriteScanline returns an error.
-	 */
-	static status write_image(TIFF* img_out, unsigned short* bitmap, int width, int height, int channels) {
-		status s = none;
+
+        /* =================[ Write bitmap to file ]================== */
 
 		/* The buffer for each strip to be copied to and then written to disk. 
 		* If rows-per-strip is one, scanline size should equate to the number
@@ -96,16 +86,27 @@ namespace tiff_util {
 			_TIFFfree(sample_row);
 		*/
 
-		int row_size = width * channels;
-		int row, bitmap_index;
-		/* ASSUMPTION: The "rows per strip" tiff tag is set to one. */
+		int row, row_size = width * channels;
+        void* row_memory_address;
+
+		/* Write all rows to file.
+         * ASSUMPTION: The "rows per strip" tiff tag is set to one. */
 		for( row = 0; row < height; row++) {
-			bitmap_index = row * row_size;
-			if (TIFFWriteScanline(img_out, bitmap + bitmap_index, row, 0) < 0)
-				return failed_to_write_strip;
+
+            /* Pointer arithmetic -- not array index arithmetic. */
+			row_memory_address = bitmap + row * row_size;
+
+            /* Write row to file. */
+			if (TIFFWriteScanline(img_out, row_memory_address, row, 0) < 0) {
+                TIFFClose(img_out);
+				throw LibTiff_WriteStripFailed();
+            }
+
 		}
 
-		return s;
-	}
 
-};
+
+		/* ==============[ Close tiff file ]================== */
+		TIFFClose(img_out);
+    }
+}

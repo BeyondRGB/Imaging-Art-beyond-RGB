@@ -7,7 +7,6 @@
 #define BEYOND_RGB_BACKEND_IMGPROCESSINGCOMPONENT_H
 
 #include <iostream>
-//using namespace std;
 #include <memory>
 #include <vector>
 #include <functional>
@@ -19,7 +18,7 @@
 using namespace std::this_thread; // sleep_for, sleep_until
 using namespace std::chrono; // nanoseconds, system_clock, seconds
 
-#include "../../image_util/ArtObject.hpp"
+#include "ImageUtil/ArtObject.hpp"
 
 //typedef void (*CallBackFunction)(string);
 typedef std::function<void(std::string)> CallBackFunction;
@@ -30,7 +29,7 @@ public:
      * Must be defined by inheritors of this class to preform the execution of
      * processing for that particular component
      */
-    virtual void execute(CallBackFunction func, ArtObject* images) = 0;
+    virtual void execute(CallBackFunction func, btrgb::ArtObject* images) = 0;
 };
 
 

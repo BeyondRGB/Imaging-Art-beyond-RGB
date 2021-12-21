@@ -9,7 +9,7 @@ ImageCalibrator::ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessing
         this->components.push_back(component);
     }
 }
-void ImageCalibrator::execute(CallBackFunction func, ArtObject* images) {
+void ImageCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
     this->callback_func = func;
     this->callback_func("Starting Image Calibration");
     for(auto  & component : this->components){

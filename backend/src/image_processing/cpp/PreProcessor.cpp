@@ -10,7 +10,7 @@ PreProcessor::PreProcessor(const std::vector<std::shared_ptr<ImgProcessingCompon
     }
 }
 
-void PreProcessor::execute(CallBackFunction func, ArtObject* images) {
+void PreProcessor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     this->callback_func = func;
     this->callback_func("Starting PreProcessor");
     for(const auto& component : this->components){

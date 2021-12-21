@@ -14,7 +14,7 @@ private:
     CallBackFunction callback_func;
 public:
     ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components);
-    void execute(CallBackFunction func, ArtObject* images) override;
+    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
     void my_callback(std::string str);
 
 };

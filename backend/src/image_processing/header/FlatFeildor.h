@@ -10,7 +10,7 @@
 
 class FlatFeildor : public ImgProcessingComponent{
 public:
-    void execute(CallBackFunction func, ArtObject* images) override;
+    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 };
 
 
