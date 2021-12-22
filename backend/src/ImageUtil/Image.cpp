@@ -32,18 +32,22 @@ namespace btrgb {
     }
 
     int image::width() {
+        checkInit();
         return this->_width;
     }
 
     int image::height() {
+        checkInit();
         return this->_height;
     }
 
     int image::channels() {
+        checkInit();
         return this->_channels;
     }
 
     pixel* image::bitmap() {
+        checkInit();
         return this->_bitmap;
     }
 
@@ -54,6 +58,11 @@ namespace btrgb {
         this->_width = 0;
         this->_height = 0;
         this->_channels = 0;
+    }
+
+    void image::checkInit() {
+        if (! this->_bitmap)
+			throw BitmapNotInitialized(this->_filename);
     }
 
 }

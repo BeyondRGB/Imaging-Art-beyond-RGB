@@ -45,12 +45,18 @@ void Pipeline::executePipeline() {
     callback("I got your msg");
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
     
+    
     btrgb::ArtObject* images = new  btrgb::ArtObject();
+    /* Demo
     images->newImage("test", "nikon_targets_2.NEF");
+    */
 
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
+    /* Demo
     images->outputImageAsTIFF("test");
+    */
+    
     delete images;
 
 };

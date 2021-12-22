@@ -28,6 +28,18 @@ namespace btrgb {
             int _width;
             int _height;
             int _channels;
+
+            void checkInit();
+    };
+
+    class BitmapNotInitialized : public std::exception {
+        private:
+            std::string msg;
+        public:
+            BitmapNotInitialized(std::string msg) {
+                this->msg = "The image \"" + msg + "\" has not been initialized.";
+            }
+            virtual char const * what() const noexcept { return  this->msg.c_str(); }
     };
 }
 
