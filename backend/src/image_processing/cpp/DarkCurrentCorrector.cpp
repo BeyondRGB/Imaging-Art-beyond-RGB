@@ -7,5 +7,5 @@
 void DarkCurrentCorrector::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("DarkCurrentCorrector");
     //TODO add Dark current correction logic here
-    sleep_for(seconds(5));
+    sleep_for(seconds(1));
 }

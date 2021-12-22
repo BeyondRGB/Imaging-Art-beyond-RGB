@@ -7,5 +7,5 @@
 void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Flat Fielding");
     //TODO add FlatFeilding logic here
-    sleep_for(seconds(5));
+    sleep_for(seconds(1));
 }
