@@ -47,7 +47,7 @@ namespace btrgb {
         return this->_bitmap;
     }
 
-    void image::recylce() {
+    void image::recycle() {
         if (this->_bitmap)
             delete this->_bitmap;
         this->_bitmap = 0;

@@ -71,7 +71,7 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
         ec = this->rawReader.copy_mem_image(im->bitmap(), width * channels * 2 /* 2 bytes */, 0);
         if(ec) {
             this->rawReader.recycle();
-            im->recylce(); /* Reset image object to just the filename. */
+            im->recycle(); /* Reset image object to just the filename. */
             func("RawImageReader[rawReader.copy_mem_image]: " + std::to_string(ec));
             continue;
         }

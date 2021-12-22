@@ -1,5 +1,5 @@
 #ifndef BTRGB_IMAGE_H
-#define BTRGB_ARTOBJ_H
+#define BTRGB_IMAGE_H
 
 #include <string>
 
@@ -20,7 +20,7 @@ namespace btrgb {
             int channels();
             pixel* bitmap();
 
-            void recylce();
+            void recycle();
 
         private:
             std::string _filename;

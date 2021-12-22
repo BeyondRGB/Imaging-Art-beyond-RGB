@@ -31,6 +31,7 @@ message(STATUS "Source Files: ${SOURCES}")
 add_executable(app ${SOURCES})
 #   Set all source include files (ie. *.h)
 target_include_directories(app PUBLIC ${headers})
+target_include_directories(app PUBLIC "src/")
 
 #----------------------------------------------------
 #	Add VCPKG provided target_link_libraties Here
