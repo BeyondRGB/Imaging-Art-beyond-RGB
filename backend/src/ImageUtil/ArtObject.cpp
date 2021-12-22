@@ -84,6 +84,9 @@ namespace btrgb {
         catch (ImageWritingError const& e) {
             throw ArtObj_ImageDoesNotExist();
         }
+        catch (BitmapNotInitialized const& e) {
+            throw;
+        }
         
     }
 
