@@ -22,12 +22,12 @@
     @apply flex-grow;
   }
   span {
-    @apply w-8 h-5 flex items-center flex-shrink-0 ml-2 p-0.5 rounded-full 
-          duration-300 ease-in-out after:w-[1.125rem] after:h-[1.125rem]  
-          after:rounded-full after:shadow-md after:duration-300 bg-gray-400/30
-          peer-checked:after:translate-x-3 group-hover:after:translate-x-0.5 ring-0
-          dark:after:bg-gray-100 after:bg-white dark:peer-checked:bg-blue-500 
-          peer-checked:bg-blue-400;
+    @apply w-12 h-6 flex items-center flex-shrink-0 ml-2 p-0 rounded-full 
+          duration-300 ease-in-out after:w-6 after:h-6 
+          after:rounded-full after:shadow-md dark:after:shadow-md after:duration-300 
+          dark:bg-gray-800/20 bg-gray-300 peer-checked:after:translate-x-6
+          group-hover:after:translate-x-0.5 ring-0 dark:after:bg-gray-600 
+          after:bg-white dark:peer-checked:bg-blue-500 peer-checked:bg-blue-400;
   }
 
   label {

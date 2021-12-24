@@ -20,15 +20,19 @@
       show = true;
       computePosition(btnRef, popRef, {
         placement: "bottom",
-        middleware: [offset(6), autoPlacement({ crossAxis: true })],
+        middleware: [offset(4), autoPlacement({ crossAxis: true })],
       }).then(({ x, y }) => {
         Object.assign(popRef.style, {
-          left: `${x}px`,
-          top: `${y}px`,
+          left: "0",
+          top: "0",
+          transform: `translate(${Math.round(x)}px,${Math.round(y)}px)`,
         });
       });
     }
   };
+
+  let temp;
+  $: console.log(popRef);
 </script>
 
 {#if show}
@@ -54,8 +58,7 @@
     @apply z-50 float-left hidden;
   }
   .shown {
-    @apply block w-36 dark:bg-gray-700 bg-gray-50 rounded-md pointer-events-none
-            absolute;
+    @apply block w-36 dark:bg-gray-700 bg-gray-50 rounded-md fixed;
   }
   li {
     @apply list-none hover:text-blue-400 px-2 py-1;
