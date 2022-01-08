@@ -82,7 +82,7 @@ namespace btrgb {
             this->tiffWriter->write( this->images[name] );
         }
         catch (ImageWritingError const& e) {
-            throw ArtObj_ImageDoesNotExist();
+            throw ArtObj_FailedToWriteImage();
         }
         catch (BitmapNotInitialized const& e) {
             throw;
