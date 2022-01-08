@@ -4,8 +4,8 @@
 
 #include "../header/SpectralCalibrator.h"
 
-void SpectralCalibrator::execute(CallBackFunction func) {
+void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("SpectralCalibration");
     //TODO add Spectral Calibration logic here
-    sleep_for(seconds(5));
+    sleep_for(seconds(1));
 }

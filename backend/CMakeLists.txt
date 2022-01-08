@@ -8,10 +8,22 @@ project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
 #------------------------------------------
 find_package(websocketpp CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
+find_package(TIFF REQUIRED)
+
+# LCMS is needed for LibRAW. For some reason on 
+# OSX and Linux, this dependency needs to be explicitly
+# found and linked. LCMS was added in dependencies.txt.
+find_package(lcms REQUIRED) # Little Color Management System
+find_package(LibRaw REQUIRED)
+
+# Pthreads & OpenMP on Linux
+find_package(Threads REQUIRED)
+find_package(OpenMP REQUIRED)
 
 #   Find all Header and Source files
 file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/*.h")
 file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
+
 #   Print out all Header and Source files found
 message(STATUS "Headers: ${HEADERS}")
 message(STATUS "Source Files: ${SOURCES}")
@@ -19,6 +31,7 @@ message(STATUS "Source Files: ${SOURCES}")
 add_executable(app ${SOURCES})
 #   Set all source include files (ie. *.h)
 target_include_directories(app PUBLIC ${headers})
+target_include_directories(app PUBLIC "src/")
 
 #----------------------------------------------------
 #	Add VCPKG provided target_link_libraties Here
@@ -26,5 +39,16 @@ target_include_directories(app PUBLIC ${headers})
 target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
 
+target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
+target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
+
+target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
+target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
+target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
+
+# Pthreads & OpenMP on Linux
+target_link_libraries(app PRIVATE Threads::Threads)
+target_link_libraries(app PRIVATE OpenMP::OpenMP_CXX)
+
 # Need the c++ standard explicitly stated for compiling on OSX.
-set_property(TARGET app PROPERTY CXX_STANDARD 11)
+set_property(TARGET app PROPERTY CXX_STANDARD 20)
