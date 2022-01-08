@@ -4,8 +4,8 @@
 
 #include "../header/BitDepthScalor.h"
 
-void BitDepthScalor::execute(CallBackFunction func) {
+void BitDepthScalor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Bit Depth Scaling");
     //TODO add Bit depth scaling logic here
-    sleep_for(seconds(5));
+    sleep_for(seconds(1));
 }
