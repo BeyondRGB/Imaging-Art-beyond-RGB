@@ -54,7 +54,7 @@ CMakeSettings.json
 ## Front End ##
 ###############
 
-./frontend/public/assets/
+/frontend/public/assets/
 
 =======
 # Byte-compiled / optimized / DLL files
