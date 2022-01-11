@@ -9,7 +9,7 @@ namespace btrgb {
     class ImageWriter {
         public:
             ImageWriter() {}
-            ~ImageWriter() {}
+            virtual ~ImageWriter() {}
             virtual void write(image* im, std::string& filename) = 0;
             virtual void write(image* im) = 0;
 
