@@ -47,8 +47,12 @@ vcpkg/
 build/
 
 # VS
+.vscode/
 .vs/
 CMakeSettings.json
+
+# macOS thumbnails
+.DS_Store
 
 ###############
 ## Front End ##
@@ -56,7 +60,7 @@ CMakeSettings.json
 
 /frontend/public/assets/
 
-=======
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -186,7 +190,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-=======
+
 # Logs
 logs
 *.log

@@ -17,7 +17,7 @@
 #include "server/comunication_obj.h"
 
 #include <iostream>
-using namespace std;
+//using namespace std;
 
 class Pipeline{
 
@@ -26,8 +26,8 @@ private:
 	CommunicationObj coms_m;
 	int num_m;
 
-	void callback(string msg);
-	shared_ptr<ImgProcessingComponent> pipelineSetup();
+	void callback(std::string msg);
+	std::shared_ptr<ImgProcessingComponent> pipelineSetup();
 
 public:
 	Pipeline(CommunicationObj coms_obj, int pipelineNumber);
