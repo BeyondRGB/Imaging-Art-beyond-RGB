@@ -16,6 +16,6 @@ CommunicationObj::CommunicationObj(const CommunicationObj &other) {
 	opcode_m = other.opcode_m;
 }
 
-void CommunicationObj::send_msg(string msg) {
+void CommunicationObj::send_msg(std::string msg) {
 	server_m->send(connectionHandle_m, msg, opcode_m);
 }
