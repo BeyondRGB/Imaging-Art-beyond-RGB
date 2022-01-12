@@ -91,4 +91,5 @@ int main() {
     } catch (...) {
         std::cout << "other exception" << std::endl;
     }
+    std::cout << "Server Shutting Down.\n";
 }
