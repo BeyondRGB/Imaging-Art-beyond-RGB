@@ -6,7 +6,6 @@
 #define COMMUNICATION_OBJ_H
 
 #include <iostream>
-using namespace std;
 
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_THREAD_
@@ -28,7 +27,11 @@ public:
 	CommunicationObj() {};
 	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
 	CommunicationObj(const CommunicationObj &other);
-	void send_msg(string msg);
+	/**
+	* Function for sending a message back to the front end
+	* @param msg: the message string to send
+	*/
+	void send_msg(std::string msg);
 };
 
 #endif // COMMUNICATION_OBJ_H
