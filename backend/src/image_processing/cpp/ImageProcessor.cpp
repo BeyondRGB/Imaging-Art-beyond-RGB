@@ -5,20 +5,20 @@
 
 #include "../header/ImageProcessor.h"
 
-ImageProcessor::ImageProcessor(const vector<shared_ptr<ImgProcessingComponent>> &components) {
+ImageProcessor::ImageProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components) {
     for(auto & component : components){
         this->components.push_back(component);
     }
 }
-void ImageProcessor::execute(CallBackFunction func) {
+void ImageProcessor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     this->callback_func = func;
     this->callback_func("Starting Image Processor");
     for(auto  & component : this->components){
-        component->execute(std::bind(&ImageProcessor::my_callback, this, placeholders::_1));
+        component->execute(std::bind(&ImageProcessor::my_callback, this, std::placeholders::_1), images);
     }
     this->callback_func("Image Processing Done!!!");
 }
 
-void ImageProcessor::my_callback(string str) {
+void ImageProcessor::my_callback(std::string str) {
     this->callback_func("ImageProcessor->" + str);
 }

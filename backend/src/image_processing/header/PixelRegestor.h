@@ -7,7 +7,7 @@
 
 class PixelRegestor : public ImgProcessingComponent{
 public:
-    void execute(CallBackFunction func) override;
+    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 };
 
 
