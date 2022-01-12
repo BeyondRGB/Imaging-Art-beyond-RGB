@@ -11,12 +11,14 @@ RawImageReader::~RawImageReader() {}
 void RawImageReader::configPostProcParams() {
 	this->rawReader.imgdata.params.output_bps = 16;
 	this->rawReader.imgdata.params.no_auto_bright = 1;
-	this->rawReader.imgdata.params.no_auto_scale = 1;
-	this->rawReader.imgdata.params.use_auto_wb = 0;
-	this->rawReader.imgdata.params.use_camera_wb = 0;
+	/*this->rawReader.imgdata.params.no_auto_scale = 1;*/
+	/*this->rawReader.imgdata.params.use_auto_wb = 0;*/
+	/*this->rawReader.imgdata.params.use_camera_wb = 0;*/
 	this->rawReader.imgdata.params.use_camera_matrix = 0;
-	this->rawReader.imgdata.params.fbdd_noiserd = 0;
-	this->rawReader.imgdata.params.use_rawspeed = 1;
+	/*this->rawReader.imgdata.params.fbdd_noiserd = 0;*/
+	/*this->rawReader.imgdata.params.use_rawspeed = 0;*/
+    this->rawReader.imgdata.params.user_qual = 0;
+    this->rawReader.imgdata.params.output_color = 0;
 }
 
 void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
