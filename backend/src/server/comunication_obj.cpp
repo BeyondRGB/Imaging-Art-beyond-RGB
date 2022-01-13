@@ -2,7 +2,7 @@
 // Defines a class to manage communication between a process and the front end
 //
 
-#include "comunication_obj.h"
+#include "comunication_obj.hpp"
 
 CommunicationObj::CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg) {
 	server_m = s;
