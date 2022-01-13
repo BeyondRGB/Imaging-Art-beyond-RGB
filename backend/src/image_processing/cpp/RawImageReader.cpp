@@ -4,11 +4,38 @@
 
 #include "../header/RawImageReader.h"
 
+void RawImageReader::InternalRawProcessor::custom_process() {
+
+    try {
+        /* Extract RAW data into image struct. */
+        raw2image();
+    
+        /* Do a basic bilinear interpolation. */
+        pre_interpolate();
+        imgdata.progress_flags |= LIBRAW_PROGRESS_PRE_INTERPOLATE;
+        lin_interpolate();
+        imgdata.progress_flags |= LIBRAW_PROGRESS_INTERPOLATE;
+
+        /* Finalize image? */
+        #define LR_HISTOGRAM libraw_internal_data.output_data.histogram
+        if (!LR_HISTOGRAM) {
+            LR_HISTOGRAM = (int(*)[LIBRAW_HISTOGRAM_SIZE]) malloc(sizeof(*LR_HISTOGRAM) * 4);
+            merror(LR_HISTOGRAM, "LibRaw::dcraw_process()");
+        }
+        convert_to_rgb();
+        imgdata.progress_flags |= LIBRAW_PROGRESS_CONVERT_RGB;
+        #undef LR_HISTOGRAM
+    }
+    catch(LibRaw_exceptions e) {
+        throw;
+    }
+
+}
 
 RawImageReader::RawImageReader() {}
 RawImageReader::~RawImageReader() {}
 
-void RawImageReader::configPostProcParams() {
+void RawImageReader::configLibRawParams() {
 	this->rawReader.imgdata.params.output_bps = 16;
 	this->rawReader.imgdata.params.no_auto_bright = 1;
 	/*this->rawReader.imgdata.params.no_auto_scale = 1;*/
@@ -22,7 +49,7 @@ void RawImageReader::configPostProcParams() {
 }
 
 void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    configPostProcParams();
+    configLibRawParams();
 
     func("Reading In Raw Image Data!");
 
@@ -50,12 +77,13 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
             continue;
         }
 
-        /* Call dcraw_process(). This call is affected by 
-         * parameters set in the RawImageReader constructor. */
-        ec = this->rawReader.dcraw_process();
-        if(ec) {
+        /* Run custom LibRaw processing routine. */
+        try {
+            this->rawReader.custom_process();
+        }
+        catch(LibRaw_exceptions e) {
             this->rawReader.recycle();
-            func("RawImageReader[rawReader.dcraw_process]: " + std::to_string(ec));
+            func("RawImageReader[rawReader.custom_process]");
             continue;
         }
 
