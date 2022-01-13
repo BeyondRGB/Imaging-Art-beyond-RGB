@@ -10,8 +10,11 @@
 class RawImageReader: public ImgProcessingComponent {
 
 private:
-    LibRaw rawReader;
-    void configPostProcParams();
+    class InternalRawProcessor : public LibRaw {
+        public: void custom_process();
+    };
+    InternalRawProcessor rawReader;
+    void configLibRawParams();
 
 public:
     RawImageReader();
