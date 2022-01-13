@@ -24,6 +24,7 @@
 		fileText,
 		eyedropper,
 		infoCircle,
+		gears,
 	} from "svelte-awesome/icons";
 	import { onDestroy } from "svelte";
 
@@ -34,6 +35,12 @@
 			icon: home,
 			isShown: true,
 			default: true,
+		},
+		Preprocessing: {
+			text: "Preprocessing",
+			component: Preprocess,
+			icon: gears,
+			isShown: true,
 		},
 		RGB: {
 			text: "Managed RGB",
@@ -73,12 +80,7 @@
 			isShown: true,
 			default: true,
 		},
-		Preprocessing: {
-			text: "Preprocessing",
-			component: Preprocess,
-			icon: home,
-			isShown: false,
-		},
+
 		Process: {
 			text: "Process",
 			component: Process,
@@ -177,7 +179,7 @@
 
 	/* Handle */
 	::-webkit-scrollbar-thumb {
-		@apply bg-gray-600;
+		@apply bg-gray-600 rounded-full;
 	}
 
 	/* Handle on hover */

@@ -31,6 +31,13 @@
     on:click={() => currentPage.set("Preprocessing")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
+    Learn More
+    <span> Learn how to use Beyond RGB </span>
+  </button>
+  <button
+    on:click={() => currentPage.set("Preprocessing")}
+    class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
+  >
     Proccess
     <span> Process a new Spectral Image </span>
   </button>
@@ -69,7 +76,7 @@
 
   #welcome {
     @apply text-black text-opacity-40 flex flex-col justify-center 
-            items-center gap-2 pb-[4vh];
+            items-center gap-2 pb-[1vh];
   }
 
   #getting-started {

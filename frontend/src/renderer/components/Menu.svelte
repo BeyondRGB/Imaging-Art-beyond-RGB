@@ -3,7 +3,7 @@
   export let icon: any;
   import Modal from "@components/Modal.svelte";
   import Settings from "@root/pages/Settings.svelte";
-
+  import TextLogo from "@assets/TextLogo.svg";
   let showModal = false;
 
   import { currentPage, modal, appSettings } from "@util/stores";
@@ -21,7 +21,10 @@
 
 <main class="{$appSettings.sideNav ? 'sideMain' : ''} {theme}">
   <ul>
-    <div class="logoBox">LOGO</div>
+    <div class="logoBox">
+      <!-- <img src={TextLogo} alt="app-logo" /> -->
+      <p>Beyond RGB</p>
+    </div>
     <div class="menuBtns">
       {#each Object.keys(routes).map((key) => [key, routes[key]]) as item, i}
         {#if item[1].isShown && !item[1].default}
@@ -65,7 +68,7 @@
   }
 
   .sideMain {
-    @apply bottom-auto w-20 h-full;
+    @apply bottom-auto w-24 h-full;
   }
 
   ul {
@@ -116,5 +119,14 @@
 
   .sideMain .ctlBtns {
     @apply flex-col py-4 px-0;
+  }
+  img {
+    /* transform: scale(0.5); */
+    pointer-events: none;
+    filter: grayscale(0.5);
+    @apply h-1/2 mt-3.5 pl-3;
+  }
+  p {
+    @apply text-xl mt-2.5 pl-3;
   }
 </style>
