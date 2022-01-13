@@ -17,7 +17,7 @@
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
-class CommunicationObj{
+class CommunicationObj {
 private:
 	server* server_m = NULL;
 	websocketpp::connection_hdl connectionHandle_m;
@@ -26,7 +26,7 @@ private:
 public:
 	CommunicationObj() {};
 	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
-	CommunicationObj(const CommunicationObj &other);
+	CommunicationObj(const CommunicationObj& other);
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send

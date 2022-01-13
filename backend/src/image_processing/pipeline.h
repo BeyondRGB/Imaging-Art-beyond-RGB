@@ -14,7 +14,7 @@
 #include "image_processing/header/RawImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
 
-#include "server/comunication_obj.h"
+#include "server/comunication_obj.hpp"
 
 #include <iostream>
 //using namespace std;
