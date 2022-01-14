@@ -18,7 +18,7 @@ void Pipeline::callback(std::string msg) {
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
     std::vector<std::shared_ptr<ImgProcessingComponent>> pre_process_components;
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader("LibRaw")));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScalor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new DarkCurrentCorrector()));
@@ -48,7 +48,7 @@ void Pipeline::executePipeline() {
     
     btrgb::ArtObject* images = new  btrgb::ArtObject();
     
-    /*
+    /* ====[ Demo ]====
     std::vector<std::string> fnames = {
         "nikon_dark_1.NEF",
         "nikon_dark_2.NEF",
@@ -62,9 +62,11 @@ void Pipeline::executePipeline() {
     }
     */
     
+    
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
-    /* DEMO
+    
+    /* ====[ Demo ]====
     images->deleteImage("nikon_white_2.NEF");
 
     for(auto& f: fnames) {
