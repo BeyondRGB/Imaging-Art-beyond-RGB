@@ -6,20 +6,18 @@
 #include <libraw.h>
 
 #include "ImgProcessingComponent.h"
+#include "image_processing/header/RawFileReader.h"
 
 class RawImageReader: public ImgProcessingComponent {
 
-private:
-    class InternalRawProcessor : public LibRaw {
-        public: void custom_process();
-    };
-    InternalRawProcessor rawReader;
-    void configLibRawParams();
+    public:
+        RawImageReader(std::string strategy);
+        ~RawImageReader();
+        void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 
-public:
-    RawImageReader();
-    ~RawImageReader();
-    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
+    private:
+        RawFileReader* fileReader;
+
 };
 
 
