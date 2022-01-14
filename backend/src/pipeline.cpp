@@ -48,7 +48,7 @@ void Pipeline::executePipeline() {
     
     btrgb::ArtObject* images = new  btrgb::ArtObject();
     
-    /* DEMO
+    /*
     std::vector<std::string> fnames = {
         "nikon_dark_1.NEF",
         "nikon_dark_2.NEF",
@@ -59,15 +59,23 @@ void Pipeline::executePipeline() {
     };
     for(auto& f: fnames) {
         images->newImage(f, f);
-    }*/
+    }
+    */
     
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
     /* DEMO
+    images->deleteImage("nikon_white_2.NEF");
+
     for(auto& f: fnames) {
-        images->outputImageAsTIFF(f);
-    }*/
-    
+        try {        
+            images->outputImageAsTIFF(f);
+        }
+        catch (const btrgb::ArtObj_ImageDoesNotExist e) {
+            callback("Image does not exist: " + f);
+        }
+    }
+    */
     
     delete images;
 
