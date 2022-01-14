@@ -5,6 +5,11 @@
 #include "image_processing/header/RawImageReader.h"
 
 
+RawImageReader::RawImageReader() {
+    this->fileReader = new LibRawFileReader();
+}
+
+
 RawImageReader::RawImageReader(std::string strategy) {
     if (strategy == "LibRaw") {
         this->fileReader = new LibRawFileReader();

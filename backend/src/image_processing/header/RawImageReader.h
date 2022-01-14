@@ -7,6 +7,7 @@
 class RawImageReader: public ImgProcessingComponent {
 
     public:
+        RawImageReader();
         RawImageReader(std::string strategy);
         ~RawImageReader();
         void execute(CallBackFunction func, btrgb::ArtObject* images) override;
