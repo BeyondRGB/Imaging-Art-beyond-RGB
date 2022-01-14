@@ -26,7 +26,7 @@ void RawImageReader::InternalRawProcessor::custom_process() {
         imgdata.progress_flags |= LIBRAW_PROGRESS_CONVERT_RGB;
         #undef LR_HISTOGRAM
     }
-    catch(LibRaw_exceptions e) {
+    catch(const LibRaw_exceptions e) {
         throw;
     }
 
@@ -62,6 +62,7 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
         /* Open the file. */
         ec = this->rawReader.open_file(im->filename().c_str());
         if(ec) {
+            images->deleteImage(key);
             this->rawReader.recycle();
             func("RawImageReader[rawReader.open_file]: " + std::to_string(ec));
             continue;

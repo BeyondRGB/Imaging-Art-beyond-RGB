@@ -3,6 +3,44 @@
 
 #include <string>
 
+/* How to iterate over the bitmap:
+ * 
+ * ch = 0: red channel
+ * ch = 1: green channel
+ * ch = 2: blue channel
+ *
+ * 
+ * Iterate over every channel value for each pixel:
+ * 
+ *    int ch, x, y, i, ix, iy;
+ *    for( y = 0; y < height; y++) {
+ *        iy = y * width * channels;
+ *        for( x = 0; x < width; x++) {
+ *            ix = x * channels;
+ *            for( ch = 0; ch < channels; ch++) {
+ *                i = iy + ix + ch;
+ *                // i is the index for the bitmap
+ *            }
+ *        }
+ *    }
+ * 
+ * 
+ * Iterate over exery pixel in each channel:
+ * 
+ *    int ch, x, y, i, ix, iy;
+ *    for( ch = 0; ch < channels; ch++) {
+ *        for( y = 0; y < height; y++) {
+ *            iy = y * width * channels;
+ *            for( x = 0; x < width; x++) {
+ *                ix = x * channels;
+ *                i = iy + ix + ch;
+ *                // i is the index for the bitmap
+ *            }
+ *        }
+ *    }
+ * 
+ */
+
 namespace btrgb {
 
     typedef unsigned short pixel;
