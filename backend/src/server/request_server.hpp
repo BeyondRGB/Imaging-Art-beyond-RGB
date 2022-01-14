@@ -16,7 +16,7 @@
 //
 //#include "image_processing/pipeline.h"
 #include "comunication_obj.hpp"
-//#include "process_manager.hpp"
+#include "process_manager.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
@@ -25,7 +25,7 @@ class RequestServer {
 	
 private:
 	server server_m;
-	//ProcessManager process_manager_m;
+	ProcessManager process_manager_m;
 	int port_m = 9002; // should this be defined by a config file?
 	void msg_handler(server* s, websocketpp::connection_hdl hdl, message_ptr msg);
 
