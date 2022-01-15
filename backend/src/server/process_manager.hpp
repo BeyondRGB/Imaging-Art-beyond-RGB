@@ -22,11 +22,11 @@ class ProcessManager {
 
 public:
 	ProcessManager() {};
-	void process_request(std::string request, CommunicationObj coms_obj);
+	void process_request(std::string request, std::shared_ptr<CommunicationObj> coms_obj);
 
 private:
-	std::shared_ptr<BackendProcess> identify_process(std::string key, CommunicationObj coms_obj);
-	void start_process(std::shared_ptr <BackendProcess> process);
+	std::shared_ptr<BackendProcess> identify_process(std::string key);
+	void start_process(std::shared_ptr <BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj);
 
 
 
