@@ -41,11 +41,10 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
 
 };
 
-void Pipeline::executePipeline() {
+void Pipeline::run() {
     callback("I got your msg");
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
-    
-    
+
     btrgb::ArtObject* images = new  btrgb::ArtObject();
     /* Demo
     images->newImage("test", "nikon_targets_2.NEF");
@@ -57,10 +56,4 @@ void Pipeline::executePipeline() {
     images->outputImageAsTIFF("test");
     */
     delete images;
-
-};
-
-void Pipeline::run() {
-    std::cout << "Pipeline run" << std::endl;
-    executePipeline();
 }
