@@ -1,6 +1,8 @@
 #ifndef BEYOND_RGB_LIBRAWFILEREADER_H
 #define BEYOND_RGB_LIBRAWFILEREADER_H
 
+#include <math.h>
+#include <memory>
 #include <libraw.h>
 
 #include "image_processing/header/RawFileReader.h"

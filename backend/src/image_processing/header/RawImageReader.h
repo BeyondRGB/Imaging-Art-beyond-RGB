@@ -1,10 +1,6 @@
 #ifndef BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 #define BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 
-#include <math.h>
-#include <memory>
-#include <libraw.h>
-
 #include "ImgProcessingComponent.h"
 #include "image_processing/header/RawFileReader.h"
 
