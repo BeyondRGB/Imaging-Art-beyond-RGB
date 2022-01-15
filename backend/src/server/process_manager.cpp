@@ -12,11 +12,14 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 		"RequestType":"processImg",
 		"RequestData":{}})";
 	//TODO pars the request once we are actualy sending json
-	jsoncons::json j = json::parse(sample_request);
+	json j = json::parse(sample_request);
 	std::string request_key = j.get(
 		key_map[ProcessManager::RequestKey::REQUEST_TYPE]).as<std::string>();
-
+	
+	// Create process
 	std::shared_ptr<BackendProcess> process = identify_process(request_key);
+	
+	//Start processing thread
 	std::thread p_thread(&ProcessManager::start_process, this, process, coms_obj);
 	p_thread.detach();
 
@@ -37,8 +40,8 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 void ProcessManager::start_process(std::shared_ptr<BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj) {
 	if (nullptr == process) {
 		std::cout << "Failed to start process" << std::endl;
+		coms_obj->send_msg("Unknown RequestType");
 	}
-	std::cout << "Starting Process:" << process << std::endl;
 	process->set_coms_obj(coms_obj);
 	process->run();
 	std::cout << process->get_process_name() << " complete." << std::endl;

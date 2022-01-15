@@ -17,6 +17,11 @@
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
+/**
+* Class used for sending mesages to the front end.
+* An instance of the class gets created when a new msg is recieved from the forntedn.
+* It can then be passed on to a process so that the process can send mesages as needed
+*/
 class CommunicationObj {
 private:
 	server* server_m = NULL;
@@ -26,7 +31,11 @@ private:
 public:
 	CommunicationObj() {};
 	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
+	/**
+	* Copy Constructor	
+	*/
 	CommunicationObj(const CommunicationObj& other);
+	
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
