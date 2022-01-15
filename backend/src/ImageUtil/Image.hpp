@@ -11,7 +11,11 @@
  *
  * 
  * Iterate over every channel value for each pixel:
- * 
+ *    int height = im->height();
+ *    int width = im->width();
+ *    int channels = im->channels();
+ *    btrgb::pixel* bitmap = im->bitmap();
+ *
  *    int ch, x, y, i, ix, iy;
  *    for( y = 0; y < height; y++) {
  *        iy = y * width * channels;
@@ -20,6 +24,7 @@
  *            for( ch = 0; ch < channels; ch++) {
  *                i = iy + ix + ch;
  *                // i is the index for the bitmap
+ *                // bitmap[i]
  *            }
  *        }
  *    }
