@@ -18,7 +18,7 @@ void Pipeline::callback(std::string msg) {
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
     std::vector<std::shared_ptr<ImgProcessingComponent>> pre_process_components;
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader("LibRaw")));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScalor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new DarkCurrentCorrector()));
@@ -47,14 +47,36 @@ void Pipeline::executePipeline() {
     
     
     btrgb::ArtObject* images = new  btrgb::ArtObject();
-    /* Demo
-    images->newImage("test", "nikon_targets_2.NEF");
+    
+    /* ====[ Demo ]====
+    std::vector<std::string> fnames = {
+        "nikon_dark_1.NEF",
+        "nikon_dark_2.NEF",
+        "nikon_white_1.NEF",
+        "nikon_white_2.NEF",
+        "nikon_targets_1.NEF",
+        "nikon_targets_2.NEF"
+    };
+    for(auto& f: fnames) {
+        images->newImage(f, f);
+    }
     */
-
+    
+    
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
-    /* Demo
-    images->outputImageAsTIFF("test");
+    
+    /* ====[ Demo ]====
+    images->deleteImage("nikon_white_2.NEF");
+
+    for(auto& f: fnames) {
+        try {        
+            images->outputImageAsTIFF(f);
+        }
+        catch (const btrgb::ArtObj_ImageDoesNotExist e) {
+            callback("Image does not exist: " + f);
+        }
+    }
     */
     
     delete images;
