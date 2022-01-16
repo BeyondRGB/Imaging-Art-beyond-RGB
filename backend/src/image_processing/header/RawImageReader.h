@@ -2,7 +2,7 @@
 #define BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 
 #include "ImgProcessingComponent.h"
-#include "image_processing/header/RawFileReader.h"
+#include "image_processing/header/RawReaderStrategy.h"
 
 class RawImageReader: public ImgProcessingComponent {
 
@@ -13,7 +13,7 @@ class RawImageReader: public ImgProcessingComponent {
         void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 
     private:
-        RawFileReader* fileReader;
+        RawReaderStrategy* fileReader;
 
 };
 

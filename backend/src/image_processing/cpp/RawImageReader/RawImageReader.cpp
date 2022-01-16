@@ -1,21 +1,21 @@
 #include <string>
 
 #include "ImageUtil/Image.hpp"
-#include "image_processing/header/LibRawFileReader.h"
+#include "image_processing/header/LibRawReader.h"
 #include "image_processing/header/RawImageReader.h"
 
 
 RawImageReader::RawImageReader() {
-    this->fileReader = new LibRawFileReader();
+    this->fileReader = new LibRawReader();
 }
 
 
 RawImageReader::RawImageReader(std::string strategy) {
     if (strategy == "LibRaw") {
-        this->fileReader = new LibRawFileReader();
+        this->fileReader = new LibRawReader();
     }
     else { /* default to LibRaw */
-        this->fileReader = new LibRawFileReader();
+        this->fileReader = new LibRawReader();
     }
 }
 
@@ -35,7 +35,7 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
             func("RawImageReader: Loading " + im->filename() + "...");
             this->fileReader->read(im);
         }
-        catch(const RawFileReader_FailedToOpenFile) {
+        catch(const RawReaderStrategy_FailedToOpenFile) {
             func("RawImageReader: Failed to open raw image.");
             images->deleteImage(key);
         }

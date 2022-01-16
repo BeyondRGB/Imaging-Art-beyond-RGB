@@ -1,18 +1,18 @@
-#ifndef BEYOND_RGB_LIBRAWFILEREADER_H
-#define BEYOND_RGB_LIBRAWFILEREADER_H
+#ifndef BEYOND_RGB_LIBRAWREADER_H
+#define BEYOND_RGB_LIBRAWREADER_H
 
 #include <math.h>
 #include <memory>
 #include <libraw.h>
 
-#include "image_processing/header/RawFileReader.h"
+#include "image_processing/header/RawReaderStrategy.h"
 #include "ImageUtil/Image.hpp"
 
-class LibRawFileReader : public RawFileReader {
+class LibRawReader : public RawReaderStrategy {
 
     public:
-        LibRawFileReader();
-        ~LibRawFileReader();
+        LibRawReader();
+        ~LibRawReader();
         void read(btrgb::image* im);
 
     private:

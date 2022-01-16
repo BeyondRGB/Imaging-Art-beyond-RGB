@@ -1,25 +1,20 @@
-#include "image_processing/header/LibRawFileReader.h"
+#include "image_processing/header/LibRawReader.h"
 
 
-LibRawFileReader::LibRawFileReader() {};
-LibRawFileReader::~LibRawFileReader() {};
+LibRawReader::LibRawReader() {};
+LibRawReader::~LibRawReader() {};
 
 
-void LibRawFileReader::configLibRawParams() {
+void LibRawReader::configLibRawParams() {
 	this->rawReader.imgdata.params.output_bps = 16;
 	this->rawReader.imgdata.params.no_auto_bright = 1;
-	/*this->rawReader.imgdata.params.no_auto_scale = 1;*/
-	/*this->rawReader.imgdata.params.use_auto_wb = 0;*/
-	/*this->rawReader.imgdata.params.use_camera_wb = 0;*/
 	this->rawReader.imgdata.params.use_camera_matrix = 0;
-	/*this->rawReader.imgdata.params.fbdd_noiserd = 0;*/
-	/*this->rawReader.imgdata.params.use_rawspeed = 0;*/
     this->rawReader.imgdata.params.user_qual = 0;
     this->rawReader.imgdata.params.output_color = 0;
 }
 
 
-void LibRawFileReader::read(btrgb::image* im) {
+void LibRawReader::read(btrgb::image* im) {
     configLibRawParams();
 
     int width, height, channels, bits_per_pixel, ec;
@@ -28,14 +23,14 @@ void LibRawFileReader::read(btrgb::image* im) {
     ec = this->rawReader.open_file(im->filename().c_str());
     if(ec) {
         this->rawReader.recycle();
-        throw RawFileReader_FailedToOpenFile();
+        throw RawReaderStrategy_FailedToOpenFile();
     }
 
     /* Unpack raw data into structures for processing. */
     ec = this->rawReader.unpack();
     if(ec) {
         this->rawReader.recycle();
-        throw RawFileReader_FailedToOpenFile();
+        throw RawReaderStrategy_FailedToOpenFile();
     }
 
     /* Run custom LibRaw processing routine. */
@@ -44,7 +39,7 @@ void LibRawFileReader::read(btrgb::image* im) {
     }
     catch(const LibRaw_exceptions e) {
         this->rawReader.recycle();
-        throw RawFileReader_FailedToOpenFile();
+        throw RawReaderStrategy_FailedToOpenFile();
     }
 
     /* Allocate memory for the processed image.
@@ -60,7 +55,7 @@ void LibRawFileReader::read(btrgb::image* im) {
         );
     if(ec) {
         this->rawReader.recycle();
-        throw RawFileReader_FailedToOpenFile();
+        throw RawReaderStrategy_FailedToOpenFile();
     }
 
     /* Reset the LibRAW object. */
@@ -69,7 +64,7 @@ void LibRawFileReader::read(btrgb::image* im) {
 }
 
 
-void LibRawFileReader::InternalRawProcessor::custom_process() {
+void LibRawReader::InternalRawProcessor::custom_process() {
     try {
         /* Extract RAW data into image struct. */
         raw2image();
