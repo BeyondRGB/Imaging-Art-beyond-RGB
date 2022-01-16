@@ -13,7 +13,7 @@ int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
 
     /* Histogram: group pixels by the number of 
      * bits needed to represent their values. */
-    int histogram[9];
+    int histogram[9] = {0};
 
     /* This might be illegal... only looking for pixel counts
      * between 8 and 16 bits inclusive. Offset array pointer
@@ -62,7 +62,7 @@ int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
                  *   pixel is 13 + 1 which is 14 bits. 
                  */
                 for( b = 16; b >= 8; b--) {
-                    if(bitmap[i] >> (16 - 1)) {
+                    if(bitmap[i] >> (b - 1)) {
                         bit_freq[b]++;
                         break;
                     }
