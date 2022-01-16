@@ -44,6 +44,20 @@
  *        }
  *    }
  * 
+ * Format of bitmaps:
+ * 
+ * Three channels:
+ * |               Row 1               |                  Row 2                    | number of rows = height
+ * |    Col 1  |   Col 2   |  Col 3    |    Col 1    |    Col 2     |    Col 3     | number of columns = width
+ * | R | G | B | R | G | B | R | G | B | R | G  | B  | R  | G  | B  | R  | G  | B  | channel
+ * | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
+ *
+ * Six channels:
+ * |                                          Row 1                                          | number of rows = height
+ * |            Col 1            |            Col 2            |            Col 3            | number of columns = width
+ * | Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| channel
+ * |  0 | 1  |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
+ * 
  */
 
 namespace btrgb {
