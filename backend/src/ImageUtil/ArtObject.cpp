@@ -14,9 +14,15 @@ namespace btrgb {
         /* Delete tiff writer. */
         delete this->tiffWriter;
 
-        /* Delete every image in the map. */
-        for( const auto& [name, img] : this->images )
-            delete img;
+        /* Delete every image in the map.
+         * This should be done automatically by the unordered_map destructor:
+         *
+         * https://www.cplusplus.com/reference/unordered_map/unordered_map/~unordered_map/
+         * ~unordered_map();
+         * Destroy unordered map
+         * Destructs the container object. This calls each of the contained element's destructors, 
+        *  and dealocates all the storage capacity allocated by the unordered_map container.
+        */
     }
 
 
@@ -59,6 +65,13 @@ namespace btrgb {
         throw ArtObj_ImageDoesNotExist();
     }
 
+
+    void ArtObject::deleteImage(std::string name) {
+        if( ! this->images.contains(name) )
+            throw ArtObj_ImageDoesNotExist();
+
+        this->images.erase(name);
+    }
 
     /* 
     * Returns a boolean to indicate if an image is stored in memory.
