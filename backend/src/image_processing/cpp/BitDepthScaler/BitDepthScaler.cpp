@@ -48,12 +48,18 @@ BitDepthScaler::~BitDepthScaler() {
 void BitDepthScaler::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int bit_depth = 0;
 
+    btrgb::image* white1;
+    try {
+        white1 = images->getImage("white1");
+    } catch( const btrgb::ArtObj_ImageDoesNotExist&  e ) {
+        func("Error: Bit depth scaling called out of order. Missing \"white1\" image assignment.");
+        return;
+    }
+    PRINT_MSG_1(func, white1->filename());
+    bit_depth = this->strategy->get_bit_depth(white1);
+    PRINT_MSG_2(func, white1->filename(), bit_depth);
+
     for(const auto& [key, im] : *images) {
-        if( ! bit_depth ) {
-            PRINT_MSG_1(func, im->filename());
-            bit_depth = this->strategy->get_bit_depth(im);
-            PRINT_MSG_2(func, im->filename(), bit_depth);
-        }
 
         PRINT_MSG_3(func, im->filename(), bit_depth);
         this->strategy->scale(im, bit_depth);

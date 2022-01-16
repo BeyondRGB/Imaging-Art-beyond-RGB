@@ -47,14 +47,26 @@ void Pipeline::executePipeline() {
     
     
     btrgb::ArtObject* images = new  btrgb::ArtObject();
-    /* Demo
-    images->newImage("test", "nikon_targets_2.NEF");
+
+    /* =====[ DEMO ]=========
+    #include <map>
+    std::map<std::string, std::string> files = {
+        {"dark1", "nikon_dark_1.NEF"},
+        {"dark2", "nikon_dark_2.NEF"},
+        {"white1", "nikon_white_1.NEF"},
+        {"white2", "nikon_white_2.NEF"},
+        {"art1", "nikon_targets_1.NEF"},
+        {"art2", "nikon_targets_2.NEF"}
+    };
+    for(const auto& [type, file]: files)
+        images->newImage(type, file);
     */
 
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
-
-    /* Demo
-    images->outputImageAsTIFF("test");
+    
+    /* =====[ DEMO ]=========
+    for(const auto& [type, file]: files)
+        images->outputImageAsTIFF(type);
     */
     
     delete images;
