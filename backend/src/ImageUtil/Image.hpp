@@ -3,6 +3,63 @@
 
 #include <string>
 
+/* How to iterate over the bitmap:
+ * 
+ * ch = 0: red channel
+ * ch = 1: green channel
+ * ch = 2: blue channel
+ *
+ * 
+ * Iterate over every channel value for each pixel:
+ *    int height = im->height();
+ *    int width = im->width();
+ *    int channels = im->channels();
+ *    btrgb::pixel* bitmap = im->bitmap();
+ *
+ *    int ch, x, y, i, ix, iy;
+ *    for( y = 0; y < height; y++) {
+ *        iy = y * width * channels;
+ *        for( x = 0; x < width; x++) {
+ *            ix = x * channels;
+ *            for( ch = 0; ch < channels; ch++) {
+ *                i = iy + ix + ch;
+ *                // i is the index for the bitmap
+ *                // bitmap[i]
+ *            }
+ *        }
+ *    }
+ * 
+ * 
+ * Iterate over exery pixel in each channel:
+ * 
+ *    int ch, x, y, i, ix, iy;
+ *    for( ch = 0; ch < channels; ch++) {
+ *        for( y = 0; y < height; y++) {
+ *            iy = y * width * channels;
+ *            for( x = 0; x < width; x++) {
+ *                ix = x * channels;
+ *                i = iy + ix + ch;
+ *                // i is the index for the bitmap
+ *            }
+ *        }
+ *    }
+ * 
+ * Format of bitmaps:
+ * 
+ * Three channels:
+ * |               Row 1               |                  Row 2                    | number of rows = height
+ * |    Col 1  |   Col 2   |  Col 3    |    Col 1    |    Col 2     |    Col 3     | number of columns = width
+ * | R | G | B | R | G | B | R | G | B | R | G  | B  | R  | G  | B  | R  | G  | B  | channel
+ * | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
+ *
+ * Six channels:
+ * |                                          Row 1                                          | number of rows = height
+ * |            Col 1            |            Col 2            |            Col 3            | number of columns = width
+ * | Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| channel
+ * |  0 | 1  |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
+ * 
+ */
+
 namespace btrgb {
 
     typedef unsigned short pixel;

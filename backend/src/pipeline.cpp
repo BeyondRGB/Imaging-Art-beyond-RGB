@@ -18,7 +18,7 @@ void Pipeline::callback(std::string msg) {
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
     std::vector<std::shared_ptr<ImgProcessingComponent>> pre_process_components;
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader("LibRaw")));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new DarkCurrentCorrector()));
@@ -48,6 +48,7 @@ void Pipeline::executePipeline() {
     
     btrgb::ArtObject* images = new  btrgb::ArtObject();
 
+
     /* =====[ DEMO ]=========
     #include <map>
     std::map<std::string, std::string> files = {
@@ -61,8 +62,10 @@ void Pipeline::executePipeline() {
     for(const auto& [type, file]: files)
         images->newImage(type, file);
     */
-
+    
+    
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
+
     
     /* =====[ DEMO ]=========
     for(const auto& [type, file]: files)
