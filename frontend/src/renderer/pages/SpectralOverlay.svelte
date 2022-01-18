@@ -29,9 +29,9 @@
     @apply flex w-full justify-center;
   }
   #image {
-    @apply w-[68vw] self-center mx-2 shadow-md;
+    @apply w-full h-full self-center mx-2 shadow-md;
   }
   #side {
-    @apply w-[25%] self-center shadow-md mr-2;
+    @apply w-full self-center shadow-md mr-2;
   }
 </style>

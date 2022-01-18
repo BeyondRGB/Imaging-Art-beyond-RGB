@@ -14,26 +14,6 @@
   let viewer;
   let useCanvas = true;
 
-  // viewer = OpenSeadragon({
-  //   id: "seadragon-viewer",
-  //   prefixUrl: "/openseadragon/images/",
-  //   immediateRender: false,
-  //   showNavigator,
-  //   minZoomLevel: 1,
-  //   useCanvas,
-  //   showZoomControl: false,
-  //   showHomeControl: false,
-  //   showFullPageControl: true,
-  //   preserveImageSizeOnResize: true,
-  //   zoomPerScroll: 1.5,
-  //   visibilityRatio: 0.99,
-  //   tileSources: {
-  //     type: "image",
-  //     url: "placeholder.jpg",
-  //     buildPyramid: false,
-  //   },
-  // });
-
   $: if (viewer) {
     if (isSync) {
       viewer.setMode("sync");
@@ -59,7 +39,7 @@
 
   function makeViewer() {
     viewer = new CurtainSyncViewer({
-      container: document.querySelector("#seadragon-viewer"),
+      container: document.querySelector("#spec-seadragon-viewer"),
 
       images: [
         {
@@ -94,10 +74,10 @@
         useCanvas,
         showZoomControl: false,
         showHomeControl: false,
-        showFullPageControl: true,
+        showFullPageControl: false,
         // preserveImageSizeOnResize: true,
         zoomPerScroll: 1.5,
-        visibilityRatio: 0.99,
+        visibilityRatio: 1,
       },
     });
   }
@@ -106,6 +86,7 @@
     if (viewer) {
       viewer.destroy();
       viewer = null;
+      console.log("Spectral Canvas Destoryed");
     }
   }
 
@@ -122,42 +103,20 @@
 
 <main class="dark:ring-gray-600">
   <button on:click={() => enterFullScreen()}>Wide</button>
-  <div id="seadragon-viewer" />
+  <div id="spec-seadragon-viewer" />
 </main>
 
 <style lang="postcss">
   main {
-    @apply w-full relative ring-1 ring-gray-800 bg-gray-900/50;
+    @apply w-full h-[90%] relative ring-1 aspect-[3/2] ring-gray-800 bg-gray-900/50;
   }
 
-  #seadragon-viewer {
-    @apply h-[90vh];
+  #spec-seadragon-viewer {
+    cursor: crosshair;
+    @apply h-full w-full;
   }
 
   button {
     @apply absolute right-0 z-10;
-  }
-  #draggable {
-    @apply bg-transparent w-6 absolute z-[1];
-  }
-
-  #stack {
-    @apply bg-black flex;
-  }
-  /* img {
-    flex: 0;
-    @apply max-h-[85vh] w-auto;
-  } */
-  #image-div {
-    position: absolute;
-    border: 1px solid #b0b0b0;
-    overflow: hidden;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-clip: content-box;
-    @apply h-full;
-  }
-  #seadragon-viewer {
-    cursor: crosshair;
   }
 </style>

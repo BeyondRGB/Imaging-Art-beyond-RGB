@@ -2,11 +2,14 @@ import { writable } from 'svelte/store';
 
 // Stores
 export const currentPage = writable(null);
-export const appSettings = writable({ theme: false, sideNav: false });
+export const appSettings = writable({ theme: false, sideNav: true });
 export const modal = writable(null);
+// Page Stores
+export const processState = writable({ currentTab: 0 });
 // Webstocket Stores
 export const messageStore = writable('');
 export const connectionState = writable('Not Connected');
+
 
 // Websocket
 const socket = new WebSocket('ws://localhost:9002');

@@ -8,8 +8,8 @@
 	import Home from "@pages/Home.svelte";
 	import ManagedRgb from "@pages/ManagedRgb.svelte";
 	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
-	import Preprocess from "@pages/Preprocess.svelte";
 	import Process from "@pages/Process.svelte";
+	import ProcessOld from "@root/pages/ProcessOld.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
@@ -37,8 +37,8 @@
 			default: true,
 		},
 		Preprocessing: {
-			text: "Preprocessing",
-			component: Preprocess,
+			text: "Process",
+			component: Process,
 			icon: gears,
 			isShown: true,
 		},
@@ -82,8 +82,8 @@
 		},
 
 		Process: {
-			text: "Process",
-			component: Process,
+			text: "ProcessOld",
+			component: ProcessOld,
 			icon: home,
 			isShown: false,
 		},
