@@ -1,6 +1,5 @@
 <script lang="ts">
-  import HeapBox from "@components/Preprocess/HeapBox.svelte";
-  import SorterCol from "@components/Preprocess/SorterCol.svelte";
+  import HeapBox from "@components/Process/HeapBox.svelte";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   let items: any[] = [
@@ -83,11 +82,6 @@
     <HeapBox {items} />
   </div>
   <div id="cols">
-    <button
-      id="addBtn"
-      on:click={handleAddCol}
-      class="dark:hover:bg-green-400/50">+</button
-    >
     <section
       use:dndzone={{ items: columns, flipDurationMs, type: "col" }}
       on:consider={(e) => handleDndConsiderCol(e)}
@@ -132,6 +126,11 @@
         </div>
       {/each}
     </section>
+    <button
+      id="addBtn"
+      on:click={handleAddCol}
+      class="dark:hover:bg-green-400/50">+</button
+    >
   </div>
 </main>
 
@@ -140,10 +139,10 @@
     @apply flex flex-col justify-center items-center;
   }
   #cols {
-    @apply flex gap-2 relative pr-9;
+    @apply flex gap-2 relative items-center justify-center align-middle mt-12;
   }
   #heap {
-    @apply mb-2 shadow-md;
+    @apply relative;
   }
 
   section {
@@ -177,17 +176,18 @@
     @apply bg-red-400 text-black dark:bg-red-800 dark:text-white;
   }
 
-  button {
-    @apply py-0 bg-transparent right-0 top-0 transition-all text-gray-400 absolute shadow-none
+  #removeBtn {
+    @apply px-2 hover:text-red-400 hover:bg-red-400/25 text-base py-0 
+          bg-transparent right-0 top-0 transition-all text-gray-400 absolute shadow-none
           ring-0;
   }
 
-  #removeBtn {
-    @apply px-2 hover:text-red-400 hover:bg-red-400/25 text-base;
-  }
-
   #addBtn {
-    @apply hover:text-green-400 z-10 text-2xl px-2 hover:bg-green-200/50 h-full 
-              rounded-full duration-500 text-gray-500;
+    margin: 0 auto;
+    display: table-cell;
+    vertical-align: middle;
+    @apply hover:text-green-500 z-10 hover:bg-green-300/25 h-10 w-10
+              rounded-full duration-500 text-gray-300 relative ring-1 ring-green-400/50 bg-transparent
+              text-center text-3xl p-0 pb-1;
   }
 </style>

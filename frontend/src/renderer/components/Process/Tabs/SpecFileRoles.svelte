@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Sorter from "@components/Preprocess/Sorter.svelte";
+  import Sorter from "@components/Process/Sorter.svelte";
 </script>
 
 <main>

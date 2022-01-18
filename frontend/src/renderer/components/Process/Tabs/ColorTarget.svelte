@@ -2,22 +2,20 @@
   let rows = "";
   let cols = "";
 
-  import { currentPage } from "@util/stores";
-  import CanvasImage from "@components/CanvasImage.svelte";
+  import { currentPage, processState } from "@util/stores";
+  import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
   import SelectBtn from "@components/SelectBtn.svelte";
-
+  import Loader from "@root/components/Loader.svelte";
   import { draggable } from "svelte-drag";
 </script>
 
 <main>
   <!-- <img src="placeholder.jpg" alt="background image" /> -->
-  <div id="image">
-    <CanvasImage />
+  <div class="left">
+    <ColorTargetViewer />
   </div>
-  <div class="side">
+  <div class="right">
     <div class="settings">
-      Settings
-      <SelectBtn />
       <div class="box">
         <div class="color-target dark:bg-gray-600">
           Color Target
@@ -41,19 +39,20 @@
       </div>
       <button class="add">+</button>
     </div>
-    <button class="next" on:click={() => currentPage.set("Process")}
-      >Confirm -></button
-    >
   </div>
 </main>
 
 <style lang="postcss">
   main {
-    @apply flex w-full h-full;
+    @apply flex w-full h-full justify-between bg-gray-700;
   }
 
-  #image {
-    @apply w-[70%] mx-2 h-full;
+  .left {
+    @apply w-full h-full flex items-center m-1;
+  }
+
+  .right {
+    @apply w-full h-full flex;
   }
 
   .settings {

@@ -3,7 +3,7 @@
   let outputDir: string;
   export let nextTab: any;
 
-  import Sorter from "@components/Preprocess/Sorter.svelte";
+  import Sorter from "@components/Process/Sorter.svelte";
   // import FileSelector from "@components/Preprocess/FileSelector.svelte";
 
   $: console.log(files);

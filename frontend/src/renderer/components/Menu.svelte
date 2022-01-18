@@ -64,11 +64,11 @@
 
 <style lang="postcss">
   main {
-    @apply w-full flex flex-col h-14 overflow-hidden;
+    @apply w-full flex flex-col h-16 overflow-hidden border-t-[0.0625rem] border-gray-700/25;
   }
 
   .sideMain {
-    @apply bottom-auto w-24 h-full;
+    @apply bottom-auto w-24 h-full border-t-0 border-r-[0.0625rem];
   }
 
   ul {
