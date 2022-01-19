@@ -24,6 +24,7 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 typedef std::function<void(std::string)> CallBackFunction;
 class ImgProcessingComponent {
 public:
+    virtual ~ImgProcessingComponent() {}
     /**
      * Pure virtual fucntion
      * Must be defined by inheritors of this class to preform the execution of
