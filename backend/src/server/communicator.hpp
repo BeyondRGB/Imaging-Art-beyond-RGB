@@ -29,7 +29,7 @@ public:
 	* This will print error to
 	*	print error to consol
 	*	report error to fontend
-	*	TODO log error
+	*	TODO log error?
 	* @param error: the error msg to report
 	*/
 	void report_error(std::string reporter, std::string error);
