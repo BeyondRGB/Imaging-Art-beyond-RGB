@@ -1,7 +1,7 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
-#include "image_processing/header/BitDepthScalor.h"
+#include "image_processing/header/BitDepthScaler.h"
 #include "image_processing/header/ChannelSelector.h"
 #include "image_processing/header/ColorManagedCalibrator.h"
 #include "image_processing/header/DarkCurrentCorrector.h"
