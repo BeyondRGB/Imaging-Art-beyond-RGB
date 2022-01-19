@@ -16,6 +16,8 @@ public:
 		STRING
 	};
 
+	Json();
+	Json(const Json &other);
 	Json(std::string json_str);
 
 	/**

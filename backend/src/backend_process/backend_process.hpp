@@ -4,6 +4,7 @@
 
 #include "server/comunication_obj.hpp"
 #include "server/communicator.hpp"
+#include "utils/json.hpp"
 
 /*
 Abstract class representing all BackendProcess's
@@ -35,8 +36,20 @@ public:
 	@param name: the string to set the name to
 	*/
 	void set_process_name(std::string name) { m_name = name; }
+
+	/**
+	* Set the process data.
+	* Process is any spicific data provided by the frontend with the request
+	* Porcess data can include things such as image file nams 
+	* @param data: a json object containing any and all process data provided with request
+	*	data should be the json obj found in the RequestData feild in original request string
+	*/
+	void set_process_data(Json data) { process_data_m = std::shared_ptr<Json>(new Json(data)); }
 private:
 	std::string m_name = "Undefined Process";
+
+protected:
+	std::shared_ptr<Json> process_data_m;
 };
 
 #endif // !BACKEND_PROCESS_H

@@ -69,9 +69,32 @@ private:
 	*/
 	void start_process(std::shared_ptr <BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj, Json request_data);
 
-	/*bool validate_request(json j);
-	std::string extract_request_str(json j);
-	json extract_request_data(json j);*/
+	std::string sample_request = R"({
+		"RequestType":"processImg",
+		"RequestData":{
+			"Images":[
+				{
+					"Art":"art1.png",
+					"White":"white1.png",
+					"Dark":"dark1.png"
+				},
+				{
+					"Art":"art2.png",
+					"White":"white2.png",
+					"Dark":"dark2.png"
+				}
+			],
+			"TargetLocation":{
+				"TopLeft":{"x": 0, "y":0},
+				"TopRight": {"x":50, "y":0},
+				"BottomRight": {"x":50, "y":50},
+				"BottomLeft": {"x":0, "y":50},
+				"NumRows": 10,
+				"NumCols":10
+			}	
+			
+		}
+	})";
 
 
 };

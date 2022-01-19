@@ -42,7 +42,8 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
 };
 
 void Pipeline::run() {
-    callback("I got your msg");
+    this->send_msg("I got your msg");
+    this->send_msg(this->process_data_m->to_string());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     btrgb::ArtObject* images = new  btrgb::ArtObject();

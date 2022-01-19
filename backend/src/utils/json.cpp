@@ -14,6 +14,10 @@ Json::Json(jsoncons::json json_obj) {
 	this->json_obj = json_obj;
 }
 
+Json::Json(const Json& other) {
+	this->json_obj = other.json_obj;
+}
+
 bool Json::has(std::string key, Type type) {
 	bool contains = this->json_obj.contains(key);
 	bool is_type = false;
