@@ -1,5 +1,5 @@
 #include "ImageUtil/ArtObject.hpp"
-#include "pipeline.h"
+#include "pipeline.hpp"
 
 int Pipeline::pipeline_count = 0;
 
@@ -56,4 +56,6 @@ void Pipeline::run() {
     images->outputImageAsTIFF("test");
     */
     delete images;
+
 }
+   
