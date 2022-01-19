@@ -33,18 +33,6 @@ class ProcessManager : public Communicator {
 		"RequestData"
 	};
 
-	/*enum Error {
-		MISSING_REQUEST_TYPE,
-		MISSING_REQUEST_DATA,
-		UKNOWN_REQUEST_TYPE
-	};
-	const std::string error_map[3] = {
-		"RequestType missing from request",
-		""
-		"Unknow RequestType"
-	};*/
-
-
 public:
 	ProcessManager() {};
 	/*
