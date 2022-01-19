@@ -58,11 +58,11 @@ void RequestServer::msg_handler(server* s, websocketpp::connection_hdl hdl, mess
     }
     std::shared_ptr<CommunicationObj> coms_obj = std::shared_ptr<CommunicationObj>(new CommunicationObj( s, hdl, msg));
     this->process_manager_m.process_request(msg->get_payload(), coms_obj);
-
 }
 
 
 void RequestServer::shutdown() {
+    std::cout << "Shutting down server." << std::endl;
 	//TODO look up to see if anything else needs to be done here
     server_m.stop_listening();
     server_m.stop();

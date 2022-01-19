@@ -5,8 +5,10 @@
 
 #include <iostream>
 #include "comunication_obj.hpp"
+#include "communicator.hpp"
 #include "backend_process/backend_process.hpp"
 #include "backend_process/pipeline.hpp"
+#include "utils/json.hpp"
 
 /*
 Class that magages parsing requests, and spinning up processing threads
@@ -17,7 +19,7 @@ It is converted to a Json object (expected format as follows)
 The RequestType is used to identify what process to start.
 Once the process is identified and created a new thread is started to run the process
 */
-class ProcessManager {
+class ProcessManager : public Communicator {
 
 	enum RequestKey {
 		REQUEST_TYPE,
@@ -26,6 +28,17 @@ class ProcessManager {
 	const std::string key_map[2] = {
 		"RequestType",
 		"RequestData"
+	};
+
+	enum Error {
+		MISSING_REQUEST_TYPE,
+		MISSING_REQUEST_DATA,
+		UKNOWN_REQUEST_TYPE
+	};
+	const std::string error_map[3] = {
+		"RequestType missing from request",
+		""
+		"Unknow RequestType"
 	};
 
 
@@ -39,6 +52,7 @@ public:
 	void process_request(std::string request, std::shared_ptr<CommunicationObj> coms_obj);
 
 private:
+	std::string name_m = "ProcessManager";
 	/*
 	Identifys and creates the requested process.
 	@param key: the key identifying what process to create, 
@@ -53,8 +67,11 @@ private:
 	@param process: the BackendProcess to run
 	@param coms_obj: the CommunicationObj to be used for the process to communicate witht the frontend
 	*/
-	void start_process(std::shared_ptr <BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj);
+	void start_process(std::shared_ptr <BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj, Json request_data);
 
+	/*bool validate_request(json j);
+	std::string extract_request_str(json j);
+	json extract_request_data(json j);*/
 
 
 };
