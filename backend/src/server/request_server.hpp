@@ -13,8 +13,8 @@
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
-/*
-Class that establishes the server that will listen for requests from the front end
+/**
+* Class that establishes the server that will listen for requests from the front end
 */
 class RequestServer {
 	
@@ -22,25 +22,29 @@ private:
 	server server_m;
 	ProcessManager process_manager_m;
 	int port_m = 9002; // should this be defined by a config file?
-	/*
-	Handler that gets called any time a new msg comes in on port_m
+	/**
+	* Handler that gets called any time a new msg comes in on port_m
 	*/
 	void msg_handler(server* s, websocketpp::connection_hdl hdl, message_ptr msg);
 
 
 public:
 	RequestServer() {};
-	/*
-	Initialize the server
-		Establish log settings
-		Sets Handelers
-		Sets port to listen on
+	/**
+	* Initialize the server
+	*	Establish log settings
+	*	Sets Handelers
+	*	Sets port to listen on
 	*/
 	void init_server();
-	/*
-	Starts server run loop
+	/**
+	* Starts server run loop
 	*/
 	void start_server();
+
+	/**
+	* Shutdown server
+	*/
 	void shutdown();
 
 
