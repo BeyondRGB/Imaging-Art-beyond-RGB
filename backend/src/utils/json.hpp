@@ -4,6 +4,9 @@
 
 /**
 * Class for parsing and creating Json
+* This class wraps uses jsoncons json parser and is a wrapper class
+* so that other classes in this project only depend on this class
+* and not an expernal library.
 */
 class Json {
 
@@ -208,9 +211,10 @@ private:
 
 };
 
-class JsonError : public std::exception {};
-
-class ParsingError : public JsonError {
+/**
+* Exception class for handeling errors when parsing Json
+*/
+class ParsingError : public std::exception {
 public:
 	ParsingError();
 	ParsingError(std::string error_msg) { error = "Error: " + error_msg; }
