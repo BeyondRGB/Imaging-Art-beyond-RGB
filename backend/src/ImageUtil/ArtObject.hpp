@@ -9,6 +9,17 @@
 #include "ImageUtil/ImageWriter/ImageWriter.hpp"
 #include "ImageUtil/ImageWriter/LibTiffWriter.hpp"
 
+/* How to iterate over all images in the ArtObject:
+ *
+ * key:     std::string
+ * im:      btrgb::image*
+ * images:  btrgb::ArtObject*
+ *
+ *      for(const auto& [key, im] : *images) {
+ *          //do stuff here
+ *      }
+ * 
+ */
 
 namespace btrgb {
 
@@ -26,6 +37,7 @@ namespace btrgb {
 
         void setImage(std::string name, image* im);
         image* getImage(std::string name);
+        void deleteImage(std::string name);
         bool imageExists(std::string name);
 
         /* To do, add parameter for photometric tiff tag: RGB, or grayscale. */
