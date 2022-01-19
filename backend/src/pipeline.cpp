@@ -20,7 +20,7 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     std::vector<std::shared_ptr<ImgProcessingComponent>> pre_process_components;
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader("LibRaw")));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScalor()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new DarkCurrentCorrector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFeildor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
@@ -47,36 +47,29 @@ void Pipeline::executePipeline() {
     
     
     btrgb::ArtObject* images = new  btrgb::ArtObject();
-    
-    /* ====[ Demo ]====
-    std::vector<std::string> fnames = {
-        "nikon_dark_1.NEF",
-        "nikon_dark_2.NEF",
-        "nikon_white_1.NEF",
-        "nikon_white_2.NEF",
-        "nikon_targets_1.NEF",
-        "nikon_targets_2.NEF"
+
+
+    /* =====[ DEMO ]=========
+    #include <map>
+    std::map<std::string, std::string> files = {
+        {"dark1", "nikon_dark_1.NEF"},
+        {"dark2", "nikon_dark_2.NEF"},
+        {"white1", "nikon_white_1.NEF"},
+        {"white2", "nikon_white_2.NEF"},
+        {"art1", "nikon_targets_1.NEF"},
+        {"art2", "nikon_targets_2.NEF"}
     };
-    for(auto& f: fnames) {
-        images->newImage(f, f);
-    }
+    for(const auto& [type, file]: files)
+        images->newImage(type, file);
     */
     
     
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
     
-    /* ====[ Demo ]====
-    images->deleteImage("nikon_white_2.NEF");
-
-    for(auto& f: fnames) {
-        try {        
-            images->outputImageAsTIFF(f);
-        }
-        catch (const btrgb::ArtObj_ImageDoesNotExist e) {
-            callback("Image does not exist: " + f);
-        }
-    }
+    /* =====[ DEMO ]=========
+    for(const auto& [type, file]: files)
+        images->outputImageAsTIFF(type);
     */
     
     delete images;
