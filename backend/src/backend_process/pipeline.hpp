@@ -25,6 +25,22 @@ Preprocessing and Calibration
 */
 class Pipeline: public BackendProcess{
 
+	enum ImageKey {
+		ART,
+		WHITE,
+		BLACK,
+		IMAGES
+	};
+	/**
+	* Maps enum values to a string
+	*/
+	const std::string key_map[4] = {
+		"Art",
+		"White",
+		"Dark",	
+		"Images"
+	};
+
 
 private:
 	CommunicationObj coms_m;
@@ -45,6 +61,9 @@ private:
 	it is constructed
 	*/
 	std::shared_ptr<ImgProcessingComponent> pipelineSetup();
+
+	bool init_art_obj(btrgb::ArtObject* art_obj);
+
 
 public:
 	Pipeline();

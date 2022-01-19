@@ -39,16 +39,6 @@ bool Json::get_bool(std::string key) {
 	return this->json_obj.get(key).as<bool>();
 }
 
-bool Json::bool_at(int index) {
-	validate_is_array();
-	validate_bounds(index);
-	jsoncons::json item = this->json_obj[index];
-	if (!this->get_type(item) == Type::BOOL) {
-		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
-	}
-	return item.as<bool>();
-}
-
 std::string Json::get_string(std::string key) {
 	validate_is_obj();
 	if (!this->has(key, Type::STRING)) {
@@ -57,32 +47,12 @@ std::string Json::get_string(std::string key) {
 	return this->json_obj.get(key).as<std::string>();
 }
 
-std::string Json::string_at(int index) {
-	validate_is_array();
-	validate_bounds(index);
-	jsoncons::json item = this->json_obj[index];
-	if (!this->get_type(item) == Type::STRING) {
-		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a string");
-	}
-	return item.as<std::string>();
-}
-
 double Json::get_number(std::string key) {
 	validate_is_obj();
 	if (!this->has(key, Type::NUMBER)) {
 		throw ParsingError("Number('" + key + "') not found");
 	}
 	return this->json_obj.get(key).as<double>();
-}
-
-double Json::number_at(int index) {
-	validate_is_array();
-	validate_bounds(index);
-	jsoncons::json item = this->json_obj[index];
-	if (!this->get_type(item) == Type::NUMBER) {
-		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
-	}
-	return item.as<double>();
 }
 
 Json Json::get_obj(std::string key) {
@@ -95,17 +65,6 @@ Json Json::get_obj(std::string key) {
 	return json;
 }
 
-Json Json::obj_at(int index) {
-	validate_is_array();
-	validate_bounds(index);
-	jsoncons::json item = this->json_obj[index];
-	if (!this->get_type(item) == Type::OBJECT) {
-		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
-	}
-	Json j(item);
-	return j;
-}
-
 Json Json::get_array(std::string key) {
 	validate_is_obj();
 	if (!this->has(key, Type::ARRAY)) {
@@ -113,6 +72,51 @@ Json Json::get_array(std::string key) {
 	}
 	jsoncons::json array = this->json_obj.get(key).as<jsoncons::json>();;
 	Json j(array);
+	return j;
+}
+
+bool Json::bool_at(int index) {
+	validate_is_array();
+	validate_bounds(index);
+	jsoncons::json item = this->json_obj[index];
+	bool is_bool = this->get_type(item) == Type::BOOL;
+		if (!is_bool) {
+			throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
+		}
+	return item.as<bool>();
+}
+
+std::string Json::string_at(int index) {
+	validate_is_array();
+	validate_bounds(index);
+	jsoncons::json item = this->json_obj[index];
+	bool is_string = this->get_type(item) == Type::STRING;
+	if (!is_string) {
+		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a string");
+	}
+	return item.as<std::string>();
+}
+
+double Json::number_at(int index) {
+	validate_is_array();
+	validate_bounds(index);
+	jsoncons::json item = this->json_obj[index];
+	bool is_number = this->get_type(item) == Type::NUMBER;
+	if (!is_number) {
+		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
+	}
+	return item.as<double>();
+}
+
+Json Json::obj_at(int index) {
+	validate_is_array();
+	validate_bounds(index);
+	jsoncons::json item = this->json_obj[index];
+	bool is_obj = this->get_type(item) == Type::OBJECT;
+	if (!is_obj) {
+		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
+	}
+	Json j(item);
 	return j;
 }
 

@@ -25,12 +25,15 @@ class ProcessManager : public Communicator {
 		REQUEST_TYPE,
 		REQUEST_DATA
 	};
+	/**
+	* Maps an enum value to a string
+	*/
 	const std::string key_map[2] = {
 		"RequestType",
 		"RequestData"
 	};
 
-	enum Error {
+	/*enum Error {
 		MISSING_REQUEST_TYPE,
 		MISSING_REQUEST_DATA,
 		UKNOWN_REQUEST_TYPE
@@ -39,7 +42,7 @@ class ProcessManager : public Communicator {
 		"RequestType missing from request",
 		""
 		"Unknow RequestType"
-	};
+	};*/
 
 
 public:

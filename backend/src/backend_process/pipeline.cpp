@@ -41,12 +41,41 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
 
 };
 
+bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
+    try {
+        // Extract Image Array from request data
+        Json image_array = this->process_data_m->get_array(key_map[ImageKey::IMAGES]);
+        for (int i = 0; i < image_array.get_size(); i++) {
+            // Extract each obj from array
+            Json obj = image_array.obj_at(i);
+            // Extract each image file name from current object
+            std::string art_file = obj.get_string(key_map[ImageKey::ART]);
+            std::string white_file = obj.get_string(key_map[ImageKey::WHITE]);
+            std::string dark_file = obj.get_string(key_map[ImageKey::BLACK]);
+            // Add each file to the ArtObject
+            art_obj->newImage(("art" + std::to_string(i + 1)), art_file);
+            art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
+            art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
+            return true;
+        }
+    }
+    catch (ParsingError e) {
+        std::string name = this->get_process_name();
+        this->report_error(name, e.what());
+        return false;
+    }
+}
+
 void Pipeline::run() {
     this->send_msg("I got your msg");
     this->send_msg(this->process_data_m->to_string());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
+    
+
     btrgb::ArtObject* images = new  btrgb::ArtObject();
+    this->init_art_obj(images);
+
     /* Demo
     images->newImage("test", "nikon_targets_2.NEF");
     */
