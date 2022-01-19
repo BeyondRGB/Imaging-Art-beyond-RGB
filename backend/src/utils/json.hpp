@@ -2,6 +2,9 @@
 #define JSON_H
 #include <jsoncons/json.hpp>
 
+/**
+* Class for parsing and creating Json
+*/
 class Json {
 
 
