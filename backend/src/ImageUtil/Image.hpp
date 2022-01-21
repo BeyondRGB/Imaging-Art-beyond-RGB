@@ -78,6 +78,8 @@ namespace btrgb {
             void initBitmap(int width, int height, int channels);
 
             std::string filename();
+            void setFilename(std::string filename);
+
             int width();
             int height();
             int channels();

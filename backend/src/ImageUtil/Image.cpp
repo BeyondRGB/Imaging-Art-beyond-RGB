@@ -31,6 +31,10 @@ namespace btrgb {
         return this->_filename;
     }
 
+    void image::setFilename(std::string filename) {
+        this->_filename = filename;
+    }
+
     int image::width() {
         checkInit();
         return this->_width;
