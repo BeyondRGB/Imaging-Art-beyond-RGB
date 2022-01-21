@@ -29,13 +29,11 @@ int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
     btrgb::pixel* bitmap = im->bitmap();
 
     /* For every pixel in the image... */
-    int ch, x, y, i, ix, iy;
+    uint32_t ch, x, y, i;
     for( y = 0; y < height; y++) {
-        iy = y * width * channels;
         for( x = 0; x < width; x++) {
-            ix = x * channels;
             for( ch = 0; ch < channels; ch++) {
-                i = iy + ix + ch;
+                i = im->getIndex(y, x, ch);
 
                 /* Determine the number of bits required
                  * to represent the given pixel. Ignore
