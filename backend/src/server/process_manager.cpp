@@ -8,8 +8,6 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 	this->set_coms_obj(coms_obj);
 	
 	std::cout << "Parsing Request" << std::endl;
-//TODO pars the real request once we are actualy sending json
-	request = this->sample_request;// Remove me latter
 
 	std::string RequestTypeKey = key_map[ProcessManager::RequestKey::REQUEST_TYPE];
 	std::string RequestDataKey = key_map[ProcessManager::RequestKey::REQUEST_DATA];
