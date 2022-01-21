@@ -29,13 +29,11 @@ void BitDepthScalerStrategy::scale(btrgb::image* im, int bit_depth) {
     int channels = im->channels();
     btrgb::pixel* bitmap = im->bitmap();
 
-    int ch, x, y, i, ix, iy;
+    uint32_t ch, x, y, i;
     for( y = 0; y < height; y++) {
-        iy = y * width * channels;
         for( x = 0; x < width; x++) {
-            ix = x * channels;
             for( ch = 0; ch < channels; ch++) {
-                i = iy + ix + ch;
+                i = im->getIndex(y, x, ch);
                 bitmap[i] = btrgb::pixel( round( double(bitmap[i]) * scaler) );
             }
         }
