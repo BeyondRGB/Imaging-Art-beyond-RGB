@@ -56,8 +56,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("art" + std::to_string(i + 1)), art_file);
             art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
             art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
-            return true;
         }
+        return true;
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
