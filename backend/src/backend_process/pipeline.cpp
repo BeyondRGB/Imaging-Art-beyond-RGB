@@ -1,18 +1,18 @@
 #include "ImageUtil/ArtObject.hpp"
-#include "pipeline.h"
+#include "pipeline.hpp"
 
-Pipeline::Pipeline(server* s, websocketpp::connection_hdl hdl, message_ptr msg, int pipelineNumber) {
-    server_m = s;
-    connectionHandle_m = hdl;
-    msg_m = msg;
-    num_m = pipelineNumber;
+int Pipeline::pipeline_count = 0;
+
+Pipeline::Pipeline(){
+    pipeline_count++;
+    num_m = pipeline_count;
+    this->set_process_name("Img Processing Pipeline (" + std::to_string(num_m) + ")");
 };
 
 void Pipeline::callback(std::string msg) {
     msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
     std::cout << "MSG: " << msg << std::endl;
-    server_m->send(connectionHandle_m, msg, msg_m->get_opcode());
-
+    this->send_msg(msg);
 };
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
@@ -41,37 +41,50 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
 
 };
 
-void Pipeline::executePipeline() {
-    callback("I got your msg");
+bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
+    try {
+        // Extract Image Array from request data
+        Json image_array = this->process_data_m->get_array(key_map[ImageKey::IMAGES]);
+        for (int i = 0; i < image_array.get_size(); i++) {
+            // Extract each obj from array
+            Json obj = image_array.obj_at(i);
+            // Extract each image file name from current object
+            std::string art_file = obj.get_string(key_map[ImageKey::ART]);
+            std::string white_file = obj.get_string(key_map[ImageKey::WHITE]);
+            std::string dark_file = obj.get_string(key_map[ImageKey::BLACK]);
+            // Add each file to the ArtObject
+            art_obj->newImage(("art" + std::to_string(i + 1)), art_file);
+            art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
+            art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
+        }
+        return true;
+    }
+    catch (ParsingError e) {
+        std::string name = this->get_process_name();
+        this->report_error(name, e.what());
+    }
+    return false;
+}
+
+void Pipeline::run() {
+    this->send_msg("I got your msg");
+    this->send_msg(this->process_data_m->to_string());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
+
     
-    
+
     btrgb::ArtObject* images = new  btrgb::ArtObject();
-
-
-    /* =====[ DEMO ]=========
-    #include <map>
-    std::map<std::string, std::string> files = {
-        {"dark1", "nikon_dark_1.NEF"},
-        {"dark2", "nikon_dark_2.NEF"},
-        {"white1", "nikon_white_1.NEF"},
-        {"white2", "nikon_white_2.NEF"},
-        {"art1", "nikon_targets_1.NEF"},
-        {"art2", "nikon_targets_2.NEF"}
-    };
-    for(const auto& [type, file]: files)
-        images->newImage(type, file);
-    */
+    this->init_art_obj(images);
     
     
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
     
-    /* =====[ DEMO ]=========
-    for(const auto& [type, file]: files)
-        images->outputImageAsTIFF(type);
-    */
+    for(const auto& [name, img]: *images) {
+        images->outputImageAsTIFF(name);
+    }
     
     delete images;
 
-};
+}
+   
