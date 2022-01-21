@@ -62,8 +62,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     catch (ParsingError e) {
         std::string name = this->get_process_name();
         this->report_error(name, e.what());
-        return false;
     }
+    return false;
 }
 
 void Pipeline::run() {
