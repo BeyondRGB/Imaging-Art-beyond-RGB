@@ -4,3 +4,5 @@ tiff
 websocketpp
 asio
 jsoncons
+libpng
+cpp-base64
