@@ -7,8 +7,8 @@ RefData::RefData(std::string file_path) {
 }
 
 RefData::~RefData() {
-	for (int i = 0; i < this->row_count; i++) {
-		delete this->color_patches[i];
+	for (int row = 0; row < this->row_count; row++) {
+		delete this->color_patches[row];
 	}
 	delete this->color_patches;
 }
@@ -21,32 +21,46 @@ void RefData::read_in_data(std::string file_path) {
 	this->init_data_storage();
 	this->pars_header(header);
 	std::cout << "ColorPatches" << std::endl;
+	
+	while (this->has_next_line()) {
+		std::string line = this->get_next_line();
+		this->pars_line(line);
+	}
+
 	for (int row = 0; row < row_count; row++) {
 		for (int col = 0; col < col_count; col++) {
-			std::cout << this->color_patches[row][col] << " ";
+			std::cout << this->color_patches[row][col]  << std::endl;
 		}
 		std::cout << std::endl;
 	}
-	//while (this->has_next_line()) {
-		//std::string line = this->get_next_line();
-		//this->pars_line(line);
-	//}
+	int wave = 730;
+	int i = 35;
+	std::cout << "Wavelen: " << wave << " index: " << WAVELEN_TO_INDEX(wave) << std::endl;
+	std::cout << "index: " << i << " wavelen: " << INDEX_TO_WAVELEN(i) << std::endl;
+
 	this->close_file();
 }
 
 void RefData::pars_line(std::string line) {
-	while (this->has_next(line)) {
-		int item = this->get_next<int>(line);
-		std::cout << "Item: " << item << std::endl;
+	// Ignor Wavlen col
+	this->get_next<int>(line);
+	for (int col = 0; col < col_count; col++) {
+		for (int row = 0; row < row_count; row++) {
+			double item = this->get_next<double>(line);
+			this->color_patches[row][col].append(item);
+		}
 	}
 }
 
 void RefData::pars_header(std::string header) {
-	for (int row = 0; row < row_count; row++) {
-		for (int col = 0; col < col_count; col++) {
-			std::string item = this->get_next<std::string>(header);
-			this->color_patches[row][col] = item;
+	// Ignor wavelength col
+	this->get_next<std::string>(header);
+	for (int col = 0; col < col_count; col++) {
+		for (int row = 0; row < row_count; row++) {
+			std::string token = this->get_next<std::string>(header);
+			this->color_patches[row][col].set_name(token);
 		}
+		std::cout << std::endl;
 	}
 }
 
@@ -73,9 +87,9 @@ void RefData::identify_data_size(std::string header) {
 }
 
 void RefData::init_data_storage() {
-	this->color_patches = new std::string * [this->row_count];
+	this->color_patches = new ColorPatch * [this->row_count];
 	for (int i = 0; i < this->row_count; i++) {
-		this->color_patches[i] = new std::string[this->col_count];
+		this->color_patches[i] = new ColorPatch[this->col_count];
 	}
 }
 

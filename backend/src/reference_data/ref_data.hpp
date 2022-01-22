@@ -4,6 +4,7 @@
 #include <string>
 //#include <iostream>
 #include "csv_parser.hpp"
+#include "color_patch.hpp"
 
 class RefData: public CSVParser {
 
@@ -21,7 +22,7 @@ private:
 
 	int row_count;
 	int col_count;
-	std::string** color_patches;
+	ColorPatch** color_patches;
 
 	
 };
