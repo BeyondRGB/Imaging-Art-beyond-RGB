@@ -2,19 +2,11 @@
 
 namespace btrgb {
     
-    LibTiffWriter::LibTiffWriter() {}
+    LibTiffWriter::LibTiffWriter() {this->file_extension = ".tiff";}
     LibTiffWriter::~LibTiffWriter() {}
 
-    void LibTiffWriter::write(image* im) {
+    void LibTiffWriter::_write(image* im, std::string filename) {
 
-        std::string fname = im->filename();
-        if (!fname.ends_with(".tiff"))
-            fname += ".tiff";
-
-        write(im, fname);
-    }
-
-    void LibTiffWriter::write(image* im, std::string& filename) {
         TIFF* img_out;
         int width = im->width();
         int height = im->height();
