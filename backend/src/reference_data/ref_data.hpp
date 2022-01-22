@@ -9,11 +9,20 @@ class RefData: public CSVParser {
 
 public:
 	RefData(std::string file_path);
+	~RefData();
 
 private:
 	void read_in_data(std::string file_path);
-	void pars_line(std::string line, std::string delimiter);
+	void pars_line(std::string line);
 	void pars_header(std::string header);
+	void identify_data_size(std::string header);
+	void init_data_storage();
+	std::string get_col_id(std::string header_item);
+
+	int row_count;
+	int col_count;
+	std::string** color_patches;
+
 	
 };
 #endif //REF_DATA_H

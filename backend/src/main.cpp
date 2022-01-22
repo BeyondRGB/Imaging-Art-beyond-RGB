@@ -62,7 +62,7 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
 #include "reference_data/data_manager.hpp"
 void test_func() {
     std::string file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\APT_Reflectance_Data.csv";
-    file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\test.csv";
+    //file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\test.csv";
 
     DataManager::get_instance()->get_ref_data(file_name);
 }
