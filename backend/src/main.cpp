@@ -59,8 +59,21 @@ void on_message(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
     }
 }
 
+#include "reference_data/data_manager.hpp"
+void test_func() {
+    std::string file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\APT_Reflectance_Data.csv";
+    file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\test.csv";
+
+    DataManager::get_instance()->get_ref_data(file_name);
+}
+
 
 int main() {
+    bool test = true;
+    if (test) {
+        test_func();
+        exit(1);
+    }
     std::cout << "BeyondRBG Backend Started: listening on port 9002\n";
     // Create a server endpoint
     server echo_server;
