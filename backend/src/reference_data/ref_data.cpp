@@ -8,18 +8,14 @@ RefData::RefData(std::string file_path) {
 
 void RefData::read_in_data(std::string file_path) {
 	std::cout << "Reading File: " << file_path << std::endl;
-	std::ifstream ref_file(file_path);
-	std::string line;
-	std::string header;
-	std::getline(ref_file, header);
-	std::cout << "ItemCount(" << header << "): " << this->count_line_items(header) << std::endl;
-	//header = "Hello";
-	std::cout << "Has_next(" << header << "):" << (this->has_next(header) ? "True" : "False") << std::endl;
-	while (std::getline(ref_file, line)) {
-		//std::cout << line << std::endl;
-		this->pars_line(line, ",");
+	this->open_file(file_path);
+	std::string header = this->get_next_line();
+	std::cout << "Header: " << header << std::endl;
+	while (this->has_next_line()) {
+		std::string line = this->get_next_line();
+		std::cout << "Line: " << line << std::endl;
 	}
-	ref_file.close();
+	this->close_file();
 }
 
 void RefData::pars_line(std::string line, std::string delimiter) {
