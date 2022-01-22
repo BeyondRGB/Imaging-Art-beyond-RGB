@@ -2,17 +2,12 @@
 
 namespace btrgb {
 
-    ArtObject::ArtObject() {
-        this->tiffWriter = new LibTiffWriter();
-    }
+    ArtObject::ArtObject() {}
 
     /* 
     * Destructor deletes all btrgb::image structures that were made.
     */
     ArtObject::~ArtObject() {
-
-        /* Delete tiff writer. */
-        delete this->tiffWriter;
 
         /* Delete every image in the map.
          * This should be done automatically by the unordered_map destructor:
@@ -80,19 +75,17 @@ namespace btrgb {
         return this->images.contains(name);
     }
 
-
+    
     /* 
-    * The key of the image stored in memory to write to disk. 
-    * The image filename will be the filename field in the 
-    * btrgb::image structure. 
-    */
-    void ArtObject::outputImageAsTIFF(std::string name) {
-
+     * The key of the image stored in memory to write to disk. 
+     */
+    void ArtObject::outputImageAs(enum output_type filetype, std::string name, std::string filename) {
+        
         if (! this->images.contains(name))
             throw ArtObj_ImageDoesNotExist();
         
         try {
-            this->tiffWriter->write( this->images[name] );
+            ImageWriterStrategy(filetype).write( this->images[name] );
         }
         catch (ImageWritingError const& e) {
             throw ArtObj_FailedToWriteImage();
@@ -100,7 +93,13 @@ namespace btrgb {
         catch (BitmapNotInitialized const& e) {
             throw;
         }
-        
     }
+
+
+    std::string getMimeBase64(std::string name) {
+        // to do
+        return "";
+    }
+
 
 }
