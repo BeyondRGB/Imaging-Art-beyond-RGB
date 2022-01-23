@@ -31,6 +31,10 @@ namespace btrgb {
         return this->_filename;
     }
 
+    void image::setFilename(std::string filename) {
+        this->_filename = filename;
+    }
+
     int image::width() {
         checkInit();
         return this->_width;
@@ -49,6 +53,10 @@ namespace btrgb {
     pixel* image::bitmap() {
         checkInit();
         return this->_bitmap;
+    }
+            
+    uint32_t image::getIndex(int row, int col, int ch) {
+        return row * _width * _channels + col * _channels + ch;
     }
 
     void image::recycle() {
