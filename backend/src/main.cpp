@@ -14,7 +14,7 @@ void testFunc() {
 
     ColorPatch* cp = DataManager::get_instance()->get_ref_data(file_name)->get_color_patch(0,0);
     std::cout << cp->get_y() << std::endl;
-    std::cout << "row: " << cp->get_row() << " col: " << cp->get_col() << std::endl;
+    //std::cout << "row: " << cp->get_row() << " col: " << cp->get_col() << std::endl;
     DataManager::get_instance()->shut_down();
 }
 
