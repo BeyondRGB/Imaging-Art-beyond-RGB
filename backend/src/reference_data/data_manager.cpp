@@ -3,7 +3,6 @@
 DataManager* DataManager::instance = nullptr;
 
 DataManager::~DataManager() {
-	std::cout << "DataManager Destructor" << std::endl;
 	if (nullptr != this->so1931) {
 		delete this->so1931;
 	}

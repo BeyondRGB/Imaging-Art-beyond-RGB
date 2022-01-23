@@ -11,7 +11,8 @@ class RefData: public CSVParser {
 public:
 	RefData(std::string file_path);
 	~RefData();
-	//ColorPatch* get_color_patch(int row, int col);
+	ColorPatch* get_color_patch(int row, int col);
+	ColorPatch* get_white_patch();
 
 private:
 	void read_in_data(std::string file_path);

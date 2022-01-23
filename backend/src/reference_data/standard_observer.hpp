@@ -30,11 +30,15 @@ public:
 	double x_by_wavelen(int wavelen);
 	double y_by_wavelen(int wavelen);
 	double z_by_wavelen(int wavelen);
+	double sum_y();
+	double sum_x();
+	double sum_z();
 
 private:
 	double* x = nullptr;
 	double* y = nullptr;
 	double* z = nullptr;
+	double sum(double* array);
 };
 
 #endif // !STANDARD_OBSERVER_H

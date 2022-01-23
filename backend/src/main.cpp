@@ -4,13 +4,16 @@
 
 //Testing
 #include "reference_data/data_manager.hpp"
+#include "reference_data/color_patch.hpp"
 void testFunc() {
 	// Add testing logc here if this is called the server will not be started
 
     std::string file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\APT_Reflectance_Data.csv";
     //file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\test.csv";
 
-    DataManager::get_instance()->get_ref_data(file_name);
+    ColorPatch* cp = DataManager::get_instance()->get_ref_data(file_name)->get_color_patch(0,0);
+    std::cout << cp->get_y() << std::endl;
+    std::cout << "row: " << cp->get_row() << " col: " << cp->get_col() << std::endl;
     DataManager::get_instance()->shut_down();
 }
 
