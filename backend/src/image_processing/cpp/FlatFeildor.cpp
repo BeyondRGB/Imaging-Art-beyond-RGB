@@ -4,24 +4,42 @@
 
 #include "../header/FlatFeildor.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <fstream>
 
 void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Flat Fielding");
     //First need to read in data from a csv format, prtend a file is provided
     //Work in progress, priority on fucntion of flatfielding
- /*   string fileName;
-    vector<vector<string>> content;
-    vector<string> row;
-    string line, word;
-    fstream file(fileName, ios::in);
-    if (file.is_open()) {
-        //Cycle for each meaningful row in the file
-    }*/
+    //Need to read in 2 set columns from 2 different sheets to get Y value
+    //along with all the columns from the reflectance data to find out which has the highest y
+
+    //Need to find any easy way to know which patch is the highest reflectance avg,
+    //to know which column to pull from
+
+    //FAKE DATA TO FIND THE BEST PATCH
+    // Need to collect all data and put into columns, num of columns is patches var
+    int patches;
+    float cell[35][patches];
+    int highestIndex;
+    float highestAvg = 0;
+    for (int i = 0; i < patches; i++) {
+        float tempAvg = 0;
+        float tempTotal = 0;
+        for (int j = 0; j < 35; j++) {
+            tempTotal += cell[j][i];
+        }
+        tempAvg = tempTotal / 35;
+        if (tempAvg > highestAvg) {
+            highestIndex = i;
+            highestAvg = tempAvg;
+        }
+    }
     
+    //Need a way to know what Images Im supposed to be looking at
+
     int height = im->height();
     int width = im->width();
     int channels = im->channels();
@@ -66,7 +84,6 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     float w = yVal * (whiteAvg / artAvg);
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted
-    //Need to change based on Image.hpp
     int ch;
     float wPix, dPix, aPix;
     for (y = 0; y < height; y++) {
@@ -76,9 +93,9 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             for (ch = 0; ch < channels; ch++) {
                 i = iy + ix + ch;
                 // i is the index for the bitmap
-                wPix = whiteImage[i];
-                dPix = darkImage[i];
-                aPix = artImage[i];
+                wPix = white[i];
+                dPix = dark[i];
+                aPix = art[i];
                 //Need to overwrite previous image pixel in the Art Object
                 artImage[i] = w((aPix - dPix) / (wPix - dPix));
             }
