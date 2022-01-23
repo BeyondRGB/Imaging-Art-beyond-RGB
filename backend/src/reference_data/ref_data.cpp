@@ -7,7 +7,13 @@ RefData::RefData(std::string file_path) {
 }
 
 RefData::~RefData() {
+	std::cout << "RefData Destructor" << std::endl;
 	for (int row = 0; row < this->row_count; row++) {
+		for (int col = 0; col < this->col_count; col++) {
+			std::cout << "RefData Delete row: " << row << " col: " << col << std::endl;
+			delete this->color_patches[row][col];
+		}
+		std::cout << "RefData Delete Row: " << row << std::endl;
 		delete this->color_patches[row];
 	}
 	delete this->color_patches;
@@ -29,7 +35,7 @@ void RefData::read_in_data(std::string file_path) {
 
 	for (int row = 0; row < row_count; row++) {
 		for (int col = 0; col < col_count; col++) {
-			std::cout << this->color_patches[row][col]  << std::endl;
+			std::cout << *this->color_patches[row][col]  << std::endl;
 		}
 		std::cout << std::endl;
 	}
@@ -47,7 +53,7 @@ void RefData::pars_line(std::string line) {
 	for (int col = 0; col < col_count; col++) {
 		for (int row = 0; row < row_count; row++) {
 			double item = this->get_next<double>(line);
-			this->color_patches[row][col].append(item);
+			this->color_patches[row][col]->append(item);
 		}
 	}
 }
@@ -58,7 +64,7 @@ void RefData::pars_header(std::string header) {
 	for (int col = 0; col < col_count; col++) {
 		for (int row = 0; row < row_count; row++) {
 			std::string token = this->get_next<std::string>(header);
-			this->color_patches[row][col].set_name(token);
+			this->color_patches[row][col]->set_name(token);
 		}
 		std::cout << std::endl;
 	}
@@ -87,9 +93,12 @@ void RefData::identify_data_size(std::string header) {
 }
 
 void RefData::init_data_storage() {
-	this->color_patches = new ColorPatch * [this->row_count];
-	for (int i = 0; i < this->row_count; i++) {
-		this->color_patches[i] = new ColorPatch[this->col_count];
+	this->color_patches = new ColorPatch ** [this->row_count];
+	for (int row = 0; row < this->row_count; row++) {
+		this->color_patches[row] = new ColorPatch*[this->col_count];
+		for (int col = 0; col < this->col_count; col++) {
+			this->color_patches[row][col] = new ColorPatch();
+		}
 	}
 }
 
