@@ -8,9 +8,11 @@ ColorPatch::ColorPatch() {
 }
 
 ColorPatch::~ColorPatch() {
+	std::cout << "ColorPatch Destructor" << std::endl;
 	if(nullptr != this->reflectance)
 		delete this->reflectance;
 	//clean Tristimulus Values
+	std::cout << "Tristimulus Values" << std::endl;
 	if (nullptr != this->x)
 		delete this->x;
 	if (nullptr != this->y)
@@ -18,12 +20,14 @@ ColorPatch::~ColorPatch() {
 	if (nullptr != this->z)
 		delete this->z;
 	// Clean CIELAB Value
+	std::cout << "CIELAB Values" << std::endl;
 	if (nullptr != this->l)
 		delete this->l;
 	if (nullptr != this->a)
 		delete this->a;
 	if (nullptr != this->b)
 		delete this->b;
+	std::cout << "Done" << std::endl;
 
 }
 

@@ -3,16 +3,24 @@
 DataManager* DataManager::instance = nullptr;
 
 DataManager::~DataManager() {
+	std::cout << "DataManager Destructor" << std::endl;
 	if (nullptr != this->so1931) {
 		delete this->so1931;
 	}
 	if (nullptr != this->so1964) {
 		delete this->so1964;
 	}
+	// Clean up RefData in data map
+	// Although they will get deleted when the unordered_map destructor is called
+	// It never is so do it here
+	for (const auto& [key, data] : data_map) {
+		delete data;
+	}
 
 }
 
 void DataManager::shut_down() {
+	std::cout << "DataManger shutdown" << std::endl;
 	if (nullptr != this->instance)
 		delete this->instance;
 }

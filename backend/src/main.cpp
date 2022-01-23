@@ -11,6 +11,7 @@ void testFunc() {
     //file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\test.csv";
 
     DataManager::get_instance()->get_ref_data(file_name);
+    DataManager::get_instance()->shut_down();
 }
 
 

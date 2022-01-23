@@ -36,7 +36,7 @@ public:
 
 private:
 	std::string name_m;
-	double* reflectance;
+	double* reflectance = nullptr;
 	int index_m = 0;
 	// Tristimulus Values
 	double *x = nullptr;
