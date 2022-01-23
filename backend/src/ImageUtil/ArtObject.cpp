@@ -1,7 +1,7 @@
 #include "ArtObject.hpp"
 
 namespace btrgb {
-
+    private int tLeft, tRight, bRight, bLeft, row, col, pSize;
     ArtObject::ArtObject() {
         this->tiffWriter = new LibTiffWriter();
     }
@@ -39,6 +39,42 @@ namespace btrgb {
         this->images[name] = im;
     }
 
+    void ArtObject::targetInfo(std::int topLeft, std::int topRight, std::int botRight, std::int botLeft, std::int rows, std::int cols, std::int patSize) {
+        tLeft = topLeft;
+        tRight = topRight;
+        bRight = botRight;
+        bLeft = botLeft;
+        row = rows;
+        col = cols;
+        pSize = patSize;
+    }
+
+    int* ArtObject::getTargetInfo(std::string type) {
+        if (type._Equal("tl")) {
+            return this->tLeft;
+        }
+        else if (type._Equal("tr")) {
+            return this->tRight;
+        }
+        else if (type._Equal("br")) {
+            return this->bRight;
+        }
+        else if (type._Equal("bl")) {
+            return this->bLeft;
+        }
+        else if (type._Equal("row")) {
+            return this->row;
+        }
+        else if (type._Equal("col")) {
+            return this->col;
+        }
+        else if (type._Equal("size")) {
+            return this->pSize;
+        }
+        else {
+            return this->NULL;
+        }
+    }
 
     /* 
     * Map an image name to an existing image object.
