@@ -94,7 +94,7 @@ double ColorPatch::calc_k_value() {
 	Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
 	double so_x_ilum_sum = 0;
 	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
-		so_x_ilum_sum += so->y_by_index(i) * illuminants->D50_by_index(i);
+		so_x_ilum_sum += so->y_by_index(i) * illuminants->value_by_index(Illuminants::IlluminantType::D50, i);
 	}
 	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
 }
