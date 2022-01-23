@@ -3,21 +3,16 @@
 
 #include <string>
 #include <iostream>
-
-#define MAX_WAVE_LEN 730 // max wave length value
-#define MIN_WAVE_LEN 380 // min wave length value
-#define WAVE_LEN_INC 10 // wave length increments
-
-#define WAVELEN_TO_INDEX(wavlen) (wavlen - MIN_WAVE_LEN) / WAVE_LEN_INC
-#define INDEX_TO_WAVELEN(index) (index * WAVE_LEN_INC) + MIN_WAVE_LEN 
-
-#define REFLECTANCE_SIZE 1 + (MAX_WAVE_LEN - MIN_WAVE_LEN) / WAVE_LEN_INC
+#include "ref_data_defines.hpp"
 
 class ColorPatch {
+	enum ValueType {
+		X,Y,Z,
+		L,A,B
+	};
 
 public:
 	ColorPatch();
-	//ColorPatch(std::string name, int size = ((MAX_WAVE_LEN-MIN_WAVE_LEN)/WAVE_LEN_INC));
 	~ColorPatch();
 	friend std::ostream& operator<<(std::ostream& os, const ColorPatch& cp) {
 		os << cp.name_m << std::endl;
@@ -31,13 +26,29 @@ public:
 	void set_name(std::string name) { this->name_m = name; }
 	double get_ref_by_index(int index);
 	double get_ref_by_wavelen(int wavelength);
+	//double get_x();
+	//double get_y();
+	//double get_z();
+	//double get_l();
+	//double get_a();
+	//double get_b();
 
 
 private:
 	std::string name_m;
 	double* reflectance;
-	//int size_m = REFLECTANCE_SIZE;
 	int index_m = 0;
+	// Tristimulus Values
+	double *x = nullptr;
+	double *y = nullptr;
+	double *z = nullptr;
+	//// CIELAB Value
+	double *l = nullptr;
+	double *a = nullptr;
+	double *b = nullptr;
+
+	//double init_Tristimulus(ValueType type);
+	//double get_so_value(ValueType type, int index);
 };
 
 #endif // !COLOR_PATCH_H
