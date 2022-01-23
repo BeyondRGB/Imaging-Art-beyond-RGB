@@ -14,6 +14,7 @@ public:
 	enum IlluminantType {
 		A, D50, D65
 	};
+
 	Illuminants();
 	~Illuminants();
 	double value_by_index(IlluminantType type, int index);

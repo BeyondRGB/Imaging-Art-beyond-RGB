@@ -93,8 +93,9 @@ double ColorPatch::calc_k_value() {
 	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
 	Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
 	double so_x_ilum_sum = 0;
+	StandardObserver::ValueType so_type = StandardObserver::ValueType::Y;
 	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
-		so_x_ilum_sum += so->y_by_index(i) * illuminants->value_by_index(Illuminants::IlluminantType::D50, i);
+		so_x_ilum_sum += so->value_by_index(so_type, i) * illuminants->value_by_index(Illuminants::IlluminantType::D50, i);
 	}
 	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
 }
@@ -112,11 +113,11 @@ double ColorPatch::get_so_value(ValueType type, int index) {
 	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
 	switch (type) {
 	case X:
-		return so->x_by_index(index);
+		return so->value_by_index(StandardObserver::ValueType::X, index);
 	case Y:
-		return so->y_by_index(index);
+		return so->value_by_index(StandardObserver::ValueType::Y, index);
 	case Z:
-		return so->z_by_index(index);
+		return so->value_by_index(StandardObserver::ValueType::Z, index);
 
 	}
 }
