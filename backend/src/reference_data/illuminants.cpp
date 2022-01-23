@@ -14,9 +14,7 @@ Illuminants::~Illuminants() {
 }
 
 void Illuminants::init() {
-	std::cout << "Init Illuminants" << std::endl;
 	bool is_open = this->open_file(ILLUMINANTS_FILE_PATH);
-	std::cout << "Did I get here" << std::endl;
 	this->illum_A = new RefDataArray(ILLUMINATNTS_SIZE);
 	this->illum_D50 = new RefDataArray(ILLUMINATNTS_SIZE);
 	this->illum_D65 = new RefDataArray(ILLUMINATNTS_SIZE);

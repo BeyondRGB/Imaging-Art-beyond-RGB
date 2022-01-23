@@ -21,7 +21,6 @@ void StandardObserver::init(std::string file) {
 	this->x = new RefDataArray(STANDARD_OBSERVER_SIZE);
 	this->y = new RefDataArray(STANDARD_OBSERVER_SIZE);
 	this->z = new RefDataArray(STANDARD_OBSERVER_SIZE);
-	std::cout << "Generateing StandardObserver" << std::endl;
 	this->open_file(file);
 	// Ignore header
 	this->get_next_line();
