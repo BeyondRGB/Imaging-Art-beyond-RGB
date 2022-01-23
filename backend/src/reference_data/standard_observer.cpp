@@ -7,15 +7,10 @@ StandardObserver::StandardObserver(ObserverType type) {
 StandardObserver::~StandardObserver() {
 	std::cout << "Destructor StandardObserver x" << std::endl;
 	if (nullptr != this->x) {
-		std::cout << "Deleting x" << std::endl;
 		delete this->x;
 	}
-
-	std::cout << "Destructor StandardObserver y" << std::endl;
 	if (nullptr != this->y)
 		delete this->y;
-
-	std::cout << "Destructor StandardObserver z" << std::endl;
 	if (nullptr != this->z)
 		delete this->z;
 }
@@ -70,4 +65,24 @@ double StandardObserver::y_by_wavelen(int wavelen) {
 
 double StandardObserver::z_by_wavelen(int wavelen) {
 	return this->z_by_index(WAVELEN_TO_INDEX(wavelen));
+}
+
+double StandardObserver::sum_y() {
+	return this->sum(this->y);
+}
+
+double StandardObserver::sum_x() {
+	return this->sum(this->x);
+}
+
+double StandardObserver::sum_z() {
+	return this->sum(this->z);
+}
+
+double StandardObserver::sum(double* array) {
+	double sum = 0;
+	for (int i = 0; i < REFLECTANCE_SIZE; i++) {
+		sum += array[i];
+	}
+	return sum;
 }
