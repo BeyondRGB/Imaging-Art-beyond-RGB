@@ -1,30 +1,33 @@
 #include "color_patch.hpp"
 
+#include "data_manager.hpp"
+#include "standard_observer.hpp"
+
 ColorPatch::ColorPatch() {
 	this->reflectance = new double[REFLECTANCE_SIZE];
 }
-//ColorPatch::ColorPatch(std::string name, int size) {
-//	std::cout << "Name: " << name << " Size: " << size << std::endl;
-//	this->reflectance = new double[size];
-//	this->size_m = size;
-//}
 
 ColorPatch::~ColorPatch() {
-	delete this->reflectance;
+	if(nullptr != this->reflectance)
+		delete this->reflectance;
+	//clean Tristimulus Values
+	if (nullptr != this->x)
+		delete this->x;
+	if (nullptr != this->y)
+		delete this->y;
+	if (nullptr != this->z)
+		delete this->z;
+	// Clean CIELAB Value
+	if (nullptr != this->l)
+		delete this->l;
+	if (nullptr != this->a)
+		delete this->a;
+	if (nullptr != this->b)
+		delete this->b;
+
 }
 
-//std::ostream& ColorPatch::operator<<(std::ostream& os, const ColorPatch& cp) {
-//	return os << cp.name_m;
-//}
-
-//std::ostream& ColorPatch::operator<<(std::ostream& os, const ColorPatch& cp) {
-//	os << cp.name_m;
-//	return os;
-//}
-
 void ColorPatch::append(double value) {
-	//std::cout << "Appending: " << value << std::endl;
-	//std::cout << "Size: " << this->size_m << " index: " << this->index_m << std::endl;
 	if (this->index_m < REFLECTANCE_SIZE) {
 		this->reflectance[this->index_m++] = value;
 	}
@@ -45,6 +48,40 @@ double ColorPatch::get_ref_by_wavelen(int wavelength) {
 	return this->get_ref_by_index(WAVELEN_TO_INDEX(wavelength));
 }
 
-//std::string ColorPatch::get_name() {
-//	return name_m;
+//double ColorPatch::get_x() {
+//	if (nullptr == this->x)
+//		*this->x = this->init_Tristimulus(ValueType::X);
+//	return *this->x;
 //}
+//
+//double ColorPatch::get_y() {
+//	if (nullptr == this->y)
+//		*this->y = this->init_Tristimulus(ValueType::Y);
+//	return *this->y;
+//}
+//
+//double ColorPatch::get_z() {
+//	if (nullptr == this->z)
+//		*this->z = this->init_Tristimulus(ValueType::Z);
+//	return *this->z;
+//}
+//
+//double ColorPatch::init_Tristimulus(ValueType type) {
+//	return 5;
+//}
+//
+//double ColorPatch::get_so_value(ValueType type, int index) {
+//	//TODO at this point its unclear which standard observer to use
+//	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
+//	switch (type) {
+//	case X:
+//		return so->x_by_index(index);
+//	case Y:
+//		return so->y_by_index(index);
+//	case Z:
+//		return so->z_by_index(index);
+//
+//	}
+//}
+
+
