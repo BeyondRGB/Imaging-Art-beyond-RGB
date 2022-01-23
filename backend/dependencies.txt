@@ -3,3 +3,4 @@ libraw
 tiff
 websocketpp
 asio
+jsoncons
