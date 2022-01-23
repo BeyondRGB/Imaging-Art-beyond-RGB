@@ -2,6 +2,7 @@
 
 #include "data_manager.hpp"
 #include "standard_observer.hpp"
+#include "illuminants.hpp"
 
 ColorPatch::ColorPatch(short row, short col) {
 	this->row = row;
@@ -58,20 +59,27 @@ double ColorPatch::get_ref_by_wavelen(int wavelength) {
 }
 
 double ColorPatch::get_x() {
-	if (nullptr == this->x)
+	if (nullptr == this->x) {
+		this->x = new double;
 		*this->x = this->init_Tristimulus(ValueType::X);
+	}
 	return *this->x;
 }
 
 double ColorPatch::get_y() {
-	if (nullptr == this->y)
+	if (nullptr == this->y) {
+		this->y = new double;
 		*this->y = this->init_Tristimulus(ValueType::Y);
+	}
+	std::cout << "Y set:" << std::endl;
 	return *this->y;
 }
 
 double ColorPatch::get_z() {
-	if (nullptr == this->z)
+	if (nullptr == this->z) {
+		this->z = new double;
 		*this->z = this->init_Tristimulus(ValueType::Z);
+	}
 	return *this->z;
 }
 
@@ -83,10 +91,12 @@ double ColorPatch::init_Tristimulus(ValueType type) {
 
 double ColorPatch::calc_k_value() {
 	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
-	double so_sum = so->sum_y();
-	double reflectance_sum = this->sum_reflectance();
-	std::cout << "soSum: " << so_sum << " reflectanceSum: " << reflectance_sum << std::endl;
-	return 100 / ((so_sum * reflectance_sum) * SAMPLING_INCREMENT);
+	//Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
+	//double so_sum = so->sum_y();
+	//double reflectance_sum = this->sum_reflectance();
+	//std::cout << "soSum: " << so_sum << " reflectanceSum: " << reflectance_sum << std::endl;
+	//return 100 / ((so_sum * reflectance_sum) * SAMPLING_INCREMENT);
+	return 5;
 }
 
 double ColorPatch::sum_reflectance() {

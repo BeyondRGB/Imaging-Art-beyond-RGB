@@ -9,6 +9,9 @@ DataManager::~DataManager() {
 	if (nullptr != this->so1964) {
 		delete this->so1964;
 	}
+	if (nullptr != this->illuminants) {
+		delete this->illuminants;
+	}
 	// Clean up RefData in data map
 	// Although they will get deleted when the unordered_map destructor is called
 	// It never is so do it here
@@ -45,4 +48,11 @@ StandardObserver* DataManager::get_observer_1964() {
 		this->so1964 = new StandardObserver(StandardObserver::ObserverType::SO_1964);
 	}
 	return this->so1964;
+}
+
+Illuminants* DataManager::get_illuminants() {
+	if (nullptr == this->illuminants) {
+		this->illuminants = new Illuminants();
+	}
+	return this->illuminants;
 }
