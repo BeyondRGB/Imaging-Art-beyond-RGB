@@ -19,6 +19,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Need to find any easy way to know which patch is the highest reflectance avg,
     //to know which column to pull from
 
+    //When read happens need to load 2d array, to find best patch
+
     //FAKE DATA TO FIND THE BEST PATCH
     // Need to collect all data and put into columns, num of columns is patches var
     int patches;
@@ -97,7 +99,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
                 dPix = dark[i];
                 aPix = art[i];
                 //Need to overwrite previous image pixel in the Art Object
-                artImage[i] = w((aPix - dPix) / (wPix - dPix));
+                art[i] = w((aPix - dPix) / (wPix - dPix));
             }
         }
     }
