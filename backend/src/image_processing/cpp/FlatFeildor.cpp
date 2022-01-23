@@ -41,7 +41,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     }
     
     //Need a way to know what Images Im supposed to be looking at
-
+    
     int height = im->height();
     int width = im->width();
     int channels = im->channels();
@@ -50,6 +50,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //and the corrisponding spot from the white image for these values
     //y value will tell us which patch to look at
     //ONLY NEED CHANNEL 2, aka Green channel, to get averages, y is from calc
+    //NEED TO CHANGE, SHOULD ONLY BE FINDING AVG WITHIN THE WHITE PATCH, LOC WILL BE PROVIDED BY ART OBJ
     float count = 0;
     float artTotal = 0;
     float whiteTotal = 0;
@@ -73,6 +74,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     float whiteAvg = whiteTotal/count;
     //Fake data being used here for inputed data, but should be the correct y calculation
     //Real data requires read in of csv file
+    //Y VALUE WILL BE PROVIDED, depricate everything beind done for the sole purpose of getting y
     float reflectance[] = {};
     float source[] = {};
     float obsv[] = {};

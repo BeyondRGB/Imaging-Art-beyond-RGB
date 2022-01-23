@@ -81,11 +81,12 @@ private:
 				"BottomRight": {"x":50, "y":50},
 				"BottomLeft": {"x":0, "y":50},
 				"NumRows": 10,
-				"NumCols":10
+				"NumCols":10,
+				"PatchSize":3
 			}	
 			
 		}
-	})";
+	})";//Patch size is referencing how many rings of pixels we can go out from the center pixel of each patch
 
 
 };
