@@ -22,7 +22,6 @@ DataManager::~DataManager() {
 }
 
 void DataManager::shut_down() {
-	std::cout << "DataManger shutdown" << std::endl;
 	if (nullptr != this->instance)
 		delete this->instance;
 }
@@ -47,10 +46,8 @@ double DataManager::x_observer_value(int index) {
 }
 
 double DataManager::y_observer_value(int index) {
-	std::cout << "y Observer" << std::endl;
 	StandardObserver::ValueType value_type = StandardObserver::ValueType::Y;
 	if (this->observer_type == StandardObserver::ObserverType::SO_1931) {
-		std::cout << "y Observer" << std::endl;
 		return this->get_observer_1931()->value_by_index(value_type, index);
 	}
 	else {
@@ -69,7 +66,6 @@ double DataManager::z_observer_value(int index) {
 }
 
 double DataManager::illuminant_value(int index) {
-	std::cout << "ill" << std::endl;
 	return this->get_illuminants()->value_by_index(this->illum_type, index);
 }
 

@@ -54,7 +54,6 @@ double ColorPatch::get_ref_by_index(int index) {
 }
 
 double ColorPatch::get_ref_by_wavelen(int wavelength) {
-	std::cout << this->reflectance;
 	return this->get_ref_by_index(WAVELEN_TO_INDEX(wavelength));
 }
 
@@ -71,7 +70,6 @@ double ColorPatch::get_y() {
 		this->y = new double;
 		*this->y = this->init_Tristimulus(ValueType::Y);
 	}
-	std::cout << "Y set:" << std::endl;
 	return *this->y;
 }
 
@@ -84,30 +82,30 @@ double ColorPatch::get_z() {
 }
 
 double ColorPatch::init_Tristimulus(ValueType type) {
+	DataManager* dm = DataManager::get_instance();
 	double k = this->calc_k_value();
-	std::cout << "K: " << k << std::endl;
-	return 5;
+	double sum = 0;
+	double oberver_value;
+	double illum_value;
+	double reflectanc_value;
+	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
+		oberver_value = this->get_so_value(type, i);
+		illum_value = dm->illuminant_value(i);
+		reflectanc_value = this->reflectance->get_by_index(i);
+		sum += oberver_value * illum_value * reflectanc_value;
+	}
+	return k * sum * SAMPLING_INCREMENT;
 }
 
 double ColorPatch::calc_k_value() {
 	DataManager* dm = DataManager::get_instance();
-	//StandardObserver* so = DataManager::get_instance()->get_observer_1931();
-	//Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
 	double so_x_ilum_sum = 0;
-	std::cout << "Working on K" << std::endl;
-	try {
-		for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
-			double oberver_value = dm->y_observer_value(i);
-			double illum_value = dm->illuminant_value(i);
-			std::cout << "observerValue: " << oberver_value << " illumValue: " << illum_value << std::endl;
-			so_x_ilum_sum += oberver_value * illum_value;
-		}
-
-		return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
+	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
+		double oberver_value = dm->y_observer_value(i);
+		double illum_value = dm->illuminant_value(i);
+		so_x_ilum_sum += oberver_value * illum_value;
 	}
-	catch (std::exception e) {
-		std::cout << e.what() << std::endl;
-	}
+	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
 }
 
 double ColorPatch::sum_reflectance() {
@@ -118,18 +116,19 @@ double ColorPatch::sum_reflectance() {
 	return sum;
 }
 
-//double ColorPatch::get_so_value(ValueType type, int index) {
-//	//TODO at this point its unclear which standard observer to use
-//	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
-//	switch (type) {
-//	case X:
-//		return so->value_by_index(StandardObserver::ValueType::X, index);
-//	case Y:
-//		return so->value_by_index(StandardObserver::ValueType::Y, index);
-//	case Z:
-//		return so->value_by_index(StandardObserver::ValueType::Z, index);
-//
-//	}
-//}
+double ColorPatch::get_so_value(ValueType type, int index) {
+	DataManager* dm = DataManager::get_instance();
+	switch (type) {
+	case X:
+		return dm->x_observer_value(index);
+	case Y:
+		return dm->y_observer_value(index);
+	case Z:
+		return dm->z_observer_value(index);
+	default:
+		return dm->y_observer_value(index);
+
+	}
+}
 
 

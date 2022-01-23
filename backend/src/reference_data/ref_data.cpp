@@ -17,6 +17,14 @@ RefData::~RefData() {
 	delete this->color_patches;
 }
 
+int RefData::get_row_size() {
+	return this->row_count;
+}
+
+int RefData::get_col_size() {
+	return this->col_count;
+}
+
 ColorPatch* RefData::get_color_patch(int row, int col) {
 	if(row < this->row_count && col < this->col_count)
 		return this->color_patches[row][col];
@@ -24,7 +32,6 @@ ColorPatch* RefData::get_color_patch(int row, int col) {
 }
 
 void RefData::read_in_data(std::string file_path) {
-	std::cout << "reading in data: " << file_path << std::endl;
 	this->open_file(file_path);
 	std::string header = this->get_next_line();
 	this->identify_data_size(header);
@@ -91,6 +98,7 @@ void RefData::identify_data_size(std::string header) {
 	int row_count = item_count / col_count;
 	this->row_count = row_count; 
 	this->col_count = col_count;
+
 }
 
 void RefData::init_data_storage() {
