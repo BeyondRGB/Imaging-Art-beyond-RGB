@@ -7,14 +7,6 @@
 
 class StandardObserver : public CSVParser {
 
-	
-
-	//TODO Im not currently sure how to do the relative pathing for this yet
-	//TODO this will need to be fixed
-	const std::string file_key[2] = {
-		"C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\standard_Observer_1931.csv",
-		"C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\Standard_Observer_1964.csv"
-	};
 
 public:
 	enum ObserverType {

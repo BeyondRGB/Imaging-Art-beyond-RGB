@@ -1,7 +1,10 @@
 #include "standard_observer.hpp"
 
 StandardObserver::StandardObserver(ObserverType type) {
-	this->init(file_key[type]);
+	if (type == ObserverType::SO_1931)
+		this->init(STANDARD_OBSERVER_1931_PATH);
+	if (type == ObserverType::SO_1964)
+		this->init(STANDARD_OBSERVER_1964_PATH);
 }
 
 StandardObserver::~StandardObserver() {
