@@ -54,7 +54,7 @@ private:
 	double *b = nullptr;
 
 	double init_Tristimulus(ValueType type);
-	double get_so_value(ValueType type, int index);
+	//double get_so_value(ValueType type, int index);
 	double calc_k_value();
 	double sum_reflectance();
 };

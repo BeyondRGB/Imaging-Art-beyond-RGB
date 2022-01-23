@@ -90,14 +90,24 @@ double ColorPatch::init_Tristimulus(ValueType type) {
 }
 
 double ColorPatch::calc_k_value() {
-	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
-	Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
+	DataManager* dm = DataManager::get_instance();
+	//StandardObserver* so = DataManager::get_instance()->get_observer_1931();
+	//Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
 	double so_x_ilum_sum = 0;
-	StandardObserver::ValueType so_type = StandardObserver::ValueType::Y;
-	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
-		so_x_ilum_sum += so->value_by_index(so_type, i) * illuminants->value_by_index(Illuminants::IlluminantType::D50, i);
+	std::cout << "Working on K" << std::endl;
+	try {
+		for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
+			double oberver_value = dm->y_observer_value(i);
+			double illum_value = dm->illuminant_value(i);
+			std::cout << "observerValue: " << oberver_value << " illumValue: " << illum_value << std::endl;
+			so_x_ilum_sum += oberver_value * illum_value;
+		}
+
+		return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
 	}
-	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
+	catch (std::exception e) {
+		std::cout << e.what() << std::endl;
+	}
 }
 
 double ColorPatch::sum_reflectance() {
@@ -108,18 +118,18 @@ double ColorPatch::sum_reflectance() {
 	return sum;
 }
 
-double ColorPatch::get_so_value(ValueType type, int index) {
-	//TODO at this point its unclear which standard observer to use
-	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
-	switch (type) {
-	case X:
-		return so->value_by_index(StandardObserver::ValueType::X, index);
-	case Y:
-		return so->value_by_index(StandardObserver::ValueType::Y, index);
-	case Z:
-		return so->value_by_index(StandardObserver::ValueType::Z, index);
-
-	}
-}
+//double ColorPatch::get_so_value(ValueType type, int index) {
+//	//TODO at this point its unclear which standard observer to use
+//	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
+//	switch (type) {
+//	case X:
+//		return so->value_by_index(StandardObserver::ValueType::X, index);
+//	case Y:
+//		return so->value_by_index(StandardObserver::ValueType::Y, index);
+//	case Z:
+//		return so->value_by_index(StandardObserver::ValueType::Z, index);
+//
+//	}
+//}
 
 

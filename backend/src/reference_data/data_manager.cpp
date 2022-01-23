@@ -36,6 +36,43 @@ RefData* DataManager::get_ref_data(std::string key) {
 	return this->data_map[key];
 }
 
+double DataManager::x_observer_value(int index) {
+	StandardObserver::ValueType value_type = StandardObserver::ValueType::X;
+	if (this->observer_type == StandardObserver::ObserverType::SO_1931) {
+		return this->so1931->value_by_index(value_type, index);
+	}
+	else {
+		return this->so1964->value_by_index(value_type, index);
+	}
+}
+
+double DataManager::y_observer_value(int index) {
+	std::cout << "y Observer" << std::endl;
+	StandardObserver::ValueType value_type = StandardObserver::ValueType::Y;
+	if (this->observer_type == StandardObserver::ObserverType::SO_1931) {
+		std::cout << "y Observer" << std::endl;
+		return this->get_observer_1931()->value_by_index(value_type, index);
+	}
+	else {
+		return this->get_observer_1964()->value_by_index(value_type, index);
+	}
+}
+
+double DataManager::z_observer_value(int index) {
+	StandardObserver::ValueType value_type = StandardObserver::ValueType::Z;
+	if (this->observer_type == StandardObserver::ObserverType::SO_1931) {
+		return this->get_observer_1931()->value_by_index(value_type, index);
+	}
+	else {
+		return this->get_observer_1964()->value_by_index(value_type, index);
+	}
+}
+
+double DataManager::illuminant_value(int index) {
+	std::cout << "ill" << std::endl;
+	return this->get_illuminants()->value_by_index(this->illum_type, index);
+}
+
 StandardObserver* DataManager::get_observer_1931() {
 	if (nullptr == this->so1931) {
 		this->so1931 = new StandardObserver(StandardObserver::ObserverType::SO_1931);
