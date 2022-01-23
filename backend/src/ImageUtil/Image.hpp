@@ -1,6 +1,7 @@
 #ifndef BTRGB_IMAGE_H
 #define BTRGB_IMAGE_H
 
+#include <stdint.h>
 #include <string>
 
 /* How to iterate over the bitmap:
@@ -11,38 +12,43 @@
  *
  * 
  * Iterate over every channel value for each pixel:
- *    int height = im->height();
- *    int width = im->width();
- *    int channels = im->channels();
- *    btrgb::pixel* bitmap = im->bitmap();
- *
- *    int ch, x, y, i, ix, iy;
- *    for( y = 0; y < height; y++) {
- *        iy = y * width * channels;
- *        for( x = 0; x < width; x++) {
- *            ix = x * channels;
- *            for( ch = 0; ch < channels; ch++) {
- *                i = iy + ix + ch;
- *                // i is the index for the bitmap
- *                // bitmap[i]
- *            }
- *        }
- *    }
+
+    int height = im->height();
+    int width = im->width();
+    int channels = im->channels();
+    btrgb::pixel* bitmap = im->bitmap();
+
+    uint32_t ch, x, y, i;
+    for( y = 0; y < height; y++) {
+        for( x = 0; x < width; x++) {
+            for( ch = 0; ch < channels; ch++) {
+                i = im->getIndex(y, x, ch);
+                //<some variable> = bitmap[i]; //getting
+                //bitmap[i] = <some number>; //setting
+            }
+        }
+    }
+
  * 
  * 
- * Iterate over exery pixel in each channel:
+ * Alternative: iterate over exery pixel in each channel:
  * 
- *    int ch, x, y, i, ix, iy;
- *    for( ch = 0; ch < channels; ch++) {
- *        for( y = 0; y < height; y++) {
- *            iy = y * width * channels;
- *            for( x = 0; x < width; x++) {
- *                ix = x * channels;
- *                i = iy + ix + ch;
- *                // i is the index for the bitmap
- *            }
- *        }
- *    }
+    int height = im->height();
+    int width = im->width();
+    int channels = im->channels();
+    btrgb::pixel* bitmap = im->bitmap();
+
+    uint32_t ch, x, y, i;
+    for( ch = 0; ch < channels; ch++) {
+        for( y = 0; y < height; y++) {
+            for( x = 0; x < width; x++) {
+                    i = im->getIndex(y, x, ch);
+                    //<some variable> = bitmap[i]; //getting
+                    //bitmap[i] = <some number>; //setting
+                }
+            }
+        }
+    }
  * 
  * Format of bitmaps:
  * 
@@ -72,10 +78,13 @@ namespace btrgb {
             void initBitmap(int width, int height, int channels);
 
             std::string filename();
+            void setFilename(std::string filename);
+
             int width();
             int height();
             int channels();
             pixel* bitmap();
+            uint32_t getIndex(int row, int col, int ch);
 
             void recycle();
 
@@ -98,6 +107,22 @@ namespace btrgb {
             }
             virtual char const * what() const noexcept { return  this->msg.c_str(); }
     };
+
+    const int Red = 0;
+    const int Green = 1;
+    const int Blue = 2;
+    const int R1 = 0;
+    const int G1 = 1;
+    const int B1 = 2;
+    const int R2 = 3;
+    const int G2 = 4;
+    const int B2 = 5;
+    const int Ch1 = 0;
+    const int Ch2 = 1;
+    const int Ch3 = 2;
+    const int Ch4 = 3;
+    const int Ch5 = 4;
+    const int Ch6 = 5;
 }
 
 #endif

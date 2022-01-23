@@ -9,6 +9,7 @@ project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
 find_package(websocketpp CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
+find_package(jsoncons CONFIG REQUIRED)
 
 # LCMS is needed for LibRAW. For some reason on 
 # OSX and Linux, this dependency needs to be explicitly
@@ -40,6 +41,7 @@ target_include_directories(app PUBLIC "src/")
 #----------------------------------------------------
 target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
+target_link_libraries(app PRIVATE jsoncons)
 
 target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
 target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
@@ -47,6 +49,7 @@ target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
 target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
 target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
+
 
 # Pthreads & OpenMP on Linux
 if( ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-linux")
