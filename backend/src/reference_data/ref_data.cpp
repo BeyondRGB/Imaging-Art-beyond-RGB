@@ -36,16 +36,16 @@ void RefData::read_in_data(std::string file_path) {
 		this->pars_line(line);
 	}
 
-	for (int row = 0; row < row_count; row++) {
-		for (int col = 0; col < col_count; col++) {
-			std::cout << *this->color_patches[row][col]  << std::endl;
-		}
-		std::cout << std::endl;
-	}
-	int wave = 730;
-	int i = 35;
-	std::cout << "Wavelen: " << wave << " index: " << WAVELEN_TO_INDEX(wave) << std::endl;
-	std::cout << "index: " << i << " wavelen: " << INDEX_TO_WAVELEN(i) << std::endl;
+	//for (int row = 0; row < row_count; row++) {
+	//	for (int col = 0; col < col_count; col++) {
+	//		std::cout << *this->color_patches[row][col]  << std::endl;
+	//	}
+	//	std::cout << std::endl;
+	//}
+	//int wave = 730;
+	//int i = 35;
+	//std::cout << "Wavelen: " << wave << " index: " << WAVELEN_TO_INDEX(wave) << std::endl;
+	//std::cout << "index: " << i << " wavelen: " << INDEX_TO_WAVELEN(i) << std::endl;
 
 	this->close_file();
 }

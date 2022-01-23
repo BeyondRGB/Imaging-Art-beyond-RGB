@@ -91,11 +91,13 @@ double ColorPatch::init_Tristimulus(ValueType type) {
 
 double ColorPatch::calc_k_value() {
 	StandardObserver* so = DataManager::get_instance()->get_observer_1931();
-	//Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
-	//double so_sum = so->sum_y();
-	//double reflectance_sum = this->sum_reflectance();
-	//std::cout << "soSum: " << so_sum << " reflectanceSum: " << reflectance_sum << std::endl;
-	//return 100 / ((so_sum * reflectance_sum) * SAMPLING_INCREMENT);
+	Illuminants* illuminants = DataManager::get_instance()->get_illuminants();
+	double so_x_ilum_sum = 0;
+	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
+		so_x_ilum_sum += so->y_by_index(i) * illuminants->D50_by_index(i);
+	}
+	//std::cout << "soSum: " << so_sum << " illum_sum: " << illum_sum << std::endl;
+	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
 	return 5;
 }
 

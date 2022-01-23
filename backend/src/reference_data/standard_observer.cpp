@@ -8,7 +8,6 @@ StandardObserver::StandardObserver(ObserverType type) {
 }
 
 StandardObserver::~StandardObserver() {
-	std::cout << "Destructor StandardObserver x" << std::endl;
 	if (nullptr != this->x) {
 		delete this->x;
 	}
@@ -19,14 +18,14 @@ StandardObserver::~StandardObserver() {
 }
 
 void StandardObserver::init(std::string file) {
-	this->x = new double[REFLECTANCE_SIZE];
-	this->y = new double[REFLECTANCE_SIZE];
-	this->z = new double[REFLECTANCE_SIZE];
+	this->x = new double[STANDARD_OBSERVER_SIZE];
+	this->y = new double[STANDARD_OBSERVER_SIZE];
+	this->z = new double[STANDARD_OBSERVER_SIZE];
 	std::cout << "Generateing StandardObserver" << std::endl;
 	this->open_file(file);
 	// Ignore header
 	this->get_next_line();
-	for(int i = 0; i < REFLECTANCE_SIZE; i++) {
+	for(int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
 		std::string line = this->get_next_line();
 		// Ignor wavelength
 		this->get_next<double>(line);
@@ -84,7 +83,7 @@ double StandardObserver::sum_z() {
 
 double StandardObserver::sum(double* array) {
 	double sum = 0;
-	for (int i = 0; i < REFLECTANCE_SIZE; i++) {
+	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
 		sum += array[i];
 	}
 	return sum;

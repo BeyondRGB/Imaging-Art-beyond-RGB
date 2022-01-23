@@ -9,6 +9,8 @@
 #define INDEX_TO_WAVELEN(index) (index * SAMPLING_INCREMENT) + MIN_WAVE_LEN 
 
 #define REFLECTANCE_SIZE 1 + (MAX_WAVE_LEN - MIN_WAVE_LEN) / SAMPLING_INCREMENT
+#define ILLUMINATNTS_SIZE REFLECTANCE_SIZE
+#define STANDARD_OBSERVER_SIZE REFLECTANCE_SIZE
 
 #define RES_PATH "../res/" // relative to /src
 #define REF_DATA_PATH "../" RES_PATH "/ref_data/" // relative to src/reference_data
