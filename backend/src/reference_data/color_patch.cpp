@@ -96,9 +96,7 @@ double ColorPatch::calc_k_value() {
 	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
 		so_x_ilum_sum += so->y_by_index(i) * illuminants->D50_by_index(i);
 	}
-	//std::cout << "soSum: " << so_sum << " illum_sum: " << illum_sum << std::endl;
 	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
-	return 5;
 }
 
 double ColorPatch::sum_reflectance() {
