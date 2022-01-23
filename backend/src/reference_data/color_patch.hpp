@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "ref_data_defines.hpp"
+#include "ref_data_array.hpp"
 
 class ColorPatch {
 	enum ValueType {
@@ -17,7 +18,7 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const ColorPatch& cp) {
 		os << cp.name_m << std::endl;
 		for (int i = 0; i < REFLECTANCE_SIZE; i++) {
-			os << "\t" << cp.reflectance[i] << std::endl;
+			os << "\t" << cp.reflectance->get_by_index(i) << std::endl;
 		}
 		return os;
 	}
@@ -38,7 +39,7 @@ public:
 
 private:
 	std::string name_m;
-	double* reflectance = nullptr;
+	RefDataArray* reflectance = nullptr;
 	int index_m = 0;
 	//Position of ColorPatch in ColorTarget
 	short row;

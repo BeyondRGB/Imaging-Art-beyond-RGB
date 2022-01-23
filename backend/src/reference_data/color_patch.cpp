@@ -7,7 +7,7 @@
 ColorPatch::ColorPatch(short row, short col) {
 	this->row = row;
 	this->col = col;
-	this->reflectance = new double[REFLECTANCE_SIZE];
+	this->reflectance = new RefDataArray(REFLECTANCE_SIZE);
 }
 
 ColorPatch::~ColorPatch() {
@@ -39,7 +39,7 @@ void ColorPatch::set_name(std::string name) { this->name_m = name; }
 
 void ColorPatch::append(double value) {
 	if (this->index_m < REFLECTANCE_SIZE) {
-		this->reflectance[this->index_m++] = value;
+		this->reflectance->append(value);
 	}
 	else
 		throw std::exception("ColorPatch is Full");
@@ -48,7 +48,7 @@ void ColorPatch::append(double value) {
 
 double ColorPatch::get_ref_by_index(int index) {
 	if (index < REFLECTANCE_SIZE)
-		return this->reflectance[index];
+		return this->reflectance->get_by_index(index);
 	else
 		throw std::out_of_range("Index out of bounds");
 }
@@ -103,7 +103,7 @@ double ColorPatch::calc_k_value() {
 double ColorPatch::sum_reflectance() {
 	double sum = 0;
 	for (int i = 0; i < REFLECTANCE_SIZE; i++) {
-		sum += this->reflectance[i];
+		sum += this->reflectance->get_by_index(i);
 	}
 	return sum;
 }
