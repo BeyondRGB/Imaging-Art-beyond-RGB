@@ -3,34 +3,37 @@
 
 #include "csv_parser.hpp"
 #include "ref_data_defines.hpp"
+#include "ref_data_array.hpp"
 #include <string>
 
 //#define ILLUMINANTS "../../res/ref_data/Illuminants.csv"
 
 class Illuminants : public CSVParser {
-	enum IlluminatType {
-		A, D50, D65
-	};
 
 public:
+	enum IlluminantType {
+		A, D50, D65
+	};
 	Illuminants();
 	~Illuminants();
-	double A_by_index(int index);
-	double D50_by_index(int index);
-	double D65_by_index(int index);
-	double A_by_wavelen(int wavelen);
-	double D50_by_wavelen(int wavelen);
-	double D65_by_wavelen(int wavelen);
+	double value_by_index(IlluminantType type, int index);
+	double value_by_wavelen(IlluminantType type, int wavelen);
+	//double A_by_index(int index);
+	//double D50_by_index(int index);
+	//double D65_by_index(int index);
+	//double A_by_wavelen(int wavelen);
+	//double D50_by_wavelen(int wavelen);
+	//double D65_by_wavelen(int wavelen);
 
-	double sum_a();
-	double sum_d50();
-	double sum_d65();
-	double sum(double* array);
+	//double sum_a();
+	//double sum_d50();
+	//double sum_d65();
+	//double sum(double* array);
 
 private:
 	void init();
-	double* illum_A = nullptr;
-	double* illum_D50 = nullptr;
-	double* illum_D65 = nullptr;
+	RefDataArray* illum_A = nullptr;
+	RefDataArray* illum_D50 = nullptr;
+	RefDataArray* illum_D65 = nullptr;
 };
 #endif // !ILLUMINANTS_H
