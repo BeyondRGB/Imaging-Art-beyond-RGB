@@ -16,6 +16,9 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     cv::Mat im1;
     cv::Mat im2;
     
+    cv::Mat mat(int rows, int type, void* data);
+
+   
     
 
     //Convert the two bitmaps from ArtObject into OpenCV matrix format
