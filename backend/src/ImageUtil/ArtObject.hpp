@@ -34,7 +34,7 @@ namespace btrgb {
         ~ArtObject();
 
         void newImage(std::string name, std::string filename);
-        void targetInfo(std::int topLeft, std::int topRight, std::int botRight, std::int botLeft, std::int rows, std::int cols, std::int patSize);
+        void targetInfo(std::int16_t topLeft, std::int16_t topRight, std::int16_t botRight, std::int16_t botLeft, std::int16_t rows, std::int16_t cols, std::int16_t patSize);
         void setImage(std::string name, image* im);
         image* getImage(std::string name);
         int* getTargetInfo(std::string type);

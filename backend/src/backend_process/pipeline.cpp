@@ -57,7 +57,9 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
             art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
         }
+        //Stuff here is pending the implementation of how the target is being defined
         //Json target_location = this->process_data_m-> NEED TO FIND OUT HOW TO READ TARGET LOCATION DATA
+        //art_obj->targetInfo()
         return true;
     }
     catch (ParsingError e) {
