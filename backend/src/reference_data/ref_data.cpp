@@ -31,6 +31,19 @@ ColorPatch* RefData::get_color_patch(int row, int col) {
 	throw std::out_of_range("Index out of bounds");
 }
 
+ColorPatch* RefData::get_white_patch() {
+	ColorPatch* current_best = this->get_color_patch(0, 0);
+	for (int row = 0; row < this->row_count; row++) {
+		for (int col = 0; col < this->col_count; col++) {
+			ColorPatch* cp = this->get_color_patch(row, col);
+			if (cp->get_y() > current_best->get_y()) {
+				current_best = cp;
+			}
+		}
+	}
+	return current_best;
+}
+
 void RefData::read_in_data(std::string file_path) {
 	this->open_file(file_path);
 	std::string header = this->get_next_line();

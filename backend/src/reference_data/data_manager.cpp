@@ -21,6 +21,14 @@ DataManager::~DataManager() {
 
 }
 
+void DataManager::set_observer(StandardObserver::ObserverType observer) {
+	this->observer_type = observer;
+}
+
+void DataManager::set_illuminants(Illuminants::IlluminantType illuminants) {
+	this->illum_type = illuminants;
+}
+
 void DataManager::shut_down() {
 	if (nullptr != this->instance)
 		delete this->instance;
