@@ -3,6 +3,20 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
 
 
+
+
+
+
+FIND_PACKAGE( OpenCV REQUIRED )                              
+INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
+
+
+
+
+
+
+
+
 #------------------------------------------
 #	Add VCPKG provided find_package Here
 #------------------------------------------
@@ -10,11 +24,6 @@ find_package(websocketpp CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
-find_package( OpenCV REQUIRED )
-include_directories( ${OpenCV_INCLUDE_DIRS} )
-add_executable( DisplayImage DisplayImage.cpp )
-
-
 
 # LCMS is needed for LibRAW. For some reason on 
 # OSX and Linux, this dependency needs to be explicitly
@@ -55,7 +64,6 @@ target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
 target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
-target_link_libraries( DisplayImage ${OpenCV_LIBS} )
 
 # Pthreads & OpenMP on Linux
 if( ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-linux")
