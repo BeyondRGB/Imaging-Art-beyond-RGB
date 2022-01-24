@@ -6,24 +6,6 @@
 
 void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Flat Fielding");
-    //TO BE DEPREICATED
-/*    int patches;
-    float cell[35][patches];
-    int highestIndex;
-    float highestAvg = 0;
-    for (int i = 0; i < patches; i++) {
-        float tempAvg = 0;
-        float tempTotal = 0;
-        for (int j = 0; j < 35; j++) {
-            tempTotal += cell[j][i];
-        }
-        tempAvg = tempTotal / 35;
-        if (tempAvg > highestAvg) {
-            highestIndex = i;
-            highestAvg = tempAvg;
-        }
-    }
-    */
     try {
         btrgb::image* art1 = images->getImage("art1");
         btrgb::image* white1 = images->getImage("white1");;
@@ -36,6 +18,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
         func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
         return;
     }
+    //Set up of the size of all the bitmaps for all the different images being looked at
     int height = art1->height();
     int width = art1->width();
     int channels = art1->channels();
@@ -45,11 +28,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::pixel* wbitmap2 = white2->bitmap();
     btrgb::pixel* dbitmap1 = dark1->bitmap();
     btrgb::pixel* dbitmap2 = dark2->bitmap();
-    //Need to pull the channel 2 value from the art white patch,
-    //and the corrisponding spot from the white image for these values
-    //y value will tell us which patch to look at
-    //ONLY NEED CHANNEL 2, aka Green channel, to get averages, y is from calc
-    //NEED TO CHANGE, SHOULD ONLY BE FINDING AVG WITHIN THE WHITE PATCH, LOC WILL BE PROVIDED BY ART OBJ
+
+    //ONLY NEED CHANNEL 2, aka Green channel, to get averages, y is from calc    
     //Provided from Art Obj
     //Determines how many pixels are compared, 
     //size - 1 = how many rings around the center point to be compared for avg
@@ -85,9 +65,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     float white1Avg = white1Total/(size*size);
     float art2Avg = art2Total / (size * size);
     float white2Avg = white2Total / (size * size);
-    //Fake data being used here for inputed data, but should be the correct y calculation
-    //Real data requires read in of csv file
-    //Y VALUE WILL BE PROVIDED, depricate everything beind done for the sole purpose of getting y
+    //Y provided by Singleton
     float yVal;
     float w1 = yVal * (white1Avg / art1Avg);
     float w2 = yVal * (white2Avg / art2Avg);
