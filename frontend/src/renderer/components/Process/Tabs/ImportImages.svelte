@@ -1,4 +1,22 @@
 <script lang="ts">
+  import { processState } from "@util/stores";
+  import FileSelector from "@components/FileSelector.svelte";
+
+  let filePaths = [];
+  $: console.log(filePaths);
+  $: if (filePaths) {
+    $processState.imageFilePaths = filePaths.map((path) => {
+      return {
+        id: (
+          path.split("").reduce((a, b) => {
+            a = (a << 5) - a + b.charCodeAt(0);
+            return a & a;
+          }, 0) + Math.pow(2, 31)
+        ).toString(16),
+        name: path,
+      };
+    });
+  }
 </script>
 
 <main>
@@ -9,12 +27,22 @@
     </p>
   </left>
   <right>
-    <input type="file" />
+    <div class="fileSelector">
+      <FileSelector bind:filePaths />
+    </div>
     <article>
       <ul>
-        {#each [1, 2, 3, 4, 5] as i}
-          <li>{i}</li>
-        {/each}
+        {#if filePaths?.length > 0}
+          {#each filePaths as filePath}
+            <li>
+              {filePath.length > 60
+                ? `${filePath.substring(0, 20)}...${filePath.substring(
+                    filePath.length - 40
+                  )}`
+                : filePath}
+            </li>
+          {/each}
+        {/if}
       </ul>
     </article></right
   >
@@ -28,7 +56,7 @@
     @apply bg-gray-600 w-full h-full p-6 flex-col overflow-auto;
   }
   right {
-    @apply bg-gray-700 w-full h-full p-6 flex justify-center;
+    @apply bg-gray-700 w-full h-full p-6 flex flex-col justify-center items-center;
   }
   h1 {
     @apply text-3xl;
@@ -36,10 +64,10 @@
   p {
     @apply text-center pt-[30vh] bg-gray-500/25 m-4 h-[90%] rounded-lg;
   }
-  input {
-    @apply pt-[35vh];
-  }
   article {
-    @apply pt-[40vh] bg-gray-800 h-60 w-[80%] hidden;
+    @apply bg-gray-800 h-full w-full m-6 overflow-auto;
+  }
+  li {
+    @apply bg-gray-700 m-1 p-2;
   }
 </style>

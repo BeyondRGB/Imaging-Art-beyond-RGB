@@ -1,93 +1,73 @@
 <script lang="ts">
   import HeapBox from "@components/Process/HeapBox.svelte";
+  import { processState } from "@util/stores";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
-  let items: any[] = [
-    { id: 1, name: "photo1.cr2" },
-    { id: 2, name: "photo2.cr2" },
-    { id: 3, name: "photo3.cr2" },
-    { id: 4, name: "photo4.cr2" },
-    { id: 5, name: "photo5.cr2" },
-    { id: 6, name: "photo6.cr2" },
-    { id: 7, name: "photo7.cr2" },
-    { id: 8, name: "photo8.cr2" },
-    { id: 9, name: "photo9.cr2" },
-    { id: 10, name: "photo10.cr2" },
-    { id: 11, name: "photo11.cr2" },
-    { id: 12, name: "photo12.cr2" },
-    { id: 13, name: "photo13.cr2" },
-    { id: 14, name: "photo14.cr2" },
-    { id: 15, name: "photo15.cr2" },
-    { id: 16, name: "photo16.cr2" },
-  ];
-
-  let columns: any[] = [
-    {
-      id: 20,
-      name: "Art 1",
-      fields: [
-        { name: "ImageA", items: [] },
-        { name: "WhitefieldA", items: [] },
-        { name: "DarkfieldA", items: [] },
-      ],
-    },
-  ];
 
   const flipDurationMs = 150;
   function handleDndConsiderCol(e: CustomEvent) {
-    columns = e.detail.items;
+    $processState.artStacks = e.detail.items;
   }
   function handleDndFinalizeCol(e: CustomEvent) {
-    columns = e.detail.items;
+    $processState.artStacks = e.detail.items;
   }
 
   function handleDndConsider(cid: number, field: string, e: CustomEvent) {
-    const colIdx = columns.findIndex((c) => c.id === cid);
-    const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
-    columns[colIdx].fields[fieldIdx].items = e.detail.items;
-    columns = [...columns];
+    const colIdx = $processState.artStacks.findIndex((c) => c.id === cid);
+    //const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
+    console.log($processState.artStacks[colIdx].fields[field].items);
+    $processState.artStacks[colIdx].fields[field] = e.detail.items;
+    $processState.artStacks = [...$processState.artStacks];
   }
   function handleDndFinalize(cid: number, field: string, e: CustomEvent) {
-    const colIdx = columns.findIndex((c) => c.id === cid);
-    const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
-    columns[colIdx].fields[fieldIdx].items = e.detail.items;
-    columns = [...columns];
+    const colIdx = $processState.artStacks.findIndex((c) => c.id === cid);
+    //const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
+    $processState.artStacks[colIdx].fields[field] = e.detail.items;
+    $processState.artStacks = [...$processState.artStacks];
   }
 
   function handleCloseCol(cid: number) {
-    const colIdx = columns.findIndex((c) => c.id === cid);
-    columns.splice(colIdx, 1);
-    console.log(columns);
-    columns = [...columns];
+    const colIdx = $processState.artStacks.findIndex((c) => c.id === cid);
+    $processState.artStacks.splice(colIdx, 1);
+
+    $processState.artStacks = [...$processState.artStacks];
   }
 
   function handleAddCol() {
-    columns = [
-      ...columns,
+    $processState.artStacks = [
+      ...$processState.artStacks,
       {
         id: Date.now(),
-        name: `Art ${columns.length + 1}`,
-        fields: [
-          { name: "ImageA", items: [] },
-          { name: "WhitefieldA", items: [] },
-          { name: "DarkfieldA", items: [] },
-        ],
+        name: `Art ${$processState.artStacks.length + 1}`,
+        fields: {
+          images: [],
+          whitefield: [],
+          darkfield: [],
+        },
       },
     ];
+  }
+
+  $: {
+    console.log($processState.artStacks);
   }
 </script>
 
 <main>
   <div id="heap">
-    <HeapBox {items} />
+    <HeapBox items={$processState.imageFilePaths} />
   </div>
   <div id="cols">
     <section
-      use:dndzone={{ items: columns, flipDurationMs, type: "col" }}
+      use:dndzone={{
+        items: $processState.artStacks,
+        flipDurationMs,
+        type: "col",
+      }}
       on:consider={(e) => handleDndConsiderCol(e)}
       on:finalize={(e) => handleDndFinalizeCol(e)}
     >
-      {#each columns as column (column.id)}
+      {#each $processState.artStacks as column (column.id)}
         <div
           class="column dark:bg-blue-700/25 bg-blue-200"
           animate:flip={{ duration: flipDurationMs * 2 }}
@@ -100,23 +80,21 @@
           >
           <div class="flex">
             <item>
-              {#each column.fields as field (field.name)}
-                <span>{field.name}</span>
+              {#each Object.entries(column.fields) as field (field[0])}
+                <span>{field[0]}</span>
                 <itemBox
                   class={"strict"}
-                  use:dndzone={{ items: field.items, flipDurationMs }}
-                  on:consider={(e) =>
-                    handleDndConsider(column.id, field.name, e)}
-                  on:finalize={(e) =>
-                    handleDndFinalize(column.id, field.name, e)}
+                  use:dndzone={{ items: field[1], flipDurationMs }}
+                  on:consider={(e) => handleDndConsider(column.id, field[0], e)}
+                  on:finalize={(e) => handleDndFinalize(column.id, field[0], e)}
                 >
-                  {#each field.items as item (item.name)}
+                  {#each field[1] as item (item.id)}
                     <card
                       animate:flip={{ duration: flipDurationMs }}
-                      class={items.length > 1 ? "selected" : ""}
+                      class={999 > 1 ? "selected" : ""}
                       style=""
                     >
-                      {item.name}
+                      {item?.name?.split("\\")?.at(-1)}
                     </card>
                   {/each}
                 </itemBox>

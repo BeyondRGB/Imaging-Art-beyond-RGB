@@ -1,31 +1,29 @@
 <script>
-  import DragBox from "@components/Process/DragBox.svelte";
+  import { processState } from "@util/stores";
 
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
-  export let items;
-
   const flipDurationMs = 200;
   function handleDndConsider(e) {
-    items = e.detail.items;
+    $processState.imageFilePaths = e.detail.items;
   }
   function handleDndFinalize(e) {
-    items = e.detail.items;
+    $processState.imageFilePaths = e.detail.items;
   }
 </script>
 
 <main class="dark:bg-blue-700/25">
   <section
-    use:dndzone={{ items, flipDurationMs }}
+    use:dndzone={{ items: $processState.imageFilePaths, flipDurationMs }}
     on:consider={handleDndConsider}
     on:finalize={handleDndFinalize}
   >
-    {#each items as item (item.id)}
+    {#each $processState.imageFilePaths as item (item?.id)}
       <card
         animate:flip={{ duration: flipDurationMs }}
         class="dark:bg-gray-600"
       >
-        {item.name}
+        {item?.name?.split("\\")?.at(-1)}
       </card>
     {/each}
   </section>
