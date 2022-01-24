@@ -1,7 +1,3 @@
-//
-// Created by ThinkPad41 on 10/10/2021.
-//
-
 #include "../header/FlatFeildor.h"
 
 void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
@@ -33,7 +29,17 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Provided from Art Obj
     //Determines how many pixels are compared, 
     //size - 1 = how many rings around the center point to be compared for avg
-    int size;
+    int size = images->getTargetInfo("size");
+    //Other data from Art Obj for Target
+    int topLeft = images->getTargetInfo("tl");
+    int topRight = images->getTargetInfo("tr");
+    int botRight = images->getTargetInfo("br");
+    int botLeft = images->getTargetInfo("bl");
+    int rows = images->getTargetInfo("row");
+    int cols = images->getTargetInfo("col");
+    //Above will be used with Patch info from singleton to find the pixel that is the center
+    //of the white patch.  For now pretend the center pixel is the patchX and patchY
+
     //Provided from Singleton
     int patchX;
     int patchY;
@@ -61,8 +67,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             }
         }        
     }
-    float art1Avg = art1Total/(size*size);
-    float white1Avg = white1Total/(size*size);
+    float art1Avg = art1Total / (size * size);
+    float white1Avg = white1Total / (size * size);
     float art2Avg = art2Total / (size * size);
     float white2Avg = white2Total / (size * size);
     //Y provided by Singleton
