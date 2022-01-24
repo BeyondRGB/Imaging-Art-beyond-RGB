@@ -1,7 +1,7 @@
 #include "ArtObject.hpp"
 
 namespace btrgb {
-    private int16_t tLeft, tRight, bRight, bLeft, row, col, pSize;
+    private int16_t tLeft, tRight, bRight, bLeft, row, col;
     ArtObject::ArtObject() {
         this->tiffWriter = new LibTiffWriter();
     }
@@ -39,14 +39,13 @@ namespace btrgb {
         this->images[name] = im;
     }
 
-    void ArtObject::targetInfo(std::int16_t topLeft, std::int16_t topRight, std::int16_t botRight, std::int16_t botLeft, std::int16_t rows, std::int16_t cols, std::int16_t patSize) {
+    void ArtObject::targetInfo(std::int16_t topLeft, std::int16_t topRight, std::int16_t botRight, std::int16_t botLeft, std::int16_t rows, std::int16_t cols) {
         tLeft = topLeft;
         tRight = topRight;
         bRight = botRight;
         bLeft = botLeft;
         row = rows;
         col = cols;
-        pSize = patSize;
     }
 
     int16_t ArtObject::getTargetInfo(std::string type) {

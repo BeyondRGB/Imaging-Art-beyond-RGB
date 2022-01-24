@@ -29,7 +29,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Provided from Art Obj
     //Determines how many pixels are compared, 
     //size - 1 = how many rings around the center point to be compared for avg
-    int size = images->getTargetInfo("size");
+    //Current default to 3 can be adjusted if needed
+    int size = 3;
     //Other data from Art Obj for Target
     int topLeft = images->getTargetInfo("tl");
     int topRight = images->getTargetInfo("tr");
@@ -57,8 +58,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             //channel will always be index 1, only channel 2 aka green
             i = iy + ix + 1;
             //Need to find out if this is referneced correctly, is ix the x position
-            if (ix == patchX || ix == patchX - (size - 1) || ix == patchX + (size - 1)) {
-                if (iy == patchY || iy == patchY - (size - 1) || iy == patchY + (size - 1)) {
+            if (x == patchX || x == patchX - (size - 1) || x == patchX + (size - 1)) {
+                if (y == patchY || y == patchY - (size - 1) || y == patchY + (size - 1)) {
                     art1Total += abitmap1[i];
                     white1Total += wbitmap1[i];
                     art2Total += abitmap2[i];
