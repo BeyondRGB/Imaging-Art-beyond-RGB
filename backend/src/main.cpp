@@ -42,9 +42,16 @@ void testFunc() {
         std::cout << x_values << std::endl;
         std::cout << y_values << std::endl;
         std::cout << z_values << std::endl;
+        ColorPatch* cp = rd->get_white_patch();
+        std::cout << "White Patch," << cp->get_name() << std::endl;
+        std::cout << "Y Value, " << cp->get_y() << ",Row," << row << ",col," << col << std::endl << std::endl;
+
     }
-    //std::cout << cp << std::endl;
-   // std::cout << "Y value: " << cp->get_y() << " row: " << row << " col: " << col << std::endl;
+    //std::string file_name = files[0];
+    //RefData* rd = DataManager::get_instance()->get_ref_data(file_name);
+    //ColorPatch* cp = rd->get_white_patch();
+    //std::cout << cp->get_name() << std::endl;
+    //std::cout << "Y value: " << cp->get_y() << " row: " << row << " col: " << col << std::endl;
     //std::cout << "row: " << cp->get_row() << " col: " << cp->get_col() << std::endl;
     DataManager::get_instance()->shut_down();
 }

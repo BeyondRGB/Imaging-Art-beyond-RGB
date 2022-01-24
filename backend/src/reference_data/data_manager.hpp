@@ -23,6 +23,8 @@ public:
 	double y_observer_value(int index);
 	double z_observer_value(int index);
 	double illuminant_value(int index);
+	void set_observer(StandardObserver::ObserverType observer);
+	void set_illuminants(Illuminants::IlluminantType illuminants);
 	
 
 private:
