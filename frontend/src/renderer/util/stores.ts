@@ -5,7 +5,21 @@ export const currentPage = writable(null);
 export const appSettings = writable({ theme: false, sideNav: true });
 export const modal = writable(null);
 // Page Stores
-export const processState = writable({ currentTab: 0 });
+export const processState = writable({
+  currentTab: 0,
+  destDir: "",
+  imageFilePaths: [],
+  artStacks: [
+    {
+      id: 1,
+      name: "Art 1",
+      fields: {
+        images: [],
+        whitefield: [],
+        darkfield: [],
+      },
+    },]
+});
 // Webstocket Stores
 export const messageStore = writable('');
 export const connectionState = writable('Not Connected');
