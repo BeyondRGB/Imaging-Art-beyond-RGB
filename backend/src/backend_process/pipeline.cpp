@@ -10,8 +10,6 @@ Pipeline::Pipeline(){
 };
 
 void Pipeline::callback(std::string msg) {
-    msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
-    std::cout << "MSG: " << msg << std::endl;
     this->send_msg(msg);
 };
 
@@ -79,10 +77,20 @@ void Pipeline::run() {
     
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
-    
+    //Pipeline::callback(images->getBase64DataURL("art2"));
+
+    #include <chrono>
+    auto overall_start = std::chrono::high_resolution_clock::now();
     for(const auto& [name, img]: *images) {
-        images->outputImageAs(btrgb::TIFF, name, img->filename());
+        auto img_start = std::chrono::high_resolution_clock::now();
+        images->outputImageAs(btrgb::PNG, name, img->filename());
+        auto img_end = std::chrono::high_resolution_clock::now();
+        auto img_duration = std::chrono::duration_cast<std::chrono::milliseconds>(img_end - img_start);
+        Pipeline::callback(name + " took " + std::to_string(img_duration.count()) + " milliseconds");
     }
+    auto overall_end = std::chrono::high_resolution_clock::now();
+    auto overall_duration = std::chrono::duration_cast<std::chrono::milliseconds>(overall_end - overall_start);
+    Pipeline::callback("Overall: " + std::to_string(overall_duration.count()) + " milliseconds");
     
     delete images;
 
