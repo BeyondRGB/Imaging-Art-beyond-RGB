@@ -6,7 +6,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::image* white1;
     btrgb::image* white2;
     btrgb::image* dark1;
-    btrgb::image* dart2;
+    btrgb::image* dark2;
     func("Flat Fielding");
     try {
         art1 = images->getImage("art1");
