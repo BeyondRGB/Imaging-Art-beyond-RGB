@@ -1,14 +1,20 @@
 #include "../header/FlatFeildor.h"
 
 void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
+    btrgb::image* art1;
+    btrgb::image* art2;
+    btrgb::image* white1;
+    btrgb::image* white2;
+    btrgb::image* dark1;
+    btrgb::image* dart2;
     func("Flat Fielding");
     try {
-        btrgb::image* art1 = images->getImage("art1");
-        btrgb::image* white1 = images->getImage("white1");;
-        btrgb::image* dark1 = images->getImage("dark1");;
-        btrgb::image* art2 = images->getImage("art2");;
-        btrgb::image* white2 = images->getImage("white2");;
-        btrgb::image* dark2 = images->getImage("dark2");;
+        art1 = images->getImage("art1");
+        white1 = images->getImage("white1");;
+        dark1 = images->getImage("dark1");;
+        art2 = images->getImage("art2");;
+        white2 = images->getImage("white2");;
+        dark2 = images->getImage("dark2");;
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
         func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
