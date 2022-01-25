@@ -11,7 +11,7 @@ find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
 find_package(libpng CONFIG REQUIRED)
-find_path(CPP_BASE64_INCLUDE_DIRS "cpp-base64/base64.cpp")
+find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 
 # LCMS is needed for LibRAW. For some reason on 
 # OSX and Linux, this dependency needs to be explicitly
@@ -45,7 +45,7 @@ target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
 target_link_libraries(app PRIVATE jsoncons)
 target_link_libraries(app PRIVATE png_static)
-target_include_directories(app PRIVATE ${CPP_BASE64_INCLUDE_DIRS})
+target_include_directories(app PRIVATE ${CPPCODEC_INCLUDE_DIRS})
 
 target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
 target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
