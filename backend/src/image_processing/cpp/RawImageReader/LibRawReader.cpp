@@ -1,6 +1,11 @@
 #include "image_processing/header/LibRawReader.h"
 
 
+LibRawReader::LibRawReader(bool use_half_size) {
+    this->use_half_size = use_half_size;
+}
+
+
 LibRawReader::LibRawReader() {};
 LibRawReader::~LibRawReader() {};
 
@@ -11,6 +16,7 @@ void LibRawReader::configLibRawParams() {
 	this->rawReader.imgdata.params.use_camera_matrix = 0;
     this->rawReader.imgdata.params.user_qual = 0;
     this->rawReader.imgdata.params.output_color = 0;
+    this->rawReader.imgdata.params.half_size = this->use_half_size;
 }
 
 
