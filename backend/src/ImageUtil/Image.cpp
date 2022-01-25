@@ -12,7 +12,7 @@ namespace btrgb {
 
     image::~image() {
         if (this->_bitmap)
-            delete this->_bitmap;
+            delete[] this->_bitmap;
     }
 
     void image::initBitmap(int width, int height, int channels) {
@@ -61,7 +61,7 @@ namespace btrgb {
 
     void image::recycle() {
         if (this->_bitmap)
-            delete this->_bitmap;
+            delete[] this->_bitmap;
         this->_bitmap = 0;
         this->_width = 0;
         this->_height = 0;
