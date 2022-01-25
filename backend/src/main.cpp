@@ -20,8 +20,10 @@ void testFunc() {
     int row = 1;
     int col = 2;
     for (int file = 0; file < 4; file++) {
-        std::string file_name = files[file];
+        std::string file_name = files[file]; 
         RefData* rd = DataManager::get_instance()->get_ref_data(file_name);
+        rd->output_xyz();
+        /*RefData* rd = DataManager::get_instance()->get_ref_data(file_name);
         std::string header = "ValueType";
         std::string y_values = "Y";
         std::string x_values = "X";
@@ -44,7 +46,7 @@ void testFunc() {
         std::cout << z_values << std::endl;
         ColorPatch* cp = rd->get_white_patch();
         std::cout << "White Patch," << cp->get_name() << std::endl;
-        std::cout << "Y Value, " << cp->get_y() << ",Row," << row << ",col," << col << std::endl << std::endl;
+        std::cout << "Y Value, " << cp->get_y() << ",Row," << row << ",col," << col << std::endl << std::endl;*/
 
     }
     //std::string file_name = files[0];
