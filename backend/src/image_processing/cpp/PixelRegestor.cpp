@@ -1,7 +1,7 @@
 //
 // Created by ThinkPad41 on 10/10/2021.
 //
-#include "Image.hpp"
+#include "ImageUtil/Image.hpp"
 #include "../header/PixelRegestor.h"
 #include <opencv2/opencv.hpp>
 
@@ -13,24 +13,23 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Pixel Registration");
 
     //Grab the image data from the art object
-    
-    image* im1 = images->getImage("art1")
-    image* im2 = images->getImage("art2")
+    btrgb::image* img1 = images->getImage("art1");
+    btrgb::image* img2 = images->getImage("art2");
 
-    int ImageARows = im1->width();
-    int ImageACols = im1->height();
-    void* dataA = im1-> bitmap();
+    int ImageARows = img1->width();
+    int ImageACols = img1->height();
+    void* dataA = img1-> bitmap();
     
-    int ImageBRows = im2->width();
-    int ImageBCols = im2->height();
-    void* dataB = im2-> bitmap();
+    int ImageBRows = img2->width();
+    int ImageBCols = img2->height();
+    void* dataB = img2-> bitmap();
 
     int type = CV_16UC3;
 
     //Convert the two bitmaps from ArtObject into OpenCV matrix format
 
     cv::Mat im1(ImageARows, ImageACols, type, dataA);
-    cv::Mat im2(ImageBRows, ImageCCols, type, dataB);
+    cv::Mat im2(ImageBRows, ImageBCols, type, dataB);
 
    
     //Check that there is actual data in them
