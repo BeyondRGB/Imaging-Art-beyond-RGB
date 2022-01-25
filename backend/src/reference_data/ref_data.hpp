@@ -16,6 +16,8 @@ public:
 	int get_row_size();
 	int get_col_size();
 
+	void output_xyz();
+
 
 private:
 	void read_in_data(std::string file_path);
@@ -28,6 +30,7 @@ private:
 	int row_count;
 	int col_count;
 	ColorPatch*** color_patches;
+	std::string f_name;
 
 	
 };

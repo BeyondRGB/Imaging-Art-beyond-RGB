@@ -4,6 +4,7 @@
 
 RefData::RefData(std::string file) {
 	std::string path = REF_DATA_PATH;
+	this->f_name = file;
 	this->read_in_data(path + file);
 }
 
@@ -127,4 +128,29 @@ void RefData::init_data_storage() {
 std::string RefData::get_col_id(std::string header_item) {
 	size_t pos = header_item.find(":");
 	return header_item.substr(0, pos);
+}
+
+void RefData::output_xyz() {
+	std::string header = "ValueType";
+	std::string y_values = "Y";
+	std::string x_values = "X";
+	std::string z_values = "Z";
+	for (int col = 0; col < this->get_col_size(); col++) {
+		for (int row = 0; row < this->get_row_size(); row++) {
+			std::string comma = ",";
+			ColorPatch* cp = this->get_color_patch(row, col);
+			header += comma + cp->get_name();
+			y_values += comma + std::to_string(cp->get_y());
+			x_values += comma + std::to_string(cp->get_x());
+			z_values += comma + std::to_string(cp->get_z());
+		}
+	}
+	std::cout << this->f_name << std::endl;
+	std::cout << header << std::endl;
+	std::cout << x_values << std::endl;
+	std::cout << y_values << std::endl;
+	std::cout << z_values << std::endl;
+	ColorPatch* cp = this->get_white_patch();
+	std::cout << "White Patch," << cp->get_name() << std::endl;
+	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",col," << cp->get_col() << std::endl << std::endl;
 }
