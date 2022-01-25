@@ -21,6 +21,11 @@ int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
     int* bit_freq = histogram - 8;
     int b;
 
+
+     /* If max value is not 8 bits or greater, 
+      * don't do anything, assume & keep 16 bit. */
+    return 16;
+}
     /* Values used to loop through every
      * pixel in the image. */
     int height = im->height();
@@ -78,6 +83,4 @@ int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
         }
     }
 
-    return -1;
-}
 
