@@ -1,3 +1,4 @@
+#include <cppcodec/base64_url.hpp>
 #include "ArtObject.hpp"
 
 namespace btrgb {
@@ -96,9 +97,15 @@ namespace btrgb {
     }
 
 
-    std::string getMimeBase64(std::string name) {
-        // to do
-        return "";
+    std::string ArtObject::getBase64DataURL(std::string name) {
+        if (! this->images.contains(name))
+            throw ArtObj_ImageDoesNotExist();
+
+        image* im = this->images[name];
+        size_t bitmap_size = im->width() * im->height() * im->channels() * sizeof(pixel);
+        
+        /* This is probably a pretty terrible concatenation. */
+        return "data:application/octet-stream;base64," + cppcodec::base64_url::encode((const uint8_t*) im->bitmap(), bitmap_size);
     }
 
 

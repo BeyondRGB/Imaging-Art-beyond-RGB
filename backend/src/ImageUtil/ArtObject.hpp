@@ -40,7 +40,7 @@ namespace btrgb {
         bool imageExists(std::string name);
 
         void outputImageAs(enum output_type filetype, std::string name, std::string filename);
-        std::string getMimeBase64(std::string name);
+        std::string getBase64DataURL(std::string name);
 
         /* Iterators over all image entries. */
         std::unordered_map<std::string, image*>::iterator begin() noexcept {return images.begin();};
