@@ -10,15 +10,9 @@ namespace btrgb {
     */
     ArtObject::~ArtObject() {
 
-        /* Delete every image in the map.
-         * This should be done automatically by the unordered_map destructor:
-         *
-         * https://www.cplusplus.com/reference/unordered_map/unordered_map/~unordered_map/
-         * ~unordered_map();
-         * Destroy unordered map
-         * Destructs the container object. This calls each of the contained element's destructors, 
-        *  and dealocates all the storage capacity allocated by the unordered_map container.
-        */
+        /* Delete every image in the map. */
+        for( const auto& [name, img] : this->images )
+            delete img;
     }
 
 
