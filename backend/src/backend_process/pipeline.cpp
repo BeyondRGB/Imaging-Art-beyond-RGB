@@ -58,8 +58,20 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
         }
         //Stuff here is pending the implementation of how the target is being defined
-        //Json target_location = this->process_data_m-> NEED TO FIND OUT HOW TO READ TARGET LOCATION DATA
-        //art_obj->targetInfo()
+        Json target_location = this->process_data_m->process_data_m->get_obj("TargetLocation");
+        Json tLeft = target_location.get_obj("TopLeft")
+        double tLeftX = tLeft.get_number("x");
+        double tLeftY = tLeft.get_number("y");
+        Json tRight = target_location.get_obj("TopRight");
+        double tRightX = tRight.get_number("x");
+        double tRightY = tRight.get_number("y");
+        Json bRight = target_location.get_obj("BottomRight");
+        double bRightX = bRight.get_number("x");
+        double bRightY = bRight.get_number("y");
+        Json bLeft = target_location.get_obj("BottomLeft");
+        double bLeftX = bLeft.get_number("x");
+        double bLeftY = bLeft.get_number("y");
+        //art_obj->targetInfo() Need to fix load for x and y for each location
         return true;
     }
     catch (ParsingError e) {

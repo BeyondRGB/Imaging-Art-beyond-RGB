@@ -1,7 +1,6 @@
 #include "ArtObject.hpp"
 
 namespace btrgb {
-    private int16_t tLeft, tRight, bRight, bLeft, row, col;
     ArtObject::ArtObject() {
         this->tiffWriter = new LibTiffWriter();
     }
@@ -67,11 +66,8 @@ namespace btrgb {
         else if (type._Equal("col")) {
             return this->col;
         }
-        else if (type._Equal("size")) {
-            return this->pSize;
-        }
         else {
-            return this->NULL;
+            return NULL;
         }
     }
 
