@@ -5,11 +5,13 @@
 //#include <iostream>
 #include "csv_parser.hpp"
 #include "color_patch.hpp"
+#include "illuminants.hpp"
+#include "standard_observer.hpp"
 
 class RefData: public CSVParser {
 
 public:
-	RefData(std::string file_path);
+	RefData(std::string file_path, Illuminants::IlluminantType illum_type, StandardObserver::ObserverType so_type);
 	~RefData();
 	ColorPatch* get_color_patch(int row, int col);
 	ColorPatch* get_white_patch();
@@ -31,6 +33,8 @@ private:
 	int col_count;
 	ColorPatch*** color_patches;
 	std::string f_name;
+	StandardObserver* observer = nullptr;
+	Illuminants* illuminants = nullptr;
 
 	
 };

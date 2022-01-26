@@ -37,7 +37,7 @@ void DataManager::shut_down() {
 RefData* DataManager::get_ref_data(std::string key) {
 	if (!this->data_map.contains(key)) {
 		//For now key is filename
-		RefData* data = new RefData(key);
+		RefData* data = new RefData(key, this->illum_type, this->observer_type);
 		this->data_map[key] =  data;
 	}
 	return this->data_map[key];
@@ -74,7 +74,7 @@ double DataManager::z_observer_value(int index) {
 }
 
 double DataManager::illuminant_value(int index) {
-	return this->get_illuminants()->value_by_index(this->illum_type, index);
+	return this->get_illuminants()->value_by_index(index);
 }
 
 StandardObserver* DataManager::get_observer_1931() {
@@ -93,7 +93,7 @@ StandardObserver* DataManager::get_observer_1964() {
 
 Illuminants* DataManager::get_illuminants() {
 	if (nullptr == this->illuminants) {
-		this->illuminants = new Illuminants();
+		this->illuminants = new Illuminants(this->illum_type);
 	}
 	return this->illuminants;
 }
