@@ -2,13 +2,21 @@
 #include <iostream>
 #include <fstream>
 
-RefData::RefData(std::string file) {
+RefData::RefData(std::string file, Illuminants::IlluminantType illum_type, StandardObserver::ObserverType so_type) {
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	this->read_in_data(path + file);
+	this->observer = new StandardObserver(so_type);
+	this->illuminants = new Illuminants(illum_type);
 }
 
 RefData::~RefData() {
+	if (nullptr != this->observer) {
+		delete this->observer;
+	}
+	if (nullptr != this->illuminants) {
+		delete this->illuminants;
+	}
 	for (int row = 0; row < this->row_count; row++) {
 		for (int col = 0; col < this->col_count; col++) {
 			delete this->color_patches[row][col];
