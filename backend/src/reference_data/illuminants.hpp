@@ -15,10 +15,10 @@ public:
 		A, D50, D65
 	};
 
-	Illuminants();
+	Illuminants(IlluminantType type);
 	~Illuminants();
-	double value_by_index(IlluminantType type, int index);
-	double value_by_wavelen(IlluminantType type, int wavelen);
+	double value_by_index(int index);
+	double value_by_wavelen(int wavelen);
 	//double A_by_index(int index);
 	//double D50_by_index(int index);
 	//double D65_by_index(int index);
@@ -36,5 +36,6 @@ private:
 	RefDataArray* illum_A = nullptr;
 	RefDataArray* illum_D50 = nullptr;
 	RefDataArray* illum_D65 = nullptr;
+	IlluminantType type;
 };
 #endif // !ILLUMINANTS_H

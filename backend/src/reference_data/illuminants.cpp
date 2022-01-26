@@ -1,7 +1,8 @@
 #include "illuminants.hpp"
 
-Illuminants::Illuminants() {
+Illuminants::Illuminants(IlluminantType type) {
 	this->init();
+	this->type = type;
 }
 
 Illuminants::~Illuminants() {
@@ -31,8 +32,8 @@ void Illuminants::init() {
 	this->close_file();
 }
 
-double Illuminants::value_by_index(IlluminantType type, int index) {
-	switch (type) {
+double Illuminants::value_by_index(int index) {
+	switch (this->type) {
 	case A:
 		return this->illum_A->get_by_index(index);
 	case D50:
@@ -44,8 +45,8 @@ double Illuminants::value_by_index(IlluminantType type, int index) {
 	}
 }
 
-double Illuminants::value_by_wavelen(IlluminantType type, int wavelen) {
-	return this->value_by_index(type, WAVELEN_TO_INDEX(wavelen));
+double Illuminants::value_by_wavelen(int wavelen) {
+	return this->value_by_index(WAVELEN_TO_INDEX(wavelen));
 }
 
 //double Illuminants::A_by_index(int index) {
