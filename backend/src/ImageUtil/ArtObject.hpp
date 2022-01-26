@@ -26,6 +26,7 @@ namespace btrgb {
     class ArtObject {
 
     private:
+        int16_t tLeft, tRight, bRight, bLeft, row, col;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
 
