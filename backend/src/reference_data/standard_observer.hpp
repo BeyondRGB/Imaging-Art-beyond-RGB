@@ -6,6 +6,10 @@
 #include "ref_data_defines.hpp"
 #include "ref_data_array.hpp"
 
+/**
+* Class to hold and provide StandardObserver values
+* This is used to compute reference data values
+*/
 class StandardObserver : public CSVParser {
 
 
@@ -19,20 +23,29 @@ public:
 	};
 	StandardObserver(ObserverType type);
 	~StandardObserver();
-	void init(std::string file);
+
+	/**
+	* Get StandardObserver value by index
+	* @param type: the ValueType(x,y,z) to get value for
+	* @param index: the index to get value from
+	* @return: the observer value
+	*/
 	double value_by_index(ValueType type, int index);
+
+	/**
+	* Get StandardObserver value by wavelength
+	* @param type: the ValueType(x,y,z) to get value for
+	* @param index: the wavelength to get value from
+	* @return: the observer value
+	*/
 	double value_by_wavelen(ValueType type, int wavelen);
-	//double x_by_index(int index);
-	//double y_by_index(int index);
-	//double z_by_index(int index);
-	//double x_by_wavelen(int wavelen);
-	//double y_by_wavelen(int wavelen);
-	//double z_by_wavelen(int wavelen);
-	//double sum_y();
-	//double sum_x();
-	//double sum_z();
 
 private:
+	/**
+	* Initialize the StandardObserver data
+	* This will read data in to RefDataArray*s x,y,z
+	*/
+	void init(std::string file);
 	RefDataArray* x = nullptr;
 	RefDataArray* y = nullptr;
 	RefDataArray* z = nullptr;
