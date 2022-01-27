@@ -5,6 +5,8 @@
 #include <iostream>
 #include "ref_data_defines.hpp"
 #include "ref_data_array.hpp"
+#include "illuminants.hpp"
+#include "standard_observer.hpp"
 
 class ColorPatch {
 	enum ValueType {
@@ -13,7 +15,7 @@ class ColorPatch {
 	};
 
 public:
-	ColorPatch(short row, short col);
+	ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so);
 	~ColorPatch();
 	friend std::ostream& operator<<(std::ostream& os, const ColorPatch& cp) {
 		os << cp.name_m << std::endl;
@@ -40,6 +42,8 @@ public:
 private:
 	std::string name_m;
 	RefDataArray* reflectance = nullptr;
+	Illuminants* illuminants = nullptr;
+	StandardObserver* observer = nullptr;
 	int index_m = 0;
 	//Position of ColorPatch in ColorTarget
 	short row;
@@ -54,7 +58,7 @@ private:
 	double *b = nullptr;
 
 	double init_Tristimulus(ValueType type);
-	double get_so_value(ValueType type, int index);
+	StandardObserver::ValueType get_so_type(ValueType type);
 	double calc_k_value();
 	double sum_reflectance();
 };

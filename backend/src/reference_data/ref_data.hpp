@@ -9,9 +9,12 @@
 #include "standard_observer.hpp"
 
 class RefData: public CSVParser {
+private:
+	typedef Illuminants::IlluminantType IlluminantType;
+	typedef StandardObserver::ObserverType ObserverType;
 
 public:
-	RefData(std::string file_path, Illuminants::IlluminantType illum_type, StandardObserver::ObserverType so_type);
+	RefData(std::string file_path, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
 	~RefData();
 	ColorPatch* get_color_patch(int row, int col);
 	ColorPatch* get_white_patch();

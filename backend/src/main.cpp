@@ -6,6 +6,7 @@
 #include "reference_data/data_manager.hpp"
 #include "reference_data/color_patch.hpp"
 #include "reference_data/ref_data_defines.hpp"
+#include "reference_data/standard_observer.hpp"
 void testFunc() {
 	// Add testing logc here if this is called the server will not be started
     std::string path = REF_DATA_PATH;
@@ -19,10 +20,12 @@ void testFunc() {
     //file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\test.csv";
     int row = 1;
     int col = 2;
+    Illuminants::IlluminantType illum_type = Illuminants::IlluminantType::D50;
+    StandardObserver::ObserverType so_type = StandardObserver::ObserverType::SO_1931;
     for (int file = 0; file < 4; file++) {
         std::string file_name = files[file]; 
-        RefData* rd = DataManager::get_instance()->get_ref_data(file_name);
-        rd->output_xyz();
+        RefData rd(file_name);
+        rd.output_xyz();
         /*RefData* rd = DataManager::get_instance()->get_ref_data(file_name);
         std::string header = "ValueType";
         std::string y_values = "Y";
@@ -55,7 +58,7 @@ void testFunc() {
     //std::cout << cp->get_name() << std::endl;
     //std::cout << "Y value: " << cp->get_y() << " row: " << row << " col: " << col << std::endl;
     //std::cout << "row: " << cp->get_row() << " col: " << cp->get_col() << std::endl;
-    DataManager::get_instance()->shut_down();
+    
 }
 
 
