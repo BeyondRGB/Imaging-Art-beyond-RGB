@@ -1,9 +1,5 @@
 #include "color_patch.hpp"
 
-//#include "data_manager.hpp"
-//#include "standard_observer.hpp"
-//#include "illuminants.hpp"
-
 ColorPatch::ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so) {
 	this->row = row;
 	this->col = col;
@@ -40,11 +36,12 @@ std::string ColorPatch::get_name() const { return this->name_m; }
 void ColorPatch::set_name(std::string name) { this->name_m = name; }
 
 void ColorPatch::append(double value) {
-	if (this->index_m < REFLECTANCE_SIZE) {
+	try{
 		this->reflectance->append(value);
 	}
-	else
-		throw std::exception("ColorPatch is Full");
+	catch (std::exception e) {
+		throw e;
+	}
 
 }
 
@@ -108,14 +105,6 @@ double ColorPatch::calc_k_value() {
 		so_x_ilum_sum += oberver_value * illum_value;
 	}
 	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
-}
-
-double ColorPatch::sum_reflectance() {
-	double sum = 0;
-	for (int i = 0; i < REFLECTANCE_SIZE; i++) {
-		sum += this->reflectance->get_by_index(i);
-	}
-	return sum;
 }
 
 StandardObserver::ValueType ColorPatch::get_so_type(ValueType type) {
