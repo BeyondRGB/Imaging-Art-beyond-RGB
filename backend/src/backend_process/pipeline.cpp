@@ -71,7 +71,9 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         Json bLeft = target_location.get_obj("BottomLeft");
         double bLeftX = bLeft.get_number("x");
         double bLeftY = bLeft.get_number("y");
-        //art_obj->targetInfo() Need to fix load for x and y for each location
+        int numRows = target_location("NumRows");
+        int numCols = target_location("NumCols");
+        art_obj->targetInfo(tLeftX, tLeftY, tRightX, tRightY, bRightX, bRightY, bLeftX, bLeftY, numRows, numCols);
         return true;
     }
     catch (ParsingError e) {
@@ -86,20 +88,19 @@ void Pipeline::run() {
     this->send_msg(this->process_data_m->to_string());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
-    
+
 
     btrgb::ArtObject* images = new  btrgb::ArtObject();
     this->init_art_obj(images);
-    
-    
+
+
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
-    
+
     for(const auto& [name, img]: *images) {
         images->outputImageAsTIFF(name);
     }
-    
+
     delete images;
 
 }
-   

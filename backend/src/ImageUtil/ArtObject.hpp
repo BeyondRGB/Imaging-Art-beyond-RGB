@@ -18,7 +18,7 @@
  *      for(const auto& [key, im] : *images) {
  *          //do stuff here
  *      }
- * 
+ *
  */
 
 namespace btrgb {
@@ -26,7 +26,8 @@ namespace btrgb {
     class ArtObject {
 
     private:
-        int16_t tLeft, tRight, bRight, bLeft, row, col;
+        double tLeftX, tLeftY, tRightX, tRightY, bRightX, bRightY, bLeftX, bLeftY;
+        int16_t row, col;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
 
@@ -35,10 +36,11 @@ namespace btrgb {
         ~ArtObject();
 
         void newImage(std::string name, std::string filename);
-        void targetInfo(std::int16_t topLeft, std::int16_t topRight, std::int16_t botRight, std::int16_t botLeft, std::int16_t rows, std::int16_t cols);
+        void targetInfo(std::double topLeftX, std::double topLeftY, std::double topRightX, std::double topRightY, std::double botRightX, std::double botRightY, std::double botLeftX, std::double botLeftY, std::int16_t rows, std::int16_t cols);
         void setImage(std::string name, image* im);
         image* getImage(std::string name);
-        int* getTargetInfo(std::string type);
+        double* getTargetInfo(std::string type);
+        int* getTargetSize(std::string edge);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
 
@@ -54,7 +56,7 @@ namespace btrgb {
 
 
     class ArtObjectError : public std::exception {};
-    
+
     class ArtObj_ImageAlreadyExists : public ArtObjectError {
         public:
         virtual char const * what() const noexcept { return "ArtObject Error: An image with that name already exists."; }

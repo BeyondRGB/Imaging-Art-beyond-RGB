@@ -31,23 +31,27 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::pixel* dbitmap1 = dark1->bitmap();
     btrgb::pixel* dbitmap2 = dark2->bitmap();
 
-    //ONLY NEED CHANNEL 2, aka Green channel, to get averages, y is from calc    
+    //ONLY NEED CHANNEL 2, aka Green channel, to get averages, y is from calc
     //Provided from Art Obj
-    //Determines how many pixels are compared, 
+    //Determines how many pixels are compared,
     //size - 1 = how many rings around the center point to be compared for avg
     //Current default to 3 can be adjusted if needed
     int size = 3;
     //Other data from Art Obj for Target
-    int topLeft = images->getTargetInfo("tl");
-    int topRight = images->getTargetInfo("tr");
-    int botRight = images->getTargetInfo("br");
-    int botLeft = images->getTargetInfo("bl");
-    int rows = images->getTargetInfo("row");
-    int cols = images->getTargetInfo("col");
+    double topLeftX = images->getTargetInfo("tlx");
+    double topLeftY = images->getTargetInfo("tly");
+    double topRightX = images->getTargetInfo("trx");
+    double topRightY = images->getTargetInfo("try");
+    double botRightX = images->getTargetInfo("brx");
+    double botRightY = images->getTargetInfo("bry");
+    double botLeftX = images->getTargetInfo("blx");
+    double botLeftY = images->getTargetInfo("bly");
+    int rows = images->getTargetSize("row");
+    int cols = images->getTargetSize("col");
     //Above will be used with Patch info from singleton to find the pixel that is the center
     //of the white patch.  For now pretend the center pixel is the patchX and patchY
-
-    //Provided from Singleton
+    //MATH HERE TO FIND PIXEL BASED ON NORMALIZED CORNER LOCATIONS AND TARGET SIZE
+    //Provided from Art Obj, waiting for merge
     int patchX;
     int patchY;
 
@@ -72,7 +76,7 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
                     white2Total += wbitmap2[i];
                 }
             }
-        }        
+        }
     }
     float art1Avg = art1Total / (size * size);
     float white1Avg = white1Total / (size * size);
@@ -108,4 +112,5 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
         }
     }
     sleep_for(seconds(1));
+    //Need to add a call to turn into a TIFF
 }
