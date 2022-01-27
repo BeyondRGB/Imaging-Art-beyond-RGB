@@ -29,7 +29,6 @@ int CSVParser::count_line_items(std::string line, std::string delimiter) {
 
 bool CSVParser::has_next(std::string line, std::string delimiter) {
 	size_t pos = line.find(delimiter);
-	//std::cout << pos << std::endl;
 	return line.length() > 0;
 }
 
