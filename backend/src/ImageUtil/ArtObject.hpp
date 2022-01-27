@@ -41,6 +41,7 @@ namespace btrgb {
         image* getImage(std::string name);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
+        RefData* get_refrence_data();
 
         /* To do, add parameter for photometric tiff tag: RGB, or grayscale. */
         void outputImageAsTIFF(std::string name);
