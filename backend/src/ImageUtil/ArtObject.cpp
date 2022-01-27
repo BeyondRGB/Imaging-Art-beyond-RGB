@@ -106,4 +106,8 @@ namespace btrgb {
         
     }
 
+    RefData* ArtObject::get_refrence_data() {
+        return this->ref_data;
+    }
+
 }
