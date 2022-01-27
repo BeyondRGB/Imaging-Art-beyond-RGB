@@ -68,6 +68,14 @@ ColorPatch* RefData::get_white_patch() {
 	return current_best;
 }
 
+int RefData::get_white_patch_row() {
+	return this->get_white_patch()->get_row();
+}
+
+int RefData::get_white_patch_col() {
+	return this->get_white_patch()->get_col();
+}
+
 void RefData::read_in_data(std::string file_path) {
 	this->open_file(file_path);
 	std::string header = this->get_next_line();
