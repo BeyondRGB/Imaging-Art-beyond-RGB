@@ -28,11 +28,11 @@ RefData::~RefData() {
 	delete this->color_patches;
 }
 
-int RefData::get_row_size() {
+int RefData::get_row_count() {
 	return this->row_count;
 }
 
-int RefData::get_col_size() {
+int RefData::get_col_count() {
 	return this->col_count;
 }
 
@@ -79,23 +79,11 @@ void RefData::read_in_data(std::string file_path) {
 		std::string line = this->get_next_line();
 		this->pars_line(line);
 	}
-
-	//for (int row = 0; row < row_count; row++) {
-	//	for (int col = 0; col < col_count; col++) {
-	//		std::cout << *this->color_patches[row][col]  << std::endl;
-	//	}
-	//	std::cout << std::endl;
-	//}
-	//int wave = 730;
-	//int i = 35;
-	//std::cout << "Wavelen: " << wave << " index: " << WAVELEN_TO_INDEX(wave) << std::endl;
-	//std::cout << "index: " << i << " wavelen: " << INDEX_TO_WAVELEN(i) << std::endl;
-
 	this->close_file();
 }
 
 void RefData::pars_line(std::string line) {
-	// Ignor Wavlen col
+	// Ignore Wavlen col
 	this->get_next<int>(line);
 	for (int col = 0; col < col_count; col++) {
 		for (int row = 0; row < row_count; row++) {
@@ -106,7 +94,7 @@ void RefData::pars_line(std::string line) {
 }
 
 void RefData::pars_header(std::string header) {
-	// Ignor wavelength col
+	// Ignore wavelength col
 	this->get_next<std::string>(header);
 	for (int col = 0; col < col_count; col++) {
 		for (int row = 0; row < row_count; row++) {
@@ -158,8 +146,8 @@ void RefData::output_xyz() {
 	std::string y_values = "Y";
 	std::string x_values = "X";
 	std::string z_values = "Z";
-	for (int col = 0; col < this->get_col_size(); col++) {
-		for (int row = 0; row < this->get_row_size(); row++) {
+	for (int col = 0; col < this->get_col_count(); col++) {
+		for (int row = 0; row < this->get_row_count(); row++) {
 			std::string comma = ",";
 			ColorPatch* cp = this->get_color_patch(row, col);
 			header += comma + cp->get_name();
@@ -175,5 +163,5 @@ void RefData::output_xyz() {
 	std::cout << z_values << std::endl;
 	ColorPatch* cp = this->get_white_patch();
 	std::cout << "White Patch," << cp->get_name() << std::endl;
-	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",col," << cp->get_col() << std::endl << std::endl;
+	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl;
 }
