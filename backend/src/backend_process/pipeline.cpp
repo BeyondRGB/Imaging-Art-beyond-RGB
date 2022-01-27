@@ -76,7 +76,7 @@ void Pipeline::run() {
     IlluminantType illuminant = this->get_illuminant_type();
     ObserverType observer = this->get_observer_type();
 
-    btrgb::ArtObject* images = new  btrgb::ArtObject();
+    btrgb::ArtObject* images = new  btrgb::ArtObject(ref_file, illuminant, observer);
     this->init_art_obj(images);
     
     

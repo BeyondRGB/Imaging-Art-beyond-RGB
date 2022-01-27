@@ -82,6 +82,11 @@ private:
 				"BottomLeft": {"x":0, "y":50},
 				"NumRows": 10,
 				"NumCols":10
+			},
+			"RefData":{
+				"RefData":"NGT_Reflectance_Data.csv",
+				"StandardObserver":1931,
+				"Illuminants":"D50"
 			}	
 			
 		}
