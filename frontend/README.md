@@ -3,7 +3,7 @@
 ## Beyond RGB Frontend
 ![Electron - 15.3.0](https://badgen.net/badge/Electron/v15.3.0/cyan)  ![Svelte - 3.44.2](https://badgen.net/badge/Svelte/v3.44.2/orange) ![Typescript - 4.5.3](https://badgen.net/badge/Typescript/v4.5.3/blue) ![Tailwindcss - 3.0.2](https://badgen.net/badge/Tailwindcss/v3.0.2/purple) ![Vite - 2.7.1](https://badgen.net/badge/Vite/v2.7.1/green) ![Electron Forge - 6.0.0-beta.61](https://badgen.net/badge/Electron%20Forge/v6.0.0-beta.61/red)
 
-[**Live Demo**](https://dev.d2m0gyo8ptlels.amplifyapp.com/) *(Works best on Chrome)*
+[**Live Demo**](https://beyondrgb.d1lrrwy1z5590.amplifyapp.com/) *(Works best on Chrome)*
 
   
 
