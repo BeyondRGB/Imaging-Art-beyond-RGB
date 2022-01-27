@@ -1,27 +1,40 @@
-<script>
-	export let selectedPage;
+<script lang="ts">
+	export let selectedPage: any;
 	import Modal from "svelte-simple-modal";
 	import { fade } from "svelte/transition";
-	import { modal } from "../stores.js";
+	import { modal, appSettings } from "@util/stores";
 	$: console.log($modal);
+
+	// in:fade={{ duration: 350, delay: 350 }}
+	// out:fade={{ duration: 350 }}
 </script>
 
 <Modal show={$modal}>
-	{#key selectedPage}
-		<div
-			class="page dark:bg-gray-700 bg-gray-50"
-			in:fade={{ duration: 350, delay: 350 }}
-			out:fade={{ duration: 350 }}
-		>
-			<svelte:component this={selectedPage} />
-		</div>
-	{/key}
+	<div
+		class="page dark:bg-gray-800 bg-white {$appSettings.sideNav
+			? 'sideNav'
+			: ''}"
+	>
+		{#key selectedPage}
+			<div in:fade={{ duration: 250, delay: 250 }} out:fade={{ duration: 250 }}>
+				<svelte:component this={selectedPage} />
+			</div>
+		{/key}
+	</div>
 </Modal>
 
 <style lang="postcss" local>
 	.page {
-		grid-area: Box;
 		overflow: overlay;
+		@apply w-full h-full pt-1;
+	}
+	::-webkit-scrollbar {
+		@apply w-1;
+	}
+	div {
 		@apply w-full h-full;
 	}
+	/* .sideNav {
+		@apply pl-20 pb-0;
+	} */
 </style>
