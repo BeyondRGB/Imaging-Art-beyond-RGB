@@ -40,6 +40,18 @@ public:
 	ColorPatch* get_white_patch();
 
 	/**
+	* Get the row the white patch is in
+	* @return: white patch row as an int
+	*/
+	int get_white_patch_row();
+
+	/**
+	* Get the colum the white patch is in
+	* @return: white patch colum as an int
+	*/
+	int get_white_patch_col();
+
+	/**
 	* Gets the x value from the ColorPatch at the given row and col
 	* @param row: the row of the ColorPatch to get x value from
 	* @param col: the colum of the ColorPatch to get x value from
