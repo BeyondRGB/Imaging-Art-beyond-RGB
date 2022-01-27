@@ -6,8 +6,10 @@
 #include "ref_data_array.hpp"
 #include <string>
 
-//#define ILLUMINANTS "../../res/ref_data/Illuminants.csv"
-
+/**
+* Class that holds and provides Illuminant values 
+* used for calculating Reference Data
+*/
 class Illuminants : public CSVParser {
 
 public:
@@ -17,21 +19,27 @@ public:
 
 	Illuminants(IlluminantType type);
 	~Illuminants();
-	double value_by_index(int index);
-	double value_by_wavelen(int wavelen);
-	//double A_by_index(int index);
-	//double D50_by_index(int index);
-	//double D65_by_index(int index);
-	//double A_by_wavelen(int wavelen);
-	//double D50_by_wavelen(int wavelen);
-	//double D65_by_wavelen(int wavelen);
 
-	//double sum_a();
-	//double sum_d50();
-	//double sum_d65();
-	//double sum(double* array);
+	/**
+	* Get the illuminant value by index
+	* @param index: the index of the value beeing retrived
+	* @return: illuminant value
+	*/
+	double value_by_index(int index);
+
+	/**
+	* Get the illuminant value by wavelength
+	* @param index: the wavelength of the value beeing retrived
+	* @return: illuminant value
+	*/
+	double value_by_wavelen(int wavelen);
 
 private:
+
+	/**
+	* Initialize Illuminant data. This will initialize a RefDataArray
+	* for each IlluminantType due to all data existing in one file
+	*/
 	void init();
 	RefDataArray* illum_A = nullptr;
 	RefDataArray* illum_D50 = nullptr;
