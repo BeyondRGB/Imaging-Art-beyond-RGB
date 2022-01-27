@@ -16,6 +16,7 @@
 
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
+#include "reference_data/ref_data.hpp"
 
 #include <iostream>
 
@@ -25,20 +26,26 @@ Preprocessing and Calibration
 */
 class Pipeline: public BackendProcess{
 
-	enum ImageKey {
+	enum DataKey {
 		ART,
 		WHITE,
 		BLACK,
-		IMAGES
+		IMAGES,
+		RefData,
+		StandardObserver,
+		Illuminants
 	};
 	/**
 	* Maps enum values to a string
 	*/
-	const std::string key_map[4] = {
+	const std::string key_map[7] = {
 		"Art",
 		"White",
 		"Dark",	
-		"Images"
+		"Images",
+		"RefData",
+		"StandardObserver",
+		"Illuminants"
 	};
 
 
@@ -63,6 +70,10 @@ private:
 	std::shared_ptr<ImgProcessingComponent> pipelineSetup();
 
 	bool init_art_obj(btrgb::ArtObject* art_obj);
+
+	IlluminantType get_illuminant_type();
+	ObserverType get_observer_type();
+	std::string get_ref_file();
 
 
 public:
