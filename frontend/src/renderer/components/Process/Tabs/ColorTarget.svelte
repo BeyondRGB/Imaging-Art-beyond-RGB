@@ -1,18 +1,29 @@
 <script>
-  let rows = "";
-  let cols = "";
+  let rows;
+  let cols;
 
   import { currentPage, processState } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
   import SelectBtn from "@components/SelectBtn.svelte";
   import Loader from "@root/components/Loader.svelte";
   import { draggable } from "svelte-drag";
+  let currentPos;
+  function update() {
+    if (currentPos) {
+      $processState.artStacks[0].colorTarget.top = currentPos.top;
+      $processState.artStacks[0].colorTarget.left = currentPos.left;
+      $processState.artStacks[0].colorTarget.bottom = currentPos.bottom;
+      $processState.artStacks[0].colorTarget.right = currentPos.right;
+      $processState.artStacks[0].colorTarget.rows = rows;
+      $processState.artStacks[0].colorTarget.cols = cols;
+    }
+  }
 </script>
 
 <main>
   <!-- <img src="placeholder.jpg" alt="background image" /> -->
   <div class="left">
-    <ColorTargetViewer />
+    <ColorTargetViewer bind:rows bind:cols bind:currentPos />
   </div>
   <div class="right">
     <div class="settings">
@@ -22,6 +33,7 @@
           <div class="input-group">
             <lable class="row-lable">Rows:</lable>
             <input
+              type="number"
               class="dark:bg-gray-700"
               bind:value={rows}
               placeholder="Placeholder..."
@@ -30,6 +42,7 @@
           <div class="input-group">
             <lable class="row-lable">Columns:</lable>
             <input
+              type="number"
               class="dark:bg-gray-700"
               bind:value={cols}
               placeholder="Placeholder..."
@@ -38,6 +51,7 @@
         </div>
       </div>
       <button class="add">+</button>
+      <button on:click={() => update()}>SAVE TARGET INFO</button>
     </div>
   </div>
 </main>
