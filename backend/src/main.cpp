@@ -3,10 +3,11 @@
 #include "server/request_server.hpp"
 
 //Testing
-#include "reference_data/data_manager.hpp"
+//#include "reference_data/data_manager.hpp"
+#include "reference_data/ref_data.hpp"
 #include "reference_data/color_patch.hpp"
 #include "reference_data/ref_data_defines.hpp"
-#include "reference_data/standard_observer.hpp"
+//#include "reference_data/standard_observer.hpp"
 void testFunc() {
 	// Add testing logc here if this is called the server will not be started
     std::string path = REF_DATA_PATH;
@@ -20,8 +21,8 @@ void testFunc() {
     //file_name = "C:\\Users\\ThinkPad41\\Documents\\GitHub\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\test.csv";
     int row = 1;
     int col = 2;
-    Illuminants::IlluminantType illum_type = Illuminants::IlluminantType::D50;
-    StandardObserver::ObserverType so_type = StandardObserver::ObserverType::SO_1931;
+    IlluminantType illum_type = IlluminantType::D50;
+    ObserverType so_type = ObserverType::SO_1931;
     for (int file = 0; file < 4; file++) {
         std::string file_name = files[file]; 
         RefData rd(file_name);
