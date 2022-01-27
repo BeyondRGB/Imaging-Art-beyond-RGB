@@ -10,7 +10,9 @@
   export let cols = 14;
 
   let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
-  let currentPos = { top: 0, bottom: 0, left: 0, right: 0 };
+  export let currentPos = { top: 0, bottom: 0, left: 0, right: 0 };
+  let viewportPoint;
+  let imagePoint;
 
   const createViewer = () => {
     viewer = OpenSeadragon({
@@ -56,22 +58,23 @@
   // });
   $: if ($processState.currentTab === 4) {
     if (viewer) {
-      setTimeout(() => {
-        viewer.open({
-          type: "image",
-          url: placeholder,
-        });
-        overlay();
+      viewer.open({
+        type: "image",
+        url: placeholder,
+      });
 
-        let temp = viewer.getOverlayById("selectorBox");
-        console.log(temp.getBounds());
-      }, 550);
+      overlay();
     }
   } else {
     if (viewer) {
       viewer.close();
     }
   }
+  // $: if (viewer) {
+  //   viewer.addHandler("canvas-enter", function (event) {
+  //     viewportPoint = viewer.viewport.pointFromPixel(event.position);
+  //   });
+  // }
   function overlay() {
     if (viewer) {
       let ele = document.querySelector("#selectorBox");
@@ -172,6 +175,14 @@
           };
         },
       });
+      new OpenSeadragon.MouseTracker({
+        element: viewer.canvas,
+        moveHandler: function (e) {
+          viewportPoint = viewer.viewport.pointFromPixel(e.position);
+          imagePoint =
+            viewer.viewport.viewportToImageCoordinates(viewportPoint);
+        },
+      });
     }
   }
 
@@ -184,6 +195,11 @@
 
 <main>
   <!-- <div class="load"><Loader /></div> -->
+  <p>
+    top: {viewportPoint?.y.toFixed(3)} ({imagePoint?.y.toFixed(2)} px) | left: {viewportPoint?.x.toFixed(
+      3
+    )} ({imagePoint?.x.toFixed(2)} px)
+  </p>
   <div id="color-seadragon-viewer" />
   <div id="selectorBox">
     <div id="gridBox">
@@ -197,11 +213,6 @@
     <div id="br" />
   </div>
   <div id="rowCol">
-    Rows:
-    <input id="rows" name="rows" type="number" bind:value={rows} />
-    Cols:
-    <input id="cols" name="cols" type="number" bind:value={cols} />
-    Pos:
     <p>
       top: {currentPos.top.toFixed(4)} | left: {currentPos.left.toFixed(4)} | bottom:
       {currentPos.bottom.toFixed(4)} | right: {currentPos.right.toFixed(4)}
@@ -211,7 +222,7 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-[90%] ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
+    @apply w-full h-[90%] ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg flex flex-col;
   }
   #color-seadragon-viewer {
     @apply h-full w-full;
@@ -238,8 +249,9 @@
       transparent 80%,
       rgba(59, 131, 246, 0.35) 80%
     );
-    @apply w-full h-full border-[2px] border-blue-700 flex items-center
-          justify-center;
+
+    @apply w-full h-full border-[2px] border-blue-700
+      flex items-center justify-center;
   }
   .target {
     @apply border-[3px] border-blue-700/50 w-1/2 h-1/2 rounded-full;

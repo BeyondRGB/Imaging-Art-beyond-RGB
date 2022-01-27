@@ -7,6 +7,7 @@
   import SelectDest from "@components/Process/Tabs/SelectDest.svelte";
   import SpecFileRoles from "@components/Process/Tabs/SpecFileRoles.svelte";
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
+  import Processing from "@root/components/Process/Tabs/Processing.svelte";
   import Layout from "@components/Process/Layout.svelte";
   let tabList;
 
@@ -16,6 +17,7 @@
     { name: "Specifiy File Roles", component: SpecFileRoles },
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
+    { name: "Processing", component: Processing, hidden: true },
   ];
 
   function nextTab() {
@@ -48,17 +50,22 @@
 <main>
   <nav class="dark:bg-gray-800/25">
     <button id="backBtn" on:click={prevTab}>Back</button>
-    <tabs>
-      {#each tabs as tab}
-        <div
-          class="tab {tabs[$processState.currentTab].name !== tab.name
-            ? 'none'
-            : ''}"
-          id={tab.name}
-        />
-      {/each}
-    </tabs>
+    {#if !tabs[$processState.currentTab].hidden}
+      <tabs>
+        {#each tabs as tab}
+          {#if !tab.hidden}
+            <div
+              class="tab {tabs[$processState.currentTab].name !== tab.name
+                ? 'none'
+                : ''}"
+              id={tab.name}
+            />
+          {/if}
+        {/each}
+      </tabs>
+    {/if}
   </nav>
+
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
     {#if tabs[$processState.currentTab + 1]?.name === "Advanced Options"}
@@ -66,6 +73,10 @@
       <button on:click={() => ($processState.currentTab += 2)} class="nextBtn"
         >Next: Skip Advanced Options</button
       >
+    {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
+      <button on:click={nextTab} class="nextBtn">Confirm</button>
+    {:else if tabs[$processState.currentTab].hidden}
+      <br />
     {:else}
       <button on:click={nextTab} class="nextBtn">Next</button>
     {/if}

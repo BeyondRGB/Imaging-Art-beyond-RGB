@@ -13,6 +13,14 @@ export const processState = writable({
     {
       id: 1,
       name: "Art 1",
+      colorTarget: {
+        top: 0.25,
+        left: 0.25,
+        bottom: 0.25,
+        right: 0.25,
+        cols: 10,
+        rows: 10,
+      },
       fields: {
         images: [],
         whitefield: [],

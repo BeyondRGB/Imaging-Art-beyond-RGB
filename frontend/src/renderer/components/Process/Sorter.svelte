@@ -15,7 +15,6 @@
   function handleDndConsider(cid: number, field: string, e: CustomEvent) {
     const colIdx = $processState.artStacks.findIndex((c) => c.id === cid);
     //const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
-    console.log($processState.artStacks[colIdx].fields[field].items);
     $processState.artStacks[colIdx].fields[field] = e.detail.items;
     $processState.artStacks = [...$processState.artStacks];
   }
@@ -46,10 +45,6 @@
         },
       },
     ];
-  }
-
-  $: {
-    console.log($processState.artStacks);
   }
 </script>
 
