@@ -25,7 +25,19 @@ void testFunc() {
     for (int file = 0; file < 4; file++) {
         std::string file_name = files[file]; 
         RefData rd(file_name);
-        rd.output_xyz();
+        int row = 1;
+        int col = 2;
+        std::cout << file_name << std::endl;
+        ColorPatch* cp = rd.get_color_patch(row, col);
+        std::cout << *cp << 
+            "{x:" << cp->get_x() <<
+            ", y:" << cp->get_y() <<
+            ", z:" << cp->get_z() << std::endl;
+        std::cout << "RefDataTest" << 
+            "{x:" << rd.get_x(row, col) <<
+            ", y:" << rd.get_y(row, col) <<
+            ", z:" << rd.get_z(row,col) << std::endl << std::endl;
+        //rd.output_xyz();
         /*RefData* rd = DataManager::get_instance()->get_ref_data(file_name);
         std::string header = "ValueType";
         std::string y_values = "Y";

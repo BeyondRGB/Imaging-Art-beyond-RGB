@@ -18,6 +18,9 @@ public:
 	~RefData();
 	ColorPatch* get_color_patch(int row, int col);
 	ColorPatch* get_white_patch();
+	double get_x(int row, int col);
+	double get_y(int row, int col);
+	double get_z(int row, int col);
 	int get_row_size();
 	int get_col_size();
 

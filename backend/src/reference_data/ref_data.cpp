@@ -36,6 +36,19 @@ int RefData::get_col_size() {
 	return this->col_count;
 }
 
+double RefData::get_x(int row, int col) {
+	ColorPatch* cp = this->get_color_patch(row, col);
+	return cp->get_x();
+}
+double RefData::get_y(int row, int col) {
+	ColorPatch* cp = this->get_color_patch(row, col);
+	return cp->get_y();
+}
+double RefData::get_z(int row, int col) {
+	ColorPatch* cp = this->get_color_patch(row, col);
+	return cp->get_z();
+}
+
 ColorPatch* RefData::get_color_patch(int row, int col) {
 	if(row < this->row_count && col < this->col_count)
 		return this->color_patches[row][col];

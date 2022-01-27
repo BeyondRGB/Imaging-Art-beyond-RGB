@@ -19,9 +19,6 @@ public:
 	~ColorPatch();
 	friend std::ostream& operator<<(std::ostream& os, const ColorPatch& cp) {
 		os << cp.name_m << std::endl;
-		for (int i = 0; i < REFLECTANCE_SIZE; i++) {
-			os << "\t" << cp.reflectance->get_by_index(i) << std::endl;
-		}
 		return os;
 	}
 	void append(double value);
