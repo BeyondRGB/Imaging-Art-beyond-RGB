@@ -2,12 +2,14 @@
 #include <iostream>
 #include <fstream>
 
-RefData::RefData(std::string file, Illuminants::IlluminantType illum_type, StandardObserver::ObserverType so_type) {
+
+
+RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_type) {
+	this->observer = new StandardObserver(so_type);
+	this->illuminants = new Illuminants(illum_type);
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	this->read_in_data(path + file);
-	this->observer = new StandardObserver(so_type);
-	this->illuminants = new Illuminants(illum_type);
 }
 
 RefData::~RefData() {
@@ -128,7 +130,7 @@ void RefData::init_data_storage() {
 	for (int row = 0; row < this->row_count; row++) {
 		this->color_patches[row] = new ColorPatch*[this->col_count];
 		for (int col = 0; col < this->col_count; col++) {
-			this->color_patches[row][col] = new ColorPatch(row, col);
+			this->color_patches[row][col] = new ColorPatch(row, col, this->illuminants, this->observer);
 		}
 	}
 }

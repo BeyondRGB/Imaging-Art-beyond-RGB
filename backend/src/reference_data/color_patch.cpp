@@ -1,13 +1,15 @@
 #include "color_patch.hpp"
 
-#include "data_manager.hpp"
-#include "standard_observer.hpp"
-#include "illuminants.hpp"
+//#include "data_manager.hpp"
+//#include "standard_observer.hpp"
+//#include "illuminants.hpp"
 
-ColorPatch::ColorPatch(short row, short col) {
+ColorPatch::ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so) {
 	this->row = row;
 	this->col = col;
 	this->reflectance = new RefDataArray(REFLECTANCE_SIZE);
+	this->illuminants = illum;
+	this->observer = so;
 }
 
 ColorPatch::~ColorPatch() {
@@ -82,15 +84,15 @@ double ColorPatch::get_z() {
 }
 
 double ColorPatch::init_Tristimulus(ValueType type) {
-	DataManager* dm = DataManager::get_instance();
 	double k = this->calc_k_value();
 	double sum = 0;
 	double oberver_value;
 	double illum_value;
 	double reflectanc_value;
+	StandardObserver::ValueType so_type = this->get_so_type(type);
 	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
-		oberver_value = this->get_so_value(type, i);
-		illum_value = dm->illuminant_value(i);
+		oberver_value = this->observer->value_by_index(so_type, i);
+		illum_value = this->illuminants->value_by_index(i);
 		reflectanc_value = this->reflectance->get_by_index(i);
 		sum += oberver_value * illum_value * reflectanc_value;
 	}
@@ -98,11 +100,11 @@ double ColorPatch::init_Tristimulus(ValueType type) {
 }
 
 double ColorPatch::calc_k_value() {
-	DataManager* dm = DataManager::get_instance();
 	double so_x_ilum_sum = 0;
+	StandardObserver::ValueType type = get_so_type(ValueType::Y);
 	for (int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {
-		double oberver_value = dm->y_observer_value(i);
-		double illum_value = dm->illuminant_value(i);
+		double oberver_value = this->observer->value_by_index(type, i);
+		double illum_value = this->illuminants->value_by_index(i);
 		so_x_ilum_sum += oberver_value * illum_value;
 	}
 	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
@@ -116,17 +118,16 @@ double ColorPatch::sum_reflectance() {
 	return sum;
 }
 
-double ColorPatch::get_so_value(ValueType type, int index) {
-	DataManager* dm = DataManager::get_instance();
+StandardObserver::ValueType ColorPatch::get_so_type(ValueType type) {
 	switch (type) {
 	case X:
-		return dm->x_observer_value(index);
+		return StandardObserver::ValueType::X;
 	case Y:
-		return dm->y_observer_value(index);
+		return StandardObserver::ValueType::Y;
 	case Z:
-		return dm->z_observer_value(index);
+		return StandardObserver::ValueType::Z;
 	default:
-		return dm->y_observer_value(index);
+		return StandardObserver::ValueType::Y;
 
 	}
 }
