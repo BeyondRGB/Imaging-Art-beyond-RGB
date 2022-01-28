@@ -5,16 +5,23 @@ namespace btrgb {
     LibpngWriter::LibpngWriter() {this->file_extension = ".png";}
     LibpngWriter::~LibpngWriter() {}
 
-    static void write_row_callback(png_structp png_ptr, png_uint_32 row, int pass) {
-      /* custom progress updater goes here */
+    void LibpngWriter::_write(image* im, std::string filename) {
+        this->write_png(im, filename);
     }
 
-    void LibpngWriter::_write(image* im, std::string filename) {
+    void LibpngWriter::write_png(image* im, std::string filename, 
+            std::vector<uint8_t>* buffer = nullptr, 
+            int special_input_bit_depth = -1) {
 
-        /* ============[ Open file for writing ]============== */
-        FILE* output_file = fopen(filename.c_str(), "wb");
-		if(output_file == NULL)
-			throw Libpng_OpenFileFailed();
+        bool write_to_file = (buffer == nullptr);
+        FILE* output_file;
+
+        if( write_to_file ) {
+            /* ============[ Open file for writing ]============== */
+            output_file = fopen(filename.c_str(), "wb");
+            if(output_file == NULL)
+                throw Libpng_OpenFileFailed();
+        }
 
         /* ============[ Create png_struct ]============== */
         png_structp png_ptr = png_create_write_struct(
@@ -24,7 +31,8 @@ namespace btrgb {
             NULL /*user_warning_fn*/
             );
         if (!png_ptr) {
-            fclose(output_file);
+            if( write_to_file )
+                fclose(output_file);
             throw Libpng_LibraryInitFailed();
         }
 
@@ -32,19 +40,33 @@ namespace btrgb {
         png_infop info_ptr = png_create_info_struct(png_ptr);
         if (!info_ptr) {
             png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-            fclose(output_file);
+            if( write_to_file )
+                fclose(output_file);
             throw Libpng_LibraryInitFailed();
         }
 
         /* ============[ Set up error jumping? ]============== */
         if (setjmp(png_jmpbuf(png_ptr))) {
             png_destroy_write_struct(&png_ptr, &info_ptr);
-            fclose(output_file);
+            if( write_to_file )
+                fclose(output_file);
             throw Libpng_LibraryInitFailed();
         }
 
-        /* ============[ Set output file for png ]============== */
-        png_init_io(png_ptr, output_file);
+        if ( write_to_file ) {
+            /* ============[ Set output file for png ]============== */
+            png_init_io(png_ptr, output_file);
+        }
+        else {
+            /* ============[ Set output buffer for png ]============== */
+            buffer->reserve(im->getTotalByteSize() / 4);
+            png_set_write_fn(png_ptr, buffer, 
+                [](png_structp  png_ptr, png_bytep data, png_size_t length) {
+                    std::vector<uint8_t>* buffer = (std::vector<uint8_t>*) png_get_io_ptr(png_ptr);
+                    buffer->insert(buffer->end(), data, data + length);
+                }, 
+                NULL);
+        }
 
         /* ============[ Set main png info ]============== */
         png_set_IHDR(png_ptr, info_ptr, 
@@ -60,12 +82,15 @@ namespace btrgb {
         png_set_sRGB(png_ptr, info_ptr, PNG_sRGB_INTENT_PERCEPTUAL);
 
         /* ============[ Set progress updater ]============== */
-        png_set_write_status_fn(png_ptr, write_row_callback);
+        png_set_write_status_fn(png_ptr, 
+            [](png_structp png_ptr, png_uint_32 row, int pass) {
+                /* custom progress updater goes here */
+            });
 
         /* ============[ Minimum compression for speed ]============== */
         png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE, PNG_NO_FILTERS);
         png_set_compression_level(png_ptr, Z_BEST_SPEED);
-        png_set_compression_buffer_size(png_ptr, 0x10000);
+        png_set_compression_buffer_size(png_ptr, 0x20000);
 
         /* ============[ Flush data to file every ten rows ]============== */
         png_set_flush(png_ptr, 10);
@@ -83,6 +108,14 @@ namespace btrgb {
         int channels = im->channels();
         btrgb::pixel* bitmap = im->bitmap();
 
+        int shift;
+        if(0 <= special_input_bit_depth && special_input_bit_depth < 8)
+            shift = 0;
+        else if(8 <= special_input_bit_depth && special_input_bit_depth <= 16)
+            shift = special_input_bit_depth - 8;
+        else
+            shift = 8;
+
         uint32_t ch, x, y, i;
         for( y = 0; y < height; y++) {
             
@@ -93,8 +126,8 @@ namespace btrgb {
             for( x = 0; x < width; x++) {
                 for( ch = 0; ch < channels; ch++) {
                     i = im->getIndex(y, x, ch);
-                    /* Fast non-arithmetic conversion from 16 to 8 bit. */
-                    output_row[row_index++] = png_byte(bitmap[i] >> 8);
+                    /* Fast, lossy conversion to 8 bit. */
+                    output_row[row_index++] = png_byte(bitmap[i] >> shift);
                 }
             }
 
@@ -111,7 +144,7 @@ namespace btrgb {
         /* ============[ Cleanup ]============== */
         png_destroy_write_struct(&png_ptr, &info_ptr);
 
-        
-		fclose(output_file);
+        if(write_to_file)
+		    fclose(output_file);
 	}
 }
