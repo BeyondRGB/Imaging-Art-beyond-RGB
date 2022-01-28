@@ -10,46 +10,30 @@ HalfSizePreview::~HalfSizePreview() {}
 
 
 void HalfSizePreview::run() {
-
-    HalfSizePreview::image_vector images;
-
-    this->initImageObjects(images);
-    this->loadRawImages(images);
-    
-    this->deleteImageObjects(images);
-
-
-}
-
-
-
-void HalfSizePreview::initImageObjects(image_vector& images) {
-
     Json filenames = this->process_data_m->get_array("filenames");
+    LibRawReader reader(LibRawReader::LOAD_HALF_SIZE);
+    ManualBitDepthFinder bitDepthFinder;
+    LibpngWriter pngWriter;
+    int raw_bit_depth;
+
     
     for (int i = 0; i < filenames.get_size(); i++) {
 
-        btrgb::image* im = new btrgb::image(filenames.string_at(i));
-        images.push_back(im);
+        btrgb::image im(filenames.string_at(i));
+        reader.read(&im);
+
+        raw_bit_depth = bitDepthFinder.get_bit_depth(&im);
+
+        std::vector<uint8_t> png_binary;
+        pngWriter.write_png(&im, "", &png_binary, raw_bit_depth);
+        
+        /* To do: 
+            - convert to base64
+            - format response message
+        */
 
     }
+
 }
 
 
-void HalfSizePreview::deleteImageObjects(image_vector& images) {
-
-    for( const auto& im : images) {
-        delete im;
-    }
-
-}
-
-
-void loadRawImages(image_vector& images) {
-    LibRawReader reader(LibRawReader::LOAD_HALF_SIZE);
-
-    for( const auto& im : images) {
-        reader.read(im);
-    }
-
-}
