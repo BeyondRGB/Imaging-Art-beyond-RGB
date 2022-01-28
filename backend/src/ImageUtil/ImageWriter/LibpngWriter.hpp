@@ -1,8 +1,10 @@
 #ifndef LIBPNGWRITER_H
 #define LIBPNGWRITER_H
 
+#include <vector>
 #include <string>
 #include <stdio.h>
+#include <stdint.h>
 
 #include <zlib.h>
 #include <png.h>
@@ -14,12 +16,19 @@
 namespace btrgb {
     
     class LibpngWriter : public ImageWriter {
+
         public:
             LibpngWriter();
             ~LibpngWriter();
+            void write_png(image* im, std::string filename, 
+                std::vector<uint8_t>* buffer = nullptr,
+                int special_input_bit_depth = -1);
+
         protected:
             void _write(image* im, std::string filename) override;
+
     };
+
 
     class Libpng_OpenFileFailed : public ImageWritingError {
         public:
