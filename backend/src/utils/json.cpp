@@ -160,7 +160,7 @@ Json::Type Json::get_type(jsoncons::json item) {
 		return Type::BOOL;
 	if (type == jsoncons::json_type::string_value)
 		return Type::STRING;
-	if (type == jsoncons::json_type::double_value)
+	if (type == jsoncons::json_type::double_value || type == jsoncons::json_type::uint64_value)
 		return Type::NUMBER;
 	if (type == jsoncons::json_type::array_value)
 		return Type::ARRAY;
