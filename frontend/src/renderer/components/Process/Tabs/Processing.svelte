@@ -1,10 +1,15 @@
-<script>
+<script lang="ts">
   import { sendMessage, messageStore, processState } from "@util/stores";
   import { stringify } from "postcss";
 
   let textValue;
   let messageList = [];
-  $: messageList = [...messageList, $messageStore];
+  $: messageList = [
+    [$messageStore[0], getTime($messageStore[1])],
+    ...messageList,
+  ];
+
+  $: console.log(messageList);
   $: console.log($processState.artStacks[0].colorTarget);
   $: jsonTest = {
     RequestType: "processImg",
@@ -30,55 +35,86 @@
       },
     },
   };
+
+  function getTime(time = new Date()) {
+    let minutes = time.getMinutes();
+    let seconds = time.getSeconds();
+    let mili = time.getMilliseconds();
+    let hours = time.getHours();
+    let ofDay = "AM";
+    if (hours > 12) {
+      hours -= 12;
+      ofDay = "PM";
+    }
+    return `${hours < 10 ? "0" : ""}${hours}:${
+      minutes < 10 ? "0" : ""
+    }${minutes}:${seconds < 10 ? "0" : ""}${seconds}:${
+      mili < 100 ? "00" : ""
+    }${mili} ${ofDay}`;
+  }
 </script>
 
 <main>
-  <state>
+  <div class="state">
     <h3>Current State:</h3>
-    <p>RequestType: "processImg",</p>
-    <p>RequestID: {jsonTest.RequestID}</p>
-    <p>RequestData:</p>
-    <p>
-      Images:
+    <div class="box">
+      <p>RequestType: "processImg",</p>
+      <p>RequestID: {jsonTest.RequestID}</p>
+      <p>RequestData:</p>
+      <p class="px-2">
+        Images:
 
-      {#each jsonTest.RequestData.Images as image, index}
-        <p>Image {String.fromCharCode(65 + index)}</p>
-        {#each Object.keys(image) as key}
+        {#each jsonTest.RequestData.Images as image, index}
           <li>
-            {key}:
-            <span>{image[key]}</span>
+            Image {String.fromCharCode(65 + index)}
+            {#each Object.keys(image) as key}
+              <li>
+                {key}:
+                <span>{image[key]}</span>
+              </li>
+            {/each}
+            <br />
           </li>
         {/each}
-        <br />
-      {/each}
-    </p>
-    <p>
-      Target Loation:
+      </p>
+      <p class="px-2">
+        Target Loation:
 
-      {#each Object.keys(jsonTest.RequestData.TargetLocation) as key}
-        <li>{key}: {jsonTest.RequestData.TargetLocation[key]}</li>
-      {/each}
-    </p>
-    <p>
-      Reference Data:
+        {#each Object.keys(jsonTest.RequestData.TargetLocation) as key}
+          <li>
+            {key}: <span>{jsonTest.RequestData.TargetLocation[key]}</span>
+          </li>
+        {/each}
+      </p>
+      <p class="px-2">
+        Reference Data:
 
-      {#each Object.keys(jsonTest.RequestData.RefData) as key}
-        <li>{key}: {jsonTest.RequestData.RefData[key]}</li>
-      {/each}
-    </p>
+        {#each Object.keys(jsonTest.RequestData.RefData) as key}
+          <li>{key}: <span>{jsonTest.RequestData.RefData[key]}</span></li>
+        {/each}
+      </p>
+    </div>
     <button on:click={() => sendMessage(JSON.stringify(jsonTest))}
       >Send to Server</button
     >
-  </state>
+  </div>
   <article>
-    <textarea placeholder="Enter command here" bind:value={textValue} />
-    <button on:click={() => sendMessage(JSON.stringify(textValue))}
-      >Send It!</button
-    >
-    <h4>Server Response</h4>
-    {#each messageList as message}
-      <message>({new Date().toLocaleTimeString()}) > {message}</message><br />
-    {/each}
+    <div class="inputGroup">
+      <textarea placeholder="Enter command here" bind:value={textValue} />
+      <button
+        class="termSend"
+        on:click={() => sendMessage(JSON.stringify(textValue))}>Send It!</button
+      >
+    </div>
+    <div class="outputGroup">
+      <h4>Server Response</h4>
+      <div class="term">
+        {#each messageList as message}
+          <div class="msg">({message[1]}) > {message[0]}</div>
+          <br />
+        {/each}
+      </div>
+    </div>
   </article>
 </main>
 
@@ -86,22 +122,58 @@
   main {
     @apply w-full h-full flex justify-center items-center;
   }
-  state {
-    @apply w-full h-full list-disc p-4;
+  .state {
+    @apply w-full h-full;
   }
   article {
-    @apply bg-gray-900 w-full h-[70%] m-4;
+    @apply w-full h-[70%] flex flex-col justify-center items-center m-2;
   }
   h4 {
-    @apply bg-gray-700/25 text-gray-400;
+    @apply bg-gray-700/25 text-gray-400 bg-gray-900 absolute top-0;
   }
   span {
-    @apply bg-gray-700 text-gray-300 whitespace-nowrap select-text;
+    @apply bg-gray-700 text-gray-200 font-semibold whitespace-nowrap select-text;
   }
   h3 {
     @apply text-lg;
   }
   textarea {
-    @apply bg-gray-500/25 w-full text-white border-2 border-blue-500;
+    overflow-wrap: break-word;
+    @apply bg-gray-500/25 w-full h-[30%] text-white border-2 border-green-600 max-h-80 min-h-[4rem];
+  }
+  .term {
+    overflow-wrap: break-word;
+    @apply overflow-y-scroll h-full w-[50vw] bg-gray-900 p-2 flex flex-col-reverse;
+  }
+  .box {
+    @apply overflow-y-scroll w-full h-[80%] bg-gray-900 text-gray-100 text-sm;
+  }
+  li {
+    @apply px-2 p-1 list-none;
+  }
+  .termSend {
+    @apply bg-green-600 h-full rounded-l-none;
+  }
+  .inputGroup {
+    @apply flex w-full justify-center items-center p-2;
+  }
+  .outputGroup {
+    @apply flex w-full h-full justify-center items-center relative flex-grow;
+  }
+  .msg {
+    @apply bg-gray-700 rounded-xl p-2 select-text;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-full;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
   }
 </style>

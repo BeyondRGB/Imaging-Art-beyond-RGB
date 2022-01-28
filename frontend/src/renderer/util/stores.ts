@@ -29,7 +29,7 @@ export const processState = writable({
     },]
 });
 // Webstocket Stores
-export const messageStore = writable('');
+export const messageStore = writable([]);
 export const connectionState = writable('Not Connected');
 
 
@@ -57,7 +57,7 @@ function connect() {
   });
 
   socket.addEventListener('message', function (event) {
-    messageStore.set(event.data);
+    messageStore.set([event.data, new Date()]);
   });
 }
 connect();
