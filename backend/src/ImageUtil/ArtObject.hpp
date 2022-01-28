@@ -8,6 +8,7 @@
 #include "ImageUtil/Image.hpp"
 #include "ImageUtil/ImageWriter/ImageWriter.hpp"
 #include "ImageUtil/ImageWriter/LibTiffWriter.hpp"
+#include "reference_data/ref_data.hpp"
 
 /* How to iterate over all images in the ArtObject:
  *
@@ -30,9 +31,10 @@ namespace btrgb {
         int16_t row, col;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
+        RefData* ref_data;
 
     public:
-        ArtObject();
+        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer);
         ~ArtObject();
 
         void newImage(std::string name, std::string filename);
@@ -43,6 +45,7 @@ namespace btrgb {
         int* getTargetSize(std::string edge);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
+        RefData* get_refrence_data();
 
         /* To do, add parameter for photometric tiff tag: RGB, or grayscale. */
         void outputImageAsTIFF(std::string name);

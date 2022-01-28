@@ -1,11 +1,11 @@
-<script>
-  import CanvasImage from "@components/CanvasImage.svelte";
+<script lang="ts">
+  import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
 </script>
 
 <main>
   <div class="flex w-full justify-center h-full">
     <div id="image">
-      <CanvasImage />
+      <SpecPickViewer />
     </div>
     <div id="side">
       <div
