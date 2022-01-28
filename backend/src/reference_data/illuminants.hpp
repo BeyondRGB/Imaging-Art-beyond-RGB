@@ -41,9 +41,7 @@ private:
 	* for each IlluminantType due to all data existing in one file
 	*/
 	void init();
-	RefDataArray* illum_A = nullptr;
-	RefDataArray* illum_D50 = nullptr;
-	RefDataArray* illum_D65 = nullptr;
+	RefDataArray* illuminants = nullptr;
 	IlluminantType type;
 };
 #endif // !ILLUMINANTS_H
