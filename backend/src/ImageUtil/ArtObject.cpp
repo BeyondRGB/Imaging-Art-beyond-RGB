@@ -41,7 +41,7 @@ namespace btrgb {
         this->images[name] = im;
     }
 
-    void ArtObject::targetInfo(std::double topLeftX, std::double topLeftY, std::double topRightX, std::double topRightY, std::double botRightX, std::double botRightY, std::double botLeftX, std::double botLeftY, std::int rows, std::int cols) {
+    void ArtObject::targetInfo(double topLeftX, double topLeftY, double topRightX, double topRightY, double botRightX, double botRightY, double botLeftX, double botLeftY, int rows, int cols) {
         tLeftX = topLeftX;
         tLeftY = topLeftY;
         tRightX = topRightX;
@@ -54,7 +54,7 @@ namespace btrgb {
         col = cols;
     }
 
-    double* ArtObject::getTargetInfo(std::string type) {
+    double ArtObject::getTargetInfo(std::string type) {
         if (type._Equal("tlx")) {
             return this->tLeftX;
         }
@@ -82,12 +82,12 @@ namespace btrgb {
         return NULL;
     }
 
-    int* ArtObject::getTargetSize(std::string edge){
+    int ArtObject::getTargetSize(std::string edge){
         if(edge._Equal("row")){
-            return this->rows;
+            return this->row;
         }
         else if(edge._Equal("col")){
-            return this->cols;
+            return this->col;
         }
         return NULL;
     }

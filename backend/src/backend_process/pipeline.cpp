@@ -21,7 +21,6 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader("LibRaw")));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new DarkCurrentCorrector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFeildor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
@@ -58,8 +57,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
         }
         //Stuff here is pending the implementation of how the target is being defined
-        Json target_location = this->process_data_m->process_data_m->get_obj("TargetLocation");
-        Json tLeft = target_location.get_obj("TopLeft")
+        Json target_location = this->process_data_m->get_obj("TargetLocation");
+        Json tLeft = target_location.get_obj("TopLeft");
         double tLeftX = tLeft.get_number("x");
         double tLeftY = tLeft.get_number("y");
         Json tRight = target_location.get_obj("TopRight");
@@ -71,8 +70,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         Json bLeft = target_location.get_obj("BottomLeft");
         double bLeftX = bLeft.get_number("x");
         double bLeftY = bLeft.get_number("y");
-        int numRows = target_location("NumRows");
-        int numCols = target_location("NumCols");
+        int numRows = target_location.get_number("NumRows");
+        int numCols = target_location.get_number("NumCols");
         art_obj->targetInfo(tLeftX, tLeftY, tRightX, tRightY, bRightX, bRightY, bLeftX, bLeftY, numRows, numCols);
         return true;
     }

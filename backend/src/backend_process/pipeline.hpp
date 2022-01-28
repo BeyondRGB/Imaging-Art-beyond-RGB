@@ -4,7 +4,6 @@
 #include "image_processing/header/BitDepthScaler.h"
 #include "image_processing/header/ChannelSelector.h"
 #include "image_processing/header/ColorManagedCalibrator.h"
-#include "image_processing/header/DarkCurrentCorrector.h"
 #include "image_processing/header/FlatFeildor.h"
 #include "image_processing/header/ImageCalibrator.h"
 #include "image_processing/header/ImageProcessor.h"
@@ -21,7 +20,7 @@
 #include <iostream>
 
 /*
-Class that process's Images. Image processing includes 
+Class that process's Images. Image processing includes
 Preprocessing and Calibration
 */
 class Pipeline: public BackendProcess{
@@ -78,10 +77,10 @@ private:
 
 public:
 	Pipeline();
-	
+
 	/*
 	Override of the run method inherited from BackendProcess
-	This gets called by the ProcessManager to start this process 
+	This gets called by the ProcessManager to start this process
 	*/
 	void run() override;
 
@@ -90,7 +89,3 @@ public:
 
 
 #endif // !PIPELINE_H
-
-
-
-	

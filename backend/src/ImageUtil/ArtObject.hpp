@@ -28,7 +28,7 @@ namespace btrgb {
 
     private:
         double tLeftX, tLeftY, tRightX, tRightY, bRightX, bRightY, bLeftX, bLeftY;
-        int16_t row, col;
+        int row, col;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
         RefData* ref_data;
@@ -38,11 +38,11 @@ namespace btrgb {
         ~ArtObject();
 
         void newImage(std::string name, std::string filename);
-        void targetInfo(std::double topLeftX, std::double topLeftY, std::double topRightX, std::double topRightY, std::double botRightX, std::double botRightY, std::double botLeftX, std::double botLeftY, std::int16_t rows, std::int16_t cols);
+        void targetInfo(double topLeftX, double topLeftY, double topRightX, double topRightY, double botRightX, double botRightY, double botLeftX, double botLeftY, int rows, int cols);
         void setImage(std::string name, image* im);
         image* getImage(std::string name);
-        double* getTargetInfo(std::string type);
-        int* getTargetSize(std::string edge);
+        double getTargetInfo(std::string type);
+        int getTargetSize(std::string edge);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
         RefData* get_refrence_data();
