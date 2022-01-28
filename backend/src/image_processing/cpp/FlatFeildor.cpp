@@ -7,14 +7,16 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::image* white2;
     btrgb::image* dark1;
     btrgb::image* dark2;
+    RefData* reference;
     func("Flat Fielding");
     try {
         art1 = images->getImage("art1");
-        white1 = images->getImage("white1");;
-        dark1 = images->getImage("dark1");;
-        art2 = images->getImage("art2");;
-        white2 = images->getImage("white2");;
-        dark2 = images->getImage("dark2");;
+        white1 = images->getImage("white1");
+        dark1 = images->getImage("dark1");
+        art2 = images->getImage("art2");
+        white2 = images->getImage("white2");
+        dark2 = images->getImage("dark2");
+        reference = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
         func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
@@ -51,6 +53,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Above will be used with Patch info from singleton to find the pixel that is the center
     //of the white patch.  For now pretend the center pixel is the patchX and patchY
     //MATH HERE TO FIND PIXEL BASED ON NORMALIZED CORNER LOCATIONS AND TARGET SIZE
+    int whiteRow = reference->get_white_patch_row();
+    int whiteCol = reference->get_white_patch_col();
     //Provided from Art Obj, waiting for merge
     int patchX;
     int patchY;
@@ -82,8 +86,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     float white1Avg = white1Total / (size * size);
     float art2Avg = art2Total / (size * size);
     float white2Avg = white2Total / (size * size);
-    //Y provided by Singleton
-    float yVal;
+
+    float yVal = reference->get_y(whiteRow, whiteCol);
     float w1 = yVal * (white1Avg / art1Avg);
     float w2 = yVal * (white2Avg / art2Avg);
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
