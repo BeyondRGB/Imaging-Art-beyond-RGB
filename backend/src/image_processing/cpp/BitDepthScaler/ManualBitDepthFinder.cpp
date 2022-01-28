@@ -49,9 +49,8 @@ int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
         }
     }
 
-     /* If max value is not 8 bits or greater, 
-      * don't do anything, assume & keep 16 bit. */
-    return 16;
+     /* Bit depth not within range. */
+    return -1;
 }
 
 
