@@ -5,7 +5,6 @@ namespace btrgb {
     ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer) {
         this->tiffWriter = new LibTiffWriter();
         this->ref_data = new RefData(ref_file, ilumination, observer);
-        this->ref_data->output_xyz();
     }
 
     /* 
