@@ -17,8 +17,8 @@ void BitDepthScalerStrategy::scale(btrgb::image* im, int bit_depth) {
     }
 
     /* If the bit depth is already 16 bits,
-     * do not scale anything. */
-    if (bit_depth == 16)
+     * or invalid, do not scale anything. */
+    if (8 <= bit_depth && bit_depth < 16)
         return;
 
     /* Math:
