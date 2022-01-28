@@ -59,6 +59,18 @@ namespace btrgb {
         return row * _width * _channels + col * _channels + ch;
     }
 
+    uint32_t image::getTotalByteSize() {
+        return _width * _height * _channels * sizeof(pixel);
+    }
+    
+    uint32_t image::getTotalPixelCount() {
+        return _width * _height * _channels;
+    }
+
+    uint32_t image::getRowByteSize() {
+        return _width * _channels * sizeof(pixel);
+    }
+
     void image::recycle() {
         if (this->_bitmap)
             delete[] this->_bitmap;
