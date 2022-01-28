@@ -1,8 +1,10 @@
 #include "ArtObject.hpp"
 
 namespace btrgb {
-    ArtObject::ArtObject() {
+
+    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer) {
         this->tiffWriter = new LibTiffWriter();
+        this->ref_data = new RefData(ref_file, ilumination, observer);
     }
 
     /*
@@ -12,6 +14,7 @@ namespace btrgb {
 
         /* Delete tiff writer. */
         delete this->tiffWriter;
+        delete this->ref_data;
 
         /* Delete every image in the map.
          * This should be done automatically by the unordered_map destructor:
@@ -150,6 +153,10 @@ namespace btrgb {
             throw;
         }
 
+    }
+
+    RefData* ArtObject::get_refrence_data() {
+        return this->ref_data;
     }
 
 }
