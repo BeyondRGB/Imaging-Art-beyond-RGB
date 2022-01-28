@@ -86,9 +86,9 @@ namespace btrgb {
             pixel* bitmap();
             uint32_t getIndex(int row, int col, int ch);
 
-            /*uint32_t getTotalByteSize();
-            uint32_t getTotalPixelSize();
-            uint32_t getRowByteSize();*/
+            uint32_t getTotalByteSize();
+            uint32_t getTotalPixelCount();
+            uint32_t getRowByteSize();
 
             void recycle();
 
