@@ -127,7 +127,6 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Convert from 32 bit floating to 16 bit
     im2_32f.convertTo(im2, CV_16UC3);
 
-    sleep_for(seconds(1));
 }
 
 
