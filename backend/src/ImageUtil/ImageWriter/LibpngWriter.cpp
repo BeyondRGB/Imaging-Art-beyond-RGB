@@ -108,6 +108,8 @@ namespace btrgb {
         int height = im->height();
         int width = im->width();
         int channels = im->channels();
+        assert(channels > 2);
+        channels = 3;
         btrgb::pixel* bitmap = im->bitmap();
 
         int shift;
