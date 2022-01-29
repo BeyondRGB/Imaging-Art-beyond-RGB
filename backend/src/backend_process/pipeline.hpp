@@ -4,7 +4,7 @@
 #include "image_processing/header/BitDepthScaler.h"
 #include "image_processing/header/ChannelSelector.h"
 #include "image_processing/header/ColorManagedCalibrator.h"
-#include "image_processing/header/FlatFeildor.h"
+#include "image_processing/header/FlatFieldor.h"
 #include "image_processing/header/ImageCalibrator.h"
 #include "image_processing/header/ImageProcessor.h"
 #include "image_processing/header/ImgProcessingComponent.h"
@@ -40,7 +40,7 @@ class Pipeline: public BackendProcess{
 	const std::string key_map[7] = {
 		"Art",
 		"White",
-		"Dark",	
+		"Dark",
 		"Images",
 		"RefData",
 		"StandardObserver",
