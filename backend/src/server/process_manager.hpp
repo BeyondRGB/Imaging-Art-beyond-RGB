@@ -8,6 +8,7 @@
 #include "communicator.hpp"
 #include "backend_process/backend_process.hpp"
 #include "backend_process/pipeline.hpp"
+#include "backend_process/HalfSizePreview.hpp"
 #include "utils/json.hpp"
 
 /*
