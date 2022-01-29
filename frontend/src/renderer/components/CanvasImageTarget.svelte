@@ -1,4 +1,5 @@
 <script>
+  import placeholder from "@assets/placeholder.jpg";
   import { onMount } from "svelte";
   import panzoom from "panzoom";
   let image;
@@ -7,7 +8,7 @@
   let context;
   onMount(() => {
     image = new Image();
-    image.src = "placeholder.jpg";
+    image.src = placeholder;
     image.onload = function () {
       context = canvas.getContext("2d");
       draw();
