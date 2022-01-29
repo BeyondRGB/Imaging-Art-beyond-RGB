@@ -60,12 +60,26 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int targetCols = images->getTargetSize("col");
 
     std::cout<<"Target Data Declaration"<<std::endl;
+    std::cout<<"*****************************"<<std::endl;
+    std::cout<<"TopLeftY "<<topLeftY<<std::endl;
+    std::cout<<"TopLeftX "<<topLeftX<<std::endl;
+    std::cout<<"TopRightY "<<topRightY<<std::endl;
+    std::cout<<"TopRightX "<<topRightX<<std::endl;
+    std::cout<<"BotLeftY "<<botLeftY<<std::endl;
+    std::cout<<"BotLeftX "<<botLeftX<<std::endl;
+    std::cout<<"BotRightY "<<botRightY<<std::endl;
+    std::cout<<"BotRightX "<<botRightX<<std::endl;
+    std::cout<<"*****************************"<<std::endl;
 
     //Col and Row of the white patch on the target
     int whiteRow = reference->get_white_patch_row();
     int whiteCol = reference->get_white_patch_col();
 
     std::cout<<"Pull from Reference Data"<<std::endl;
+    std::cout<<"*****************************"<<std::endl;
+    std::cout<<"WhiteRow "<<whiteRow<<std::endl;
+    std::cout<<"WhiteCol "<<whiteCol<<std::endl;
+    std::cout<<"*****************************"<<std::endl;
 
     //Need to double check and make sure this can be done between ints and doubles
     //Normalized location by width from base
@@ -75,24 +89,41 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int rightEdge = width * topRightX;
     int tarHeight = botEdge - topEdge;
     int tarWidth = rightEdge - leftEdge;
-    //wHeight and wWidth are the offset from the edges of the color target to the white patch center
-    int wHeight = tarHeight * (targetRows - whiteRow);
-    int wWidth = tarWidth * (targetCols - whiteCol);
+    //wOffY and wOffX are the offset from the edges of the color target to the white patch center
+    int wOffY = tarHeight * (whiteRow / targetRows);
+    int wOffX = tarWidth * (whiteCol / targetCols);
 
     //X and Y of White patch location
-    int patchX = leftEdge + wWidth;
-    int patchY = topEdge + wHeight;
+    int patchX = leftEdge + wOffX;
+    int patchY = topEdge + wOffY;
 
     std::cout<<"Center Coordinate Declaration"<<std::endl;
+    std::cout<<"*****************************"<<std::endl;
+    std::cout<<"Top "<<topEdge<<std::endl;
+    std::cout<<"Bot "<<botEdge<<std::endl;
+    std::cout<<"Left "<<leftEdge<<std::endl;
+    std::cout<<"Right "<<rightEdge<<std::endl;
+    std::cout<<"Patch X "<<patchX<<std::endl;
+    std::cout<<"Patch Y "<<patchY<<std::endl;
+    std::cout<<"*****************************"<<std::endl;
 
     int art1Total = 0;
     int white1Total = 0;
     int art2Total = 0;
     int white2Total = 0;
+    int loops = 0;
+    int startVal = (size * -1) + 1;
     int xOff, yOff, i, ix, iy;
+
+    std::cout<<"For Loop Variable Declaration"<<std::endl;
+
     //Collecting values of pixels in the rings around center pixel in the white
-    for (yOff = (-size + 1); yOff < size; yOff++){
-        for (xOff = (-size + 1); xOff < size; xOff++){
+    for (yOff = startVal; yOff < size; yOff++){
+        for (xOff = startVal; xOff < size; xOff++){
+            std::cout<<"PatchX "<<patchX<<std::endl;
+            std::cout<<"PatchY "<<patchY<<std::endl;
+            std::cout<<"PatchX offset "<<xOff<<std::endl;
+            std::cout<<"PatchY offset "<<yOff<<std::endl;
             iy = (patchY + yOff) * width * channels;
             ix = (patchX + xOff) * channels;
             i = iy + ix + 1;
@@ -100,8 +131,14 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             white1Total += wbitmap1[i];
             art2Total += abitmap2[i];
             white2Total += wbitmap2[i];
+            loops++;
+            std::cout<<"Completed Loops "<<loops<<std::endl;
         }
     }
+
+    std::cout<<"For Loop 1 Complete"<<std::endl;
+
+    //Need to make sure that this is the correct denominator
     double art1Avg = art1Total / (size * size);
     double white1Avg = white1Total / (size * size);
     double art2Avg = art2Total / (size * size);
@@ -140,17 +177,6 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     }
 
     std::cout<<"Flat Fielding Done"<<std::endl;
-
-    //Testing
-    std::cout<<"*****************************"<<std::endl;
-    std::cout<<"Testing"<<std::endl;
-    std::cout<<"Top "<<topEdge<<std::endl;
-    std::cout<<"Bot "<<botEdge<<std::endl;
-    std::cout<<"Left "<<leftEdge<<std::endl;
-    std::cout<<"Right "<<rightEdge<<std::endl;
-    std::cout<<"Patch X "<<patchX<<std::endl;
-    std::cout<<"Patch Y "<<patchY<<std::endl;
-    std::cout<<"*****************************"<<std::endl;
 
     sleep_for(seconds(1));
     //Need to add a call to turn into a TIFF
