@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Test page</title>
+  </head>
+  <body style="display:flex; flex-direction: row; ">
+    <div id="output" style="background-color: #aaa; width:100%;"></div>
+    <canvas id="canvas" style="width:100%; height:90vh;"></canvas>
+    <script>
+        const output = document.getElementById("output");
+        const canvas = document.getElementById("canvas").getContext('2d');
+        const ws = new WebSocket("ws://localhost:9002");
+        let blob_global;
+
+        ws.onmessage = (e) => {
+            if(e.data.includes("data:application/octet-stream;base64,")) {
+                console.log(e.data);
+                fetch(e.data)
+                .then(res => res.blob())
+                .then(blob_data => {
+                    
+                    blob_global = blob_data;
+                });
+            }
+            else {
+                let m = document.createElement("div");
+                m.textContent = e.data;
+                output.appendChild(m);
+            }
+        }
+
+        ws.onopen = () => {
+            req = {
+                "RequestType": "processImg",
+                "RequestData": {
+                    "Images":[
+                        {
+                            "Art": "nikon_targets_1.NEF",
+                            "White": "nikon_white_1.NEF",
+                            "Dark": "nikon_dark_1.NEF"
+                        },
+                        {
+                            "Art": "nikon_targets_2.NEF",
+                            "White": "nikon_white_2.NEF",
+                            "Dark": "nikon_dark_2.NEF"
+                        }
+                    ],
+                    "TargetLocation":{
+                        "TopLeft":{"x": 0, "y":0},
+                        "TopRight": {"x":50, "y":0},
+                        "BottomRight": {"x":50, "y":50},
+                        "BottomLeft": {"x":0, "y":50},
+                        "NumRows": 10,
+                        "NumCols":10
+                    },
+                    "RefData": {
+                        "RefData": "NGT_Reflectance_Data.csv",
+				        "StandardObserver": 1931,
+				        "Illuminants": "D50"
+			        }
+                        
+                }
+            };
+            ws.send(JSON.stringify(req));
+        };
+
+        
+    </script>
+  </body>
+</html>
