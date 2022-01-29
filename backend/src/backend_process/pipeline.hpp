@@ -28,7 +28,7 @@ class Pipeline: public BackendProcess{
 	enum DataKey {
 		ART,
 		WHITE,
-		BLACK,
+		DARK,
 		IMAGES,
 		RefData,
 		StandardObserver,
