@@ -4,3 +4,4 @@ tiff
 websocketpp
 asio
 jsoncons
+opencv
