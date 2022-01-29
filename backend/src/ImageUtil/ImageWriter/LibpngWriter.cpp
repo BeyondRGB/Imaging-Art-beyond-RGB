@@ -10,8 +10,8 @@ namespace btrgb {
     }
 
     void LibpngWriter::write_png(image* im, std::string filename, 
-            std::vector<uint8_t>* buffer = nullptr, 
-            int special_input_bit_depth = -1) {
+            std::vector<uint8_t>* buffer, 
+            int special_input_bit_depth) {
 
         bool write_to_file = (buffer == nullptr);
         FILE* output_file;
@@ -65,7 +65,9 @@ namespace btrgb {
                     std::vector<uint8_t>* buffer = (std::vector<uint8_t>*) png_get_io_ptr(png_ptr);
                     buffer->insert(buffer->end(), data, data + length);
                 }, 
-                NULL);
+                [](png_structp png_ptr) {
+                    /* Flush callback. */
+                });
         }
 
         /* ============[ Set main png info ]============== */
