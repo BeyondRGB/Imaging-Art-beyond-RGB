@@ -52,12 +52,20 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int cols = images->getTargetSize("col");
     //Above will be used with Patch info from singleton to find the pixel that is the center
     //of the white patch.  For now pretend the center pixel is the patchX and patchY
-    //MATH HERE TO FIND PIXEL BASED ON NORMALIZED CORNER LOCATIONS AND TARGET SIZE
     int whiteRow = reference->get_white_patch_row();
     int whiteCol = reference->get_white_patch_col();
-    //Provided from Art Obj, waiting for merge
-    int patchX;
-    int patchY;
+    //Need to double check and make sure this can be done between ints and doubles
+    int topEdge = height * topLeftY;
+    int botEdge = height * botRightY;
+    int leftEdge = width * botLeftX;
+    int rightEdge = width * topRightX;
+    int tarHeight = botEdge - topEdge;
+    int tarWidth = rightEdge - leftEdge;
+    int wHeight = tarHeight * (rows - whiteRow);
+    int wWidth = tarWidth * (cols - whiteCol);
+
+    int patchX = leftEdge + wWidth;
+    int patchY = topEdge + wHeight;
 
     float art1Total = 0;
     float white1Total = 0;
