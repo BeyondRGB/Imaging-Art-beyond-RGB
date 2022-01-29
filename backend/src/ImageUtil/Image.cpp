@@ -11,8 +11,10 @@ namespace btrgb {
     }
 
     image::~image() {
-        if (this->_bitmap)
+        if (this->_bitmap != nullptr) {
             delete[] this->_bitmap;
+            this->_bitmap = nullptr;
+        }
     }
 
     void image::initBitmap(int width, int height, int channels) {
