@@ -14,9 +14,9 @@
         let blob_global;
 
         ws.onmessage = (e) => {
-            console.log(e.data);
             try {
                 rsp = JSON.parse(e.data);
+                console.log(rsp);
                 if(rsp.RequestType = "HalfSizePreview") {
                     if(typeof(rsp.RequestData.dataURL) == "string") {
                         let im = new Image();

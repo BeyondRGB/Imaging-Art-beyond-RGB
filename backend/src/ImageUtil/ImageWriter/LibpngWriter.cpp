@@ -109,9 +109,9 @@ namespace btrgb {
         /* ============[ Minimum compression for speed ]============== */
         png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE, PNG_NO_FILTERS);
         png_set_compression_level(png_ptr, Z_BEST_SPEED);
-        /* Runs better on my windows: */
+        /* (Nikon test raws) Runs better on my windows: */
         png_set_compression_buffer_size(png_ptr, compression_buffer_size);
-        /* Runs better on my mac: */
+        /* (Nikon test raws) Runs better on my mac: */
         /*png_set_compression_buffer_size(png_ptr, 0x20000);*/
 
         /* ============[ Flush data to file every ten rows ]============== */
