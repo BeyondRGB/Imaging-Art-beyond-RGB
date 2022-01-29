@@ -50,11 +50,11 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             // Extract each image file name from current object
             std::string art_file = obj.get_string(key_map[DataKey::ART]);
             std::string white_file = obj.get_string(key_map[DataKey::WHITE]);
-            std::string dark_file = obj.get_string(key_map[DataKey::BLACK]);
+            std::string dark_file = obj.get_string(key_map[DataKey::DARK]);
             // Add each file to the ArtObject
             art_obj->newImage(("art" + std::to_string(i + 1)), art_file);
             art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
-            art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
+            art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
         //Stuff here is pending the implementation of how the target is being defined
         Json target_location = this->process_data_m->get_obj("TargetLocation");
