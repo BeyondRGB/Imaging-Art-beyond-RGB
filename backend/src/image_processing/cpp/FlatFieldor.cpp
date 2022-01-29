@@ -1,6 +1,6 @@
-#include "../header/FlatFeildor.h"
+#include "../header/FlatFieldor.h"
 
-void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
+void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::image* art1;
     btrgb::image* art2;
     btrgb::image* white1;
@@ -48,8 +48,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     double botRightY = images->getTargetInfo("bry");
     double botLeftX = images->getTargetInfo("blx");
     double botLeftY = images->getTargetInfo("bly");
-    int rows = images->getTargetSize("row");
-    int cols = images->getTargetSize("col");
+    int targetRows = images->getTargetSize("row");
+    int targetCols = images->getTargetSize("col");
     //Above will be used with Patch info from singleton to find the pixel that is the center
     //of the white patch.  For now pretend the center pixel is the patchX and patchY
     int whiteRow = reference->get_white_patch_row();
@@ -61,8 +61,8 @@ void FlatFeildor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int rightEdge = width * topRightX;
     int tarHeight = botEdge - topEdge;
     int tarWidth = rightEdge - leftEdge;
-    int wHeight = tarHeight * (rows - whiteRow);
-    int wWidth = tarWidth * (cols - whiteCol);
+    int wHeight = tarHeight * (targetRows - whiteRow);
+    int wWidth = tarWidth * (targetCols - whiteCol);
 
     int patchX = leftEdge + wWidth;
     int patchY = topEdge + wHeight;

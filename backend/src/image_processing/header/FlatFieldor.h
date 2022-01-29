@@ -2,13 +2,13 @@
 // Created by ThinkPad41 on 10/10/2021.
 //
 
-#ifndef BEYOND_RGB_BACKEND_FLATFEILDOR_H
-#define BEYOND_RGB_BACKEND_FLATFEILDOR_H
+#ifndef BEYOND_RGB_BACKEND_FLATFIELDOR_H
+#define BEYOND_RGB_BACKEND_FLATFIELDOR_H
 
 
 #include "ImgProcessingComponent.h"
 
-class FlatFeildor : public ImgProcessingComponent{
+class FlatFieldor : public ImgProcessingComponent{
 public:
     void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 };
