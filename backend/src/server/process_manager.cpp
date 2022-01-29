@@ -36,6 +36,9 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 		std::cout << "Creating Pipeline" << std::endl;
 		process = std::shared_ptr<Pipeline>(new Pipeline());
 	}
+	else if (key == "HalfSizePreview") {
+		process = std::shared_ptr<HalfSizePreview>(new HalfSizePreview());
+	}
 	//TODO add other process instantiation here as more get created
 
 	return process;
