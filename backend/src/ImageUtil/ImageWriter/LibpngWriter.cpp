@@ -10,8 +10,12 @@ namespace btrgb {
     }
 
     void LibpngWriter::write_png(image* im, std::string filename, 
-            std::vector<uint8_t>* buffer, 
-            int special_input_bit_depth) {
+    std::vector<uint8_t>* buffer, 
+    int special_input_bit_depth) {
+
+        int height = im->height();
+        int width = im->width();
+        int channels = im->channels();
 
         bool write_to_file = (buffer == nullptr);
         FILE* output_file;
@@ -70,12 +74,22 @@ namespace btrgb {
                 });
         }
 
+        int color_type;
+        if(channels < 3) {
+            color_type = PNG_COLOR_TYPE_GRAY;
+            channels = 1;
+        }
+        else {
+            color_type = PNG_COLOR_TYPE_RGB;
+            channels = 3;
+        }
+
         /* ============[ Set main png info ]============== */
         png_set_IHDR(png_ptr, info_ptr, 
-            im->width(), 
-            im->height(),
+            width, 
+            height,
             8, /* output bit depth */
-            PNG_COLOR_TYPE_RGB, 
+            color_type, 
             PNG_INTERLACE_NONE,
             PNG_COMPRESSION_TYPE_DEFAULT, 
             PNG_FILTER_TYPE_DEFAULT);
@@ -89,13 +103,16 @@ namespace btrgb {
                 /* custom progress updater goes here */
             });
 
+        int row_flush_freq = 10;
+        uint32_t compression_buffer_size = width * channels * row_flush_freq;
+
         /* ============[ Minimum compression for speed ]============== */
         png_set_filter(png_ptr, PNG_FILTER_TYPE_BASE, PNG_NO_FILTERS);
         png_set_compression_level(png_ptr, Z_BEST_SPEED);
-        png_set_compression_buffer_size(png_ptr, 0x20000);
+        png_set_compression_buffer_size(png_ptr, compression_buffer_size);
 
         /* ============[ Flush data to file every ten rows ]============== */
-        png_set_flush(png_ptr, 10);
+        png_set_flush(png_ptr, row_flush_freq);
 
         /* ============[ Write file header ]============== */
         png_write_info(png_ptr, info_ptr);
@@ -105,11 +122,8 @@ namespace btrgb {
         uint32_t row_index;
         png_bytep output_row = new png_byte[size_of_row];
 
-        int height = im->height();
-        int width = im->width();
-        int channels = im->channels();
-        assert(channels > 2);
-        channels = 3;
+       
+        /* int channels: defined above */
         btrgb::pixel* bitmap = im->bitmap();
 
         int shift;

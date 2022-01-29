@@ -1,3 +1,4 @@
+#include <chrono>
 #include "backend_process/HalfSizePreview.hpp"
 
 unsigned int HalfSizePreview::id = 0;
@@ -26,8 +27,10 @@ void HalfSizePreview::run() {
     std::vector<uint8_t>* png_binary;
 
     
+        
+        
     for (int i = 0; i < filenames.get_size(); i++) {
-
+        auto img_start = std::chrono::high_resolution_clock::now();
         try {
             std::cout << "about to read raw..." << std::endl;
             im = new btrgb::image(filenames.string_at(i));
@@ -75,6 +78,9 @@ void HalfSizePreview::run() {
             rsp->append(R"(","dataURL": 0)");
             rsp->append(R"(}})");
         }
+        auto img_end = std::chrono::high_resolution_clock::now();
+        auto img_duration = std::chrono::duration_cast<std::chrono::milliseconds>(img_end - img_start);
+        std::cout << "Image processing time: " << img_duration << " (" << im->filename() << ")" << std::endl;
 
         if(rsp != nullptr) {
             delete rsp;
@@ -88,7 +94,6 @@ void HalfSizePreview::run() {
             delete im;
             im = nullptr;
         }
-
     }
 
     delete reader;
