@@ -50,8 +50,8 @@ namespace btrgb {
         bRightY = botRightY;
         bLeftX = botLeftX;
         bLeftY = botLeftY;
-        row = rows;
-        col = cols;
+        targetRow = rows;
+        targetCol = cols;
     }
 
     double ArtObject::getTargetInfo(std::string type) {
@@ -84,10 +84,10 @@ namespace btrgb {
 
     int ArtObject::getTargetSize(std::string edge){
         if(edge._Equal("row")){
-            return this->row;
+            return this->targetRow;
         }
         else if(edge._Equal("col")){
-            return this->col;
+            return this->targetCol;
         }
         return NULL;
     }
