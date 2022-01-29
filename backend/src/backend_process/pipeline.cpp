@@ -58,21 +58,14 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         }
         //Stuff here is pending the implementation of how the target is being defined
         Json target_location = this->process_data_m->get_obj("TargetLocation");
-        Json tLeft = target_location.get_obj("TopLeft");
-        double tLeftX = tLeft.get_number("x");
-        double tLeftY = tLeft.get_number("y");
-        Json tRight = target_location.get_obj("TopRight");
-        double tRightX = tRight.get_number("x");
-        double tRightY = tRight.get_number("y");
-        Json bRight = target_location.get_obj("BottomRight");
-        double bRightX = bRight.get_number("x");
-        double bRightY = bRight.get_number("y");
-        Json bLeft = target_location.get_obj("BottomLeft");
-        double bLeftX = bLeft.get_number("x");
-        double bLeftY = bLeft.get_number("y");
-        int numRows = target_location.get_number("NumRows");
-        int numCols = target_location.get_number("NumCols");
-        art_obj->targetInfo(tLeftX, tLeftY, tRightX, tRightY, bRightX, bRightY, bLeftX, bLeftY, numRows, numCols);
+        double topEdge = target_location.get_number("top");
+        double leftEdge = target_location.get_number("left");
+        double botEdge = target_location.get_number("bottom");
+        double rightEdge = target_location.get_number("right");
+        int numCols = target_location.get_number("cols");
+        int numRows = target_location.get_number("rows");
+        art_obj->targetInfo(topEdge, leftEdge, botEdge, rightEdge, numRows, numCols);
+        //std::cout<<target_location.to_string(true)<<std::endl;
         return true;
     }
     catch (ParsingError e) {
