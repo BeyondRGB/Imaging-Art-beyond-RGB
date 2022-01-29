@@ -44,8 +44,6 @@ target_include_directories(app PUBLIC "src/")
 target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
 target_link_libraries(app PRIVATE jsoncons)
-#target_link_libraries(app PRIVATE png_static)
-target_link_libraries(app PRIVATE png)
 target_include_directories(app PRIVATE ${CPPCODEC_INCLUDE_DIRS})
 
 target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
@@ -54,6 +52,13 @@ target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
 target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
 target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
+
+# LibPNG
+if( ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-windows")
+    target_link_libraries(app PRIVATE png)
+else()
+    target_link_libraries(app PRIVATE png_static)
+endif()
 
 
 # Pthreads & OpenMP on Linux
