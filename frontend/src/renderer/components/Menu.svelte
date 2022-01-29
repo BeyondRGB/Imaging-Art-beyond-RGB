@@ -1,13 +1,17 @@
-<script>
-  export let routes;
-  export let icon;
+<script lang="ts">
+  export let routes: any;
+  export let icon: any;
+  import Modal from "@components/Modal.svelte";
+  import Settings from "@root/pages/Settings.svelte";
+  import TextLogo from "@assets/TextLogo.svg";
+  let showModal = false;
 
-  import { currentPage, modal } from "../stores";
+  import { currentPage, modal, appSettings } from "@util/stores";
   import Icon from "svelte-awesome";
 
-  function handleClick(newPage) {
+  $: theme = $appSettings.theme ? "dark" : "";
+  function handleClick(newPage: any[]) {
     if (newPage[0] === "Settings") {
-      console.log("Settings to Settings", newPage[1]);
       modal.set(newPage[1].component);
     } else {
       currentPage.set(newPage[0]);
@@ -15,117 +19,114 @@
   }
 </script>
 
-<main class="dark:bg-gray-900 bg-gray-300 dark:text-white text-gray-800">
-  <ul class="list">
-    <logo>
-      <div class="logo-icon">
-        <Icon data={icon} scale="2.5" />
-      </div>
-      <span class="logo-text">Beyond RGB</span>
-    </logo>
-    {#each Object.keys(routes).map((key) => [key, routes[key]]) as item, i}
-      {#if item[1].isShown}
-        <button
-          class="item dark:text-gray-50 text-gray-800 dark:hover:text-gray-50"
-          on:click={() => handleClick(item)}
-          disabled={($currentPage !== "RGB") &
-          ($currentPage !== "SpecOverlay") &
-          ($currentPage !== "Reports") &
-          ($currentPage !== "SpecPicker")
-            ? !item[1].default
-            : false}
-        >
-          <div class="item-icon">
-            <Icon data={item[1].icon} scale="1.5" />
-          </div>
-          <span class="item-text">{item[1].text}</span>
-        </button>
-      {/if}
-    {/each}
+<main class="{$appSettings.sideNav ? 'sideMain' : ''} {theme}">
+  <ul>
+    <div class="logoBox">
+      <!-- <img src={TextLogo} alt="app-logo" /> -->
+      <p>Beyond RGB</p>
+    </div>
+    <div class="menuBtns">
+      {#each Object.keys(routes).map((key) => [key, routes[key]]) as item, i}
+        {#if item[1].isShown && !item[1].default}
+          <button
+            class={$currentPage === item[0] ? "selected" : ""}
+            on:click={() => handleClick(item)}
+          >
+            <Icon data={item[1].icon} scale={1.5} />
+            <span>{item[1].text}</span>
+          </button>
+        {/if}
+      {/each}
+    </div>
+    <div class="ctlBtns">
+      <button on:click={() => currentPage.set("Home")}>
+        <Icon data={routes["Home"].icon} scale={1.75} />
+      </button>
+
+      <button on:click={() => (showModal = true)}>
+        <Icon data={routes["Settings"].icon} scale={1.75} />
+      </button>
+    </div>
   </ul>
 </main>
 
+{#if showModal}
+  <Modal on:close={() => (showModal = false)}>
+    <!-- <h2 slot="header">
+      modal
+      <small><em>adjective</em> mod·al \ˈmō-dəl\</small>
+    </h2> -->
+
+    <h1 slot="header">App Settings</h1>
+    <Settings />
+  </Modal>
+{/if}
+
 <style lang="postcss">
-  :root {
-    --menu-width: 6vw;
-    --menu-width-exp: 30vw;
-  }
-
-  @media (min-width: 1200px) {
-    :root {
-      --menu-width: 5vw;
-      --menu-width-exp: 20vw;
-    }
-  }
-
   main {
-    grid-area: Navbar-start / Menu-start / Menu-end / Box-Start;
-    transition-property: width, border-radius, box-shadow;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 400ms;
-    transition-delay: 100ms;
-    @apply w-[var(--menu-width)] flex flex-col h-full
-					shadow-lg rounded-r-lg overflow-hidden z-10;
+    @apply w-full flex flex-col h-16 overflow-hidden border-t-[0.0625rem] border-gray-700/25;
   }
 
-  /* Logo */
-  logo {
-    @apply pb-12 pt-2 relative justify-center text-center w-full;
+  .sideMain {
+    @apply bottom-auto w-24 h-full border-t-0 border-r-[0.0625rem];
   }
 
-  .logo-text {
-    transition-property: left, position;
-    @apply whitespace-nowrap select-none absolute -left-48 duration-200 text-2xl;
+  ul {
+    @apply flex list-none m-0 justify-between h-full w-full bg-gray-100 
+          dark:bg-gray-700;
   }
 
-  .logo-icon {
-    @apply duration-200 mt-6 pb-2;
+  .sideMain ul {
+    @apply flex-col;
   }
 
-  /* main */
-  main:hover {
-    @apply w-[var(--menu-width-exp)] shadow-2xl rounded-r-3xl;
+  span {
+    @apply text-xs;
   }
 
-  .list {
-    @apply flex flex-col list-none m-0 items-center h-[100vh];
+  .selected span {
+    @apply dark:text-gray-50;
   }
 
-  main:hover .item-text {
-    @apply opacity-100 transition-opacity ease-linear;
+  button {
+    @apply rounded-none h-full w-full flex flex-col justify-center items-center
+            ring-0 bg-transparent dark:hover:bg-gray-800 hover:bg-gray-200 
+            dark:text-gray-50/60 dark:hover:text-gray-50 shadow-none;
   }
 
-  main:hover .logo-text {
-    transition-property: left, position;
-    @apply left-0 absolute duration-1000 w-full;
+  .selected {
+    @apply dark:bg-gray-900 bg-gray-400 dark:hover:bg-gray-900/40 hover:bg-gray-600/40 
+          dark:text-blue-500 border-b-4 border-blue-500;
   }
 
-  /* Menu Item */
-  .item {
-    @apply w-full flex items-center h-20 transition-colors duration-500 bg-transparent
-            p-0 disabled:hover:bg-gray-400 disabled:text-gray-400 disabled:cursor-not-allowed
-            disabled:hover:text-gray-50 active:scale-100 shadow-none;
+  .menuBtns {
+    @apply flex h-full list-none w-[60%] whitespace-nowrap overflow-hidden 
+            self-center;
   }
 
-  .item:first-of-type {
-    @apply border-t-[.0625rem];
+  .sideMain .menuBtns {
+    @apply flex-col h-[60%] w-full whitespace-normal;
   }
 
-  .item:last-of-type {
-    margin-top: auto;
-    @apply border-b-0;
+  .ctlBtns {
+    @apply flex dark:bg-gray-600/30 bg-gray-200/30 rounded-l-2xl px-4 gap-2;
   }
 
-  .item:hover {
-    /* filter: grayscale(0%) opacity(1); */
-    @apply transition-colors duration-500 bg-blue-400/75;
+  .ctlBtns button {
+    @apply rounded-full hover:text-blue-500 dark:hover:text-blue-500 
+            hover:bg-transparent dark:text-gray-50;
   }
 
-  .item-text {
-    @apply ml-4 whitespace-nowrap select-none opacity-0 duration-200;
+  .sideMain .ctlBtns {
+    @apply flex-col py-4 px-0;
   }
-
-  .item-icon {
-    @apply ml-[1.75vw] duration-200;
+  img {
+    /* transform: scale(0.5); */
+    pointer-events: none;
+    filter: grayscale(0.5);
+    @apply h-1/2 mt-3.5 pl-3;
+  }
+  p {
+    @apply text-xl mt-2.5 pl-3;
   }
 </style>

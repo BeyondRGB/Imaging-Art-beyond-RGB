@@ -1,26 +1,23 @@
-<script>
+<script lang="ts">
   import Switch from "@components/Switch.svelte";
-  import { appSettings } from "../stores";
-  import { getContext } from "svelte";
-  import { modal } from "../stores";
+  import { appSettings } from "@util/stores";
+  import { modal } from "@util/stores";
 
+  import SelectBtn from "@components/SelectBtn.svelte";
   function handle() {
     modal.set(null);
   }
+  $: console.log($appSettings);
 </script>
 
-<main>
-  <h1>App Settings</h1>
-  <div>
-    <Switch label="Dark Mode" bind:checked={$appSettings} />
-  </div>
-</main>
+<div>
+  <SelectBtn />
+  <Switch label="Dark Mode" bind:checked={$appSettings.theme} />
+  <Switch label="Side Menu" bind:checked={$appSettings.sideNav} />
+</div>
 
 <style lang="postcss">
-  main {
-    @apply flex-col justify-center w-full p-6;
-  }
   div {
-    @apply w-[50%];
+    @apply flex-col justify-center w-full p-6;
   }
 </style>
