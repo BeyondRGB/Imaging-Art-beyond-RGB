@@ -80,7 +80,7 @@ void HalfSizePreview::run() {
         }
         auto img_end = std::chrono::high_resolution_clock::now();
         auto img_duration = std::chrono::duration_cast<std::chrono::milliseconds>(img_end - img_start);
-        std::cout << "Image processing time: " << img_duration << " (" << im->filename() << ")" << std::endl;
+        std::cout << "Image processing time: " << std::to_string(img_duration.count()) << " (" << im->filename() << ")" << std::endl;
 
         if(rsp != nullptr) {
             delete rsp;
