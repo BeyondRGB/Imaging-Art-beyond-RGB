@@ -28,7 +28,7 @@ namespace btrgb {
 
     private:
         double tLeftX, tLeftY, tRightX, tRightY, bRightX, bRightY, bLeftX, bLeftY;
-        int row, col;
+        int targetRow, targetCol;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
         RefData* ref_data;
