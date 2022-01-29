@@ -1,5 +1,5 @@
-#ifndef LIBPNGWRITER_H
-#define LIBPNGWRITER_H
+#ifndef BTRGB_LIBPNGWRITER_H
+#define BTRGB_LIBPNGWRITER_H
 
 #include <vector>
 #include <string>
