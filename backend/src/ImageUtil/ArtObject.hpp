@@ -27,7 +27,8 @@ namespace btrgb {
     class ArtObject {
 
     private:
-        double tLeftX, tLeftY, tRightX, tRightY, bRightX, bRightY, bLeftX, bLeftY;
+        //Target Info
+        double topEdge, leftEdge, botEdge, rightEdge;
         int targetRow, targetCol;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
@@ -38,7 +39,7 @@ namespace btrgb {
         ~ArtObject();
 
         void newImage(std::string name, std::string filename);
-        void targetInfo(double topLeftX, double topLeftY, double topRightX, double topRightY, double botRightX, double botRightY, double botLeftX, double botLeftY, int rows, int cols);
+        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
         void setImage(std::string name, image* im);
         image* getImage(std::string name);
         double getTargetInfo(std::string type);

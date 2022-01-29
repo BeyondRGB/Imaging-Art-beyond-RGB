@@ -41,43 +41,27 @@ namespace btrgb {
         this->images[name] = im;
     }
 
-    void ArtObject::targetInfo(double topLeftX, double topLeftY, double topRightX, double topRightY, double botRightX, double botRightY, double botLeftX, double botLeftY, int rows, int cols) {
-        tLeftX = topLeftX;
-        tLeftY = topLeftY;
-        tRightX = topRightX;
-        tRightY = topRightY;
-        bRightX = botRightX;
-        bRightY = botRightY;
-        bLeftX = botLeftX;
-        bLeftY = botLeftY;
+    void ArtObject::targetInfo(double top, double left, double bot, double right, int rows, int cols) {
+        topEdge = top;
+        leftEdge = left;
+        botEdge = bot;
+        rightEdge = right;
         targetRow = rows;
         targetCol = cols;
     }
 
     double ArtObject::getTargetInfo(std::string type) {
-        if (type._Equal("tlx")) {
-            return this->tLeftX;
+        if (type._Equal("top")) {
+            return this->topEdge;
         }
-        if (type._Equal("tly")) {
-            return this->tLeftY;
+        else if (type._Equal("bot")) {
+            return this->botEdge;
         }
-        else if (type._Equal("trx")) {
-            return this->tRightX;
+        else if (type._Equal("left")) {
+            return this->leftEdge;
         }
-        else if (type._Equal("try")) {
-            return this->tRightY;
-        }
-        else if (type._Equal("brx")) {
-            return this->bRightX;
-        }
-        else if (type._Equal("bry")) {
-            return this->bRightY;
-        }
-        else if (type._Equal("blx")) {
-            return this->bLeftX;
-        }
-        else if (type._Equal("bly")) {
-            return this->bLeftY;
+        else if (type._Equal("right")) {
+            return this->rightEdge;
         }
         return NULL;
     }
