@@ -50,8 +50,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     double botLeftY = images->getTargetInfo("bly");
     int targetRows = images->getTargetSize("row");
     int targetCols = images->getTargetSize("col");
-    //Above will be used with Patch info from singleton to find the pixel that is the center
-    //of the white patch.  For now pretend the center pixel is the patchX and patchY
+    //Col and Row of the white patch on the target
     int whiteRow = reference->get_white_patch_row();
     int whiteCol = reference->get_white_patch_col();
     //Need to double check and make sure this can be done between ints and doubles
@@ -62,17 +61,11 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int rightEdge = width * topRightX;
     int tarHeight = botEdge - topEdge;
     int tarWidth = rightEdge - leftEdge;
+    //wHeight and wWidth are the offset from the edges of the color target to the white patch center
     int wHeight = tarHeight * (targetRows - whiteRow);
     int wWidth = tarWidth * (targetCols - whiteCol);
 
-    //Testing
-    std::cout<<"*****************************"<<std::endl;
-    std::cout<<"Top "<<topEdge<<std::endl;
-    std::cout<<"Bot "<<botEdge<<std::endl;
-    std::cout<<"Left "<<leftEdge<<std::endl;
-    std::cout<<"Right "<<rightEdge<<std::endl;
-    std::cout<<"*****************************"<<std::endl;
-
+    //X and Y of White patch location
     int patchX = leftEdge + wWidth;
     int patchY = topEdge + wHeight;
 
@@ -80,9 +73,9 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     float white1Total = 0;
     float art2Total = 0;
     float white2Total = 0;
-    int x, y, i, ix, iy;
-    //May need to be looked at, old implementation of bitmap for loop
-    for (y = 0; y < height; y++) {
+    int xOff, yOff, i, ix, iy;
+    //Old will be removed soon
+/*    for (y = 0; y < height; y++) {
         iy = y * width * channels;
         for (x = 0; x < width; x++) {
             ix = x * channels;
@@ -98,6 +91,18 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
                 }
             }
         }
+    }*/
+    //Collecting values of pixels in the rings around center pixel in the white
+    for (yOff = (-size + 1); yOff < size; yOff++){
+        for (xOff = (-size + 1); xOff < size; xOff++){
+            iy = (patchY + yOff) * width * channels;
+            ix = (patchX + xOff) * channels;
+            i = iy + ix + 1;
+            art1Total += abitmap1[i];
+            white1Total += wbitmap1[i];
+            art2Total += abitmap2[i];
+            white2Total += wbitmap2[i];
+        }
     }
     float art1Avg = art1Total / (size * size);
     float white1Avg = white1Total / (size * size);
@@ -110,7 +115,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted
     //Old version of the For Loop, may need to be changed
-    int ch;
+    int x, y, ch;
     float wPix, dPix, aPix;
     for (y = 0; y < height; y++) {
         iy = y * width * channels;
@@ -132,6 +137,16 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             }
         }
     }
+    //Testing
+    std::cout<<"*****************************"<<std::endl;
+    std::cout<<"Top "<<topEdge<<std::endl;
+    std::cout<<"Bot "<<botEdge<<std::endl;
+    std::cout<<"Left "<<leftEdge<<std::endl;
+    std::cout<<"Right "<<rightEdge<<std::endl;
+    std::cout<<"Patch X "<<patchX<<std::endl;
+    std::cout<<"Patch Y "<<patchY<<std::endl;
+    std::cout<<"*****************************"<<std::endl;
+
     sleep_for(seconds(1));
     //Need to add a call to turn into a TIFF
 }
