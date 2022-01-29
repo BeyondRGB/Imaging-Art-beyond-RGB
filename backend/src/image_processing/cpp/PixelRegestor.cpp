@@ -31,6 +31,9 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     cv::Mat im1(ImageARows, ImageACols, type, dataA);
     cv::Mat im2(ImageBRows, ImageBCols, type, dataB);
 
+
+
+
    
     //Check that there is actual data in them
     if(!im1.data || !im2.data)
@@ -40,6 +43,15 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     }
 
 
+    //Convert to 32bit floating point
+    cv::Mat im1_32f;
+    cv::Mat im2_32f;
+
+    im1.convertTo(im1_32f, CV_32FC3);
+    im2.convertTo(im2_32f, CV_32FC3);
+
+
+    
     //Seperating the three channel matrix into multiple single channel arrays
     //We will be using im1Split[2] as registration base
 
@@ -48,49 +60,68 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //im1Split[3] == R
 
     cv::Mat im1Split[3];
-    split(im1, im1Split);
+    split(im1_32f, im1Split);
 
     cv::Mat im2Split[3];
-    split(im2, im2Split);
+    split(im2_32f, im2Split);
+
+    std::cout << "Register start \n";
+
+    //Warp model
+    const int warp_mode = MOTION_EUCLIDEAN;
+
+    cv::Mat warp_matrix;
+
+    std::cout << "Setting up warp matrix \n";
+
+    if (warp_mode == MOTION_HOMOGRAPHY) {
+        warp_matrix = Mat::eye(3, 3, CV_32F);
+    }
+    else {
+        warp_matrix = Mat::eye(2, 3, CV_32F);
+    }
+  
+    std::cout << "Setting criteria \n";
+    //Higher iteration number, higher accuracy, higher compute time
+
+    //Takes about 8-10 seconds per iteration, recommend keeping low till testing is done.
+    int iterations = 10;
+
+    double termination_eps = 1e-10;
+
+    TermCriteria criteria(TermCriteria::COUNT + TermCriteria::EPS, iterations, termination_eps);
+
+   
+
+    std::cout << "Estimating warp matrix \n";
+    //Perform image alignment
+    findTransformECC(im1Split[2], im2Split[1], warp_matrix, warp_mode, criteria);
+
+
+    std::cout << "Warping image\n";    
+    //Storage for registered channel
+    cv::Mat aligned;
+
+    if (warp_mode != MOTION_HOMOGRAPHY) {
+        warpAffine(im2Split[1], aligned, warp_matrix, im1Split[2].size(), INTER_LINEAR + WARP_INVERSE_MAP);
+    }
+    else {
+        warpPerspective(im2Split[1], aligned, warp_matrix, im1Split[2].size(), INTER_LINEAR + WARP_INVERSE_MAP);
+    }
+    std::cout << "Done \n";
+    //Overwrite the orginal single channel with the aligned channel
+    im2Split[1] = aligned;
+
+
+
 
     //Perform three registrations, one on each channel of image 2
+
+    //Disabled for now till I get registration running faster
     for(int registrationNumber = 1; registrationNumber < 4; registrationNumber--){
 
 
-        //Warp model
-        const int warp_mode = MOTION_EUCLIDEAN;
-
-        cv::Mat warp_matrix;
-
-        if ( warp_mode == MOTION_HOMOGRAPHY ){
-            warp_matrix = Mat::eye(3, 3, CV_32F);
-        }
-        else{
-            warp_matrix = Mat::eye(2, 3, CV_32F);
-        }
-
-        //Higher iteration number, higher accuracy, higher compute time
-        int iterations = 5000;
-
-        double termination_eps = 1e-10;
-
-        TermCriteria criteria(TermCriteria::COUNT+TermCriteria::EPS, iterations, termination_eps);
-
-        //Perform image alignment
-        findTransformECC(im1Split[2], im2Split[registrationNumber], warp_matrix, warp_mode, criteria);
-
-        //Storage for registered channel
-        cv::Mat aligned;
-
-        if(warp_mode != MOTION_HOMOGRAPHY){
-            warpAffine(im2Split[registrationNumber], aligned, warp_matrix, im1Split[2].size(), INTER_LINEAR + WARP_INVERSE_MAP);
-        }
-        else{
-            warpPerspective (im2Split[registrationNumber], aligned, warp_matrix, im1Split[2].size(),INTER_LINEAR + WARP_INVERSE_MAP);
-        }
         
-        //Overwrite the orginal single channel with the aligned channel
-        im2Split[registrationNumber] = aligned;
     }
 
  
