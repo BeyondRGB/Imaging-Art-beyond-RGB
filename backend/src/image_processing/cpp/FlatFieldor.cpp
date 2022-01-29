@@ -67,10 +67,10 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     //Testing
     std::cout<<("*****************************")<<std::endl;
-    std::cout<<("Top " + topEdge.to_string())<<std::endl;
-    std::cout<<("Bot " + botEdge.to_string())<<std::endl;
-    std::cout<<("Left " + leftEdge.to_string())<<std::endl;
-    std::cout<<("Right " + rightEdge.to_string())<<std::endl;
+    std::cout<<("Top " + topEdge)<<std::endl;
+    std::cout<<("Bot " + botEdge)<<std::endl;
+    std::cout<<("Left " + leftEdge)<<std::endl;
+    std::cout<<("Right " + rightEdge)<<std::endl;
     std::cout<<("*****************************")<<std::endl;
 
     int patchX = leftEdge + wWidth;
