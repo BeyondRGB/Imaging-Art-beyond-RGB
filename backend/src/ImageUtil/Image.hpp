@@ -94,7 +94,7 @@ namespace btrgb {
 
         private:
             std::string _filename;
-            pixel* _bitmap;
+            pixel* _bitmap = nullptr;
             int _width;
             int _height;
             int _channels;
