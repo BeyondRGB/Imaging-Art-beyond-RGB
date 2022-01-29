@@ -1,7 +1,6 @@
 <script lang="ts">
   import { currentPage, processState } from "@util/stores";
 
-
   import Settings from "@components/Process/Settings.svelte";
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
   import ImportImages from "@components/Process/Tabs/ImportImages.svelte";
@@ -19,9 +18,7 @@
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
-
   ];
-
 
   function nextTab() {
     if ($processState.currentTab !== tabs.length - 1) {
@@ -51,7 +48,6 @@
 </script>
 
 <main>
-
   <nav class="dark:bg-gray-800/25">
     <button id="backBtn" on:click={prevTab}>Back</button>
     {#if !tabs[$processState.currentTab].hidden}
