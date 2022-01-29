@@ -55,9 +55,9 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Seperating the three channel matrix into multiple single channel arrays
     //We will be using im1Split[2] as registration base
 
-    //im1Split[1] == B
-    //im1Split[2] == G
-    //im1Split[3] == R
+    //im1Split[0] == B
+    //im1Split[1] == G
+    //im1Split[2] == R
 
     cv::Mat im1Split[3];
     split(im1_32f, im1Split);
@@ -85,7 +85,7 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Higher iteration number, higher accuracy, higher compute time
 
     //Takes about 8-10 seconds per iteration, recommend keeping low till testing is done.
-    int iterations = 10;
+    int iterations = 6;
 
     double termination_eps = 1e-10;
 
@@ -95,30 +95,30 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     std::cout << "Estimating warp matrix \n";
     //Perform image alignment
-    findTransformECC(im1Split[2], im2Split[1], warp_matrix, warp_mode, criteria);
+    findTransformECC(im1Split[1], im2Split[1], warp_matrix, warp_mode, criteria);
 
 
-    std::cout << "Warping image\n";    
-    //Storage for registered channel
-    cv::Mat aligned;
+    //Perform three registrations, currently reusing warp matrix from Im1[1] and Im2[1]
 
-    if (warp_mode != MOTION_HOMOGRAPHY) {
-        warpAffine(im2Split[1], aligned, warp_matrix, im1Split[2].size(), INTER_LINEAR + WARP_INVERSE_MAP);
-    }
-    else {
-        warpPerspective(im2Split[1], aligned, warp_matrix, im1Split[2].size(), INTER_LINEAR + WARP_INVERSE_MAP);
-    }
-    std::cout << "Done \n";
-    //Overwrite the orginal single channel with the aligned channel
-    im2Split[1] = aligned;
+    for (int registrationNumber = 2; registrationNumber >= 0;) {
 
+        std::cout << "Warping image \n";
+        std::cout << registrationNumber;
 
+        //Storage for registered channel
+        cv::Mat aligned;
 
+        if (warp_mode != MOTION_HOMOGRAPHY) {
+            warpAffine(im2Split[registrationNumber], aligned, warp_matrix, im1Split[1].size(), INTER_LINEAR + WARP_INVERSE_MAP);
+        }
+        else {
+            warpPerspective(im2Split[registrationNumber], aligned, warp_matrix, im1Split[1].size(), INTER_LINEAR + WARP_INVERSE_MAP);
+        }
+        std::cout << "Done \n";
+        //Overwrite the orginal single channel with the aligned channel
+        im2Split[registrationNumber] = aligned;
 
-    //Perform three registrations, one on each channel of image 2
-
-    //Disabled for now till I get registration running faster
-    for(int registrationNumber = 1; registrationNumber < 4; registrationNumber--){
+        registrationNumber--;
 
 
         
