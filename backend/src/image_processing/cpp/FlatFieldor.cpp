@@ -55,14 +55,23 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int whiteRow = reference->get_white_patch_row();
     int whiteCol = reference->get_white_patch_col();
     //Need to double check and make sure this can be done between ints and doubles
-    int topEdge = height * topLeftY;
-    int botEdge = height * botRightY;
+    //Normalized location by width from base
+    int topEdge = width * topLeftY;
+    int botEdge = width * botRightY;
     int leftEdge = width * botLeftX;
     int rightEdge = width * topRightX;
     int tarHeight = botEdge - topEdge;
     int tarWidth = rightEdge - leftEdge;
     int wHeight = tarHeight * (targetRows - whiteRow);
     int wWidth = tarWidth * (targetCols - whiteCol);
+
+    //Testing
+    std::cout<<("*****************************")
+    std::cout<<("Top " + topEdge.to_string())
+    std::cout<<("Bot " + botEdge.to_string())
+    std::cout<<("Left " + leftEdge.to_string())
+    std::cout<<("Right " + rightEdge.to_string())
+    std::cout<<("*****************************")
 
     int patchX = leftEdge + wWidth;
     int patchY = topEdge + wHeight;
