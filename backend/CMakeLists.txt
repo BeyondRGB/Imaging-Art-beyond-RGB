@@ -3,6 +3,8 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
 project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
 
 
+
+
 #------------------------------------------
 #	Add VCPKG provided find_package Here
 #------------------------------------------
@@ -10,6 +12,8 @@ find_package(websocketpp CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
+FIND_PACKAGE( OpenCV REQUIRED )                              
+INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 
 # LCMS is needed for LibRAW. For some reason on 
 # OSX and Linux, this dependency needs to be explicitly
@@ -42,6 +46,8 @@ target_include_directories(app PUBLIC "src/")
 target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
 target_link_libraries(app PRIVATE jsoncons)
+TARGET_LINK_LIBRARIES ( app PRIVATE ${OpenCV_LIBS} )
+
 
 target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
 target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
