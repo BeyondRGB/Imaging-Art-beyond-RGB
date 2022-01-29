@@ -100,7 +100,7 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     //Perform three registrations, currently reusing warp matrix from Im1[1] and Im2[1]
 
-    for (int registrationNumber = 2; registrationNumber >= 0;) {
+    for (int registrationNumber = 2; registrationNumber >= 0; registrationNumber--) {
 
         std::cout << "Warping image \n";
         std::cout << registrationNumber;
@@ -118,10 +118,6 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
         //Overwrite the orginal single channel with the aligned channel
         im2Split[registrationNumber] = aligned;
 
-        registrationNumber--;
-
-
-        
     }
 
  
