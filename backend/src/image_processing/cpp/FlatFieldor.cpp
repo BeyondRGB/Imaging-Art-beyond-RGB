@@ -8,6 +8,9 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::image* dark1;
     btrgb::image* dark2;
     RefData* reference;
+
+    std::cout<<"Variable Declaration"<<std::endl;
+
     func("Flat Fielding");
     try {
         art1 = images->getImage("art1");
@@ -22,6 +25,9 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
         func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
         return;
     }
+
+    std::cout<<"ArtObject Pulls"<<std::endl;
+
     //Set up of the size of all the bitmaps for all the different images being looked at
     int height = art1->height();
     int width = art1->width();
@@ -32,6 +38,8 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::pixel* wbitmap2 = white2->bitmap();
     btrgb::pixel* dbitmap1 = dark1->bitmap();
     btrgb::pixel* dbitmap2 = dark2->bitmap();
+
+    std::cout<<"BitMap Declaration"<<std::endl;
 
     //ONLY NEED CHANNEL 2, aka Green channel, to get averages, y is from calc
     //Provided from Art Obj
@@ -50,9 +58,15 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     double botLeftY = images->getTargetInfo("bly");
     int targetRows = images->getTargetSize("row");
     int targetCols = images->getTargetSize("col");
+
+    std::cout<<"Target Data Declaration"<<std::endl;
+
     //Col and Row of the white patch on the target
     int whiteRow = reference->get_white_patch_row();
     int whiteCol = reference->get_white_patch_col();
+
+    std::cout<<"Pull from Reference Data"<<std::endl;
+
     //Need to double check and make sure this can be done between ints and doubles
     //Normalized location by width from base
     int topEdge = width * topLeftY;
@@ -68,6 +82,8 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //X and Y of White patch location
     int patchX = leftEdge + wWidth;
     int patchY = topEdge + wHeight;
+
+    std::cout<<"Center Coordinate Declaration"<<std::endl;
 
     int art1Total = 0;
     int white1Total = 0;
@@ -94,6 +110,9 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     double yVal = reference->get_y(whiteRow, whiteCol);
     double w1 = yVal * (white1Avg / art1Avg);
     double w2 = yVal * (white2Avg / art2Avg);
+
+    std::cout<<"W value calculated"<<std::endl;
+
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted
     //Old version of the For Loop, may need to be changed
@@ -119,8 +138,12 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             }
         }
     }
+
+    std::cout<<"Flat Fielding Done"<<std::endl;
+
     //Testing
     std::cout<<"*****************************"<<std::endl;
+    std::cout<<"Testing"<<std::endl;
     std::cout<<"Top "<<topEdge<<std::endl;
     std::cout<<"Bot "<<botEdge<<std::endl;
     std::cout<<"Left "<<leftEdge<<std::endl;
