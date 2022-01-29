@@ -69,29 +69,11 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int patchX = leftEdge + wWidth;
     int patchY = topEdge + wHeight;
 
-    float art1Total = 0;
-    float white1Total = 0;
-    float art2Total = 0;
-    float white2Total = 0;
+    int art1Total = 0;
+    int white1Total = 0;
+    int art2Total = 0;
+    int white2Total = 0;
     int xOff, yOff, i, ix, iy;
-    //Old will be removed soon
-/*    for (y = 0; y < height; y++) {
-        iy = y * width * channels;
-        for (x = 0; x < width; x++) {
-            ix = x * channels;
-            //channel will always be index 1, only channel 2 aka green
-            i = iy + ix + 1;
-            //Need to find out if this is referneced correctly, is ix the x position
-            if (x == patchX || x == patchX - (size - 1) || x == patchX + (size - 1)) {
-                if (y == patchY || y == patchY - (size - 1) || y == patchY + (size - 1)) {
-                    art1Total += abitmap1[i];
-                    white1Total += wbitmap1[i];
-                    art2Total += abitmap2[i];
-                    white2Total += wbitmap2[i];
-                }
-            }
-        }
-    }*/
     //Collecting values of pixels in the rings around center pixel in the white
     for (yOff = (-size + 1); yOff < size; yOff++){
         for (xOff = (-size + 1); xOff < size; xOff++){
@@ -104,19 +86,19 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             white2Total += wbitmap2[i];
         }
     }
-    float art1Avg = art1Total / (size * size);
-    float white1Avg = white1Total / (size * size);
-    float art2Avg = art2Total / (size * size);
-    float white2Avg = white2Total / (size * size);
+    double art1Avg = art1Total / (size * size);
+    double white1Avg = white1Total / (size * size);
+    double art2Avg = art2Total / (size * size);
+    double white2Avg = white2Total / (size * size);
 
-    float yVal = reference->get_y(whiteRow, whiteCol);
-    float w1 = yVal * (white1Avg / art1Avg);
-    float w2 = yVal * (white2Avg / art2Avg);
+    double yVal = reference->get_y(whiteRow, whiteCol);
+    double w1 = yVal * (white1Avg / art1Avg);
+    double w2 = yVal * (white2Avg / art2Avg);
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted
     //Old version of the For Loop, may need to be changed
     int x, y, ch;
-    float wPix, dPix, aPix;
+    int wPix, dPix, aPix;
     for (y = 0; y < height; y++) {
         iy = y * width * channels;
         for (x = 0; x < width; x++) {
