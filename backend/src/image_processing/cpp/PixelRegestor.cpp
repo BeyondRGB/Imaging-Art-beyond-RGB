@@ -60,10 +60,10 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //im1Split[2] == R
 
     cv::Mat im1Split[3];
-    split(im1_32f, im1Split);
+    cv::split(im1_32f, im1Split);
 
     cv::Mat im2Split[3];
-    split(im2_32f, im2Split);
+    cv::split(im2_32f, im2Split);
 
     std::cout << "Register start \n";
 
@@ -121,13 +121,11 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     }
 
  
-    //Todo 
-    //matrix cleanup, ensure bitmap is updated
-    
+    //Merging 3 split channels back into 1 matrix
+    cv::merge(im2Split, 3, im2_32f);
 
-
-
-
+    //Convert from 32 bit floating to 16 bit
+    im2_32f.convertTo(im2, CV_16UC3);
 
     sleep_for(seconds(1));
 }
