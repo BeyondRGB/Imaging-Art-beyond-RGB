@@ -1,90 +1,90 @@
 <script>
-	import { sendMessage, messageStore } from "../stores";
-	import Stepper from "../components/Stepper.svelte";
-	import { getContext } from "svelte";
-	import ExportOptions from "@components/ExportOptions.svelte";
-	import CanvasImage from "@components/CanvasImage.svelte";
+  import { sendMessage, messageStore } from "../stores";
+  import Stepper from "../components/Stepper.svelte";
+  import { getContext } from "svelte";
+  import ExportOptions from "@components/ExportOptions.svelte";
+  import CanvasImage from "@components/CanvasImage.svelte";
 
-	let messageList = [];
-	$: messageList = [...messageList, $messageStore];
-	$: {
-	const re = /->([a-z A-Z]+)->([a-z A-Z]+)/;
-	const array = re.exec($messageStore);
-	console.log(array);
-	if (array) {
-	const stepName =
-	array[1] === "ImageCalibrator" ? "Process" : "Preprocess";
-	const stepId = steps.findIndex((c) => c.title === stepName);
-	console.log(stepId);
-	steps[stepId].subTitle = array[2];
-	steps = [...steps];
-	} else if ($messageStore.includes("PreProcessor Done")) {
-	steps[0].status = "success";
-	steps = [...steps];
-	} else if ($messageStore.includes("Image Calibration Done")) {
-	steps[1].status = "success";
-	steps = [...steps];
-	} else if ($messageStore.includes("Image Processing Done")) {
-	steps[2].status = "success";
-	steps = [...steps];
-	}
-	}
+  let messageList = [];
+  $: messageList = [...messageList, $messageStore];
+  $: {
+  const re = /->([a-z A-Z]+)->([a-z A-Z]+)/;
+  const array = re.exec($messageStore);
+  console.log(array);
+  if (array) {
+  const stepName =
+  array[1] === "ImageCalibrator" ? "Process" : "Preprocess";
+  const stepId = steps.findIndex((c) => c.title === stepName);
+  console.log(stepId);
+  steps[stepId].subTitle = array[2];
+  steps = [...steps];
+  } else if ($messageStore.includes("PreProcessor Done")) {
+  steps[0].status = "success";
+  steps = [...steps];
+  } else if ($messageStore.includes("Image Calibration Done")) {
+  steps[1].status = "success";
+  steps = [...steps];
+  } else if ($messageStore.includes("Image Processing Done")) {
+  steps[2].status = "success";
+  steps = [...steps];
+  }
+  }
 
-	let steps = [
-	{
-	title: "Preprocess",
-	subTitle: "none",
-	status: "pending",
-	},
-	{
-	title: "Process",
-	subTitle: "none",
-	status: "pending",
-	},
-	{
-	title: "Export",
-	subTitle: "none",
-	status: "pending",
-	},
-	];
-	let activeStep = 0;
+  let steps = [
+  {
+  title: "Preprocess",
+  subTitle: "none",
+  status: "pending",
+  },
+  {
+  title: "Process",
+  subTitle: "none",
+  status: "pending",
+  },
+  {
+  title: "Export",
+  subTitle: "none",
+  status: "pending",
+  },
+  ];
+  let activeStep = 0;
 
-	let jsonTest = {
-	"RequestType":"processImg",
-	"RequestData":{
-	"Images":[
-	{
-	"Art":"C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\canon_targets_1.CR2",
-	"White":"C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\canon_white_1.CR2",
-	"Dark":"C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\canon_dark_1.CR2"
-	},
-	{
-	"Art":"C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\canon_targets_2.CR2",
-	"White":"C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\canon_white_2.CR2",
-	"Dark":"C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\canon_dark_2.CR2"
-	}
-	],
-	"TargetLocation":{
-	"TopLeft":{"x": 0, "y":0},
-	"TopRight": {"x":50, "y":0},
-	"BottomRight": {"x":50, "y":50},
-	"BottomLeft": {"x":0, "y":50},
-	"NumRows": 10,
-	"NumCols":10
-	}
-	}
-	}
+  let jsonTest = {
+  "RequestType":"processImg",
+  "RequestData":{
+  "Images":[
+  {
+  "Art":"C:\\Users\\Andrew\\Desktop\\Im\\canon_targets_1.CR2",
+  "White":"C:\\Users\\Andrew\\Desktop\\Im\\canon_white_1.CR2",
+  "Dark":"C:\\Users\\Andrew\\Desktop\\Im\\canon_dark_1.CR2"
+  },
+  {
+  "Art":"C:\\Users\\Andrew\\Desktop\\Im\\canon_targets_2.CR2",
+  "White":"C:\\Users\\Andrew\\Desktop\\Im\\canon_white_2.CR2",
+  "Dark":"C:\\Users\\Andrew\\Desktop\\Im\\canon_dark_2.CR2"
+  }
+  ],
+  "TargetLocation":{
+  "TopLeft":{"x": 0, "y":0},
+  "TopRight": {"x":50, "y":0},
+  "BottomRight": {"x":50, "y":50},
+  "BottomLeft": {"x":0, "y":50},
+  "NumRows": 10,
+  "NumCols":10
+  }
+  }
+  }
 
-	const { open } = getContext("simple-modal");
+  const { open } = getContext("simple-modal");
 
-	const openModal = () => {
-	//modal.set(bind(ExportOptions), {}, { closeButton: false });
-	open(ExportOptions, {}, { closeButton: false });
-	};
+  const openModal = () => {
+  //modal.set(bind(ExportOptions), {}, { closeButton: false });
+  open(ExportOptions, {}, { closeButton: false });
+  };
 
-	$: if (activeStep === 3) {
-	openModal();
-	}
+  $: if (activeStep === 3) {
+  openModal();
+  }
 </script>
 
 <main>
