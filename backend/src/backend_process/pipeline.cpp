@@ -21,8 +21,7 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader("LibRaw")));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new DarkCurrentCorrector()));
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFeildor()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
@@ -51,13 +50,21 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             // Extract each image file name from current object
             std::string art_file = obj.get_string(key_map[DataKey::ART]);
             std::string white_file = obj.get_string(key_map[DataKey::WHITE]);
-            std::string dark_file = obj.get_string(key_map[DataKey::BLACK]);
+            std::string dark_file = obj.get_string(key_map[DataKey::DARK]);
             // Add each file to the ArtObject
             art_obj->newImage(("art" + std::to_string(i + 1)), art_file);
             art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
-            art_obj->newImage(("black" + std::to_string(i + 1)), dark_file);
+            art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
-        
+        //Collect the information provided about the color target
+        Json target_location = this->process_data_m->get_obj("TargetLocation");
+        double topEdge = target_location.get_number("top");
+        double leftEdge = target_location.get_number("left");
+        double botEdge = target_location.get_number("bottom");
+        double rightEdge = target_location.get_number("right");
+        int numCols = target_location.get_number("cols");
+        int numRows = target_location.get_number("rows");
+        art_obj->targetInfo(topEdge, leftEdge, botEdge, rightEdge, numRows, numCols);
         return true;
     }
     catch (ParsingError e) {
@@ -78,15 +85,15 @@ void Pipeline::run() {
 
     btrgb::ArtObject* images = new  btrgb::ArtObject(ref_file, illuminant, observer);
     this->init_art_obj(images);
-    
-    
+
+
     pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
 
-    
+
     for(const auto& [name, img]: *images) {
         images->outputImageAsTIFF(name);
     }
-    
+
     delete images;
 
 }
@@ -142,5 +149,3 @@ std::string Pipeline::get_ref_file() {
     }
     return ref_file;
 }
-
-   

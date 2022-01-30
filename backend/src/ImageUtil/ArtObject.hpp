@@ -19,7 +19,7 @@
  *      for(const auto& [key, im] : *images) {
  *          //do stuff here
  *      }
- * 
+ *
  */
 
 namespace btrgb {
@@ -27,6 +27,9 @@ namespace btrgb {
     class ArtObject {
 
     private:
+        //Target Info
+        double topEdge, leftEdge, botEdge, rightEdge;
+        int targetRow, targetCol;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
         RefData* ref_data;
@@ -36,9 +39,11 @@ namespace btrgb {
         ~ArtObject();
 
         void newImage(std::string name, std::string filename);
-
+        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
         void setImage(std::string name, image* im);
         image* getImage(std::string name);
+        double getTargetInfo(std::string type);
+        int getTargetSize(std::string edge);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
         RefData* get_refrence_data();
@@ -55,7 +60,7 @@ namespace btrgb {
 
 
     class ArtObjectError : public std::exception {};
-    
+
     class ArtObj_ImageAlreadyExists : public ArtObjectError {
         public:
         virtual char const * what() const noexcept { return "ArtObject Error: An image with that name already exists."; }
