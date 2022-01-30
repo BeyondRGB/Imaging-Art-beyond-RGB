@@ -1,10 +1,10 @@
-<script>
-  import CanvasImage from "@components/CanvasImage.svelte";
+<script lang="ts">
+  import ImageViewer from "@components/ImageViewer.svelte";
 </script>
 
 <main>
-  <div id="image">
-    <CanvasImage />
+  <div class="image">
+    <ImageViewer />
   </div>
   <div id="side">
     <div
@@ -35,13 +35,13 @@
 
 <style lang="postcss">
   main {
-    @apply flex w-full justify-center;
+    @apply flex w-full justify-between;
   }
-  #image {
-    @apply w-[75%] self-center mx-2;
+  .image {
+    @apply w-full h-full flex items-center m-1;
   }
   #side {
-    @apply w-[25%];
+    @apply w-full;
   }
   /* #view-options {
     @apply bg-gray-200 h-[15%] m-2;

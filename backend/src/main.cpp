@@ -2,10 +2,11 @@
 #include <iostream>
 #include "server/request_server.hpp"
 
+//Testing Includes: Remove before submiting PR
 void testFunc() {
-	// Add testing logc here if this is called the server will not be started
 
 }
+
 
 int main() {
 	bool test = false; // Set to true if you want to test something and bypass the server

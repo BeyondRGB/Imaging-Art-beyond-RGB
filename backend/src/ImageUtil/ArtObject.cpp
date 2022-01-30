@@ -3,9 +3,11 @@
 
 namespace btrgb {
 
-    ArtObject::ArtObject() {}
+    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer) {
+        this->ref_data = new RefData(ref_file, ilumination, observer);
+    }
 
-    /* 
+    /*
     * Destructor deletes all btrgb::image structures that were made.
     */
     ArtObject::~ArtObject() {
@@ -13,10 +15,13 @@ namespace btrgb {
         /* Delete every image in the map. */
         for( const auto& [name, img] : this->images )
             delete img;
+
+        delete this->ref_data;
+
     }
 
 
-    /* 
+    /*
     * Creates and maps a new image.
     */
     void ArtObject::newImage(std::string name, std::string filename) {
@@ -29,8 +34,45 @@ namespace btrgb {
         this->images[name] = im;
     }
 
+    //Collects the color target information from the request message and saves it in the ArtObject
+    void ArtObject::targetInfo(double top, double left, double bot, double right, int rows, int cols) {
+        topEdge = top;
+        leftEdge = left;
+        botEdge = bot;
+        rightEdge = right;
+        targetRow = rows;
+        targetCol = cols;
+    }
 
-    /* 
+    //Returns a normalized value of the requested edge of the color target
+    double ArtObject::getTargetInfo(std::string type) {
+        if (type._Equal("top")) {
+            return this->topEdge;
+        }
+        else if (type._Equal("bot")) {
+            return this->botEdge;
+        }
+        else if (type._Equal("left")) {
+            return this->leftEdge;
+        }
+        else if (type._Equal("right")) {
+            return this->rightEdge;
+        }
+        return NULL;
+    }
+
+    //Returns the requested dimension of the color target
+    int ArtObject::getTargetSize(std::string edge){
+        if(edge._Equal("row")){
+            return this->targetRow;
+        }
+        else if(edge._Equal("col")){
+            return this->targetCol;
+        }
+        return NULL;
+    }
+
+    /*
     * Map an image name to an existing image object.
     * If the name is used, throws ArtObj_ImageAlreadyExists.
     */
@@ -43,9 +85,9 @@ namespace btrgb {
     }
 
 
-    /* 
+    /*
     * Returns a pointer to an image object if it is
-    * is found in memory, otherwise throws ArtObj_ImageDoesNotExist. 
+    * is found in memory, otherwise throws ArtObj_ImageDoesNotExist.
     */
     image* ArtObject::getImage(std::string name) {
 
@@ -63,7 +105,7 @@ namespace btrgb {
         this->images.erase(name);
     }
 
-    /* 
+    /*
     * Returns a boolean to indicate if an image is stored in memory.
     */
     bool ArtObject::imageExists(std::string name) {
@@ -78,7 +120,7 @@ namespace btrgb {
         
         if (! this->images.contains(name))
             throw ArtObj_ImageDoesNotExist();
-        
+
         try {
             ImageWriterStrategy(filetype).write( this->images[name] );
         }
@@ -102,5 +144,9 @@ namespace btrgb {
         return "data:application/octet-stream;base64," + cppcodec::base64_url::encode((const uint8_t*) im->bitmap(), bitmap_size);
     }
 
+
+    RefData* ArtObject::get_refrence_data() {
+        return this->ref_data;
+    }
 
 }

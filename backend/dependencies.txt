@@ -6,3 +6,4 @@ asio
 jsoncons
 libpng
 cppcodec
+opencv

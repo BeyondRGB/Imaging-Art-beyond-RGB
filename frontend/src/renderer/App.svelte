@@ -1,19 +1,19 @@
-<script>
-	import { currentPage, appSettings } from "./stores";
+<script lang="ts">
+	import { currentPage, appSettings } from "@util/stores";
 	// Components
-	import Navbar from "@components/Navbar.svelte";
+	// import Navbar from "@components/Navbar.svelte";
 	import Menu from "@components/Menu.svelte";
 	import Page from "@components/Page.svelte";
 	// Pages
 	import Home from "@pages/Home.svelte";
 	import ManagedRgb from "@pages/ManagedRgb.svelte";
 	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
-	import Preprocess from "@pages/Preprocess.svelte";
-	import ColorTarget from "@pages/ColorTarget.svelte";
 	import Process from "@pages/Process.svelte";
+	import ProcessOld from "@root/pages/ProcessOld.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
+	import Demo from "@pages/Demo.svelte";
 
 	import {
 		photo,
@@ -23,9 +23,12 @@
 		github,
 		fileText,
 		eyedropper,
+		infoCircle,
+		gears,
 	} from "svelte-awesome/icons";
+	import { onDestroy } from "svelte";
 
-	const routes = {
+	const routes: any = {
 		Home: {
 			text: "Home",
 			component: Home,
@@ -33,8 +36,14 @@
 			isShown: true,
 			default: true,
 		},
+		Preprocessing: {
+			text: "Process",
+			component: Process,
+			icon: gears,
+			isShown: true,
+		},
 		RGB: {
-			text: "Color Managed RGB Image",
+			text: "Managed RGB",
 			component: ManagedRgb,
 			icon: photo,
 			isShown: true,
@@ -57,6 +66,13 @@
 			icon: eyedropper,
 			isShown: true,
 		},
+		Demo: {
+			text: "Demo",
+			component: Demo,
+			icon: infoCircle,
+			isShown: true,
+			default: true,
+		},
 		Settings: {
 			text: "Settings",
 			component: Settings,
@@ -64,35 +80,28 @@
 			isShown: true,
 			default: true,
 		},
-		Preprocessing: {
-			text: "Preprocessing",
-			component: Preprocess,
-			icon: home,
-			isShown: false,
-		},
-		ColorTarget: {
-			text: "Color Target",
-			component: ColorTarget,
-			icon: home,
-			isShown: false,
-		},
+
 		Process: {
-			text: "Process",
-			component: Process,
+			text: "ProcessOld",
+			component: ProcessOld,
 			icon: home,
 			isShown: false,
 		},
 	};
 
 	currentPage.set("Home");
+
 	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-	darkThemeMq.addEventListener("change", (e) => {
-		appSettings.set(e.matches);
+	appSettings.set({
+		theme: darkThemeMq.matches,
+		sideNav: $appSettings.sideNav,
 	});
-	// $: appSettings.set(window.matchMedia("(prefers-color-scheme: dark)").matches);
+	darkThemeMq.addEventListener("change", (e) => {
+		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	});
 
 	$: selectedPage = routes[$currentPage];
-	$: theme = $appSettings ? "dark" : "";
+	$: theme = $appSettings.theme ? "dark" : "";
 	$: if (theme !== "") {
 		console.log("Theme Change");
 		document.documentElement.classList.add(theme);
@@ -101,11 +110,17 @@
 		document.documentElement.classList.remove("dark");
 		document.body.classList.remove("dark");
 	}
+
+	onDestroy(() => {
+		darkThemeMq.removeEventListener("change", (e) => {
+			appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+		});
+	});
 </script>
 
 <main class={theme}>
-	<div class="app">
-		<Navbar {routes} />
+	<div class="app {theme} {$appSettings.sideNav ? 'sideMenu' : ''}">
+		<!-- <Navbar {routes} /> -->
 
 		<Menu icon={github} {routes} />
 
@@ -123,21 +138,13 @@
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
-		@apply bg-gray-50 dark:bg-gray-700 dark:border-gray-600 border-red-600 select-none;
+		@apply bg-white dark:bg-gray-800 dark:border-gray-600 border-red-600 select-none
+						dark:text-gray-50;
 	}
 	main {
 		height: 100%;
 		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 			Helvetica, Arial, sans-serif;
-	}
-	:root {
-		--icon-mr: 80%;
-	}
-
-	@media (min-width: 900px) {
-		:root {
-			--icon-mr: 90%;
-		}
 	}
 
 	.app {
@@ -145,32 +152,19 @@
 		height: 100%;
 		margin: 0 auto;
 
-		display: grid;
-		gap: 0rem;
+		@apply flex flex-col-reverse;
+	}
 
-		/* Explicit grid */
-		grid-template-areas:
-			"Navbar Navbar Navbar"
-			"Menu Box Box"
-			"Menu Box Box";
-
-		/* grid-template-rows: repeat(3, auto); */
-		grid-template-rows:
-			7%
-			auto
-			auto;
-
-		grid-template-columns:
-			var(--menu-width)
-			3fr
-			3fr;
-		/* grid-template-columns: repeat(3, auto); */
+	.sideMenu {
+		@apply flex flex-row;
 	}
 
 	button {
-		@apply hover:bg-blue-600 bg-blue-400 text-gray-50 rounded-md self-center text-lg px-4 py-2
-						transition-all hover:rounded-lg dark:bg-blue-700 dark:hover:bg-blue-600 dark:hover:text-gray-800
-						active:scale-95 shadow-md;
+		@apply hover:bg-blue-200 bg-gray-100 text-gray-900 dark:text-white rounded-lg 
+						self-center text-base px-3 py-1 transition-all dark:bg-gray-600 
+						dark:hover:bg-blue-500 dark:hover:text-white active:scale-95 shadow-sm 
+						dark:ring-gray-500 ring-1 ring-gray-300 dark:focus:ring-blue-500 focus:ring-2 
+						focus:ring-blue-300 duration-300;
 	}
 
 	/* width */
@@ -185,7 +179,7 @@
 
 	/* Handle */
 	::-webkit-scrollbar-thumb {
-		@apply bg-gray-600;
+		@apply bg-gray-600 rounded-full;
 	}
 
 	/* Handle on hover */
