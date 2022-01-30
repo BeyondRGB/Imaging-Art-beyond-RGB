@@ -48,8 +48,7 @@ namespace btrgb {
         RefData* get_refrence_data();
 
         void outputImageAs(enum output_type filetype, std::string name, std::string filename);
-        std::string getBase64DataURL(std::string name);
-
+        
         /* Iterators over all image entries. */
         std::unordered_map<std::string, image*>::iterator begin() noexcept {return images.begin();};
         std::unordered_map<std::string, image*>::iterator end() noexcept {return images.end();};
