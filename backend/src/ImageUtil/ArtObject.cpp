@@ -1,4 +1,3 @@
-#include <cppcodec/base64_url.hpp>
 #include "ArtObject.hpp"
 
 namespace btrgb {
@@ -46,16 +45,16 @@ namespace btrgb {
 
     //Returns a normalized value of the requested edge of the color target
     double ArtObject::getTargetInfo(std::string type) {
-        if (type._Equal("top")) {
+        if (type == "top") {
             return this->topEdge;
         }
-        else if (type._Equal("bot")) {
+        else if (type == "bot") {
             return this->botEdge;
         }
-        else if (type._Equal("left")) {
+        else if (type == "left") {
             return this->leftEdge;
         }
-        else if (type._Equal("right")) {
+        else if (type == "right") {
             return this->rightEdge;
         }
         return NULL;
@@ -63,10 +62,10 @@ namespace btrgb {
 
     //Returns the requested dimension of the color target
     int ArtObject::getTargetSize(std::string edge){
-        if(edge._Equal("row")){
+        if(edge == "row"){
             return this->targetRow;
         }
-        else if(edge._Equal("col")){
+        else if(edge == "col"){
             return this->targetCol;
         }
         return NULL;
