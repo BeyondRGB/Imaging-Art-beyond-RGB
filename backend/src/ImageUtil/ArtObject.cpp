@@ -100,7 +100,9 @@ namespace btrgb {
     void ArtObject::deleteImage(std::string name) {
         if( ! this->images.contains(name) )
             throw ArtObj_ImageDoesNotExist();
-
+            
+        image* im = this->images[name];
+        delete im;
         this->images.erase(name);
     }
 
