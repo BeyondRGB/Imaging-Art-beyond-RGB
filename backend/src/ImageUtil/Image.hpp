@@ -85,6 +85,8 @@ namespace btrgb {
             int channels();
             pixel* bitmap();
             uint32_t getIndex(int row, int col, int ch);
+            void setPixel(int row, int col, int ch, btrgb::pixel value);
+            btrgb::pixel getPixel(int row, int col, int ch);
 
             void recycle();
 
