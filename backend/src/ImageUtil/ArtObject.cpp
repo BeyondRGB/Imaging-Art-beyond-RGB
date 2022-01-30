@@ -41,6 +41,7 @@ namespace btrgb {
         this->images[name] = im;
     }
 
+    //Collects the color target information from the request message and saves it in the ArtObject
     void ArtObject::targetInfo(double top, double left, double bot, double right, int rows, int cols) {
         topEdge = top;
         leftEdge = left;
@@ -50,6 +51,7 @@ namespace btrgb {
         targetCol = cols;
     }
 
+    //Returns a normalized value of the requested edge of the color target
     double ArtObject::getTargetInfo(std::string type) {
         if (type._Equal("top")) {
             return this->topEdge;
@@ -66,6 +68,7 @@ namespace btrgb {
         return NULL;
     }
 
+    //Returns the requested dimension of the color target
     int ArtObject::getTargetSize(std::string edge){
         if(edge._Equal("row")){
             return this->targetRow;

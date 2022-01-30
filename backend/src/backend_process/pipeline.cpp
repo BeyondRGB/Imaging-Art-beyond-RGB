@@ -56,7 +56,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
-        //Stuff here is pending the implementation of how the target is being defined
+        //Collect the information provided about the color target
         Json target_location = this->process_data_m->get_obj("TargetLocation");
         double topEdge = target_location.get_number("top");
         double leftEdge = target_location.get_number("left");
@@ -65,7 +65,6 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         int numCols = target_location.get_number("cols");
         int numRows = target_location.get_number("rows");
         art_obj->targetInfo(topEdge, leftEdge, botEdge, rightEdge, numRows, numCols);
-        //std::cout<<target_location.to_string(true)<<std::endl;
         return true;
     }
     catch (ParsingError e) {
