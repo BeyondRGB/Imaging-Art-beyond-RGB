@@ -7,5 +7,5 @@
 void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Color Managed Calibration");
     //TODO add Color Manged Calibration logic here
-    sleep_for(seconds(1));
+    //sleep_for(seconds(1));
 }
