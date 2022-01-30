@@ -52,7 +52,7 @@ void HalfSizePreview::run() {
             rsp->append(R"({"RequestID":)");
             rsp->append(std::to_string(ticket));
             rsp->append(R"(,"RequestType":"HalfSizePreview","RequestData":{"filename":")");
-            rsp->append(std::regex_replace(im->filename(), std::regex("/\\/"), "\\\\"));
+            rsp->append(std::regex_replace(im->filename(), std::regex("\\\\"), "\\\\"));
             rsp->append(R"(","dataURL": "data:image/png;base64,)");
             rsp->append(cppcodec::base64_rfc4648::encode((const uint8_t*) &(*png_binary)[0], png_binary->size()));
             rsp->append(R"("}})");
