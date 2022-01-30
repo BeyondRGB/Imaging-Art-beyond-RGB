@@ -94,8 +94,10 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     double white2Avg = white2Total / (loops);
 
     double yVal = reference->get_y(whiteRow, whiteCol);
-    double w1 = yVal * (white1Avg / art1Avg);
-    double w2 = yVal * (white2Avg / art2Avg);
+    //double w1 = yVal * (white1Avg / art1Avg);
+    double w1 = ((yVal * (white1Avg / art1Avg)) / 100) * 0xFFFF;
+    //double w2 = yVal * (white2Avg / art2Avg);
+    double w2 = ((yVal * (white2Avg / art2Avg)) / 100) * 0xFFFF;
 
     std::cout<<"****************************"<<std::endl;
     std::cout<<"yVal "<<yVal<<std::endl;
@@ -105,7 +107,6 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted
-    //Old version of the For Loop, may need to be changed
     int ch;
     int wPix, dPix, aPix, newPixel;
     for (currRow = 0; currRow < height; currRow++) {
