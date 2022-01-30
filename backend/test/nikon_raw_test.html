@@ -43,7 +43,8 @@
         }
 
         ws.onopen = () => {
-            req = {
+            req_halfsize = {
+                "RequestID": 345345,
                 "RequestType": "HalfSizePreview",
                 "RequestData": {
                     "filenames": [
@@ -55,8 +56,11 @@
                         "backslashtest\\nikon_dark_2.NEF"
                     ]
                 }
+            };
 
-                /*"RequestType": "processImg",
+            req_process = {
+                "RequestID": 345345,
+                "RequestType": "processImg",
                 "RequestData": {
                     "Images":[
                         {
@@ -77,11 +81,17 @@
                         "BottomLeft": {"x":0, "y":50},
                         "NumRows": 10,
                         "NumCols":10
-                    }	
+                    },
+                    "RefData": {
+                        "RefData": "NGT_Reflectance_Data.csv",
+				        "StandardObserver": 1931,
+				        "Illuminants": "D50"
+			        }
                         
-                }*/
+                }
             };
-            ws.send(JSON.stringify(req));
+            
+            ws.send(JSON.stringify(req_process));
         };
 
         

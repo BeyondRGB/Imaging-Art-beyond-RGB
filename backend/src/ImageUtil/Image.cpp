@@ -60,6 +60,14 @@ namespace btrgb {
     uint32_t image::getIndex(int row, int col, int ch) {
         return row * _width * _channels + col * _channels + ch;
     }
+    
+    void image::setPixel(int row, int col, int ch, btrgb::pixel value) {
+        _bitmap[row * _width * _channels + col * _channels + ch] = value;
+    }
+
+    btrgb::pixel image::getPixel(int row, int col, int ch) {
+        return _bitmap[row * _width * _channels + col * _channels + ch];
+    }
 
     uint32_t image::getTotalByteSize() {
         return _width * _height * _channels * sizeof(pixel);
