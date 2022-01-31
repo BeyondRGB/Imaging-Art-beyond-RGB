@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { currentPage, processState } from "@util/stores";
+  import {
+    currentPage,
+    messageStore,
+    processState,
+    sendMessage,
+  } from "@util/stores";
 
   import Settings from "@components/Process/Settings.svelte";
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
@@ -45,6 +50,28 @@
       behavior: "smooth",
     });
   }
+  $: if ($messageStore.length > 1) {
+    try {
+      let temp = JSON.parse($messageStore[0]);
+      $processState.artStacks[0].colorTargetImage = temp.RequestData;
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  function colorTargetPrev() {
+    let msg = {
+      RequestID: 2434234,
+      RequestType: "HalfSizePreview",
+      RequestData: {
+        filenames: [$processState.artStacks[0].fields.images[0].name],
+      },
+    };
+    if ($processState.artStacks[0].fields.images[0].name.length > 2) {
+      console.log("Getting Color Target Preview");
+      sendMessage(JSON.stringify(msg));
+    }
+  }
 </script>
 
 <main>
@@ -70,8 +97,12 @@
   <botnav class="dark:bg-transparent">
     {#if tabs[$processState.currentTab + 1]?.name === "Advanced Options"}
       <button on:click={nextTab}>Go to Advanced Options</button>
-      <button on:click={() => ($processState.currentTab += 2)} class="nextBtn"
-        >Next: Skip Advanced Options</button
+      <button
+        on:click={() => {
+          colorTargetPrev();
+          $processState.currentTab += 2;
+        }}
+        class="nextBtn">Next: Skip Advanced Options</button
       >
     {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
       <button on:click={nextTab} class="nextBtn">Confirm</button>
