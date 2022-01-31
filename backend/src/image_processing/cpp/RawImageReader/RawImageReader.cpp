@@ -43,10 +43,6 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
     }
 
     //Outputs TIFFs for each image group for after this step, temporary
-    btrgb::image* img1 = images->getImage("art1");
-    btrgb::image* img2 = images->getImage("art2");
-    img1->setFilename("RawReadOut1");
-    img2->setFilename("RawReadOut2");
-    images->outputImageAsTIFF("art1");
-    images->outputImageAsTIFF("art2");
+    images->outputImageAs(btrgb::TIFF, "art1", "RawReadOut1");
+    images->outputImageAs(btrgb::TIFF, "art2", "RawReadOut2");
 }
