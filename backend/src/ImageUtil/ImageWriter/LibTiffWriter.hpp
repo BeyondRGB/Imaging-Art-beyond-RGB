@@ -14,8 +14,8 @@ namespace btrgb {
         public:
             LibTiffWriter();
             ~LibTiffWriter();
-            void write(image* im, std::string& filename);
-            void write(image* im);
+        protected:
+            void _write(image* im, std::string filename) override;
     };
 
     class LibTiff_OpenFileFailed : public ImageWritingError {
