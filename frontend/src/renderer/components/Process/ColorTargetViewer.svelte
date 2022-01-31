@@ -14,6 +14,8 @@
   let viewportPoint;
   let imagePoint;
 
+  let imageUrl = placeholder;
+
   const createViewer = () => {
     viewer = OpenSeadragon({
       id: "color-seadragon-viewer",
@@ -60,7 +62,7 @@
     if (viewer) {
       viewer.open({
         type: "image",
-        url: placeholder,
+        url: imageUrl,
       });
 
       overlay();
@@ -83,7 +85,14 @@
       ).style.gridTemplateColumns = `repeat(${cols}, auto)`;
       viewer.addOverlay({
         element: ele,
-        location: new OpenSeadragon.Rect(0.25, 0.25, 0.25, 0.25),
+        location: new OpenSeadragon.Rect(
+          $processState.artStacks[0].colorTarget.left,
+          $processState.artStacks[0].colorTarget.top,
+          $processState.artStacks[0].colorTarget.right -
+            $processState.artStacks[0].colorTarget.left,
+          $processState.artStacks[0].colorTarget.bottom -
+            $processState.artStacks[0].colorTarget.top
+        ),
       });
 
       new OpenSeadragon.MouseTracker({
@@ -190,6 +199,13 @@
     document.getElementById(
       "gridBox"
     ).style.gridTemplateColumns = `repeat(${cols}, auto)`;
+  }
+
+  $: if (viewer) {
+    // console.log($processState.artStacks[0].colorTargetImage);
+    let temp = new Image();
+    temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
+    imageUrl = temp.src;
   }
 </script>
 
