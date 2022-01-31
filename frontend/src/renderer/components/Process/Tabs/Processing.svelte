@@ -150,7 +150,6 @@
     </div>
   </div>
   <article>
-    <button class="" on:click={() => connect()}>Reconnect</button>
     <div class="inputGroup">
       <button on:click={() => (textValue = "")} class="clear">X</button>
       <textarea placeholder="Enter command here" bind:value={textValue} />
@@ -212,6 +211,7 @@
     <div class="notConnected">
       <card>
         WARNING YOU ARE NOT CONNECTED TO THE BACKEND
+        <button class="" on:click={() => connect()}>Reconnect</button>
         <button on:click={() => (notConnectedMode = true)} class="cont"
           >Continue Anyway</button
         >
@@ -267,8 +267,9 @@
     @apply absolute top-0 z-50 bg-gray-900/75 pb-1 px-2 pt-0 rounded-lg text-gray-200;
   } */
   textarea {
-    overflow-wrap: break-word;
-    @apply bg-gray-500/25 w-full h-[30%] text-white border-2 border-green-600 max-h-60 min-h-[4rem];
+    /* overflow-wrap: break-word; */
+    @apply bg-gray-500/25 w-full h-[30%] text-white border-2 border-green-600 max-h-60 min-h-[4rem]
+            overflow-y-auto;
   }
   .clear {
     @apply absolute -left-2 top-2 text-sm px-1 py-0 text-red-500 bg-red-600/25 hover:bg-red-700;

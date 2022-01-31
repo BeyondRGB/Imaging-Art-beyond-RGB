@@ -11,6 +11,7 @@
     modal,
     appSettings,
     connectionState,
+    connect,
   } from "@util/stores";
   import Icon from "svelte-awesome";
 
@@ -52,7 +53,10 @@
         <Icon data={routes["Settings"].icon} scale={1.75} />
       </button>
 
-      {$connectionState}
+      <button
+        on:click={() => connect()}
+        class={$connectionState === "Connected" ? "connected" : "disconnected"}
+      />
     </div>
   </ul>
 </main>
@@ -135,5 +139,11 @@
   }
   p {
     @apply text-xl mt-2.5 pl-3;
+  }
+  .connected {
+    @apply w-2 h-4 rounded-full bg-green-400 dark:hover:bg-green-500 dark:hover:scale-125;
+  }
+  .disconnected {
+    @apply w-2 h-4 bg-red-500 dark:hover:bg-red-400 dark:hover:scale-125;
   }
 </style>
