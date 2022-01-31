@@ -6,7 +6,12 @@
   import TextLogo from "@assets/TextLogo.svg";
   let showModal = false;
 
-  import { currentPage, modal, appSettings } from "@util/stores";
+  import {
+    currentPage,
+    modal,
+    appSettings,
+    connectionState,
+  } from "@util/stores";
   import Icon from "svelte-awesome";
 
   $: theme = $appSettings.theme ? "dark" : "";
@@ -46,6 +51,8 @@
       <button on:click={() => (showModal = true)}>
         <Icon data={routes["Settings"].icon} scale={1.75} />
       </button>
+
+      {$connectionState}
     </div>
   </ul>
 </main>

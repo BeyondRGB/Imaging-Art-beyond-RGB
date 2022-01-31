@@ -13,12 +13,13 @@ export const processState = writable({
     {
       id: 1,
       name: "Art 1",
+      colorTargetImage: { dataURL: "", filename: "" },
       colorTarget: {
         top: 0.25,
         left: 0.25,
-        bottom: 0.25,
-        right: 0.25,
-        cols: 10,
+        bottom: 0.50,
+        right: 0.50,
+        cols: 14,
         rows: 10,
       },
       fields: {
@@ -34,9 +35,11 @@ export const connectionState = writable('Not Connected');
 
 
 // Websocket
-const socket = new WebSocket('ws://localhost:9002');
+let socket = new WebSocket('ws://localhost:9002');
 
-function connect() {
+export function connect() {
+  console.log({ "Attempting to Connect": socket });
+  socket = new WebSocket('ws://localhost:9002');
   socket.addEventListener('open', function (event) {
     console.log("Connected!");
     connectionState.set("Connected");
@@ -45,6 +48,7 @@ function connect() {
   socket.addEventListener('close', function (event) {
     console.log("Closed - Trying again in 15 seconds.");
     connectionState.set("Closed");
+    //close();
     // setTimeout(function () {
     //   connect();
     // }, 15000);
@@ -61,6 +65,11 @@ function connect() {
   });
 }
 connect();
+
+export function close() {
+  console.log("Closing all websocket listeners");
+  socket.close();
+}
 
 export const sendMessage = (message) => {
   if (socket.readyState === 1) {
