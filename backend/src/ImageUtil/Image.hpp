@@ -88,11 +88,15 @@ namespace btrgb {
             void setPixel(int row, int col, int ch, btrgb::pixel value);
             btrgb::pixel getPixel(int row, int col, int ch);
 
+            uint32_t getTotalByteSize();
+            uint32_t getTotalPixelCount();
+            uint32_t getRowByteSize();
+
             void recycle();
 
         private:
             std::string _filename;
-            pixel* _bitmap;
+            pixel* _bitmap = nullptr;
             int _width;
             int _height;
             int _channels;

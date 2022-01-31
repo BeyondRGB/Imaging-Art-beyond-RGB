@@ -1,6 +1,11 @@
 #include "image_processing/header/LibRawReader.h"
 
 
+LibRawReader::LibRawReader(bool use_half_size) {
+    this->use_half_size = use_half_size;
+}
+
+
 LibRawReader::LibRawReader() {};
 LibRawReader::~LibRawReader() {};
 
@@ -11,11 +16,11 @@ void LibRawReader::configLibRawParams() {
 	this->rawReader.imgdata.params.use_camera_matrix = 0;
     this->rawReader.imgdata.params.user_qual = 0;
     this->rawReader.imgdata.params.output_color = 0;
+    this->rawReader.imgdata.params.half_size = this->use_half_size;
 }
 
 
 void LibRawReader::read(btrgb::image* im) {
-    configLibRawParams();
 
     int width, height, channels, bits_per_pixel, ec;
 
@@ -25,6 +30,8 @@ void LibRawReader::read(btrgb::image* im) {
         this->rawReader.recycle();
         throw RawReaderStrategy_FailedToOpenFile();
     }
+
+    this->configLibRawParams();
 
     /* Unpack raw data into structures for processing. */
     ec = this->rawReader.unpack();
@@ -69,11 +76,18 @@ void LibRawReader::InternalRawProcessor::custom_process() {
         /* Extract RAW data into image struct. */
         raw2image();
     
-        /* Do a basic bilinear interpolation. */
         pre_interpolate();
         imgdata.progress_flags |= LIBRAW_PROGRESS_PRE_INTERPOLATE;
-        lin_interpolate();
-        imgdata.progress_flags |= LIBRAW_PROGRESS_INTERPOLATE;
+        
+        if(imgdata.params.half_size == 0) {
+            /* Do a basic bilinear interpolation. */
+            lin_interpolate();
+            imgdata.progress_flags |= LIBRAW_PROGRESS_INTERPOLATE;
+        }
+        else {
+            /* Half-size means each 2x2 bayer pattern composes one pixel
+             * and therefore no interpolation is needed. */
+        }
 
         /* Convert to RGB? */
         #define LR_HISTOGRAM libraw_internal_data.output_data.histogram

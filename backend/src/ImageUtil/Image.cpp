@@ -11,8 +11,10 @@ namespace btrgb {
     }
 
     image::~image() {
-        if (this->_bitmap)
-            delete this->_bitmap;
+        if (this->_bitmap != nullptr) {
+            delete[] this->_bitmap;
+            this->_bitmap = nullptr;
+        }
     }
 
     void image::initBitmap(int width, int height, int channels) {
@@ -67,9 +69,21 @@ namespace btrgb {
         return _bitmap[row * _width * _channels + col * _channels + ch];
     }
 
+    uint32_t image::getTotalByteSize() {
+        return _width * _height * _channels * sizeof(pixel);
+    }
+    
+    uint32_t image::getTotalPixelCount() {
+        return _width * _height * _channels;
+    }
+
+    uint32_t image::getRowByteSize() {
+        return _width * _channels * sizeof(pixel);
+    }
+
     void image::recycle() {
         if (this->_bitmap)
-            delete this->_bitmap;
+            delete[] this->_bitmap;
         this->_bitmap = 0;
         this->_width = 0;
         this->_height = 0;

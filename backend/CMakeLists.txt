@@ -12,6 +12,8 @@ find_package(websocketpp CONFIG REQUIRED)
 find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
+find_package(libpng CONFIG REQUIRED)
+find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 FIND_PACKAGE( OpenCV REQUIRED )                              
 INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 
@@ -46,6 +48,7 @@ target_include_directories(app PUBLIC "src/")
 target_link_libraries(app PRIVATE websocketpp::websocketpp)
 target_link_libraries(app PRIVATE asio asio::asio)
 target_link_libraries(app PRIVATE jsoncons)
+target_include_directories(app PRIVATE ${CPPCODEC_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES ( app PRIVATE ${OpenCV_LIBS} )
 
 
@@ -55,6 +58,13 @@ target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
 target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
 target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
+
+# LibPNG
+if( ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-windows")
+    target_link_libraries(app PRIVATE png)
+else()
+    target_link_libraries(app PRIVATE png_static)
+endif()
 
 
 # Pthreads & OpenMP on Linux
