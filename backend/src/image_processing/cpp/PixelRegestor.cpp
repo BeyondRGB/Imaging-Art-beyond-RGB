@@ -127,6 +127,10 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //Convert from 32 bit floating to 16 bit
     im2_32f.convertTo(im2, CV_16UC3);
 
+    //Outputs TIFFs for each image group for after this step, temporary
+    images->outputImageAs(btrgb::TIFF, "art1", "RegistrationOut1");
+    images->outputImageAs(btrgb::TIFF, "art2", "RegistrationOut2");
+
 }
 
 
