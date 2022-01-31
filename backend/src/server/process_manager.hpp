@@ -46,9 +46,9 @@ private:
 	std::string name_m = "ProcessManager";
 	/*
 	Identifys and creates the requested process.
-	@param key: the key identifying what process to create, 
+	@param key: the key identifying what process to create,
 		this should be what is found in the RequestType feild
-	@return the BackendProcess to run, 
+	@return the BackendProcess to run,
 		if the request string did not conain a valid Request Type this will return a nullptr
 	*/
 	std::shared_ptr<BackendProcess> identify_process(std::string key);
@@ -82,8 +82,13 @@ private:
 				"BottomLeft": {"x":0, "y":50},
 				"NumRows": 10,
 				"NumCols":10
-			}	
-			
+			},
+			"RefData":{
+				"RefData":"NGT_Reflectance_Data.csv",
+				"StandardObserver":1931,
+				"Illuminants":"D50"
+			}
+
 		}
 	})";
 
