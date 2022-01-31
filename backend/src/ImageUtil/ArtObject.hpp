@@ -8,6 +8,7 @@
 #include "ImageUtil/Image.hpp"
 #include "ImageUtil/ImageWriter/ImageWriter.hpp"
 #include "ImageUtil/ImageWriter/LibTiffWriter.hpp"
+#include "reference_data/ref_data.hpp"
 
 /* How to iterate over all images in the ArtObject:
  *
@@ -18,7 +19,7 @@
  *      for(const auto& [key, im] : *images) {
  *          //do stuff here
  *      }
- * 
+ *
  */
 
 namespace btrgb {
@@ -26,19 +27,26 @@ namespace btrgb {
     class ArtObject {
 
     private:
+        //Target Info
+        double topEdge, leftEdge, botEdge, rightEdge;
+        int targetRow, targetCol;
         std::unordered_map<std::string, image*> images;
         ImageWriter* tiffWriter;
+        RefData* ref_data;
 
     public:
-        ArtObject();
+        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer);
         ~ArtObject();
 
         void newImage(std::string name, std::string filename);
-
+        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
         void setImage(std::string name, image* im);
         image* getImage(std::string name);
+        double getTargetInfo(std::string type);
+        int getTargetSize(std::string edge);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
+        RefData* get_refrence_data();
 
         /* To do, add parameter for photometric tiff tag: RGB, or grayscale. */
         void outputImageAsTIFF(std::string name);
@@ -52,7 +60,7 @@ namespace btrgb {
 
 
     class ArtObjectError : public std::exception {};
-    
+
     class ArtObj_ImageAlreadyExists : public ArtObjectError {
         public:
         virtual char const * what() const noexcept { return "ArtObject Error: An image with that name already exists."; }
