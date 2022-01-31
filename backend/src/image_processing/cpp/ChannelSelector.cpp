@@ -7,5 +7,5 @@
 void ChannelSelector::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Channel Selection");
     //TODO add channel section logic here
-    sleep_for(seconds(1));
+    //sleep_for(seconds(1));
 }
