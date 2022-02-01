@@ -165,7 +165,7 @@
       <h4>Server Response</h4>
       <div class="term">
         {#each messageList as message}
-          {#if message[0]?.length > 512}
+          {#if message[0]?.length > 512 && !message[2]}
             <!-- <div class="msg">
               ({message[1]}) >| {message[0].substring(0, 256)} [.../...] {message[0].substring(
                 message[0].length - 256
