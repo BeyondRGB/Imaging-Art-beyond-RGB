@@ -58,38 +58,7 @@
                 }
             };
 
-            req_process = {
-                "RequestID": 345345,
-                "RequestType": "processImg",
-                "RequestData": {
-                    "Images":[
-                        {
-                            "Art": "nikon_targets_1.NEF",
-                            "White": "nikon_white_1.NEF",
-                            "Dark": "nikon_dark_1.NEF"
-                        },
-                        {
-                            "Art": "nikon_targets_2.NEF",
-                            "White": "nikon_white_2.NEF",
-                            "Dark": "nikon_dark_2.NEF"
-                        }
-                    ],
-                    "TargetLocation":{
-                        "TopLeft":{"x": 0, "y":0},
-                        "TopRight": {"x":50, "y":0},
-                        "BottomRight": {"x":50, "y":50},
-                        "BottomLeft": {"x":0, "y":50},
-                        "NumRows": 10,
-                        "NumCols":10
-                    },
-                    "RefData": {
-                        "RefData": "NGT_Reflectance_Data.csv",
-				        "StandardObserver": 1931,
-				        "Illuminants": "D50"
-			        }
-                        
-                }
-            };
+            req_process = {"RequestType":"processImg","RequestID":1643645472057,"RequestData":{"Images":[{"Art":"C:\\Users\\Jared\\Downloads\\canon_targets_1.CR2","White":"C:\\Users\\Jared\\Downloads\\canon_white_1.CR2","Dark":"C:\\Users\\Jared\\Downloads\\canon_dark_1.CR2"},{"Art":"C:\\Users\\Jared\\Downloads\\canon_targets_2.CR2","White":"C:\\Users\\Jared\\Downloads\\canon_white_2.CR2","Dark":"C:\\Users\\Jared\\Downloads\\canon_dark_2.CR2"}],"TargetLocation":{"top":0.10964912280701757,"left":0.15456139637015717,"bottom":0.3077192964609603,"right":0.4101754350271839,"cols":13,"rows":10},"RefData":{"RefData":"NGT_Reflectance_Data.csv","StandardObserver":1931,"Illuminants":"D50"}}};
             
             ws.send(JSON.stringify(req_process));
         };
