@@ -9,6 +9,7 @@ export const processState = writable({
   currentTab: 0,
   destDir: "",
   imageFilePaths: [],
+  outputImage: { dataURL: "", name: "Waiting..." },
   artStacks: [
     {
       id: 1,
@@ -48,7 +49,7 @@ export function connect() {
   socket.addEventListener('close', function (event) {
     console.log("Closed - Trying again in 15 seconds.");
     connectionState.set("Closed");
-    //close();
+    close();
     // setTimeout(function () {
     //   connect();
     // }, 15000);

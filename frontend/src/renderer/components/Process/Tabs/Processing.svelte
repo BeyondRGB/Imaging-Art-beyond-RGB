@@ -145,7 +145,7 @@
       </div>
     </div>
     <div class="image">
-      <h4>Preprocess Output</h4>
+      <h4>{$processState.outputImage?.name}</h4>
       <ImageViewer />
     </div>
   </div>
