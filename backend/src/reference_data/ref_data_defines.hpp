@@ -12,8 +12,8 @@
 #define ILLUMINATNTS_SIZE REFLECTANCE_SIZE
 #define STANDARD_OBSERVER_SIZE REFLECTANCE_SIZE
 
-#define RES_PATH "../res/" // relative to /src
-#define REF_DATA_PATH "../" RES_PATH "/ref_data/" // relative to src/reference_data
+#define RES_PATH "./resources/app/backend/res/" // relative to .exe
+#define REF_DATA_PATH RES_PATH "/ref_data/"
 #define ILLUMINANTS_FILE_PATH REF_DATA_PATH "/Illuminants.csv"
 #define STANDARD_OBSERVER_1931_PATH REF_DATA_PATH "/standard_Observer_1931.csv"
 #define STANDARD_OBSERVER_1964_PATH REF_DATA_PATH "/standard_Observer_1964.csv"
