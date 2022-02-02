@@ -60,6 +60,8 @@ CMakeSettings.json
 
 /frontend/public/*
 
+/frontend/backend/*
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
