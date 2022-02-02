@@ -1,98 +1,122 @@
 #include "Image.hpp"
 
+/*
+
+im->forEach([](Pixel (&p)[], const int* position) -> void {
+    p[btrgb::R] = 5;
+})
+
+*/
+
+
 namespace btrgb {
 
-    image::image(std::string filename) {
-        this->_filename = filename;
-        this->_bitmap = 0;
-        this->_width = 0;
-        this->_height = 0;
-        this->_channels = 0;
-    }
 
-    image::~image() {
+    Image::Image(std::string filename) { this->_filename = filename; }
+
+    Image::~Image() {
         if (this->_bitmap != nullptr) {
             delete[] this->_bitmap;
             this->_bitmap = nullptr;
         }
     }
 
-    void image::initBitmap(int width, int height, int channels) {
+
+
+    void Image::initBitmap(int width, int height, int channels) {
+
+        if( channels < 1 || channels > 10)
+            throw UnsupportedChannels();
+
         try {
-            this->_bitmap = new pixel[width * height * channels];
-        } catch (std::bad_alloc&) {
+            this->_bitmap = new float[width * height * channels];
+        } catch(const std::bad_alloc& e) {
+            /* Not enough memory: 
+             * This should be caught by pipeline and ArtObject properly deleted. */
             throw;
         }
 
+        cv::Mat im(width, height, CV_32FC(channels), this->_bitmap);
+        
+        this->_opencv_mat = im;
         this->_width = width;
         this->_height = height;
         this->_channels = channels;
     }
 
-    std::string image::filename() {
+
+
+    std::string Image::filename() {
         return this->_filename;
     }
 
-    void image::setFilename(std::string filename) {
+    void Image::setFilename(std::string filename) {
         this->_filename = filename;
     }
 
-    int image::width() {
-        checkInit();
+
+
+    int Image::width() {
+        _checkInit();
         return this->_width;
     }
 
-    int image::height() {
-        checkInit();
+    int Image::height() {
+        _checkInit();
         return this->_height;
     }
 
-    int image::channels() {
-        checkInit();
+    int Image::channels() {
+        _checkInit();
         return this->_channels;
     }
 
-    pixel* image::bitmap() {
-        checkInit();
+
+
+    float* Image::bitmap() {
+        _checkInit();
         return this->_bitmap;
     }
             
-    uint32_t image::getIndex(int row, int col, int ch) {
-        return row * _width * _channels + col * _channels + ch;
+
+    uint32_t Image::getIndex(int row, int col, int ch) {
+        return row * this->_width * this->_channels + col * this->_channels + ch;
+    }
+
+    
+    void Image::setPixel(int row, int col, int ch, float value) {
+        this->_bitmap[row * this->_width * this->_channels + col * this->_channels + ch] = value;
+    }
+
+    float Image::getPixel(int row, int col, int ch) {
+        return this->_bitmap[row * this->_width * this->_channels + col * this->_channels + ch];
+    }
+
+    float* Image::getPixelPointer(int row, int col) {
+        return &( this->_bitmap[row * this->_width * this->_channels + col * this->_channels] );
+    }
+
+
+    template<typename T> inline void Image::forEach(const T& foreach_callback) {
+        this->_opencv_mat.forEach<float[]>(foreach_callback);
     }
     
-    void image::setPixel(int row, int col, int ch, btrgb::pixel value) {
-        _bitmap[row * _width * _channels + col * _channels + ch] = value;
-    }
 
-    btrgb::pixel image::getPixel(int row, int col, int ch) {
-        return _bitmap[row * _width * _channels + col * _channels + ch];
-    }
-
-    uint32_t image::getTotalByteSize() {
-        return _width * _height * _channels * sizeof(pixel);
-    }
-    
-    uint32_t image::getTotalPixelCount() {
-        return _width * _height * _channels;
-    }
-
-    uint32_t image::getRowByteSize() {
-        return _width * _channels * sizeof(pixel);
-    }
-
-    void image::recycle() {
-        if (this->_bitmap)
+    void Image::recycle() {
+        if (this->_bitmap != nullptr) {
             delete[] this->_bitmap;
+            this->_bitmap == nullptr;
+        }
         this->_bitmap = 0;
         this->_width = 0;
         this->_height = 0;
         this->_channels = 0;
+        cv::Mat empty;
+        this->_opencv_mat = empty;
     }
 
-    void image::checkInit() {
-        if (! this->_bitmap)
-			throw BitmapNotInitialized(this->_filename);
+    void inline Image::_checkInit() {
+        if (this->_bitmap == nullptr)
+			throw ImageNotInitialized(this->_filename);
     }
-
 }
