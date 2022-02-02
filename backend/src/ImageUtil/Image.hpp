@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <opencv2/opencv.hpp>
 
 /* How to iterate over the bitmap:
  * 
@@ -68,67 +69,72 @@
 
 namespace btrgb {
 
-    typedef unsigned short pixel;
-
-    class image {
+    class Image {
         public:
-            image(std::string filename);
-            ~image();
+            Image(std::string filename);
+            ~Image();
 
             void initBitmap(int width, int height, int channels);
 
-            std::string filename();
-            void setFilename(std::string filename);
+            cv::Mat getMat();
 
             int width();
             int height();
             int channels();
-            pixel* bitmap();
-            uint32_t getIndex(int row, int col, int ch);
-            void setPixel(int row, int col, int ch, btrgb::pixel value);
-            btrgb::pixel getPixel(int row, int col, int ch);
+            float* bitmap();
 
-            uint32_t getTotalByteSize();
-            uint32_t getTotalPixelCount();
-            uint32_t getRowByteSize();
+            uint32_t getIndex(int row, int col, int ch);
+            void Image::setPixel(int row, int col, int ch, float value);
+            float Image::getPixel(int row, int col, int ch);
+
+            float* Image::getPixelPointer(int row, int col);
+            template<typename T> inline void forEach(const T& operation);
+
+            std::string filename();
+            void setFilename(std::string filename);
 
             void recycle();
 
         private:
             std::string _filename;
-            pixel* _bitmap = nullptr;
-            int _width;
-            int _height;
-            int _channels;
+            float* _bitmap = nullptr;
+            int _width = 0;
+            int _height = 0;
+            int _channels = 0;
+            cv::Mat _opencv_mat;
 
-            void checkInit();
+            void _checkInit();
     };
 
-    class BitmapNotInitialized : public std::exception {
+
+    class ImageError : public std::exception {};
+
+    class ImageNotInitialized : public ImageError {
         private:
             std::string msg;
         public:
-            BitmapNotInitialized(std::string msg) {
-                this->msg = "The image \"" + msg + "\" has not been initialized.";
+            ImageNotInitialized(std::string msg) {
+                this->msg = "The Image \"" + msg + "\" has not been initialized.";
             }
             virtual char const * what() const noexcept { return  this->msg.c_str(); }
     };
 
-    const int Red = 0;
-    const int Green = 1;
-    const int Blue = 2;
+    class UnsupportedChannels : public ImageError {
+        public:
+            virtual char const * what() const noexcept { return "Image::initBitmap(): The number of channels must be between 1 and 10 inclusive."; }
+    };
+
+    const int R = 0;
+    const int G = 1;
+    const int B = 2;
+
     const int R1 = 0;
     const int G1 = 1;
     const int B1 = 2;
     const int R2 = 3;
     const int G2 = 4;
     const int B2 = 5;
-    const int Ch1 = 0;
-    const int Ch2 = 1;
-    const int Ch3 = 2;
-    const int Ch4 = 3;
-    const int Ch5 = 4;
-    const int Ch6 = 5;
+
 }
 
 #endif
