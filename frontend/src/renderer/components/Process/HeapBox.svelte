@@ -23,7 +23,9 @@
         animate:flip={{ duration: flipDurationMs }}
         class="dark:bg-gray-600"
       >
-        {item?.name?.split("\\")?.at(-1)}
+        {item?.name?.split("\\") > 2
+          ? item?.name?.split("\\").at(-1)
+          : item?.name?.split("/").at(-1)}
       </card>
     {/each}
   </section>
