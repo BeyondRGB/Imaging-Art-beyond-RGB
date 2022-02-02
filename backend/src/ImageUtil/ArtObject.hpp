@@ -6,8 +6,7 @@
 #include <unordered_map>
 
 #include "ImageUtil/Image.hpp"
-#include "ImageUtil/ImageWriter/ImageWriter.hpp"
-#include "ImageUtil/ImageWriter/LibTiffWriter.hpp"
+#include "ImageUtil/ImageWriter/ImageWriterStrategy.hpp"
 #include "reference_data/ref_data.hpp"
 
 /* How to iterate over all images in the ArtObject:
@@ -38,26 +37,24 @@ namespace btrgb {
         ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer);
         ~ArtObject();
 
-        void newImage(std::string name, std::string filename);
-        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
-        void setImage(std::string name, image* im);
-        image* getImage(std::string name);
-        double getTargetInfo(std::string type);
-        int getTargetSize(std::string edge);
-        void deleteImage(std::string name);
-        bool imageExists(std::string name);
         RefData* get_refrence_data();
 
-        /* To do, add parameter for photometric tiff tag: RGB, or grayscale. */
-        void outputImageAsTIFF(std::string name);
+        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
+        double getTargetInfo(std::string type);
+        int getTargetSize(std::string edge);
 
+        void newImage(std::string name, std::string filename);
+        void setImage(std::string name, image* im);
+        image* getImage(std::string name);
+        void deleteImage(std::string name);
+        bool imageExists(std::string name);
+        
+        void outputImageAs(enum output_type filetype, std::string name, std::string filename = "");
+        
         /* Iterators over all image entries. */
         std::unordered_map<std::string, image*>::iterator begin() noexcept {return images.begin();};
         std::unordered_map<std::string, image*>::iterator end() noexcept {return images.end();};
     };
-
-
-
 
     class ArtObjectError : public std::exception {};
 

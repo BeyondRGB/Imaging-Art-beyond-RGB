@@ -3,7 +3,6 @@
 namespace btrgb {
 
     ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer) {
-        this->tiffWriter = new LibTiffWriter();
         this->ref_data = new RefData(ref_file, ilumination, observer);
     }
 
@@ -12,19 +11,12 @@ namespace btrgb {
     */
     ArtObject::~ArtObject() {
 
-        /* Delete tiff writer. */
-        delete this->tiffWriter;
+        /* Delete every image in the map. */
+        for( const auto& [name, img] : this->images )
+            delete img;
+
         delete this->ref_data;
 
-        /* Delete every image in the map.
-         * This should be done automatically by the unordered_map destructor:
-         *
-         * https://www.cplusplus.com/reference/unordered_map/unordered_map/~unordered_map/
-         * ~unordered_map();
-         * Destroy unordered map
-         * Destructs the container object. This calls each of the contained element's destructors,
-        *  and dealocates all the storage capacity allocated by the unordered_map container.
-        */
     }
 
 
@@ -53,16 +45,16 @@ namespace btrgb {
 
     //Returns a normalized value of the requested edge of the color target
     double ArtObject::getTargetInfo(std::string type) {
-        if (type._Equal("top")) {
+        if (type == "top") {
             return this->topEdge;
         }
-        else if (type._Equal("bot")) {
+        else if (type == "bot") {
             return this->botEdge;
         }
-        else if (type._Equal("left")) {
+        else if (type == "left") {
             return this->leftEdge;
         }
-        else if (type._Equal("right")) {
+        else if (type == "right") {
             return this->rightEdge;
         }
         return NULL;
@@ -70,10 +62,10 @@ namespace btrgb {
 
     //Returns the requested dimension of the color target
     int ArtObject::getTargetSize(std::string edge){
-        if(edge._Equal("row")){
+        if(edge == "row"){
             return this->targetRow;
         }
-        else if(edge._Equal("col")){
+        else if(edge == "col"){
             return this->targetCol;
         }
         return NULL;
@@ -108,7 +100,9 @@ namespace btrgb {
     void ArtObject::deleteImage(std::string name) {
         if( ! this->images.contains(name) )
             throw ArtObj_ImageDoesNotExist();
-
+            
+        image* im = this->images[name];
+        delete im;
         this->images.erase(name);
     }
 
@@ -119,19 +113,21 @@ namespace btrgb {
         return this->images.contains(name);
     }
 
-
-    /*
-    * The key of the image stored in memory to write to disk.
-    * The image filename will be the filename field in the
-    * btrgb::image structure.
-    */
-    void ArtObject::outputImageAsTIFF(std::string name) {
-
+    
+    /* 
+     * The key of the image stored in memory to write to disk. 
+     */
+    void ArtObject::outputImageAs(enum output_type filetype, std::string name, std::string filename) {
+        
         if (! this->images.contains(name))
             throw ArtObj_ImageDoesNotExist();
 
         try {
-            this->tiffWriter->write( this->images[name] );
+            if(filename != "")
+                ImageWriterStrategy(filetype).write( this->images[name], filename );
+            else
+                ImageWriterStrategy(filetype).write( this->images[name] );
+
         }
         catch (ImageWritingError const& e) {
             throw ArtObj_FailedToWriteImage();
@@ -139,8 +135,8 @@ namespace btrgb {
         catch (BitmapNotInitialized const& e) {
             throw;
         }
-
     }
+
 
     RefData* ArtObject::get_refrence_data() {
         return this->ref_data;

@@ -64,6 +64,10 @@ void BitDepthScaler::execute(CallBackFunction func, btrgb::ArtObject* images) {
         PRINT_MSG_3(func, im->filename(), bit_depth);
         this->strategy->scale(im, bit_depth);
     }
+
+    //Outputs TIFFs for each image group for after this step, temporary
+    images->outputImageAs(btrgb::TIFF, "art1", "BitDepthScaleingOut1");
+    images->outputImageAs(btrgb::TIFF, "art2", "BitDepthScaleingOut2");
     
 }
 
