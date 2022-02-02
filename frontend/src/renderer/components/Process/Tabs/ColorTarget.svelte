@@ -52,6 +52,14 @@
       </div>
       <button class="add">+</button>
       <button on:click={() => update()}>SAVE TARGET INFO</button>
+      <p>
+        top: {$processState.artStacks[0].colorTarget.top.toFixed(4)} | left: {$processState.artStacks[0].colorTarget.left.toFixed(
+          4
+        )} | bottom:
+        {$processState.artStacks[0].colorTarget.bottom.toFixed(4)} | right: {$processState.artStacks[0].colorTarget.right.toFixed(
+          4
+        )}
+      </p>
     </div>
   </div>
 </main>

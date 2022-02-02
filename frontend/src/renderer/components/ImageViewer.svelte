@@ -1,9 +1,11 @@
 <script lang="ts">
+  import { currentPage, processState } from "@util/stores";
   import placeholder from "@assets/placeholder.jpg";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
   import Loader from "@components/Loader.svelte";
   let viewer;
+  let imageUrl;
   onMount(() => {
     viewer = OpenSeadragon({
       id: "image-seadragon-viewer",
@@ -19,10 +21,10 @@
       preserveImageSizeOnResize: true,
       // zoomPerScroll: 1.5,
       visibilityRatio: 1,
-      tileSources: {
-        type: "image",
-        url: placeholder,
-      },
+      // tileSources: {
+      //   type: "image",
+      //   url: placeholder,
+      // },
     });
   });
 
@@ -33,6 +35,16 @@
       console.log("Image viewer destroyed");
     }
   });
+
+  $: if (viewer && $processState.artStacks[0].colorTargetImage?.dataURL) {
+    // console.log($processState.artStacks[0].colorTargetImage);
+    imageUrl = $processState.artStacks[0].colorTargetImage?.dataURL;
+
+    viewer.open({
+      type: "image",
+      url: imageUrl,
+    });
+  }
 </script>
 
 <main>
@@ -42,7 +54,7 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-[90%] ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
+    @apply w-full h-full ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
   }
   #image-seadragon-viewer {
     @apply h-full w-full;

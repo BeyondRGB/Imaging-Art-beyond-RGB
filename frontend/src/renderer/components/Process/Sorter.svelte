@@ -1,6 +1,6 @@
 <script lang="ts">
   import HeapBox from "@components/Process/HeapBox.svelte";
-  import { processState } from "@util/stores";
+  import { processState, sendMessage } from "@util/stores";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
 
@@ -33,18 +33,19 @@
   }
 
   function handleAddCol() {
-    $processState.artStacks = [
-      ...$processState.artStacks,
-      {
-        id: Date.now(),
-        name: `Art ${$processState.artStacks.length + 1}`,
-        fields: {
-          images: [],
-          whitefield: [],
-          darkfield: [],
-        },
-      },
-    ];
+    console.log("ADD COL");
+    // $processState.artStacks = [
+    //   ...$processState.artStacks,
+    //   {
+    //     id: Date.now(),
+    //     name: `Art ${$processState.artStacks.length + 1}`,
+    //     fields: {
+    //       images: [],
+    //       whitefield: [],
+    //       darkfield: [],
+    //     },
+    //   },
+    // ];
   }
 </script>
 
