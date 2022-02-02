@@ -18,6 +18,7 @@ CommunicationObj's to send msgs to the front end.
 class BackendProcess: public Communicator{
 
 public:
+	virtual ~BackendProcess() {}
 	/*
 	Pure virtual run function
 	Any class inheriting this class is required to override and define this

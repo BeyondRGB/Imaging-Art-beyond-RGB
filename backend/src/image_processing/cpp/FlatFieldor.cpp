@@ -133,8 +133,6 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     }
     
     //Outputs TIFFs for each image group for after this step, temporary
-    art1->setFilename("FFOut1");
-    art2->setFilename("FFOut2");
-    images->outputImageAsTIFF("art1");
-    images->outputImageAsTIFF("art2");
+    images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
+    images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
 }
