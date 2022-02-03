@@ -1,4 +1,4 @@
-if [ -e ../backend/build/Release/*.exe ]
+if [ -e ../backend/build/app ]
 then
 	echo Found ../backend/build/Release/*.exe
 	if [ -d ./backend/lib/ ]
@@ -14,7 +14,7 @@ then
 		mkdir -p ./backend/res/
 	fi
 	# Copy .exe and libraries 
-	cp ../backend/build/Release/* ./backend/lib
+	cp ../backend/build/app ./backend/lib
 	# Copy all backend resource files
 	cp -r ../backend/res ./backend
 
