@@ -7,9 +7,9 @@
 class BitDepthScalerStrategy {
     public:
         virtual ~BitDepthScalerStrategy() {}
-        virtual int get_bit_depth(btrgb::image* im) = 0;
-        virtual void scale(btrgb::image* im);
-        virtual void scale(btrgb::image* im, int bit_depth);
+        virtual int get_bit_depth(btrgb::Image* im) = 0;
+        virtual void scale(btrgb::Image* im);
+        virtual void scale(btrgb::Image* im, int bit_depth);
 };
 
 class BitDepthScalerStrategyError : public std::exception {};

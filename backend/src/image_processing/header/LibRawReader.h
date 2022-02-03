@@ -1,12 +1,15 @@
 #ifndef BEYOND_RGB_LIBRAWREADER_H
 #define BEYOND_RGB_LIBRAWREADER_H
 
+#include <stdint.h>
 #include <math.h>
 #include <memory>
 #include <libraw.h>
+#include <opencv2/opencv.hpp>
 
 #include "image_processing/header/RawReaderStrategy.h"
 #include "ImageUtil/Image.hpp"
+#include "ImageUtil/BitDepthFinder.hpp"
 
 class LibRawReader : public RawReaderStrategy {
 
@@ -16,7 +19,7 @@ class LibRawReader : public RawReaderStrategy {
         const static bool LOAD_HALF_SIZE = true;
         ~LibRawReader();
 
-        void read(btrgb::image* im);
+        void read(btrgb::Image* im);
 
     private:
         class InternalRawProcessor : public LibRaw {
