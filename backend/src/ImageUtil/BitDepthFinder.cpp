@@ -1,45 +1,37 @@
-#include "image_processing/header/ManualBitDepthFinder.h"
-
-
-ManualBitDepthFinder::ManualBitDepthFinder() {}
-ManualBitDepthFinder::~ManualBitDepthFinder() {}
+#include "BitDepthFinder.hpp"
 
 /* This function accounts for the small chance that, for example,
  * a 14 bit image may have one or two pixels take up 15 bits. 
  * Just in case if there were such an error, the number of pixels
  * for the maximum bit depth must be above a given threshold. 
  */
-int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
+int BitDepthFinder::get_bit_depth(uint16_t* im, int width, int height, int channels) {
 
     /* Histogram: group pixels by the number of 
      * bits needed to represent their values. */
-    int histogram[17] = {0};
-    int* bit_freq = histogram;
-    int b;
+    int bit_freq[17] = {0};
 
      /* Values used to loop through every
      * pixel in the image. */
-    int height = im->height();
-    int width = im->width();
-    int channels = im->channels();
-    btrgb::pixel* bitmap = im->bitmap();
 
     /* For every pixel in the image... */
-    uint32_t ch, x, y, i;
-    for( y = 0; y < height; y++) {
-        for( x = 0; x < width; x++) {
+    uint32_t ch, col, row, i; 
+    uint32_t row_size = width * channels; 
+    uint32_t col_size = channels;
+
+    for( row = 0; row < height; row++) {
+        for( col = 0; col < width; col++) {
             for( ch = 0; ch < channels; ch++) {
-                i = im->getIndex(y, x, ch);
-                b = this->required_bits(bitmap[i]);
-                bit_freq[b]++;
+                i = row * row_size + col * col_size + ch;
+                bit_freq[ this->required_bits(im[i]) ]++;
             }
         }
     }
 
     /* Check the histogram to find the higest required-bits
      * value that has a pixel count above the threshold. */
-    for( b = 16; b >= 8; b--) {
-        if( bit_freq[b] > BIT_DEPTH_FINDER_PIXEL_COUNT_THRESHOLD) {
+    for( int b = 16; b >= 8; b--) {
+        if( bit_freq[b] > this->PIXEL_COUNT_THRESHOLD) {
             return b;
         }
     }
@@ -49,7 +41,7 @@ int ManualBitDepthFinder::get_bit_depth(btrgb::image* im) {
 }
 
 
-int ManualBitDepthFinder::required_bits(btrgb::pixel value) {
+int BitDepthFinder::required_bits(uint16_t value) {
 
     int bits;
 

@@ -8,8 +8,7 @@
 class BitDepthScaler : public ImgProcessingComponent {
 
     public:
-        BitDepthScaler();
-        BitDepthScaler(std::string strategy);
+        BitDepthScaler(std::string strategy = "OpenCV Matrix forEach");
         ~BitDepthScaler();
         void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 
