@@ -5,17 +5,22 @@ namespace btrgb {
     LibpngWriter::LibpngWriter() {this->file_extension = ".png";}
     LibpngWriter::~LibpngWriter() {}
 
-    void LibpngWriter::_write(image* im, std::string filename) {
+    void LibpngWriter::_write(Image* im, std::string filename) {
         this->write_png(im, filename);
     }
 
-    void LibpngWriter::write_png(image* im, std::string filename, 
+    void LibpngWriter::write_png(Image* im, std::string filename, 
     std::vector<uint8_t>* buffer, 
     int special_input_bit_depth) {
 
         int height = im->height();
         int width = im->width();
         int channels = im->channels();
+
+        cv::Mat im_8u;
+		im->getMat().convertTo(im_8u, CV_8U);
+        uint8_t* bitmap = (uint8_t*) im_8u.data;
+
 
         bool write_to_file = (buffer == nullptr);
         FILE* output_file;
@@ -61,9 +66,12 @@ namespace btrgb {
             /* ============[ Set output file for png ]============== */
             png_init_io(png_ptr, output_file);
         }
-        else {
+        else { 
             /* ============[ Set output buffer for png ]============== */
-            buffer->reserve(im->getTotalByteSize() / 4);
+
+            /* Overshoot of estimated size (because of compression) */
+            buffer->reserve(width * height * channels);
+
             png_set_write_fn(png_ptr, buffer, 
                 [](png_structp  png_ptr, png_bytep data, png_size_t length) {
                     std::vector<uint8_t>* buffer = (std::vector<uint8_t>*) png_get_io_ptr(png_ptr);
@@ -76,10 +84,12 @@ namespace btrgb {
 
         int color_type;
         if(channels < 3) {
+            /* If there are two channels, just show the first one. */
             color_type = PNG_COLOR_TYPE_GRAY;
             channels = 1;
         }
         else {
+            /* If there are mroe than three, just show the first three as RGB. */
             color_type = PNG_COLOR_TYPE_RGB;
             channels = 3;
         }
@@ -121,21 +131,10 @@ namespace btrgb {
         png_write_info(png_ptr, info_ptr);
 
         /* ============[ Write each row ]============== */
-        uint32_t size_of_row = im->width() * im->channels() * 1; /* 8 bit writing. */
+        uint32_t size_of_row = width * channels * 1; /* 8 bit (1 byte) */
         uint32_t row_index;
         png_bytep output_row = new png_byte[size_of_row];
 
-       
-        /* int channels: defined above */
-        btrgb::pixel* bitmap = im->bitmap();
-
-        int shift;
-        if(0 <= special_input_bit_depth && special_input_bit_depth < 8)
-            shift = 0;
-        else if(8 <= special_input_bit_depth && special_input_bit_depth <= 16)
-            shift = special_input_bit_depth - 8;
-        else
-            shift = 8;
 
         uint32_t ch, x, y, i;
         for( y = 0; y < height; y++) {
@@ -148,7 +147,7 @@ namespace btrgb {
                 for( ch = 0; ch < channels; ch++) {
                     i = im->getIndex(y, x, ch);
                     /* Fast, lossy conversion to 8 bit. */
-                    output_row[row_index++] = png_byte(bitmap[i] >> shift);
+                    output_row[row_index++] = png_byte(bitmap[i]);
                 }
             }
 
@@ -157,6 +156,7 @@ namespace btrgb {
             
         }
         delete[] output_row;
+
 
         /* ============[ End png writing ]============== */
         png_write_end(png_ptr, info_ptr);
