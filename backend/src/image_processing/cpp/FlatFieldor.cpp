@@ -8,6 +8,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::image* dark1;
     btrgb::image* dark2;
     RefData* reference;
+    double w1, w2;
 
     func("Flat Fielding");
 
@@ -30,10 +31,6 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int height = art1->height();
     int width = art1->width();
     int channels = art1->channels();
-
-    //size - 1 = how many rings around the center point to be compared for avg
-    //Current default to 3 can be adjusted if needed
-    int size = 3;
 
     //Collect Normalized Target Information From the Art Object
     double topTarget = images->getTargetInfo("top");
@@ -66,6 +63,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int patchX = leftEdge + wOffX + (colWidth / 2);
     int patchY = topEdge + wOffY + (rowHeight / 2);
 
+/*
     //Setting values for the For Loop going over one channel, channel 2
     int art1Total = 0;
     int white1Total = 0;
@@ -101,6 +99,14 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     double w1 = ((yVal * (white1Avg / art1Avg)) / 100) * 0xFFFF;
     //double w2 = yVal * (white2Avg / art2Avg);
     double w2 = ((yVal * (white2Avg / art2Avg)) / 100) * 0xFFFF;
+*/
+    //Test Version of function septeration
+    //size - 1 = how many rings around the center point to be compared for avg
+    //Current default to 3 can be adjusted if needed
+    int size = 3;
+    int startVal = (size * -1) + 1;
+    double yVal = reference->get_y(whiteRow, whiteCol);
+    FlatFieldor->wCalc(startVal, size, yVal);
 
     //This was for testing the output of the y and w values
     /*std::cout<<"****************************"<<std::endl;
@@ -139,4 +145,40 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
+}
+
+void::FlatFieldor::wCalc(int base, int rings, double yRef){
+    //Setting values for the For Loop going over one channel, channel 2
+    int art1Total = 0;
+    int white1Total = 0;
+    int art2Total = 0;
+    int white2Total = 0;
+    int loops = 0;
+    int xOff, yOff, currRow, currCol;
+
+    //Collecting values of pixels in the rings around center pixel in the white patch
+    for (yOff = base; yOff < rings; yOff++){
+        for (xOff = base; xOff < rings; xOff++){
+            currRow = (patchY + yOff);
+            currCol = (patchX + xOff);
+            art1Total += art1->getPixel(currRow, currCol, 1);
+            white1Total += white1->getPixel(currRow, currCol, 1);
+            art2Total += art2->getPixel(currRow, currCol, 1);
+            white2Total += white2->getPixel(currRow, currCol, 1);
+            loops++;
+        }
+    }
+    //Calculate average based on the counts from the for loop
+    double art1Avg = art1Total / (loops);
+    double white1Avg = white1Total / (loops);
+    double art2Avg = art2Total / (loops);
+    double white2Avg = white2Total / (loops);
+
+    //Y value is calculated in ref_data
+    //w values are constants based on the y value and patch value averages
+    //double yVal = reference->get_y(whiteRow, whiteCol);
+    //double w1 = yVal * (white1Avg / art1Avg);
+    w1 = ((yRef * (white1Avg / art1Avg)) / 100) * 0xFFFF;
+    //double w2 = yVal * (white2Avg / art2Avg);
+    w2 = ((yRef * (white2Avg / art2Avg)) / 100) * 0xFFFF;
 }
