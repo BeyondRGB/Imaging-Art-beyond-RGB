@@ -6,7 +6,8 @@
 class RawReaderStrategy {
     public:
         virtual ~RawReaderStrategy() {}
-        virtual void read(btrgb::Image* im) = 0;
+        virtual void read(btrgb::Image* im, bool record_bit_depth = false) = 0;
+        const static bool RECORD_BIT_DEPTH = true;
 };
 
 class RawReaderStrategyError : public std::exception {};
