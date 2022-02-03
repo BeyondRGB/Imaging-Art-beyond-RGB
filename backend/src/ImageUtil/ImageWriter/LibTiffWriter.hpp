@@ -5,6 +5,8 @@ extern "C" {
     #include <tiffio.h>
 }
 #include <string>
+#include <opencv2/opencv.hpp>
+
 #include "ImageUtil/Image.hpp"
 #include "ImageWriter.hpp"
 
@@ -15,7 +17,7 @@ namespace btrgb {
             LibTiffWriter();
             ~LibTiffWriter();
         protected:
-            void _write(image* im, std::string filename) override;
+            void _write(Image* im, std::string filename) override;
     };
 
     class LibTiff_OpenFileFailed : public ImageWritingError {

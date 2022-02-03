@@ -5,16 +5,16 @@ namespace btrgb {
     LibTiffWriter::LibTiffWriter() {this->file_extension = ".tiff";}
     LibTiffWriter::~LibTiffWriter() {}
 
-    void LibTiffWriter::_write(image* im, std::string filename) {
-
+    void LibTiffWriter::_write(Image* im, std::string filename) {
         TIFF* img_out;
+
         int width = im->width();
         int height = im->height();
         int channels = im->channels();
 
-        /* Keep as pointer for pointer arithmetic instead 
-         * of array index arithmetic. */
-        unsigned short* bitmap = im->bitmap();
+		cv::Mat im_16u;
+		im->getMat().convertTo(im_16u, CV_16U);
+        uint16_t* bitmap = (uint16_t*) im_16u.data;
 
 
 
@@ -34,7 +34,7 @@ namespace btrgb {
 		/* Set the number of channels. */
 		TIFFSetField(img_out, TIFFTAG_SAMPLESPERPIXEL, channels);
 
-		/* We'll do 16 bits, dcraw_process() defaults to 8 bits. */
+		/* We want 16 bits. */
 		TIFFSetField(img_out, TIFFTAG_BITSPERSAMPLE, 16);
 		
 		/* Image rotation. */
@@ -78,14 +78,13 @@ namespace btrgb {
 			_TIFFfree(sample_row);
 		*/
 
-		int row, row_size = width * channels;
+		uint32_t row, row_size = width * channels;
         void* row_memory_address;
 
 		/* Write all rows to file.
          * ASSUMPTION: The "rows per strip" tiff tag is set to one. */
 		for( row = 0; row < height; row++) {
-
-            /* Pointer arithmetic -- not array index arithmetic. */
+			
 			row_memory_address = bitmap + row * row_size;
 
             /* Write row to file. */
