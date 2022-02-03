@@ -7,33 +7,19 @@ namespace btrgb {
     Image::Image(std::string filename) { this->_filename = filename; }
 
     Image::~Image() {
-        if (this->_bitmap != nullptr) {
-            delete[] this->_bitmap;
-            this->_bitmap = nullptr;
-        }
+        /* Shouldn't have an effect, but it will help debug if
+         * someone is accidentally holding onto a reference and then use it. */
+        this->_opencv_mat.release();
     }
 
 
 
-    void Image::initImage(int width, int height, int channels) {
-
-        if( channels < 1 || channels > 10)
-            throw UnsupportedChannels();
-
-        try {
-            this->_bitmap = new float[width * height * channels];
-        } catch(const std::bad_alloc& e) {
-            /* Not enough memory: 
-             * This should be caught by pipeline and ArtObject properly deleted. */
-            throw;
-        }
-
-        cv::Mat im(width, height, CV_32FC(channels), this->_bitmap);
-        
+    void Image::initImage(cv::Mat im) {
         this->_opencv_mat = im;
-        this->_width = width;
-        this->_height = height;
-        this->_channels = channels;
+        this->_bitmap = (float*) im.data;
+        this->_width = im.cols;
+        this->_height = im.rows;
+        this->_channels = im.channels();
     }
 
 
@@ -71,42 +57,58 @@ namespace btrgb {
     }
             
 
-    uint32_t Image::getIndex(int row, int col, int ch) {
+    uint32_t inline Image::getIndex(int row, int col, int ch) {
         return row * this->_width * this->_channels + col * this->_channels + ch;
     }
 
     
-    void Image::setPixel(int row, int col, int ch, float value) {
+    void inline Image::setPixel(int row, int col, int ch, float value) {
         this->_bitmap[row * this->_width * this->_channels + col * this->_channels + ch] = value;
     }
 
-    float Image::getPixel(int row, int col, int ch) {
+    float inline Image::getPixel(int row, int col, int ch) {
         return this->_bitmap[row * this->_width * this->_channels + col * this->_channels + ch];
     }
 
-    float* Image::getPixelPointer(int row, int col) {
+    float inline* Image::getPixelPointer(int row, int col) {
         return &( this->_bitmap[row * this->_width * this->_channels + col * this->_channels] );
     }
 
+    /* Get array of channels for each pixel: (Use constants at end of Image.hpp)
 
+    im->forEach([](float (&pixel)[], const int* pos) -> void {
+        pixel[R] = 5;
+        float blue = pixel[B];
+        float blue1 = pixel[B1]; // B is the same as B1 so blue == blue1
+        float green2 = pixel[G2]; // Only use R2, B2, & G2 for six channel images
+    })
+
+
+    * Loop through every channel for each pixel: (put number of channels in capture list)
+
+    int channels = im->channels();
+    im->forEach( [channels](float (&pixel)[], const int* pos) -> void {
+        for( int ch = 0; ch < channels; ch++) {
+            pixel[ch] = <whatever value>;
+            <whatever variable> = pixel[ch];
+        }
+    });
+
+    */
     template<typename T> inline void Image::forEach(const T& foreach_callback) {
         this->_opencv_mat.forEach<float[]>(foreach_callback);
     }
     
 
     void Image::recycle() {
-        if (this->_bitmap != nullptr) {
-            delete[] this->_bitmap;
-            this->_bitmap == nullptr;
-        }
-        this->_bitmap = 0;
+        this->_bitmap = nullptr;
         this->_width = 0;
         this->_height = 0;
         this->_channels = 0;
+        this->_opencv_mat.release();
         cv::Mat empty;
         this->_opencv_mat = empty;
         int _raw_bit_depth = 0;
-        this->_temp.release();
     }
 
     void inline Image::_checkInit() {

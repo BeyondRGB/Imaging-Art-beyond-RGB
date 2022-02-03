@@ -5,13 +5,25 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-/*
+/* Get array of channels for each pixel: (Use constants at end of Image.hpp)
 
-im->forEach([](float (&pixel)[], const int* position) -> void {
-    pixel[R] = 5;
-    float blue = pixel[B];
-    float blue2 = pixel[G2];
-})
+    im->forEach([](float (&pixel)[], const int* pos) -> void {
+        pixel[R] = 5;
+        float blue = pixel[B];
+        float blue1 = pixel[B1]; // B is the same as B1 so blue == blue1
+        float green2 = pixel[G2]; // Only use R2, B2, & G2 for six channel images
+    })
+
+
+* Loop through every channel for each pixel: (put number of channels in capture list)
+
+    int channels = im->channels();
+    im->forEach( [channels](float (&pixel)[], const int* pos) -> void {
+        for( int ch = 0; ch < channels; ch++) {
+            pixel[ch] = <whatever value>;
+            <whatever variable> = pixel[ch];
+        }
+    });
 
 */
 
@@ -22,7 +34,7 @@ namespace btrgb {
             Image(std::string filename);
             ~Image();
 
-            void initImage(int width, int height, int channels);
+            void initImage(cv::Mat im);
 
             cv::Mat getMat();
 
@@ -42,7 +54,6 @@ namespace btrgb {
             void setFilename(std::string filename);
 
             void recycle();
-            cv::Mat _temp;
             int _raw_bit_depth = 0;
 
         private:
