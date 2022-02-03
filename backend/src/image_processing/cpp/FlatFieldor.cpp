@@ -131,8 +131,12 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             }
         }
     }
-    
+
     //Outputs TIFFs for each image group for after this step, temporary
-    images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
-    images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
+    //images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
+    //images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
+    images->deleteImage("white1");
+    images->deleteImage("white2");
+    images->deleteImage("dark1");
+    images->deleteImage("dark2");
 }
