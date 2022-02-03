@@ -1,6 +1,6 @@
 if [ -e ../backend/build/app ]
 then
-	echo Found ../backend/build/Release/*.exe
+	echo Found ../backend/build/app
 	if [ -d ./backend/lib/ ]
 	then
 		echo Found ./backend/lib/
@@ -21,7 +21,7 @@ then
 	npm run make
 
 else
-	echo Backend Release build does not exist. Run Imaging-Art-beyond-RGB/backend/linux_release.sh and try again
+	echo Backend Release build does not exist. Run Imaging-Art-beyond-RGB/backend/<linux|macOS>_release.sh and try again
 fi
 
 $SHELL
