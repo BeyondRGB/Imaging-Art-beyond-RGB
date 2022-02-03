@@ -1,23 +1,17 @@
 if [ -e ../backend/build/Release/*.exe ]
 then
 	echo Found ../backend/build/Release/*.exe
-	if [ -d ./backend/ ]
-	then 
-		echo Found ./backend/
-	else
-		mkdir ./backend/
-	fi
 	if [ -d ./backend/lib/ ]
 	then
 		echo Found ./backend/lib/
 	else
-		mkdir ./backend/lib/
+		mkdir -p ./backend/lib/
 	fi
 	if [ -d ./backend/res/ ]
 	then
 		echo Found ./backend/res/
 	else
-		mkdir ./backend/res/
+		mkdir -p ./backend/res/
 	fi
 	# Copy .exe and libraries 
 	cp ../backend/build/Release/* ./backend/lib
