@@ -25,7 +25,7 @@ void RefDataArray::append(double value) {
 		this->data[this->curr_index++] = value;
 	}
 	else
-		throw std::exception("RefDataArray is Full");
+		throw std::runtime_error("RefDataArray is Full");
 }
 
 bool RefDataArray::is_valid_index(int index) {

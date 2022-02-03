@@ -37,17 +37,19 @@ namespace btrgb {
         ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer);
         ~ArtObject();
 
-        void newImage(std::string name, std::string filename);
-        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
-        void setImage(std::string name, image* im);
-        image* getImage(std::string name);
-        double getTargetInfo(std::string type);
-        int getTargetSize(std::string edge);
-        void deleteImage(std::string name);
-        bool imageExists(std::string name);
         RefData* get_refrence_data();
 
-        void outputImageAs(enum output_type filetype, std::string name, std::string filename);
+        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
+        double getTargetInfo(std::string type);
+        int getTargetSize(std::string edge);
+
+        void newImage(std::string name, std::string filename);
+        void setImage(std::string name, image* im);
+        image* getImage(std::string name);
+        void deleteImage(std::string name);
+        bool imageExists(std::string name);
+        
+        void outputImageAs(enum output_type filetype, std::string name, std::string filename = "");
         
         /* Iterators over all image entries. */
         std::unordered_map<std::string, image*>::iterator begin() noexcept {return images.begin();};
