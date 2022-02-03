@@ -23,8 +23,8 @@ INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
 find_package(lcms REQUIRED) # Little Color Management System
 find_package(LibRaw REQUIRED)
 
-# Pthreads & OpenMP on Linux
-if( ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-linux")
+# Pthreads & OpenMP on Windows & Linux
+if( NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx")
     find_package(Threads REQUIRED)
     find_package(OpenMP REQUIRED)
 endif()
@@ -67,8 +67,8 @@ else()
 endif()
 
 
-# Pthreads & OpenMP on Linux
-if( ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-linux")
+# Pthreads & OpenMP on Windows & Linux
+if( NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx")
     target_link_libraries(app PRIVATE Threads::Threads)
     target_link_libraries(app PRIVATE OpenMP::OpenMP_CXX)
 endif()

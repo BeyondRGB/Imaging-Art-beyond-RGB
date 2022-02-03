@@ -123,7 +123,11 @@ namespace btrgb {
             throw ArtObj_ImageDoesNotExist();
 
         try {
-            ImageWriterStrategy(filetype).write( this->images[name], filename );
+            if(filename != "")
+                ImageWriterStrategy(filetype).write( this->images[name], filename );
+            else
+                ImageWriterStrategy(filetype).write( this->images[name] );
+
         }
         catch (ImageWritingError const& e) {
             throw ArtObj_FailedToWriteImage();
