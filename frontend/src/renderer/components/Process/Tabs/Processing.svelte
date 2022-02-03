@@ -70,9 +70,9 @@
           on:click={() => sendMessage(JSON.stringify(jsonTest))}
           >Send to Server</button
         >
-        <button class="" on:click={() => (textValue = JSON.stringify(jsonTest))}
+        <!-- <button class="" on:click={() => (textValue = JSON.stringify(jsonTest))}
           >Copy to Term</button
-        >
+        > -->
       </h3>
       <div class="box">
         <p>
