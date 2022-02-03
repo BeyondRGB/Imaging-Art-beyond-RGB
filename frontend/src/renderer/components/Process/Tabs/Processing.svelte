@@ -149,64 +149,6 @@
       <ImageViewer />
     </div>
   </div>
-  <article>
-    <div class="inputGroup">
-      <button on:click={() => (textValue = "")} class="clear">X</button>
-      <textarea placeholder="Enter command here" bind:value={textValue} />
-      <button
-        class="termSend"
-        on:click={() => {
-          messageList.unshift([textValue, getTime(), true]);
-          sendMessage(textValue);
-        }}>Send It!</button
-      >
-    </div>
-    <div class="outputGroup">
-      <h4>Server Response</h4>
-      <div class="term">
-        {#each messageList as message}
-          {#if message[0]?.length > 512 && !message[2]}
-            <!-- <div class="msg">
-              ({message[1]}) >| {message[0].substring(0, 256)} [.../...] {message[0].substring(
-                message[0].length - 256
-              )}
-            </div>
-            <br /> -->
-            <details class="msg">
-              <summary
-                >{message[1]}) > [Expand: {message[0].length} chars]
-                {message[0].substring(0, 256)} ...</summary
-              >
-              <code>{message[0]}</code>
-            </details>
-            <br />
-          {:else if message[2]}
-            {#if message[0]?.length > 128}
-              <details class="request">
-                <summary class="reqTime">
-                  [Expand: {message[0].length} chars] {"<"} ({message[1]})</summary
-                >
-                <code>{message[0]}</code>
-              </details>
-              <br />
-            {:else}
-              <div class="request">
-                <p class="reqTime">{"<"} ({message[1]})</p>
-                <p class="reqMsg">{message[0]}</p>
-              </div>
-              <br />
-            {/if}
-          {:else}
-            <div class="msg">
-              ({message[1]}) > {message[0]}
-            </div>
-            <br />
-          {/if}
-        {/each}
-      </div>
-    </div>
-  </article>
-
   {#if $connectionState !== "Connected" && !notConnectedMode}
     <div class="notConnected">
       <card>
@@ -239,9 +181,6 @@
   .image {
     @apply w-full h-[45vh] bg-blue-600/25 relative items-center flex justify-center;
   }
-  article {
-    @apply w-full h-[70%] flex flex-col justify-center items-center m-2;
-  }
   h4 {
     @apply text-gray-200 bg-gray-900/90 absolute top-0 pb-1 pt-0 px-2 rounded-lg z-50;
   }
@@ -260,52 +199,17 @@
   h3 {
     @apply text-lg;
   }
-  code {
-    @apply bg-gray-900/50;
-  }
   /* .imgTitle {
     @apply absolute top-0 z-50 bg-gray-900/75 pb-1 px-2 pt-0 rounded-lg text-gray-200;
   } */
-  textarea {
-    /* overflow-wrap: break-word; */
-    @apply bg-gray-500/25 w-full h-[30%] text-white border-2 border-green-600 max-h-60 min-h-[4rem]
-            overflow-y-auto;
-  }
-  .clear {
-    @apply absolute -left-2 top-2 text-sm px-1 py-0 text-red-500 bg-red-600/25 hover:bg-red-700;
-  }
-  .term {
-    @apply overflow-y-scroll h-full w-[50vw] bg-gray-900 p-2 flex flex-col-reverse;
-  }
   .box {
     @apply overflow-y-auto w-full h-full bg-gray-900 text-gray-100 text-sm;
   }
   li {
     @apply px-2 p-1 list-none;
   }
-  .termSend {
-    @apply bg-green-600 h-full rounded-l-none;
-  }
   .stateSend {
     @apply bg-blue-500/50 h-full;
-  }
-  .inputGroup {
-    @apply flex w-full justify-center items-center p-2 relative;
-  }
-  .outputGroup {
-    @apply flex w-full h-full justify-center items-center relative flex-grow;
-  }
-  .msg {
-    overflow-wrap: break-word;
-    @apply bg-gray-700 rounded-xl p-2 select-text inline-block;
-  }
-  .request {
-    overflow-wrap: break-word;
-    @apply bg-blue-600/80 rounded-xl p-2 select-text inline-block;
-  }
-  .reqTime {
-    text-align: right;
-    @apply right-0;
   }
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
