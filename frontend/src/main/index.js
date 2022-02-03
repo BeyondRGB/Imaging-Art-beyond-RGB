@@ -1,8 +1,13 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 var child = require('child_process').execFile;
-var executablePath = path.join(__dirname, '../../backend/lib/app.exe');
-//var executablePath = path.join(__dirname, '../../backend/lib/app');
+var executablePath;
+
+if (process.platform !== 'win32')
+  executablePath = path.join(__dirname, '../../backend/lib/app.exe');
+else {
+  executablePath = path.join(__dirname, '../../backend/lib/app');
+}
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
