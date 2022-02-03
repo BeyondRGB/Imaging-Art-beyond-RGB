@@ -5,67 +5,15 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-/* How to iterate over the bitmap:
- * 
- * ch = 0: red channel
- * ch = 1: green channel
- * ch = 2: blue channel
- *
- * 
- * Iterate over every channel value for each pixel:
+/*
 
-    int height = im->height();
-    int width = im->width();
-    int channels = im->channels();
-    btrgb::pixel* bitmap = im->bitmap();
+im->forEach([](float (&pixel)[], const int* position) -> void {
+    pixel[R] = 5;
+    float blue = pixel[B];
+    float blue2 = pixel[G2];
+})
 
-    uint32_t ch, x, y, i;
-    for( y = 0; y < height; y++) {
-        for( x = 0; x < width; x++) {
-            for( ch = 0; ch < channels; ch++) {
-                i = im->getIndex(y, x, ch);
-                //<some variable> = bitmap[i]; //getting
-                //bitmap[i] = <some number>; //setting
-            }
-        }
-    }
-
- * 
- * 
- * Alternative: iterate over exery pixel in each channel:
- * 
-    int height = im->height();
-    int width = im->width();
-    int channels = im->channels();
-    btrgb::pixel* bitmap = im->bitmap();
-
-    uint32_t ch, x, y, i;
-    for( ch = 0; ch < channels; ch++) {
-        for( y = 0; y < height; y++) {
-            for( x = 0; x < width; x++) {
-                    i = im->getIndex(y, x, ch);
-                    //<some variable> = bitmap[i]; //getting
-                    //bitmap[i] = <some number>; //setting
-                }
-            }
-        }
-    }
- * 
- * Format of bitmaps:
- * 
- * Three channels:
- * |               Row 1               |                  Row 2                    | number of rows = height
- * |    Col 1  |   Col 2   |  Col 3    |    Col 1    |    Col 2     |    Col 3     | number of columns = width
- * | R | G | B | R | G | B | R | G | B | R | G  | B  | R  | G  | B  | R  | G  | B  | channel
- * | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
- *
- * Six channels:
- * |                                          Row 1                                          | number of rows = height
- * |            Col 1            |            Col 2            |            Col 3            | number of columns = width
- * | Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| channel
- * |  0 | 1  |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
- * 
- */
+*/
 
 namespace btrgb {
 
@@ -74,7 +22,7 @@ namespace btrgb {
             Image(std::string filename);
             ~Image();
 
-            void initBitmap(int width, int height, int channels);
+            void initImage(int width, int height, int channels);
 
             cv::Mat getMat();
 
@@ -94,6 +42,8 @@ namespace btrgb {
             void setFilename(std::string filename);
 
             void recycle();
+            cv::Mat _temp;
+            int _raw_bit_depth = 0;
 
         private:
             std::string _filename;
@@ -105,7 +55,6 @@ namespace btrgb {
 
             void _checkInit();
     };
-
 
     class ImageError : public std::exception {};
 
@@ -124,17 +73,17 @@ namespace btrgb {
             virtual char const * what() const noexcept { return "Image::initBitmap(): The number of channels must be between 1 and 10 inclusive."; }
     };
 
-    const int R = 0;
-    const int G = 1;
-    const int B = 2;
-
-    const int R1 = 0;
-    const int G1 = 1;
-    const int B1 = 2;
-    const int R2 = 3;
-    const int G2 = 4;
-    const int B2 = 5;
-
 }
+
+const int R = 0;
+const int G = 1;
+const int B = 2;
+
+const int R1 = 0;
+const int G1 = 1;
+const int B1 = 2;
+const int R2 = 3;
+const int G2 = 4;
+const int B2 = 5;
 
 #endif

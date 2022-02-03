@@ -1,13 +1,5 @@
 #include "Image.hpp"
 
-/*
-
-im->forEach([](Pixel (&p)[], const int* position) -> void {
-    p[btrgb::R] = 5;
-})
-
-*/
-
 
 namespace btrgb {
 
@@ -23,7 +15,7 @@ namespace btrgb {
 
 
 
-    void Image::initBitmap(int width, int height, int channels) {
+    void Image::initImage(int width, int height, int channels) {
 
         if( channels < 1 || channels > 10)
             throw UnsupportedChannels();
@@ -113,10 +105,13 @@ namespace btrgb {
         this->_channels = 0;
         cv::Mat empty;
         this->_opencv_mat = empty;
+        int _raw_bit_depth = 0;
+        this->_temp.release();
     }
 
     void inline Image::_checkInit() {
         if (this->_bitmap == nullptr)
 			throw ImageNotInitialized(this->_filename);
     }
+
 }

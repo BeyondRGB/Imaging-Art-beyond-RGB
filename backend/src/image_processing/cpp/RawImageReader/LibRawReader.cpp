@@ -20,7 +20,7 @@ void LibRawReader::configLibRawParams() {
 }
 
 
-void LibRawReader::read(btrgb::image* im) {
+void LibRawReader::read(btrgb::Image* im) {
 
     int width, height, channels, bits_per_pixel, ec;
 
@@ -52,18 +52,22 @@ void LibRawReader::read(btrgb::image* im) {
     /* Allocate memory for the processed image.
      * Bits per pixel should always return as 16 since that is what we configured up top. */
     this->rawReader.get_mem_image_format(&width, &height, &channels, &bits_per_pixel);
-    im->initBitmap(width, height, channels);
+    cv::Mat temp(width, height, CV_16UC(channels));
 
     /* Copy image data into bitmap. */
     ec = this->rawReader.copy_mem_image(
-        im->bitmap(), /* Copy to image object's bitmap. */
-        width * channels * 2, /* 16 bits */
-        0 /* Use RGB channel order instead of BGR. */
+        temp.data, /* Copy to temp image bitmap. */
+        width * channels * 2, /* Total row byte size. */
+        0 /* Use RGB (0) channel order instead of BGR (1). */
         );
     if(ec) {
-        this->rawReader.recycle();
         throw RawReaderStrategy_FailedToOpenFile();
     }
+
+    /* Convert 16U to 32F and copy to the btrgb::Image im. */
+    im->initImage(width, height, channels);
+    temp.convertTo(im->getMat(), CV_32F);
+    im->deleteTempBitmap();
 
     /* Reset the LibRAW object. */
     this->rawReader.recycle();
