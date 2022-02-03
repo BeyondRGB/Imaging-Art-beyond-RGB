@@ -4,9 +4,6 @@
 LibRawReader::LibRawReader(bool use_half_size) {
     this->use_half_size = use_half_size;
 }
-
-
-LibRawReader::LibRawReader() {};
 LibRawReader::~LibRawReader() {};
 
 
@@ -20,7 +17,7 @@ void LibRawReader::configLibRawParams() {
 }
 
 
-void LibRawReader::read(btrgb::Image* im) {
+void LibRawReader::read(btrgb::Image* im, bool record_bit_depth = false) {
 
     int width, height, channels, bits_per_pixel, ec;
 
@@ -64,10 +61,17 @@ void LibRawReader::read(btrgb::Image* im) {
         throw RawReaderStrategy_FailedToOpenFile();
     }
 
+    /* Estimate bit depth of raw image. */
+    int raw_bit_depth = 0;
+    if(record_bit_depth) {
+        raw_bit_depth = BitDepthFinder().get_bit_depth(temp.data, width, height, channels);
+    }
+
     /* Convert 16U to 32F and copy to the btrgb::Image im. */
-    im->initImage(width, height, channels);
-    temp.convertTo(im->getMat(), CV_32F);
-    im->deleteTempBitmap();
+    cv::Mat im_32f;
+    temp.convertTo(im_32f, CV_32F);
+    im->initImage(im_32f);
+    im->_raw_bit_depth = raw_bit_depth;
 
     /* Reset the LibRAW object. */
     this->rawReader.recycle();
