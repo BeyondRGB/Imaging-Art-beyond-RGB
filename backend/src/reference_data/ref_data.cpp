@@ -77,7 +77,8 @@ int RefData::get_white_patch_col() {
 }
 
 void RefData::read_in_data(std::string file_path) {
-	this->open_file(file_path);
+	if(this->open_file(file_path))
+		throw std::runtime_error("[ref_data.cpp] Failed to open file: " + file_path);
 	std::string header = this->get_next_line();
 	this->identify_data_size(header);
 	this->init_data_storage();
