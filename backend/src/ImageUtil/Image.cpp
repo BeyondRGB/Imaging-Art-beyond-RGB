@@ -20,6 +20,8 @@ namespace btrgb {
         this->_width = im.cols;
         this->_height = im.rows;
         this->_channels = im.channels();
+        this->_col_size = this->_channels;
+        this->_row_size = this->_width * this->_col_size;
     }
 
 
@@ -63,20 +65,20 @@ namespace btrgb {
             
 
     uint32_t Image::getIndex(int row, int col, int ch) {
-        return row * this->_width * this->_channels + col * this->_channels + ch;
+        return row * _row_size + col * _col_size + ch;
     }
 
     
     void Image::setPixel(int row, int col, int ch, float value) {
-        this->_bitmap[row * this->_width * this->_channels + col * this->_channels + ch] = value;
+        _bitmap[ (row * _row_size) + (col * _col_size) + ch] = value;
     }
 
     float Image::getPixel(int row, int col, int ch) {
-        return this->_bitmap[row * this->_width * this->_channels + col * this->_channels + ch];
+        return _bitmap[ (row * _row_size) + (col * _col_size) + ch];
     }
 
     float* Image::getPixelPointer(int row, int col) {
-        return &( this->_bitmap[row * this->_width * this->_channels + col * this->_channels] );
+        return &( _bitmap[ (row * _row_size) + (col * _col_size) ] );
     }
     
 
@@ -85,6 +87,8 @@ namespace btrgb {
         this->_width = 0;
         this->_height = 0;
         this->_channels = 0;
+        this->_row_size = 0;
+        this->_col_size = 0;
         this->_opencv_mat.release();
         cv::Mat empty;
         this->_opencv_mat = empty;
