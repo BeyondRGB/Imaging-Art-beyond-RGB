@@ -14,6 +14,7 @@
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
 	import Demo from "@pages/Demo.svelte";
+	import TestConsole from "@components/TestConsole.svelte";
 
 	import {
 		photo,
@@ -41,30 +42,35 @@
 			component: Process,
 			icon: gears,
 			isShown: true,
+			page: true,
 		},
 		RGB: {
 			text: "Managed RGB",
 			component: ManagedRgb,
 			icon: photo,
 			isShown: true,
+			page: true,
 		},
 		SpecOverlay: {
 			text: "Spectral Overlay",
 			component: SpectralOverlay,
 			icon: fileImageO,
 			isShown: true,
+			page: true,
 		},
 		Reports: {
 			text: "Reports",
 			component: Reports,
 			icon: fileText,
 			isShown: true,
+			page: true,
 		},
 		SpecPicker: {
 			text: "Spectral Picker",
 			component: SpectralPicker,
 			icon: eyedropper,
 			isShown: true,
+			page: true,
 		},
 		Demo: {
 			text: "Demo",
@@ -116,6 +122,39 @@
 			appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
 		});
 	});
+
+	let pages;
+	$: if (pages) {
+		let activePages = [];
+		Object.keys(routes).map((key) => {
+			if (routes[key].page) {
+				activePages.push(key);
+			}
+		});
+
+		let width = pages.scrollWidth;
+		let height = pages.scrollHeight;
+
+		if ($appSettings.sideNav) {
+			pages.scroll({
+				top:
+					activePages.findIndex((item) => item === $currentPage) *
+					(height / activePages.length),
+				left: 0,
+				behavior: "smooth",
+			});
+		} else {
+			pages.scroll({
+				top: 0,
+				left:
+					activePages.findIndex((item) => item === $currentPage) *
+					(width / activePages.length),
+				behavior: "smooth",
+			});
+		}
+	}
+
+	let isOpen = false;
 </script>
 
 <main class={theme}>
@@ -124,7 +163,17 @@
 
 		<Menu icon={github} {routes} />
 
-		<Page selectedPage={selectedPage.component} />
+		<Page selectedPage={selectedPage.component} {routes} bind:pages />
+		<div class={`console ${isOpen ? "open" : ""}`}>
+			<div class="testBox">
+				<div class="handle" on:click={() => (isOpen = !isOpen)}>
+					{isOpen ? ">" : "<"}
+				</div>
+				<div class="con">
+					<TestConsole />
+				</div>
+			</div>
+		</div>
 	</div>
 </main>
 
@@ -152,7 +201,7 @@
 		height: 100%;
 		margin: 0 auto;
 
-		@apply flex flex-col-reverse;
+		@apply flex flex-col-reverse relative overflow-hidden justify-center items-center;
 	}
 
 	.sideMenu {
@@ -185,5 +234,23 @@
 	/* Handle on hover */
 	::-webkit-scrollbar-thumb:hover {
 		@apply bg-gray-500;
+	}
+
+	.console {
+		@apply absolute -right-[60%] w-[60%] transition-all duration-300 z-50;
+	}
+	.open {
+		@apply -right-0;
+	}
+	.handle {
+		@apply bg-gray-800 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
+							text-2xl rounded-l-full border-l-2 border-t-2 border-b-2 border-gray-700;
+	}
+	.testBox {
+		@apply bg-gray-800 w-full h-full relative rounded-l-lg flex justify-center items-center
+						border-2 border-gray-700 shadow-2xl;
+	}
+	.con {
+		@apply w-full h-full;
 	}
 </style>
