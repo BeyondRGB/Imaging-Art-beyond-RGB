@@ -12,7 +12,7 @@
 /* How to iterate over all images in the ArtObject:
  *
  * key:     std::string
- * im:      btrgb::image*
+ * im:      btrgb::Image*
  * images:  btrgb::ArtObject*
  *
  *      for(const auto& [key, im] : *images) {
@@ -29,7 +29,7 @@ namespace btrgb {
         //Target Info
         double topEdge, leftEdge, botEdge, rightEdge;
         int targetRow, targetCol;
-        std::unordered_map<std::string, image*> images;
+        std::unordered_map<std::string, Image*> images;
         ImageWriter* tiffWriter;
         RefData* ref_data;
 
@@ -44,16 +44,16 @@ namespace btrgb {
         int getTargetSize(std::string edge);
 
         void newImage(std::string name, std::string filename);
-        void setImage(std::string name, image* im);
-        image* getImage(std::string name);
+        void setImage(std::string name, Image* im);
+        Image* getImage(std::string name);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
         
         void outputImageAs(enum output_type filetype, std::string name, std::string filename = "");
         
         /* Iterators over all image entries. */
-        std::unordered_map<std::string, image*>::iterator begin() noexcept {return images.begin();};
-        std::unordered_map<std::string, image*>::iterator end() noexcept {return images.end();};
+        std::unordered_map<std::string, Image*>::iterator begin() noexcept {return images.begin();};
+        std::unordered_map<std::string, Image*>::iterator end() noexcept {return images.end();};
     };
 
     class ArtObjectError : public std::exception {};

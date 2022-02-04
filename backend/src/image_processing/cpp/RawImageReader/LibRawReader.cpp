@@ -17,7 +17,7 @@ void LibRawReader::configLibRawParams() {
 }
 
 
-void LibRawReader::read(btrgb::Image* im, bool record_bit_depth = false) {
+void LibRawReader::read(btrgb::Image* im, bool record_bit_depth) {
 
     int width, height, channels, bits_per_pixel, ec;
 
@@ -64,7 +64,7 @@ void LibRawReader::read(btrgb::Image* im, bool record_bit_depth = false) {
     /* Estimate bit depth of raw image. */
     int raw_bit_depth = 0;
     if(record_bit_depth) {
-        raw_bit_depth = BitDepthFinder().get_bit_depth(temp.data, width, height, channels);
+        raw_bit_depth = BitDepthFinder().get_bit_depth( (uint16_t*) temp.data, width, height, channels);
     }
 
     /* Convert 16U to 32F and copy to the btrgb::Image im. */
