@@ -13,7 +13,7 @@ namespace btrgb {
         int channels = im->channels();
 
 		cv::Mat im_16u;
-		im->getMat().convertTo(im_16u, CV_16U);
+		im->getMat().convertTo(im_16u, CV_16U, 0xFFFF);
         uint16_t* bitmap = (uint16_t*) im_16u.data;
 
 

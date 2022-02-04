@@ -18,7 +18,7 @@ namespace btrgb {
         int channels = im->channels();
 
         cv::Mat im_8u;
-		im->getMat().convertTo(im_8u, CV_8U);
+		im->getMat().convertTo(im_8u, CV_8U, 0xFF);
         uint8_t* bitmap = (uint8_t*) im_8u.data;
 
 
