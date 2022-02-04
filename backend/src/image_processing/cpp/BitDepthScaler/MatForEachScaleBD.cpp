@@ -24,5 +24,13 @@ void MatForEachScaleBD::scale(btrgb::Image* im) {
     float scaler = float( (1 << 16) - 1 ) / float( (1 << raw_bit_depth) - 1);
 
     im->getMat() *= scaler;
+    /*
+    cv::Mat im32f = im->getMat();
+    im32f.forEach<float[]>( [scaler](float (&pixel)[], const int* pos) -> void {
+        pixel[R] *= scaler;
+        pixel[G] *= scaler;
+        pixel[B] *= scaler;
+    });
+    */
 
 }
