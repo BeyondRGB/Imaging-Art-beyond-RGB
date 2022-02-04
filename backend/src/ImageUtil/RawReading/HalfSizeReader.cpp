@@ -5,6 +5,11 @@ namespace btrgb {
     HalfSizeReader::HalfSizeReader() {
         this->_rawReader.imgdata.params.output_bps = 8;
         this->_rawReader.imgdata.params.half_size = 1;
+        this->_rawReader.imgdata.params.use_camera_wb = 0;
+        this->_rawReader.imgdata.params.use_auto_wb = 0;
+        this->_rawReader.imgdata.params.use_camera_matrix = 0;
+        this->_rawReader.imgdata.params.output_color = 0;
+        this->_rawReader.imgdata.params.use_rawspeed = 1;
         //this->_rawReader.imgdata.params.user_qual = 0;
         //this->_rawReader.imgdata.params.no_interpolation = 1;
     }
