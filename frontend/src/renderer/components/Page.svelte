@@ -1,9 +1,11 @@
 <script lang="ts">
 	export let selectedPage: any;
+	export let routes;
+	export let pages;
 	import Modal from "svelte-simple-modal";
 	import { fade } from "svelte/transition";
 	import { modal, appSettings } from "@util/stores";
-	import TestConsole from "@components/TestConsole.svelte";
+
 	$: console.log($modal);
 
 	// in:fade={{ duration: 350, delay: 350 }}
@@ -13,42 +15,41 @@
 
 <Modal show={$modal}>
 	<div
+		bind:this={pages}
 		class="page dark:bg-gray-800 bg-white {$appSettings.sideNav
 			? 'sideNav'
 			: ''}"
 	>
-		{#key selectedPage}
-			<div
-				class="content"
-				in:fade={{ duration: 250, delay: 250 }}
-				out:fade={{ duration: 250 }}
-			>
-				<svelte:component this={selectedPage} />
-			</div>
-		{/key}
-		<div class={`console ${isOpen ? "open" : ""}`}>
-			<div class="testBox">
-				<div class="handle" on:click={() => (isOpen = !isOpen)}>
-					{isOpen ? ">" : "<"}
+		{#each Object.keys(routes) as pageKey}
+			{#if routes[pageKey].page}
+				<div
+					class="content"
+					in:fade={{ duration: 250, delay: 250 }}
+					out:fade={{ duration: 250 }}
+				>
+					<svelte:component this={routes[pageKey].component} />
 				</div>
-				<div class="con">
-					<TestConsole />
-				</div>
-			</div>
-		</div>
+			{/if}
+		{/each}
 	</div>
 </Modal>
 
 <style lang="postcss" local>
 	.page {
+		scroll-snap-type: y mandatory;
+		scroll-behavior: smooth;
 		overflow: hidden;
-		@apply w-full h-full pt-1 relative flex justify-center items-center;
+		@apply w-full h-full pt-1 relative flex;
+	}
+	.sideNav {
+		@apply flex-col;
 	}
 	::-webkit-scrollbar {
 		@apply w-1;
 	}
 	.content {
-		@apply w-full h-full;
+		scroll-snap-align: start;
+		@apply flex-shrink-0 w-full h-full;
 	}
 	.console {
 		@apply absolute -right-[60%] w-[60%] transition-all duration-300 z-50;
