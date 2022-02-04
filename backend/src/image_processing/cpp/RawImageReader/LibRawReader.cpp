@@ -49,11 +49,11 @@ void LibRawReader::read(btrgb::Image* im, bool record_bit_depth) {
     /* Allocate memory for the processed image.
      * Bits per pixel should always return as 16 since that is what we configured up top. */
     this->rawReader.get_mem_image_format(&width, &height, &channels, &bits_per_pixel);
-    cv::Mat temp(height, width, CV_16UC(channels));
+    cv::Mat im16u(height, width, CV_16UC(channels));
 
     /* Copy image data into bitmap. */
     ec = this->rawReader.copy_mem_image(
-        temp.data, /* Copy to temp image bitmap. */
+        im16u.data, /* Copy to temp image bitmap. */
         width * channels * 2, /* Total row byte size. */
         0 /* Use RGB (0) channel order instead of BGR (1). */
         );
@@ -64,17 +64,18 @@ void LibRawReader::read(btrgb::Image* im, bool record_bit_depth) {
     /* Estimate bit depth of raw image. */
     int raw_bit_depth = 0;
     if(record_bit_depth) {
-        raw_bit_depth = BitDepthFinder().get_bit_depth( (uint16_t*) temp.data, width, height, channels);
+        raw_bit_depth = BitDepthFinder().get_bit_depth( (uint16_t*) im16u.data, width, height, channels);
     }
 
     /* Convert 16U to 32F and copy to the btrgb::Image im. */
-    cv::Mat im_32f;
-    temp.convertTo(im_32f, CV_32F);
-    im->initImage(im_32f);
+    cv::Mat im32f;
+    im16u.convertTo(im32f, CV_32F, 1.0/0xFFFF);
+    im->initImage(im32f);
     im->_raw_bit_depth = raw_bit_depth;
 
     /* Reset the LibRAW object. */
     this->rawReader.recycle();
+    im16u.release();
 
 }
 
