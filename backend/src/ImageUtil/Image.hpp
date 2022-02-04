@@ -61,6 +61,8 @@ namespace btrgb {
             int _width = 0;
             int _height = 0;
             int _channels = 0;
+            int _row_size = 0;
+            int _col_size = 0;
             cv::Mat _opencv_mat;
 
             void _checkInit();
