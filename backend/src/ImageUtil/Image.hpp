@@ -42,13 +42,12 @@ namespace btrgb {
             int height();
             int channels();
             float* bitmap();
+            
 
             uint32_t getIndex(int row, int col, int ch);
-            void Image::setPixel(int row, int col, int ch, float value);
-            float Image::getPixel(int row, int col, int ch);
-
-            float* Image::getPixelPointer(int row, int col);
-            template<typename T> inline void forEach(const T& operation);
+            void setPixel(int row, int col, int ch, float value);
+            float getPixel(int row, int col, int ch);
+            float* getPixelPointer(int row, int col);
 
             std::string filename();
             void setFilename(std::string filename);
