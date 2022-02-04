@@ -143,7 +143,7 @@ void RefData::init_data_storage() {
 	for (int row = 0; row < this->row_count; row++) {
 		this->color_patches[row] = new ColorPatch*[this->col_count];
 		for (int col = 0; col < this->col_count; col++) {
-			this->color_patches[row][col] = new ColorPatch(row, col, this->illuminants, this->observer);
+			this->color_patches[row][col] = new ColorPatch(row, col, this->illuminants, this->observer, this->white_pts);
 		}
 	}
 }
@@ -158,6 +158,9 @@ void RefData::output_xyz() {
 	std::string y_values = "Y";
 	std::string x_values = "X";
 	std::string z_values = "Z";
+	std::string L_values = "L*";
+	std::string a_values = "a*";
+	std::string b_values = "b*";
 	for (int col = 0; col < this->get_col_count(); col++) {
 		for (int row = 0; row < this->get_row_count(); row++) {
 			std::string comma = ",";
@@ -166,6 +169,9 @@ void RefData::output_xyz() {
 			y_values += comma + std::to_string(cp->get_y());
 			x_values += comma + std::to_string(cp->get_x());
 			z_values += comma + std::to_string(cp->get_z());
+			L_values += comma + std::to_string(cp->get_L());
+			a_values += comma + std::to_string(cp->get_a());
+			b_values += comma + std::to_string(cp->get_b());
 		}
 	}
 	std::cout << this->f_name << std::endl;
@@ -173,6 +179,9 @@ void RefData::output_xyz() {
 	std::cout << x_values << std::endl;
 	std::cout << y_values << std::endl;
 	std::cout << z_values << std::endl;
+	std::cout << L_values << std::endl;
+	std::cout << a_values << std::endl;
+	std::cout << b_values << std::endl;
 	ColorPatch* cp = this->get_white_patch();
 	std::cout << "White Patch," << cp->get_name() << std::endl;
 	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl;
