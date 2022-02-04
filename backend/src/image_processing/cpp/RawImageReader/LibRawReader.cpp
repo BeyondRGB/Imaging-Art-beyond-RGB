@@ -49,7 +49,7 @@ void LibRawReader::read(btrgb::Image* im, bool record_bit_depth) {
     /* Allocate memory for the processed image.
      * Bits per pixel should always return as 16 since that is what we configured up top. */
     this->rawReader.get_mem_image_format(&width, &height, &channels, &bits_per_pixel);
-    cv::Mat temp(width, height, CV_16UC(channels));
+    cv::Mat temp(height, width, CV_16UC(channels));
 
     /* Copy image data into bitmap. */
     ec = this->rawReader.copy_mem_image(
