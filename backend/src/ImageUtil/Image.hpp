@@ -5,26 +5,50 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-/* Get array of channels for each pixel: (Use constants at end of Image.hpp)
+/* Ways to loop:
 
-    im->forEach([](float (&pixel)[], const int* pos) -> void {
-        pixel[R] = 5;
-        float blue = pixel[B];
-        float blue1 = pixel[B1]; // B is the same as B1 so blue == blue1
-        float green2 = pixel[G2]; // Only use R2, B2, & G2 for six channel images
-    })
+    // Apply operation directly to mat.
+    im->getMat() *= scaler;
+   
+    // Use Mat forEach loop (put variable from outside of for-loop in the capture list).
+    float scaler = ...
+    cv::Mat im32f = im->getMat();
+    im32f.forEach<float[]>( [scaler](float (&pixel)[], const int* pos) -> void {
+        pixel[R] *= scaler;
+        pixel[G] *= scaler;
+        pixel[B] *= scaler;
+    });
 
-
-* Loop through every channel for each pixel: (put number of channels in capture list)
-
+    // Loop through every channel.
+    float scaler = ...
     int channels = im->channels();
-    im->forEach( [channels](float (&pixel)[], const int* pos) -> void {
+    cv::Mat im32f = im->getMat();
+    im32f.forEach<float[]>( [channels](float (&pixel)[], const int* pos) -> void {
         for( int ch = 0; ch < channels; ch++) {
-            pixel[ch] = <whatever value>;
-            <whatever variable> = pixel[ch];
+            pixel[ch] *= scaler;
         }
     });
 
+    // Direct looping.
+    int row, col, ch;
+    int width = im->width(), height = im->height(), channels = im->channels();
+    float pixel_value;
+    float* pixel_ptr;
+    for (row = 0; row < height; row++) {
+        for (col = 0; col < width; col++) {
+            
+            // Every channel
+            for (ch = 0; ch < channels; ch++) {
+                pixel_value = im->getPixel(row, col, ch);
+                im->setPixel(currRow, col, ch, 4.645);
+            }
+
+            // Access specific channels
+            pixel_ptr = im->getPixelPointer(row, col);
+            pixel_ptr[R] = 3;
+            pixel_value = pixel_ptr[G1];
+        }
+    }
 */
 
 namespace btrgb {
