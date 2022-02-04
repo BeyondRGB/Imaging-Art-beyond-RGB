@@ -7,6 +7,7 @@
 RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_type) {
 	this->observer = new StandardObserver(so_type);
 	this->illuminants = new Illuminants(illum_type);
+	this->white_pts = new WhitePoints(so_type, illum_type);
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	this->read_in_data(path + file);
@@ -18,6 +19,9 @@ RefData::~RefData() {
 	}
 	if (nullptr != this->illuminants) {
 		delete this->illuminants;
+	}
+	if (nullptr != this->white_pts) {
+		delete this->white_pts;
 	}
 	for (int row = 0; row < this->row_count; row++) {
 		for (int col = 0; col < this->col_count; col++) {

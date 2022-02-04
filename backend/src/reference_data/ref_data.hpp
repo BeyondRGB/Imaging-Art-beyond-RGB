@@ -7,6 +7,7 @@
 #include "color_patch.hpp"
 #include "illuminants.hpp"
 #include "standard_observer.hpp"
+#include "white_points.hpp"
 
 
 typedef Illuminants::IlluminantType IlluminantType;
@@ -137,6 +138,7 @@ private:
 	ColorPatch*** color_patches;
 	StandardObserver* observer = nullptr;
 	Illuminants* illuminants = nullptr;
+	WhitePoints* white_pts = nullptr;
 	std::string f_name;
 	int row_count;
 	int col_count;
