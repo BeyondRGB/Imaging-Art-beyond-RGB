@@ -1,0 +1,33 @@
+#ifndef WHITE_PTS_H
+#define WHITE_PTS_H
+
+#include "standard_observer.hpp"
+#include "illuminants.hpp"
+
+#define VALUE_COUNT 3
+#define OBSERVER_COUNT 2
+#define ILLUMINANT_COUNT 3
+
+typedef StandardObserver::ObserverType ObserverType;
+typedef Illuminants::IlluminantType IlluminantType;
+
+class WhitePoints {
+
+public:
+	enum ValueType {
+		Xn, Yn, Zn
+	};
+
+	WhitePoints(ObserverType observer, IlluminantType illuminant);
+	~WhitePoints();
+	double get_white_point(ValueType type);
+private:
+	ObserverType observer;
+	IlluminantType illuminant;
+	double*** values;
+
+	void init_data_storage();
+
+};
+
+#endif // !WHITE_PTS_H
