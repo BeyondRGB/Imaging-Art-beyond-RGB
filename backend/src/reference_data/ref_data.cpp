@@ -161,9 +161,9 @@ void RefData::output_xyz() {
 	std::string L_values = "L*";
 	std::string a_values = "a*";
 	std::string b_values = "b*";
+	std::string comma = ",";
 	for (int col = 0; col < this->get_col_count(); col++) {
 		for (int row = 0; row < this->get_row_count(); row++) {
-			std::string comma = ",";
 			ColorPatch* cp = this->get_color_patch(row, col);
 			header += comma + cp->get_name();
 			y_values += comma + std::to_string(cp->get_y());
@@ -175,14 +175,18 @@ void RefData::output_xyz() {
 		}
 	}
 	std::cout << this->f_name << std::endl;
+	std::cout << "Xn: " << this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
+	std::cout << comma << " Yn: " << this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
+	std::cout << comma << " Zn: " << this->white_pts->get_white_point(WhitePoints::ValueType::Zn) << std::endl;
+
 	std::cout << header << std::endl;
 	std::cout << x_values << std::endl;
 	std::cout << y_values << std::endl;
-	std::cout << z_values << std::endl;
+	std::cout << z_values << std::endl << std::endl;
 	std::cout << L_values << std::endl;
 	std::cout << a_values << std::endl;
-	std::cout << b_values << std::endl;
+	std::cout << b_values << std::endl << std::endl;
 	ColorPatch* cp = this->get_white_patch();
 	std::cout << "White Patch," << cp->get_name() << std::endl;
-	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl;
+	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl << std::endl;
 }
