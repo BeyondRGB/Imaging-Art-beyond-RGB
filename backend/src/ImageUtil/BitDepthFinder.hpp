@@ -4,14 +4,6 @@
 #include <stdint.h>
 
 
-/* Test if built-in count leading zeros is available. */
-#ifdef __has_builtin
-    #if __has_builtin (__builtin_clz)
-        #define BTRGB_MANUAL_BIT_DEPTH_USE_OPTIMIZED
-    #endif
-#endif
-
-
 class BitDepthFinder {
     public:
         int get_bit_depth(uint16_t* im, int width, int height, int channels);

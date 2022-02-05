@@ -57,7 +57,9 @@ namespace btrgb {
         else if (type == "right") {
             return this->rightEdge;
         }
-        return (double) NULL;
+        throw std::logic_error("[ArtObject::getTargetInfo] Parameter value \""
+            + type + "\" is not a valid option.");
+        return -1.0;
     }
 
     //Returns the requested dimension of the color target
@@ -68,7 +70,9 @@ namespace btrgb {
         else if(edge == "col"){
             return this->targetCol;
         }
-        return (int) NULL;
+        throw std::logic_error("[ArtObject::getTargetSize] Parameter value \""
+            + edge + "\" is not a valid option.");
+        return -1;
     }
 
     /*
