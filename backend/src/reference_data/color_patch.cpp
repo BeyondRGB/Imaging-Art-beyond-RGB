@@ -151,10 +151,10 @@ double ColorPatch::calc_k_value() {
 }
 
 double ColorPatch::lab_f(double x) {
-	if (x < 216 / 24389) {
-		return pow(x, 1 / 3);
+	if (x > 216.0 / 24389.0) {
+		return pow(x, 1.0 / 3.0);
 	}
-	return ((24389 / 27) * x + 16) / 116;
+	return ((24389.0 / 27.0) * x + 16) / 116.0;
 }
 
 StandardObserver::ValueType ColorPatch::get_so_type(ValueType type) {
