@@ -3,7 +3,7 @@ const path = require('path');
 var child = require('child_process').execFile;
 var executablePath;
 
-if (process.platform !== 'win32')
+if (process.platform == 'win32')
   executablePath = path.join(__dirname, '../../backend/lib/app.exe');
 else {
   executablePath = path.join(__dirname, '../../backend/lib/app');
