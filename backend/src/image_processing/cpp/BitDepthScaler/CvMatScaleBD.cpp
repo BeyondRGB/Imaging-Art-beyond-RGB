@@ -1,9 +1,9 @@
-#include "image_processing/header/MatForEachScaleBD.h"
+#include "image_processing/header/CvMatScaleBD.h"
 
 
 /* Manually provide bit depth. This allows the caller to store the bit depth
  * and reuse for images assumed to be the same bit depth to save time. */
-void MatForEachScaleBD::scale(btrgb::Image* im) {
+void CvMatScaleBD::scale(btrgb::Image* im) {
 
     int raw_bit_depth = im->_raw_bit_depth;
     
