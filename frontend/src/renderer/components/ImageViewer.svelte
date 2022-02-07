@@ -36,9 +36,21 @@
     }
   });
 
-  $: if (viewer && $processState.artStacks[0].colorTargetImage?.dataURL) {
+  // $: if (viewer && $processState.artStacks[0].colorTargetImage?.dataURL) {
+  //   // console.log($processState.artStacks[0].colorTargetImage);
+  //   // imageUrl = $processState.artStacks[0].colorTargetImage?.dataURL;
+
+  //   viewer.open({
+  //     type: "image",
+  //     url: imageUrl,
+  //   });
+  // }
+
+  $: if (viewer && $processState.outputImage?.dataURL) {
     // console.log($processState.artStacks[0].colorTargetImage);
-    imageUrl = $processState.artStacks[0].colorTargetImage?.dataURL;
+    let temp = new Image();
+    temp.src = $processState.outputImage?.dataURL;
+    imageUrl = temp.src;
 
     viewer.open({
       type: "image",
