@@ -1,27 +1,33 @@
-if [ -e ../backend/build/app ]
+#!/bin/sh
+
+if [ -e ../backend/build/Release/app ]
 then
-	echo Found ../backend/build/app
-	if [ -d ./backend/lib/ ]
+	echo Found ../backend/build/Release/app
+
+	# Make sure the backend/lib folder exists
+	if [ -d ./backend/lib ]
 	then
-		echo Found ./backend/lib/
+		echo Found ./backend/lib
 	else
-		mkdir -p ./backend/lib/
+		mkdir -p ./backend/lib
 	fi
-	if [ -d ./backend/res/ ]
+
+	# Make sure the backend/res folder exists
+	if [ -d ./backend/res ]
 	then
-		echo Found ./backend/res/
+		echo Found ./backend/res
 	else
-		mkdir -p ./backend/res/
+		mkdir -p ./backend/res
 	fi
-	# Copy .exe and libraries 
-	cp ../backend/build/app ./backend/lib
+
+	# Copy executable
+	cp -v ../backend/build/Release/app ./backend/lib
+
 	# Copy all backend resource files
-	cp -r ../backend/res ./backend
+	cp -rv ../backend/res/ ./backend/res/
 
 	npm run make
 
 else
-	echo Backend Release build does not exist. Run Imaging-Art-beyond-RGB/backend/<linux|macOS>_release.sh and try again
+	echo Please build the backend release.
 fi
-
-$SHELL
