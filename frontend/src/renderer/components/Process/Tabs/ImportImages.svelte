@@ -31,6 +31,7 @@
       <FileSelector bind:filePaths />
     </div>
     <article>
+      {filePaths ? filePaths.length : 0} / 6
       <ul>
         {#if filePaths?.length > 0}
           {#each filePaths as filePath}

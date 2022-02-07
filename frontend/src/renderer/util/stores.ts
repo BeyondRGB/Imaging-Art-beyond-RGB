@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 
 // Stores
 export const currentPage = writable(null);
@@ -9,6 +9,7 @@ export const processState = writable({
   currentTab: 0,
   destDir: "",
   imageFilePaths: [],
+  outputImage: { dataURL: "", name: "Waiting..." },
   artStacks: [
     {
       id: 1,
@@ -31,6 +32,7 @@ export const processState = writable({
 });
 // Webstocket Stores
 export const messageStore = writable([]);
+export const messageLog = writable([]);
 export const connectionState = writable('Not Connected');
 
 
@@ -48,7 +50,7 @@ export function connect() {
   socket.addEventListener('close', function (event) {
     console.log("Closed - Trying again in 15 seconds.");
     connectionState.set("Closed");
-    //close();
+    close();
     // setTimeout(function () {
     //   connect();
     // }, 15000);
@@ -61,7 +63,9 @@ export function connect() {
   });
 
   socket.addEventListener('message', function (event) {
+    let messageObj = [event.data, new Date()];
     messageStore.set([event.data, new Date()]);
+    messageLog.update(current => [messageObj, ...current]);
   });
 }
 connect();
@@ -73,6 +77,8 @@ export function close() {
 
 export const sendMessage = (message) => {
   if (socket.readyState === 1) {
+    let messageObj = [message, new Date(), true];
+    messageLog.update(current => [messageObj, ...current]);
     socket.send(message);
   }
 };
