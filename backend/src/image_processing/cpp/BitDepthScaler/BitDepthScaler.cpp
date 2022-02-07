@@ -1,16 +1,16 @@
 #include <sstream>
 
 #include "image_processing/header/BitDepthScaler.h"
-#include "image_processing/header/MatForEachScaleBD.h"
+#include "image_processing/header/CvMatScaleBD.h"
 
 
 BitDepthScaler::BitDepthScaler(std::string strategy) {
     if( strategy == "OpenCV Matrix forEach" ) {
-        this->strategy = new MatForEachScaleBD();
+        this->strategy = new CvMatScaleBD();
     }
     /* Default to manual. */
     else {
-        this->strategy = new MatForEachScaleBD();
+        this->strategy = new CvMatScaleBD();
     }
 }
 

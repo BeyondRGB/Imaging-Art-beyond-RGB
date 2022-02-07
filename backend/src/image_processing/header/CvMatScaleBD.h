@@ -4,7 +4,7 @@
 #include <math.h>
 #include "image_processing/header/BitDepthScalerStrategy.h"
 
-class MatForEachScaleBD : public BitDepthScalerStrategy {
+class CvMatScaleBD : public BitDepthScalerStrategy {
     public:
         void scale(btrgb::Image* im);
 };
