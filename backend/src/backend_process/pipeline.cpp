@@ -1,3 +1,11 @@
+#ifdef WINDOWS
+#include <direct.h>
+#define get_cwd _getcwd
+#else
+#include <unistd.h>
+#define get_cwd getcwd
+#endif
+
 #include "ImageUtil/ArtObject.hpp"
 #include "pipeline.hpp"
 
@@ -75,6 +83,13 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 }
 
 void Pipeline::run() {
+
+    char buff[FILENAME_MAX];
+    get_cwd( buff, FILENAME_MAX );
+    std::string cwd(buff);
+
+    this->send_msg("Current working directory: " + cwd);
+
     this->send_msg("I got your msg");
     this->send_msg(this->process_data_m->to_string());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
@@ -83,11 +98,35 @@ void Pipeline::run() {
     IlluminantType illuminant = this->get_illuminant_type();
     ObserverType observer = this->get_observer_type();
 
-    btrgb::ArtObject* images = new  btrgb::ArtObject(ref_file, illuminant, observer);
+    btrgb::ArtObject* images;
+    try {
+        images = new  btrgb::ArtObject(ref_file, illuminant, observer);
+    }
+    catch(const std::exception& err) {
+        this->send_msg("[art_obj construction]");
+        this->send_msg(err.what());
+    }
+    catch(...) {
+        this->send_msg("Some other error occured during ArtObject construction.");
+    }
+
+    
+    this->send_msg("About to init art obj...");
     this->init_art_obj(images);
 
 
-    pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
+
+    this->send_msg("About to execute...");
+    try {
+        pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
+    }
+    catch(const std::exception& err) {
+        this->send_msg("[pipeline execution]"); 
+        this->send_msg(err.what());
+    }
+    catch(...) {
+        this->send_msg("Some other error occured during pipeline execution.");
+    }
 
 
     for(const auto& [name, img]: *images) {
