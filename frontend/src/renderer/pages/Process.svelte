@@ -53,7 +53,13 @@
   $: if ($messageStore.length > 1) {
     try {
       let temp = JSON.parse($messageStore[0]);
-      $processState.artStacks[0].colorTargetImage = temp.RequestData;
+      console.log(temp);
+      if (temp["RequestType"] === "HalfSizePreview") {
+        console.log("HalfSizedPreview From Server");
+        $processState.artStacks[0].colorTargetImage = temp.RequestData;
+      } else if (temp["ResponseType"] === "image") {
+        $processState.outputImage = temp["ResponseData"];
+      }
     } catch (e) {
       console.log(e);
     }
