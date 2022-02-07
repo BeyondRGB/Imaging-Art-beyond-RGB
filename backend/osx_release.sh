@@ -20,5 +20,5 @@ fi
 cp -rv ./res/* ./build/Release/resources/app/backend/res/
 
 # Run CMake
-cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-linux
+cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-osx
 cmake --build ./build/Release # --config Release
