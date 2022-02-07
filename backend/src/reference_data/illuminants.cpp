@@ -11,7 +11,9 @@ Illuminants::~Illuminants() {
 }
 
 void Illuminants::init() {
-	bool is_open = this->open_file(ILLUMINANTS_FILE_PATH);
+	std::string fpath = ILLUMINANTS_FILE_PATH;
+	if( !this->open_file(fpath) ) 
+		throw std::runtime_error("[illuminants.cpp] Failed to open file: " + fpath);
 	this->illuminants = new RefDataArray(ILLUMINATNTS_SIZE);
 	this->get_next_line();//ignore header
 	for (int i = 0; i < ILLUMINATNTS_SIZE; i++) {
