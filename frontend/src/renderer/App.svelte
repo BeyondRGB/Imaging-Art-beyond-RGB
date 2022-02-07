@@ -95,7 +95,7 @@
 		},
 	};
 
-	currentPage.set("Home");
+	currentPage.set("Process");
 
 	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 	appSettings.set({

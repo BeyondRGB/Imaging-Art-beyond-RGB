@@ -7,6 +7,8 @@
 
   let modal;
 
+  export let minimal = false;
+
   $: theme = $appSettings.theme ? "dark" : "";
 
   const handle_keydown = (e) => {
@@ -45,20 +47,19 @@
 
 <div class="modal-background" on:click={close} />
 
-<div
-  class="{theme} modal dark:bg-gray-600 bg-gray-200"
-  role="dialog"
-  aria-modal="true"
-  bind:this={modal}
->
-  <slot name="header" />
-  <hr />
-  <slot />
-  <hr />
+{#if !minimal}
+  <div class="{theme} modal" role="dialog" aria-modal="true" bind:this={modal}>
+    <slot />
 
-  <!-- svelte-ignore a11y-autofocus -->
-  <button autofocus on:click={close}>close modal</button>
-</div>
+    <!-- svelte-ignore a11y-autofocus -->
+    <button class="closeDia" autofocus on:click={close}>close modal</button>
+  </div>
+{:else}
+  <div class="{theme} modal" bind:this={modal} role="dialog">
+    <button class="closeHome" on:click={close}>X</button>
+    <slot />
+  </div>
+{/if}
 
 <style lang="postcss">
   .modal-background {
@@ -67,8 +68,21 @@
   }
 
   .modal {
-    @apply absolute left-1/2 top-1/2 w-[calc(100vw-4em)] z-50 max-w-[32em]
-            max-h-[calc(100vh-4em)] overflow-auto -translate-x-1/2 -translate-y-1/2 p-[1em];
+    @apply absolute flex flex-col items-center justify-center z-50 w-full h-full;
+  }
+
+  .box {
+    @apply bg-red-300 h-full w-full;
+  }
+
+  .closeHome {
+    @apply absolute top-0 left-0 bg-gray-800/75 w-[6vh] h-[6vh] rounded-full
+          border-2 border-gray-700 text-gray-200/50 hover:bg-red-900/75 hover:rounded-full
+          translate-y-[2vh];
+  }
+
+  .closeDia {
+    @apply bg-gray-500 h-10 -translate-y-16;
   }
 
   button {
