@@ -33,6 +33,13 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   return dia;
 });
 
+process.on('loaded', (event, args) => {
+  console.log('LOADED');
+  console.log(process.resourcesPath);
+  // console.log(process.getCPUUsage());
+  // console.log(process.getProcessMemoryInfo());
+  console.log(app.getAppPath());
+});
 
 const createWindow = () => {
   // Create the browser window.

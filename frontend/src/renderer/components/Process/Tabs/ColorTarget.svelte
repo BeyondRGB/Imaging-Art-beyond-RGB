@@ -18,6 +18,10 @@
       $processState.artStacks[0].colorTarget.cols = cols;
     }
   }
+
+  // let colorTargets = [
+
+  // ]
 </script>
 
 <main>
@@ -66,15 +70,15 @@
 
 <style lang="postcss">
   main {
-    @apply flex w-full h-full justify-between bg-gray-700;
+    @apply flex w-full h-full justify-between overflow-hidden;
   }
 
   .left {
-    @apply w-full h-full flex items-center m-1;
+    @apply w-full h-full flex items-center m-1 bg-gray-600;
   }
 
   .right {
-    @apply w-full h-full flex;
+    @apply w-[50vw] h-full flex items-center bg-gray-700;
   }
 
   .settings {

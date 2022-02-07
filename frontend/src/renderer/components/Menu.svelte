@@ -1,10 +1,7 @@
 <script lang="ts">
   export let routes: any;
   export let icon: any;
-  import Modal from "@components/Modal.svelte";
-  import Settings from "@root/pages/Settings.svelte";
   import TextLogo from "@assets/TextLogo.svg";
-  let showModal = false;
 
   import {
     currentPage,
@@ -28,7 +25,6 @@
 <main class="{$appSettings.sideNav ? 'sideMain' : ''} {theme}">
   <ul>
     <div class="logoBox">
-      <!-- <img src={TextLogo} alt="app-logo" /> -->
       <p>Beyond RGB</p>
     </div>
     <div class="menuBtns">
@@ -45,11 +41,11 @@
       {/each}
     </div>
     <div class="ctlBtns">
-      <button on:click={() => currentPage.set("Home")}>
+      <button on:click={() => modal.set("Home")}>
         <Icon data={routes["Home"].icon} scale={1.75} />
       </button>
 
-      <button on:click={() => (showModal = true)}>
+      <button on:click={() => modal.set("Settings")}>
         <Icon data={routes["Settings"].icon} scale={1.75} />
       </button>
 
@@ -60,18 +56,6 @@
     </div>
   </ul>
 </main>
-
-{#if showModal}
-  <Modal on:close={() => (showModal = false)}>
-    <!-- <h2 slot="header">
-      modal
-      <small><em>adjective</em> mod·al \ˈmō-dəl\</small>
-    </h2> -->
-
-    <h1 slot="header">App Settings</h1>
-    <Settings />
-  </Modal>
-{/if}
 
 <style lang="postcss">
   main {
@@ -130,12 +114,6 @@
 
   .sideMain .ctlBtns {
     @apply flex-col py-4 px-0;
-  }
-  img {
-    /* transform: scale(0.5); */
-    pointer-events: none;
-    filter: grayscale(0.5);
-    @apply h-1/2 mt-3.5 pl-3;
   }
   p {
     @apply text-xl mt-2.5 pl-3;

@@ -1,9 +1,14 @@
 <script lang="ts">
   import TextLogo from "@assets/TextLogo.svg";
-  import { currentPage } from "@util/stores";
+  import { currentPage, modal } from "@util/stores";
   import { angleDoubleDown } from "svelte-awesome/icons";
   import { fade, draw } from "svelte/transition";
   import Icon from "svelte-awesome";
+
+  function handleClick(page) {
+    currentPage.set(page);
+    modal.set(null);
+  }
 </script>
 
 <main>
@@ -28,21 +33,21 @@
     </div>
   </div>
   <button
-    on:click={() => currentPage.set("Preprocessing")}
+    on:click={() => handleClick("Preprocessing")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     Learn More
     <span> Learn how to use Beyond RGB </span>
   </button>
   <button
-    on:click={() => currentPage.set("Preprocessing")}
+    on:click={() => handleClick("Preprocessing")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     Proccess
     <span> Process a new Spectral Image </span>
   </button>
   <button
-    on:click={() => currentPage.set("SpecOverlay")}
+    on:click={() => handleClick("SpecOverlay")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     View
@@ -52,7 +57,8 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-full flex flex-col items-center justify-center gap-4;
+    @apply w-full h-[95%] flex flex-col items-center justify-center gap-4
+            bg-gray-800 mt-[5%] relative;
   }
 
   button {
@@ -64,7 +70,6 @@
   button:last-of-type {
     @apply mb-[20vh];
   }
-
   h1 {
     @apply text-4xl font-bold;
   }
