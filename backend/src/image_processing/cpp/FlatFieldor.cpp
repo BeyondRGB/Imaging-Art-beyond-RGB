@@ -8,7 +8,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::image* dark1;
     btrgb::image* dark2;
     RefData* reference;
-    double w1, w2;
+    //double w1, w2;
 
     func("Flat Fielding");
 
@@ -106,8 +106,8 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int size = 3;
     int startVal = (size * -1) + 1;
     double yVal = reference->get_y(whiteRow, whiteCol);
-    FlatFieldor->wCalc(startVal, size, patchX, patchY, yVal);
-    FlatFieldor->pixelOperation(height, width, channels);
+    wCalc(startVal, size, patchX, patchY, yVal, art1, art2, white1, white2);
+    pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
 
     //This was for testing the output of the y and w values
     /*std::cout<<"****************************"<<std::endl;
@@ -148,7 +148,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     images->deleteImage("dark2");
 }
 
-void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef){
+void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2){
     //Setting values for the For Loop going over one channel, channel 2
     int art1Total = 0;
     int white1Total = 0;
@@ -162,10 +162,10 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef){
         for (xOff = base; xOff < rings; xOff++){
             currRow = (patY + yOff);
             currCol = (patX + xOff);
-            art1Total += art1->getPixel(currRow, currCol, 1);
-            white1Total += white1->getPixel(currRow, currCol, 1);
-            art2Total += art2->getPixel(currRow, currCol, 1);
-            white2Total += white2->getPixel(currRow, currCol, 1);
+            art1Total += a1->getPixel(currRow, currCol, 1);
+            white1Total += wh1->getPixel(currRow, currCol, 1);
+            art2Total += a2->getPixel(currRow, currCol, 1);
+            white2Total += wh2->getPixel(currRow, currCol, 1);
             loops++;
         }
     }
@@ -184,26 +184,32 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef){
     w2 = ((yRef * (white2Avg / art2Avg)) / 100) * 0xFFFF;
 }
 
-void::FlatFieldor::pixelOperation(int h, int w, int c){
+void::FlatFieldor::pixelOperation(int h, int w, int c, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2, btrgb::image* d1, btrgb::image* d2){
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
+    //btrgb::image* art1 = images->getImage("art1");
+    //btrgb::image* white1 = images->getImage("white1");
+    //btrgb::image* dark1 = images->getImage("dark1");
+    //btrgb::image* art2 = images->getImage("art2");
+    //btrgb::image* white2 = images->getImage("white2");
+    //btrgb::image* dark2 = images->getImage("dark2");
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int currRow, currCol, ch;
     int wPix, dPix, aPix, newPixel;
     for (currRow = 0; currRow < h; currRow++) {
         for (currCol = 0; currCol < w; currCol++) {
             for (ch = 0; ch < c; ch++) {
-                wPix = white1->getPixel(currRow, currCol, ch);
-                dPix = dark1->getPixel(currRow, currCol, ch);
-                aPix = art1->getPixel(currRow, currCol, ch);
+                wPix = wh1->getPixel(currRow, currCol, ch);
+                dPix = d1->getPixel(currRow, currCol, ch);
+                aPix = a1->getPixel(currRow, currCol, ch);
                 //Need to overwrite previous image pixel in the Art Object
                 newPixel = w1 * (double(aPix - dPix) / double(wPix - dPix));
-                art1->setPixel(currRow, currCol, ch, newPixel);
+                a1->setPixel(currRow, currCol, ch, newPixel);
                 //Repeat for image 2
-                wPix = white2->getPixel(currRow, currCol, ch);
-                dPix = dark2->getPixel(currRow, currCol, ch);
-                aPix = art2->getPixel(currRow, currCol, ch);;
+                wPix = wh2->getPixel(currRow, currCol, ch);
+                dPix = d2->getPixel(currRow, currCol, ch);
+                aPix = a2->getPixel(currRow, currCol, ch);
                 newPixel = w2 * (double(aPix - dPix) / double(wPix - dPix));
-                art2->setPixel(currRow, currCol, ch, newPixel);
+                a2->setPixel(currRow, currCol, ch, newPixel);
             }
         }
     }
