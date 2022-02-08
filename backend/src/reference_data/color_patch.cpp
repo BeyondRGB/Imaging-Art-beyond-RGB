@@ -15,21 +15,6 @@ ColorPatch::~ColorPatch() {
 	// are passed by reference into this class and are not owned by this class
 	if(nullptr != this->reflectance)
 		delete this->reflectance;
-	//clean Tristimulus Values
-	//if (nullptr != this->x)
-	//	delete this->x;
-	//if (nullptr != this->y)
-	//	delete this->y;
-	//if (nullptr != this->z)
-	//	delete this->z;
-	// Clean CIELAB Value
-	//if (nullptr != this->l)
-	//	delete this->l;
-	//if (nullptr != this->a)
-	//	delete this->a;
-	//if (nullptr != this->b)
-	//	delete this->b;
-
 }
 
 short ColorPatch::get_row() { return this->row; }
@@ -78,41 +63,14 @@ double ColorPatch::get_z() {
 }
 
 double ColorPatch::get_L() {
-	//if (nullptr == this->l) {
-	//	this->l = new double;
-	//	double Y = this->get_y();
-	//	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
-	//	double f = this->lab_f(Y / Yn);
-	//	*this->l = 116 * f - 16;
-	//}
 	return this->l;
 }
 
 double ColorPatch::get_a() {
-	//if (nullptr == this->a) {
-	//	this->a = new double;
-	//	double X = this->get_x();
-	//	double Xn = this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
-	//	double Y = this->get_y();
-	//	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
-	//	double fX = this->lab_f(X / Xn);
-	//	double fY = this->lab_f(Y / Yn);
-	//	*this->a = 500 * (fX - fY);
-	//}
 	return this->a;
 }
 
 double ColorPatch::get_b() {
-	//if (nullptr == this->b) {
-	//	this->b = new double;
-	//	double Y = this->get_y();
-	//	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
-	//	double Z = this->get_z();
-	//	double Zn = this->white_pts->get_white_point(WhitePoints::ValueType::Zn);
-	//	double fY = this->lab_f(Y / Yn);
-	//	double fZ = this->lab_f(Z / Zn);
-	//	*this->b = 200 * (fY - fZ);
-	//}
 	return this->b;
 }
 
