@@ -135,6 +135,11 @@ private:
 	*/
 	std::string get_col_id(std::string header_item);
 
+	/**
+	* Initialize ColorPatch Tristimulus and CIELAB values
+	*/
+	void init_color_patches();
+
 	ColorPatch*** color_patches;
 	StandardObserver* observer = nullptr;
 	Illuminants* illuminants = nullptr;

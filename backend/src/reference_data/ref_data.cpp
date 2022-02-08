@@ -11,6 +11,7 @@ RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_ty
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	this->read_in_data(path + file);
+	this->init_color_patches();
 }
 
 RefData::~RefData() {
@@ -151,6 +152,14 @@ void RefData::init_data_storage() {
 std::string RefData::get_col_id(std::string header_item) {
 	size_t pos = header_item.find(":");
 	return header_item.substr(0, pos);
+}
+
+void RefData::init_color_patches() {
+	for (int row = 0; row < row_count; row++) {
+		for (int col = 0; col < col_count; col++) {
+			this->color_patches[row][col]->init();
+		}
+	}
 }
 
 void RefData::output_xyz() {

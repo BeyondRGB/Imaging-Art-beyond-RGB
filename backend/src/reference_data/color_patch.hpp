@@ -21,7 +21,6 @@
 class ColorPatch {
 	enum ValueType {
 		X,Y,Z,
-		L,A,B
 	};
 
 public:
@@ -43,6 +42,8 @@ public:
 	* @param value: the numeric value to append
 	*/
 	void append(double value);
+
+	void init();
 
 	/**
 	* Gets the name of the CollorPatch
@@ -135,9 +136,9 @@ private:
 	short row;
 	short col;
 	// Tristimulus Values
-	double *x = nullptr;
-	double *y = nullptr;
-	double *z = nullptr;
+	double x;
+	double y;
+	double z;
 	//// CIELAB Value
 	double *l = nullptr;
 	double *a = nullptr;
@@ -148,7 +149,17 @@ private:
 	* @param type: the ValueType::(x,y,z) to compute
 	* @return: the Tristimulus value(x,y,z) computed
 	*/
-	double init_Tristimulus(ValueType type);
+	double calc_Tristimulus(ValueType type);
+
+	/**
+	* Initialize Tristimulus values
+	*/
+	void init_Tristumulus_values();
+
+	/**
+	*  Initialize CIELAB values
+	*/
+	void init_CIELAB_values();
 
 	/**
 	* Calculates the f(x) value used for calculating
