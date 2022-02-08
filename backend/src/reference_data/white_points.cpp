@@ -1,9 +1,10 @@
 #include "white_points.hpp"
 
+double WhitePoints::values[VALUE_COUNT][ILLUMINANT_COUNT][OBSERVER_COUNT] = { 0 };
+
 WhitePoints::WhitePoints(ObserverType observer, IlluminantType illuminant) {
 	this->observer = observer;
 	this->illuminant = illuminant;
-	this->init_data_storage();
 	//Xn
 	values[ValueType::Xn][IlluminantType::A][ObserverType::SO_1931] = 109.846606945637;
 	values[ValueType::Xn][IlluminantType::D50][ObserverType::SO_1931] = 96.4211994421199;
@@ -32,26 +33,6 @@ WhitePoints::WhitePoints(ObserverType observer, IlluminantType illuminant) {
 	values[ValueType::Zn][IlluminantType::D65][ObserverType::SO_1964] = 107.305135951661;
 }
 
-WhitePoints::~WhitePoints() {
-	for (int row = 0; row < VALUE_COUNT; row++) {
-		for (int col = 0; col < ILLUMINANT_COUNT; col++) {
-			delete[] values[row][col];
-		}
-		delete[] values[row];
-	}
-	delete[] values;
-}
-
-void WhitePoints::init_data_storage() {
-	values = new double**[VALUE_COUNT];
-	for (int row = 0; row < VALUE_COUNT; row++) {
-		values[row] = new double*[ILLUMINANT_COUNT];
-		for (int col = 0; col < ILLUMINANT_COUNT; col++) {
-			values[row][col] = new double[OBSERVER_COUNT];
-		}
-	}
-
-}
 
 double WhitePoints::get_white_point(WhitePoints::ValueType type) {
 	return values[type][this->illuminant][this->observer];
