@@ -79,7 +79,16 @@ public:
 			// Erase entire line
 			erase_stop = line.length();
 		line.erase(0, erase_stop);
-		return boost::lexical_cast<T>(token);
+		
+		T result;
+		try {
+			result = boost::lexical_cast<T>(token);
+		}
+		catch(const boost::wrapexcept<boost::bad_lexical_cast>& e) {
+			throw std::runtime_error("\nline: " + line + "\ntoken: " + token + "\npos: " + std::to_string(pos));
+		}
+
+		return result;
 	}
 
 private:

@@ -18,11 +18,11 @@ StandardObserver::~StandardObserver() {
 }
 
 void StandardObserver::init(std::string file) {
+	if( !this->open_file(file) ) 
+		throw std::runtime_error("[standarad_observer.cpp] Failed to open file: " + file);
 	this->x = new RefDataArray(STANDARD_OBSERVER_SIZE);
 	this->y = new RefDataArray(STANDARD_OBSERVER_SIZE);
 	this->z = new RefDataArray(STANDARD_OBSERVER_SIZE);
-	if(this->open_file(file))
-		throw std::runtime_error("[standard_observer.cpp] Failed to open: " + file);
 	// Ignore header
 	this->get_next_line();
 	for(int i = 0; i < STANDARD_OBSERVER_SIZE; i++) {

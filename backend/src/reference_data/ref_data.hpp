@@ -7,6 +7,7 @@
 #include "color_patch.hpp"
 #include "illuminants.hpp"
 #include "standard_observer.hpp"
+#include "white_points.hpp"
 
 
 typedef Illuminants::IlluminantType IlluminantType;
@@ -134,9 +135,15 @@ private:
 	*/
 	std::string get_col_id(std::string header_item);
 
+	/**
+	* Initialize ColorPatch Tristimulus and CIELAB values
+	*/
+	void init_color_patches();
+
 	ColorPatch*** color_patches;
 	StandardObserver* observer = nullptr;
 	Illuminants* illuminants = nullptr;
+	WhitePoints* white_pts = nullptr;
 	std::string f_name;
 	int row_count;
 	int col_count;
