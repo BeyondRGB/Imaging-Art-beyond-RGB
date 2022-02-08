@@ -7,9 +7,11 @@
 RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_type) {
 	this->observer = new StandardObserver(so_type);
 	this->illuminants = new Illuminants(illum_type);
+	this->white_pts = new WhitePoints(so_type, illum_type);
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	this->read_in_data(path + file);
+	this->init_color_patches();
 }
 
 RefData::~RefData() {
@@ -18,6 +20,9 @@ RefData::~RefData() {
 	}
 	if (nullptr != this->illuminants) {
 		delete this->illuminants;
+	}
+	if (nullptr != this->white_pts) {
+		delete this->white_pts;
 	}
 	for (int row = 0; row < this->row_count; row++) {
 		for (int col = 0; col < this->col_count; col++) {
@@ -77,7 +82,7 @@ int RefData::get_white_patch_col() {
 }
 
 void RefData::read_in_data(std::string file_path) {
-	if(this->open_file(file_path))
+	if( !this->open_file(file_path) ) 
 		throw std::runtime_error("[ref_data.cpp] Failed to open file: " + file_path);
 	std::string header = this->get_next_line();
 	this->identify_data_size(header);
@@ -140,7 +145,7 @@ void RefData::init_data_storage() {
 	for (int row = 0; row < this->row_count; row++) {
 		this->color_patches[row] = new ColorPatch*[this->col_count];
 		for (int col = 0; col < this->col_count; col++) {
-			this->color_patches[row][col] = new ColorPatch(row, col, this->illuminants, this->observer);
+			this->color_patches[row][col] = new ColorPatch(row, col, this->illuminants, this->observer, this->white_pts);
 		}
 	}
 }
@@ -150,27 +155,48 @@ std::string RefData::get_col_id(std::string header_item) {
 	return header_item.substr(0, pos);
 }
 
+void RefData::init_color_patches() {
+	for (int row = 0; row < row_count; row++) {
+		for (int col = 0; col < col_count; col++) {
+			this->color_patches[row][col]->init();
+		}
+	}
+}
+
 void RefData::output_xyz() {
 	std::string header = "ValueType";
 	std::string y_values = "Y";
 	std::string x_values = "X";
 	std::string z_values = "Z";
+	std::string L_values = "L*";
+	std::string a_values = "a*";
+	std::string b_values = "b*";
+	std::string comma = ",";
 	for (int col = 0; col < this->get_col_count(); col++) {
 		for (int row = 0; row < this->get_row_count(); row++) {
-			std::string comma = ",";
 			ColorPatch* cp = this->get_color_patch(row, col);
 			header += comma + cp->get_name();
 			y_values += comma + std::to_string(cp->get_y());
 			x_values += comma + std::to_string(cp->get_x());
 			z_values += comma + std::to_string(cp->get_z());
+			L_values += comma + std::to_string(cp->get_L());
+			a_values += comma + std::to_string(cp->get_a());
+			b_values += comma + std::to_string(cp->get_b());
 		}
 	}
 	std::cout << this->f_name << std::endl;
+	std::cout << "Xn: " << this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
+	std::cout << comma << " Yn: " << this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
+	std::cout << comma << " Zn: " << this->white_pts->get_white_point(WhitePoints::ValueType::Zn) << std::endl;
+
 	std::cout << header << std::endl;
 	std::cout << x_values << std::endl;
 	std::cout << y_values << std::endl;
-	std::cout << z_values << std::endl;
+	std::cout << z_values << std::endl << std::endl;
+	std::cout << L_values << std::endl;
+	std::cout << a_values << std::endl;
+	std::cout << b_values << std::endl << std::endl;
 	ColorPatch* cp = this->get_white_patch();
 	std::cout << "White Patch," << cp->get_name() << std::endl;
-	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl;
+	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl << std::endl;
 }
