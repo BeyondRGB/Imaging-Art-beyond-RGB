@@ -2,11 +2,11 @@
 
 namespace btrgb {
 
-    void ImageWriter::write(image* im) {
+    void ImageWriter::write(Image* im) {
         write(im, im->filename());
     }
 
-    void ImageWriter::write(image* im, std::string filename) {
+    void ImageWriter::write(Image* im, std::string filename) {
 
         std::string fname = filename;
         if (!fname.ends_with(this->file_extension))

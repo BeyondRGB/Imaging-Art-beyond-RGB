@@ -3,132 +3,123 @@
 
 #include <stdint.h>
 #include <string>
+#include <opencv2/opencv.hpp>
 
-/* How to iterate over the bitmap:
- * 
- * ch = 0: red channel
- * ch = 1: green channel
- * ch = 2: blue channel
- *
- * 
- * Iterate over every channel value for each pixel:
+/* Ways to loop:
 
-    int height = im->height();
-    int width = im->width();
+    // Apply operation directly to mat.
+    im->getMat() *= scaler;
+   
+    // Use Mat forEach loop (put variable from outside of for-loop in the capture list).
+    float scaler = ...
+    cv::Mat im32f = im->getMat();
+    im32f.forEach<float[]>( [scaler](float (&pixel)[], const int* pos) -> void {
+        pixel[R] *= scaler;
+        pixel[G] *= scaler;
+        pixel[B] *= scaler;
+    });
+
+    // Loop through every channel.
+    float scaler = ...
     int channels = im->channels();
-    btrgb::pixel* bitmap = im->bitmap();
+    cv::Mat im32f = im->getMat();
+    im32f.forEach<float[]>( [channels](float (&pixel)[], const int* pos) -> void {
+        for( int ch = 0; ch < channels; ch++) {
+            pixel[ch] *= scaler;
+        }
+    });
 
-    uint32_t ch, x, y, i;
-    for( y = 0; y < height; y++) {
-        for( x = 0; x < width; x++) {
-            for( ch = 0; ch < channels; ch++) {
-                i = im->getIndex(y, x, ch);
-                //<some variable> = bitmap[i]; //getting
-                //bitmap[i] = <some number>; //setting
+    // Direct looping.
+    int row, col, ch;
+    int width = im->width(), height = im->height(), channels = im->channels();
+    float pixel_value;
+    float* pixel_ptr;
+    for (row = 0; row < height; row++) {
+        for (col = 0; col < width; col++) {
+            
+            // Every channel
+            for (ch = 0; ch < channels; ch++) {
+                pixel_value = im->getPixel(row, col, ch);
+                im->setPixel(currRow, col, ch, 4.645);
             }
+
+            // Access specific channels
+            pixel_ptr = im->getPixelPointer(row, col);
+            pixel_ptr[R] = 3;
+            pixel_value = pixel_ptr[G1];
         }
     }
-
- * 
- * 
- * Alternative: iterate over exery pixel in each channel:
- * 
-    int height = im->height();
-    int width = im->width();
-    int channels = im->channels();
-    btrgb::pixel* bitmap = im->bitmap();
-
-    uint32_t ch, x, y, i;
-    for( ch = 0; ch < channels; ch++) {
-        for( y = 0; y < height; y++) {
-            for( x = 0; x < width; x++) {
-                    i = im->getIndex(y, x, ch);
-                    //<some variable> = bitmap[i]; //getting
-                    //bitmap[i] = <some number>; //setting
-                }
-            }
-        }
-    }
- * 
- * Format of bitmaps:
- * 
- * Three channels:
- * |               Row 1               |                  Row 2                    | number of rows = height
- * |    Col 1  |   Col 2   |  Col 3    |    Col 1    |    Col 2     |    Col 3     | number of columns = width
- * | R | G | B | R | G | B | R | G | B | R | G  | B  | R  | G  | B  | R  | G  | B  | channel
- * | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
- *
- * Six channels:
- * |                                          Row 1                                          | number of rows = height
- * |            Col 1            |            Col 2            |            Col 3            | number of columns = width
- * | Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| Ch1| Ch2| Ch3| Ch4| Ch5| Ch6| channel
- * |  0 | 1  |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | bitmap array index
- * 
- */
+*/
 
 namespace btrgb {
 
-    typedef unsigned short pixel;
-
-    class image {
+    class Image {
         public:
-            image(std::string filename);
-            ~image();
+            Image(std::string filename);
+            ~Image();
 
-            void initBitmap(int width, int height, int channels);
+            void initImage(cv::Mat im);
 
-            std::string filename();
-            void setFilename(std::string filename);
+            cv::Mat getMat();
 
             int width();
             int height();
             int channels();
-            pixel* bitmap();
-            uint32_t getIndex(int row, int col, int ch);
-            void setPixel(int row, int col, int ch, btrgb::pixel value);
-            btrgb::pixel getPixel(int row, int col, int ch);
+            float* bitmap();
+            
 
-            uint32_t getTotalByteSize();
-            uint32_t getTotalPixelCount();
-            uint32_t getRowByteSize();
+            uint32_t getIndex(int row, int col, int ch);
+            void setPixel(int row, int col, int ch, float value);
+            float getPixel(int row, int col, int ch);
+            float* getPixelPointer(int row, int col);
+
+            std::string filename();
+            void setFilename(std::string filename);
 
             void recycle();
+            int _raw_bit_depth = 0;
 
         private:
             std::string _filename;
-            pixel* _bitmap = nullptr;
-            int _width;
-            int _height;
-            int _channels;
+            float* _bitmap = nullptr;
+            int _width = 0;
+            int _height = 0;
+            int _channels = 0;
+            int _row_size = 0;
+            int _col_size = 0;
+            cv::Mat _opencv_mat;
 
-            void checkInit();
+            void _checkInit();
     };
 
-    class BitmapNotInitialized : public std::exception {
+    class ImageError : public std::exception {};
+
+    class ImageNotInitialized : public ImageError {
         private:
             std::string msg;
         public:
-            BitmapNotInitialized(std::string msg) {
-                this->msg = "The image \"" + msg + "\" has not been initialized.";
+            ImageNotInitialized(std::string msg) {
+                this->msg = "The Image \"" + msg + "\" has not been initialized.";
             }
             virtual char const * what() const noexcept { return  this->msg.c_str(); }
     };
 
-    const int Red = 0;
-    const int Green = 1;
-    const int Blue = 2;
-    const int R1 = 0;
-    const int G1 = 1;
-    const int B1 = 2;
-    const int R2 = 3;
-    const int G2 = 4;
-    const int B2 = 5;
-    const int Ch1 = 0;
-    const int Ch2 = 1;
-    const int Ch3 = 2;
-    const int Ch4 = 3;
-    const int Ch5 = 4;
-    const int Ch6 = 5;
+    class UnsupportedChannels : public ImageError {
+        public:
+            virtual char const * what() const noexcept { return "Image::initBitmap(): The number of channels must be between 1 and 10 inclusive."; }
+    };
+
 }
+
+const int R = 0;
+const int G = 1;
+const int B = 2;
+
+const int R1 = 0;
+const int G1 = 1;
+const int B1 = 2;
+const int R2 = 3;
+const int G2 = 4;
+const int B2 = 5;
 
 #endif
