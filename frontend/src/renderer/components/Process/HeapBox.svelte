@@ -23,7 +23,9 @@
         animate:flip={{ duration: flipDurationMs }}
         class="dark:bg-gray-600"
       >
-        {item?.name?.split("\\")?.at(-1)}
+        {item?.name?.split("\\").length > 2
+          ? item?.name?.split("\\").at(-1)
+          : item?.name?.split("/").at(-1)}
       </card>
     {/each}
   </section>
@@ -31,7 +33,7 @@
 
 <style lang="postcss">
   main {
-    @apply bg-blue-200 w-full;
+    @apply bg-blue-200 min-w-[16rem] min-h-[4rem];
   }
 
   section {
