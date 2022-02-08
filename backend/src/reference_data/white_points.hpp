@@ -19,14 +19,13 @@ public:
 	};
 
 	WhitePoints(ObserverType observer, IlluminantType illuminant);
-	~WhitePoints();
+	~WhitePoints() {};
 	double get_white_point(ValueType type);
 private:
 	ObserverType observer;
 	IlluminantType illuminant;
-	double*** values;
+	static double values[VALUE_COUNT][ILLUMINANT_COUNT][OBSERVER_COUNT];
 
-	void init_data_storage();
 
 };
 
