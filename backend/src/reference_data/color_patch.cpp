@@ -16,12 +16,12 @@ ColorPatch::~ColorPatch() {
 	if(nullptr != this->reflectance)
 		delete this->reflectance;
 	//clean Tristimulus Values
-	if (nullptr != this->x)
-		delete this->x;
-	if (nullptr != this->y)
-		delete this->y;
-	if (nullptr != this->z)
-		delete this->z;
+	//if (nullptr != this->x)
+	//	delete this->x;
+	//if (nullptr != this->y)
+	//	delete this->y;
+	//if (nullptr != this->z)
+	//	delete this->z;
 	// Clean CIELAB Value
 	if (nullptr != this->l)
 		delete this->l;
@@ -49,6 +49,11 @@ void ColorPatch::append(double value) {
 
 }
 
+void ColorPatch::init() {
+	this->init_Tristumulus_values();
+	this->init_CIELAB_values();
+}
+
 double ColorPatch::get_ref_by_index(int index) {
 	if (index < REFLECTANCE_SIZE)
 		return this->reflectance->get_by_index(index);
@@ -61,27 +66,15 @@ double ColorPatch::get_ref_by_wavelen(int wavelength) {
 }
 
 double ColorPatch::get_x() {
-	if (nullptr == this->x) {
-		this->x = new double;
-		*this->x = this->init_Tristimulus(ValueType::X);
-	}
-	return *this->x;
+	return this->x;
 }
 
 double ColorPatch::get_y() {
-	if (nullptr == this->y) {
-		this->y = new double;
-		*this->y = this->init_Tristimulus(ValueType::Y);
-	}
-	return *this->y;
+	return this->y;
 }
 
 double ColorPatch::get_z() {
-	if (nullptr == this->z) {
-		this->z = new double;
-		*this->z = this->init_Tristimulus(ValueType::Z);
-	}
-	return *this->z;
+	return this->z;
 }
 
 double ColorPatch::get_L() {
@@ -123,7 +116,7 @@ double ColorPatch::get_b() {
 	return *this->b;
 }
 
-double ColorPatch::init_Tristimulus(ValueType type) {
+double ColorPatch::calc_Tristimulus(ValueType type) {
 	double k = this->calc_k_value();
 	double sum = 0;
 	double oberver_value;
@@ -137,6 +130,16 @@ double ColorPatch::init_Tristimulus(ValueType type) {
 		sum += oberver_value * illum_value * reflectanc_value;
 	}
 	return k * sum * SAMPLING_INCREMENT;
+}
+
+void ColorPatch::init_Tristumulus_values() {
+	this->x = this->calc_Tristimulus(ValueType::X);
+	this->y = this->calc_Tristimulus(ValueType::Y);
+	this->z = this->calc_Tristimulus(ValueType::Z);
+}
+
+void ColorPatch::init_CIELAB_values() {
+
 }
 
 double ColorPatch::calc_k_value() {
