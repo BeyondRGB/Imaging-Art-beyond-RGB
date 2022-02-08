@@ -33,7 +33,12 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
         try {
             func("RawImageReader: Loading " + im->filename() + "...");
-            this->fileReader->read(im);
+            if(key == "white1") {
+                this->fileReader->read(im, RawReaderStrategy::RECORD_BIT_DEPTH);
+            }
+            else {
+                this->fileReader->read(im);
+            }
         }
         catch(const RawReaderStrategy_FailedToOpenFile) {
             func("RawImageReader: Failed to open raw image.");
@@ -41,6 +46,14 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
         }
 
     }
+
+
+    btrgb::Image* white1 = images->getImage("white1");
+    for(const auto& [key, im] : *images) {
+        if(key != "white1")
+            im->_raw_bit_depth = white1->_raw_bit_depth;
+    }
+
 
     //Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "RawReadOut1");

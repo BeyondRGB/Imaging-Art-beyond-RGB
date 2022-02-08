@@ -8,6 +8,7 @@
 
 #include <zlib.h>
 #include <png.h>
+#include <opencv2/opencv.hpp>
 
 #include "ImageUtil/Image.hpp"
 #include "ImageWriter.hpp"
@@ -20,12 +21,12 @@ namespace btrgb {
         public:
             LibpngWriter();
             ~LibpngWriter();
-            void write_png(image* im, std::string filename, 
+            void write_png(Image* im, std::string filename, 
                 std::vector<uint8_t>* buffer = nullptr,
                 int special_input_bit_depth = -1);
 
         protected:
-            void _write(image* im, std::string filename) override;
+            void _write(Image* im, std::string filename) override;
 
     };
 
