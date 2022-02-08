@@ -42,7 +42,11 @@ public:
 	* @param value: the numeric value to append
 	*/
 	void append(double value);
-
+	
+	/**
+	* Initialize both the Tristimulus and CIELAB values
+	* Called by RefData after all reflectance data is read in.
+	*/
 	void init();
 
 	/**
@@ -140,9 +144,9 @@ private:
 	double y;
 	double z;
 	//// CIELAB Value
-	double *l = nullptr;
-	double *a = nullptr;
-	double *b = nullptr;
+	double l;
+	double a;
+	double b;
 
 	/**
 	* Calculates the Tristimulus value of the given type

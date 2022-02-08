@@ -23,12 +23,12 @@ ColorPatch::~ColorPatch() {
 	//if (nullptr != this->z)
 	//	delete this->z;
 	// Clean CIELAB Value
-	if (nullptr != this->l)
-		delete this->l;
-	if (nullptr != this->a)
-		delete this->a;
-	if (nullptr != this->b)
-		delete this->b;
+	//if (nullptr != this->l)
+	//	delete this->l;
+	//if (nullptr != this->a)
+	//	delete this->a;
+	//if (nullptr != this->b)
+	//	delete this->b;
 
 }
 
@@ -78,42 +78,42 @@ double ColorPatch::get_z() {
 }
 
 double ColorPatch::get_L() {
-	if (nullptr == this->l) {
-		this->l = new double;
-		double Y = this->get_y();
-		double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
-		double f = this->lab_f(Y / Yn);
-		*this->l = 116 * f - 16;
-	}
-	return *this->l;
+	//if (nullptr == this->l) {
+	//	this->l = new double;
+	//	double Y = this->get_y();
+	//	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
+	//	double f = this->lab_f(Y / Yn);
+	//	*this->l = 116 * f - 16;
+	//}
+	return this->l;
 }
 
 double ColorPatch::get_a() {
-	if (nullptr == this->a) {
-		this->a = new double;
-		double X = this->get_x();
-		double Xn = this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
-		double Y = this->get_y();
-		double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
-		double fX = this->lab_f(X / Xn);
-		double fY = this->lab_f(Y / Yn);
-		*this->a = 500 * (fX - fY);
-	}
-	return *this->a;
+	//if (nullptr == this->a) {
+	//	this->a = new double;
+	//	double X = this->get_x();
+	//	double Xn = this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
+	//	double Y = this->get_y();
+	//	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
+	//	double fX = this->lab_f(X / Xn);
+	//	double fY = this->lab_f(Y / Yn);
+	//	*this->a = 500 * (fX - fY);
+	//}
+	return this->a;
 }
 
 double ColorPatch::get_b() {
-	if (nullptr == this->b) {
-		this->b = new double;
-		double Y = this->get_y();
-		double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
-		double Z = this->get_z();
-		double Zn = this->white_pts->get_white_point(WhitePoints::ValueType::Zn);
-		double fY = this->lab_f(Y / Yn);
-		double fZ = this->lab_f(Z / Zn);
-		*this->b = 200 * (fY - fZ);
-	}
-	return *this->b;
+	//if (nullptr == this->b) {
+	//	this->b = new double;
+	//	double Y = this->get_y();
+	//	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
+	//	double Z = this->get_z();
+	//	double Zn = this->white_pts->get_white_point(WhitePoints::ValueType::Zn);
+	//	double fY = this->lab_f(Y / Yn);
+	//	double fZ = this->lab_f(Z / Zn);
+	//	*this->b = 200 * (fY - fZ);
+	//}
+	return this->b;
 }
 
 double ColorPatch::calc_Tristimulus(ValueType type) {
@@ -139,7 +139,21 @@ void ColorPatch::init_Tristumulus_values() {
 }
 
 void ColorPatch::init_CIELAB_values() {
+	double X = this->get_x();
+	double Y = this->get_y();
+	double Z = this->get_z();
 
+	double Xn = this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
+	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
+	double Zn = this->white_pts->get_white_point(WhitePoints::ValueType::Zn);
+
+	double fX = this->lab_f(X / Xn);
+	double fY = this->lab_f(Y / Yn);
+	double fZ = this->lab_f(Z / Zn);
+	
+	this->l = 116 * fY - 16;
+	this->a = 500 * (fX - fY);
+	this->b = 200 * (fY - fZ);
 }
 
 double ColorPatch::calc_k_value() {
