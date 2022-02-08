@@ -1,11 +1,3 @@
-#ifdef WINDOWS
-#include <direct.h>
-#define get_cwd _getcwd
-#else
-#include <unistd.h>
-#define get_cwd getcwd
-#endif
-
 #include "ImageUtil/ArtObject.hpp"
 #include "pipeline.hpp"
 
@@ -83,12 +75,6 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 }
 
 void Pipeline::run() {
-
-    char buff[FILENAME_MAX];
-    get_cwd( buff, FILENAME_MAX );
-    std::string cwd(buff);
-
-    this->send_msg("Current working directory: " + cwd);
 
     this->send_msg("I got your msg");
     this->send_msg(this->process_data_m->to_string());
