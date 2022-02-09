@@ -7,6 +7,7 @@
 #include "ref_data_array.hpp"
 #include "illuminants.hpp"
 #include "standard_observer.hpp"
+#include "white_points.hpp"
 
 /**
 * Class that represents an individual collor patch in reference data
@@ -20,11 +21,10 @@
 class ColorPatch {
 	enum ValueType {
 		X,Y,Z,
-		L,A,B
 	};
 
 public:
-	ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so);
+	ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so, WhitePoints* white_pts);
 	~ColorPatch();
 	/**
 	* Overloaded  << operator. 
@@ -42,6 +42,12 @@ public:
 	* @param value: the numeric value to append
 	*/
 	void append(double value);
+	
+	/**
+	* Initialize both the Tristimulus and CIELAB values
+	* Called by RefData after all reflectance data is read in.
+	*/
+	void init();
 
 	/**
 	* Gets the name of the CollorPatch
@@ -114,9 +120,9 @@ public:
 	* But when we do know this is where the l,a,b values shoule
 	* come from
 	*/
-	//double get_l();
-	//double get_a();
-	//double get_b();
+	double get_L();
+	double get_a();
+	double get_b();
 
 
 private:
@@ -127,25 +133,47 @@ private:
 	Illuminants* illuminants = nullptr;
 	// Reference to the StandardObserver used for calculated values
 	StandardObserver* observer = nullptr;
+	// Reference to WhitePoints used for calculated values
+	WhitePoints* white_pts = nullptr;
 	int index_m = 0;
 	//Position of ColorPatch in ColorTarget
 	short row;
 	short col;
 	// Tristimulus Values
-	double *x = nullptr;
-	double *y = nullptr;
-	double *z = nullptr;
+	double x;
+	double y;
+	double z;
 	//// CIELAB Value
-	double *l = nullptr;
-	double *a = nullptr;
-	double *b = nullptr;
+	double l;
+	double a;
+	double b;
 
 	/**
 	* Calculates the Tristimulus value of the given type
 	* @param type: the ValueType::(x,y,z) to compute
 	* @return: the Tristimulus value(x,y,z) computed
 	*/
-	double init_Tristimulus(ValueType type);
+	double calc_Tristimulus(ValueType type);
+
+	/**
+	* Initialize Tristimulus values
+	*/
+	void init_Tristumulus_values();
+
+	/**
+	*  Initialize CIELAB values
+	*/
+	void init_CIELAB_values();
+
+	/**
+	* Calculates the f(x) value used for calculating
+	* L*,a*,b* values
+	* @param x: double X/Xn, Y/Yn, or Z/Zn 
+	*	where X,Y,Z are the x,y,z values contained by this ColorPatch
+	*	and Xn, Yn, Zn are the Xn, Yn, Zn from the WhitePoints
+	* @return: computed double
+	*/
+	double lab_f(double x);
 	
 	/**
 	* TODO these have not yet been implemneted yet

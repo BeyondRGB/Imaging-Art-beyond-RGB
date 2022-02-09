@@ -1,98 +1,103 @@
 #include "Image.hpp"
 
+
 namespace btrgb {
 
-    image::image(std::string filename) {
-        this->_filename = filename;
-        this->_bitmap = 0;
-        this->_width = 0;
-        this->_height = 0;
-        this->_channels = 0;
+
+    Image::Image(std::string filename) { this->_filename = filename; }
+
+    Image::~Image() {
+        /* Shouldn't have an effect, but it will help debug if
+         * someone is accidentally holding onto a reference and then use it. */
+        this->_opencv_mat.release();
     }
 
-    image::~image() {
-        if (this->_bitmap != nullptr) {
-            delete[] this->_bitmap;
-            this->_bitmap = nullptr;
-        }
+
+
+    void Image::initImage(cv::Mat im) {
+        this->_opencv_mat = im;
+        this->_bitmap = (float*) im.data;
+        this->_width = im.cols;
+        this->_height = im.rows;
+        this->_channels = im.channels();
+        this->_col_size = this->_channels;
+        this->_row_size = this->_width * this->_col_size;
     }
 
-    void image::initBitmap(int width, int height, int channels) {
-        try {
-            this->_bitmap = new pixel[width * height * channels];
-        } catch (std::bad_alloc&) {
-            throw;
-        }
 
-        this->_width = width;
-        this->_height = height;
-        this->_channels = channels;
-    }
 
-    std::string image::filename() {
+    std::string Image::filename() {
         return this->_filename;
     }
 
-    void image::setFilename(std::string filename) {
+    void Image::setFilename(std::string filename) {
         this->_filename = filename;
     }
 
-    int image::width() {
-        checkInit();
+
+
+    int Image::width() {
+        _checkInit();
         return this->_width;
     }
 
-    int image::height() {
-        checkInit();
+    int Image::height() {
+        _checkInit();
         return this->_height;
     }
 
-    int image::channels() {
-        checkInit();
+    int Image::channels() {
+        _checkInit();
         return this->_channels;
     }
 
-    pixel* image::bitmap() {
-        checkInit();
+
+
+    float* Image::bitmap() {
+        _checkInit();
         return this->_bitmap;
     }
+
+    cv::Mat Image::getMat() {
+        _checkInit();
+        return this->_opencv_mat;
+    }
             
-    uint32_t image::getIndex(int row, int col, int ch) {
-        return row * _width * _channels + col * _channels + ch;
+
+    uint32_t Image::getIndex(int row, int col, int ch) {
+        return row * _row_size + col * _col_size + ch;
+    }
+
+    
+    void Image::setPixel(int row, int col, int ch, float value) {
+        _bitmap[ (row * _row_size) + (col * _col_size) + ch] = value;
+    }
+
+    float Image::getPixel(int row, int col, int ch) {
+        return _bitmap[ (row * _row_size) + (col * _col_size) + ch];
+    }
+
+    float* Image::getPixelPointer(int row, int col) {
+        return &( _bitmap[ (row * _row_size) + (col * _col_size) ] );
     }
     
-    void image::setPixel(int row, int col, int ch, btrgb::pixel value) {
-        _bitmap[row * _width * _channels + col * _channels + ch] = value;
-    }
 
-    btrgb::pixel image::getPixel(int row, int col, int ch) {
-        return _bitmap[row * _width * _channels + col * _channels + ch];
-    }
-
-    uint32_t image::getTotalByteSize() {
-        return _width * _height * _channels * sizeof(pixel);
-    }
-    
-    uint32_t image::getTotalPixelCount() {
-        return _width * _height * _channels;
-    }
-
-    uint32_t image::getRowByteSize() {
-        return _width * _channels * sizeof(pixel);
-    }
-
-    void image::recycle() {
-        if (this->_bitmap)
-            delete[] this->_bitmap;
-        this->_bitmap = 0;
+    void Image::recycle() {
+        this->_bitmap = nullptr;
         this->_width = 0;
         this->_height = 0;
         this->_channels = 0;
+        this->_row_size = 0;
+        this->_col_size = 0;
+        this->_opencv_mat.release();
+        cv::Mat empty;
+        this->_opencv_mat = empty;
+        int _raw_bit_depth = 0;
     }
 
-    void image::checkInit() {
-        if (! this->_bitmap)
-			throw BitmapNotInitialized(this->_filename);
+    void inline Image::_checkInit() {
+        if (this->_bitmap == nullptr)
+			throw ImageNotInitialized(this->_filename);
     }
 
 }

@@ -4,7 +4,7 @@ bool CSVParser::open_file(std::string file){
 	if (this->file_m.is_open())
 		this->close_file();
 	this->file_m.open(file);
-	if (this->file_m.fail())
+	if (this->file_m.good())
 		return true;
 	return false;
 }
