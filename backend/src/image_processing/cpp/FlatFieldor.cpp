@@ -1,5 +1,6 @@
 #include "../header/FlatFieldor.h"
 
+//Runs the overall function for correcting the white and dark coloring of the image
 void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::Image* art1;
     btrgb::Image* art2;
@@ -8,7 +9,6 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::Image* dark1;
     btrgb::Image* dark2;
     RefData* reference;
-    //double w1, w2;
 
     func("Flat Fielding");
 
@@ -63,91 +63,24 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int patchX = leftEdge + wOffX + (colWidth / 2);
     int patchY = topEdge + wOffY + (rowHeight / 2);
 
-/*
-    //Setting values for the For Loop going over one channel, channel 2
-    float art1Total = 0;
-    float white1Total = 0;
-    float art2Total = 0;
-    float white2Total = 0;
-    int loops = 0;
-    int startVal = (size * -1) + 1;
-    int xOff, yOff, currRow, currCol;
-
-    //Collecting values of pixels in the rings around center pixel in the white patch
-    for (yOff = startVal; yOff < size; yOff++){
-        for (xOff = startVal; xOff < size; xOff++){
-            currRow = (patchY + yOff);
-            currCol = (patchX + xOff);
-            art1Total += art1->getPixel(currRow, currCol, 1);
-            white1Total += white1->getPixel(currRow, currCol, 1);
-            art2Total += art2->getPixel(currRow, currCol, 1);
-            white2Total += white2->getPixel(currRow, currCol, 1);
-            loops++;
-        }
-    }
-
-    //Calculate average based on the counts from the for loop
-    float art1Avg = art1Total / (loops);
-    float white1Avg = white1Total / (loops);
-    float art2Avg = art2Total / (loops);
-    float white2Avg = white2Total / (loops);
-
-    //Y value is calculated in ref_data
-    //w values are constants based on the y value and patch value averages
-    double yVal = reference->get_y(whiteRow, whiteCol);
-    //double w1 = yVal * (white1Avg / art1Avg);
-    double w1 = ((yVal * (white1Avg / art1Avg)) / 100) * 0xFFFF;
-    //double w2 = yVal * (white2Avg / art2Avg);
-    double w2 = ((yVal * (white2Avg / art2Avg)) / 100) * 0xFFFF;
-*/
-    //Test Version of function septeration
     //size - 1 = how many rings around the center point to be compared for avg
     //Current default to 3 can be adjusted if needed
     int size = 3;
     int startVal = (size * -1) + 1;
+
+    //Collecting the y Value from the reference data
     double yVal = reference->get_y(whiteRow, whiteCol);
     wCalc(startVal, size, patchX, patchY, yVal, art1, art2, white1, white2);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
 
-    //This was for testing the output of the y and w values
-    /*std::cout<<"****************************"<<std::endl;
-    std::cout<<"yVal "<<yVal<<std::endl;
-    std::cout<<"W value 1 "<<w1<<std::endl;
-    std::cout<<"W value 2 "<<w2<<std::endl;
-    std::cout<<"****************************"<<std::endl;*/
-/*
-    //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
-    //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
-    int ch;
-    float wPix, dPix, aPix, newPixel;
-    for (currRow = 0; currRow < height; currRow++) {
-        for (currCol = 0; currCol < width; currCol++) {
-            for (ch = 0; ch < channels; ch++) {
-                wPix = white1->getPixel(currRow, currCol, ch);
-                dPix = dark1->getPixel(currRow, currCol, ch);
-                aPix = art1->getPixel(currRow, currCol, ch);
-                //Need to overwrite previous image pixel in the Art Object
-                newPixel = w1 * ((aPix - dPix) / (wPix - dPix));
-                art1->setPixel(currRow, currCol, ch, newPixel);
-                //Repeat for image 2
-                wPix = white2->getPixel(currRow, currCol, ch);
-                dPix = dark2->getPixel(currRow, currCol, ch);
-                aPix = art2->getPixel(currRow, currCol, ch);;
-                newPixel = w2 * ((aPix - dPix) / (wPix - dPix));
-                art2->setPixel(currRow, currCol, ch, newPixel);
-            }
-        }
-    }
-*/
-    //Outputs TIFFs for each image group for after this step, temporary
-    //images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
-    //images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
+    //Removes the white and dark images from the art object
     images->deleteImage("white1");
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
 }
-
+//Takes in the size as rings, the corrdinates of the white patech, the y value, and the images needed for this function
+//Sets the w value for the two images for the flatfielding process
 void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2){
     //Setting values for the For Loop going over one channel, channel 2
     int art1Total = 0;
@@ -175,23 +108,15 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, b
     double art2Avg = art2Total / (loops);
     double white2Avg = white2Total / (loops);
 
-    //Y value is calculated in ref_data
     //w values are constants based on the y value and patch value averages
-    //double yVal = reference->get_y(whiteRow, whiteCol);
-    //double w1 = yVal * (white1Avg / art1Avg);
     w1 = ((yRef * (white1Avg / art1Avg)) / 100);
-    //double w2 = yVal * (white2Avg / art2Avg);
     w2 = ((yRef * (white2Avg / art2Avg)) / 100);
 }
 
+//Takes in the height, width, and channel count of the images in general, and takes in all the images that were provided by the user
+//Updates the pixels based on the w calculation for both the images
 void::FlatFieldor::pixelOperation(int h, int w, int c, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2, btrgb::image* d1, btrgb::image* d2){
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
-    //btrgb::image* art1 = images->getImage("art1");
-    //btrgb::image* white1 = images->getImage("white1");
-    //btrgb::image* dark1 = images->getImage("dark1");
-    //btrgb::image* art2 = images->getImage("art2");
-    //btrgb::image* white2 = images->getImage("white2");
-    //btrgb::image* dark2 = images->getImage("dark2");
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int currRow, currCol, ch;
     int wPix, dPix, aPix, newPixel;
