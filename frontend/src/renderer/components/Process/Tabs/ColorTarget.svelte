@@ -7,6 +7,7 @@
   import SelectBtn from "@components/SelectBtn.svelte";
   import Loader from "@root/components/Loader.svelte";
   import { draggable } from "svelte-drag";
+  import { bullhorn } from "svelte-awesome/icons";
   let currentPos;
   function update() {
     if (currentPos) {
@@ -19,101 +20,110 @@
     }
   }
 
-  // let colorTargets = [
-
-  // ]
+  let colorTargets = [
+    {
+      name: "Color Target",
+      rows: null,
+      cols: null,
+      refData: null,
+      color: "",
+    },
+  ];
 </script>
 
 <main>
   <!-- <img src="placeholder.jpg" alt="background image" /> -->
   <div class="left">
-    <ColorTargetViewer bind:rows bind:cols bind:currentPos />
+    <ColorTargetViewer
+      bind:rows
+      bind:cols
+      bind:currentPos
+      bind:hue={colorTargets[0].color}
+    />
   </div>
   <div class="right">
-    <div class="settings">
-      <div class="box">
-        <div class="color-target dark:bg-gray-600">
-          Color Target
-          <div class="input-group">
-            <lable class="row-lable">Rows:</lable>
-            <input
-              type="number"
-              class="dark:bg-gray-700"
-              bind:value={rows}
-              placeholder="Placeholder..."
-            />
+    <div class="cardBox">
+      {#each colorTargets as target}
+        <div class="card">
+          <h2>{target.name}</h2>
+          <div class="rowcol">
+            <div class="inputGroup">
+              <span>Rows</span>
+              <input placeholder="1..26 [a-z]" />
+            </div>
+            <span class="times">x</span>
+            <div class="inputGroup">
+              <span>Cols</span>
+              <input placeholder="1..26 [a-z]" />
+            </div>
           </div>
-          <div class="input-group">
-            <lable class="row-lable">Columns:</lable>
-            <input
-              type="number"
-              class="dark:bg-gray-700"
-              bind:value={cols}
-              placeholder="Placeholder..."
-            />
+          <div class="extra">
+            <button>RefData</button>
+            <input type="range" bind:value={colorTargets[0].color} max="360" />
+            {colorTargets[0].color}
           </div>
         </div>
-      </div>
-      <button class="add">+</button>
-      <button on:click={() => update()}>SAVE TARGET INFO</button>
-      <p>
-        top: {$processState.artStacks[0].colorTarget.top.toFixed(4)} | left: {$processState.artStacks[0].colorTarget.left.toFixed(
-          4
-        )} | bottom:
-        {$processState.artStacks[0].colorTarget.bottom.toFixed(4)} | right: {$processState.artStacks[0].colorTarget.right.toFixed(
-          4
-        )}
-      </p>
+      {/each}
     </div>
+
+    <!-- <button on:click={() => update()}>SAVE TARGET INFO</button>
+    <p>
+      top: {$processState.artStacks[0].colorTarget.top.toFixed(4)} | left: {$processState.artStacks[0].colorTarget.left.toFixed(
+        4
+      )} | bottom:
+      {$processState.artStacks[0].colorTarget.bottom.toFixed(4)} | right: {$processState.artStacks[0].colorTarget.right.toFixed(
+        4
+      )}
+    </p> -->
   </div>
 </main>
 
 <style lang="postcss">
   main {
-    @apply flex w-full h-full justify-between overflow-hidden;
+    @apply flex w-full h-full overflow-hidden;
   }
 
   .left {
-    @apply w-full h-full flex items-center m-1 bg-gray-600;
+    @apply w-full h-full flex items-center m-1 bg-gray-600 p-2;
   }
 
   .right {
-    @apply w-[50vw] h-full flex items-center bg-gray-700;
+    @apply w-[40vw] h-full flex justify-center bg-gray-700;
   }
 
-  .settings {
-    @apply w-full px-4 flex flex-col;
+  .cardBox {
+    @apply bg-gray-800 w-full m-6 p-2;
   }
 
-  .box {
-    @apply bg-gray-200 rounded-md shadow-md w-full;
+  .card {
+    @apply bg-gray-600 rounded-lg w-full min-h-[4rem] p-4 flex flex-col gap-1;
   }
 
-  .color-target {
-    @apply px-2 py-1 w-full;
+  h2 {
+    @apply text-lg justify-center flex items-center font-semibold;
   }
 
-  .input-group {
-    @apply flex w-full;
+  .rowcol {
+    @apply flex justify-between items-center;
   }
 
-  .row-lable {
-    @apply my-1 py-1 mx-1;
+  .rowcol input {
+    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
+            h-full w-full;
   }
 
-  input {
-    @apply w-full mx-2 my-1 px-2 py-1;
+  .extra {
+    @apply bg-gray-700 p-2;
   }
 
-  .add {
-    @apply rounded-full text-2xl;
+  .inputGroup {
+    @apply flex flex-col items-center;
   }
-
-  .next {
-    @apply mt-auto;
+  .inputGroup > span {
+    @apply font-semibold;
   }
-
-  .side {
-    @apply flex flex-col h-[90%];
+  .times {
+    @apply text-xl;
   }
 </style>
