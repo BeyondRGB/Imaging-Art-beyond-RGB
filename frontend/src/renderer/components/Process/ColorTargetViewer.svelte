@@ -13,6 +13,7 @@
   export let currentPos = { top: 0, bottom: 0, left: 0, right: 0 };
   let viewportPoint;
   let imagePoint;
+  export let hue;
 
   let imageUrl = placeholder;
 
@@ -198,7 +199,7 @@
   $: if (viewer) {
     document.getElementById(
       "gridBox"
-    ).style.gridTemplateColumns = `repeat(${cols}, auto)`;
+    ).style.gridTemplateRows = `repeat(${rows}, auto)`;
   }
 
   $: if (viewer) {
@@ -206,6 +207,11 @@
     let temp = new Image();
     temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
     imageUrl = temp.src;
+  }
+
+  $: if (hue) {
+    let root = document.documentElement;
+    root.style.setProperty("--hue", `${hue}`);
   }
 </script>
 
@@ -220,7 +226,10 @@
   <div id="selectorBox">
     <div id="gridBox">
       {#each [...Array(rows * cols).keys()].map((i) => i + 1) as i}
-        <div class="line"><div class="target" /></div>
+        <div class="line">
+          <div class="target" />
+          <span class="targetNum">{i}</span>
+        </div>
       {/each}
     </div>
     <div id="tl" />
@@ -237,14 +246,15 @@
 </main>
 
 <style lang="postcss">
+  :root {
+    --hue: 50;
+  }
+
   main {
     @apply w-full h-[90%] ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg flex flex-col;
   }
   #color-seadragon-viewer {
     @apply h-full w-full;
-  }
-  .load {
-    @apply absolute left-1/2 bottom-1/2;
   }
   #selectorBox {
     /* background-size: 40px 40px;
@@ -256,45 +266,51 @@
   }
   #gridBox {
     display: grid;
-    grid-template-columns: auto;
+    grid-template-rows: auto;
+    grid-auto-flow: column;
     @apply w-full h-full absolute overflow-hidden;
   }
   .line {
     background: radial-gradient(
       circle at center,
       transparent 80%,
-      rgba(59, 131, 246, 0.35) 80%
+      hsla(var(--hue), 100%, 50%, 0.35) 80%
     );
+    border-color: hsl(var(--hue), 100%, 50%);
 
-    @apply w-full h-full border-[2px] border-blue-700
-      flex items-center justify-center;
+    @apply w-full h-full border-[2px] flex items-center justify-center relative overflow-hidden;
   }
   .target {
-    @apply border-[3px] border-blue-700/50 w-1/2 h-1/2 rounded-full;
-  }
-  button {
-    @apply z-50;
+    border-color: hsla(var(--hue), 100%, 50%, 0.5);
+    @apply border-[3px] w-[75%] h-[75%] rounded-full;
   }
   #tl {
-    @apply absolute h-3 aspect-square bg-blue-800/50 -top-1.5 -left-1.5 cursor-nw-resize;
+    background-color: hsla(var(--hue), 100%, 50%, 0.5);
+    @apply absolute h-3 aspect-square -top-1.5 -left-1.5 cursor-nw-resize;
   }
   #tr {
-    @apply absolute h-3 aspect-square bg-blue-800 -top-1.5 -right-1.5 cursor-ne-resize;
+    background-color: hsl(var(--hue), 100%, 50%);
+    @apply absolute h-3 aspect-square -top-1.5 -right-1.5 cursor-ne-resize;
   }
   #bl {
-    @apply absolute h-3 aspect-square bg-blue-800 -bottom-1.5 -left-1.5 cursor-ne-resize;
+    background-color: hsl(var(--hue), 100%, 50%);
+    @apply absolute h-3 aspect-square -bottom-1.5 -left-1.5 cursor-ne-resize;
   }
   #br {
-    @apply absolute h-3 aspect-square bg-blue-800 -bottom-1.5 -right-1.5 cursor-nw-resize;
+    background-color: hsl(var(--hue), 100%, 50%);
+    @apply absolute h-3 aspect-square -bottom-1.5 -right-1.5 cursor-nw-resize;
   }
-
+  #selectorBox {
+    @apply filter;
+  }
   #rowCol {
     @apply bg-transparent flex;
   }
-
-  #rowCol > input {
-    @apply bg-black w-12;
+  .targetNum {
+    color: hsl(var(--hue), 100%, 50%);
+    @apply absolute top-0 left-0 p-1 text-sm font-semibold;
   }
+
   #rowCol > p {
     @apply bg-black flex px-2;
   }
