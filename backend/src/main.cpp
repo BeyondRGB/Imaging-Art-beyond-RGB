@@ -1,15 +1,26 @@
 
 #include <iostream>
 #include "server/request_server.hpp"
+#include "spdlog/spdlog.h"
+#include "utils/logger.hpp"
+
+
+void testOther() {
+    LOG_ERROR("FromOther");
+}
 
 //Testing Includes: Remove before submiting PR
 void testFunc() {
-
+    
+    LOG_ERROR("Test 1 2 3");
+    LOG_ERROR("Test 456");
+    testOther();
+    LOG_ERROR("Test 789");
 }
 
 
 int main() {
-	bool test = false; // Set to true if you want to test something and bypass the server
+	bool test = true; // Set to true if you want to test something and bypass the server
 	if (test) {
 		testFunc();
 		std::cout << "Exit" << std::endl;
