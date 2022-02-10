@@ -20,8 +20,8 @@ namespace btrgb {
         public:
             ImageWriterStrategy(enum output_type file_type);
             ~ImageWriterStrategy();
-            void write(image* im, std::string filename);
-            void write(image* im);
+            void write(Image* im, std::string filename);
+            void write(Image* im);
 
         private:
             ImageWriter* writer;

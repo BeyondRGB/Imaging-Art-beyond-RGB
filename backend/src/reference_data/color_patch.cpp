@@ -1,31 +1,20 @@
 #include "color_patch.hpp"
+#include <math.h>
 
-ColorPatch::ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so) {
+ColorPatch::ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so, WhitePoints* white_pts) {
 	this->row = row;
 	this->col = col;
 	this->reflectance = new RefDataArray(REFLECTANCE_SIZE);
 	this->illuminants = illum;
 	this->observer = so;
+	this->white_pts = white_pts;
 }
 
 ColorPatch::~ColorPatch() {
+	// Do not delete iluminants, observer, white_pts as they
+	// are passed by reference into this class and are not owned by this class
 	if(nullptr != this->reflectance)
 		delete this->reflectance;
-	//clean Tristimulus Values
-	if (nullptr != this->x)
-		delete this->x;
-	if (nullptr != this->y)
-		delete this->y;
-	if (nullptr != this->z)
-		delete this->z;
-	// Clean CIELAB Value
-	if (nullptr != this->l)
-		delete this->l;
-	if (nullptr != this->a)
-		delete this->a;
-	if (nullptr != this->b)
-		delete this->b;
-
 }
 
 short ColorPatch::get_row() { return this->row; }
@@ -45,6 +34,11 @@ void ColorPatch::append(double value) {
 
 }
 
+void ColorPatch::init() {
+	this->init_Tristumulus_values();
+	this->init_CIELAB_values();
+}
+
 double ColorPatch::get_ref_by_index(int index) {
 	if (index < REFLECTANCE_SIZE)
 		return this->reflectance->get_by_index(index);
@@ -57,30 +51,30 @@ double ColorPatch::get_ref_by_wavelen(int wavelength) {
 }
 
 double ColorPatch::get_x() {
-	if (nullptr == this->x) {
-		this->x = new double;
-		*this->x = this->init_Tristimulus(ValueType::X);
-	}
-	return *this->x;
+	return this->x;
 }
 
 double ColorPatch::get_y() {
-	if (nullptr == this->y) {
-		this->y = new double;
-		*this->y = this->init_Tristimulus(ValueType::Y);
-	}
-	return *this->y;
+	return this->y;
 }
 
 double ColorPatch::get_z() {
-	if (nullptr == this->z) {
-		this->z = new double;
-		*this->z = this->init_Tristimulus(ValueType::Z);
-	}
-	return *this->z;
+	return this->z;
 }
 
-double ColorPatch::init_Tristimulus(ValueType type) {
+double ColorPatch::get_L() {
+	return this->l;
+}
+
+double ColorPatch::get_a() {
+	return this->a;
+}
+
+double ColorPatch::get_b() {
+	return this->b;
+}
+
+double ColorPatch::calc_Tristimulus(ValueType type) {
 	double k = this->calc_k_value();
 	double sum = 0;
 	double oberver_value;
@@ -96,6 +90,30 @@ double ColorPatch::init_Tristimulus(ValueType type) {
 	return k * sum * SAMPLING_INCREMENT;
 }
 
+void ColorPatch::init_Tristumulus_values() {
+	this->x = this->calc_Tristimulus(ValueType::X);
+	this->y = this->calc_Tristimulus(ValueType::Y);
+	this->z = this->calc_Tristimulus(ValueType::Z);
+}
+
+void ColorPatch::init_CIELAB_values() {
+	double X = this->get_x();
+	double Y = this->get_y();
+	double Z = this->get_z();
+
+	double Xn = this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
+	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
+	double Zn = this->white_pts->get_white_point(WhitePoints::ValueType::Zn);
+
+	double fX = this->lab_f(X / Xn);
+	double fY = this->lab_f(Y / Yn);
+	double fZ = this->lab_f(Z / Zn);
+	
+	this->l = 116 * fY - 16;
+	this->a = 500 * (fX - fY);
+	this->b = 200 * (fY - fZ);
+}
+
 double ColorPatch::calc_k_value() {
 	double so_x_ilum_sum = 0;
 	StandardObserver::ValueType type = get_so_type(ValueType::Y);
@@ -105,6 +123,13 @@ double ColorPatch::calc_k_value() {
 		so_x_ilum_sum += oberver_value * illum_value;
 	}
 	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
+}
+
+double ColorPatch::lab_f(double x) {
+	if (x > 216.0 / 24389.0) {
+		return pow(x, 1.0 / 3.0);
+	}
+	return ((24389.0 / 27.0) * x + 16) / 116.0;
 }
 
 StandardObserver::ValueType ColorPatch::get_so_type(ValueType type) {
