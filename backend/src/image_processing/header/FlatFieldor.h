@@ -10,7 +10,7 @@
 
 class FlatFieldor : public ImgProcessingComponent{
 private:
-    double w1, w2;
+    float w1, w2;
     void wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2);
     void pixelOperation(int h, int w, int c, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2, btrgb::image* d1, btrgb::image* d2);
 public:
