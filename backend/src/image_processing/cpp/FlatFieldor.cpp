@@ -1,12 +1,12 @@
 #include "../header/FlatFieldor.h"
 
 void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    btrgb::image* art1;
-    btrgb::image* art2;
-    btrgb::image* white1;
-    btrgb::image* white2;
-    btrgb::image* dark1;
-    btrgb::image* dark2;
+    btrgb::Image* art1;
+    btrgb::Image* art2;
+    btrgb::Image* white1;
+    btrgb::Image* white2;
+    btrgb::Image* dark1;
+    btrgb::Image* dark2;
     RefData* reference;
     //double w1, w2;
 
@@ -33,10 +33,10 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int channels = art1->channels();
 
     //Collect Normalized Target Information From the Art Object
-    double topTarget = images->getTargetInfo("top");
-    double botTarget = images->getTargetInfo("bot");
-    double leftTarget = images->getTargetInfo("left");
-    double rightTarget = images->getTargetInfo("right");
+    float topTarget = images->getTargetInfo("top");
+    float botTarget = images->getTargetInfo("bot");
+    float leftTarget = images->getTargetInfo("left");
+    float rightTarget = images->getTargetInfo("right");
     int targetRows = images->getTargetSize("row");
     int targetCols = images->getTargetSize("col");
 
@@ -65,10 +65,10 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
 /*
     //Setting values for the For Loop going over one channel, channel 2
-    int art1Total = 0;
-    int white1Total = 0;
-    int art2Total = 0;
-    int white2Total = 0;
+    float art1Total = 0;
+    float white1Total = 0;
+    float art2Total = 0;
+    float white2Total = 0;
     int loops = 0;
     int startVal = (size * -1) + 1;
     int xOff, yOff, currRow, currCol;
@@ -87,10 +87,10 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     }
 
     //Calculate average based on the counts from the for loop
-    double art1Avg = art1Total / (loops);
-    double white1Avg = white1Total / (loops);
-    double art2Avg = art2Total / (loops);
-    double white2Avg = white2Total / (loops);
+    float art1Avg = art1Total / (loops);
+    float white1Avg = white1Total / (loops);
+    float art2Avg = art2Total / (loops);
+    float white2Avg = white2Total / (loops);
 
     //Y value is calculated in ref_data
     //w values are constants based on the y value and patch value averages
@@ -119,7 +119,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int ch;
-    int wPix, dPix, aPix, newPixel;
+    float wPix, dPix, aPix, newPixel;
     for (currRow = 0; currRow < height; currRow++) {
         for (currCol = 0; currCol < width; currCol++) {
             for (ch = 0; ch < channels; ch++) {
@@ -127,13 +127,13 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
                 dPix = dark1->getPixel(currRow, currCol, ch);
                 aPix = art1->getPixel(currRow, currCol, ch);
                 //Need to overwrite previous image pixel in the Art Object
-                newPixel = w1 * (double(aPix - dPix) / double(wPix - dPix));
+                newPixel = w1 * ((aPix - dPix) / (wPix - dPix));
                 art1->setPixel(currRow, currCol, ch, newPixel);
                 //Repeat for image 2
                 wPix = white2->getPixel(currRow, currCol, ch);
                 dPix = dark2->getPixel(currRow, currCol, ch);
                 aPix = art2->getPixel(currRow, currCol, ch);;
-                newPixel = w2 * (double(aPix - dPix) / double(wPix - dPix));
+                newPixel = w2 * ((aPix - dPix) / (wPix - dPix));
                 art2->setPixel(currRow, currCol, ch, newPixel);
             }
         }
@@ -179,9 +179,9 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, b
     //w values are constants based on the y value and patch value averages
     //double yVal = reference->get_y(whiteRow, whiteCol);
     //double w1 = yVal * (white1Avg / art1Avg);
-    w1 = ((yRef * (white1Avg / art1Avg)) / 100) * 0xFFFF;
+    w1 = ((yRef * (white1Avg / art1Avg)) / 100);
     //double w2 = yVal * (white2Avg / art2Avg);
-    w2 = ((yRef * (white2Avg / art2Avg)) / 100) * 0xFFFF;
+    w2 = ((yRef * (white2Avg / art2Avg)) / 100);
 }
 
 void::FlatFieldor::pixelOperation(int h, int w, int c, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2, btrgb::image* d1, btrgb::image* d2){

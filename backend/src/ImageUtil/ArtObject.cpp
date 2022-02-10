@@ -28,7 +28,7 @@ namespace btrgb {
         if(this->images.contains(name))
             throw ArtObj_ImageAlreadyExists();
 
-        image* im = new image(filename);
+        Image* im = new Image(filename);
 
         this->images[name] = im;
     }
@@ -57,7 +57,9 @@ namespace btrgb {
         else if (type == "right") {
             return this->rightEdge;
         }
-        return NULL;
+        throw std::logic_error("[ArtObject::getTargetInfo] Parameter value \""
+            + type + "\" is not a valid option.");
+        return -1.0;
     }
 
     //Returns the requested dimension of the color target
@@ -68,14 +70,16 @@ namespace btrgb {
         else if(edge == "col"){
             return this->targetCol;
         }
-        return NULL;
+        throw std::logic_error("[ArtObject::getTargetSize] Parameter value \""
+            + edge + "\" is not a valid option.");
+        return -1;
     }
 
     /*
     * Map an image name to an existing image object.
     * If the name is used, throws ArtObj_ImageAlreadyExists.
     */
-    void ArtObject::setImage(std::string name, image* im) {
+    void ArtObject::setImage(std::string name, Image* im) {
 
         if (this->images.contains(name))
             throw ArtObj_ImageAlreadyExists();
@@ -88,7 +92,7 @@ namespace btrgb {
     * Returns a pointer to an image object if it is
     * is found in memory, otherwise throws ArtObj_ImageDoesNotExist.
     */
-    image* ArtObject::getImage(std::string name) {
+    Image* ArtObject::getImage(std::string name) {
 
         if(this->images.contains(name))
             return this->images[name];
@@ -101,7 +105,7 @@ namespace btrgb {
         if( ! this->images.contains(name) )
             throw ArtObj_ImageDoesNotExist();
             
-        image* im = this->images[name];
+        Image* im = this->images[name];
         delete im;
         this->images.erase(name);
     }
@@ -132,7 +136,7 @@ namespace btrgb {
         catch (ImageWritingError const& e) {
             throw ArtObj_FailedToWriteImage();
         }
-        catch (BitmapNotInitialized const& e) {
+        catch (ImageNotInitialized const& e) {
             throw;
         }
     }

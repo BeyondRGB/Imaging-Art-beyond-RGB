@@ -18,25 +18,21 @@ void Pipeline::callback(std::string msg) {
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
     std::vector<std::shared_ptr<ImgProcessingComponent>> pre_process_components;
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader("LibRaw")));
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader()));
+    //pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
-    std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
-    calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
-    calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
-
-    auto* process = new PreProcessor(pre_process_components);
-    auto* calibrator = new ImageCalibrator(calibration_components);
+    //std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
+    //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
+    //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
 
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
-    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(process));
-    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(calibrator));
+    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
+   // img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
 
-    ImgProcessingComponent* processor = new ImageProcessor(img_process_components);
-    return std::shared_ptr<ImgProcessingComponent>(processor);
+    return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
 
 };
 
@@ -75,6 +71,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 }
 
 void Pipeline::run() {
+
     this->send_msg("I got your msg");
     this->send_msg(this->process_data_m->to_string());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
@@ -83,11 +80,35 @@ void Pipeline::run() {
     IlluminantType illuminant = this->get_illuminant_type();
     ObserverType observer = this->get_observer_type();
 
-    btrgb::ArtObject* images = new  btrgb::ArtObject(ref_file, illuminant, observer);
+    btrgb::ArtObject* images;
+    try {
+        images = new  btrgb::ArtObject(ref_file, illuminant, observer);
+    }
+    catch(const std::exception& err) {
+        this->send_msg("[art_obj construction]");
+        this->send_msg(err.what());
+    }
+    catch(...) {
+        this->send_msg("Some other error occured during ArtObject construction.");
+    }
+
+    
+    this->send_msg("About to init art obj...");
     this->init_art_obj(images);
 
 
-    pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
+
+    this->send_msg("About to execute...");
+    try {
+        pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
+    }
+    catch(const std::exception& err) {
+        this->send_msg("[pipeline execution]"); 
+        this->send_msg(err.what());
+    }
+    catch(...) {
+        this->send_msg("Some other error occured during pipeline execution.");
+    }
 
 
     for(const auto& [name, img]: *images) {

@@ -21,11 +21,11 @@ namespace btrgb {
         delete this->writer;
     }
 
-    void ImageWriterStrategy::write(image* im, std::string filename) {
+    void ImageWriterStrategy::write(Image* im, std::string filename) {
         this->writer->write(im, filename);
     }
     
-    void ImageWriterStrategy::write(image* im) {
+    void ImageWriterStrategy::write(Image* im) {
         this->writer->write(im);
     }
 

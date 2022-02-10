@@ -11,12 +11,12 @@ namespace btrgb {
         public:
             ImageWriter() {}
             virtual ~ImageWriter() {}
-            virtual void write(image* im, std::string filename);
-            virtual void write(image* im);
+            virtual void write(Image* im, std::string filename);
+            virtual void write(Image* im);
 
         protected:
             std::string file_extension;
-            virtual void _write(image* im, std::string filename) = 0;
+            virtual void _write(Image* im, std::string filename) = 0;
 
     };
 
