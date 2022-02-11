@@ -9,7 +9,7 @@
 
 
 /**
-* Macro for loggin errors.
+* Macro for logging errors.
 * If this macro is used it will automaticly include filename, line number, and function name 
 * from where the macro was called.
 * It will log the error to the log file and to stderr.
@@ -18,7 +18,7 @@
 #define LOG_ERROR(msg) Logger::log_error(__FILE__ , __FUNCTION__, __LINE__, msg)
 
 /**
-* Macro for loggin errors.
+* Macro for logging errors.
 * If this macro is used it will automaticly include filename, line number, and function name
 * from where the macro was called.
 * It will log the error to the log file and to stdout.
