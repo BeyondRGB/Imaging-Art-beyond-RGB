@@ -6,9 +6,16 @@
 
 
 //Testing Includes: Remove before submiting PR
+//#include "reference_data/illuminants.hpp"
+#include "reference_data/ref_data.hpp"
 void testFunc() {
     std::cout << "TestFunc" << std::endl;
-    std::cout << "App_Root: " << GlobalsSinglton::get_instance()->app_root() << std::endl;;
+    std::cout << "App_Root: " << GlobalsSinglton::get_instance()->app_root() << std::endl;
+    IlluminantType illum = Illuminants::D50;
+    ObserverType observer = StandardObserver::SO_1931;
+    std::string file = "APT_Reflectance_Data.csv";
+    RefData data(file, illum, observer);
+    data.output_xyz();
 }
 
 
