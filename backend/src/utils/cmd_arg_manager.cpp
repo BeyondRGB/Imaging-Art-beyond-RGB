@@ -48,12 +48,13 @@ void CMDArgManager::set_option(std::string key, std::string value) {
         value = toLowerCase(value);
         std::cout << value << std::endl;
         if (value == "true") {
-            bool is_test = true;
+            GlobalsSinglton::get_instance()->set_is_test(true);
         }
     }
     if (key == "--app_root") {
         //TODO set pathe here
         std::cout << "Got Path" << std::endl;
+        GlobalsSinglton::get_instance()->set_app_root(value);
     }
 }
 
