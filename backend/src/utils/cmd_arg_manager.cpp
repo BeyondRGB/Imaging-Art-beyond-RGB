@@ -1,7 +1,6 @@
 #include "cmd_arg_manager.hpp"
 
 void CMDArgManager::process_args(int argc, char** argv) {
-    std::cout << "ArgC: " << argc << std::endl;
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
         if (is_optional_arg(arg)) {
@@ -9,7 +8,6 @@ void CMDArgManager::process_args(int argc, char** argv) {
             bool success = pars_optional_arg(arg, option_items);
             std::string option_key = option_items[0];
             std::string option_value = option_items[1];
-            std::cout << option_key << " -> " << option_value << std::endl;
             set_option(option_key, option_value);
         }
         else {
@@ -43,17 +41,13 @@ bool CMDArgManager::is_optional_arg(std::string arg) {
 }
 
 void CMDArgManager::set_option(std::string key, std::string value) {
-    std::cout << "Setting Options: " << key << " -> " << value << std::endl;
     if (key == "--test_run") {
         value = toLowerCase(value);
-        std::cout << value << std::endl;
         if (value == "true") {
             GlobalsSinglton::get_instance()->set_is_test(true);
         }
     }
     if (key == "--app_root") {
-        //TODO set pathe here
-        std::cout << "Got Path" << std::endl;
         GlobalsSinglton::get_instance()->set_app_root(value);
     }
 }
@@ -73,6 +67,5 @@ std::string CMDArgManager::toLowerCase(std::string str) {
     for (int i = 0; i < str.length(); i++) {
         str[i] = tolower(str[i]);
     }
-    std::cout << "to lower:" << str << std::endl;
     return str;
 }
