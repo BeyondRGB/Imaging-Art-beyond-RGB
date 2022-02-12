@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include "server/globals_siglton.hpp"
 
 class CMDArgManager {
 public:
