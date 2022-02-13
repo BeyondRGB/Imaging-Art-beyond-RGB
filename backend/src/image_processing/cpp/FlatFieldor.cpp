@@ -1,6 +1,6 @@
 #include "../header/FlatFieldor.h"
 
-void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
+void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     btrgb::Image* art1;
     btrgb::Image* art2;
     btrgb::Image* white1;
@@ -9,7 +9,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::Image* dark2;
     RefData* reference;
 
-    func("Flat Fielding");
+    comms->send_info("", "Flat Fielding");
 
     //Pull the images needed out of the Art Object
     try {
@@ -22,7 +22,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
         reference = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
+        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", "FlatFieldor");
         return;
     }
 
@@ -131,7 +131,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
             }
         }
     }
-    
+
     //Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
     images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");

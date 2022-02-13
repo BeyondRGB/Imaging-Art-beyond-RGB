@@ -10,7 +10,7 @@ class RawImageReader: public ImgProcessingComponent {
         RawImageReader();
         RawImageReader(std::string strategy);
         ~RawImageReader();
-        void execute(CallBackFunction func, btrgb::ArtObject* images) override;
+        void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
     private:
         RawReaderStrategy* fileReader;

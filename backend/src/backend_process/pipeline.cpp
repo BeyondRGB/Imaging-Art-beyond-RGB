@@ -100,7 +100,7 @@ void Pipeline::run() {
 
     this->send_info(this->get_process_name(), "About to execute...");
     try {
-        pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
+        pipeline->execute(this->coms_obj_m.get(), images);
     }
     catch(const std::exception& err) {
         std::string msg(err.what());

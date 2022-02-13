@@ -35,7 +35,7 @@ public:
 	* @param error: the error msg to report
 	*/
 	void report_error(std::string reporter, std::string error);
-private:
+protected:
 	std::shared_ptr<CommunicationObj> coms_obj_m;
 };
 

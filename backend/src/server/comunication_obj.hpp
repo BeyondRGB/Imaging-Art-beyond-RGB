@@ -49,6 +49,7 @@ public:
 
 	void send_info(std::string msg, std::string sender);
 	void send_error(std::string msg, std::string sender);
+	void send_progress(double val, std::string sender);
 };
 
 #endif // COMMUNICATION_OBJ_H
