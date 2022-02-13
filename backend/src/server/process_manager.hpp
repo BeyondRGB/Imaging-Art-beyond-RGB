@@ -24,14 +24,16 @@ class ProcessManager : public Communicator {
 
 	enum RequestKey {
 		REQUEST_TYPE,
-		REQUEST_DATA
+		REQUEST_DATA,
+		REQUEST_ID
 	};
 	/**
 	* Maps an enum value to a string
 	*/
-	const std::string key_map[2] = {
+	const std::string key_map[3] = {
 		"RequestType",
-		"RequestData"
+		"RequestData",
+		"RequestID"
 	};
 
 public:

@@ -28,7 +28,9 @@ private:
 	server* server_m = NULL;
 	websocketpp::connection_hdl connectionHandle_m;
 	websocketpp::frame::opcode::value opcode_m;
-	int id = 0;
+	int id;
+	//Should be private is temporarily public for testing
+	//void send_msg(std::string msg);
 
 public:
 	CommunicationObj() {};
@@ -38,11 +40,12 @@ public:
 	*/
 	CommunicationObj(const CommunicationObj& other);
 
+	void send_msg(std::string msg);
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
 	*/
-	void send_msg(std::string msg);
+	void set_id(int newID);
 
 	void send_info(std::string msg, std::string sender);
 	void send_error(std::string msg, std::string sender);
