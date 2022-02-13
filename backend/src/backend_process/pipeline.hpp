@@ -49,7 +49,6 @@ class Pipeline: public BackendProcess{
 
 
 private:
-	CommunicationObj coms_m;
 	int num_m;
 	static int pipeline_count;
 

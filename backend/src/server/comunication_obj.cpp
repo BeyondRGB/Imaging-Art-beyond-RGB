@@ -51,3 +51,17 @@ void CommunicationObj::send_error(std::string msg, std::string sender){
 	std::cout<<all_info<<std::endl;
 	send_msg(all_info);
 }
+
+void CommunicationObj::send_progress(double val, std::string sender){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "Progress");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("value", val);
+	response_data.insert_or_assign("sender", sender);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	std::cout<<all_info<<std::endl;
+	send_msg(all_info);
+}
