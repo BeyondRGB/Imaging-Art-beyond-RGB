@@ -4,9 +4,9 @@ var child = require('child_process').execFile;
 var executablePath;
 
 if (process.platform == 'win32')
-  executablePath = path.join(__dirname, '../../backend/lib/app.exe');
+  executablePath = path.join(__dirname, '../../lib/app.exe');
 else {
-  executablePath = path.join(__dirname, '../../backend/lib/app');
+  executablePath = path.join(__dirname, '../../lib/app');
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
