@@ -22,15 +22,15 @@ void HalfSizePreview::run() {
     std::vector<uchar>* png_binary = nullptr;
     std::string* rsp = nullptr;
 
-    
+
     const std::vector<int> png_params = {
         cv::IMWRITE_PNG_COMPRESSION, 1,
         cv::IMWRITE_PNG_STRATEGY, cv::IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY,
     };
 
-    
-        
-        
+
+
+
     for (int i = 0; i < filenames.get_size(); i++) {
         auto img_start = std::chrono::high_resolution_clock::now();
         try {
@@ -55,7 +55,7 @@ void HalfSizePreview::run() {
             cv::imencode(".png", im_scaled, *png_binary, png_params);
             im_scaled.release();
             std::cout << "wrote png" << std::endl;
-            
+
             std::cout << "writing base64 and response..." << std::endl;
             rsp = new std::string;
             rsp->reserve( png_binary->size() / 2 );
@@ -69,17 +69,19 @@ void HalfSizePreview::run() {
 
             std::cout << "base64 and json complete" << std::endl;
 
+            //Need to be replaced with new send command, base64, in comms obj, will build the response there
             this->send_msg(*rsp);
 
 
         }
         catch(const std::runtime_error& e) {
-            this->send_msg(R"({"RequestID":)");
-            rsp->append(std::to_string(ticket));
-            rsp->append(R"(,"RequestType":"HalfSizePreview","RequestData":{"filename":")");
-            rsp->append(filenames.string_at(i));
-            rsp->append(R"(","dataURL": 0)");
-            rsp->append(R"(}})");
+            std::string loc(filenames.string_at(i));
+            this->report_error(this->get_process_name(), "Unable to open image: " + loc);
+            //rsp->append(std::to_string(ticket));
+            //rsp->append(R"(,"RequestType":"HalfSizePreview","RequestData":{"filename":")");
+            //rsp->append(filenames.string_at(i));
+            //rsp->append(R"(","dataURL": 0)");
+            //rsp->append(R"(}})");
         }
 
         auto img_end = std::chrono::high_resolution_clock::now();
@@ -100,7 +102,3 @@ void HalfSizePreview::run() {
     delete reader;
 
 }
-
-
-    
-

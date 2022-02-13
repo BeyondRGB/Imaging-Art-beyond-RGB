@@ -12,7 +12,7 @@ Pipeline::Pipeline(){
 void Pipeline::callback(std::string msg) {
     msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
     std::cout << "MSG: " << msg << std::endl;
-    this->send_msg(msg);
+    this->send_info(this->get_process_name(), msg);
 };
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
@@ -72,8 +72,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 
 void Pipeline::run() {
 
-    this->send_msg("I got your msg");
-    this->send_msg(this->process_data_m->to_string());
+    this->send_info(this->get_process_name(), "I got your msg");
+    this->send_info(this->get_process_name(), this->process_data_m->to_string());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     std::string ref_file = this->get_ref_file();
@@ -85,29 +85,29 @@ void Pipeline::run() {
         images = new  btrgb::ArtObject(ref_file, illuminant, observer);
     }
     catch(const std::exception& err) {
-        this->send_msg("[art_obj construction]");
-        this->send_msg(err.what());
+        std::string msg(err.what());
+        this->report_error(this->get_process_name(), "[art_obj construction]: " + msg);
     }
     catch(...) {
-        this->send_msg("Some other error occured during ArtObject construction.");
+        this->report_error(this->get_process_name(), "Some other error occured during ArtObject construction.");
     }
 
-    
-    this->send_msg("About to init art obj...");
+
+    this->send_info(this->get_process_name(), "About to init art obj...");
     this->init_art_obj(images);
 
 
 
-    this->send_msg("About to execute...");
+    this->send_info(this->get_process_name(), "About to execute...");
     try {
         pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
     }
     catch(const std::exception& err) {
-        this->send_msg("[pipeline execution]"); 
-        this->send_msg(err.what());
+        std::string msg(err.what());
+        this->report_error(this->get_process_name(), "[pipeline execution]: " + msg);
     }
     catch(...) {
-        this->send_msg("Some other error occured during pipeline execution.");
+        this->report_error(this->get_process_name(), "Some other error occured during pipeline execution.");
     }
 
 

@@ -6,7 +6,7 @@
 
 /*
 Communications class, used for communication with the front end.
-A class that inherits from this class can send mesages to the front end using the 
+A class that inherits from this class can send mesages to the front end using the
 coms obj once it has been set.
 NOTE: befor a mesage can be sent successfully set_coms_obj must be called
 */
@@ -17,13 +17,15 @@ public:
 	* Send a mesage to the front end
 	* @param msg: the mesage to be sent
 	*/
-	void send_msg(std::string msg);
+	void send_info(std::string reporter, std::string msg);
 	/**
 	* Set the CommunicationObj to be used for sending messages
 	* @param coms_obj: the CommunicationObj to set
 	*/
 	void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj);
 
+	//Temporary Function
+	void send_msg(std::string msg);
 	/**
 	* Report error
 	* This will print error to

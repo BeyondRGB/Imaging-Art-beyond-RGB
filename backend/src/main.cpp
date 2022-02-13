@@ -6,12 +6,12 @@
 #include "server/comunication_obj.hpp"
 void testFunc() {
 		CommunicationObj commTest;
-		commTest.send_info("Test Out", "Tester");
+		commTest.send_error("Test Out", "Tester");
 }
 
 
 int main() {
-	bool test = true; // Set to true if you want to test something and bypass the server
+	bool test = false; // Set to true if you want to test something and bypass the server
 	if (test) {
 		testFunc();
 		std::cout << "Exit" << std::endl;
