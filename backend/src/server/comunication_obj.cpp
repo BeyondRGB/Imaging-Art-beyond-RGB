@@ -19,3 +19,20 @@ CommunicationObj::CommunicationObj(const CommunicationObj &other) {
 void CommunicationObj::send_msg(std::string msg) {
 	server_m->send(connectionHandle_m, msg, opcode_m);
 }
+
+void CommunicationObj::send_info(std::string msg, std::string sender){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "Info");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("message", msg);
+	response_data.insert_or_assign("sender", sender);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump_pretty(all_info);
+	std::cout<<all_info<<std::endl;
+}
+
+void CommunicationObj::send_error(std::string msg, std::string sender){
+
+}

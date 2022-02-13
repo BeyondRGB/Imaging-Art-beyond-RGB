@@ -3,13 +3,15 @@
 #include "server/request_server.hpp"
 
 //Testing Includes: Remove before submiting PR
+#include "server/comunication_obj.hpp"
 void testFunc() {
-
+		CommunicationObj commTest;
+		commTest.send_info("Test Out", "Tester");
 }
 
 
 int main() {
-	bool test = false; // Set to true if you want to test something and bypass the server
+	bool test = true; // Set to true if you want to test something and bypass the server
 	if (test) {
 		testFunc();
 		std::cout << "Exit" << std::endl;
@@ -23,5 +25,5 @@ int main() {
 
     //Block till server shuts down
     std::cout << "Exiting.\n";
-    
+
 }

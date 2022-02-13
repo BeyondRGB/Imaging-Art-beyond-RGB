@@ -6,10 +6,11 @@
 #define COMMUNICATION_OBJ_H
 
 #include <iostream>
+#include <jsoncons/json.hpp>
 
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_THREAD_
-#define _WEBSOCKETPP_CPP11_STRICT_ 
+#define _WEBSOCKETPP_CPP11_STRICT_
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
@@ -27,20 +28,24 @@ private:
 	server* server_m = NULL;
 	websocketpp::connection_hdl connectionHandle_m;
 	websocketpp::frame::opcode::value opcode_m;
+	int id = 0;
 
 public:
 	CommunicationObj() {};
 	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
 	/**
-	* Copy Constructor	
+	* Copy Constructor
 	*/
 	CommunicationObj(const CommunicationObj& other);
-	
+
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
 	*/
 	void send_msg(std::string msg);
+
+	void send_info(std::string msg, std::string sender);
+	void send_error(std::string msg, std::string sender);
 };
 
 #endif // COMMUNICATION_OBJ_H
