@@ -14,6 +14,7 @@
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+#include "ImageUtil/Image.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
@@ -28,7 +29,7 @@ private:
 	server* server_m = NULL;
 	websocketpp::connection_hdl connectionHandle_m;
 	websocketpp::frame::opcode::value opcode_m;
-	int id;
+	unsigned long id;
 	//Should be private is temporarily public for testing
 	//void send_msg(std::string msg);
 
@@ -45,7 +46,7 @@ public:
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
 	*/
-	void set_id(int newID);
+	void set_id(long newID);
 
 	void send_info(std::string msg, std::string sender);
 	void send_error(std::string msg, std::string sender);

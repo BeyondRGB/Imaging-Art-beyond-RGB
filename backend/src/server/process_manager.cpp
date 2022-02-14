@@ -17,7 +17,7 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 		// Pars Json
 		Json j(request);
 		std::string request_key = j.get_string(RequestTypeKey);
-		int request_id = j.get_number(RequestIDKey);
+		unsigned long request_id = j.get_number(RequestIDKey);
 		Json request_data = j.get_obj(RequestDataKey);
 		coms_obj->set_id(request_id);
 

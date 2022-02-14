@@ -20,7 +20,7 @@ void CommunicationObj::send_msg(std::string msg) {
 	server_m->send(connectionHandle_m, msg, opcode_m);
 }
 
-void CommunicationObj::set_id(int newID){
+void CommunicationObj::set_id(long newID){
 	id = newID;
 }
 
@@ -81,7 +81,7 @@ void CommunicationObj::send_base64(btrgb::Image* image){
 	send_msg(all_info);
 }
 
-voic CommunicationObj::send_binary(btrgb::Image* image){
+void CommunicationObj::send_binary(btrgb::Image* image){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
