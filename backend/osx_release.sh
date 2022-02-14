@@ -2,9 +2,9 @@
 
 # Make sure the release directory is gone so that the 
 # frontend does not automatically start the old executable.
-if [ -d ../frontend/backend/ ]
+if [ -d ../frontend/lib/ ]
 then
-	rm -rf ../frontend/backend/
+	rm -rf ../frontend/lib/
 fi
 
 # Make sure the resource folder exists.
