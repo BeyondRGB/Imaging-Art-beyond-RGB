@@ -14,14 +14,19 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-// Start Backend Server
-child(executablePath, function (err, data) {
-  if (err) {
-    console.error(err);
-    return;
-  }
+process.on('loaded', (event, args) => {
+  console.log('LOADED');
+  console.log(app.getAppPath());
 
-  console.log(data.toString());
+  // Start Backend Server
+  child(executablePath, [`--app_root=${app.getAppPath()}`], (err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    console.log(data.toString());
+  });
 });
 
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
