@@ -50,6 +50,8 @@ public:
 	void send_info(std::string msg, std::string sender);
 	void send_error(std::string msg, std::string sender);
 	void send_progress(double val, std::string sender);
+	void send_base64(btrgb::Image*);
+	void send_binary(btrgb::Image*);
 };
 
 #endif // COMMUNICATION_OBJ_H
