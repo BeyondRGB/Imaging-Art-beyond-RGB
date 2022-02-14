@@ -7,12 +7,13 @@
 
 
 #include "ImgProcessingComponent.h"
+#include "ImageUtil/Image.hpp"
 
 class FlatFieldor : public ImgProcessingComponent{
 private:
     float w1, w2;
-    void wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2);
-    void pixelOperation(int h, int w, int c, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2, btrgb::image* d1, btrgb::image* d2);
+    void wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2);
+    void pixelOperation(int h, int w, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2);
 public:
     void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 };
