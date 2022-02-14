@@ -23,47 +23,71 @@
   let colorTargets = [
     {
       name: "Color Target",
-      rows: null,
-      cols: null,
+      rows,
+      cols,
       refData: null,
       color: "",
     },
   ];
+
+  function addTarget() {
+    colorTargets = [
+      ...colorTargets,
+      {
+        name: "Verification Target",
+        rows,
+        cols,
+        refData: null,
+        color: "",
+      },
+    ];
+  }
+
+  $: if (colorTargets[0].color) {
+    let root = document.documentElement;
+    root.style.setProperty("--color_hue", `${colorTargets[0].color}`);
+  }
+
+  $: if (colorTargets[1]) {
+    let root = document.documentElement;
+    root.style.setProperty("--verfiy_hue", `${colorTargets[1].color}`);
+  }
 </script>
 
 <main>
   <!-- <img src="placeholder.jpg" alt="background image" /> -->
   <div class="left">
     <ColorTargetViewer
-      bind:rows
-      bind:cols
+      bind:rows={colorTargets[0].rows}
+      bind:cols={colorTargets[0].cols}
       bind:currentPos
       bind:hue={colorTargets[0].color}
     />
   </div>
   <div class="right">
     <div class="cardBox">
-      {#each colorTargets as target}
-        <div class="card">
+      {#each colorTargets as target, i}
+        <div class={`card ${i === 0 ? "colorTarget" : "verificationTarget"}`}>
           <h2>{target.name}</h2>
           <div class="rowcol">
             <div class="inputGroup">
               <span>Rows</span>
-              <input placeholder="1..26 [a-z]" />
+              <input placeholder="1..26 [a-z]" bind:value={target.rows} />
             </div>
             <span class="times">x</span>
             <div class="inputGroup">
               <span>Cols</span>
-              <input placeholder="1..26 [a-z]" />
+              <input placeholder="1..26 [a-z]" bind:value={target.cols} />
             </div>
           </div>
           <div class="extra">
             <button>RefData</button>
-            <input type="range" bind:value={colorTargets[0].color} max="360" />
-            {colorTargets[0].color}
+            <input type="range" bind:value={target.color} max="360" />
+            {target.color}
           </div>
         </div>
       {/each}
+      <button on:click={() => addTarget()}>+</button>
     </div>
 
     <!-- <button on:click={() => update()}>SAVE TARGET INFO</button>
@@ -79,6 +103,11 @@
 </main>
 
 <style lang="postcss">
+  :root {
+    --color_hue: 50;
+    --verfiy_hue: 100;
+  }
+
   main {
     @apply flex w-full h-full overflow-hidden;
   }
@@ -92,11 +121,19 @@
   }
 
   .cardBox {
-    @apply bg-gray-800 w-full m-6 p-2;
+    @apply bg-gray-800 w-full m-6 p-2 gap-2;
   }
 
   .card {
-    @apply bg-gray-600 rounded-lg w-full min-h-[4rem] p-4 flex flex-col gap-1;
+    @apply rounded-lg w-full min-h-[4rem] p-4 flex flex-col gap-1;
+  }
+
+  .colorTarget {
+    background-color: hsl(var(--color_hue), 100%, 30%);
+  }
+
+  .verificationTarget {
+    background-color: hsl(var(--verfiy_hue), 100%, 30%);
   }
 
   h2 {

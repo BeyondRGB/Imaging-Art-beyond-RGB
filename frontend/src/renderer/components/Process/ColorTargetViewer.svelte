@@ -224,13 +224,20 @@
   </p>
   <div id="color-seadragon-viewer" />
   <div id="selectorBox">
-    <div id="gridBox">
-      {#each [...Array(rows * cols).keys()].map((i) => i + 1) as i}
-        <div class="line">
-          <div class="target" />
-          <span class="targetNum">{i}</span>
-        </div>
-      {/each}
+    <div class="layout">
+      <div id="gridBox">
+        {#each [...Array(rows * cols).keys()].map((i) => i + 1) as i}
+          <div class="line">
+            <div class="target" />
+            <span class="targetNum">{i}</span>
+          </div>
+        {/each}
+      </div>
+
+      <button class="exp top" on:click={() => console.log("Hi")} />
+      <button class="exp left" on:click={() => console.log("Hi")} />
+      <button class="exp right" on:click={() => console.log("Hi")} />
+      <button class="exp bottom" on:click={() => console.log("Hi")} />
     </div>
     <div id="tl" />
     <div id="tr" />
@@ -268,7 +275,8 @@
     display: grid;
     grid-template-rows: auto;
     grid-auto-flow: column;
-    @apply w-full h-full absolute overflow-hidden;
+    grid-area: box;
+    @apply w-full h-full overflow-hidden z-40;
   }
   .line {
     background: radial-gradient(
@@ -278,27 +286,57 @@
     );
     border-color: hsl(var(--hue), 100%, 50%);
 
-    @apply w-full h-full border-[2px] flex items-center justify-center relative overflow-hidden;
+    @apply w-full h-full border-[2px] flex items-center justify-center relative overflow-hidden z-10;
+  }
+  .layout {
+    display: grid;
+    grid-template-rows: 14% auto 14%;
+    grid-template-columns: 14% auto 14%;
+    /* grid-auto-flow: column; */
+    grid-template-areas:
+      "top top top"
+      "left box right"
+      "bottom bottom bottom";
+    @apply w-[140%] h-[140%] absolute -top-[20%] -left-[20%] overflow-hidden;
+  }
+  .exp {
+    @apply bg-transparent hover:bg-green-400/50 border-2 
+          border-gray-600/25 hover:border-green-500 z-0 w-full h-full
+          duration-500 transition-all delay-150 ease-in;
+  }
+  .top {
+    grid-area: top;
+    @apply w-[70%] ml-[15%];
+  }
+  .left {
+    grid-area: left;
+  }
+  .right {
+    grid-area: right;
+  }
+  .bottom {
+    grid-area: bottom;
+    @apply w-[70%] ml-[15%];
   }
   .target {
     border-color: hsla(var(--hue), 100%, 50%, 0.5);
     @apply border-[3px] w-[75%] h-[75%] rounded-full;
   }
   #tl {
-    background-color: hsla(var(--hue), 100%, 50%, 0.5);
-    @apply absolute h-3 aspect-square -top-1.5 -left-1.5 cursor-nw-resize;
+    background-color: hsla(var(--hue), 100%, 50%, 0.75);
+    @apply absolute h-3 aspect-square -top-1.5 -left-1.5 cursor-nw-resize z-50;
   }
   #tr {
     background-color: hsl(var(--hue), 100%, 50%);
-    @apply absolute h-3 aspect-square -top-1.5 -right-1.5 cursor-ne-resize;
+    @apply absolute h-3 aspect-square -top-1.5 -right-1.5 cursor-ne-resize z-50;
   }
   #bl {
     background-color: hsl(var(--hue), 100%, 50%);
-    @apply absolute h-3 aspect-square -bottom-1.5 -left-1.5 cursor-ne-resize;
+    @apply absolute h-3 aspect-square -bottom-1.5 -left-1.5 cursor-ne-resize z-50;
   }
   #br {
     background-color: hsl(var(--hue), 100%, 50%);
-    @apply absolute h-3 aspect-square -bottom-1.5 -right-1.5 cursor-nw-resize;
+    @apply absolute h-3 aspect-square -bottom-1.5 -right-1.5 cursor-nw-resize z-50;
   }
   #selectorBox {
     @apply filter;
@@ -307,8 +345,8 @@
     @apply bg-transparent flex;
   }
   .targetNum {
-    color: hsl(var(--hue), 100%, 50%);
-    @apply absolute top-0 left-0 p-1 text-sm font-semibold;
+    color: hsla(var(--hue), 100%, 50%, 0.75);
+    @apply absolute top-0 left-0 p-1 text-base font-semibold;
   }
 
   #rowCol > p {
