@@ -79,8 +79,19 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     images->deleteImage("dark1");
     images->deleteImage("dark2");
 }
-//Takes in the size as rings, the corrdinates of the white patech, the y value, and the images needed for this function
-//Sets the w value for the two images for the flatfielding process
+
+/**
+* Sets the w value for the two images for the flatfielding process
+* @param base: Base value for the for loop going around the center pixel
+* @param rings: How many rings around the center pixel we are comparing to find the average, includes the center pixel as a ring
+* @param patX: x coordinate of the white patch
+* @param patY: y coordinate of the white patch
+* @param yRef: Y value calculated using the reference data for the color target
+* @param a1: art1 image
+* @param a2: art2 image
+* @param w1: white1 image
+* @param w2: white2 image
+*/
 void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2){
     //Setting values for the For Loop going over one channel, channel 2
     int art1Total = 0;
@@ -113,8 +124,18 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, b
     w2 = ((yRef * (white2Avg / art2Avg)) / 100);
 }
 
-//Takes in the height, width, and channel count of the images in general, and takes in all the images that were provided by the user
-//Updates the pixels based on the w calculation for both the images
+/**
+* Updates the pixels based on the w calculation for both given images
+* @param h: height of images
+* @param w: width of images
+* @param c: channel count
+* @param a1: art1 image
+* @param a2: art2 image
+* @param wh1: white1 image
+* @param wh2: white2 image
+* @param d1: dark1 image
+* @param d2 : dark2 image
+*/
 void::FlatFieldor::pixelOperation(int h, int w, int c, btrgb::image* a1, btrgb::image* a2, btrgb::image* wh1, btrgb::image* wh2, btrgb::image* d1, btrgb::image* d2){
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
