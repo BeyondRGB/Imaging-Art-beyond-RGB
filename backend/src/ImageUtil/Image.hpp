@@ -57,9 +57,10 @@ namespace btrgb {
     typedef std::unique_ptr<std::vector<uchar>> binary_ptr_t;
     typedef std::unique_ptr<std::string> base64_ptr_t;
 
-    enum image_binary_type {
+    enum output_type {
         PNG,
-        WEBP
+        WEBP,
+        TIFF
     };
 
     enum image_quality {
@@ -90,8 +91,8 @@ namespace btrgb {
             std::string getName();
             void setName(std::string name);
 
-            binary_ptr_t toBinaryOfType(enum image_binary_type type, enum image_quality quality);
-            base64_ptr_t toBase64OfType(enum image_binary_type type, enum image_quality quality);
+            binary_ptr_t toBinaryOfType(enum output_type type, enum image_quality quality);
+            base64_ptr_t toBase64OfType(enum output_type type, enum image_quality quality);
 
             void recycle();
             int _raw_bit_depth = 0;

@@ -101,76 +101,75 @@ namespace btrgb {
     }
 
 
-    binary_ptr_t Image::toBinaryOfType(enum image_binary_type type, enum image_quality quality) {
+    binary_ptr_t Image::toBinaryOfType(enum output_type type, enum image_quality quality) {
         binary_ptr_t result_binary(new std::vector<uchar>);
         std::vector<int> params;
-
+        std::string ftype;
         cv::Mat im;
+
+        switch(type) {
+            /* Supported */
+            case PNG: ftype = ".png"; break;
+            case WEBP: ftype = ".webp"; break;
+            /* Unsupported */
+            case TIFF:
+            default: throw std::logic_error("[Image::getBinaryOfType] Invalid image type. ");
+        }
+
         switch(quality) {
         case FAST:
 
-            /* Scale width of image to be 2000 pixels. */
-            double scaler = double(2000) / double(this->_opencv_mat.cols);
-            cv::resize(this->_opencv_mat, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
-            im.convertTo(im, CV_8U, 0xFF);
+            /* Scale the image to have a maximum width of 2000 pixels (keep same aspect ratio). */
+            if(this->_opencv_mat.cols > 2000) {
+                double scaler = double(2000) / double(this->_opencv_mat.cols);
+                cv::resize(this->_opencv_mat, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
+            } else {
+                im = this->_opencv_mat;
+            }
+
+            /* Convert to 8 bit to save space. */
+            if(im.depth() != CV_8U) {
+                im.convertTo(im, CV_8U, 0xFF);
+            }
 
             /* Set compression parameters for use later. */
-            switch(type) {
-                case PNG: params = {
+            if(type == PNG)
+                params = {
                     cv::IMWRITE_PNG_COMPRESSION, 1,
                     cv::IMWRITE_PNG_STRATEGY, cv::IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY,
-                }; break;
+                };
+            else if(type == WEBP)
+                params = {cv::IMWRITE_WEBP_QUALITY, 1};
 
-                case WEBP: params = {
-                    cv::IMWRITE_WEBP_QUALITY, 1
-                }; break;
-                
-                default: params = { /* Use default values. */
-                }; break;
-            } 
             break;
 
+
         case FULL:
+            im = this->_opencv_mat;
 
-            if(type == WEBP) /* WebP must be 8bit. */
-                this->_opencv_mat.convertTo(im, CV_8U, 0xFF);
-            else /* PNG & JPEG can be 16 bit. */
-                this->_opencv_mat.convertTo(im, CV_16U, 0xFFFF);
-
-            /* Set compression parameters for use later. */
-            switch(type) {
-                case WEBP: params = { /* Quality above 100 for lossless. */
-                    cv::IMWRITE_WEBP_QUALITY, 101
-                }; break;
-
-                default: params = { /* Use default values. */
-                }; break;
-            } 
+            if(type == WEBP) {
+                /* Quality above 100 for lossless. */
+                params = {cv::IMWRITE_WEBP_QUALITY, 101}; 
+                if(im.depth() != CV_8U)
+                    im.convertTo(im, CV_8U, 0xFF);
+            }
+            else if(type == PNG) {
+                if(im.depth() != CV_16U)
+                    im.convertTo(im, CV_16U, 0xFFFF);
+            }
             break;
 
         default:
             throw std::logic_error("[Image::getBinaryOfType] Invalid quality type. ");
-
         }
 
+
+        /* Encode image. */
         try {
-            switch(type) {
-                /* Write image as png in the result buffer. */
-                case PNG: {
-                    cv::imencode(".png", im, *result_binary, params);
-                }   break;
-
-                /* Write image as webp in the result buffer. */
-                case WEBP: {
-                    cv::imencode(".webp", im, *result_binary, params);
-                }   break;
-
-                default:
-                    throw std::logic_error("[Image::getBinaryOfType] Invalid image type. ");
-            }
+            cv::imencode(ftype, im, *result_binary, params);
         }
+        /* Failed to encode image. */
         catch(const cv::Exception& ex) {
-            /* Failed to encode image. */
             throw FailedToEncode();
         }
 
@@ -179,7 +178,7 @@ namespace btrgb {
 
 
 
-    base64_ptr_t Image::toBase64OfType(enum image_binary_type type, enum image_quality quality) {
+    base64_ptr_t Image::toBase64OfType(enum output_type type, enum image_quality quality) {
 
         binary_ptr_t img_bin = this->toBinaryOfType(type, quality);
 

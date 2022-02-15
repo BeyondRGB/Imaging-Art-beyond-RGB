@@ -1,3 +1,4 @@
+#include <regex>
 #include "backend_process/HalfSizePreview.hpp"
 
 unsigned int HalfSizePreview::id = 0;
@@ -26,24 +27,25 @@ void HalfSizePreview::run() {
             reader->copyBitmap( (uint8_t*) im.data, im.rows * im.cols * im.channels() );
             reader->release();
 
-            /* Scale the image to have a maximum width of 2000 pixels (keep same aspect ratio). */
-            cv::Mat im_scaled;
-            if(im.cols > 2000) {
-                double scaler = double(2000) / double(im.cols);
-                cv::resize(im, im_scaled, cv::Size(), scaler, scaler, cv::INTER_AREA);
-            } else {
-                im_scaled = im;
-            }
-            im.release();
-
             /* Wrap the Mat as an Image object. */
             btrgb::Image imObj(fname + ".HalfSize");
-            imObj.initImage(im_scaled);
+            imObj.initImage(im);
             
 
-
-            // Need to send image here.
-            
+            // ===============[ REPLACE CODE ]==================
+            std::string* rsp = new std::string;
+            rsp->reserve( 2000 * 2000 * 3 * 1); /* w x h x channels x byte depth -- Should be smaller when compressed, also not square */
+            rsp->append(R"({"RequestID":)");
+            rsp->append("3453456");
+            rsp->append(R"(,"RequestType":"HalfSizePreview","RequestData":{"filename":")");
+            rsp->append(std::regex_replace(filenames.string_at(i), std::regex("\\\\"), "\\\\"));
+            rsp->append(R"(","dataURL": ")");
+            btrgb::base64_ptr_t b64 = imObj.toBase64OfType(btrgb::PNG, btrgb::FAST);
+            rsp->append(*b64);
+            rsp->append(R"("}})");
+            this->send_msg(*rsp);
+            delete rsp;
+            // ===========[ End REPLACE CODE ]===============
 
 
         }
