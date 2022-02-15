@@ -13,7 +13,7 @@ void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
 
         /* Output message. */
         std::stringstream out3;
-        out3 << "Scaling \"" << im->filename() << "\" from " << im->_raw_bit_depth << " to 16 bits...";
+        out3 << "Scaling \"" << im->getName() << "\" from " << im->_raw_bit_depth << " to 16 bits...";
         comms->send_info(out3.str(), "BitDepthScaler");
 
 
