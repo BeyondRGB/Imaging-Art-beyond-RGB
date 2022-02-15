@@ -50,12 +50,9 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     btrgb::Image* white1 = images->getImage("white1");
     for(const auto& [key, im] : *images) {
+        images->outputImageAs(btrgb::TIFF, key, key + "_raw");
         if(key != "white1")
             im->_raw_bit_depth = white1->_raw_bit_depth;
     }
 
-
-    //Outputs TIFFs for each image group for after this step, temporary
-    images->outputImageAs(btrgb::TIFF, "art1", "RawReadOut1");
-    images->outputImageAs(btrgb::TIFF, "art2", "RawReadOut2");
 }

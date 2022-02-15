@@ -34,7 +34,7 @@ void BitDepthScaler::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
 
         /* Output bit depth scaled image. */
-        images->outputImageAs(btrgb::TIFF, key, key + "_bd_scaled");
+        images->outputImageAs(btrgb::TIFF, key, key + "_bd");
     }
     
 }
