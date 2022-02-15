@@ -4,7 +4,7 @@
 namespace btrgb {
 
 
-    Image::Image(std::string filename) { this->_filename = filename; }
+    Image::Image(std::string name) { this->_name = name; }
 
     Image::~Image() {
         /* Shouldn't have an effect, but it will help debug if
@@ -26,12 +26,12 @@ namespace btrgb {
 
 
 
-    std::string Image::filename() {
-        return this->_filename;
+    std::string Image::getName() {
+        return this->_name;
     }
 
-    void Image::setFilename(std::string filename) {
-        this->_filename = filename;
+    void Image::setName(std::string name) {
+        this->_name = name;
     }
 
 
@@ -97,7 +97,97 @@ namespace btrgb {
 
     void inline Image::_checkInit() {
         if (this->_bitmap == nullptr)
-			throw ImageNotInitialized(this->_filename);
+			throw ImageNotInitialized(this->_name);
+    }
+
+
+    binary_ptr_t Image::toBinaryOfType(enum image_binary_type type, enum image_quality quality) {
+        binary_ptr_t result_binary(new std::vector<uchar>);
+        std::vector<int> params;
+
+        cv::Mat im;
+        switch(quality) {
+        case FAST:
+
+            /* Scale width of image to be 2000 pixels. */
+            double scaler = double(2000) / double(this->_opencv_mat.cols);
+            cv::resize(this->_opencv_mat, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
+            im.convertTo(im, CV_8U, 0xFF);
+
+            /* Set compression parameters for use later. */
+            switch(type) {
+                case PNG: params = {
+                    cv::IMWRITE_PNG_COMPRESSION, 1,
+                    cv::IMWRITE_PNG_STRATEGY, cv::IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY,
+                }; break;
+
+                case WEBP: params = {
+                    cv::IMWRITE_WEBP_QUALITY, 1
+                }; break;
+                
+                default: params = { /* Use default values. */
+                }; break;
+            } 
+            break;
+
+        case FULL:
+
+            if(type == WEBP) /* WebP must be 8bit. */
+                this->_opencv_mat.convertTo(im, CV_8U, 0xFF);
+            else /* PNG & JPEG can be 16 bit. */
+                this->_opencv_mat.convertTo(im, CV_16U, 0xFFFF);
+
+            /* Set compression parameters for use later. */
+            switch(type) {
+                case WEBP: params = { /* Quality above 100 for lossless. */
+                    cv::IMWRITE_WEBP_QUALITY, 101
+                }; break;
+
+                default: params = { /* Use default values. */
+                }; break;
+            } 
+            break;
+
+        default:
+            throw std::logic_error("[Image::getBinaryOfType] Invalid quality type. ");
+
+        }
+
+        try {
+            switch(type) {
+                /* Write image as png in the result buffer. */
+                case PNG: {
+                    cv::imencode(".png", im, *result_binary, params);
+                }   break;
+
+                /* Write image as webp in the result buffer. */
+                case WEBP: {
+                    cv::imencode(".webp", im, *result_binary, params);
+                }   break;
+
+                default:
+                    throw std::logic_error("[Image::getBinaryOfType] Invalid image type. ");
+            }
+        }
+        catch(const cv::Exception& ex) {
+            /* Failed to encode image. */
+            throw;
+        }
+
+        return result_binary;
+    }
+
+
+
+    base64_ptr_t Image::toBase64OfType(enum image_binary_type type, enum image_quality quality) {
+
+        binary_ptr_t img_bin = this->toBinaryOfType(type, quality);
+
+        base64_ptr_t result_base64(new std::string(
+            "data:image/png;base64," + cppcodec::base64_rfc4648::encode(*img_bin)
+        ));
+        
+        return result_base64;
     }
 
 }
