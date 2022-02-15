@@ -182,8 +182,18 @@ namespace btrgb {
 
         binary_ptr_t img_bin = this->toBinaryOfType(type, quality);
 
+        std::string img_type;
+        switch(type) {
+            /* Supported */
+            case PNG: img_type = "png"; break;
+            case WEBP: img_type = "webp"; break;
+            /* Unsupported */
+            case TIFF:
+            default: throw std::logic_error("[Image::getBinaryOfType] Invalid image type. ");
+        }
+
         base64_ptr_t result_base64(new std::string(
-            "data:image/png;base64," + cppcodec::base64_rfc4648::encode(*img_bin)
+            "data:image/" + img_type + ";base64," + cppcodec::base64_rfc4648::encode(*img_bin)
         ));
         
         return result_base64;
