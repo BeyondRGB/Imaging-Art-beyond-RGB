@@ -14,18 +14,13 @@
 class LibRawReader : public RawReaderStrategy {
 
     public:
-        const static bool LOAD_HALF_SIZE = true;
-        LibRawReader(bool use_half_size = false);
+        LibRawReader();
         ~LibRawReader();
 
         void read(btrgb::Image* im, bool record_bit_depth = false);
 
     private:
-        class InternalRawProcessor : public LibRaw {
-            public: void custom_process();
-        };
-        InternalRawProcessor rawReader;
-        bool use_half_size = false;
+        LibRaw _reader;
         void configLibRawParams();
 
 };

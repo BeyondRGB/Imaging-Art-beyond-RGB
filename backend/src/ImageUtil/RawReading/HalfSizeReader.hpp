@@ -26,7 +26,7 @@ namespace btrgb {
             int _width = -1;
             int _height = -1;
             int _channels = -1;
-            LibRaw _rawReader;
+            LibRaw _reader;
     };
 
 
