@@ -171,7 +171,7 @@ namespace btrgb {
         }
         catch(const cv::Exception& ex) {
             /* Failed to encode image. */
-            throw;
+            throw FailedToEncode();
         }
 
         return result_binary;

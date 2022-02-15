@@ -121,6 +121,11 @@ namespace btrgb {
             virtual char const * what() const noexcept { return  this->msg.c_str(); }
     };
 
+    class FailedToEncode : public ImageError {
+        public:
+            virtual char const * what() const noexcept { return "[Image::to<Binary|Base64>OfType] OpenCV failed to encode image."; }
+    };
+
     class UnsupportedChannels : public ImageError {
         public:
             virtual char const * what() const noexcept { return "Image::initBitmap(): The number of channels must be between 1 and 10 inclusive."; }
