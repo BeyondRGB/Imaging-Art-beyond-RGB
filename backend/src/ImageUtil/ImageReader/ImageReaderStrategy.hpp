@@ -20,7 +20,7 @@ class ImageReaderStrategy {
         int depth() {return _depth;}
 
         virtual void copyBitmapTo(void* buffer, uint32_t size) = 0;
-        virtual void copyBitmapTo(cv::Mat im) = 0;
+        virtual void copyBitmapTo(cv::Mat& im) = 0;
 
     protected:
         int _width = -1;

@@ -111,7 +111,7 @@ void LibRawReader::copyBitmapTo(void* buffer, uint32_t size) {
 }
 
 
-void LibRawReader::copyBitmapTo(cv::Mat im) {
+void LibRawReader::copyBitmapTo(cv::Mat& im) {
 
     /* Get depth of image to create. */
     int cv_depth;
