@@ -13,7 +13,7 @@ class ImageReader: public ImgProcessingComponent {
         void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 
     private:
-        btrgb::ImageReaderStrategy* fileReader;
+        btrgb::ImageReaderStrategy* _reader;
 
 };
 

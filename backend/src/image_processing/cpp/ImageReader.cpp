@@ -1,58 +1,85 @@
 #include <string>
 
 #include "ImageUtil/Image.hpp"
+#include "ImageUtil/BitDepthFinder.hpp"
 #include "ImageUtil/ImageReader/LibRawReader.hpp"
 #include "image_processing/header/ImageReader.h"
 
 
-RawImageReader::RawImageReader() {
-    this->fileReader = new LibRawReader();
-}
+ImageReader::ImageReader(ImageReader::reader_strategy strategy) {
+    switch(strategy) {
 
+        case TIFF_OpenCV:
+            // to do
+            break;
 
-RawImageReader::RawImageReader(std::string strategy) {
-    if (strategy == "LibRaw") {
-        this->fileReader = new LibRawReader();
+        case RAW_LibRaw:
+            this->_reader = new btrgb::LibRawReader;
+            break;
+
+        default: 
+            throw std::logic_error("[ImageReader] Invalid strategy.");
     }
-    else { /* default to LibRaw */
-        this->fileReader = new LibRawReader();
-    }
 }
 
 
-RawImageReader::~RawImageReader() {
-    delete this->fileReader;
+ImageReader::~ImageReader() {
+    delete this->_reader;
 }
 
 
-void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
+void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Reading In Raw Image Data!");
-    
-    /* For each btrgb::image struct in the art object. */
+
+    btrgb::BitDepthFinder util;
+    int bit_depth = -1;
+
+    cv::Mat raw_im;
+    cv::Mat float_im;
+
     for(const auto& [key, im] : *images) {
+        func("RawImageReader: Loading " + im->filename() + "...");
 
         try {
-            func("RawImageReader: Loading " + im->filename() + "...");
+            _reader->open(im->filename());
+            _reader->copyBitmapTo(raw_im);
+            _reader->recycle();
+
+            if(raw_im.depth() != CV_16U)
+                throw std::runtime_error(" Image must be 16 bit." );
+
             if(key == "white1") {
-                this->fileReader->read(im, RawReaderStrategy::RECORD_BIT_DEPTH);
+                bit_depth = util.get_bit_depth(
+                    (uint16_t*) raw_im.data,    
+                    raw_im.cols, 
+                    raw_im.rows,
+                    raw_im.channels()
+                );
+                if(bit_depth < 0)
+                    throw std::runtime_error(" Bit depth detection of 'white1' failed." );
             }
-            else {
-                this->fileReader->read(im);
-            }
+
+            raw_im.convertTo(float_im, CV_32F, 1.0/0xFFFF);
+
+            im->initImage(raw_im);
+
+
         }
-        catch(const RawReaderStrategy_FailedToOpenFile) {
-            func("RawImageReader: Failed to open raw image.");
+        catch(const btrgb::ReaderFailedToOpenFile& e) {
+            func("[ImageReader]" + std::string(e.what()) + im->filename());
+            images->deleteImage(key);
+        }
+        catch(const std::runtime_error& e) {
+            func("[ImageReader]" + std::string(e.what()) + im->filename());
             images->deleteImage(key);
         }
 
+
     }
 
 
-    btrgb::Image* white1 = images->getImage("white1");
     for(const auto& [key, im] : *images) {
-        images->outputImageAs(btrgb::TIFF, key, key + "_raw");
-        if(key != "white1")
-            im->_raw_bit_depth = white1->_raw_bit_depth;
+        im->_raw_bit_depth = bit_depth;
     }
 
 }
