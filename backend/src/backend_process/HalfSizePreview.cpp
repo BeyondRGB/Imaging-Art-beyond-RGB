@@ -18,7 +18,7 @@ void HalfSizePreview::run() {
     Json filenames = this->process_data_m->get_array("filenames");
     const int ticket = 2345234;
 
-    btrgb::HalfSizeReader* reader = new btrgb::HalfSizeReader;
+    btrgb::LibRawReader* reader = new btrgb::LibRawReader(btrgb::LibRawReader::PREVIEW);
     std::vector<uchar>* png_binary = nullptr;
     std::string* rsp = nullptr;
 
@@ -38,8 +38,8 @@ void HalfSizePreview::run() {
             std::cout << "about to read raw..." << std::endl;
             reader->open(filenames.string_at(i));
             cv::Mat im(reader->height(), reader->width(), CV_8UC(reader->channels()));
-            reader->copyBitmap( (uint8_t*) im.data, im.rows * im.cols * im.channels());
-            reader->release();
+            reader->copyBitmapTo( (uint8_t*) im.data, im.rows * im.cols * im.channels());
+            reader->recycle();
             std::cout << "read raw" << std::endl;
 
             std::cout << "scaling preview..." << std::endl;
