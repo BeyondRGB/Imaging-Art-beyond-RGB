@@ -34,13 +34,12 @@ void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::BitDepthFinder util;
     int bit_depth = -1;
 
-    cv::Mat raw_im;
-    cv::Mat float_im;
 
     for(const auto& [key, im] : *images) {
         func("RawImageReader: Loading " + im->filename() + "...");
 
         try {
+            cv::Mat raw_im;
             _reader->open(im->filename());
             _reader->copyBitmapTo(raw_im);
             _reader->recycle();
@@ -59,9 +58,10 @@ void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
                     throw std::runtime_error(" Bit depth detection of 'white1' failed." );
             }
 
+            cv::Mat float_im;
             raw_im.convertTo(float_im, CV_32F, 1.0/0xFFFF);
 
-            im->initImage(raw_im);
+            im->initImage(float_im);
 
 
         }
