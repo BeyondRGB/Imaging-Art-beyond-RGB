@@ -9,7 +9,7 @@
 #include <cppcodec/base64_rfc4648.hpp>
 
 #include "ImageUtil/Image.hpp"
-#include "ImageUtil/RawReading/HalfSizeReader.hpp"
+#include "ImageUtil/ImageReader/LibRawReader.hpp"
 #include "utils/json.hpp"
 #include "server/comunication_obj.hpp"
 

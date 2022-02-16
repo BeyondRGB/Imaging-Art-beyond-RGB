@@ -1,8 +1,8 @@
 #include <string>
 
 #include "ImageUtil/Image.hpp"
-#include "image_processing/header/LibRawReader.h"
-#include "image_processing/header/RawImageReader.h"
+#include "ImageUtil/ImageReader/LibRawReader.hpp"
+#include "image_processing/header/ImageReader.h"
 
 
 RawImageReader::RawImageReader() {

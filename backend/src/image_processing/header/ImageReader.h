@@ -1,19 +1,19 @@
 #ifndef BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 #define BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 
+#include "ImageUtil/ImageReader/ImageReaderStrategy.hpp"
 #include "ImgProcessingComponent.h"
-#include "image_processing/header/RawReaderStrategy.h"
 
-class RawImageReader: public ImgProcessingComponent {
+class ImageReader: public ImgProcessingComponent {
 
     public:
-        RawImageReader();
-        RawImageReader(std::string strategy);
-        ~RawImageReader();
+        enum reader_strategy {RAW_LibRaw, TIFF_OpenCV};
+        ImageReader(reader_strategy strategy);
+        ~ImageReader();
         void execute(CallBackFunction func, btrgb::ArtObject* images) override;
 
     private:
-        RawReaderStrategy* fileReader;
+        btrgb::ImageReaderStrategy* fileReader;
 
 };
 
