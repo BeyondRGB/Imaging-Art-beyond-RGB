@@ -20,7 +20,7 @@ class LibRawReader : public ImageReaderStrategy {
         void recycle();
 
         void copyBitmapTo(void* buffer, uint32_t size);
-        void copyBitmapTo(cv::Mat im);
+        void copyBitmapTo(cv::Mat& im);
 
     private:
         LibRaw _reader;
