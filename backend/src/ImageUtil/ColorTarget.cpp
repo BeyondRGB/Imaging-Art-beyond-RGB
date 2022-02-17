@@ -2,7 +2,7 @@
 
 ColorTarget::ColorTarget(btrgb::Image* im, double top_loction, double bottom_location, double left_location, double right_location, int row_count, int col_count) {
 	this->im = im;
-	std::cout << "Image: " << im->filename();
+
 	// The front end normalizes the location based on width, so multiply top by width instead of height
 	int img_width = im->width();
 
@@ -55,23 +55,16 @@ double ColorTarget::get_patch_avg(int row, int col, int chan) {
 
 	// Find sume of pixel values for all pixels within sample
 	double pixel_value_sum = 0;
-	int loops = 0;
 	for (int yOffset = -sr; yOffset < sr + 1; yOffset++) {
 		for (int xOffset = -sr; xOffset < sr + 1; xOffset++) {
 			int col = center_pixX + xOffset;
 			int row = center_pixY + yOffset;
-			//double pix_value = im->getPixel(row, col, chan);
 			pixel_value_sum += im->getPixel(row, col, chan);
-			//std::cout << "pix_value: " << pix_value << "(" << col << "," << row << ")" << std::endl;
-			loops++;
 		}
 	}
-	std::cout << "loops: " << loops << std::endl;
-	std::cout << "centerX: " << center_pixX << " centerY: " << center_pixY << std::endl;
-	std::cout << "pixel_value_sum: " << pixel_value_sum << std::endl;
+
 	// The sample pixels form a square so the number of pixels is sample_width squared
 	int pixel_count = pow(sw, 2);
-	std::cout << "pix_count: " << pixel_count << std::endl;
 	double avg = pixel_value_sum / pixel_count;	
 	return avg;
 }
@@ -91,11 +84,11 @@ int ColorTarget::patch_posY(int row) {
 
 }
 
-int ColorTarget::row_count() {
+int ColorTarget::get_row_count() {
 	return this->row_count;
 }
 
-int ColorTarget::col_count() {
+int ColorTarget::get_col_count() {
 	return this->col_count;
 }
 
