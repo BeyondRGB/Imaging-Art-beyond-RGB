@@ -18,6 +18,7 @@ void Logger::init_logging() {
 	auto console = spdlog::stdout_color_mt(STD_OUT);
 	auto error = spdlog::stderr_color_mt(STD_ERR);
 	spdlog::enable_backtrace(BACKTRACE_SIZE);
+	spdlog::flush_every(std::chrono::seconds(5));
 	spdlog::get(LOG)->info("\n*********************    Begin Application Execution    *********************\n");
 }
 
