@@ -10,7 +10,7 @@ class ColorTarget {
 public:
 	ColorTarget() {}
 	ColorTarget(btrgb::Image* im, double top_loction,double bottom_location, double left_location, double right_location, int row_count, int col_count);
-	double get_patch_avg(int row, int col, int channel);
+	float get_patch_avg(int row, int col, int channel, double sp=0.3);
 	int get_row_count();
 	int get_col_count();
 
