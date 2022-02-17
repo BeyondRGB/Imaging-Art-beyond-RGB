@@ -43,29 +43,30 @@ ColorTarget::ColorTarget(btrgb::Image* im, double top_loction, double bottom_loc
 *		sr = (sw - 1) / 2
 * 
 */
-double ColorTarget::get_patch_avg(int row, int col, int chan) {
+float ColorTarget::get_patch_avg(int row, int col, int chan, double sp) {
 	int center_pixX = this->patch_posX(col);
 	int center_pixY = this->patch_posY(row);
 	// percentage of patch width that the sample width takes up
-	double sp = 30.0 / 100.0; // 30%
+	//double sp = 30.0 / 100.0; // 30%
 	// Sample width/height
-	int sw = 5;//sp * this->col_width;
+	int sw = sp * this->col_width;
 	// Sample radious(number of pixels on either side of center)
 	int sr = (sw - 1) / 2;
 
 	// Find sume of pixel values for all pixels within sample
-	double pixel_value_sum = 0;
+	float pixel_value_sum = 0;
 	for (int yOffset = -sr; yOffset < sr + 1; yOffset++) {
 		for (int xOffset = -sr; xOffset < sr + 1; xOffset++) {
 			int col = center_pixX + xOffset;
 			int row = center_pixY + yOffset;
 			pixel_value_sum += im->getPixel(row, col, chan);
+			//std::cout << "pixel(" << col << "," << row << "): " << im->getPixel(row, col, chan) << std::endl;
 		}
 	}
 
 	// The sample pixels form a square so the number of pixels is sample_width squared
 	int pixel_count = pow(sw, 2);
-	double avg = pixel_value_sum / pixel_count;	
+	float avg = pixel_value_sum / pixel_count;	
 	return avg;
 }
 
