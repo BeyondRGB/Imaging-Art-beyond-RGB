@@ -32,7 +32,7 @@ void RawImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     for(const auto& [key, im] : *images) {
 
         try {
-            comms->send_info("Loading " + im->filename() + "...", "RawImageReader");
+            comms->send_info("Loading " + im->getName() + "...", "RawImageReader");
             if(key == "white1") {
                 this->fileReader->read(im, RawReaderStrategy::RECORD_BIT_DEPTH);
             }
