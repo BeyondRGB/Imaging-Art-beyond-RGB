@@ -3,8 +3,10 @@
 #include "../header/ColorManagedCalibrator.h"
 
 ColorManagedCalibrator::~ColorManagedCalibrator() {
-    this->color_patch_avgs->release();
-    delete this->color_patch_avgs;
+    if (nullptr != this->color_patch_avgs) {
+        this->color_patch_avgs->release();
+        delete this->color_patch_avgs;
+    }
 }
 
 void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
@@ -37,8 +39,10 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     int channel_count = art1->channels();
     int target_count = std::size(targets);
 
-    this->build_target_avg_matrix(targets, target_count, channel_count);
-    this->display_avg_matrix();
+    //this->build_target_avg_matrix(targets, target_count, channel_count);
+    //this->display_avg_matrix(this->color_patch_avgs);
+
+    this->build_input_matrix();
     
 
 
@@ -113,14 +117,65 @@ void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int 
     }
 }
 
-void ColorManagedCalibrator::display_avg_matrix() {
+void ColorManagedCalibrator::build_input_matrix() {
+    CSVParser parser;
+    std::string path = RES_PATH;
+    parser.open_file(path + "calibration_input_matrix.csv");
+    int row_count = parser.get_line_count()-1;
+    std::string header = parser.get_next_line();
+    int col_count = parser.count_line_items(header)-1;
+    this->optimization_input = cv::Mat(row_count, col_count, CV_32FC1);
+    int row = 0;
+    std::cout << "matRow: " << this->optimization_input.rows << " matCol: " << this->optimization_input.cols << std::endl;
+    while (parser.has_next_line()) {
+        int col = 0;
+        std::string line = parser.get_next_line();
+        std::cout << line << std::endl;
+        //Ignore the first item in line
+        parser.get_next<std::string>(line);
+        while (parser.has_next(line)) {
+            float value = 0;
+            try {
+                value = parser.get_next<float>(line);
+            }
+            catch (boost::wrapexcept<boost::bad_lexical_cast> e) {
+                std::cerr << "Bad value found in csv file (row: " << row+1 << " col: " << col+1 << std::endl;
+            }
+            std::cout << "value: " << value << " row: " << row << " col: " << col << std::endl;
+            this->optimization_input.at<float>(row, col++) = value;
+        }
+        row++;
+    }
+    this->M = this->optimization_input(cv::Rect(0, 0, col_count, row_count - 1));
+    this->offest = this->optimization_input(cv::Rect(0, row_count - 1, col_count, 1));
+
+    std::cout << "row_count: " << row_count << " col_count: " << col_count << std::endl;
+    
+    std::cout << "Full Matrix" << std::endl;
+    this->display_avg_matrix(&this->optimization_input);
+    std::cout << "M Matrix" << std::endl;
+    this->display_avg_matrix(&this->M);
+    std::cout << "Offset Matrix" << std::endl;
+    this->display_avg_matrix(&this->offest);
+    parser.close_file();
+}
+
+void ColorManagedCalibrator::display_avg_matrix(cv::Mat* matrix) {
     std::cout << std::endl;
     std::cout << "What is in the Mat" << std::endl;
-    for (int chan = 0; chan < color_patch_avgs->rows; chan++) {
-        for (int col = 0; col < color_patch_avgs->cols; col++) {
-            float avg = color_patch_avgs->at<float>(chan, col);
-            std::cout << avg << ",";
+    if (nullptr != matrix) {
+        for (int chan = 0; chan < matrix->rows; chan++) {
+            for (int col = 0; col < matrix->cols; col++) {
+                if (col != 0) {
+                    std::cout << ", ";
+                }
+                float avg = matrix->at<float>(chan, col);
+                std::cout << avg;
+            }
+            std::cout << std::endl << std::endl;
         }
-        std::cout << std::endl << std::endl;
+    }
+    else {
+        std::cout << "Matrix not initialized" << std::endl;
     }
 }
