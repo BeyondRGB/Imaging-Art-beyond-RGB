@@ -6,7 +6,10 @@
 #include <math.h>
 
 typedef struct target_location {
+	// Normalized locations of the four edges of the Target
+	// These are the values provided by the front end
 	double top_loc, bot_loc, left_loc, right_loc;
+	// Row and Colum count for the color Target provided by the front end
 	int row_count, col_count;
 }TargetData;
 
