@@ -2,6 +2,11 @@
 
 #include "../header/ColorManagedCalibrator.h"
 
+ColorManagedCalibrator::~ColorManagedCalibrator() {
+    this->color_patch_avgs->release();
+    delete this->color_patch_avgs;
+}
+
 void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
     func("Color Managed Calibration");
     
@@ -29,46 +34,14 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
         func("Error: " + error);
     }
     ColorTarget targets[] = { target1, target2 };
-    int row_count = target1.get_row_count();
-    int col_count = target2.get_col_count();
     int channel_count = art1->channels();
     int target_count = std::size(targets);
-    int mat_cols = row_count * col_count;
-    int mat_rows = channel_count * target_count;
-    cv::Mat patch_avgs(mat_rows, mat_cols , CV_32FC1);
-    for (int target = 0; target < target_count; target++) {
-        for (int chan = 0; chan < channel_count; chan++) {
-            int mat_row_index = 0;
-            for (int target_row = 0; target_row < row_count; target_row++) {
-                for (int target_col = 0; target_col < col_count; target_col++) {
-                    float avg = targets[target].get_patch_avg(target_row, target_col, chan);
-                    //std::cout << "target_" << target + 1 << " (row: " << target_row << ", col : " << target_col << ") chan: " << chan << std::endl;
-                    //float* data = (float*)patch_avgs.data;
-                    int mat_row = chan + target * channel_count;
-                    //data[chan * mat_cols + mat_row_index] = avg;
-                    patch_avgs.at<float>(mat_row, mat_row_index++) = avg;
-                    std::cout << avg << ",";
-                }
-            }
-            std::cout << std::endl << std::endl;
-        }
-    }
-    std::cout << std::endl;
-    std::cout << "What is in the Mat" << std::endl;
-    for (int chan = 0; chan < patch_avgs.rows; chan++) {
-        for (int col = 0; col < patch_avgs.cols; col++) {
-            //float* data = (float*)patch_avgs.data;
-            //float avg = data[chan * patch_avgs.cols + col];
-            float avg = patch_avgs.at<float>(chan, col);
-            std::cout << avg << ",";
-        }
-        std::cout << std::endl << std::endl;
-    }
 
-/*    double avg1 = target1.get_patch_avg(4, 0, 1);
-    double avg2 = target2.get_patch_avg(4, 0, 1);
-    std::cout << "avg1: " << avg1 << " avg2: " << avg2 << std::endl;
- */   
+    this->build_target_avg_matrix(targets, target_count, channel_count);
+    this->display_avg_matrix();
+    
+
+
     sleep_for(seconds(5));
 }
 
@@ -103,4 +76,51 @@ ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::
     ColorTarget target(im, target_data);
    
     return target;
+}
+
+void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count) {
+    int row_count = targets[0].get_row_count();
+    int col_count = targets[0].get_col_count();
+
+    //Calculate row and col count for matrix
+    // There should be a row for each channel of each target(ie 2 targes, 3 channels = 6 rows)
+    // Each row should hold a number of values equle to the total number of ColorPatches of one ColorTarget
+    int mat_col_count = row_count * col_count;
+    int mat_row_count = channel_count * target_count;
+
+    this->color_patch_avgs = new cv::Mat(mat_row_count, mat_col_count, CV_32FC1);
+    // Iterate over each Target
+    for (int target_i = 0; target_i < target_count; target_i++) {
+        ColorTarget target = targets[target_i];
+        // For each Target visit each Channel
+        for (int chan = 0; chan < channel_count; chan++) {
+            // Calculate the row of matrex to put data
+            int mat_row = chan + target_i * channel_count;
+            // Iterate over all ColorPatches for current Target
+            for (int target_row = 0; target_row < row_count; target_row++) {
+                for (int target_col = 0; target_col < col_count; target_col++) {
+                    // Calculate the colum of matrix to put data
+                    int mat_col = target_col + target_row * col_count;
+                    // Get avg pixel color for current ColorPatch
+                    float avg = target.get_patch_avg(target_row, target_col, chan);
+                    // Stroe avg value
+                    color_patch_avgs->at<float>(mat_row, mat_col) = avg;
+                    std::cout << avg << ",";
+                }
+            }
+            std::cout << std::endl << std::endl;
+        }
+    }
+}
+
+void ColorManagedCalibrator::display_avg_matrix() {
+    std::cout << std::endl;
+    std::cout << "What is in the Mat" << std::endl;
+    for (int chan = 0; chan < color_patch_avgs->rows; chan++) {
+        for (int col = 0; col < color_patch_avgs->cols; col++) {
+            float avg = color_patch_avgs->at<float>(chan, col);
+            std::cout << avg << ",";
+        }
+        std::cout << std::endl << std::endl;
+    }
 }
