@@ -5,11 +5,16 @@
 #include <iostream>
 #include <math.h>
 
+typedef struct target_location {
+	double top_loc, bot_loc, left_loc, right_loc;
+	int row_count, col_count;
+}TargetData;
+
 class ColorTarget {
 
 public:
 	ColorTarget() {}
-	ColorTarget(btrgb::Image* im, double top_loction,double bottom_location, double left_location, double right_location, int row_count, int col_count);
+	ColorTarget(btrgb::Image* im, TargetData location_data);
 	float get_patch_avg(int row, int col, int channel, double sp=0.3);
 	int get_row_count();
 	int get_col_count();

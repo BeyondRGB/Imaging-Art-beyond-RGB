@@ -73,23 +73,24 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
 }
 
 ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::Image* im) {
-    double target_top_location;
-    double target_bottom_location;
-    double target_left_location;
-    double target_right_location;
-    //int target_width;
-    //int target_height;
-    int target_row_count;
-    int target_col_count;
+    //double target_top_location;
+    //double target_bottom_location;
+    //double target_left_location;
+    //double target_right_location;
+    ////int target_width;
+    ////int target_height;
+    //int target_row_count;
+    //int target_col_count;
+    TargetData target_data;
 
     try {
-        target_top_location = images->getTargetInfo("top");
-        target_bottom_location = images->getTargetInfo("bot");
-        target_left_location = images->getTargetInfo("left");
-        target_right_location = images->getTargetInfo("right");
+        target_data.top_loc = images->getTargetInfo("top");
+        target_data.bot_loc = images->getTargetInfo("bot");
+        target_data.left_loc = images->getTargetInfo("left");
+        target_data.right_loc = images->getTargetInfo("right");
 
-        target_row_count = images->getTargetSize("row");
-        target_col_count = images->getTargetSize("col");
+        target_data.row_count = images->getTargetSize("row");
+        target_data.col_count = images->getTargetSize("col");
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
         throw e;
@@ -97,8 +98,9 @@ ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::
     catch (const std::logic_error& e) {
         throw e;
     }
-
-    ColorTarget target(im, target_top_location, target_bottom_location, target_left_location, target_right_location, target_row_count, target_col_count);
+    
+  
+    ColorTarget target(im, target_data);
    
     return target;
 }

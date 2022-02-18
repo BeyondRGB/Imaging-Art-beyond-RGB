@@ -1,21 +1,21 @@
 #include "ColorTarget.hpp"
 
-ColorTarget::ColorTarget(btrgb::Image* im, double top_loction, double bottom_location, double left_location, double right_location, int row_count, int col_count) {
+ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	this->im = im;
 
 	// The front end normalizes the location based on width, so multiply top by width instead of height
 	int img_width = im->width();
 
-	this->target_left_edge = left_location * img_width;
-	this->target_top_edge = top_loction * img_width;
-	int right_edge = right_location * img_width;
-	int bottom_edge = bottom_location * img_width;
+	this->target_left_edge = location_data.left_loc * img_width;
+	this->target_top_edge = location_data.top_loc * img_width;
+	int right_edge = location_data.right_loc * img_width;
+	int bottom_edge = location_data.bot_loc * img_width;
 
 	this->target_width = right_edge - this->target_left_edge;
 	this->target_height = bottom_edge - this->target_top_edge;
 
-	this->row_count = row_count;
-	this->col_count = col_count;
+	this->row_count = location_data.row_count;
+	this->col_count = location_data.col_count;
 
 	this->row_height = this->target_height / this->row_count;
 	this->col_width = this->target_width / this->col_count;
