@@ -3,10 +3,6 @@
 #include "../header/ColorManagedCalibrator.h"
 
 ColorManagedCalibrator::~ColorManagedCalibrator() {
-    if (nullptr != this->color_patch_avgs) {
-        this->color_patch_avgs->release();
-        delete this->color_patch_avgs;
-    }
 }
 
 void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
@@ -14,7 +10,6 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     
     btrgb::Image* art1;
     btrgb::Image* art2;
-    RefData* ref_data;
     ColorTarget target1;
     ColorTarget target2;
 
@@ -23,9 +18,9 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     try {
         art1 = images->getImage("art1");
         art2 = images->getImage("art2");
-        ref_data = images->get_refrence_data();
         target1 = this->get_target(images, art1);
         target2 = this->get_target(images, art2);
+        this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
         func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
@@ -34,20 +29,66 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     catch (const std::logic_error& e) {
         std::string error(e.what());
         func("Error: " + error);
+        return;
     }
     ColorTarget targets[] = { target1, target2 };
     int channel_count = art1->channels();
     int target_count = std::size(targets);
 
-    //this->build_target_avg_matrix(targets, target_count, channel_count);
-    //this->display_avg_matrix(this->color_patch_avgs);
+    this->build_target_avg_matrix(targets, target_count, channel_count);
+    this->display_matrix(&this->color_patch_avgs);
 
     this->build_input_matrix();
+
+    this->find_optimization();
     
 
 
     sleep_for(seconds(5));
 }
+
+void ColorManagedCalibrator::find_optimization() {
+    this->compute_deltaE(this->color_patch_avgs);
+}
+
+double ColorManagedCalibrator::compute_deltaE(cv::Mat input) {
+    int row_count = this->color_patch_avgs.rows;
+    int col_count = this->color_patch_avgs.cols;
+    cv::Mat offset_avg(row_count, col_count, CV_32FC1);
+    for (int row = 0; row < row_count; row++) {
+        float offset = this->offest.at<float>(row);
+        for (int col = 0; col < col_count; col++) {
+            float avg = this->color_patch_avgs.at<float>(row, col);
+            offset_avg.at<float>(row, col) = avg - offset;
+        }
+    }
+    cv::Mat xyz = this->M * offset_avg;
+
+    row_count = this->ref_data->get_row_count();
+    col_count = this->ref_data->get_col_count();
+    double ref_L;
+    double ref_a;
+    double ref_b;
+    double L;
+    double a;
+    double b;
+    for (int row = 0; row < row_count; row++) {
+        for (int col = 0; col < col_count; col++) {
+            ref_L = this->ref_data->get_L(row, col);
+            ref_a = this->ref_data->get_a(row, col);
+            ref_b = this->ref_data->get_b(row, col);
+
+            int xyz_index = col + row * col_count;
+            double x = (double)xyz.at<float>(0, xyz_index);
+            double y = (double)xyz.at<float>(1, xyz_index);
+            double z = (double)xyz.at<float>(2, xyz_index);
+        }
+    }
+    
+
+    return 5;
+}
+
 
 ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::Image* im) {
     //double target_top_location;
@@ -92,7 +133,7 @@ void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int 
     int mat_col_count = row_count * col_count;
     int mat_row_count = channel_count * target_count;
 
-    this->color_patch_avgs = new cv::Mat(mat_row_count, mat_col_count, CV_32FC1);
+    this->color_patch_avgs = cv::Mat(mat_row_count, mat_col_count, CV_32FC1);
     // Iterate over each Target
     for (int target_i = 0; target_i < target_count; target_i++) {
         ColorTarget target = targets[target_i];
@@ -108,7 +149,7 @@ void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int 
                     // Get avg pixel color for current ColorPatch
                     float avg = target.get_patch_avg(target_row, target_col, chan);
                     // Stroe avg value
-                    color_patch_avgs->at<float>(mat_row, mat_col) = avg;
+                    this->color_patch_avgs.at<float>(mat_row, mat_col) = avg;
                     std::cout << avg << ",";
                 }
             }
@@ -119,8 +160,8 @@ void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int 
 
 void ColorManagedCalibrator::build_input_matrix() {
     CSVParser parser;
-    std::string path = RES_PATH;
-    parser.open_file(path + "calibration_input_matrix.csv");
+    std::string file_path = RES_PATH "calibration_input_matrix.csv";
+    parser.open_file(file_path);
     int row_count = parser.get_line_count()-1;
     std::string header = parser.get_next_line();
     int col_count = parser.count_line_items(header)-1;
@@ -152,15 +193,15 @@ void ColorManagedCalibrator::build_input_matrix() {
     std::cout << "row_count: " << row_count << " col_count: " << col_count << std::endl;
     
     std::cout << "Full Matrix" << std::endl;
-    this->display_avg_matrix(&this->optimization_input);
+    this->display_matrix(&this->optimization_input);
     std::cout << "M Matrix" << std::endl;
-    this->display_avg_matrix(&this->M);
+    this->display_matrix(&this->M);
     std::cout << "Offset Matrix" << std::endl;
-    this->display_avg_matrix(&this->offest);
+    this->display_matrix(&this->offest);
     parser.close_file();
 }
 
-void ColorManagedCalibrator::display_avg_matrix(cv::Mat* matrix) {
+void ColorManagedCalibrator::display_matrix(cv::Mat* matrix) {
     std::cout << std::endl;
     std::cout << "What is in the Mat" << std::endl;
     if (nullptr != matrix) {
