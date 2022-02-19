@@ -48,55 +48,76 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
 }
 
 void ColorManagedCalibrator::find_optimization() {
-    double dE = this->compute_deltaE(this->color_patch_avgs);
-    std::cout << "deltaE: " << dE << std::endl;
+    std::cout << "Initial M" << std::endl;
+    this->display_matrix(&this->M);
+    std::cout << "Creating Function" << std::endl;
+    cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new DeltaEFunction(
+        &this->color_patch_avgs, &this->offest, &this->M, this->ref_data
+    ));
+    // ptr_F->calc(&this->optimization_input.data.db);
+    
+    std::cout << "Creating Solver" << std::endl;
+    cv::Ptr<cv::ConjGradSolver> min_solver = cv::ConjGradSolver::create();
+    std::cout << "Setting function" << std::endl;
+    min_solver->setFunction(ptr_F);
+    
+    std::cout << "Minimizing" << std::endl;
+    double res = min_solver->minimize(this->optimization_input);
+
+    std::cout << "Resulting DeltaE: " << res << std::endl;
+    std::cout << "Resulting M" << std::endl;
+    this->display_matrix(&this->M);
 }
 
 double ColorManagedCalibrator::compute_deltaE(cv::Mat input) {
-    int row_count = this->color_patch_avgs.rows;
-    int col_count = this->color_patch_avgs.cols;
-    cv::Mat offset_avg(row_count, col_count, CV_32FC1);
-    for (int row = 0; row < row_count; row++) {
-        float offset = this->offest.at<float>(row);
-        for (int col = 0; col < col_count; col++) {
-            float avg = this->color_patch_avgs.at<float>(row, col);
-            offset_avg.at<float>(row, col) = avg - offset;
-        }
-    }
-    cv::Mat xyz = this->M * offset_avg;
+    // this->optimization_input = input;
+    // std::cout << "New Iteration" << std::endl;
+    // this->display_matrix(&this->optimization_input);
+    // int row_count = this->color_patch_avgs.rows;
+    // int col_count = this->color_patch_avgs.cols;
+    // cv::Mat offset_avg(row_count, col_count, CV_32FC1);
+    // for (int row = 0; row < row_count; row++) {
+    //     float offset = this->offest.at<float>(row);
+    //     for (int col = 0; col < col_count; col++) {
+    //         float avg = this->color_patch_avgs.at<float>(row, col);
+    //         offset_avg.at<float>(row, col) = avg - offset;
+    //     }
+    // }
+    // cv::Mat xyz = this->M * offset_avg;
 
-    row_count = this->ref_data->get_row_count();
-    col_count = this->ref_data->get_col_count();
-    double ref_L;
-    double ref_a;
-    double ref_b;
-    double L;
-    double a;
-    double b;
+    // row_count = this->ref_data->get_row_count();
+    // col_count = this->ref_data->get_col_count();
+    // double ref_L;
+    // double ref_a;
+    // double ref_b;
+    // double L;
+    // double a;
+    // double b;
     
-    // Calculate AVG delta E for all ColorPatches on target
-    // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
-    WhitePoints* wp = this->ref_data->get_white_pts();
-    for (int row = 0; row < row_count; row++) {
-        for (int col = 0; col < col_count; col++) {
-            ref_L = this->ref_data->get_L(row, col);
-            ref_a = this->ref_data->get_a(row, col);
-            ref_b = this->ref_data->get_b(row, col);
+    // // Calculate AVG delta E for all ColorPatches on target
+    // // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
+    // WhitePoints* wp = this->ref_data->get_white_pts();
+    // for (int row = 0; row < row_count; row++) {
+    //     for (int col = 0; col < col_count; col++) {
+    //         ref_L = this->ref_data->get_L(row, col);
+    //         ref_a = this->ref_data->get_a(row, col);
+    //         ref_b = this->ref_data->get_b(row, col);
 
-            int xyz_index = col + row * col_count;
-            double x = (double)xyz.at<float>(0, xyz_index);
-            double y = (double)xyz.at<float>(1, xyz_index);
-            double z = (double)xyz.at<float>(2, xyz_index);
+    //         int xyz_index = col + row * col_count;
+    //         double x = (double)xyz.at<float>(0, xyz_index);
+    //         double y = (double)xyz.at<float>(1, xyz_index);
+    //         double z = (double)xyz.at<float>(2, xyz_index);
 
-            btrgb::XYZ_t xyz = {x, y, z};
-            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+    //         btrgb::XYZ_t xyz = {x, y, z};
+    //         btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
 
-            cmsCIELab lab1(ref_L, ref_a, ref_b);
-            cmsCIELab lab2(lab.L, lab.a, lab.b);
-            double deltaE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
-            return deltaE;
-        }
-    }
+    //         cmsCIELab lab1(ref_L, ref_a, ref_b);
+    //         cmsCIELab lab2(lab.L, lab.a, lab.b);
+    //         double deltaE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+    //         std::cout << "Delta E: " << deltaE << std::endl;
+    //         return deltaE;
+    //     }
+    // }
     
 
     return 5;
@@ -146,7 +167,7 @@ void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int 
     int mat_col_count = row_count * col_count;
     int mat_row_count = channel_count * target_count;
 
-    this->color_patch_avgs = cv::Mat(mat_row_count, mat_col_count, CV_32FC1);
+    this->color_patch_avgs = cv::Mat_<double>(mat_row_count, mat_col_count, CV_32FC1);
     // Iterate over each Target
     for (int target_i = 0; target_i < target_count; target_i++) {
         ColorTarget target = targets[target_i];
@@ -162,7 +183,7 @@ void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int 
                     // Get avg pixel color for current ColorPatch
                     float avg = target.get_patch_avg(target_row, target_col, chan);
                     // Stroe avg value
-                    this->color_patch_avgs.at<float>(mat_row, mat_col) = avg;
+                    this->color_patch_avgs.at<double>(mat_row, mat_col) = (double)avg;
                     std::cout << avg << ",";
                 }
             }
@@ -178,7 +199,7 @@ void ColorManagedCalibrator::build_input_matrix() {
     int row_count = parser.get_line_count()-1;
     std::string header = parser.get_next_line();
     int col_count = parser.count_line_items(header)-1;
-    this->optimization_input = cv::Mat(row_count, col_count, CV_32FC1);
+    this->optimization_input = cv::Mat_<double>(row_count, col_count, CV_64FC1);
     int row = 0;
     std::cout << "matRow: " << this->optimization_input.rows << " matCol: " << this->optimization_input.cols << std::endl;
     while (parser.has_next_line()) {
@@ -190,13 +211,13 @@ void ColorManagedCalibrator::build_input_matrix() {
         while (parser.has_next(line)) {
             float value = 0;
             try {
-                value = parser.get_next<float>(line);
+                value = parser.get_next<double>(line);
             }
             catch (boost::wrapexcept<boost::bad_lexical_cast> e) {
                 std::cerr << "Bad value found in csv file (row: " << row+1 << " col: " << col+1 << std::endl;
             }
             std::cout << "value: " << value << " row: " << row << " col: " << col << std::endl;
-            this->optimization_input.at<float>(row, col++) = value;
+            this->optimization_input.at<double>(row, col++) = value;
         }
         row++;
     }
@@ -223,7 +244,7 @@ void ColorManagedCalibrator::display_matrix(cv::Mat* matrix) {
                 if (col != 0) {
                     std::cout << ", ";
                 }
-                float avg = matrix->at<float>(chan, col);
+                double avg = matrix->at<double>(chan, col);
                 std::cout << avg;
             }
             std::cout << std::endl << std::endl;
@@ -232,4 +253,77 @@ void ColorManagedCalibrator::display_matrix(cv::Mat* matrix) {
     else {
         std::cout << "Matrix not initialized" << std::endl;
     }
+}
+
+DeltaEFunction::DeltaEFunction(cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data){
+    // this->opt_in = opt_in;
+    std::cout << "Initializing DeltaEFunction" << std::endl;
+    this->color_patch_avgs = cp_avgs;
+    this->ref_data = ref_data;
+    int row_count = this->color_patch_avgs->rows;//this->color_patch_avgs.rows;
+    int col_count = this->color_patch_avgs->cols;
+    this->M = M;
+    this->offeset = offeset;
+}
+
+int DeltaEFunction::getDims()const{
+    return 6*5;
+}
+
+double DeltaEFunction::calc(const double* x)const{
+    std::cout << "New Iteration" << std::endl;
+    //this->display_matrix(&this->optimization_input);
+    int row_count = this->color_patch_avgs->rows;//this->color_patch_avgs.rows;
+    int col_count = this->color_patch_avgs->cols;
+    cv::Mat offset_avg(row_count, col_count, CV_32FC1);
+    for (int row = 0; row < row_count; row++) {
+        float offset = this->offeset->at<float>(row);
+        for (int col = 0; col < col_count; col++) {
+            float avg = this->color_patch_avgs->at<float>(row, col);
+            offset_avg.at<float>(row, col) = avg - offset;
+        }
+    }
+    cv::Mat xyz = *this->M * offset_avg;
+
+    row_count = this->ref_data->get_row_count();
+    col_count = this->ref_data->get_col_count();
+    double ref_L;
+    double ref_a;
+    double ref_b;
+    double L;
+    double a;
+    double b;
+    
+    // Calculate AVG delta E for all ColorPatches on target
+    // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
+    WhitePoints* wp = this->ref_data->get_white_pts();
+    double deltaE_sum = 0;
+    for (int row = 0; row < row_count; row++) {
+        for (int col = 0; col < col_count; col++) {
+            ref_L = this->ref_data->get_L(row, col);
+            ref_a = this->ref_data->get_a(row, col);
+            ref_b = this->ref_data->get_b(row, col);
+
+            int xyz_index = col + row * col_count;
+            double x = (double)xyz.at<float>(0, xyz_index);
+            double y = (double)xyz.at<float>(1, xyz_index);
+            double z = (double)xyz.at<float>(2, xyz_index);
+
+            btrgb::XYZ_t xyz = {x, y, z};
+            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+
+            cmsCIELab lab1(ref_L, ref_a, ref_b);
+            cmsCIELab lab2(lab.L, lab.a, lab.b);
+            deltaE_sum += cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+            
+        }
+    }
+    int patch_count = row_count * col_count;
+    double deltaE_avg = deltaE_sum / patch_count;
+    std::cout << "DeltaE: " << deltaE_avg << std::endl;
+    return deltaE_avg;
+}
+
+void DeltaEFunction::getGradient(const double* x, double* grad){
+    std::cout << "GetGradient" << std::endl;
 }

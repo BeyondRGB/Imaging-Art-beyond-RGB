@@ -13,7 +13,13 @@
 #include "utils/color_convertions.hpp"
 #include "reference_data/white_points.hpp"
 
+//typedef double (*minimize_detlaE)(cv::Mat);
+typedef std::function<double(cv::Mat)> MinDeltaE_function;
+
 class ColorManagedCalibrator : public ImgProcessingComponent{
+
+    
+
 public:
     ~ColorManagedCalibrator();
     void execute(CallBackFunction func, btrgb::ArtObject* images) override;
@@ -39,6 +45,22 @@ private:
     
     //void build_input_matrix();
     //void display_avg_matrix(cv::Mat* matrix);
+
+    
+};
+
+class DeltaEFunction: public cv::MinProblemSolver::Function{
+public: 
+    DeltaEFunction(cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data);
+    int getDims() const;
+    double calc(const double* x)const;
+    void getGradient(const double* x, double* grad);
+
+private:
+    cv::Mat* offeset;
+    cv::Mat* M;
+    cv::Mat* color_patch_avgs = nullptr;
+    RefData* ref_data = nullptr;
 };
 
 
