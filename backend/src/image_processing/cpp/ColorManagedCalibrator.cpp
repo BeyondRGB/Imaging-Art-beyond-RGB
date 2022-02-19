@@ -72,6 +72,8 @@ double ColorManagedCalibrator::compute_deltaE(cv::Mat input) {
     double L;
     double a;
     double b;
+    // Calculate AVG delta E for all ColorPatches on target
+    // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
     for (int row = 0; row < row_count; row++) {
         for (int col = 0; col < col_count; col++) {
             ref_L = this->ref_data->get_L(row, col);
