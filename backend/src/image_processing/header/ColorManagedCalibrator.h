@@ -3,12 +3,15 @@
 
 #include <opencv2/core/optim.hpp>
 #include <opencv2/opencv.hpp>
+#include <lcms2.h>
 
 #include "ImageUtil/ColorTarget.hpp"
 #include "utils/csv_parser.hpp"
 #include "ImgProcessingComponent.h"
 #include "reference_data/ref_data_defines.hpp"
 #include "reference_data/ref_data.hpp"
+#include "utils/color_convertions.hpp"
+#include "reference_data/white_points.hpp"
 
 class ColorManagedCalibrator : public ImgProcessingComponent{
 public:

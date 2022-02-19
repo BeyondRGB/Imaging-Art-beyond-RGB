@@ -107,6 +107,13 @@ public:
 	int get_col_count();
 
 	/**
+	 * @brief Get the white pts ptr
+	 * 
+	 * @return WhitePoints* 
+	 */
+	WhitePoints* get_white_pts();
+
+	/**
 	* Ouputs RefData to standard out.
 	* This is used to capture Reference data to verify 
 	* that values are computed correctly

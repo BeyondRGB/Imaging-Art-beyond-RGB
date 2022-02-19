@@ -48,7 +48,8 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
 }
 
 void ColorManagedCalibrator::find_optimization() {
-    this->compute_deltaE(this->color_patch_avgs);
+    double dE = this->compute_deltaE(this->color_patch_avgs);
+    std::cout << "deltaE: " << dE << std::endl;
 }
 
 double ColorManagedCalibrator::compute_deltaE(cv::Mat input) {
@@ -72,8 +73,10 @@ double ColorManagedCalibrator::compute_deltaE(cv::Mat input) {
     double L;
     double a;
     double b;
+    
     // Calculate AVG delta E for all ColorPatches on target
     // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
+    WhitePoints* wp = this->ref_data->get_white_pts();
     for (int row = 0; row < row_count; row++) {
         for (int col = 0; col < col_count; col++) {
             ref_L = this->ref_data->get_L(row, col);
@@ -84,6 +87,14 @@ double ColorManagedCalibrator::compute_deltaE(cv::Mat input) {
             double x = (double)xyz.at<float>(0, xyz_index);
             double y = (double)xyz.at<float>(1, xyz_index);
             double z = (double)xyz.at<float>(2, xyz_index);
+
+            btrgb::XYZ_t xyz = {x, y, z};
+            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+
+            cmsCIELab lab1(ref_L, ref_a, ref_b);
+            cmsCIELab lab2(lab.L, lab.a, lab.b);
+            double deltaE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+            return deltaE;
         }
     }
     
