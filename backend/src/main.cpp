@@ -1,11 +1,13 @@
 
 #include <iostream>
 #include "server/request_server.hpp"
+#include "utils/logger.hpp"
 
 //Testing Includes: Remove before submiting PR
 #include "image_processing/header/ColorManagedCalibrator.h"
 #include <opencv2/opencv.hpp>
 void testFunc() {
+<<<<<<< HEAD
     ColorManagedCalibrator c;
     cv::Mat m1(3, 2, CV_32FC1);
     cv::Mat m2(2, 3, CV_32FC1);
@@ -36,10 +38,14 @@ void testFunc() {
     c.display_matrix(&m2);
     std::cout << "M3" << std::endl;
     c.display_matrix(&m3);
+=======
+    
+>>>>>>> main
 }
 
 
 int main() {
+    Logger::init_logging();
 	bool test = false; // Set to true if you want to test something and bypass the server
 	if (test) {
 		testFunc();
