@@ -50,7 +50,7 @@ int main() {
     Logger::init_logging();
     
     std::cout << "Logging initialized" << std::endl;
-	bool test = true; // Set to true if you want to test something and bypass the server
+	bool test = false; // Set to true if you want to test something and bypass the server
 	if (test) {
 		testFunc();
 		std::cout << "Exit" << std::endl;
