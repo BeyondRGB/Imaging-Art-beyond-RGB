@@ -66,14 +66,13 @@ void CommunicationObj::send_progress(double val, std::string sender){
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_base64(btrgb::Image* image){
+void CommunicationObj::send_base64(btrgb::Image* image, enum output_type type, enum image_quality qual){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBase64");
-	//Commented out to talk about where we are getting the base 64 and image key name
 	jsoncons::json response_data;
-/*	response_data.insert_or_assign("dataURL", "data:image/png;base64," + image->getBase64());
-	response_data.insert_or_assign("name", image->getName());*/
+	response_data.insert_or_assign("dataURL", image->toBase64OfType(type, qual));
+	response_data.insert_or_assign("name", image->getName());
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
@@ -81,15 +80,18 @@ void CommunicationObj::send_base64(btrgb::Image* image){
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_binary(btrgb::Image* image){
+void CommunicationObj::send_binary(btrgb::Image* image, int imID, enum output_type, enum image_quality){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
-	//Commented out to talk about where we are getting the binary ID, image type and image key name
 	jsoncons::json response_data;
-/*	response_data.insert_or_assign("id", image->getID());
+	response_data.insert_or_assign("id", imID);
+	switch(type) {
+			case PNG: response_data.insert_or_assign("type", "png"); break;
+			case WEBP: response_data.insert_or_assign("type", "webp"); break;
+	}
 	response_data.insert_or_assign("type", image->getType());
-	response_data.insert_or_assign("name", image->getName());*/
+	response_data.insert_or_assign("name", image->getName());
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
