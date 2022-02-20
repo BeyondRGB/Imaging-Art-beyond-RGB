@@ -31,7 +31,7 @@ private:
 	websocketpp::frame::opcode::value opcode_m;
 	unsigned long id;
 	//Should be private is temporarily public for testing
-	//void send_msg(std::string msg);
+	void send_msg(std::string msg);
 
 public:
 	CommunicationObj() {};
@@ -41,7 +41,7 @@ public:
 	*/
 	CommunicationObj(const CommunicationObj& other);
 
-	void send_msg(std::string msg);
+	//void send_msg(std::string msg);
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
@@ -51,8 +51,8 @@ public:
 	void send_info(std::string msg, std::string sender);
 	void send_error(std::string msg, std::string sender);
 	void send_progress(double val, std::string sender);
-	void send_base64(btrgb::Image*);
-	void send_binary(btrgb::Image*);
+	void send_base64(btrgb::Image*, enum output_type type, enum image_quality qual);
+	void send_binary(btrgb::Image*, int imID, enum output_type type, enum image_quality qual);
 };
 
 #endif // COMMUNICATION_OBJ_H
