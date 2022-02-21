@@ -4,6 +4,8 @@
 
 #include "comunication_obj.hpp"
 
+unsigned char CommunicationObj::binID = 0;
+
 CommunicationObj::CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg) {
 	server_m = s;
 	connectionHandle_m = hd1;
@@ -81,12 +83,12 @@ void CommunicationObj::send_base64(btrgb::Image* image, enum btrgb::output_type 
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_binary(btrgb::Image* image, int imID, enum btrgb::output_type type, enum btrgb::image_quality qual){
+void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
 	jsoncons::json response_data;
-	response_data.insert_or_assign("id", imID);
+	response_data.insert_or_assign("id", this->binID);
 	switch(type) {
 			case btrgb::PNG: response_data.insert_or_assign("type", "png"); break;
 			case btrgb::WEBP: response_data.insert_or_assign("type", "webp"); break;
@@ -97,5 +99,6 @@ void CommunicationObj::send_binary(btrgb::Image* image, int imID, enum btrgb::ou
 	std::string all_info;
 	info_body.dump(all_info);
 	std::cout<<all_info<<std::endl;
+	this->binID++;
 	send_msg(all_info);
 }
