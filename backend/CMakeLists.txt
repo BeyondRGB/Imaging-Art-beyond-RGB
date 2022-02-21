@@ -16,6 +16,7 @@ find_package(libpng CONFIG REQUIRED)
 find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 FIND_PACKAGE( OpenCV REQUIRED )                              
 INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
+find_package(spdlog CONFIG REQUIRED)
 
 # LCMS is needed for LibRAW. For some reason on 
 # OSX and Linux, this dependency needs to be explicitly
@@ -50,6 +51,7 @@ target_link_libraries(app PRIVATE asio asio::asio)
 target_link_libraries(app PRIVATE jsoncons)
 target_include_directories(app PRIVATE ${CPPCODEC_INCLUDE_DIRS})
 TARGET_LINK_LIBRARIES ( app PRIVATE ${OpenCV_LIBS} )
+target_link_libraries(app PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
 
 
 target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
