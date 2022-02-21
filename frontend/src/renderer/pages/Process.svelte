@@ -16,6 +16,8 @@
   import Layout from "@components/Process/Layout.svelte";
   let tabList;
 
+  let showDialog = false;
+
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
@@ -78,6 +80,16 @@
       sendMessage(JSON.stringify(msg));
     }
   }
+
+  function handleConfirm() {
+    showDialog = false;
+
+    if ($processState.currentTab !== tabs.length - 1) {
+      $processState.currentTab += 1;
+    } else {
+      console.log("Error overflow");
+    }
+  }
 </script>
 
 <main>
@@ -111,13 +123,31 @@
         class="nextBtn">Next: Skip Advanced Options</button
       >
     {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
-      <button on:click={nextTab} class="nextBtn">Confirm</button>
+      <button on:click={() => (showDialog = true)} class="nextBtn"
+        >Confirm</button
+      >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
     {:else}
       <button on:click={nextTab} class="nextBtn">Next</button>
     {/if}
   </botnav>
+
+  <div class={`confirmModal ${showDialog ? "show" : ""}`}>
+    <div class="confirmDialog">
+      <span class="warning">Warning:</span>
+      <p>
+        Are you sure all information is accurate, you will not be able to go
+        back
+      </p>
+      <div class="btnGroup">
+        <button class="cancel" on:click={() => (showDialog = false)}
+          >Cancel</button
+        >
+        <button class="confirm" on:click={handleConfirm}>Confirm</button>
+      </div>
+    </div>
+  </div>
 </main>
 
 <style lang="postcss" local>
@@ -141,9 +171,40 @@
     @apply w-full h-full flex overflow-x-auto;
   }
 
-  div {
-    @apply w-full h-full;
+  .confirmModal {
+    @apply absolute bg-black/25 z-50 items-center justify-center w-full h-full hidden;
   }
+
+  .show {
+    @apply flex;
+  }
+
+  .confirmDialog {
+    @apply bg-gray-600 w-1/2 h-1/3 text-xl rounded-xl p-4 flex flex-col justify-between;
+  }
+
+  .confirmDialog p {
+    @apply bg-gray-800/25 rounded-md flex justify-center p-2;
+  }
+
+  .warning {
+    @apply text-red-400 font-bold text-2xl flex items-center justify-center;
+  }
+
+  .btnGroup {
+    @apply flex justify-end gap-2;
+  }
+
+  .confirm {
+    @apply bg-green-600 hover:bg-green-500 focus:ring-green-600 transition-all;
+  }
+
+  .cancel {
+    @apply bg-gray-500 hover:bg-blue-500/50 focus:ring-green-600 transition-all;
+  }
+  /* div {
+    @apply w-full h-full;
+  } */
   .tab {
     @apply w-16 h-1 rounded-full bg-blue-400 self-center mx-2;
   }
