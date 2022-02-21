@@ -11,7 +11,6 @@
 double lab_f(double x);
 
 btrgb::Lab_t btrgb::xyz_2_Lab(btrgb::XYZ_t xyz, WhitePoints* wp){
-    std::cout << "Converting XYZ->L*a*b*" << std::endl;
     double Xn = wp->get_white_point(WhitePoints::ValueType::Xn);
 	double Yn = wp->get_white_point(WhitePoints::ValueType::Yn);
 	double Zn = wp->get_white_point(WhitePoints::ValueType::Zn);
