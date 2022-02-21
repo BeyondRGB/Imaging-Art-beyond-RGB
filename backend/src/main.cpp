@@ -8,40 +8,40 @@
 #include <opencv2/opencv.hpp>
 #include "reference_data/ref_data.hpp"
 void testFunc() {
-    std::cout << "Main" << std::endl;
-    RefData ref_data("NGT_Reflectance_Data.csv");
-    std::cout << "RefData created outpiting Now" << std::endl;
-    ref_data.output_xyz();
-    // ColorManagedCalibrator c;
-    // cv::Mat m1(3, 2, CV_32FC1);
-    // cv::Mat m2(2, 3, CV_32FC1);
+    // std::cout << "Main" << std::endl;
+    // RefData ref_data("NGT_Reflectance_Data.csv");
+    // std::cout << "RefData created outpiting Now" << std::endl;
+    // ref_data.output_xyz();
+    ColorManagedCalibrator c;
+    cv::Mat_<double> m1(3, 2, CV_32FC1);
+    cv::Mat_<double> m2(2, 3, CV_32FC1);
 
-    // float num = 1;
-    // for (int row = 0; row < m1.rows; row++) {
-    //     for (int col = 0; col < m1.cols; col++) {
-    //         m1.at<float>(row, col) = num;
-    //         num += 1;
-    //     }
-    // }
-    // std::cout << "M1" << std::endl;
-    // c.display_matrix(&m1);
-    // num = 1;
-    // for (int row = 0; row < m2.rows; row++) {
-    //     for (int col = 0; col < m2.cols; col++) {
-    //         m2.at<float>(row, col) = num;
-    //         num += 1;
-    //     }
-    // }
-    // std::cout << "M2" << std::endl;
-    // c.display_matrix(&m2);
+    float num = 1;
+    for (int row = 0; row < m1.rows; row++) {
+        for (int col = 0; col < m1.cols; col++) {
+            m1.at<double>(row, col) = num;
+            num += 1;
+        }
+    }
+    std::cout << "M1" << std::endl;
+    c.display_matrix(&m1, "M1");
+    num = 1;
+    for (int row = 0; row < m2.rows; row++) {
+        for (int col = 0; col < m2.cols; col++) {
+            m2.at<double>(row, col) = num;
+            num += 1;
+        }
+    }
+    std::cout << "M2" << std::endl;
+    c.display_matrix(&m2, "M2");
 
-    // cv::Mat m3 = m1 * m2;// *m2;
-    // std::cout << "M1" << std::endl;
-    // c.display_matrix(&m1);
-    // std::cout << "M2" << std::endl;
-    // c.display_matrix(&m2);
-    // std::cout << "M3" << std::endl;
-    // c.display_matrix(&m3);
+    cv::Mat m3 = m1 * m2;// *m2;
+    std::cout << "M1" << std::endl;
+    c.display_matrix(&m1, "M1");
+    std::cout << "M2" << std::endl;
+    c.display_matrix(&m2, "M2");
+    std::cout << "M3" << std::endl;
+    c.display_matrix(&m3, "M3");
 }
 
 
