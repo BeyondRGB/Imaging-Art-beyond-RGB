@@ -66,12 +66,13 @@ void CommunicationObj::send_progress(double val, std::string sender){
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_base64(btrgb::Image* image, enum output_type type, enum image_quality qual){
+void CommunicationObj::send_base64(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBase64");
 	jsoncons::json response_data;
-	response_data.insert_or_assign("dataURL", image->toBase64OfType(type, qual));
+	btrgb::base64_ptr_t b64 = image->toBase64OfType(type, qual);
+	response_data.insert_or_assign("dataURL", *b64);
 	response_data.insert_or_assign("name", image->getName());
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
@@ -80,17 +81,17 @@ void CommunicationObj::send_base64(btrgb::Image* image, enum output_type type, e
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_binary(btrgb::Image* image, int imID, enum output_type, enum image_quality){
+void CommunicationObj::send_binary(btrgb::Image* image, int imID, enum btrgb::output_type type, enum btrgb::image_quality qual){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
 	jsoncons::json response_data;
 	response_data.insert_or_assign("id", imID);
 	switch(type) {
-			case PNG: response_data.insert_or_assign("type", "png"); break;
-			case WEBP: response_data.insert_or_assign("type", "webp"); break;
+			case btrgb::PNG: response_data.insert_or_assign("type", "png"); break;
+			case btrgb::WEBP: response_data.insert_or_assign("type", "webp"); break;
 	}
-	response_data.insert_or_assign("type", image->getType());
+	//response_data.insert_or_assign("type", image->getType());
 	response_data.insert_or_assign("name", image->getName());
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
