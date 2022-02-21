@@ -50,10 +50,13 @@ void HalfSizePreview::run() {
             im.release();
             std::cout << "scaling done" << std::endl;
 
+            cv::Mat bgr_im;
+            cv::cvtColor(im_scaled, bgr_im, cv::COLOR_RGB2BGR);
+            im_scaled.release();
             std::cout << "writing png..." << std::endl;
             png_binary = new std::vector<uchar>;
-            cv::imencode(".png", im_scaled, *png_binary, png_params);
-            im_scaled.release();
+            cv::imencode(".png", bgr_im, *png_binary, png_params);
+            bgr_im.release();
             std::cout << "wrote png" << std::endl;
             
             std::cout << "writing base64 and response..." << std::endl;
