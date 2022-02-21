@@ -17,16 +17,18 @@ void TiffReaderOpenCV::recycle() {
 
 void TiffReaderOpenCV::open(std::string filename) {
     
-    this->_im = cv::imread(filename);
+    cv::Mat raw_im = cv::imread(filename);
 
-    if(this->_im.data == NULL)
+    if(raw_im.data == NULL)
         throw ReaderFailedToOpenFile();
 
 
-    if(this->_im.depth() != CV_16U) {
+    if(raw_im.depth() != CV_16U) {
         this->recycle();
         throw std::runtime_error("[TiffReaderOpenCV] Only 16 bit tiffs are supported.");
     }
+
+    cv::cvtColor(raw_im, this->_im, cv::COLOR_BGR2RGB);
 
     this->_width = this->_im.cols;
     this->_height = this->_im.rows;
