@@ -84,7 +84,7 @@ void ColorManagedCalibrator::find_optimization() {
     //cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
     std::cout << "Setting function" << std::endl;
     min_solver->setFunction(ptr_F);
-    min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER, 5000, 0.001));
+    //min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER, 5000, 0.001));
     std::cout << "Minimizing" << std::endl;
     double res = min_solver->minimize(this->optimization_input);
 
@@ -241,7 +241,7 @@ double DeltaEFunction::calc(const double* x)const{
         this->opt_in->at<double>(0,i) = val;
     }
     // For Debuging, display M and Offset to ensure that the updates are represented
-    ColorManagedCalibrator m;
+    //ColorManagedCalibrator m;
     m.display_matrix(this->M, "M");
     m.display_matrix(this->offeset, "Offset");
 
@@ -293,7 +293,14 @@ double DeltaEFunction::calc(const double* x)const{
     
     // Compute camera_xyz
     cv::Mat_<double> xyz = *this->M * offset_avg;
-    m.display_matrix(&xyz, "XYZ");
+    // m.display_matrix(&xyz, "XYZ");
+    // for(int row = 0; row < xyz.rows; row++){
+    //     for(int col = 0; col < xyz.cols; col++){
+    //         double scaled_value = xyz.at<double>(row,col) * 100;
+    //         xyz.at<double>(row,col) = scaled_value;
+    //     }
+    // }
+    // m.display_matrix(&xyz, "Scaled XYZ");
 
     // Establish vars for DeltaE calculation
     row_count = this->ref_data->get_row_count();
