@@ -44,10 +44,10 @@ void HalfSizePreview::run() {
             //rsp->append(*b64);
             //rsp->append(R"("}})");
             //this->send_msg(*rsp);
-            //delete rsp; 
+            //delete rsp;
             // ===========[ End REPLACE CODE ]===============
             // ===========[ REPLACEMENT CODE ]===============
-            this->send_base64(*imObj, btrgb::PNG, btrgb::FAST);
+            this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FAST);
             // ===========[ End REPLACEMENT CODE ]===============
 
 

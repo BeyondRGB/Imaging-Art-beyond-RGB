@@ -9,9 +9,9 @@ void Communicator::send_info(std::string reporter, std::string msg) {
 }
 
 //Temporary function for HalfSizePreview
-void Communicator::send_msg(std::string msg){
+/*void Communicator::send_msg(std::string msg){
 	coms_obj_m->send_msg(msg);
-}
+}*/
 
 void Communicator::set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj) {
 	coms_obj_m = coms_obj;

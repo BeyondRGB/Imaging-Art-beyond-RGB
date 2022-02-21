@@ -51,8 +51,8 @@ public:
 	void send_info(std::string msg, std::string sender);
 	void send_error(std::string msg, std::string sender);
 	void send_progress(double val, std::string sender);
-	void send_base64(btrgb::Image*, enum output_type type, enum image_quality qual);
-	void send_binary(btrgb::Image*, int imID, enum output_type type, enum image_quality qual);
+	void send_base64(btrgb::Image*, enum btrgb::output_type type, enum btrgb::image_quality qual);
+	void send_binary(btrgb::Image*, int imID, enum btrgb::output_type type, enum btrgb::image_quality qual);
 };
 
 #endif // COMMUNICATION_OBJ_H

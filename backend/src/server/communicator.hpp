@@ -25,7 +25,7 @@ public:
 	void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj);
 
 	//Temporary Function
-	void send_msg(std::string msg);
+	//void send_msg(std::string msg);
 	/**
 	* Report error
 	* This will print error to
