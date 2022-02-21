@@ -106,8 +106,10 @@ void LibRawReader::copyBitmapTo(void* buffer, uint32_t size) {
     int stride = this->_width * this->_channels;
     int error_code = this->_reader.copy_mem_image(buffer, stride, false);
     
-    if(error_code) 
+    if(error_code) {
+        this->recycle();
         throw std::runtime_error("[LibRawReader] Failed to copy image to buffer.");
+    }
 }
 
 
@@ -121,14 +123,30 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
         default: throw std::runtime_error("[LibRawReader] Internal error.");
     }
 
-    /* Initialize OpenCV Mat if needed. */
-    im.create(_height, _width, CV_MAKETYPE(cv_depth, _channels));
     
     /* Copy LibRaw image data to OpenCV Mat. */
+    cv::Mat raw_im(_height, _width, CV_MAKETYPE(cv_depth, _channels));
     int stride = _width * _channels * (_depth / 8);
-    int error_code = this->_reader.copy_mem_image(im.data, stride, false);
-    if(error_code) 
+    int error_code = this->_reader.copy_mem_image(raw_im.data, stride, false);
+    if(error_code) {
+        this->recycle();
         throw std::runtime_error("[LibRawReader] Failed to copy image to buffer.");
+    }
+    
+            
+    /* Ignore fourth channel if present. */
+    cv::Mat u16_rgb_im;
+    if(raw_im.channels() == 4) {
+        int from_to[] = { 0,0, 1,1, 2,2 };
+        cv::mixChannels( &raw_im, 1, &u16_rgb_im, 1, from_to, 3);
+    } else if( raw_im.channels() == 3 ) {
+        u16_rgb_im = raw_im;
+    } else {
+        this->recycle();
+        throw std::runtime_error("[LibRawReader] Unsupported number of channels." );
+    }
+
+    im = u16_rgb_im;
 
 }
 
