@@ -135,7 +135,7 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
     
             
     /* Ignore fourth channel if present. */
-    cv::Mat u16_rgb_im;
+    cv::Mat u16_rgb_im(_height, _width, CV_MAKETYPE(cv_depth, 3));
     if(raw_im.channels() == 4) {
         int from_to[] = { 0,0, 1,1, 2,2 };
         cv::mixChannels( &raw_im, 1, &u16_rgb_im, 1, from_to, 3);
