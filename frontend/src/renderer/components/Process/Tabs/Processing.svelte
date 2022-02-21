@@ -35,12 +35,12 @@
         },
       ],
       TargetLocation: {
-        top: $processState.artStacks[0].colorTarget.top,
-        left: $processState.artStacks[0].colorTarget.left,
-        bottom: $processState.artStacks[0].colorTarget.bottom,
-        right: $processState.artStacks[0].colorTarget.right,
-        cols: $processState.artStacks[0].colorTarget.cols,
-        rows: $processState.artStacks[0].colorTarget.rows,
+        top: $processState.artStacks[0].colorTargets[0]?.top,
+        left: $processState.artStacks[0].colorTargets[0]?.left,
+        bottom: $processState.artStacks[0].colorTargets[0]?.bottom,
+        right: $processState.artStacks[0].colorTargets[0]?.right,
+        cols: $processState.artStacks[0].colorTargets[0]?.cols,
+        rows: $processState.artStacks[0].colorTargets[0]?.rows,
       },
       RefData: {
         RefData: "NGT_Reflectance_Data.csv",

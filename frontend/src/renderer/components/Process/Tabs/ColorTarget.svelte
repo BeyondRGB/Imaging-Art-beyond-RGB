@@ -1,104 +1,132 @@
 <script>
-  let rows;
-  let cols;
-
   import { currentPage, processState } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
-  import SelectBtn from "@components/SelectBtn.svelte";
-  import Loader from "@root/components/Loader.svelte";
-  import { draggable } from "svelte-drag";
-  import { bullhorn } from "svelte-awesome/icons";
-  let currentPos;
   function update() {
-    if (currentPos) {
-      $processState.artStacks[0].colorTarget.top = currentPos.top;
-      $processState.artStacks[0].colorTarget.left = currentPos.left;
-      $processState.artStacks[0].colorTarget.bottom = currentPos.bottom;
-      $processState.artStacks[0].colorTarget.right = currentPos.right;
-      $processState.artStacks[0].colorTarget.rows = rows;
-      $processState.artStacks[0].colorTarget.cols = cols;
+    if (colorTarget?.currentPos) {
+      $processState.artStacks[0].colorTargets[0].top =
+        colorTarget.currentPos.top;
+      $processState.artStacks[0].colorTargets[0].left =
+        colorTarget.currentPos.left;
+      $processState.artStacks[0].colorTargets[0].bottom =
+        colorTarget.currentPos.bottom;
+      $processState.artStacks[0].colorTargets[0].right =
+        colorTarget.currentPos.right;
+      $processState.artStacks[0].colorTargets[0].rows = colorTarget.rows;
+      $processState.artStacks[0].colorTargets[0].cols = colorTarget.cols;
     }
   }
 
-  let colorTargets = [
-    {
-      name: "Color Target",
-      rows,
-      cols,
-      refData: null,
-      color: "",
-    },
-  ];
+  $: if ($processState.currentTab === 5) {
+    console.log("Update");
+    update();
+  }
+
+  let colorTarget;
+  let verifyTarget;
 
   function addTarget() {
-    colorTargets = [
-      ...colorTargets,
-      {
-        name: "Verification Target",
-        rows,
-        cols,
+    if (!colorTarget) {
+      colorTarget = {
+        name: "Color Target",
+        currentPos: {},
+        rows: 10,
+        cols: 10,
         refData: null,
-        color: "",
-      },
-    ];
+        color: 50,
+      };
+      $processState.artStacks[0].colorTargets[0] = {
+        top: 0.25,
+        left: 0.25,
+        bottom: 0.5,
+        right: 0.5,
+        cols: 10,
+        rows: 10,
+      };
+    } else if (!verifyTarget) {
+      verifyTarget = {
+        name: "Verification Target",
+        currentPos: {},
+        rows: 10,
+        cols: 10,
+        refData: null,
+        color: 100,
+      };
+      $processState.artStacks[0].colorTargets[1] = {
+        top: 0.25,
+        left: 0.25,
+        bottom: 0.5,
+        right: 0.5,
+        cols: 10,
+        rows: 10,
+      };
+    }
   }
 
-  $: if (colorTargets[0].color) {
-    let root = document.documentElement;
-    root.style.setProperty("--color_hue", `${colorTargets[0].color}`);
+  function removeTarget(id) {
+    console.log("Remove");
+    if (id === 0) {
+      console.log("Removeing Color Target");
+      colorTarget = null;
+    } else if (id === 1) {
+      console.log("Removeing Verify Target");
+      verifyTarget = null;
+    }
   }
 
-  $: if (colorTargets[1]) {
+  $: if (colorTarget) {
     let root = document.documentElement;
-    root.style.setProperty("--verfiy_hue", `${colorTargets[1].color}`);
+    root.style.setProperty("--color_hue", `${colorTarget.color}`);
   }
+
+  $: if (verifyTarget) {
+    let root = document.documentElement;
+    root.style.setProperty("--verfiy_hue", `${verifyTarget}`);
+  }
+  $: console.log($processState.artStacks[0].colorTargets);
+
+  $: console.log([colorTarget, verifyTarget]);
 </script>
 
 <main>
-  <!-- <img src="placeholder.jpg" alt="background image" /> -->
   <div class="left">
-    <ColorTargetViewer
-      bind:rows={colorTargets[0].rows}
-      bind:cols={colorTargets[0].cols}
-      bind:currentPos
-      bind:hue={colorTargets[0].color}
-    />
+    <ColorTargetViewer bind:colorTarget bind:verifyTarget />
   </div>
   <div class="right">
     <div class="cardBox">
-      {#each colorTargets as target, i}
-        <div class={`card ${i === 0 ? "colorTarget" : "verificationTarget"}`}>
-          <h2>{target.name}</h2>
-          <div class="rowcol">
-            <div class="inputGroup">
-              <span>Rows</span>
-              <input placeholder="1..26 [a-z]" bind:value={target.rows} />
+      {#each [colorTarget, verifyTarget] as target, i}
+        {#if target}
+          <div class={`card ${i === 0 ? "colorTarget" : "verificationTarget"}`}>
+            <h2>{target.name}</h2>
+            <div class="rowcol">
+              <div class="inputGroup">
+                <span>Rows</span>
+                <input
+                  placeholder="1..26 [a-z]"
+                  type="number"
+                  bind:value={target.rows}
+                />
+              </div>
+              <span class="times">x</span>
+              <div class="inputGroup">
+                <span>Cols</span>
+                <input
+                  placeholder="1..26 [a-z]"
+                  type="number"
+                  bind:value={target.cols}
+                />
+              </div>
             </div>
-            <span class="times">x</span>
-            <div class="inputGroup">
-              <span>Cols</span>
-              <input placeholder="1..26 [a-z]" bind:value={target.cols} />
+            <div class="extra">
+              <button>RefData</button>
+              <input type="range" bind:value={target.color} max="360" />
+              {target.color}
             </div>
+            <button class="close" on:click={() => removeTarget(i)}>X</button>
           </div>
-          <div class="extra">
-            <button>RefData</button>
-            <input type="range" bind:value={target.color} max="360" />
-            {target.color}
-          </div>
-        </div>
+        {/if}
       {/each}
-      <button on:click={() => addTarget()}>+</button>
+      <button class="addTarget" on:click={() => addTarget()}>+</button>
     </div>
-
-    <!-- <button on:click={() => update()}>SAVE TARGET INFO</button>
-    <p>
-      top: {$processState.artStacks[0].colorTarget.top.toFixed(4)} | left: {$processState.artStacks[0].colorTarget.left.toFixed(
-        4
-      )} | bottom:
-      {$processState.artStacks[0].colorTarget.bottom.toFixed(4)} | right: {$processState.artStacks[0].colorTarget.right.toFixed(
-        4
-      )}
-    </p> -->
   </div>
 </main>
 
@@ -121,11 +149,11 @@
   }
 
   .cardBox {
-    @apply bg-gray-800 w-full m-6 p-2 gap-2;
+    @apply bg-gray-800 w-full m-6 p-2 gap-2 flex flex-col items-center;
   }
 
   .card {
-    @apply rounded-lg w-full min-h-[4rem] p-4 flex flex-col gap-1;
+    @apply rounded-lg w-full min-h-[4rem] p-4 flex flex-col gap-1 relative;
   }
 
   .colorTarget {
@@ -142,6 +170,10 @@
 
   .rowcol {
     @apply flex justify-between items-center;
+  }
+
+  .addTarget {
+    @apply bg-green-500 w-full h-12;
   }
 
   .rowcol input {
@@ -162,5 +194,10 @@
   }
   .times {
     @apply text-xl;
+  }
+
+  .close {
+    @apply absolute top-0 right-0 bg-transparent text-white
+            hover:bg-red-600/50 hover:text-red-300;
   }
 </style>
