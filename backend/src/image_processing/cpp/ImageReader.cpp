@@ -47,6 +47,8 @@ void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
             if(raw_im.depth() != CV_16U)
                 throw std::runtime_error(" Image must be 16 bit." );
 
+
+            /* Find bit depth if image is white field #1. */
             if(key == "white1") {
                 bit_depth = util.get_bit_depth(
                     (uint16_t*) raw_im.data,    
@@ -58,11 +60,12 @@ void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
                     throw std::runtime_error(" Bit depth detection of 'white1' failed." );
             }
 
+            /* Convert to floating point. */
             cv::Mat float_im;
             raw_im.convertTo(float_im, CV_32F, 1.0/0xFFFF);
 
+            /* Init btrgb::Image object. */
             im->initImage(float_im);
-
 
         }
         catch(const btrgb::ReaderFailedToOpenFile& e) {
@@ -80,6 +83,7 @@ void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     for(const auto& [key, im] : *images) {
         im->_raw_bit_depth = bit_depth;
+        images->outputImageAs(btrgb::TIFF, key, key + "_raw");
     }
 
 }
