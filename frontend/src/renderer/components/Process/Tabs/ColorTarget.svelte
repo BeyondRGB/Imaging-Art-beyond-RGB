@@ -1,6 +1,9 @@
 <script>
   import { currentPage, processState } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
+  import { flip } from "svelte/animate";
+  import Page from "@root/components/Page.svelte";
+
   function update() {
     if (colorTarget?.currentPos) {
       $processState.artStacks[0].colorTargets[0].top =
@@ -33,6 +36,7 @@
         cols: 10,
         refData: null,
         color: 50,
+        size: 0.3,
       };
       $processState.artStacks[0].colorTargets[0] = {
         top: 0.25,
@@ -41,6 +45,7 @@
         right: 0.5,
         cols: 10,
         rows: 10,
+        size: 0.3,
       };
     } else if (!verifyTarget) {
       verifyTarget = {
@@ -50,6 +55,7 @@
         cols: 10,
         refData: null,
         color: 100,
+        size: 0.3,
       };
       $processState.artStacks[0].colorTargets[1] = {
         top: 0.25,
@@ -58,6 +64,7 @@
         right: 0.5,
         cols: 10,
         rows: 10,
+        size: 0.3,
       };
     }
   }
@@ -85,6 +92,19 @@
   $: console.log($processState.artStacks[0].colorTargets);
 
   $: console.log([colorTarget, verifyTarget]);
+
+  let targetArray;
+  $: {
+    targetArray = [];
+    if (colorTarget) {
+      targetArray = [colorTarget];
+    }
+    if (verifyTarget) {
+      targetArray = [...targetArray, verifyTarget];
+    }
+  }
+
+  $: console.log(targetArray);
 </script>
 
 <main>
@@ -93,37 +113,40 @@
   </div>
   <div class="right">
     <div class="cardBox">
-      {#each [colorTarget, verifyTarget] as target, i}
-        {#if target}
-          <div class={`card ${i === 0 ? "colorTarget" : "verificationTarget"}`}>
-            <h2>{target.name}</h2>
-            <div class="rowcol">
-              <div class="inputGroup">
-                <span>Rows</span>
-                <input
-                  placeholder="1..26 [a-z]"
-                  type="number"
-                  bind:value={target.rows}
-                />
-              </div>
-              <span class="times">x</span>
-              <div class="inputGroup">
-                <span>Cols</span>
-                <input
-                  placeholder="1..26 [a-z]"
-                  type="number"
-                  bind:value={target.cols}
-                />
-              </div>
+      {#each targetArray as target, i (target)}
+        <div
+          animate:flip={{ duration: 250 }}
+          class={`card ${i === 0 ? "colorTarget" : "verificationTarget"}`}
+        >
+          <h2>{target.name}</h2>
+          <div class="rowcol">
+            <div class="inputGroup">
+              <span>Rows</span>
+              <input
+                placeholder="1..26 [a-z]"
+                type="number"
+                bind:value={target.rows}
+              />
             </div>
-            <div class="extra">
-              <button>RefData</button>
-              <input type="range" bind:value={target.color} max="360" />
-              {target.color}
+            <span class="times">x</span>
+            <div class="inputGroup">
+              <span>Cols</span>
+              <input
+                placeholder="1..26 [a-z]"
+                type="number"
+                bind:value={target.cols}
+              />
             </div>
-            <button class="close" on:click={() => removeTarget(i)}>X</button>
           </div>
-        {/if}
+          <div class="extra">
+            <button>RefData</button>
+            <input type="range" bind:value={target.color} max="360" />
+            {target.color}
+            <input type="range" bind:value={target.size} max="1" step=".01" />
+            {Math.round(target.size * 100)}%
+          </div>
+          <button class="close" on:click={() => removeTarget(i)}>X</button>
+        </div>
       {/each}
       <button class="addTarget" on:click={() => addTarget()}>+</button>
     </div>

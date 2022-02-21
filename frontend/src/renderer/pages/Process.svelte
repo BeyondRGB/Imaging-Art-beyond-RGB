@@ -180,7 +180,7 @@
   }
 
   .confirmDialog {
-    @apply bg-gray-600 w-1/2 h-1/3 text-xl rounded-xl p-4 flex flex-col justify-between;
+    @apply bg-gray-700 w-1/2 h-1/3 text-xl rounded-xl p-4 flex flex-col justify-between;
   }
 
   .confirmDialog p {
@@ -188,7 +188,7 @@
   }
 
   .warning {
-    @apply text-red-400 font-bold text-2xl flex items-center justify-center;
+    @apply text-red-500 font-bold text-2xl flex items-center justify-center;
   }
 
   .btnGroup {
