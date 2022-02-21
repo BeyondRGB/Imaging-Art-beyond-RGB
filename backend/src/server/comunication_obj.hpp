@@ -33,6 +33,7 @@ private:
 	static unsigned char binID;
 	//Should be private is temporarily public for testing
 	void send_msg(std::string msg);
+	void send_bin(std::vector<uchar>& v);
 
 public:
 	CommunicationObj() {};

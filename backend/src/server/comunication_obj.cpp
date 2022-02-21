@@ -22,6 +22,12 @@ void CommunicationObj::send_msg(std::string msg) {
 	server_m->send(connectionHandle_m, msg, opcode_m);
 }
 
+void CommunicationObj::send_bin(std::vector<uchar>& v){
+	const void* binToSend = (void*)v.data();
+	//Need to find out how to send bin without this send, since it needs a string for what it is sending
+	server_m->send(connectionHandle_m, binToSend, websocketpp::frame::opcode::binary);
+}
+
 void CommunicationObj::set_id(long newID){
 	id = newID;
 }
@@ -93,7 +99,6 @@ void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type 
 			case btrgb::PNG: response_data.insert_or_assign("type", "png"); break;
 			case btrgb::WEBP: response_data.insert_or_assign("type", "webp"); break;
 	}
-	//response_data.insert_or_assign("type", image->getType());
 	response_data.insert_or_assign("name", image->getName());
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
@@ -101,4 +106,6 @@ void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type 
 	std::cout<<all_info<<std::endl;
 	this->binID++;
 	send_msg(all_info);
+	btrgb::binary_ptr_t bin = image->toBinaryOfType(type, qual);
+	send_bin(*bin);
 }
