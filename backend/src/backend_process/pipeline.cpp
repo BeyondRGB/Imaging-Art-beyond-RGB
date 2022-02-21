@@ -111,9 +111,9 @@ void Pipeline::run() {
     }
 
 
-    for(const auto& [name, img]: *images) {
-        images->outputImageAs(btrgb::TIFF, name, name);
-    }
+    /*for(const auto& [name, img]: *images) {
+        images->outputImageAs(btrgb::TIFF, name, name + "_final");
+    }*/
 
     delete images;
 
