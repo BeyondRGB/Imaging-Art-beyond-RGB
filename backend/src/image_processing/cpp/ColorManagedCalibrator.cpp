@@ -48,6 +48,8 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
 
     this->build_target_avg_matrix(targets, target_count, channel_count);
     this->display_matrix(&this->color_patch_avgs, "ColorPatch Avgs");
+    
+    this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
 
     this->build_input_matrix();
 
@@ -74,25 +76,41 @@ void ColorManagedCalibrator::find_optimization() {
     //          and the return value of calc() is the average DeltaE
     // The MinProblemSolver will provide new values for the InputArray
     // and try to minimize deltaE
+    
+
     cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new DeltaEFunction(
-        &this->optimization_input, &this->color_patch_avgs, &this->offest, &this->M, this->ref_data
+        &this->optimization_input, 
+        &this->color_patch_avgs, 
+        &this->offest, 
+        &this->M, 
+        this->ref_data, 
+        &this->deltaE_values
     ));
     // ptr_F->calc(&this->optimization_input.data.db);
     
     std::cout << "Creating Solver" << std::endl;
-    cv::Ptr<cv::ConjGradSolver> min_solver = cv::ConjGradSolver::create();
-    //cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
+    //cv::Ptr<cv::ConjGradSolver> min_solver = cv::ConjGradSolver::create();
+    cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
     std::cout << "Setting function" << std::endl;
     min_solver->setFunction(ptr_F);
-    //min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER, 5000, 0.001));
+    cv::Mat step = (cv::Mat_<double>(1,24)<<
+                            /*M*/       1.75,1.75,1.75,1.75,1.75,1.75,
+                            /*M*/       1.75,1.75,1.75,1.75,1.75,1.75,
+                            /*M*/       1.75,1.75,1.75,1.75,1.75,1.75,
+                            /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01);
+                                
+    min_solver->setInitStep(step);
+    min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50000, 1e-10));
     std::cout << "Minimizing" << std::endl;
     double res = min_solver->minimize(this->optimization_input);
+
 
     std::cout << "Resulting DeltaE: " << res << std::endl;
     std::cout << "Resulting M" << std::endl;
     this->display_matrix(&this->M, "M");
     std::cout << "Resulting offset" << std::endl;
     this->display_matrix(&this->offest, "offset");
+    this->display_matrix(&this->deltaE_values, "DelE Values");
 }
 
 ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::Image* im) {
@@ -168,7 +186,7 @@ void ColorManagedCalibrator::build_input_matrix() {
     *  M,1.25,0.25,0.25,0.1,0.1,0.1
     *  M,0.25,1.15,-0.1,0.1,0.1,0.1
     *  M,-0.25,-0.25,1.5,0.1,0.1,0.1
-    *  offset,0.01,0.01,0.01,0.01,0.01,0.01
+    *  offset,0.1,0.01,0.01,0.01,0.01,0.01
     * 
     * All values will be stored in the InputArray and Matrix Headers will be created for M, and Offset
     * Thes headers will point to the values in the InputArray and will simply represent that data in a different format
@@ -216,7 +234,7 @@ void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
     }
 }
 
-DeltaEFunction::DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data){
+DeltaEFunction::DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data, cv::Mat* delE_values){
     // this->opt_in = opt_in;
     std::cout << "Initializing DeltaEFunction" << std::endl;
     this->opt_in = opt_in;
@@ -226,6 +244,7 @@ DeltaEFunction::DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offes
     // int col_count = this->color_patch_avgs->cols;
     this->M = M;
     this->offeset = offeset;
+    this->delE_values = delE_values;
 }
 
 int DeltaEFunction::getDims()const{
@@ -241,9 +260,9 @@ double DeltaEFunction::calc(const double* x)const{
         this->opt_in->at<double>(0,i) = val;
     }
     // For Debuging, display M and Offset to ensure that the updates are represented
-    //ColorManagedCalibrator m;
-    m.display_matrix(this->M, "M");
-    m.display_matrix(this->offeset, "Offset");
+     ColorManagedCalibrator m;
+    // m.display_matrix(this->M, "M");
+    // m.display_matrix(this->offeset, "Offset");
 
     /**
     * Befor we can comput DeltaE we need to comput the x,y,z values fro each color patch
@@ -324,10 +343,11 @@ double DeltaEFunction::calc(const double* x)const{
             ref_b = this->ref_data->get_b(row, col);
 
             // Extract current camera_(x,y,z)
+            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
             int xyz_index = col + row * col_count;
-            double x = xyz.at<double>(0, xyz_index);
-            double y = xyz.at<double>(1, xyz_index);
-            double z = xyz.at<double>(2, xyz_index);
+            double x = 100 * xyz.at<double>(0, xyz_index);
+            double y = 100 * xyz.at<double>(1, xyz_index);
+            double z = 100 * xyz.at<double>(2, xyz_index);
             // Convert camera_(x,y,z) to camera_(L*,a*,b*)
             btrgb::XYZ_t xyz = {x, y, z};
             btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
@@ -335,17 +355,26 @@ double DeltaEFunction::calc(const double* x)const{
             // Calculate deltaE and add to sum
             cmsCIELab lab1(ref_L, ref_a, ref_b);
             cmsCIELab lab2(lab.L, lab.a, lab.b);
-            deltaE_sum += cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+            double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+            //std::cout << "Adding(" << col << "," << row<< " ): " << delE << std::endl;
+            // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
+            this->delE_values->at<double>(row,col) = delE;
+            deltaE_sum += delE;
+           // enter_to_continue();
             
         }
     }
     
+    
+
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
     
-    std::cout << "DeltaE: " << deltaE_avg << std::endl;
-    enter_to_continue();
+    // if(deltaE_avg < 1.35)
+    //     m.display_matrix(this->delE_values, "delE_Values update");
+    //std::cout << "DeltaE: " << deltaE_avg << std::endl;
+    //enter_to_continue();
     return deltaE_avg;
 }
 

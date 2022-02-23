@@ -35,6 +35,7 @@ private:
     cv::Mat optimization_input;
     cv::Mat M;
     cv::Mat offest;
+    cv::Mat deltaE_values;
     RefData* ref_data;
 
 
@@ -51,7 +52,7 @@ private:
 
 class DeltaEFunction: public cv::MinProblemSolver::Function{
 public: 
-    DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data);
+    DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data, cv::Mat* delE_values);
     int getDims() const;
     double calc(const double* x)const;
     //void getGradient(const double* x, double* grad);
@@ -61,6 +62,7 @@ private:
     cv::Mat* offeset;
     cv::Mat* M;
     cv::Mat* color_patch_avgs = nullptr;
+    cv::Mat* delE_values;
     RefData* ref_data = nullptr;
 };
 
