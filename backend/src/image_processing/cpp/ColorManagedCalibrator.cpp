@@ -47,17 +47,42 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     int target_count = std::size(targets);
 
     this->build_target_avg_matrix(targets, target_count, channel_count);
-    this->display_matrix(&this->color_patch_avgs, "ColorPatch Avgs");
+    //this->display_matrix(&this->color_patch_avgs, "ColorPatch Avgs");
     
     this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
+    
+    int run = 0;
+    for(int i = 1; i <= 2; i++){
+            this->mid = i;
+        for(int j = 1; j <= 3; j++){
+            run++;
+            if(j == 1)
+                this->stp = 1.75;
+            if(j == 2)
+                this->stp = 0.75;
+            if(j == 3)
+                this->stp = 0.5;
+            if(this->mid == 2)
+                    std::cout << "Run " << run << "(Modified M, Step:"<< stp << ")" << std::endl << std::endl;
+            else
+                std::cout << "Run " << run << "(Step:"<< stp << ")" << std::endl << std::endl;
 
-    this->build_input_matrix();
+            
+            this->build_input_matrix();
 
-    this->display_matrix(&this->optimization_input, "InputArray");
-    this->display_matrix(&this->M, "M");
-    this->display_matrix(&this->offest, "Offset");
+            // this->display_matrix(&this->optimization_input, "InputArray");
+            // this->display_matrix(&this->M, "M");
+            // this->display_matrix(&this->offest, "Offset");
+            
+            std::cout << "************************************\n\tInitial Input Values\n************************************" << std::endl;
+            // this->display_matrix(&this->optimization_input, "InputArray");
+            // this->display_matrix(&opt_as_2d, "InputArray 2d representation");
+            this->display_matrix(&this->M, "Innitial M");
+            this->display_matrix(&this->offest, "Innitial Offset");
 
-    this->find_optimization();
+            this->find_optimization();
+        }
+    }
     
 
 }
@@ -93,24 +118,53 @@ void ColorManagedCalibrator::find_optimization() {
     cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
     std::cout << "Setting function" << std::endl;
     min_solver->setFunction(ptr_F);
-    cv::Mat step = (cv::Mat_<double>(1,24)<<
+
+    cv::Mat step;
+
+    if(this->stp == 1.75){
+    step = (cv::Mat_<double>(1,24)<<
                             /*M*/       1.75,1.75,1.75,1.75,1.75,1.75,
                             /*M*/       1.75,1.75,1.75,1.75,1.75,1.75,
                             /*M*/       1.75,1.75,1.75,1.75,1.75,1.75,
                             /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01);
+    }
+
+    if(this->stp == 0.75){
+    step = (cv::Mat_<double>(1,24)<<
+                            /*M*/       0.75,0.75,0.75,0.75,0.75,0.75,
+                            /*M*/       0.75,0.75,0.75,0.75,0.75,0.75,
+                            /*M*/       0.75,0.75,0.75,0.75,0.75,0.75,
+                            /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01);
+    }
+
+    if(this->stp == 0.5){
+    step = (cv::Mat_<double>(1,24)<<
+                            /*M*/       0.5,0.5,0.5,0.5,0.5,0.5,
+                            /*M*/       0.5,0.5,0.5,0.5,0.5,0.5,
+                            /*M*/       0.5,0.5,0.5,0.5,0.5,0.5,
+                            /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01);
+    }
+
+    cv::Mat step_2d = cv::Mat(step).reshape(0, 4);
+    this->display_matrix(&step_2d, "Step");
                                 
     min_solver->setInitStep(step);
     min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50000, 1e-10));
-    std::cout << "Minimizing" << std::endl;
+    //std::cout << "Minimizing" << std::endl;
     double res = min_solver->minimize(this->optimization_input);
 
 
-    std::cout << "Resulting DeltaE: " << res << std::endl;
-    std::cout << "Resulting M" << std::endl;
+    
+    std::cout << "**********************\n\tResults\n**********************" << std::endl;
     this->display_matrix(&this->M, "M");
-    std::cout << "Resulting offset" << std::endl;
+    //std::cout << "Resulting offset" << std::endl;
     this->display_matrix(&this->offest, "offset");
     this->display_matrix(&this->deltaE_values, "DelE Values");
+    cv::Ptr<DeltaEFunction> def = ptr_F.staticCast<DeltaEFunction>();
+    std::cout << "Resulting DeltaE: " << res << std::endl;
+    std::cout << "Itteration Count: " << def->get_itteration_count() << std::endl;
+    std::cout << "\n*********************************************************************************************************************" << std::endl;
+
 }
 
 ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::Image* im) {
@@ -163,10 +217,10 @@ void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int 
                     float avg = target.get_patch_avg(target_row, target_col, chan);
                     // Stroe avg value
                     this->color_patch_avgs.at<double>(mat_row, mat_col) = (double)avg;
-                    std::cout << avg << ",";
+                    //std::cout << avg << ",";
                 }
             }
-            std::cout << std::endl << std::endl;
+            //std::cout << std::endl << std::endl;
         }
     }
 }
@@ -192,12 +246,24 @@ void ColorManagedCalibrator::build_input_matrix() {
     * Thes headers will point to the values in the InputArray and will simply represent that data in a different format
     * An change in the this->optimazation_input will be represented in M and Offset
     */
+
+   if(this->mid == 1){
     this->optimization_input = (cv::Mat_<double>(1,item_count)<<
                             /*M*/       1.25,0.25,0.25,0.1,0.1,0.1,
                             /*M*/       0.25,1.15,-0.1,0.1,0.1,0.1,
                             /*M*/       -0.25,-0.25,1.5,0.1,0.1,0.1,
                             /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01
                                 );
+   }
+
+    if(this->mid == 2){
+    this->optimization_input = (cv::Mat_<double>(1,item_count)<<
+                            /*M*/       0.1, 0.1, 0.25, 0.5, 0.1, 0.1,
+                            /*M*/       0.1, 0.1, 0.25, 0.1, 1.0, 0.1,
+                            /*M*/       0.1, 0.1, 0.25, 0.1, 0.1, 0.5,
+                            /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01
+                                );
+    }
      
     // Create Matrix Header to Represents the 1d InputArray as a 2d Matrix for easy extraction of M and offset
     cv::Mat opt_as_2d = cv::Mat(this->optimization_input).reshape(0, row_count);
@@ -208,10 +274,7 @@ void ColorManagedCalibrator::build_input_matrix() {
 
     //std::cout << "row_count: " << row_count << " col_count: " << col_count << std::endl;
     
-    this->display_matrix(&this->optimization_input, "InputArray");
-    this->display_matrix(&opt_as_2d, "InputArray 2d representation");
-    this->display_matrix(&this->M, "M");
-    this->display_matrix(&this->offest, "Offset");
+    
 }
 
 void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
@@ -226,7 +289,7 @@ void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
                 double avg = matrix->at<double>(chan, col);
                 std::cout << avg;
             }
-            std::cout << std::endl << std::endl;
+            std::cout << std::endl;// << std::endl;
         }
     }
     else {
@@ -234,6 +297,11 @@ void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
     }
 }
 
+
+
+
+
+int DeltaEFunction::itteration_count = 0;
 DeltaEFunction::DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data, cv::Mat* delE_values){
     // this->opt_in = opt_in;
     std::cout << "Initializing DeltaEFunction" << std::endl;
@@ -254,6 +322,8 @@ int DeltaEFunction::getDims()const{
 }
 
 double DeltaEFunction::calc(const double* x)const{
+    this->itteration_count++;
+
     // Update what is in opt_in whit whats passed in for the InputArray
     for(int i = 0; i < this->opt_in->cols; i++){
         double val = x[i];
