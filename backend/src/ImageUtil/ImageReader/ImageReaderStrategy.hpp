@@ -27,6 +27,7 @@ class ImageReaderStrategy {
         int _height = -1;
         int _channels = -1;
         int _depth = -1;
+        bool _is_open = false;
 
 };
 
