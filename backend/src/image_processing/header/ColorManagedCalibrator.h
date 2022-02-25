@@ -37,12 +37,16 @@ private:
     cv::Mat offest;
     cv::Mat deltaE_values;
     RefData* ref_data;
+    
+    double stp;
+    int mid;
 
 
 
     ColorTarget get_target(btrgb::ArtObject* images, btrgb::Image* im);
     void build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count);
     void find_optimization();
+
     
     //void build_input_matrix();
     //void display_avg_matrix(cv::Mat* matrix);
@@ -57,6 +61,7 @@ public:
     double calc(const double* x)const;
     //void getGradient(const double* x, double* grad);
     void crop_input(const double* x);
+    int get_itteration_count(){ return this->itteration_count; }
 private:
     cv::Mat* opt_in;
     cv::Mat* offeset;
@@ -64,6 +69,7 @@ private:
     cv::Mat* color_patch_avgs = nullptr;
     cv::Mat* delE_values;
     RefData* ref_data = nullptr;
+    static int itteration_count;
 };
 
 
