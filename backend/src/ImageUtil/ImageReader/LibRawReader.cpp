@@ -64,6 +64,10 @@ void LibRawReader::_configLibRawParams() {
 
     /* Use raw color space. */
     opt->output_color = 0;
+
+    /* Use raw speed. */
+    opt->use_rawspeed = 1;
+
 }
 
 
@@ -103,7 +107,7 @@ void LibRawReader::copyBitmapTo(void* buffer, uint32_t size) {
     if( size < _width * _height * _channels * (_depth / 8) )
         throw std::logic_error("[LibRawReader] Buffer size is too small.");
     
-    int stride = this->_width * this->_channels;
+    int stride = this->_width * this->_channels * (_depth / 8);
     int error_code = this->_reader.copy_mem_image(buffer, stride, false);
     
     if(error_code) {
@@ -136,15 +140,29 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
             
     /* Ignore fourth channel if present. */
     cv::Mat u16_rgb_im(_height, _width, CV_MAKETYPE(cv_depth, 3));
+    std::cout << "==========================================" << std::endl;
     if(raw_im.channels() == 4) {
+        std::cout << "|| LibRAW returned four channels, discarding the last channel." << std::endl;
         int from_to[] = { 0,0, 1,1, 2,2 };
         cv::mixChannels( &raw_im, 1, &u16_rgb_im, 1, from_to, 3);
     } else if( raw_im.channels() == 3 ) {
+        std::cout << "|| LibRAW returned three channels." << std::endl;
         u16_rgb_im = raw_im;
     } else {
         this->recycle();
         throw std::runtime_error("[LibRawReader] Unsupported number of channels." );
     }
+
+
+    if(this->_reader.imgdata.progress_flags & LIBRAW_PROGRESS_INTERPOLATE) {
+        std::cout << "Interpolated image" << std::endl;
+    }
+    else {
+        std::cout << "Did not interpolate image" << std::endl;
+    }
+
+
+    std::cout << "==========================================" << std::endl;
 
     im = u16_rgb_im;
 
