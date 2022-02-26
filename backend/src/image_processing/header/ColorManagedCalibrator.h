@@ -4,6 +4,7 @@
 #include <opencv2/core/optim.hpp>
 #include <opencv2/opencv.hpp>
 #include <lcms2.h>
+#include <math.h>
 
 #include "ImageUtil/ColorTarget.hpp"
 #include "utils/csv_parser.hpp"
@@ -16,17 +17,24 @@
 
 typedef std::function<double(cv::Mat)> MinDeltaE_function;
 
+
+
 class ColorManagedCalibrator : public ImgProcessingComponent{
 
-    
-
 public:
+enum ColorSpace{
+    Adobe_RGB_1998, ProPhoto, sRGB, Wide_Gamut_RGB
+}; 
+
+
     ~ColorManagedCalibrator();
     void execute(CallBackFunction func, btrgb::ArtObject* images) override;
     void my_callback(std::string str);
 
     void build_input_matrix();
     void display_matrix(cv::Mat* matrix, std::string name);
+    cv::Mat rgb_convertions_matrix(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
+    float gamma(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
 
 private:
     cv::Mat color_patch_avgs;
