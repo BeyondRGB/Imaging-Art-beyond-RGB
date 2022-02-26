@@ -13,9 +13,7 @@
 #include "utils/color_convertions.hpp"
 #include "reference_data/white_points.hpp"
 
-//#include <ceres.h>
 
-//typedef double (*minimize_detlaE)(cv::Mat);
 typedef std::function<double(cv::Mat)> MinDeltaE_function;
 
 class ColorManagedCalibrator : public ImgProcessingComponent{
@@ -46,21 +44,23 @@ private:
     ColorTarget get_target(btrgb::ArtObject* images, btrgb::Image* im);
     void build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count);
     void find_optimization();
-
-    
-    //void build_input_matrix();
-    //void display_avg_matrix(cv::Mat* matrix);
+    void update_image(btrgb::ArtObject* images);
 
     
 };
+
+
+
+
+
+
+
 
 class DeltaEFunction: public cv::MinProblemSolver::Function{
 public: 
     DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offeset, cv::Mat* M, RefData* ref_data, cv::Mat* delE_values);
     int getDims() const;
     double calc(const double* x)const;
-    //void getGradient(const double* x, double* grad);
-    void crop_input(const double* x);
     int get_itteration_count(){ return this->itteration_count; }
 private:
     cv::Mat* opt_in;
