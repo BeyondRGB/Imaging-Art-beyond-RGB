@@ -142,11 +142,32 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
         }
     }
     std::cout << "finished setting up Mat" << std::endl;
-    cv::Mat cm = this->M * six_chan;
-    std::cout << "Creating Image" << std::endl;
+    // Convert six channels ColorManaged XYZ values
+    cv::Mat cm_XYZ = this->M * six_chan;
+    six_chan.release();
+    
+    // Convert ColorManaged XYZ values to ColorManaged RGB values
+    cv::Mat rgb_convertion_matrix = this->rgb_convertions_matrix();
+    this->display_matrix(&rgb_convertion_matrix, "RGB Convertion Matrix");
+    cv::Mat cm_RGB = rgb_convertion_matrix * cm_XYZ;
+    cm_XYZ.release();
 
+    std::cout << "Creating Image" << std::endl;
     btrgb::Image* cm_im = new btrgb::Image("ColorManaged");
-    cm_im->initImage(cm);
+    cv::Mat color_managed_data(height, width, CV_32FC3);
+    cm_im->initImage(color_managed_data);
+    for(int chan = 0; chan < 3; chan++){
+        for(int row = 0; row < height; row++){
+            for(int col = 0; col < width; col++){
+                int data_col = col + row * width;
+                float px_value = (float)cm_RGB.at<double>(chan, data_col);
+                // Apply gamma
+                float gamma_corrected_value = std::pow(px_value, this->gamma());
+                cm_im->setPixel(row, col, chan, px_value);
+            }
+        }
+    }
+    cm_RGB.release();
     std::string name = "ColorManaged";
     std::cout << "adding image" << std::endl;
     try{
@@ -268,6 +289,67 @@ void ColorManagedCalibrator::build_input_matrix() {
     // Create Matrix Header to represent the 1d Matrix offset that points to the values that are in the InputArray
     this->offest = opt_as_2d(cv::Rect(0, row_count - 1, col_count, 1));  
     
+}
+
+cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
+    cv::Mat convertions_matrix;
+    switch(color_space){
+        case ColorSpace::Adobe_RGB_1998:
+            convertions_matrix = (cv::Mat_<double>(3,3) << 
+                             1.9624274, -0.6105343, -0.3413404,
+                            -0.9787684,  1.9161415,  0.0334540,
+                             0.0286869, -0.1406752,  1.3487655
+                    );
+            break;
+
+        case ColorSpace::Wide_Gamut_RGB:
+            convertions_matrix = (cv::Mat_<double>(3,3) << 
+                            1.4628067, -0.1840623, -0.2743606,
+                            -0.5217933,  1.4472381,  0.0677227,
+                            0.0349342, -0.0968930,  1.2884099
+                    );
+            break;
+
+        case ColorSpace::sRGB:
+            convertions_matrix = (cv::Mat_<double>(3,3) << 
+                             3.1338561, -1.6168667, -0.4906146,
+                            -0.9787684,  1.9161415,  0.0334540,
+                             0.0719453, -0.2289914 , 1.4052427
+                    );
+            break;
+
+        case ColorSpace::ProPhoto:
+        default:
+            convertions_matrix = (cv::Mat_<double>(3,3) << 
+                             1.3459433, -0.2556075, -0.0511118,
+                            -0.5445989,  1.5081673,  0.0205351,
+                             0.0000000,  0.0000000,  1.2118128
+                    );
+            break;
+    }
+    return convertions_matrix;
+}
+
+float ColorManagedCalibrator::gamma(ColorSpace color_space){
+    //TODO the gamma values included here are not what they should be and should
+    // be updated once we know what they are.
+    float gamma = 2.2;
+    switch(color_space){
+        case ColorSpace::Adobe_RGB_1998:
+            break;
+
+        case ColorSpace::Wide_Gamut_RGB:
+            break;
+
+        case ColorSpace::sRGB:
+            break;
+
+        case ColorSpace::ProPhoto:
+        default:
+            gamma = 1.8;
+            break;
+    }
+    return gamma;
 }
 
 void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
