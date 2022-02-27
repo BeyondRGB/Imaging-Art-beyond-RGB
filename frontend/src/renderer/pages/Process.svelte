@@ -93,9 +93,10 @@
 </script>
 
 <main>
-  <nav class="dark:bg-gray-800/25">
-    <button id="backBtn" on:click={prevTab}>Back</button>
-    {#if !tabs[$processState.currentTab].hidden}
+  {#if !tabs[$processState.currentTab].hidden}
+    <nav class="dark:bg-gray-800/25">
+      <button id="backBtn" on:click={prevTab}>Back</button>
+
       <tabs>
         {#each tabs as tab}
           {#if !tab.hidden}
@@ -108,9 +109,8 @@
           {/if}
         {/each}
       </tabs>
-    {/if}
-  </nav>
-
+    </nav>
+  {/if}
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
     {#if tabs[$processState.currentTab + 1]?.name === "Advanced Options"}
