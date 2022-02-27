@@ -25,19 +25,21 @@
   }
 
   let colorTarget;
+  let colorPos;
   let verifyTarget;
+  let verifyPos;
 
   function addTarget() {
     if (!colorTarget) {
       colorTarget = {
         name: "Color Target",
-        currentPos: {},
         rows: 10,
         cols: 10,
         refData: null,
         color: 50,
-        size: 0.3,
+        size: 0.7,
       };
+      colorPos = { top: 0.25, left: 0.25, bottom: 0.5, right: 0.5 };
       $processState.artStacks[0].colorTargets[0] = {
         top: 0.25,
         left: 0.25,
@@ -45,18 +47,18 @@
         right: 0.5,
         cols: 10,
         rows: 10,
-        size: 0.3,
+        size: 0.7,
       };
     } else if (!verifyTarget) {
       verifyTarget = {
         name: "Verification Target",
-        currentPos: {},
         rows: 10,
         cols: 10,
         refData: null,
         color: 100,
-        size: 0.3,
+        size: 0.7,
       };
+      verifyPos = { top: 0.5, left: 0.5, bottom: 0.75, right: 0.75 };
       $processState.artStacks[0].colorTargets[1] = {
         top: 0.25,
         left: 0.25,
@@ -64,7 +66,7 @@
         right: 0.5,
         cols: 10,
         rows: 10,
-        size: 0.3,
+        size: 0.7,
       };
     }
   }
@@ -91,7 +93,7 @@
   }
   $: console.log($processState.artStacks[0].colorTargets);
 
-  $: console.log([colorTarget, verifyTarget]);
+  // $: console.log([colorTarget, verifyTarget]);
 
   let targetArray;
   $: {
@@ -104,12 +106,17 @@
     }
   }
 
-  $: console.log(targetArray);
+  // $: console.log(targetArray);
 </script>
 
 <main>
   <div class="left">
-    <ColorTargetViewer bind:colorTarget bind:verifyTarget />
+    <ColorTargetViewer
+      bind:colorTarget
+      bind:verifyTarget
+      bind:colorPos
+      bind:verifyPos
+    />
   </div>
   <div class="right">
     <div class="cardBox">

@@ -17,6 +17,9 @@
   export let colorTarget;
   export let verifyTarget;
 
+  export let colorPos;
+  export let verifyPos;
+
   let imageUrl;
 
   const createViewer = () => {
@@ -187,7 +190,7 @@
             overlay.update(box);
             overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 
-            colorTarget.currentPos = {
+            colorPos = {
               top: overlay.bounds.y,
               left: overlay.bounds.x,
               bottom: overlay.bounds.y + overlay.bounds.height,
@@ -258,7 +261,7 @@
             overlay.update(box);
             overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 
-            verifyTarget.currentPos = {
+            verifyPos = {
               top: overlay.bounds.y,
               left: overlay.bounds.x,
               bottom: overlay.bounds.y + overlay.bounds.height,
@@ -282,12 +285,19 @@
     }
   }
 
+  let root = document.documentElement;
+
   // ----------------------------------------
   $: if (colorTarget && !colorOverlay) {
     console.log("Color Target");
     setTimeout(() => {
       addOverlay(0);
-    }, 200);
+      console.log("start");
+      setTimeout(() => {
+        console.log("delay");
+        colorTarget.color = colorTarget.color + 1;
+      }, 50);
+    }, 100);
   }
 
   $: if (!colorTarget && colorOverlay) {
@@ -297,7 +307,6 @@
   }
 
   $: if (colorTarget?.color) {
-    let root = document.documentElement;
     root.style.setProperty("--color_hue", `${colorTarget.color}`);
   }
 
@@ -307,12 +316,20 @@
       gridBox.style.gridTemplateRows = `repeat(${colorTarget.rows}, auto)`;
     }
   }
+
+  $: if (colorTarget?.size) {
+    root.style.setProperty("--color_size", `${colorTarget.size * 100}%`);
+  }
+
   // --------------------------------------
   $: if (verifyTarget && !verifyOverlay) {
     console.log("Verify Target");
     setTimeout(() => {
       addOverlay(1);
-    }, 200);
+      setTimeout(() => {
+        verifyTarget.color = verifyTarget.color + 1;
+      }, 50);
+    }, 100);
   }
 
   $: if (!verifyTarget && verifyOverlay) {
@@ -322,8 +339,14 @@
   }
 
   $: if (verifyTarget?.color) {
-    let root = document.documentElement;
+    console.log("verify hue");
     root.style.setProperty("--verfiy_hue", `${verifyTarget.color}`);
+  }
+
+  $: if (verifyTarget?.size) {
+    console.log("verify size");
+
+    root.style.setProperty("--verify_size", `${verifyTarget.size * 100}%`);
   }
 
   $: if (verifyTarget?.rows) {
@@ -348,7 +371,7 @@
           {#each [...Array(colorTarget.rows * colorTarget.cols).keys()].map((i) => i + 1) as boxIndex}
             <div class="line">
               <div class="target" />
-              <span class="targetNum"><svg><text>{boxIndex}</text></svg></span>
+              <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
             </div>
           {/each}
         </div>
@@ -373,8 +396,8 @@
         <div class="gridBox" id={`gBox-1`}>
           {#each [...Array(verifyTarget.rows * verifyTarget.cols).keys()].map((i) => i + 1) as boxIndex}
             <div class="line ver">
-              <div class="target" />
-              <span class="targetNum"><svg><text>{boxIndex}</text></svg></span>
+              <div class="verTarget" />
+              <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
             </div>
           {/each}
         </div>
@@ -396,23 +419,15 @@
   <div id="rowCol">
     Color Target:
     <p>
-      top: {colorTarget?.currentPos?.top?.toFixed(4)} | left: {colorTarget?.currentPos?.left?.toFixed(
-        4
-      )} | bottom:
-      {colorTarget?.currentPos?.bottom?.toFixed(4)} | right: {colorTarget?.currentPos?.right?.toFixed(
-        4
-      )}
+      top: {colorPos?.top?.toFixed(4)} | left: {colorPos?.left?.toFixed(4)} | bottom:
+      {colorPos?.bottom?.toFixed(4)} | right: {colorPos?.right?.toFixed(4)}
     </p>
   </div>
   <div id="rowCol">
     Verification Target:
     <p>
-      top: {verifyTarget?.currentPos?.top?.toFixed(4)} | left: {verifyTarget?.currentPos?.left?.toFixed(
-        4
-      )} | bottom:
-      {verifyTarget?.currentPos?.bottom?.toFixed(4)} | right: {verifyTarget?.currentPos?.right?.toFixed(
-        4
-      )}
+      top: {verifyPos?.top?.toFixed(4)} | left: {verifyPos?.left?.toFixed(4)} | bottom:
+      {verifyPos?.bottom?.toFixed(4)} | right: {verifyPos?.right?.toFixed(4)}
     </p>
   </div>
 </main>
@@ -421,6 +436,8 @@
   :root {
     --color_hue: 50;
     --verfiy_hue: 100;
+    --verify_size: 70%;
+    --color_size: 70%;
   }
 
   main {
@@ -448,7 +465,7 @@
     background: radial-gradient(
       circle at center,
       transparent 80%,
-      hsla(var(--color_hue), 100%, 50%, 0.35) 80%
+      hsla(var(--color_hue), 100%, 50%, 0.3) 80%
     );
     border-color: hsl(var(--color_hue), 100%, 50%);
 
@@ -463,7 +480,7 @@
     background: radial-gradient(
       circle at center,
       transparent 80%,
-      hsla(var(--verfiy_hue), 100%, 50%, 0.35) 80%
+      hsla(var(--verfiy_hue), 100%, 50%, 0.3) 80%
     );
   }
 
@@ -504,12 +521,16 @@
   }
   .target {
     border-color: hsla(var(--color_hue), 100%, 50%, 0.5);
-    @apply border-[3px] w-[75%] h-[75%] rounded-full;
+    width: var(--color_size);
+    height: var(--color_size);
+    @apply border-[3px] rounded-full;
   }
 
-  .ver .target {
+  .verTarget {
     border-color: hsla(var(--verfiy_hue), 100%, 50%, 0.5);
-    @apply border-[3px] w-[75%] h-[75%] rounded-full;
+    width: var(--verify_size);
+    height: var(--verify_size);
+    @apply border-[3px] rounded-full;
   }
 
   .corner {
