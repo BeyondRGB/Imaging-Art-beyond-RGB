@@ -550,12 +550,9 @@ double DeltaEFunction::calc(const double* x)const{
             // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
             this->delE_values->at<double>(row,col) = delE;
             deltaE_sum += delE;
-            
         }
     }
     
-    
-
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
