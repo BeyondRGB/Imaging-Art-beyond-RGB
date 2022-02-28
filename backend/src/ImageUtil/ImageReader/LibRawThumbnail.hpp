@@ -1,6 +1,8 @@
 #ifndef BTRGB_LIBRAWTHUMBNAIL_HPP
 #define BTRGB_LIBRAWTHUMBNAIL_HPP
 
+#include <cstring>
+
 #include <math.h>
 #include <memory>
 #include <libraw.h>
@@ -18,7 +20,7 @@ class LibRawThumbnail : public ImageReaderStrategy {
         void open(std::string filename);
         void recycle();
         bool is_encoded();
-        unsigned int length();
+        size_t length();
 
         void copyBitmapTo(void* buffer, uint32_t size);
         void copyBitmapTo(cv::Mat& im);
@@ -26,7 +28,7 @@ class LibRawThumbnail : public ImageReaderStrategy {
     private:
         LibRaw _reader;
         bool _is_encoded;
-        bool _length;
+        size_t _length;
         void* _data;
 
 };

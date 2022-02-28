@@ -19,7 +19,7 @@ void LibRawThumbnail::open(std::string filename) {
     error_code = this->_reader.unpack_thumb();
     if(error_code) {
         this->recycle();
-        throw std::runtime_error("[LibRaw] Failed to unpack thumbnail.");
+        throw std::runtime_error("[LibRawThumbnail] Failed to unpack thumbnail.");
     }
 
     /* Determine thumbnail type. */
@@ -36,17 +36,19 @@ void LibRawThumbnail::open(std::string filename) {
             this->_channels = this->_reader.imgdata.thumbnail.tcolors;
             this->_height = this->_reader.imgdata.thumbnail.theight;
             this->_depth = 8;
+            this->_length = _width * _height * _channels * (_depth / 8);
             break;
 
         default:
             this->recycle();
-            throw std::runtime_error("[LibRaw] Unsupported thumbnail.");
+            throw std::runtime_error("[LibRawThumbnail] Unsupported thumbnail.");
     }
 
     this->_is_open = true;
     this->_data = this->_reader.imgdata.thumbnail.thumb;
 
 }
+
 
 void LibRawThumbnail::recycle() {
     this->_reader.recycle();
@@ -55,9 +57,36 @@ void LibRawThumbnail::recycle() {
     this->_depth = -1;
     this->_channels = -1;
     this->_is_open = false;
+    this->_length = -1;
+    this->_data = 0;
 }
 
-void LibRawThumbnail::copyBitmapTo(void* buffer, uint32_t size) {}
-void LibRawThumbnail::copyBitmapTo(cv::Mat& im) {}
+
+size_t LibRawThumbnail::length() { return this->_length; }
+bool LibRawThumbnail::is_encoded() { return this->_is_encoded; }
+
+
+void LibRawThumbnail::copyBitmapTo(void* buffer, uint32_t size) {
+    if( ! this->_is_open)
+        throw std::runtime_error("[LibRawThumnail] Out of order call, image not open.");
+    
+    memcpy( buffer, this->_data, this->_length );
+}
+
+
+void LibRawThumbnail::copyBitmapTo(cv::Mat& im) {
+    if( ! this->_is_open)
+        throw std::runtime_error("[LibRawThumnail] Out of order call, image not open.");
+    
+    if( this->_is_encoded ) {
+        cv::Mat im_in = cv::imdecode( cv::Mat( 1, this->_length, CV_8UC1, this->_data ), cv::IMREAD_COLOR );
+        cv::cvtColor(im_in, im, cv::COLOR_BGR2RGB);
+    }
+    else {
+        im.create(this->_height, this->_width, CV_8UC3);
+        memcpy( im.data, this->_data, this->_length );
+    }
+}
+
 
 }
