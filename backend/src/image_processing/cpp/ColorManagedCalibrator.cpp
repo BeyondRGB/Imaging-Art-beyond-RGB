@@ -444,6 +444,9 @@ DeltaEFunction::DeltaEFunction(cv::Mat* opt_in, cv::Mat* cp_avgs, cv::Mat* offes
 }
 
 int DeltaEFunction::getDims()const{
+    // Dimentions of the input array
+    // M is 3x6 and offset is 1x6
+    // InputArray is 1d so 6 colums * 4 rows
     int dim = 6*4;
     std::cout << "Dim: " << dim << std::endl;
     return dim;
