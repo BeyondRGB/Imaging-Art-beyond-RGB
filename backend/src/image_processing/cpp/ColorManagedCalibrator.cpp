@@ -395,10 +395,10 @@ float ColorManagedCalibrator::gamma(ColorSpace color_space){
     return gamma;
 }
 
-float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto){
+float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space){
     // TODO this is not complete yet and is more complicated than what is currently implemented
     // Update this once we know what is involved
-    float gamma = gamma(color_space);
+    float gamma = this->gamma(color_space);
     // Apply gamma to correct brightness
     float gamma_corrected_value = std::pow(px_value, gamma);
     return gamma_corrected_value;

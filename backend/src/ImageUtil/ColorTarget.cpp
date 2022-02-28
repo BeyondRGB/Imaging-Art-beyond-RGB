@@ -5,28 +5,20 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 
 	// The front end normalizes the location based on width, so multiply top by width instead of height
 	int img_width = im->width();
-
+	// Init target edge locations
 	this->target_left_edge = location_data.left_loc * img_width;
 	this->target_top_edge = location_data.top_loc * img_width;
 	int right_edge = location_data.right_loc * img_width;
 	int bottom_edge = location_data.bot_loc * img_width;
-
+	// Init target width and hieght
 	this->target_width = right_edge - this->target_left_edge;
 	this->target_height = bottom_edge - this->target_top_edge;
-
+	// Init row and col count
 	this->row_count = location_data.row_count;
 	this->col_count = location_data.col_count;
-
+	// Init row width and col height
 	this->row_height = this->target_height / this->row_count;
 	this->col_width = this->target_width / this->col_count;
-	/*std::cout << "img_widht: " << img_width << " img_height: " << im->height() << std::endl;
-	std::cout << "Top: " << this->target_top_edge << "  Left: " << this->target_left_edge << std::endl;
-	std::cout << "Bottom: " << bottom_edge << "  Right: " << right_edge << std::endl;
-
-	std::cout << "width: " << this->target_width << " hight: " << this->target_height << std::endl;
-	std::cout << "row_count: " << this->row_count << " col_count: " << this->col_count << std::endl;*/
-
-
 }
 
 /**
@@ -73,6 +65,7 @@ float ColorTarget::get_patch_avg(int row, int col, int chan, double sp) {
 int ColorTarget::patch_posX(int col) {
 	int col_width = this->target_width / this->col_count;
 	int offset = col * col_width;
+	// left edge of target + offset gives the left edge of patch so add col_width/2 to get to center
 	int patch_centerX = this->target_left_edge + offset + (col_width / 2);
 	return patch_centerX;
 }
@@ -80,6 +73,7 @@ int ColorTarget::patch_posX(int col) {
 int ColorTarget::patch_posY(int row) {
 	int row_height = this->target_height / this->row_count;
 	int offset = row * row_height;
+	// top edge of target + offset gives the top edge of patch so add row_height/2 to get to center
 	int patch_centerY = this->target_top_edge + offset + (row_height / 2);
 	return patch_centerY;
 
