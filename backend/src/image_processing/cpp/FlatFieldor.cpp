@@ -1,7 +1,6 @@
 #include "../header/FlatFieldor.h"
 
-//Runs the overall function for correcting the white and dark coloring of the image
-void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
+void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     btrgb::Image* art1;
     btrgb::Image* art2;
     btrgb::Image* white1;
@@ -10,7 +9,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     btrgb::Image* dark2;
     RefData* reference;
 
-    func("Flat Fielding");
+    comms->send_info("", "Flat Fielding");
 
     //Pull the images needed out of the Art Object
     try {
@@ -23,7 +22,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
         reference = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
+        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", "FlatFieldor");
         return;
     }
 

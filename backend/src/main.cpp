@@ -4,8 +4,10 @@
 #include "utils/logger.hpp"
 
 //Testing Includes: Remove before submiting PR
+#include "server/comunication_obj.hpp"
 void testFunc() {
-    
+		CommunicationObj commTest;
+		commTest.send_error("Test Out", "Tester");
 }
 
 
@@ -25,5 +27,5 @@ int main() {
 
     //Block till server shuts down
     std::cout << "Exiting.\n";
-    
+
 }

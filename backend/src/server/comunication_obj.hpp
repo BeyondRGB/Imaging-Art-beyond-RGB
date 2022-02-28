@@ -6,13 +6,15 @@
 #define COMMUNICATION_OBJ_H
 
 #include <iostream>
+#include <jsoncons/json.hpp>
 
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_THREAD_
-#define _WEBSOCKETPP_CPP11_STRICT_ 
+#define _WEBSOCKETPP_CPP11_STRICT_
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+#include "ImageUtil/Image.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
@@ -27,20 +29,32 @@ private:
 	server* server_m = NULL;
 	websocketpp::connection_hdl connectionHandle_m;
 	websocketpp::frame::opcode::value opcode_m;
+	unsigned long id;
+	static unsigned char binID;
+	//Should be private is temporarily public for testing
+	void send_msg(std::string msg);
+	void send_bin(std::vector<uchar>& v);
 
 public:
 	CommunicationObj() {};
 	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
 	/**
-	* Copy Constructor	
+	* Copy Constructor
 	*/
 	CommunicationObj(const CommunicationObj& other);
-	
+
+	//void send_msg(std::string msg);
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
 	*/
-	void send_msg(std::string msg);
+	void set_id(long newID);
+
+	void send_info(std::string msg, std::string sender);
+	void send_error(std::string msg, std::string sender);
+	void send_progress(double val, std::string sender);
+	void send_base64(btrgb::Image*, enum btrgb::output_type type, enum btrgb::image_quality qual);
+	void send_binary(btrgb::Image*, enum btrgb::output_type type, enum btrgb::image_quality qual);
 };
 
 #endif // COMMUNICATION_OBJ_H

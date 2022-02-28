@@ -10,7 +10,7 @@ class ImageReader: public ImgProcessingComponent {
         enum reader_strategy {RAW_LibRaw, TIFF_OpenCV};
         ImageReader(reader_strategy strategy);
         ~ImageReader();
-        void execute(CallBackFunction func, btrgb::ArtObject* images) override;
+        void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
     private:
         btrgb::ImageReaderStrategy* _reader;
