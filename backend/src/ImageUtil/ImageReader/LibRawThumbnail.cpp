@@ -70,7 +70,7 @@ void LibRawThumbnail::copyBitmapTo(void* buffer, uint32_t size) {
     if( ! this->_is_open)
         throw std::runtime_error("[LibRawThumnail] Out of order call, image not open.");
     
-    memcpy( buffer, this->_data, this->_length );
+    std::copy( (char*)_data, (char*)_data + _length, buffer );
 }
 
 
@@ -84,7 +84,7 @@ void LibRawThumbnail::copyBitmapTo(cv::Mat& im) {
     }
     else {
         im.create(this->_height, this->_width, CV_8UC3);
-        memcpy( im.data, this->_data, this->_length );
+        std::copy( (char*)_data, (char*)_data + _length, im.data );
     }
 }
 
