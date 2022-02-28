@@ -103,19 +103,19 @@ private:
      */
     void build_input_matrix();
 
-    /**
-     * @brief Create a ColorTarget object for the given image
-     * 
-     * TODO this does not belong here and it should be refactored
-     * so that ArtObject creates and holds the ColorTarget. Doing so now
-     * would break some other things that are not available so it will need to be
-     * refactored once they are all merged
-     * 
-     * @param images The ArtObject the contains the target info
-     * @param im the image containing the color target
-     * @return ColorTarget 
-     */
-    ColorTarget get_target(btrgb::ArtObject* images, btrgb::Image* im);
+    // /**
+    //  * @brief Create a ColorTarget object for the given image
+    //  * 
+    //  * TODO this does not belong here and it should be refactored
+    //  * so that ArtObject creates and holds the ColorTarget. Doing so now
+    //  * would break some other things that are not available so it will need to be
+    //  * refactored once they are all merged
+    //  * 
+    //  * @param images The ArtObject the contains the target info
+    //  * @param im the image containing the color target
+    //  * @return ColorTarget 
+    //  */
+    // ColorTarget get_target(btrgb::ArtObject* images, btrgb::Image* im);
     
     /**
      * @brief Initialize a MxN matrix to hold the average pixel values for each color patch where 

@@ -30,8 +30,8 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
 
     // Extract images and RefData from art object
     try {
-        art1 = images->getImage("art1");
-        art2 = images->getImage("art2");
+        art1 = images->getImage(ART(1));
+        art2 = images->getImage(ART(2));
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
@@ -45,8 +45,8 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     }
     
     // Init Color Targets
-    target1 = this->get_target(images, art1);
-    target2 = this->get_target(images, art2);
+    target1 = images->get_target(ART(1));// this->get_target(images, art1);
+    target2 = images->get_target(ART(2));// this->get_target(images, art2);
     ColorTarget targets[] = { target1, target2 };
     int channel_count = art1->channels();
     int target_count = std::size(targets);
@@ -225,29 +225,29 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     }
 }
 
-ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::Image* im) {
-    // TODO refactor ArtObject to hold all ColorTargets
-    TargetData target_data;
-    // Extract nessisary data from ArtObject about color target and stor it in target_data
-    try {
-        target_data.top_loc = images->getTargetInfo("top");
-        target_data.bot_loc = images->getTargetInfo("bot");
-        target_data.left_loc = images->getTargetInfo("left");
-        target_data.right_loc = images->getTargetInfo("right");
+// ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::Image* im) {
+//     // TODO refactor ArtObject to hold all ColorTargets
+//     TargetData target_data;
+//     // Extract nessisary data from ArtObject about color target and stor it in target_data
+//     try {
+//         target_data.top_loc = images->getTargetInfo("top");
+//         target_data.bot_loc = images->getTargetInfo("bot");
+//         target_data.left_loc = images->getTargetInfo("left");
+//         target_data.right_loc = images->getTargetInfo("right");
 
-        target_data.row_count = images->getTargetSize("row");
-        target_data.col_count = images->getTargetSize("col");
-    }
-    catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        throw e;
-    }
-    catch (const std::logic_error& e) {
-        throw e;
-    }
-    // Create and return ColorTarget
-    ColorTarget target(im, target_data);
-    return target;
-}
+//         target_data.row_count = images->getTargetSize("row");
+//         target_data.col_count = images->getTargetSize("col");
+//     }
+//     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
+//         throw e;
+//     }
+//     catch (const std::logic_error& e) {
+//         throw e;
+//     }
+//     // Create and return ColorTarget
+//     ColorTarget target(im, target_data);
+//     return target;
+// }
 
 void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count) {
     int row_count = targets[0].get_row_count();

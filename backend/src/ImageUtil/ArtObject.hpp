@@ -8,6 +8,11 @@
 #include "ImageUtil/Image.hpp"
 #include "ImageUtil/ImageWriter/ImageWriterStrategy.hpp"
 #include "reference_data/ref_data.hpp"
+#include "ImageUtil/ColorTarget.hpp"
+
+#define ART(num) "art"#num
+#define DARK(num) "dark"#num
+#define WHITE(num) "white"#num
 
 /* How to iterate over all images in the ArtObject:
  *
@@ -27,8 +32,9 @@ namespace btrgb {
 
     private:
         //Target Info
-        double topEdge, leftEdge, botEdge, rightEdge;
-        int targetRow, targetCol;
+        // double topEdge, leftEdge, botEdge, rightEdge;
+        // int targetRow, targetCol;
+        TargetData target_data;
         std::unordered_map<std::string, Image*> images;
         ImageWriter* tiffWriter;
         RefData* ref_data;
@@ -39,9 +45,11 @@ namespace btrgb {
 
         RefData* get_refrence_data();
 
-        void targetInfo(double top, double left, double bot, double right, int rows, int cols);
+        // void targetInfo(double top, double left, double bot, double right, int rows, int cols);
+        void setTargetInfo(TargetData td);
         double getTargetInfo(std::string type);
         int getTargetSize(std::string edge);
+        ColorTarget get_target(std::string imageName);
 
         void newImage(std::string name, std::string filename);
         void setImage(std::string name, Image* im);
