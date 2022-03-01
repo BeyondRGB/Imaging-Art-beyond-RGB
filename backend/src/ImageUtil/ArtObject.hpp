@@ -10,6 +10,9 @@
 #include "reference_data/ref_data.hpp"
 #include "ImageUtil/ColorTarget.hpp"
 
+// Macros for identifying images in "images" map
+// Example ART(1) will expand to "art1" ART(2) will expand to "art2"
+// NOTE: using these will not work with a variable passed in, Only used with hard coded numbers
 #define ART(num) "art"#num
 #define DARK(num) "dark"#num
 #define WHITE(num) "white"#num

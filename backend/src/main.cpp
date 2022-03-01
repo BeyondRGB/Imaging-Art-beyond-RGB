@@ -48,6 +48,9 @@ void testFunc() {
     std::cout << DARK(3) << std::endl;
     std::cout << WHITE(2) << std::endl;
     std::cout << TEST(2) << std::endl;
+    int i = 5;
+    std::cout << TEST(i) << std::endl;
+
 }
 
 
