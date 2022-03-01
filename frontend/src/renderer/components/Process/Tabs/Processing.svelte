@@ -1,22 +1,13 @@
 <script lang="ts">
   import {
     sendMessage,
-    messageStore,
     processState,
     connectionState,
     connect,
   } from "@util/stores";
-  import { stringify } from "postcss";
   import ImageViewer from "@components/ImageViewer.svelte";
-  import { append, bubble } from "svelte/internal";
 
   let notConnectedMode = false;
-  let textValue;
-  let messageList = [];
-  $: messageList = [
-    [$messageStore[0], getTime($messageStore[1])],
-    ...messageList,
-  ];
 
   $: jsonTest = {
     RequestType: "processImg",
@@ -41,6 +32,7 @@
         right: $processState.artStacks[0].colorTargets[0]?.right,
         cols: $processState.artStacks[0].colorTargets[0]?.cols,
         rows: $processState.artStacks[0].colorTargets[0]?.rows,
+        size: $processState.artStacks[0].colorTargets[0]?.size,
       },
       RefData: {
         RefData: "NGT_Reflectance_Data.csv",
@@ -49,23 +41,6 @@
       },
     },
   };
-
-  function getTime(time = new Date()) {
-    let minutes = time.getMinutes();
-    let seconds = time.getSeconds();
-    let mili = time.getMilliseconds();
-    let hours = time.getHours();
-    let ofDay = "AM";
-    if (hours > 12) {
-      hours -= 12;
-      ofDay = "PM";
-    }
-    return `${hours < 10 ? "0" : ""}${hours}:${
-      minutes < 10 ? "0" : ""
-    }${minutes}:${seconds < 10 ? "0" : ""}${seconds}:${
-      mili < 10 ? "00" : mili < 100 ? "0" : ""
-    }${mili} ${ofDay}`;
-  }
 </script>
 
 <main>
