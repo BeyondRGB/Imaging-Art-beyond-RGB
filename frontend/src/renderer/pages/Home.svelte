@@ -1,9 +1,10 @@
 <script lang="ts">
   import TextLogo from "@assets/TextLogo.svg";
   import { currentPage, modal } from "@util/stores";
-  import { angleDoubleDown } from "svelte-awesome/icons";
+  // import { angleDoubleDown } from "svelte-awesome/icons";
   import { fade, draw } from "svelte/transition";
-  import Icon from "svelte-awesome";
+  // import Icon from "svelte-awesome";
+  import { ChevronsDownIcon } from "svelte-feather-icons";
 
   function handleClick(page) {
     currentPage.set(page);
@@ -28,7 +29,7 @@
     >
       <h3 class="dark:text-gray-400">Get started below</h3>
       <div class="downarrow">
-        <Icon data={angleDoubleDown} scale={2} />
+        <ChevronsDownIcon size="2x" />
       </div>
     </div>
   </div>
@@ -57,8 +58,8 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-[95%] flex flex-col items-center justify-center gap-4
-            bg-gray-800 mt-[5%] relative;
+    @apply w-full h-[97%] flex flex-col items-center justify-center gap-4
+            bg-gray-800 mt-[3%] relative;
   }
 
   button {

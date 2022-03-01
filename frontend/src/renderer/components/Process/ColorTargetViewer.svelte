@@ -2,6 +2,7 @@
   import { currentPage, processState } from "@util/stores";
   import OpenSeadragon from "openseadragon";
   import { afterUpdate, onDestroy, onMount } from "svelte";
+  import { PlusIcon, MinusIcon } from "svelte-feather-icons";
   let viewer;
   let mouseTracker;
   let colorOverlay;
@@ -147,11 +148,43 @@
 
             // Event Distance to Edge
             pressPos = {
+              ele: e.originalEvent.target,
               top: Math.abs(eViewY - topPos),
               left: Math.abs(eViewX - leftPos),
               right: Math.abs(eViewX - rightPos),
               bottom: Math.abs(eViewY - botPos),
             };
+            e.originalEvent.path.forEach((element) => {
+              if (element.classList?.length > 0) {
+                if (element.classList[0] === "inc") {
+                  console.log("increase");
+                  if (
+                    element.parentElement.classList[1] === "top" ||
+                    element.parentElement.classList[1] === "bottom"
+                  ) {
+                    colorTarget.rows = colorTarget.rows + 1;
+                  } else if (
+                    element.parentElement.classList[1] === "left" ||
+                    element.parentElement.classList[1] === "right"
+                  ) {
+                    colorTarget.cols = colorTarget.cols + 1;
+                  }
+                } else if (element.classList[0] === "dec") {
+                  console.log("decrease");
+                  if (
+                    element.parentElement.classList[1] === "top" ||
+                    element.parentElement.classList[1] === "bottom"
+                  ) {
+                    colorTarget.rows = colorTarget.rows - 1;
+                  } else if (
+                    element.parentElement.classList[1] === "left" ||
+                    element.parentElement.classList[1] === "right"
+                  ) {
+                    colorTarget.cols = colorTarget.cols - 1;
+                  }
+                }
+              }
+            });
           },
           dragHandler: function (e) {
             var overlay = viewer.getOverlayById(`sBox-${id}`);
@@ -164,25 +197,27 @@
               overlay.width,
               overlay.height
             );
-            if (pressPos.right < 0.008) {
-              box.width += viewDeltaPoint.x;
-            }
-            if (pressPos.bottom < 0.008) {
-              box.height += viewDeltaPoint.y;
-            }
-            if (pressPos.top < 0.008) {
+
+            if (pressPos.ele.classList[1] === "tl") {
               box.y += viewDeltaPoint.y;
               box.height -= viewDeltaPoint.y;
-            }
-            if (pressPos.left < 0.008) {
               box.x += viewDeltaPoint.x;
               box.width -= viewDeltaPoint.x;
-            }
-            if (
-              pressPos.bottom > 0.008 &&
-              pressPos.right > 0.008 &&
-              pressPos.top > 0.008 &&
-              pressPos.left > 0.008
+            } else if (pressPos.ele.classList[1] === "tr") {
+              box.y += viewDeltaPoint.y;
+              box.height -= viewDeltaPoint.y;
+              box.width += viewDeltaPoint.x;
+            } else if (pressPos.ele.classList[1] === "bl") {
+              box.height += viewDeltaPoint.y;
+              box.x += viewDeltaPoint.x;
+              box.width -= viewDeltaPoint.x;
+            } else if (pressPos.ele.classList[1] === "br") {
+              box.height += viewDeltaPoint.y;
+              box.width += viewDeltaPoint.x;
+            } else if (
+              pressPos.ele.classList[0] === "line" ||
+              pressPos.ele.classList[0] === "target" ||
+              pressPos.ele.classList[0] === "verTarget"
             ) {
               box.x += viewDeltaPoint.x;
               box.y += viewDeltaPoint.y;
@@ -203,6 +238,7 @@
         verifyTracker = new OpenSeadragon.MouseTracker({
           element: `sBox-${id}`,
           pressHandler: function (e) {
+            console.log("Verification press handler activeted");
             var overlay = viewer.getOverlayById(`sBox-${id}`);
 
             // Overlay box coords
@@ -218,11 +254,45 @@
 
             // Event Distance to Edge
             pressPos = {
+              ele: e.originalEvent.target,
               top: Math.abs(eViewY - topPos),
               left: Math.abs(eViewX - leftPos),
               right: Math.abs(eViewX - rightPos),
               bottom: Math.abs(eViewY - botPos),
             };
+            // console.log(e);
+            // console.log(e.originalEvent.path);
+            e.originalEvent.path.forEach((element) => {
+              if (element.classList?.length > 0) {
+                if (element.classList[0] === "inc") {
+                  console.log("increase");
+                  if (
+                    element.parentElement.classList[1] === "top" ||
+                    element.parentElement.classList[1] === "bottom"
+                  ) {
+                    verifyTarget.rows = verifyTarget.rows + 1;
+                  } else if (
+                    element.parentElement.classList[1] === "left" ||
+                    element.parentElement.classList[1] === "right"
+                  ) {
+                    verifyTarget.cols = verifyTarget.cols + 1;
+                  }
+                } else if (element.classList[0] === "dec") {
+                  console.log("decrease");
+                  if (
+                    element.parentElement.classList[1] === "top" ||
+                    element.parentElement.classList[1] === "bottom"
+                  ) {
+                    verifyTarget.rows = verifyTarget.rows - 1;
+                  } else if (
+                    element.parentElement.classList[1] === "left" ||
+                    element.parentElement.classList[1] === "right"
+                  ) {
+                    verifyTarget.cols = verifyTarget.cols - 1;
+                  }
+                }
+              }
+            });
           },
           dragHandler: function (e) {
             var overlay = viewer.getOverlayById(`sBox-${id}`);
@@ -235,25 +305,27 @@
               overlay.width,
               overlay.height
             );
-            if (pressPos.right < 0.008) {
-              box.width += viewDeltaPoint.x;
-            }
-            if (pressPos.bottom < 0.008) {
-              box.height += viewDeltaPoint.y;
-            }
-            if (pressPos.top < 0.008) {
+
+            if (pressPos.ele.classList[1] === "tl") {
               box.y += viewDeltaPoint.y;
               box.height -= viewDeltaPoint.y;
-            }
-            if (pressPos.left < 0.008) {
               box.x += viewDeltaPoint.x;
               box.width -= viewDeltaPoint.x;
-            }
-            if (
-              pressPos.bottom > 0.008 &&
-              pressPos.right > 0.008 &&
-              pressPos.top > 0.008 &&
-              pressPos.left > 0.008
+            } else if (pressPos.ele.classList[1] === "tr") {
+              box.y += viewDeltaPoint.y;
+              box.height -= viewDeltaPoint.y;
+              box.width += viewDeltaPoint.x;
+            } else if (pressPos.ele.classList[1] === "bl") {
+              box.height += viewDeltaPoint.y;
+              box.x += viewDeltaPoint.x;
+              box.width -= viewDeltaPoint.x;
+            } else if (pressPos.ele.classList[1] === "br") {
+              box.height += viewDeltaPoint.y;
+              box.width += viewDeltaPoint.x;
+            } else if (
+              pressPos.ele.classList[0] === "line" ||
+              pressPos.ele.classList[0] === "target" ||
+              pressPos.ele.classList[0] === "verTarget"
             ) {
               box.x += viewDeltaPoint.x;
               box.y += viewDeltaPoint.y;
@@ -292,12 +364,10 @@
     console.log("Color Target");
     setTimeout(() => {
       addOverlay(0);
-      console.log("start");
       setTimeout(() => {
-        console.log("delay");
         colorTarget.color = colorTarget.color + 1;
-      }, 50);
-    }, 100);
+      }, 0);
+    }, 0);
   }
 
   $: if (!colorTarget && colorOverlay) {
@@ -316,6 +386,12 @@
       gridBox.style.gridTemplateRows = `repeat(${colorTarget.rows}, auto)`;
     }
   }
+  $: if (colorTarget?.cols) {
+    const gridBox = document.getElementById("gBox-0");
+    if (gridBox) {
+      gridBox.style.gridTemplateColumns = `repeat(${colorTarget.cols}, auto)`;
+    }
+  }
 
   $: if (colorTarget?.size) {
     root.style.setProperty("--color_size", `${colorTarget.size * 100}%`);
@@ -328,8 +404,8 @@
       addOverlay(1);
       setTimeout(() => {
         verifyTarget.color = verifyTarget.color + 1;
-      }, 50);
-    }, 100);
+      }, 0);
+    }, 0);
   }
 
   $: if (!verifyTarget && verifyOverlay) {
@@ -355,6 +431,13 @@
       gridBox.style.gridTemplateRows = `repeat(${verifyTarget.rows}, auto)`;
     }
   }
+
+  $: if (verifyTarget?.cols) {
+    const gridBox = document.getElementById("gBox-1");
+    if (gridBox) {
+      gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
+    }
+  }
 </script>
 
 <main>
@@ -376,12 +459,38 @@
           {/each}
         </div>
 
-        <!-- <div class="exp top group">
-          <button class="inc">+</button>
+        <div class="exp top group">
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
         </div>
-        <div class="exp left" />
-        <div class="exp right" />
-        <div class="exp bottom" /> -->
+        <!-- <div class="exp left group">
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
+        </div> -->
+        <div class="exp right group">
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
+        </div>
+        <!-- <div class="exp bottom group">
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
+        </div> -->
       </div>
       <div class="corner tl" />
       <div class="corner tr" />
@@ -401,13 +510,39 @@
             </div>
           {/each}
         </div>
-        <!-- 
+
         <div class="exp top group">
-          <button class="inc">+</button>
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
         </div>
-        <div class="exp left" />
-        <div class="exp right" />
-        <div class="exp bottom" /> -->
+        <!-- <div class="exp left group">
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
+        </div> -->
+        <div class="exp right group">
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
+        </div>
+        <!-- <div class="exp bottom group">
+          <button class="dec">
+            <MinusIcon size="1.5x" />
+          </button>
+          <button class="inc">
+            <PlusIcon size="1.5x" />
+          </button>
+        </div> -->
       </div>
       <div class="corner tl" />
       <div class="corner tr" />
@@ -436,8 +571,8 @@
   :root {
     --color_hue: 50;
     --verfiy_hue: 100;
-    --verify_size: 70%;
-    --color_size: 70%;
+    --verify_size: 50%;
+    --color_size: 50%;
   }
 
   main {
@@ -498,44 +633,75 @@
   .exp {
     @apply bg-transparent hover:bg-green-400/50 border-2 
           border-gray-600/25 hover:border-green-500 z-0 w-full h-full
-          duration-500 transition-all delay-150 ease-in flex justify-center;
+          duration-500 transition-all delay-150 ease-in flex justify-center rounded-lg
+          gap-1;
   }
   .inc {
-    font-size: 10vw;
-    @apply bg-transparent text-transparent group-hover:text-white group-hover:bg-green-500
-            align-middle justify-center flex items-center w-[10%] h-[50%];
+    @apply bg-transparent text-transparent group-hover:text-white group-hover:bg-green-500/90
+            align-middle justify-center flex items-center transition-all delay-200;
+  }
+  /* w-[40%] h-[80%] */
+  .dec {
+    @apply bg-transparent text-transparent group-hover:text-white group-hover:bg-red-500/90
+            align-middle justify-center flex items-center transition-all delay-200;
   }
   .top {
     grid-area: top;
-    @apply w-[70%] ml-[15%];
+    @apply w-[70%] ml-[15%] flex overflow-hidden;
+  }
+  .top .inc {
+    @apply w-1/4;
+  }
+  .top .dec {
+    @apply w-1/4;
   }
   .left {
     grid-area: left;
+    @apply flex flex-col-reverse overflow-hidden;
+  }
+  .left .inc {
+    @apply h-1/4;
+  }
+  .left .dec {
+    @apply h-1/4;
   }
   .right {
     grid-area: right;
+    @apply flex flex-col-reverse overflow-hidden;
+  }
+  .right .inc {
+    @apply h-1/4;
+  }
+  .right .dec {
+    @apply h-1/4;
   }
   .bottom {
     grid-area: bottom;
-    @apply w-[70%] ml-[15%];
+    @apply w-[70%] ml-[15%] flex overflow-hidden;
+  }
+  .bottom .inc {
+    @apply w-1/4;
+  }
+  .bottom .dec {
+    @apply w-1/4;
   }
   .target {
     border-color: hsla(var(--color_hue), 100%, 50%, 0.5);
     width: var(--color_size);
     height: var(--color_size);
-    @apply border-[3px] rounded-full;
+    @apply border-[3px] rounded-none;
   }
 
   .verTarget {
     border-color: hsla(var(--verfiy_hue), 100%, 50%, 0.5);
     width: var(--verify_size);
     height: var(--verify_size);
-    @apply border-[3px] rounded-full;
+    @apply border-[3px] rounded-none;
   }
 
   .corner {
     background-color: hsla(var(--color_hue), 100%, 50%, 0.75);
-    @apply absolute h-3 aspect-square z-50;
+    @apply absolute h-[5%] aspect-square z-50;
   }
 
   .ver .corner {
@@ -543,16 +709,16 @@
   }
 
   .tl {
-    @apply -top-1.5 -left-1.5 cursor-nw-resize;
+    @apply -top-[2.5%] -left-[2%] cursor-nw-resize;
   }
   .tr {
-    @apply -top-1.5 -right-1.5 cursor-ne-resize;
+    @apply -top-[2.5%] -right-[2%] cursor-ne-resize;
   }
   .bl {
-    @apply -bottom-1.5 -left-1.5 cursor-ne-resize;
+    @apply -bottom-[2.5%] -left-[2%] cursor-ne-resize;
   }
   .br {
-    @apply -bottom-1.5 -right-1.5 cursor-nw-resize;
+    @apply -bottom-[2.5%] -right-[2%] cursor-nw-resize;
   }
   #rowCol {
     @apply bg-transparent flex;

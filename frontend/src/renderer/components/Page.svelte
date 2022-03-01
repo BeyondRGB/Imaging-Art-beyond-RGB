@@ -2,7 +2,7 @@
 	export let selectedPage: any;
 	export let routes;
 	export let pages;
-	import { fade } from "svelte/transition";
+	import { fade, fly } from "svelte/transition";
 	import { currentPage, appSettings, modal } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 

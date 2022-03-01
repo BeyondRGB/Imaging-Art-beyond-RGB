@@ -1,7 +1,8 @@
 <script>
   import { createEventDispatcher, onDestroy } from "svelte";
-
+  import { fly } from "svelte/transition";
   import { appSettings } from "@util/stores";
+  import { ChevronDownIcon } from "svelte-feather-icons";
   const dispatch = createEventDispatcher();
   const close = () => dispatch("close");
 
@@ -48,15 +49,28 @@
 <div class="modal-background" on:click={close} />
 
 {#if !minimal}
-  <div class="{theme} modal" role="dialog" aria-modal="true" bind:this={modal}>
+  <div
+    class="{theme} modal"
+    role="dialog"
+    aria-modal="true"
+    bind:this={modal}
+    transition:fly={{ y: window.innerHeight, duration: 250, opacity: 0 }}
+  >
     <slot />
 
     <!-- svelte-ignore a11y-autofocus -->
     <button class="closeDia" autofocus on:click={close}>close modal</button>
   </div>
 {:else}
-  <div class="{theme} modal" bind:this={modal} role="dialog">
-    <button class="closeHome" on:click={close}>X</button>
+  <div
+    class="{theme} modal"
+    bind:this={modal}
+    role="dialog"
+    transition:fly={{ y: window.innerHeight, duration: 400, opacity: 1 }}
+  >
+    <button class="closeHome" on:click={close}
+      ><ChevronDownIcon size="2x" /></button
+    >
     <slot />
   </div>
 {/if}
@@ -76,9 +90,9 @@
   }
 
   .closeHome {
-    @apply absolute top-0 left-0 bg-gray-800/75 w-[6vh] h-[6vh] rounded-full
-          border-2 border-gray-700 text-gray-200/50 hover:bg-red-900/75 hover:rounded-full
-          translate-y-[2vh];
+    @apply absolute top-0 left-0 bg-gray-800/75 w-full h-[6%] rounded-none
+          border-2 border-gray-700 text-gray-200/50 hover:bg-gray-600/75 hover:rounded-none
+          m-0 flex items-center justify-center active:scale-100 active:bg-gray-400/75 transition-all;
   }
 
   .closeDia {

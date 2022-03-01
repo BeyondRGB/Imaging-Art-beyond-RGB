@@ -14,9 +14,11 @@
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
   import Layout from "@components/Process/Layout.svelte";
+  import { time_ranges_to_array } from "svelte/internal";
   let tabList;
 
   let showDialog = false;
+  let colorTargetID;
 
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
@@ -56,9 +58,10 @@
     try {
       let temp = JSON.parse($messageStore[0]);
       console.log(temp);
-      if (temp["RequestType"] === "HalfSizePreview") {
+      console.log(colorTargetID);
+      if (temp["RequestID"] === colorTargetID) {
         console.log("HalfSizedPreview From Server");
-        $processState.artStacks[0].colorTargetImage = temp.RequestData;
+        $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
       } else if (temp["ResponseType"] === "image") {
         $processState.outputImage = temp["ResponseData"];
       }
@@ -68,8 +71,9 @@
   }
 
   function colorTargetPrev() {
+    colorTargetID = Math.floor(Math.random() * 999999999);
     let msg = {
-      RequestID: 2434234,
+      RequestID: colorTargetID,
       RequestType: "HalfSizePreview",
       RequestData: {
         filenames: [$processState.artStacks[0].fields.images[0].name],
@@ -77,6 +81,7 @@
     };
     if ($processState.artStacks[0].fields.images[0].name.length > 2) {
       console.log("Getting Color Target Preview");
+      console.log(msg);
       sendMessage(JSON.stringify(msg));
     }
   }

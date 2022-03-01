@@ -37,7 +37,7 @@
         cols: 10,
         refData: null,
         color: 50,
-        size: 0.7,
+        size: 0.5,
       };
       colorPos = { top: 0.25, left: 0.25, bottom: 0.5, right: 0.5 };
       $processState.artStacks[0].colorTargets[0] = {
@@ -47,7 +47,7 @@
         right: 0.5,
         cols: 10,
         rows: 10,
-        size: 0.7,
+        size: 0.5,
       };
     } else if (!verifyTarget) {
       verifyTarget = {
@@ -56,7 +56,7 @@
         cols: 10,
         refData: null,
         color: 100,
-        size: 0.7,
+        size: 0.5,
       };
       verifyPos = { top: 0.5, left: 0.5, bottom: 0.75, right: 0.75 };
       $processState.artStacks[0].colorTargets[1] = {
@@ -66,7 +66,7 @@
         right: 0.5,
         cols: 10,
         rows: 10,
-        size: 0.7,
+        size: 0.5,
       };
     }
   }
@@ -149,7 +149,13 @@
             <button>RefData</button>
             <input type="range" bind:value={target.color} max="360" />
             {target.color}
-            <input type="range" bind:value={target.size} max="1" step=".01" />
+            <input
+              type="range"
+              bind:value={target.size}
+              min=".3"
+              max=".7"
+              step=".01"
+            />
             {Math.round(target.size * 100)}%
           </div>
           <button class="close" on:click={() => removeTarget(i)}>X</button>
