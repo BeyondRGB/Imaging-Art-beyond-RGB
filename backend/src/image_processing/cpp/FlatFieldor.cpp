@@ -92,7 +92,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 * @param w1: white1 image
 * @param w2: white2 image
 */
-void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2){
+void FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2){
     //Setting values for the For Loop going over one channel, channel 2
     float art1Total = 0;
     float white1Total = 0;
@@ -136,7 +136,7 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, b
 * @param d1: dark1 image
 * @param d2 : dark2 image
 */
-void::FlatFieldor::pixelOperation(int h, int w, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2){
+void FlatFieldor::pixelOperation(int h, int w, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2){
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int currRow, currCol, ch;
