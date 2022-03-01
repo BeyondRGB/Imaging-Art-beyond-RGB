@@ -63,6 +63,9 @@ private:
      */
     cv::Mat rgb_convertions_matrix(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
     
+    
+    float clip_pixel(float px_value);
+
     /**
      * @brief Get the gamma adjustment value for the given ColorSpace
      * Defaults to ProPhoto value
