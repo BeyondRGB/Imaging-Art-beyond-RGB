@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { currentPage, appSettings } from "@util/stores";
+	import { currentPage, appSettings, modal } from "@util/stores";
 	// Components
 	// import Navbar from "@components/Navbar.svelte";
 	import Menu from "@components/Menu.svelte";
@@ -17,85 +17,80 @@
 	import TestConsole from "@components/TestConsole.svelte";
 
 	import {
-		photo,
-		fileImageO,
-		home,
-		cog,
-		github,
-		fileText,
-		eyedropper,
-		infoCircle,
-		gears,
-	} from "svelte-awesome/icons";
+		HomeIcon,
+		SettingsIcon,
+		ImageIcon,
+		LayersIcon,
+		FileTextIcon,
+		CrosshairIcon,
+		ApertureIcon,
+	} from "svelte-feather-icons";
+
 	import { onDestroy } from "svelte";
 
 	const routes: any = {
 		Home: {
 			text: "Home",
 			component: Home,
-			icon: home,
+			icon: HomeIcon,
 			isShown: true,
 			default: true,
 		},
-		Preprocessing: {
+		Process: {
 			text: "Process",
 			component: Process,
-			icon: gears,
+			icon: ApertureIcon,
 			isShown: true,
 			page: true,
 		},
 		RGB: {
 			text: "Managed RGB",
 			component: ManagedRgb,
-			icon: photo,
+			icon: ImageIcon,
 			isShown: true,
 			page: true,
 		},
 		SpecOverlay: {
 			text: "Spectral Overlay",
 			component: SpectralOverlay,
-			icon: fileImageO,
+			icon: LayersIcon,
 			isShown: true,
 			page: true,
 		},
 		Reports: {
 			text: "Reports",
 			component: Reports,
-			icon: fileText,
+			icon: FileTextIcon,
 			isShown: true,
 			page: true,
 		},
 		SpecPicker: {
 			text: "Spectral Picker",
 			component: SpectralPicker,
-			icon: eyedropper,
+			icon: CrosshairIcon,
 			isShown: true,
 			page: true,
 		},
 		Demo: {
 			text: "Demo",
 			component: Demo,
-			icon: infoCircle,
+			icon: SettingsIcon,
 			isShown: true,
 			default: true,
 		},
 		Settings: {
 			text: "Settings",
 			component: Settings,
-			icon: cog,
+			icon: SettingsIcon,
 			isShown: true,
 			default: true,
-		},
-
-		Process: {
-			text: "ProcessOld",
-			component: ProcessOld,
-			icon: home,
-			isShown: false,
 		},
 	};
 
 	currentPage.set("Process");
+	setTimeout(() => {
+		modal.set("Home");
+	}, 0);
 
 	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 	appSettings.set({
@@ -161,7 +156,7 @@
 	<div class="app {theme} {$appSettings.sideNav ? 'sideMenu' : ''}">
 		<!-- <Navbar {routes} /> -->
 
-		<Menu icon={github} {routes} />
+		<Menu icon={SettingsIcon} {routes} />
 
 		<Page selectedPage={selectedPage.component} {routes} bind:pages />
 		<div class={`console ${isOpen ? "open" : ""}`}>
@@ -252,5 +247,10 @@
 	}
 	.con {
 		@apply w-full h-full;
+	}
+
+	.menuNavIcon {
+		fill: transparent;
+		stroke-width: 8%;
 	}
 </style>

@@ -10,7 +10,7 @@
     connectionState,
     connect,
   } from "@util/stores";
-  import Icon from "svelte-awesome";
+  // import Icon from "svelte-awesome";
 
   $: theme = $appSettings.theme ? "dark" : "";
   function handleClick(newPage: any[]) {
@@ -25,7 +25,15 @@
 <main class="{$appSettings.sideNav ? 'sideMain' : ''} {theme}">
   <ul>
     <div class="logoBox">
-      <p>Beyond RGB</p>
+      <p>
+        Beyond RGB <span
+          class="bg-red-600 rounded-lg p-1 font-semibold flex justify-center items-center"
+          >ALPHA
+        </span><span
+          class="bg-gray-500 rounded-lg p-0.5 font-semibold flex justify-center items-center"
+          >v0.0.5</span
+        >
+      </p>
     </div>
     <div class="menuBtns">
       {#each Object.keys(routes).map((key) => [key, routes[key]]) as item, i}
@@ -34,7 +42,11 @@
             class={$currentPage === item[0] ? "selected" : ""}
             on:click={() => handleClick(item)}
           >
-            <Icon data={item[1].icon} scale={1.5} />
+            <svelte:component
+              this={item[1].icon}
+              size="1.75x"
+              class="menuNavIcon"
+            />
             <span>{item[1].text}</span>
           </button>
         {/if}
@@ -42,11 +54,13 @@
     </div>
     <div class="ctlBtns">
       <button on:click={() => modal.set("Home")}>
-        <Icon data={routes["Home"].icon} scale={1.75} />
+        <!-- <Icon data={routes["Home"].icon} scale={1.75} /> -->
+        <svelte:component this={routes["Home"].icon} size="1.75x" />
       </button>
 
       <button on:click={() => modal.set("Settings")}>
-        <Icon data={routes["Settings"].icon} scale={1.75} />
+        <!-- <Icon data={routes["Settings"].icon} scale={1.75} /> -->
+        <svelte:component this={routes["Settings"].icon} size="1.75x" />
       </button>
 
       <button
@@ -86,7 +100,7 @@
   button {
     @apply rounded-none h-full w-full flex flex-col justify-center items-center
             ring-0 bg-transparent dark:hover:bg-gray-800 hover:bg-gray-200 
-            dark:text-gray-50/60 dark:hover:text-gray-50 shadow-none;
+            dark:text-gray-300 dark:hover:text-gray-50 shadow-none;
   }
 
   .selected {
