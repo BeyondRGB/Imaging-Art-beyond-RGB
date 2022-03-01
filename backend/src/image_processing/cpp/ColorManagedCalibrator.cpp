@@ -203,9 +203,11 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
             for(int col = 0; col < width; col++){
                 int data_col = col + row * width;
                 float px_value = (float)cm_RGB.at<double>(chan, data_col);
+                // Clip px between 0 and 1
+                px_value = this->clip_pixel(px_value);
                 // Apply gamma to correct brightness
-                float gamma_corrected_value = this->apply_gamma(px_value, this->color_space);
-                cm_im->setPixel(row, col, chan, gamma_corrected_value);
+                px_value = this->apply_gamma(px_value, this->color_space);
+                cm_im->setPixel(row, col, chan, px_value);
             }
         }
     }
@@ -373,6 +375,14 @@ cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
     return convertions_matrix;
 }
 
+float ColorManagedCalibrator::clip_pixel(float px_value){
+    if(px_value < 0)
+        px_value = 0;
+    if(px_value > 1)
+        px_value = 1;
+    return px_value;
+}
+
 float ColorManagedCalibrator::gamma(ColorSpace color_space){
     //TODO the gamma values included here are not what they should be and should
     // be updated once we know what they are.
@@ -398,9 +408,17 @@ float ColorManagedCalibrator::gamma(ColorSpace color_space){
 float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space){
     // TODO this is not complete yet and is more complicated than what is currently implemented
     // Update this once we know what is involved
-    float gamma = this->gamma(color_space);
-    // Apply gamma to correct brightness
-    float gamma_corrected_value = std::pow(px_value, gamma);
+    // float gamma = this->gamma(color_space);
+    // // Apply gamma to correct brightness
+    // float gamma_corrected_value = std::pow(px_value, gamma);
+    float gamma_corrected_value;
+    if( px_value >= 0.001953125 ){
+        float exponent = 1 / 1.8;
+        gamma_corrected_value = pow(px_value, exponent);
+    }
+    else{
+        gamma_corrected_value  = px_value * 16;
+    }
     return gamma_corrected_value;
 }
 
