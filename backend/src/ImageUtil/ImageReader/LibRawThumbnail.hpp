@@ -1,6 +1,8 @@
 #ifndef BTRGB_LIBRAWTHUMBNAIL_HPP
 #define BTRGB_LIBRAWTHUMBNAIL_HPP
 
+#include <cstring>
+
 #include <math.h>
 #include <memory>
 #include <libraw.h>

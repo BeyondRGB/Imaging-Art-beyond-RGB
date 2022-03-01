@@ -1,6 +1,8 @@
 #ifndef THUMBNAIL_HPP
 #define THUMBNAIL_HPP
 
+#include <cppcodec/base64_rfc4648.hpp>
+
 #include "ImageUtil/ImageReader/LibRawThumbnail.hpp"
 #include "ImageUtil/Image.hpp"
 
@@ -16,6 +18,6 @@ public:
 private:
 	static unsigned int id;
 
-}
+};
 
 #endif
