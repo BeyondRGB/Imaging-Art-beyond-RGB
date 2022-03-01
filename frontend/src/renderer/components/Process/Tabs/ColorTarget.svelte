@@ -5,23 +5,22 @@
   import Page from "@root/components/Page.svelte";
 
   function update() {
-    if (colorTarget?.currentPos) {
-      $processState.artStacks[0].colorTargets[0].top =
-        colorTarget.currentPos.top;
-      $processState.artStacks[0].colorTargets[0].left =
-        colorTarget.currentPos.left;
-      $processState.artStacks[0].colorTargets[0].bottom =
-        colorTarget.currentPos.bottom;
-      $processState.artStacks[0].colorTargets[0].right =
-        colorTarget.currentPos.right;
+    if (colorPos) {
+      $processState.artStacks[0].colorTargets[0].top = colorPos.top;
+      $processState.artStacks[0].colorTargets[0].left = colorPos.left;
+      $processState.artStacks[0].colorTargets[0].bottom = colorPos.bottom;
+      $processState.artStacks[0].colorTargets[0].right = colorPos.right;
       $processState.artStacks[0].colorTargets[0].rows = colorTarget.rows;
       $processState.artStacks[0].colorTargets[0].cols = colorTarget.cols;
+      $processState.artStacks[0].colorTargets[0].size = colorTarget.size;
     }
   }
 
   $: if ($processState.currentTab === 5) {
     console.log("Update");
+    console.log($processState);
     update();
+    console.log($processState);
   }
 
   let colorTarget;
