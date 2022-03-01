@@ -28,19 +28,19 @@ ImageReader::~ImageReader() {
 }
 
 
-void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    func("Reading In Raw Image Data!");
+void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+    comms->send_info("Reading In Raw Image Data!", "ImageReader");
 
     btrgb::BitDepthFinder util;
     int bit_depth = -1;
 
 
     for(const auto& [key, im] : *images) {
-        func("RawImageReader: Loading " + im->filename() + "...");
+        comms->send_info("Loading " + im->getName() + "...", "ImageReader");
 
         try {
             cv::Mat raw_im;
-            _reader->open(im->filename());
+            _reader->open(im->getName());
             _reader->copyBitmapTo(raw_im);
             _reader->recycle();
 
@@ -69,11 +69,11 @@ void ImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
         }
         catch(const btrgb::ReaderFailedToOpenFile& e) {
-            func("[ImageReader]" + std::string(e.what()) + im->filename());
+            comms->send_error(std::string(e.what()) + " || " + im->getName(), "ImageReader");
             images->deleteImage(key);
         }
         catch(const std::runtime_error& e) {
-            func("[ImageReader]" + std::string(e.what()) + im->filename());
+            comms->send_error(std::string(e.what()) + " || " + im->getName(), "ImageReader");
             images->deleteImage(key);
         }
 
