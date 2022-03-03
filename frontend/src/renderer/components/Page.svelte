@@ -1,5 +1,4 @@
 <script lang="ts">
-	export let selectedPage: any;
 	export let routes;
 	export let pages;
 	import { fade, fly } from "svelte/transition";
@@ -7,10 +6,12 @@
 	import Modal from "@components/Modal.svelte";
 
 	let showModal = false;
-	$: console.log($modal);
 	$: if ($modal === "Settings" || $modal === "Home") {
 		showModal = true;
+	} else {
+		showModal = false;
 	}
+	$: console.log($currentPage);
 </script>
 
 <div
