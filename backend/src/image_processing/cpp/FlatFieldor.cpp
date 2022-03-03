@@ -94,10 +94,10 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 */
 void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2){
     //Setting values for the For Loop going over one channel, channel 2
-    int art1Total = 0;
-    int white1Total = 0;
-    int art2Total = 0;
-    int white2Total = 0;
+    float art1Total = 0;
+    float white1Total = 0;
+    float art2Total = 0;
+    float white2Total = 0;
     int loops = 0;
     int xOff, yOff, currRow, currCol;
 
@@ -108,20 +108,20 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, b
             currCol = (patX + xOff);
             art1Total += a1->getPixel(currRow, currCol, 1);
             white1Total += wh1->getPixel(currRow, currCol, 1);
-            art2Total += a2->getPixel(currRow, currCol, 1);
-            white2Total += wh2->getPixel(currRow, currCol, 1);
+//            art2Total += a2->getPixel(currRow, currCol, 1);
+//            white2Total += wh2->getPixel(currRow, currCol, 1);
             loops++;
         }
     }
     //Calculate average based on the counts from the for loop
     double art1Avg = art1Total / (loops);
     double white1Avg = white1Total / (loops);
-    double art2Avg = art2Total / (loops);
-    double white2Avg = white2Total / (loops);
+//    double art2Avg = art2Total / (loops);
+//    double white2Avg = white2Total / (loops);
 
     //w values are constants based on the y value and patch value averages
-    w1 = ((yRef * (white1Avg / art1Avg)) / 100);
-    w2 = ((yRef * (white2Avg / art2Avg)) / 100);
+    w = ((yRef * (white1Avg / art1Avg)) / 100);
+//    w2 = ((yRef * (white2Avg / art2Avg)) / 100);
 }
 
 /**
@@ -148,13 +148,13 @@ void::FlatFieldor::pixelOperation(int h, int w, int c, btrgb::Image* a1, btrgb::
                 dPix = d1->getPixel(currRow, currCol, ch);
                 aPix = a1->getPixel(currRow, currCol, ch);
                 //Need to overwrite previous image pixel in the Art Object
-                newPixel = w1 * (double(aPix - dPix) / double(wPix - dPix));
+                newPixel = w * (double(aPix - dPix) / double(wPix - dPix));
                 a1->setPixel(currRow, currCol, ch, newPixel);
                 //Repeat for image 2
                 wPix = wh2->getPixel(currRow, currCol, ch);
                 dPix = d2->getPixel(currRow, currCol, ch);
                 aPix = a2->getPixel(currRow, currCol, ch);
-                newPixel = w2 * (double(aPix - dPix) / double(wPix - dPix));
+                newPixel = w * (double(aPix - dPix) / double(wPix - dPix));
                 a2->setPixel(currRow, currCol, ch, newPixel);
             }
         }
