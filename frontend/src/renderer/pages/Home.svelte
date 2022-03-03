@@ -34,14 +34,14 @@
     </div>
   </div>
   <button
-    on:click={() => handleClick("Preprocessing")}
+    on:click={() => handleClick("Process")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     Learn More
     <span> Learn how to use Beyond RGB </span>
   </button>
   <button
-    on:click={() => handleClick("Preprocessing")}
+    on:click={() => handleClick("Process")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     Proccess

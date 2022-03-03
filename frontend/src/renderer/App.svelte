@@ -158,7 +158,7 @@
 
 		<Menu icon={SettingsIcon} {routes} />
 
-		<Page selectedPage={selectedPage.component} {routes} bind:pages />
+		<Page {routes} bind:pages />
 		<div class={`console ${isOpen ? "open" : ""}`}>
 			<div class="testBox">
 				<div class="handle" on:click={() => (isOpen = !isOpen)}>

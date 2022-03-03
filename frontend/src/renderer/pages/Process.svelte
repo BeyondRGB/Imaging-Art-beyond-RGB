@@ -70,6 +70,21 @@
     }
   }
 
+  $: if ($messageStore.length > 1) {
+    try {
+      let temp = JSON.parse($messageStore[0]);
+      console.log(temp);
+      if (temp["ResponseType"] === "ImageBase64") {
+        console.log("Base64 From Server");
+        $processState.outputImage = temp["ResponseData"];
+      } else if (temp["ResponseType"] === "image") {
+        $processState.outputImage = temp["ResponseData"];
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   function colorTargetPrev() {
     colorTargetID = Math.floor(Math.random() * 999999999);
     let msg = {
@@ -177,7 +192,7 @@
   }
 
   .confirmModal {
-    @apply absolute bg-black/25 z-50 items-center justify-center w-full h-full hidden;
+    @apply absolute bg-black/75 z-50 items-center justify-center w-full h-full hidden;
   }
 
   .show {
