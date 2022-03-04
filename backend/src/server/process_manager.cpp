@@ -7,8 +7,8 @@
 void ProcessManager::process_request(std::string request, std::shared_ptr<CommunicationObj> coms_obj) {
 	this->set_coms_obj(coms_obj);
 	//this->send_info( this->name_m, "Received: " + request);
-	std::cout << "Received: " << request << std::endl;
-	std::cout << "Parsing Request" << std::endl;
+	//std::cout << "Received: " << request << std::endl;
+	//std::cout << "Parsing Request" << std::endl;
 
 	std::string RequestIDKey = key_map[ProcessManager::RequestKey::REQUEST_ID];
 	std::string RequestTypeKey = key_map[ProcessManager::RequestKey::REQUEST_TYPE];
@@ -42,6 +42,9 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 	}
 	else if (key == "HalfSizePreview") {
 		process = std::shared_ptr<HalfSizePreview>(new HalfSizePreview());
+	}
+	else if (key == "Thumbnails") {
+		process = std::shared_ptr<ThumbnailLoader>(new ThumbnailLoader());
 	}
 	//TODO add other process instantiation here as more get created
 

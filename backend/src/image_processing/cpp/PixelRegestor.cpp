@@ -11,6 +11,7 @@ using namespace cv;
 
 void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("", "PixelRegestor");
+    return;
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");

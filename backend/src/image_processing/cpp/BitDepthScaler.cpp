@@ -34,7 +34,7 @@ void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
 
 
         /* Output bit depth scaled image. */
-        images->outputImageAs(btrgb::TIFF, key, key + "_bd");
+        //images->outputImageAs(btrgb::TIFF, key, key + "_bd");
     }
 
 }

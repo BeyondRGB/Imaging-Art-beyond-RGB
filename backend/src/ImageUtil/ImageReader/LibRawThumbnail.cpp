@@ -66,6 +66,17 @@ size_t LibRawThumbnail::length() { return this->_length; }
 bool LibRawThumbnail::is_encoded() { return this->_is_encoded; }
 
 
+void LibRawThumbnail::copyBitmapTo(std::vector<uchar>& buffer) {
+    if( ! this->_is_open)
+        throw std::runtime_error("[LibRawThumnail] Out of order call, image not open.");
+    
+    uchar* data = (uchar*) this->_data;
+    uint begin_index = 0, end_index = this->_length - 1;
+    buffer.reserve( this->_length );
+    buffer.insert( buffer.begin(), &data[begin_index], &data[end_index] );
+}
+
+
 void LibRawThumbnail::copyBitmapTo(void* buffer, uint32_t size) {
     if( ! this->_is_open)
         throw std::runtime_error("[LibRawThumnail] Out of order call, image not open.");
