@@ -38,7 +38,7 @@ class Pipeline: public BackendProcess{
 	/**
 	* Maps enum values to a string
 	*/
-	const std::string key_map[7] = {
+	const std::string key_map[8] = {
 		"art",
 		"white",
 		"dark",
