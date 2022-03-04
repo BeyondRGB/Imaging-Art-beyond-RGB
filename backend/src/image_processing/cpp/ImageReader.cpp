@@ -83,7 +83,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
     for(const auto& [key, im] : *images) {
         im->_raw_bit_depth = bit_depth;
-        images->outputImageAs(btrgb::TIFF, key, key + "_raw");
+        //images->outputImageAs(btrgb::TIFF, key, key + "_raw");
     }
 
 }

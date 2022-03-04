@@ -1,5 +1,5 @@
-#ifndef THUMBNAIL_HPP
-#define THUMBNAIL_HPP
+#ifndef THUMBNAILLOADER_HPP
+#define THUMBNAILLOADER_HPP
 
 #include <cppcodec/base64_rfc4648.hpp>
 
@@ -8,11 +8,11 @@
 
 #include "backend_process.hpp"
 
-class Thumbnail : public BackendProcess {
+class ThumbnailLoader : public BackendProcess {
 
 public:
-    Thumbnail();
-    ~Thumbnail();
+    ThumbnailLoader();
+    ~ThumbnailLoader();
 	void run() override;
 
 private:

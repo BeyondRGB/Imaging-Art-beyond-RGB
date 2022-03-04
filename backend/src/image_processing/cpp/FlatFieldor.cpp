@@ -83,8 +83,8 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 
 
     // Outputs TIFFs for each image group for after this step, temporary
-    images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
-    images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
+    //images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
+    //images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
 }
 
 /**

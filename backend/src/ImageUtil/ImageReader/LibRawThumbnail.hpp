@@ -22,6 +22,8 @@ class LibRawThumbnail : public ImageReaderStrategy {
         bool is_encoded();
         size_t length();
 
+
+        void copyBitmapTo(std::vector<uchar>& buffer);
         void copyBitmapTo(void* buffer, uint32_t size);
         void copyBitmapTo(cv::Mat& im);
 
