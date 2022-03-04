@@ -9,8 +9,8 @@ using namespace cv;
 
 
 
-void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    func("Pixel Registration");
+void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+    comms->send_info("", "PixelRegestor");
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
@@ -19,15 +19,15 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
 
-   
+
     //Check that there is actual data in them
     if(!im1.data || !im2.data)
     {
-       func("Error: No data in OpenCv Matrixs");
+        comms->send_error("No data in OpenCv Matrixs", "PixelRegestor");
         return;
     }
 
-    
+
     //Seperating the three channel matrix into multiple single channel arrays
     //We will be using im1Split[2] as registration base
 
@@ -56,7 +56,7 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     else {
         warp_matrix = Mat::eye(2, 3, CV_32F);
     }
-  
+
     std::cout << "Setting criteria \n";
     //Higher iteration number, higher accuracy, higher compute time
 
@@ -67,7 +67,7 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     TermCriteria criteria(TermCriteria::COUNT + TermCriteria::EPS, iterations, termination_eps);
 
-   
+
     try {
         std::cout << "Estimating warp matrix \n";
         //Perform image alignment
@@ -96,7 +96,7 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
         }
 
-    
+
         //Merging 3 split channels back into 1 matrix
         cv::merge(im2Split, 3, im2);
     }
@@ -110,5 +110,3 @@ void PixelRegestor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     images->outputImageAs(btrgb::TIFF, "art2", "RegistrationOut2");
 
 }
-
-

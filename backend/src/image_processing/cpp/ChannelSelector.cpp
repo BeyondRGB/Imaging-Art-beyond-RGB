@@ -4,8 +4,8 @@
 
 #include "../header/ChannelSelector.h"
 
-void ChannelSelector::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    func("Channel Selection");
+void ChannelSelector::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+    comms->send_info("", "ChannelSelector");
     //TODO add channel section logic here
     //sleep_for(seconds(1));
 }
