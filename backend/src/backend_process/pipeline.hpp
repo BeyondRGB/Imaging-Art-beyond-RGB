@@ -32,19 +32,21 @@ class Pipeline: public BackendProcess{
 		IMAGES,
 		RefData,
 		StandardObserver,
-		Illuminants
+		Illuminants,
+		TargetLocation
 	};
 	/**
 	* Maps enum values to a string
 	*/
 	const std::string key_map[7] = {
-		"Art",
-		"White",
-		"Dark",
-		"Images",
-		"RefData",
-		"StandardObserver",
-		"Illuminants"
+		"art",
+		"white",
+		"dark",
+		"images",
+		"refData",
+		"standardObserver",
+		"illuminants",
+		"targetLocation"
 	};
 
 
