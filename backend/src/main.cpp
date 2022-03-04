@@ -1,16 +1,14 @@
 
 #include <iostream>
 #include "server/request_server.hpp"
-#include "utils/logger.hpp"
 
 //Testing Includes: Remove before submiting PR
 void testFunc() {
-    
+
 }
 
 
 int main() {
-    Logger::init_logging();
 	bool test = false; // Set to true if you want to test something and bypass the server
 	if (test) {
 		testFunc();
