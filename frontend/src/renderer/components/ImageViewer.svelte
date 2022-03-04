@@ -1,4 +1,10 @@
 <script lang="ts">
+  import {
+    currentPage,
+    messageStore,
+    processState,
+    sendMessage,
+  } from "@util/stores";
   import { currentPage, processState } from "@util/stores";
   import placeholder from "@assets/placeholder.jpg";
   import OpenSeadragon from "openseadragon";
@@ -6,14 +12,15 @@
   import Loader from "@components/Loader.svelte";
   let viewer;
   let imageUrl;
-  onMount(() => {
+
+  const createViewer = () => {
     viewer = OpenSeadragon({
       id: "image-seadragon-viewer",
       prefixUrl: "/openseadragon/images/",
       immediateRender: true,
       preload: true,
       showNavigator: false,
-      minZoomLevel: 1,
+      minZoomLevel: 0.5,
       useCanvas: true,
       showZoomControl: false,
       showHomeControl: false,
@@ -26,7 +33,7 @@
       //   url: placeholder,
       // },
     });
-  });
+  };
 
   onDestroy(() => {
     if (viewer) {
@@ -34,6 +41,23 @@
       viewer = null;
       console.log("Image viewer destroyed");
     }
+  });
+
+  const destoryViewer = () => {
+    if (viewer) {
+      viewer.destroy();
+      viewer = null;
+      console.log("Image viewer destroyed");
+    }
+  };
+
+  onMount(() => {
+    console.log("Image viewer Mount");
+    createViewer();
+  });
+  onDestroy(() => {
+    console.log("Image viewer Destroy");
+    destoryViewer();
   });
 
   // $: if (viewer && $processState.artStacks[0].colorTargetImage?.dataURL) {
@@ -45,17 +69,35 @@
   //     url: imageUrl,
   //   });
   // }
+  $: if ($processState.currentTab === 5) {
+    if (viewer && !viewer.isOpen()) {
+      console.log("Opening Image");
+      console.log(viewer.isOpen());
+      viewer.open({
+        type: "image",
+        url: imageUrl,
+      });
+    }
+  } else {
+    if (viewer) {
+      viewer.close();
+    }
+  }
 
-  $: if (viewer && $processState.outputImage?.dataURL) {
+  $: if (viewer) {
     // console.log($processState.artStacks[0].colorTargetImage);
+    console.log("New Image (Image Viewer)");
     let temp = new Image();
     temp.src = $processState.outputImage?.dataURL;
-    imageUrl = temp.src;
-
-    viewer.open({
-      type: "image",
-      url: imageUrl,
-    });
+    if (imageUrl === temp.src) {
+      console.log("skip (image viewer)");
+    } else {
+      imageUrl = temp.src;
+      viewer.open({
+        type: "image",
+        url: imageUrl,
+      });
+    }
   }
 </script>
 

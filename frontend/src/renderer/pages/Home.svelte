@@ -1,9 +1,15 @@
 <script lang="ts">
   import TextLogo from "@assets/TextLogo.svg";
-  import { currentPage } from "@util/stores";
-  import { angleDoubleDown } from "svelte-awesome/icons";
+  import { currentPage, modal } from "@util/stores";
+  // import { angleDoubleDown } from "svelte-awesome/icons";
   import { fade, draw } from "svelte/transition";
-  import Icon from "svelte-awesome";
+  // import Icon from "svelte-awesome";
+  import { ChevronsDownIcon } from "svelte-feather-icons";
+
+  function handleClick(page) {
+    currentPage.set(page);
+    modal.set(null);
+  }
 </script>
 
 <main>
@@ -23,26 +29,26 @@
     >
       <h3 class="dark:text-gray-400">Get started below</h3>
       <div class="downarrow">
-        <Icon data={angleDoubleDown} scale={2} />
+        <ChevronsDownIcon size="2x" />
       </div>
     </div>
   </div>
   <button
-    on:click={() => currentPage.set("Preprocessing")}
+    on:click={() => handleClick("Process")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     Learn More
     <span> Learn how to use Beyond RGB </span>
   </button>
   <button
-    on:click={() => currentPage.set("Preprocessing")}
+    on:click={() => handleClick("Process")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     Proccess
     <span> Process a new Spectral Image </span>
   </button>
   <button
-    on:click={() => currentPage.set("SpecOverlay")}
+    on:click={() => handleClick("SpecOverlay")}
     class="dark:bg-gray-700/25 dark:text-white dark:hover:bg-gray-600/60 dark:hover:text-white dark:border-gray-600"
   >
     View
@@ -52,7 +58,8 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-full flex flex-col items-center justify-center gap-4;
+    @apply w-full h-[97%] flex flex-col items-center justify-center gap-4
+            bg-gray-800 mt-[3%] relative;
   }
 
   button {
@@ -64,7 +71,6 @@
   button:last-of-type {
     @apply mb-[20vh];
   }
-
   h1 {
     @apply text-4xl font-bold;
   }
