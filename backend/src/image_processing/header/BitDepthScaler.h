@@ -9,7 +9,7 @@ class BitDepthScaler : public ImgProcessingComponent {
     public:
         BitDepthScaler();
         ~BitDepthScaler();
-        void execute(CallBackFunction func, btrgb::ArtObject* images) override;
+        void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 };
 
 

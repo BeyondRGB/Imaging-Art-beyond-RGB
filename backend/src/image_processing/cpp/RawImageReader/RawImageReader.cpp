@@ -25,14 +25,14 @@ RawImageReader::~RawImageReader() {
 }
 
 
-void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    func("Reading In Raw Image Data!");
-    
+void RawImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+    comms->send_info("Reading In Raw Image Data!", "RawImageReader");
+
     /* For each btrgb::image struct in the art object. */
     for(const auto& [key, im] : *images) {
 
         try {
-            func("RawImageReader: Loading " + im->filename() + "...");
+            comms->send_info("Loading " + im->getName() + "...", "RawImageReader");
             if(key == "white1") {
                 this->fileReader->read(im, RawReaderStrategy::RECORD_BIT_DEPTH);
             }
@@ -41,7 +41,7 @@ void RawImageReader::execute(CallBackFunction func, btrgb::ArtObject* images) {
             }
         }
         catch(const RawReaderStrategy_FailedToOpenFile) {
-            func("RawImageReader: Failed to open raw image.");
+            comms->send_error("Failed to open raw image.", "RawImageReader");
             images->deleteImage(key);
         }
 
