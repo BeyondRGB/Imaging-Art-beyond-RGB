@@ -6,7 +6,7 @@
 
 void ProcessManager::process_request(std::string request, std::shared_ptr<CommunicationObj> coms_obj) {
 	this->set_coms_obj(coms_obj);
-	this->send_info( this->name_m, "Received: " + request);
+	//this->send_info( this->name_m, "Received: " + request);
 	std::cout << "Received: " << request << std::endl;
 	std::cout << "Parsing Request" << std::endl;
 
@@ -36,7 +36,7 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key) {
 	std::shared_ptr<BackendProcess> process(nullptr);
 	std::cout << "ProcessKey: " << key << std::endl;
-	if (key == "processImg") {
+	if (key == "Process") {
 		std::cout << "Creating Pipeline" << std::endl;
 		process = std::shared_ptr<Pipeline>(new Pipeline());
 	}

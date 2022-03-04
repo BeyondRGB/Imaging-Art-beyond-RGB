@@ -31,7 +31,10 @@ private:
 	websocketpp::frame::opcode::value opcode_m;
 	unsigned long id;
 	static unsigned char binID;
-	//Should be private is temporarily public for testing
+	/**
+	* Function for sending a message back to the front end
+	* @param msg: the message string to send
+	*/
 	void send_msg(std::string msg);
 	void send_bin(std::vector<uchar>& v);
 
@@ -44,17 +47,33 @@ public:
 	CommunicationObj(const CommunicationObj& other);
 
 	//void send_msg(std::string msg);
-	/**
-	* Function for sending a message back to the front end
-	* @param msg: the message string to send
-	*/
 	void set_id(long newID);
-
+	/**
+	* Function for sending a Information Message to the front end
+	* @param msg: the message being sent to the front end
+	* @param sender: what function is sending the message
+	*/
 	void send_info(std::string msg, std::string sender);
+	/**
+	* Function for sending a Error Message to the front end
+	* @param msg: the message being sent to the front end
+	* @param sender: what function is sending the message
+	*/
 	void send_error(std::string msg, std::string sender);
+	/**
+	* Function for sending a Progress Update Message to the front end
+	* @param val: amount of progress made in a overall step
+	* @param sender: what function is sending the message
+	*/
 	void send_progress(double val, std::string sender);
-	void send_base64(btrgb::Image*, enum btrgb::output_type type, enum btrgb::image_quality qual);
-	void send_binary(btrgb::Image*, enum btrgb::output_type type, enum btrgb::image_quality qual);
+	/**
+	* Function for sending a base64 image to the front end
+	* @param image: pointer to the image object of the image being sent
+	* @param type: enum to the type of image being sent
+	* @param qual: enum for the quality of the image being sent
+	*/
+	void send_base64(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
+	void send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
 };
 
 #endif // COMMUNICATION_OBJ_H
