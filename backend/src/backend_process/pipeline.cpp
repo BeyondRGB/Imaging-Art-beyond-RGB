@@ -53,7 +53,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
         //Collect the information provided about the color target
-        Json target_location = this->process_data_m->get_obj("TargetLocation");
+        Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
         double topEdge = target_location.get_number("top");
         double leftEdge = target_location.get_number("left");
         double botEdge = target_location.get_number("bottom");
@@ -161,7 +161,7 @@ std::string Pipeline::get_ref_file() {
     std::string ref_file = "";
     try {
         Json ref_data = this->process_data_m->get_obj(key_map[DataKey::RefData]);
-        ref_file = ref_data.get_string(key_map[DataKey::RefData]);
+        ref_file = ref_data.get_string("name");
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
