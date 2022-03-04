@@ -33,7 +33,7 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key) {
 	std::shared_ptr<BackendProcess> process(nullptr);
 	std::cout << "ProcessKey: " << key << std::endl;
-	if (key == "processImg") {
+	if (key == "Process") {
 		std::cout << "Creating Pipeline" << std::endl;
 		process = std::shared_ptr<Pipeline>(new Pipeline());
 	}
