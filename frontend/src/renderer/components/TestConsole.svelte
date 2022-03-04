@@ -72,10 +72,10 @@
           {:else if message[0]?.length > 512}
             <details class="responseDropdown">
               <summary
-                >{getTime(message[1])}) > [Expand: {message[0].length} chars]
+                >{getTime(message[1])}) > [Expand: {message[0].length}+ chars]
                 {message[0].substring(0, 256)} ...</summary
               >
-              <code>{message[0]}</code>
+              <code>{message[0]} ...</code>
             </details>
           {:else}
             <div class="responseMessage">

@@ -42,7 +42,7 @@ void CommunicationObj::send_info(std::string msg, std::string sender){
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
-	std::cout<<all_info<<std::endl;
+	//std::cout<<all_info<<std::endl;
 	send_msg(all_info);
 }
 
@@ -56,7 +56,7 @@ void CommunicationObj::send_error(std::string msg, std::string sender){
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
-	std::cout<<all_info<<std::endl;
+	//std::cout<<all_info<<std::endl;
 	send_msg(all_info);
 }
 
@@ -70,7 +70,7 @@ void CommunicationObj::send_progress(double val, std::string sender){
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
-	std::cout<<all_info<<std::endl;
+	//std::cout<<all_info<<std::endl;
 	send_msg(all_info);
 }
 
@@ -85,7 +85,7 @@ void CommunicationObj::send_base64(btrgb::Image* image, enum btrgb::output_type 
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
-	std::cout<<all_info<<std::endl;
+	//std::cout<<all_info<<std::endl;
 	send_msg(all_info);
 }
 
@@ -103,7 +103,7 @@ void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type 
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
-	std::cout<<all_info<<std::endl;
+	//std::cout<<all_info<<std::endl;
 	send_msg(all_info);
 	btrgb::binary_ptr_t bin = image->toBinaryOfType(type, qual);
 	bin->push_back(binID);
