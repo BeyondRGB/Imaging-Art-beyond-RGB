@@ -4,9 +4,9 @@ var child = require('child_process').execFile;
 var executablePath;
 
 if (process.platform == 'win32')
-  executablePath = path.join(__dirname, '../../backend/lib/app.exe');
+  executablePath = path.join(__dirname, '../../lib/app.exe');
 else {
-  executablePath = path.join(__dirname, '../../backend/lib/app');
+  executablePath = path.join(__dirname, '../../lib/app');
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -14,14 +14,19 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-// Start Backend Server
-child(executablePath, function (err, data) {
-  if (err) {
-    console.error(err);
-    return;
-  }
+process.on('loaded', (event, args) => {
+  console.log('LOADED');
+  console.log(app.getAppPath());
 
-  console.log(data.toString());
+  // Start Backend Server
+  child(executablePath, [`--app_root=${app.getAppPath()}`], (err, data) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    console.log(data.toString());
+  });
 });
 
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
