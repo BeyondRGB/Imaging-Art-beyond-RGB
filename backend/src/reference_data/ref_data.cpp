@@ -219,3 +219,25 @@ void RefData::output_xyz() {
 	std::cout << "White Patch," << cp->get_name() << std::endl;
 	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl << std::endl;
 }
+
+cv::Mat RefData::as_matrix(){
+	int col_count = this->row_count * this->col_count;
+	cv::Mat ref_data = cv::Mat_<double>(REFLECTANCE_SIZE, col_count, CV_32FC1);
+	std::cout << "RefData rows: " << ref_data.rows << " ReflecSize: " << REFLECTANCE_SIZE << std::endl;
+	for(int mat_row = 0; mat_row < ref_data.rows; mat_row++){
+		int wave_len = INDEX_TO_WAVELEN(mat_row);
+		std::cout << "WaveLen: " << wave_len << " -> (" << std::endl;
+		for(int row = 0; row < this->row_count; row++){
+			for(int col = 0; col < this->col_count; col++){
+				int mat_col = col + row * this->col_count;
+				std::cout << "\t\trow: " << row << " col: " << col << " mat_col: " << mat_col << std::endl;
+				// ColorPatch cp = *this->color_patches[row][col];
+				// std::cout << cp.get_name() << " ";
+
+			}
+			std::cout << std::endl << std::endl;
+		}
+	}
+
+	return ref_data;
+}
