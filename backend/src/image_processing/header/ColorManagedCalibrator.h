@@ -13,6 +13,7 @@
 #include "reference_data/ref_data.hpp"
 #include "utils/color_convertions.hpp"
 #include "reference_data/white_points.hpp"
+#include "utils/calibration_util.hpp"
 
 // typedef std::function<double(cv::Mat)> MinDeltaE_function;
 
@@ -109,37 +110,6 @@ private:
      */
     void build_input_matrix();
 
-    // /**
-    //  * @brief Create a ColorTarget object for the given image
-    //  * 
-    //  * TODO this does not belong here and it should be refactored
-    //  * so that ArtObject creates and holds the ColorTarget. Doing so now
-    //  * would break some other things that are not available so it will need to be
-    //  * refactored once they are all merged
-    //  * 
-    //  * @param images The ArtObject the contains the target info
-    //  * @param im the image containing the color target
-    //  * @return ColorTarget 
-    //  */
-    // ColorTarget get_target(btrgb::ArtObject* images, btrgb::Image* im);
-    
-    /**
-     * @brief Initialize a MxN matrix to hold the average pixel values for each color patch where 
-     * M is the number of channels
-     * N is the number of Color Patches 
-     * 
-     *   color_patch_avg is a 2d Matrix in the form 
-     *   (cp_avg is the average pixel value from the color target in the actual image)
-     *       cp_avg_chan1_patch_1, cp_avg_chan1_patch_2, ..., cp_avg_chan1_patch_k
-     *       cp_avg_chan2_patch_1, cp_avg_chan2_patch_2, ..., cp_avg_chan2_patch_k
-     *       ...                 , ...                 , ..., ...
-     *       cp_avg_chan6_patch_1, cp_avg_chan6_patch_2, ..., cp_avg_chan6_patch_k 
-     * @param targets an array of color targets
-     * @param target_count the number of color targets
-     * @param channel_count the number of channels (M) this Matrix will hold
-     */
-    void build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count);
-    
     /**
      * @brief Runs the MinProblemSolver to optimize M and offsets for a minimal deltaE
      * This requires that build_input_matrix has been called to set up the InputArray, M, and offsets
