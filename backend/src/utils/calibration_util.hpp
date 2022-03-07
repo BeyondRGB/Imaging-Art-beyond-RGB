@@ -44,6 +44,14 @@ namespace btrgb{
          * @return cv::Mat camrasigs
          */
         cv::Mat build_camra_signals_matrix(Image* images[], int art_count, int channel_count, cv::Mat* offsets=nullptr);
+    
+        /**
+         * @brief Helper function for displaying a matrix to stdout
+         * 
+         * @param matrix the matrix to be displayed
+         * @param name the name of the matrix that will be displyed along with values
+         */
+        void display_matrix(cv::Mat* matrix, std::string name);
     }
 }
 
