@@ -57,10 +57,15 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
 
     // Fined M and Offsets to minimize deltaE
+    std::cout << "Optimizing to minimize deltaE" << std::endl;
     this->find_optimization();
     
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
+    std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     this->update_image(images);
+    
+    // Save resulting Matacies for latter use
+    this->output_report_data();
 
     // Dont remove art1 and art2 from the ArtObject yet as they are still needed for spectral calibration
 
@@ -97,29 +102,19 @@ void ColorManagedCalibrator::find_optimization() {
     cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
     min_solver->setFunction(ptr_F);
     cv::Mat step = (cv::Mat_<double>(1,24) <<
-                        1.75,1.75,1.75,1.75,1.75,1.75,  // M
-                        1.75,1.75,1.75,1.75,1.75,1.75,  // M
-                        1.75,1.75,1.75,1.75,1.75,1.75,  // M
+                        0.75,0.75,0.75,0.75,0.75,0.75,  // M
+                        0.75,0.75,0.75,0.75,0.75,0.75,  // M
+                        0.75,0.75,0.75,0.75,0.75,0.75,  // M
                         0.01,0.01,0.01,0.01,0.01,0.01   // Offsetr
                     );                                
     min_solver->setInitStep(step);
     min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50000, 1e-10));
     
     // Optimize M and offset for minimized deltaE
-    double res = min_solver->minimize(this->optimization_input);
-
-
-    /** TODO Remove below when ready to merge */ 
-    std::cout << "**********************\n\tResults\n**********************" << std::endl;
-    this->display_matrix(&this->M, "M");
-    //std::cout << "Resulting offset" << std::endl;
-    this->display_matrix(&this->offest, "offset");
-    this->display_matrix(&this->deltaE_values, "DelE Values");
+    this->resulting_avg_deltaE = min_solver->minimize(this->optimization_input);
+    
     cv::Ptr<DeltaEFunction> def = ptr_F.staticCast<DeltaEFunction>();
-    std::cout << "Resulting DeltaE: " << res << std::endl;
-    std::cout << "Itteration Count: " << def->get_itteration_count() << std::endl;
-    std::cout << "\n*********************************************************************************************************************" << std::endl;
-
+    this->solver_iteration_count = def->get_itteration_count();
 }
 
 /***
@@ -227,29 +222,21 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     }
 }
 
-// ColorTarget ColorManagedCalibrator::get_target(btrgb::ArtObject* images, btrgb::Image* im) {
-//     // TODO refactor ArtObject to hold all ColorTargets
-//     TargetData target_data;
-//     // Extract nessisary data from ArtObject about color target and stor it in target_data
-//     try {
-//         target_data.top_loc = images->getTargetInfo("top");
-//         target_data.bot_loc = images->getTargetInfo("bot");
-//         target_data.left_loc = images->getTargetInfo("left");
-//         target_data.right_loc = images->getTargetInfo("right");
+void ColorManagedCalibrator::output_report_data(){
+    // We currently do not have a place to store the results.
+    // The plan is to add a Report class when the results will put.
+    // It will be comming in a future PR, so for now just display results in terminal
 
-//         target_data.row_count = images->getTargetSize("row");
-//         target_data.col_count = images->getTargetSize("col");
-//     }
-//     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-//         throw e;
-//     }
-//     catch (const std::logic_error& e) {
-//         throw e;
-//     }
-//     // Create and return ColorTarget
-//     ColorTarget target(im, target_data);
-//     return target;
-// }
+    /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */ 
+    std::cout << "**********************\n\tResults\n**********************" << std::endl;
+    this->display_matrix(&this->M, "M");
+    this->display_matrix(&this->offest, "offset");
+    this->display_matrix(&this->deltaE_values, "DelE Values");
+    std::cout << "Resulting DeltaE: " << this->resulting_avg_deltaE << std::endl;
+    std::cout << "Itteration Count: " << this->solver_iteration_count << std::endl;
+    std::cout << "\n*********************************************************************************************************************" << std::endl;
+
+}
 
 void ColorManagedCalibrator::build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count) {
     int row_count = targets[0].get_row_count();
@@ -306,20 +293,21 @@ void ColorManagedCalibrator::build_input_matrix() {
     * An change in the this->optimazation_input will be represented in M and Offset
     */
 
-
-    this->optimization_input = (cv::Mat_<double>(1,item_count)<<
-                            /*M*/       1.25,0.25,0.25,0.1,0.1,0.1,
-                            /*M*/       0.25,1.15,-0.1,0.1,0.1,0.1,
-                            /*M*/       -0.25,-0.25,1.5,0.1,0.1,0.1,
-                            /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01
-                                );
-
+    /** This is the original M matrix given for optimization. */
     // this->optimization_input = (cv::Mat_<double>(1,item_count)<<
-    //                         /*M*/       0.1, 0.1, 0.25, 0.5, 0.1, 0.1,
-    //                         /*M*/       0.1, 0.1, 0.25, 0.1, 1.0, 0.1,
-    //                         /*M*/       0.1, 0.1, 0.25, 0.1, 0.1, 0.5,
+    //                         /*M*/       1.25,0.25,0.25,0.1,0.1,0.1,
+    //                         /*M*/       0.25,1.15,-0.1,0.1,0.1,0.1,
+    //                         /*M*/       -0.25,-0.25,1.5,0.1,0.1,0.1,
     //                         /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01
     //                             );
+
+    /** We get better results when we use this one instead of the original */
+    this->optimization_input = (cv::Mat_<double>(1,item_count)<<
+                            /*M*/       0.1, 0.1, 0.25, 0.5, 0.1, 0.1,
+                            /*M*/       0.1, 0.1, 0.25, 0.1, 1.0, 0.1,
+                            /*M*/       0.1, 0.1, 0.25, 0.1, 0.1, 0.5,
+                            /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01
+                                );
    
      
     // Create Matrix Header to Represents the 1d InputArray as a 2d Matrix for easy extraction of M and offset

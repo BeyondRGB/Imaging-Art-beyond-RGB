@@ -50,6 +50,9 @@ private:
     cv::Mat color_patch_avgs;
     RefData* ref_data;
 
+    double resulting_avg_deltaE;
+    int solver_iteration_count;
+
     ColorSpace color_space;
     
     double stp;
@@ -154,6 +157,12 @@ private:
      * @param images the art object containing art1 and art2
      */
     void update_image(btrgb::ArtObject* images);
+
+    /**
+     * @brief Saves optimized M and offset as well the final deltaE values
+     * 
+     */
+    void output_report_data();
 
     
 };
