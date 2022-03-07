@@ -45,6 +45,10 @@ void SpectralCalibrator::init_M_refl(){
     cv::invert(this->color_patch_avgs, psudoinvers, cv::DECOMP_SVD);
     // btrgb::calibration::display_matrix(&this->color_patch_avgs, "Patch AVGS");
     // btrgb::calibration::display_matrix(&psudoinvers, "psudoInvers");
-    cv::Mat R_refl = this->ref_data->as_matrix();
+    cv::Mat R_ref = this->ref_data->as_matrix();
+    
+    cv::Mat M_refl = R_ref * psudoinvers;
+    btrgb::calibration::display_matrix(&M_refl, "M Reflectance");
+    std::cout << "M_refl rows: " << M_refl.rows << " M_refl cols: " << M_refl.cols << std::endl;
 
 }

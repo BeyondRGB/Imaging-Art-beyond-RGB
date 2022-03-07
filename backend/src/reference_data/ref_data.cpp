@@ -224,19 +224,22 @@ void RefData::output_xyz() {
 cv::Mat RefData::as_matrix(){
 	int col_count = this->row_count * this->col_count;
 	cv::Mat ref_data = cv::Mat_<double>(REFLECTANCE_SIZE, col_count, CV_32FC1);
-	std::cout << "RefData rows: " << ref_data.rows << " ReflecSize: " << REFLECTANCE_SIZE << std::endl;
 	for(int mat_row = 0; mat_row < ref_data.rows; mat_row++){
 		int wave_len = INDEX_TO_WAVELEN(mat_row);
-		std::cout << "WaveLen: " << wave_len << " -> (" << std::endl;
-		for(int row = 0; row < this->row_count; row++){
-			for(int col = 0; col < this->col_count; col++){
-				int mat_col = col + row * this->col_count;
-				std::cout << "\t\trow: " << row << " col: " << col << " mat_col: " << mat_col << std::endl;
-				// ColorPatch cp = *this->color_patches[row][col];
-				// std::cout << cp.get_name() << " ";
-
+		// The Color patches are stored in 
+			// A1, B1, C1, ..., K1
+			// A2, B2, C2, ..., K2
+			// ..., ..., ..., ..., ...
+			// Ak, Bk, Ck, ..., Kk
+		for(int col = 0; col < this->col_count; col++){
+			for(int row = 0; row < this->row_count; row++){
+				int mat_col = row + col * this->row_count;
+				ColorPatch *cp = this->get_color_patch(row, col);
+				double reflectance_value = cp->get_ref_by_wavelen(wave_len);
+				// std::cout << cp->get_name() << ": " << cp->get_ref_by_wavelen(wave_len) << " mat_col:" << mat_col << std::endl;
+				ref_data.at<double>(mat_row, mat_col) = reflectance_value;
 			}
-			std::cout << std::endl << std::endl;
+			// std::cout << std::endl << std::endl;
 		}
 	}
 

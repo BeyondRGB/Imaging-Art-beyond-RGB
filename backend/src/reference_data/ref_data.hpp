@@ -130,6 +130,19 @@ public:
 	*/
 	void output_xyz();
 
+	/**
+	 * @brief Convert refdata to a NxM matrix
+	 * 	N is the number of wavelenghts
+	 * 	M is the number of ColorPatches
+	 * The ColorPatches are added in order of
+	 * 	A1_wavlen380, A2_wavlen380, A3_wavlen380, ..., Ak_wavlen380, B1_wavlen380, ... , Kk_wavlen380
+	 *  A1_wavlen390, A2_wavlen390, A3_wavlen390, ..., Ak_wavlen390, B1_wavlen390, ... , Kk_wavlen390
+	 *  ...			, ...		  , ...			, ..., ...		   , ...		 , ... , ...								
+	 *  A1_wavlen730, A2_wavlen730, A3_wavlen730, ..., Ak_wavlen730, B1_wavlen730, ... , Kk_wavlen730
+	 * 
+	 * 
+	 * @return cv::Mat 
+	 */
 	cv::Mat as_matrix();
 
 
