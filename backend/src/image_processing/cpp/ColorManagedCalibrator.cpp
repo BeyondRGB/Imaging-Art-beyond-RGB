@@ -130,33 +130,9 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     int width = art1->width();
     
     // Initialize 6xN Matrix to represen our 6 channal image
-    cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
     // Each row represents a single channel and N is the number total pixles for each channel
-    // cv::Mat six_chan = cv::Mat_<double>(6, height * width, CV_32FC1);
-    // int chan_count = 3; // Each image only has 3 channels
-    // for(int art_i = 0; art_i < std::size(art); art_i++){
-    //     // The are image we are currently getting pixel values from
-    //     btrgb::Image* art_c = art[art_i];
-    //     for(int chan = 0; chan < chan_count; chan++){
-    //         // The row in the six_chan matrix we are currently adding values to
-    //         int mat_row = chan + art_i * chan_count;
-    //         for(int row = 0; row < art_c->height(); row++){
-    //             int offset_index = chan + art_i * 3;
-    //             // The offset value subracted from each pixel
-    //             double offset_value = this->offest.at<double>(offset_index);
-    //             for(int col = 0; col < art_c->width(); col++){
-    //                 // The pixel value we are going to set. 
-    //                 // NOTE: this includes the subraction of the offset_value
-    //                 double px_val = (double)art_c->getPixel(row, col, chan) - offset_value;
-    //                 // The col in the six_chan matrix we ar currently adding values to
-    //                 int mat_col = col + row * art_c->width();
-    //                 // Set pixel
-    //                 six_chan.at<double>(mat_row, mat_col) = px_val;
-    //             }
-    //         }
-    //     }
-    // }
-
+    cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
+   
     /**
     *   M is a 2d Matrix in the form
     *       m_1,1, m_1,2, ..., m_1,6
@@ -230,9 +206,9 @@ void ColorManagedCalibrator::output_report_data(){
 
     /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */ 
     std::cout << "**********************\n\tResults\n**********************" << std::endl;
-    this->display_matrix(&this->M, "M");
-    this->display_matrix(&this->offest, "offset");
-    this->display_matrix(&this->deltaE_values, "DelE Values");
+    btrgb::calibration::display_matrix(&this->M, "M");
+    btrgb::calibration::display_matrix(&this->offest, "offset");
+    btrgb::calibration::display_matrix(&this->deltaE_values, "DelE Values");
     std::cout << "Resulting DeltaE: " << this->resulting_avg_deltaE << std::endl;
     std::cout << "Itteration Count: " << this->solver_iteration_count << std::endl;
     std::cout << "\n*********************************************************************************************************************" << std::endl;
@@ -378,25 +354,25 @@ float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator
     return gamma_corrected_value;
 }
 
-void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
-    std::cout << std::endl;
-    std::cout << "What is in " << name << std::endl;
-    if (nullptr != matrix) {
-        for (int chan = 0; chan < matrix->rows; chan++) {
-            for (int col = 0; col < matrix->cols; col++) {
-                if (col != 0) {
-                    std::cout << ", ";
-                }
-                double avg = matrix->at<double>(chan, col);
-                std::cout << avg;
-            }
-            std::cout << std::endl;// << std::endl;
-        }
-    }
-    else {
-        std::cout << "Matrix not initialized" << std::endl;
-    }
-}
+// void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
+//     std::cout << std::endl;
+//     std::cout << "What is in " << name << std::endl;
+//     if (nullptr != matrix) {
+//         for (int chan = 0; chan < matrix->rows; chan++) {
+//             for (int col = 0; col < matrix->cols; col++) {
+//                 if (col != 0) {
+//                     std::cout << ", ";
+//                 }
+//                 double avg = matrix->at<double>(chan, col);
+//                 std::cout << avg;
+//             }
+//             std::cout << std::endl;// << std::endl;
+//         }
+//     }
+//     else {
+//         std::cout << "Matrix not initialized" << std::endl;
+//     }
+// }
 
 
 ////////////////////////////////////////////////////////////////////////////////
