@@ -32,5 +32,39 @@ cv::Mat btrgb::calibration::build_target_avg_matrix(ColorTarget targets[], int t
         }
     }
     return color_patch_avgs;
+}
 
+cv::Mat btrgb::calibration::build_camra_signals_matrix(Image* art[], int art_count, int channel_count, cv::Mat* offsets){
+    int height = art[0]->height();
+    int width = art[0]->width();
+    // Initialize 6xN Matrix to represen our 6 channal image
+    // Each row represents a single channel and N is the number total pixles for each channel
+    cv::Mat camra_sigs = cv::Mat_<double>(channel_count, height * width, CV_32FC1);
+    int chan_count = 3; // Each image only has 3 channels
+    for(int art_i = 0; art_i < art_count; art_i++){
+        // The are image we are currently getting pixel values from
+        btrgb::Image* art_c = art[art_i];
+        for(int chan = 0; chan < chan_count; chan++){
+            // The row in the six_chan matrix we are currently adding values to
+            int mat_row = chan + art_i * chan_count;
+            for(int row = 0; row < art_c->height(); row++){
+                int offset_index = chan + art_i * 3;
+                // The offset value subracted from each pixel, but we only need to subtract offsets if some were given
+                double offset_value = 0;
+                if(nullptr != offsets){
+                    offset_value = offsets->at<double>(offset_index);
+                }
+                for(int col = 0; col < art_c->width(); col++){
+                    // The pixel value we are going to set. 
+                    // NOTE: this includes the subraction of the offset_value
+                    double px_val = (double)art_c->getPixel(row, col, chan) - offset_value;
+                    // The col in the six_chan matrix we ar currently adding values to
+                    int mat_col = col + row * art_c->width();
+                    // Set pixel
+                    camra_sigs.at<double>(mat_row, mat_col) = px_val;
+                }
+            }
+        }
+    }
+    return camra_sigs;
 }
