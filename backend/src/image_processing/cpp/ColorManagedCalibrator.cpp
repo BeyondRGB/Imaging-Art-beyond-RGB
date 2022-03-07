@@ -130,31 +130,32 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     int width = art1->width();
     
     // Initialize 6xN Matrix to represen our 6 channal image
+    cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
     // Each row represents a single channel and N is the number total pixles for each channel
-    cv::Mat six_chan = cv::Mat_<double>(6, height * width, CV_32FC1);
-    int chan_count = 3; // Each image only has 3 channels
-    for(int art_i = 0; art_i < std::size(art); art_i++){
-        // The are image we are currently getting pixel values from
-        btrgb::Image* art_c = art[art_i];
-        for(int chan = 0; chan < chan_count; chan++){
-            // The row in the six_chan matrix we are currently adding values to
-            int mat_row = chan + art_i * chan_count;
-            for(int row = 0; row < art_c->height(); row++){
-                int offset_index = chan + art_i * 3;
-                // The offset value subracted from each pixel
-                double offset_value = this->offest.at<double>(offset_index);
-                for(int col = 0; col < art_c->width(); col++){
-                    // The pixel value we are going to set. 
-                    // NOTE: this includes the subraction of the offset_value
-                    double px_val = (double)art_c->getPixel(row, col, chan) - offset_value;
-                    // The col in the six_chan matrix we ar currently adding values to
-                    int mat_col = col + row * art_c->width();
-                    // Set pixel
-                    six_chan.at<double>(mat_row, mat_col) = px_val;
-                }
-            }
-        }
-    }
+    // cv::Mat six_chan = cv::Mat_<double>(6, height * width, CV_32FC1);
+    // int chan_count = 3; // Each image only has 3 channels
+    // for(int art_i = 0; art_i < std::size(art); art_i++){
+    //     // The are image we are currently getting pixel values from
+    //     btrgb::Image* art_c = art[art_i];
+    //     for(int chan = 0; chan < chan_count; chan++){
+    //         // The row in the six_chan matrix we are currently adding values to
+    //         int mat_row = chan + art_i * chan_count;
+    //         for(int row = 0; row < art_c->height(); row++){
+    //             int offset_index = chan + art_i * 3;
+    //             // The offset value subracted from each pixel
+    //             double offset_value = this->offest.at<double>(offset_index);
+    //             for(int col = 0; col < art_c->width(); col++){
+    //                 // The pixel value we are going to set. 
+    //                 // NOTE: this includes the subraction of the offset_value
+    //                 double px_val = (double)art_c->getPixel(row, col, chan) - offset_value;
+    //                 // The col in the six_chan matrix we ar currently adding values to
+    //                 int mat_col = col + row * art_c->width();
+    //                 // Set pixel
+    //                 six_chan.at<double>(mat_row, mat_col) = px_val;
+    //             }
+    //         }
+    //     }
+    // }
 
     /**
     *   M is a 2d Matrix in the form
@@ -162,7 +163,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     *       m_2,1, m_2,2, ..., m_2,6
     *       m_3,1, m_3,2, ..., m_3,6
     * 
-    *   six_chan is a 2d Matrix in the form
+    *   camra_sigs is a 2d Matrix in the form
     *       px1_ch1, px2_ch1, ..., pxN_ch1
     *       px1_ch2, px2_ch2, ..., pxN_ch2
     *       px1_ch3, px2_ch3, ..., pxN_ch3
@@ -176,9 +177,9 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     *       Z1, Z2, ..., ZN
     *       
     */
-    // Convert six channels ColorManaged XYZ values
-    cv::Mat cm_XYZ = this->M * six_chan;
-    six_chan.release(); // No longer needed
+    // Convert camra_sigs ColorManaged XYZ values
+    cv::Mat cm_XYZ = this->M * camra_sigs;
+    camra_sigs.release(); // No longer needed
     
     // Convert ColorManaged XYZ values to ColorManaged RGB values
     cv::Mat rgb_convertion_matrix = this->rgb_convertions_matrix(this->color_space);
