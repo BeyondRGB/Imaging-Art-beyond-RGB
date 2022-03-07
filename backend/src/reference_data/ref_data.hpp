@@ -2,12 +2,14 @@
 #define REF_DATA_H
 
 #include <string>
+#include <opencv2/opencv.hpp>
 //#include <iostream>
 #include "utils/csv_parser.hpp"
 #include "color_patch.hpp"
 #include "illuminants.hpp"
 #include "standard_observer.hpp"
 #include "white_points.hpp"
+
 
 
 typedef Illuminants::IlluminantType IlluminantType;
@@ -127,6 +129,8 @@ public:
 	* Y Value,<White ColorPatch yvalue>,Row,<White ColorPatch row>,Col,<White ColorPatch col> 
 	*/
 	void output_xyz();
+
+	cv::Mat as_matrix();
 
 
 private:
