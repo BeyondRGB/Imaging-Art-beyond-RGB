@@ -10,10 +10,7 @@ void testFunc() {
 
 
 int main() {
-    std::cout << "Init Logging" << std::endl;
     Logger::init_logging();
-    
-    std::cout << "Logging initialized" << std::endl;
 	bool test = false; // Set to true if you want to test something and bypass the server
 	if (test) {
 		testFunc();
