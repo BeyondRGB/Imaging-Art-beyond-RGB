@@ -6,13 +6,23 @@
 
 
 //Testing Includes: Remove before submiting PR
-//#include "reference_data/illuminants.hpp"
+#include "reference_data/illuminants.hpp"
+#include "reference_data/ref_data.hpp"
+#include "reference_data/standard_observer.hpp"
+#include "utils/calibration_util.hpp"
 void testFunc() {
-    
+    ObserverType so = StandardObserver::ObserverType::SO_1931;
+    IlluminantType illum = Illuminants::IlluminantType::D50;
+    std::string file = "APT_Reflectance_Data.csv";
+    RefData ref_data(file, illum, so);
+    cv::Mat m = ref_data.as_matrix();
+    btrgb::calibration::display_matrix(&m, "RefData");
+
 }
 
 
 int main(int argc, char** argv) {
+    std::cout << argv << std::endl;
     CMDArgManager::process_args(argc, argv);
 	bool test = true; // Set to true if you want to test something and bypass the server
 	if (GlobalsSinglton::get_instance()->is_test()) {
