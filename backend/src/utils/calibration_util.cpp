@@ -70,6 +70,7 @@ cv::Mat btrgb::calibration::build_camra_signals_matrix(Image* art[], int art_cou
 }
 
 void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
+    bool contains_negatives = false;
     std::cout << std::endl;
     std::cout << "What is in " << name << std::endl;
     if (nullptr != matrix) {
@@ -78,8 +79,10 @@ void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
                 if (col != 0) {
                     std::cout << ", ";
                 }
-                double avg = matrix->at<double>(chan, col);
-                std::cout << avg;
+                double val = matrix->at<double>(chan, col);
+                std::cout << val;
+                if(val < 0)
+                    contains_negatives = true;
             }
             std::cout << std::endl;// << std::endl;
         }
@@ -87,4 +90,30 @@ void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
     else {
         std::cout << "Matrix not initialized" << std::endl;
     }
+    if(contains_negatives)
+        std::cout << "Contains Negative Values." << std::endl;
+    else
+        std::cout << "All Values are posotive." << std::endl;
+}
+
+double btrgb::calibration::row_min(cv::Mat &target, int row){
+    double min = MAX;
+    for(int col = 0; col < target.cols; col++){
+        double val = target.at<double>(row, col);
+        if(val < min){
+            min = val;
+        }
+    }
+    return min;
+}
+
+double btrgb::calibration::row_max(cv::Mat &target, int row){
+    double max = MIN;
+    for(int col = 0; col < target.cols; col++){
+        double val = target.at<double>(row, col);
+        if(val > max){
+            max = val;
+        }
+    }
+    return max;
 }
