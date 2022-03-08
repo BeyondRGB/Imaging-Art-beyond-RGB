@@ -3,9 +3,13 @@
 
 
 #include <opencv2/opencv.hpp>
+#include <limits>
 
 #include "ImageUtil/ColorTarget.hpp"
 #include "ImageUtil/Image.hpp"
+
+#define MAX std::numeric_limits<double>::max()
+#define MIN std::numeric_limits<double>::min()
 
 namespace btrgb{
     namespace calibration{
@@ -52,6 +56,25 @@ namespace btrgb{
          * @param name the name of the matrix that will be displyed along with values
          */
         void display_matrix(cv::Mat* matrix, std::string name);
+
+        /**
+         * @brief Find min value in specified targets row 
+         * 
+         * @param target: the target matrix to look for min value
+         * @param row: the row to look for min in target
+         * @return double min value
+         */
+        double row_min(cv::Mat &target, int row);
+
+        /**
+         * @brief Find the max value in specified tartets row
+         * 
+         * @param target the target matrix to look for max value
+         * @param row the row to look for max in target
+         * @return double max value
+         */
+        double row_max(cv::Mat &target, int row);
+
     }
 }
 
