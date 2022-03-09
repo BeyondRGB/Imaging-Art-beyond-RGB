@@ -33,22 +33,29 @@ void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images
 
     //Init Matracies used in calibration
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
-    this->init_M_refl();
+    for(float sp_value = 0.2f; sp_value <= 0.4f; sp_value += 0.1f){
+        std::cout << std::endl << "****************************************************************" << std::endl;
+        std::cout << std::endl << "****************************************************************" << std::endl;
 
-    cv::Mat ref_data_matrix = this->ref_data->as_matrix();
-    cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
-            &ref_data_matrix,
-            &this->input_array,
-            &this->M_refl,
-            &this->color_patch_avgs,
-            &this->R_camera
-        ));
+        std::string str = "\nTesting Step: " + std::to_string(sp_value);
+        //func(str);
+        std::cout << str << std::endl;
 
-    //Init MinProblemSolver
-    cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
-    min_solver->setFunction(ptr_F);
-    for(float sp_value = 0.25f; sp_value <= 0.75f; sp_value += 0.1f){
-        std::cout << "\nTesting Step: " << sp_value << std::endl;
+        this->init_M_refl();
+
+        cv::Mat ref_data_matrix = this->ref_data->as_matrix();
+        cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
+                &ref_data_matrix,
+                &this->input_array,
+                &this->M_refl,
+                &this->color_patch_avgs,
+                &this->R_camera
+            ));
+
+        //Init MinProblemSolver
+        cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
+        min_solver->setFunction(ptr_F);
+        
         cv::Mat step;
         this->init_step(sp_value, step);
         // btrgb::calibration::display_matrix(&step, "Step");
@@ -56,44 +63,54 @@ void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images
         min_solver->setInitStep(step);
         min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50000, 1e-10));
 
-        // btrgb::calibration::display_matrix(&this->M_refl, "Mrefl");
+
+        btrgb::calibration::display_matrix(&this->M_refl, "Mrefl Init");
 
 
-        this->R_camera = this->M_refl * this->color_patch_avgs;
-        // Optimize M and offset for minimized deltaE
+    //    this->R_camera = this->M_refl * this->color_patch_avgs;
+        
         TimeTracker time_tracker;
         time_tracker.start_timeing();
+        // Optimize M_refl to minimized Z
         double res = min_solver->minimize(this->input_array);
         time_tracker.end_timeing();
-        // btrgb::calibration::display_matrix(&this->R_camera, "RCamera Final");
-        std::cout << "Min z: " << res << std::endl;
+
+        btrgb::calibration::display_matrix(&this->M_refl, "Mrefl After");
+        this->R_camera = this->M_refl * this->color_patch_avgs;
+        btrgb::calibration::display_matrix(&this->R_camera, "RCamera After");
+
+        
 
         time_tracker.elapsed_time_sec();
         time_tracker.elapsed_time_min();
+
+        cv::Ptr<WeightedErrorFunction> def = ptr_F.staticCast<WeightedErrorFunction>();
+        std::cout << "Itterations: " << def->get_itteration_count() << std::endl;
+        std::cout << "Min z: " << res << std::endl;
     }
         
 
 }
 
 void SpectralCalibrator::init_M_refl(){
-    std::cout << "Initializing M_refl" << std::endl;
+    // std::cout << "Initializing M_refl" << std::endl;
     int row_count = this->color_patch_avgs.rows;
     int col_count = this->color_patch_avgs.cols;
     cv::Mat psudoinvers = cv::Mat_<double>(col_count, row_count, CV_32FC1);
     
-    std::cout << "Invert" << std::endl;
+    // std::cout << "Invert" << std::endl;
     cv::invert(this->color_patch_avgs, psudoinvers, cv::DECOMP_SVD);
     // btrgb::calibration::display_matrix(&this->color_patch_avgs, "Patch AVGS");
     // btrgb::calibration::display_matrix(&psudoinvers, "psudoInvers");
-    std::cout << "R_ref" << std::endl;
+    // std::cout << "R_ref" << std::endl;
     cv::Mat R_ref = this->ref_data->as_matrix();
-    std::cout << "Mrefl" << std::endl;
+    // std::cout << "Mrefl" << std::endl;
     this->M_refl = R_ref * psudoinvers;
     // btrgb::calibration::display_matrix(&this->M_refl, "M Reflectance");
-    std::cout << "M_refl rows: " << this->M_refl.rows << " M_refl cols: " << M_refl.cols << std::endl;
+    // std::cout << "M_refl rows: " << this->M_refl.rows << " M_refl cols: " << M_refl.cols << std::endl;
     this->input_array = cv::Mat(this->M_refl).reshape(0,1);
     // btrgb::calibration::display_matrix(&this->input_array, "InputArray");
-    std::cout << "InputArray rows: " << this->input_array.rows << " InputArray cols: " << input_array.cols << std::endl;
+    // std::cout << "InputArray rows: " << this->input_array.rows << " InputArray cols: " << input_array.cols << std::endl;
     
 }
 
@@ -110,6 +127,8 @@ void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
 //                      WeightedErrorFunction                 //
 ////////////////////////////////////////////////////////////////
 
+int WeightedErrorFunction::itteration_count = 0;
+
 WeightedErrorFunction::WeightedErrorFunction(cv::Mat *ref_data, cv::Mat *input_array, cv::Mat *M_refl, cv::Mat *cp_carmera_sigs, cv::Mat *R_camera){
     this->ref_data = ref_data;
     this->input_array = input_array;
@@ -125,6 +144,7 @@ int WeightedErrorFunction::getDims() const{
 }
 
 double WeightedErrorFunction::calc(const double *x) const{
+    this->itteration_count++;
     for (int row = 0; row < this->M_refl->rows; row++){
         for(int col = 0; col < this->M_refl->cols; col++){
             int i = col + row * this->M_refl->cols;

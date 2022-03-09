@@ -43,7 +43,10 @@ public:
 
     double calc(const double* x) const;
 
+    int get_itteration_count(){return this->itteration_count; }
+
 private:
+    static int itteration_count;
     cv::Mat *ref_data;
     cv::Mat *input_array;
     cv::Mat *M_refl;
