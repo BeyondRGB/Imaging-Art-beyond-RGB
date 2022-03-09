@@ -7,4 +7,3 @@ jsoncons
 libpng
 cppcodec
 opencv
-spdlog

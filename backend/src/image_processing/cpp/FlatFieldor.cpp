@@ -143,7 +143,7 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int currRow, currCol, ch;
-    int wPix, dPix, aPix, newPixel;
+    float wPix, dPix, aPix, newPixel;
     for (currRow = 0; currRow < h; currRow++) {
         for (currCol = 0; currCol < wid; currCol++) {
             for (ch = 0; ch < c; ch++) {

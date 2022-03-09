@@ -5,26 +5,26 @@ then
 	echo Found ../backend/build/Release/app
 
 	# Make sure the backend/lib folder exists
-	if [ -d ./backend/lib ]
+	if [ -d ./lib ]
 	then
-		echo Found ./backend/lib
+		echo Found ./lib
 	else
-		mkdir -p ./backend/lib
+		mkdir -p ./lib
 	fi
 
 	# Make sure the backend/res folder exists
-	if [ -d ./backend/res ]
+	if [ -d ./res ]
 	then
-		echo Found ./backend/res
+		echo Found ./res
 	else
-		mkdir -p ./backend/res
+		mkdir -p ./res
 	fi
 
 	# Copy executable
-	cp -v ../backend/build/Release/app ./backend/lib
+	cp -v ../backend/build/Release/app ./lib
 
 	# Copy all backend resource files
-	cp -rv ../backend/res/ ./backend/res/
+	cp -rv ../backend/res/* ./res
 
 	npm run make
 
