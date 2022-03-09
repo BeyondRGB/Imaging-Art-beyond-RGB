@@ -32,46 +32,18 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     int width = art1->width();
     int channels = art1->channels();
 
-    //Collect Normalized Target Information From the Art Object
-    float topTarget = images->getTargetInfo("top");
-    float botTarget = images->getTargetInfo("bot");
-    float leftTarget = images->getTargetInfo("left");
-    float rightTarget = images->getTargetInfo("right");
-    int targetRows = images->getTargetSize("row");
-    int targetCols = images->getTargetSize("col");
-
     //Col and Row of the white patch on the target
     int whiteRow = reference->get_white_patch_row();
     int whiteCol = reference->get_white_patch_col();
 
-    //Change Normalized values to actual pixel coordinates
-    int topEdge = width * topTarget;
-    int botEdge = width * botTarget;
-    int leftEdge = width * leftTarget;
-    int rightEdge = width * rightTarget;
-    int tarHeight = botEdge - topEdge;
-    int tarWidth = rightEdge - leftEdge;
-
-    //wOffY and wOffX are the offset from the edges of the color target to the white patch center
-    int rowHeight = (tarHeight / targetRows);
-    int colWidth = (tarWidth / targetCols);
-    int wOffY = whiteRow * rowHeight;
-    int wOffX = whiteCol * colWidth;
-
-    //X and Y of White patch location
-    //Offset by half of a cells width and height to get the center
-    int patchX = leftEdge + wOffX + (colWidth / 2);
-    int patchY = topEdge + wOffY + (rowHeight / 2);
-
-    //size - 1 = how many rings around the center point to be compared for avg
-    //Current default to 3 can be adjusted if needed
-    int size = 3;
-    int startVal = (size * -1) + 1;
-
     //Collecting the y Value from the reference data
     double yVal = reference->get_y(whiteRow, whiteCol);
+
+    //Getting average patch values for white and art images channel two
     float patAvg = images->get_target("art1").get_patch_avg(whiteRow, whiteCol, 1);
     float whiteAvg = images->get_target("white1").get_patch_avg(whiteRow, whiteCol, 1);
+
+    //Calculate w value and complete the pixel operation with set w value
     wCalc(patAvg, whiteAvg, yVal);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
 
