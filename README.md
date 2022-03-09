@@ -28,6 +28,7 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 - https://nodejs.org/en/
 	- Do not need/uncheck optional build tools (python and MSVC 2017)
 - Reboot or log-out and log-in
+- Make sure your editor is configured for `C++20` syntax
 
 ### Clone our github repository
 - `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
