@@ -90,6 +90,8 @@ void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
     else {
         std::cout << "Matrix not initialized" << std::endl;
     }
+    
+    std::cout << name << " rows: " << matrix->rows << " " << name << " cols: " << matrix->cols << std::endl;
     if(contains_negatives)
         std::cout << "Contains Negative Values." << std::endl;
     else
