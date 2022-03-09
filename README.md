@@ -5,7 +5,7 @@
 
 # About
 This project is sponsored by The Studio for Scientific Imaging and Archiving of Cultural Heritage -- a facility within the RIT Program of Color Science’s Munsell Color Science Lab.
-The project is being developed by a senior project team from the Software Engenering program at RIT.
+The project is being developed by a senior project team from the Software Engineering program at RIT.
 ### Sponsor
 Olivia Kuzio
 ### Senior Project Team
