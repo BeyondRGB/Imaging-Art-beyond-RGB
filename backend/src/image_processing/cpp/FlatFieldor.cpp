@@ -75,6 +75,9 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     wCalc(patAvg, whiteAvg, yVal);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
 
+    //Testing Image Outputs
+    //images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
+    //images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
     //Removes the white and dark images from the art object
     images->deleteImage("white1");
     images->deleteImage("white2");
@@ -84,47 +87,13 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
 /**
 * Sets the w value for the two images for the flatfielding process
-* @param base: Base value for the for loop going around the center pixel
-* @param rings: How many rings around the center pixel we are comparing to find the average, includes the center pixel as a ring
-* @param patX: x coordinate of the white patch
-* @param patY: y coordinate of the white patch
-* @param yRef: Y value calculated using the reference data for the color target
-* @param a1: art1 image
-* @param a2: art2 image
-* @param w1: white1 image
-* @param w2: white2 image
+* @param pAvg: Average Pixel value of the second channel of the overall art image
+* @param wAvg: Average Pixel value of the second channel of the overall white image
+* @param yRef: y value from reference data
 */
 void::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef){
-    //Setting values for the For Loop going over one channel, channel 2
-    //float art1Total = 0;
-    //float white1Total = 0;
-    //float art2Total = 0;
-    //float white2Total = 0;
-    //int loops = 0;
-    //int xOff, yOff, currRow, currCol;
-
-    //Collecting values of pixels in the rings around center pixel in the white patch
-    /*for (yOff = base; yOff < rings; yOff++){
-        for (xOff = base; xOff < rings; xOff++){
-            currRow = (patY + yOff);
-            currCol = (patX + xOff);
-            art1Total += a1->getPixel(currRow, currCol, 1);
-            white1Total += wh1->getPixel(currRow, currCol, 1);
-//            art2Total += a2->getPixel(currRow, currCol, 1);
-//            white2Total += wh2->getPixel(currRow, currCol, 1);
-            loops++;
-        }
-    }*/
-
-//    double art1Avg = art1Total / (loops);
-//    double white1Avg = white1Total / (loops);
-//    double art2Avg = art2Total / (loops);
-//    double white2Avg = white2Total / (loops);
-
-
     //w values are constants based on the y value and patch value averages
     w = ((yRef * (wAvg / pAvg)) / 100);
-//    w2 = ((yRef * (white2Avg / art2Avg)) / 100);
 }
 
 /**
