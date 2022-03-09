@@ -70,7 +70,9 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
     //Collecting the y Value from the reference data
     double yVal = reference->get_y(whiteRow, whiteCol);
-    wCalc(startVal, size, patchX, patchY, yVal, art1, art2, white1, white2);
+    float patAvg = images->get_target("art1").get_patch_avg(whiteRow, whiteCol, 1);
+    float whiteAvg = images->get_target("white1").get_patch_avg(whiteRow, whiteCol, 1);
+    wCalc(patAvg, whiteAvg, yVal);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
 
     //Removes the white and dark images from the art object
@@ -92,17 +94,17 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 * @param w1: white1 image
 * @param w2: white2 image
 */
-void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2){
+void::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef){
     //Setting values for the For Loop going over one channel, channel 2
-    float art1Total = 0;
-    float white1Total = 0;
-    float art2Total = 0;
-    float white2Total = 0;
-    int loops = 0;
-    int xOff, yOff, currRow, currCol;
+    //float art1Total = 0;
+    //float white1Total = 0;
+    //float art2Total = 0;
+    //float white2Total = 0;
+    //int loops = 0;
+    //int xOff, yOff, currRow, currCol;
 
     //Collecting values of pixels in the rings around center pixel in the white patch
-    for (yOff = base; yOff < rings; yOff++){
+    /*for (yOff = base; yOff < rings; yOff++){
         for (xOff = base; xOff < rings; xOff++){
             currRow = (patY + yOff);
             currCol = (patX + xOff);
@@ -112,22 +114,23 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, b
 //            white2Total += wh2->getPixel(currRow, currCol, 1);
             loops++;
         }
-    }
-    //Calculate average based on the counts from the for loop
-    double art1Avg = art1Total / (loops);
-    double white1Avg = white1Total / (loops);
+    }*/
+
+//    double art1Avg = art1Total / (loops);
+//    double white1Avg = white1Total / (loops);
 //    double art2Avg = art2Total / (loops);
 //    double white2Avg = white2Total / (loops);
 
+
     //w values are constants based on the y value and patch value averages
-    w = ((yRef * (white1Avg / art1Avg)) / 100);
+    w = ((yRef * (wAvg / pAvg)) / 100);
 //    w2 = ((yRef * (white2Avg / art2Avg)) / 100);
 }
 
 /**
 * Updates the pixels based on the w calculation for both given images
 * @param h: height of images
-* @param w: width of images
+* @param wid: width of images
 * @param c: channel count
 * @param a1: art1 image
 * @param a2: art2 image
@@ -136,13 +139,13 @@ void::FlatFieldor::wCalc(int base, int rings, int patX, int patY, double yRef, b
 * @param d1: dark1 image
 * @param d2 : dark2 image
 */
-void::FlatFieldor::pixelOperation(int h, int w, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2){
+void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2){
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int currRow, currCol, ch;
     int wPix, dPix, aPix, newPixel;
     for (currRow = 0; currRow < h; currRow++) {
-        for (currCol = 0; currCol < w; currCol++) {
+        for (currCol = 0; currCol < wid; currCol++) {
             for (ch = 0; ch < c; ch++) {
                 wPix = wh1->getPixel(currRow, currCol, ch);
                 dPix = d1->getPixel(currRow, currCol, ch);
