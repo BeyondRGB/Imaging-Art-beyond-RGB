@@ -1,17 +1,4 @@
-
-
 #include "../header/ColorManagedCalibrator.h"
-
-
-
-void enter_to_continue(){
-    std::cout << "Enter To Continue.";
-    char c;
-    do{
-        std::cin >> std::noskipws >> c;
-        std::cout << "c: (" << c << ")" << std::endl;
-    }while(c != '\n');
-}
 
 ColorManagedCalibrator::~ColorManagedCalibrator() {
 }
@@ -35,7 +22,7 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
+        func("Error: ColorManagedCalibrator called out of order. Missing at least 1 image assignment.");
         return;
     }
     catch (const std::logic_error& e) {
@@ -123,7 +110,7 @@ void ColorManagedCalibrator::find_optimization() {
  */
 void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     std::cout << "Updating Image" << std::endl;
-    btrgb::Image* art1 = art1 = images->getImage("art1");
+    btrgb::Image* art1 = images->getImage("art1");
     btrgb::Image* art2 = images->getImage("art2");
     btrgb::Image* art[2] = {art1, art2};
     int height = art1->height();
@@ -131,37 +118,12 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     
     // Initialize 6xN Matrix to represen our 6 channal image
     cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
-    // Each row represents a single channel and N is the number total pixles for each channel
-    // cv::Mat six_chan = cv::Mat_<double>(6, height * width, CV_32FC1);
-    // int chan_count = 3; // Each image only has 3 channels
-    // for(int art_i = 0; art_i < std::size(art); art_i++){
-    //     // The are image we are currently getting pixel values from
-    //     btrgb::Image* art_c = art[art_i];
-    //     for(int chan = 0; chan < chan_count; chan++){
-    //         // The row in the six_chan matrix we are currently adding values to
-    //         int mat_row = chan + art_i * chan_count;
-    //         for(int row = 0; row < art_c->height(); row++){
-    //             int offset_index = chan + art_i * 3;
-    //             // The offset value subracted from each pixel
-    //             double offset_value = this->offest.at<double>(offset_index);
-    //             for(int col = 0; col < art_c->width(); col++){
-    //                 // The pixel value we are going to set. 
-    //                 // NOTE: this includes the subraction of the offset_value
-    //                 double px_val = (double)art_c->getPixel(row, col, chan) - offset_value;
-    //                 // The col in the six_chan matrix we ar currently adding values to
-    //                 int mat_col = col + row * art_c->width();
-    //                 // Set pixel
-    //                 six_chan.at<double>(mat_row, mat_col) = px_val;
-    //             }
-    //         }
-    //     }
-    // }
 
     /**
     *   M is a 2d Matrix in the form
-    *       m_1,1, m_1,2, ..., m_1,6
-    *       m_2,1, m_2,2, ..., m_2,6
-    *       m_3,1, m_3,2, ..., m_3,6
+    *       m_1_1, m_1_2, ..., m_1_6
+    *       m_2_1, m_2_2, ..., m_2_6
+    *       m_3_1, m_3_2, ..., m_3_6
     * 
     *   camra_sigs is a 2d Matrix in the form
     *       px1_ch1, px2_ch1, ..., pxN_ch1
@@ -530,8 +492,6 @@ double DeltaEFunction::calc(const double* x)const{
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
-    //std::cout << "DeltaE: " << deltaE_avg << std::endl;
-    //enter_to_continue();
     return deltaE_avg;
 }
 
