@@ -1,20 +1,21 @@
 
 #include <iostream>
 #include "server/request_server.hpp"
-#include "utils/logger.hpp"
+#include "utils/cmd_arg_manager.hpp"
+#include "server/globals_siglton.hpp"
 
-// Testing Includes: Remove before submiting PR
-#include "server/comunication_obj.hpp"
-void testFunc()
-{
+
+//Testing Includes: Remove before submiting PR
+//#include "reference_data/illuminants.hpp"
+void testFunc() {
+    
 }
 
-int main()
-{
-	Logger::init_logging();
-	bool test = false; // Set to true if you want to test something and bypass the server
-	if (test)
-	{
+
+int main(int argc, char** argv) {
+    CMDArgManager::process_args(argc, argv);
+	bool test = true; // Set to true if you want to test something and bypass the server
+	if (GlobalsSinglton::get_instance()->is_test()) {
 		testFunc();
 		std::cout << "Exit" << std::endl;
 		exit(1);
@@ -25,6 +26,9 @@ int main()
 	server.init_server();
 	server.start_server();
 
-	// Block till server shuts down
-	std::cout << "Exiting.\n";
+    //Block till server shuts down
+    std::cout << "Exiting.\n";
+    delete GlobalsSinglton::get_instance();
+    
+
 }
