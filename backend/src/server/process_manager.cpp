@@ -6,18 +6,21 @@
 
 void ProcessManager::process_request(std::string request, std::shared_ptr<CommunicationObj> coms_obj) {
 	this->set_coms_obj(coms_obj);
-	this->send_msg("Received: " + request);
+	//this->send_info( this->name_m, "Received: " + request);
 	std::cout << "Received: " << request << std::endl;
 	std::cout << "Parsing Request" << std::endl;
 
+	std::string RequestIDKey = key_map[ProcessManager::RequestKey::REQUEST_ID];
 	std::string RequestTypeKey = key_map[ProcessManager::RequestKey::REQUEST_TYPE];
 	std::string RequestDataKey = key_map[ProcessManager::RequestKey::REQUEST_DATA];
 	try {
 		// Pars Json
 		Json j(request);
 		std::string request_key = j.get_string(RequestTypeKey);
+		unsigned long request_id = j.get_number(RequestIDKey);
 		Json request_data = j.get_obj(RequestDataKey);
-		
+		coms_obj->set_id(request_id);
+
 		// Create process
 		std::shared_ptr<BackendProcess> process = identify_process(request_key);
 
@@ -33,7 +36,7 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key) {
 	std::shared_ptr<BackendProcess> process(nullptr);
 	std::cout << "ProcessKey: " << key << std::endl;
-	if (key == "processImg") {
+	if (key == "Process") {
 		std::cout << "Creating Pipeline" << std::endl;
 		process = std::shared_ptr<Pipeline>(new Pipeline());
 	}
