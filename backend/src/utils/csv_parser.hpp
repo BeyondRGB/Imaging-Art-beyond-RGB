@@ -31,6 +31,18 @@ public:
 	void close_file();
 
 	/**
+	* Counts the number of lines in the file
+	* This will reset the file to the beggining before and after its done
+	* @return: the number of lines in the file including the header
+	*/
+	int get_line_count();
+
+	/**
+	* Reset the file back to the begining
+	*/
+	void reset_file();
+
+	/**
 	* Counts the number of tokens in the given line
 	* @param line: string to count tokens in
 	* @param delimiter: string used to seperate tokens in line. 
