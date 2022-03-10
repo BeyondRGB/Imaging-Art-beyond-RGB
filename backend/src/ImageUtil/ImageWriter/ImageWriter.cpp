@@ -3,7 +3,7 @@
 namespace btrgb {
 
     void ImageWriter::write(Image* im) {
-        write(im, im->filename());
+        write(im, im->getName());
     }
 
     void ImageWriter::write(Image* im, std::string filename) {

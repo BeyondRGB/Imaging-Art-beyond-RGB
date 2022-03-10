@@ -4,8 +4,8 @@
 
 #include "../header/ColorManagedCalibrator.h"
 
-void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    func("Color Managed Calibration");
+void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+    comms->send_info("", "ColorManagedCalibrator");
     //TODO add Color Manged Calibration logic here
     //sleep_for(seconds(1));
 }
