@@ -1,25 +1,25 @@
 
 if exist ..\backend\build\Release\*.exe (
 	@echo off
-	if exist backend\lib\ (
-		echo Found .\backend\lib\
+	if exist lib\ (
+		echo Found .\lib\
 	) else (
 		@echo on
-		mkdir backend\lib\
+		mkdir lib\
 	)
-	if exist backend\res\ (
-		echo Found .\backend\res
+	if exist res\ (
+		echo Found .\res
 	) else (
 		@echo on
-		mkdir .\backend\res\
+		mkdir res\
 	)
 	:: The /y flag supresses the promt to verify that it is ok to overwrite files
 	:: This will always just replace the res and lib with whatever is Release and res
 	
 	:: Copy .exe and libraries
-	Xcopy /y ..\backend\build\Release .\backend\lib
+	Xcopy /y ..\backend\build\Release .\lib
 	:: Copy all backend resource files
-	Xcopy /y /e ..\backend\res .\backend\res
+	Xcopy /y /e ..\backend\res .\res
 	npm run make
 )else (
 	echo Backend Release build does not exist. Run Imaging-Art-beyond-RGB\backend\win10_release.bat and try again

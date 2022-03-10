@@ -2,22 +2,22 @@
 
 # Make sure the release directory is gone so that the 
 # frontend does not automatically start the old executable.
-if [ -d ../frontend/backend/ ]
+if [ -d ../frontend/lib/ ]
 then
-	rm -rf ../frontend/backend/
+	rm -rf ../frontend/lib/
 fi
 
 # Make sure the resource folder exists.
-if [ -d ./build/Release/resources/app/backend/res/ ]
+if [ -d ./build/Release/res/ ]
 then
 	echo Found build/Release
 else
 	echo Creating build/Release
-	mkdir -p ./build/Release/resources/app/backend/res/
+	mkdir -p ./build/Release/res/
 fi
 
 # Copy resource files over.
-cp -rv ./res/* ./build/Release/resources/app/backend/res/
+cp -rv ./res/* ./build/Release/res/
 
 # Run CMake
 cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-linux
