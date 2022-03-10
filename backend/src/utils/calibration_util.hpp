@@ -75,6 +75,8 @@ namespace btrgb{
          */
         double row_max(cv::Mat &target, int row);
 
+        void enter_to_continue();
+
     }
 }
 

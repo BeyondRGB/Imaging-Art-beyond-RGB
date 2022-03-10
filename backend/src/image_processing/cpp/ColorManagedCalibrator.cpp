@@ -1,17 +1,5 @@
-
-
 #include "../header/ColorManagedCalibrator.h"
 
-
-
-void enter_to_continue(){
-    std::cout << "Enter To Continue.";
-    char c;
-    do{
-        std::cin >> std::noskipws >> c;
-        std::cout << "c: (" << c << ")" << std::endl;
-    }while(c != '\n');
-}
 
 ColorManagedCalibrator::~ColorManagedCalibrator() {
 }
@@ -507,7 +495,7 @@ double DeltaEFunction::calc(const double* x)const{
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
     //std::cout << "DeltaE: " << deltaE_avg << std::endl;
-    //enter_to_continue();
+    // btrgb::calibration::enter_to_continue();
     return deltaE_avg;
 }
 

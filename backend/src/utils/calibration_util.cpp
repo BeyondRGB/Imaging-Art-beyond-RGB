@@ -119,3 +119,12 @@ double btrgb::calibration::row_max(cv::Mat &target, int row){
     }
     return max;
 }
+
+void btrgb::calibration::enter_to_continue(){
+        std::cout << "Enter To Continue.";
+        char c;
+        do{
+            std::cin >> std::noskipws >> c;
+            std::cout << "c: (" << c << ")" << std::endl;
+        }while(c != '\n');
+    }
