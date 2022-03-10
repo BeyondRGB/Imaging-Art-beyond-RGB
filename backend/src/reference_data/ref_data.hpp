@@ -74,6 +74,27 @@ public:
 	double get_z(int row, int col);
 
 	/**
+	* Gets the L value from the ColorPatch at the given row and col
+	* @param row: the row of the ColorPatch to get L value from
+	* @param col: the colum of the ColorPatch to get L value from
+	*/
+	double get_L(int row, int col);
+
+	/**
+	* Gets the a value from the ColorPatch at the given row and col
+	* @param row: the row of the ColorPatch to get a value from
+	* @param col: the colum of the ColorPatch to get a value from
+	*/
+	double get_a(int row, int col);
+
+	/**
+	* Gets the b value from the ColorPatch at the given row and col
+	* @param row: the row of the ColorPatch to get b value from
+	* @param col: the colum of the ColorPatch to get b value from
+	*/
+	double get_b(int row, int col);
+
+	/**
 	* Gets the number of rows the RefData holds
 	* @return: number of rows
 	*/
@@ -84,6 +105,13 @@ public:
 	* @return: number of colums
 	*/
 	int get_col_count();
+
+	/**
+	 * @brief Get the white pts ptr
+	 * 
+	 * @return WhitePoints* 
+	 */
+	WhitePoints* get_white_pts();
 
 	/**
 	* Ouputs RefData to standard out.
