@@ -25,7 +25,7 @@ private:
     cv::Mat M_refl;
     cv::Mat R_camera;
 
-    void init_M_refl();
+    void init_M_refl(cv::Mat R_ref);
     void init_step(double stp_value, cv::Mat &step);
 
 };

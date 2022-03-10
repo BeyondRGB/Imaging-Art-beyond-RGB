@@ -221,6 +221,7 @@ void RefData::output_xyz() {
 	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl << std::endl;
 }
 
+#include "utils/calibration_util.hpp"
 cv::Mat RefData::as_matrix(){
 	int col_count = this->row_count * this->col_count;
 	cv::Mat ref_data = cv::Mat_<double>(REFLECTANCE_SIZE, col_count, CV_32FC1);
@@ -231,13 +232,14 @@ cv::Mat RefData::as_matrix(){
 			// A2, B2, C2, ..., K2
 			// ..., ..., ..., ..., ...
 			// Ak, Bk, Ck, ..., Kk
-		for(int col = 0; col < this->col_count; col++){
-			for(int row = 0; row < this->row_count; row++){
-				int mat_col = row + col * this->row_count;
+		for(int row = 0; row < this->row_count; row++){
+			for(int col = 0; col < this->col_count; col++){
+				int mat_col = col + row * this->col_count;
 				ColorPatch *cp = this->get_color_patch(row, col);
 				double reflectance_value = cp->get_ref_by_wavelen(wave_len);
-				// std::cout << cp->get_name() << ": " << cp->get_ref_by_wavelen(wave_len) << " mat_col:" << mat_col << std::endl;
+				// std::cout << cp->get_name() << ": " << cp->get_ref_by_wavelen(wave_len) << " mat_col:" << mat_col << " wavelen: " << wave_len  << std::endl;
 				ref_data.at<double>(mat_row, mat_col) = reflectance_value;
+				// btrgb::calibration::enter_to_continue();
 			}
 			// std::cout << std::endl << std::endl;
 		}
