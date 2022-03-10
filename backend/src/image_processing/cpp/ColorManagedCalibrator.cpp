@@ -412,9 +412,9 @@ double DeltaEFunction::calc(const double* x)const{
     *       z_patch_1, z_patch_2, ..., z_patch_k
     *   
     *   M is a 2d Matrix in the form
-    *       m_1,1, m_1,2, ..., m_1,6
-    *       m_2,1, m_2,2, ..., m_2,6
-    *       m_3,1, m_3,2, ..., m_3,6
+    *       m_1_1, m_1_2, ..., m_1_6
+    *       m_2_1, m_2_2, ..., m_2_6
+    *       m_3_1, m_3_2, ..., m_3_6
     * 
     *   color_patch_avg is a 2d Matrix in the form 
     *   (cp_avg is the average pixel value from the color target in the actual image)
