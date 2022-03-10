@@ -91,7 +91,7 @@
       RequestID: colorTargetID,
       RequestType: "HalfSizePreview",
       RequestData: {
-        filenames: [$processState.artStacks[0].fields.images[0].name],
+        names: [$processState.artStacks[0].fields.images[0].name],
       },
     };
     if ($processState.artStacks[0].fields.images[0].name.length > 2) {
