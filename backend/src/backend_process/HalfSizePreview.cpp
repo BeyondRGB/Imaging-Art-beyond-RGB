@@ -13,7 +13,7 @@ HalfSizePreview::~HalfSizePreview() {}
 
 void HalfSizePreview::run() {
 
-    Json filenames = this->process_data_m->get_array("filenames");
+    Json filenames = this->process_data_m->get_array("names");
     btrgb::HalfSizeReader* reader = new btrgb::HalfSizeReader;
     std::string fname;
 
