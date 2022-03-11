@@ -2,8 +2,16 @@
 
 namespace btrgb {
 
-    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer) {
+    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory) {
         this->ref_data = new RefData(ref_file, ilumination, observer);
+
+        bool is_windows = output_directory.front() != '/';
+        if( is_windows && output_directory.back() != '\\' )
+            this->output_directory = output_directory + "\\";
+        else if( ! is_windows && output_directory.back() != '/' )
+            this->output_directory = output_directory + "/";
+        else
+            this->output_directory = output_directory;
     }
 
     /*
@@ -127,10 +135,9 @@ namespace btrgb {
             throw ArtObj_ImageDoesNotExist();
 
         try {
-            if(filename != "")
-                ImageWriterStrategy(filetype).write( this->images[name], filename );
-            else
-                ImageWriterStrategy(filetype).write( this->images[name] );
+            if(filename == "")
+                filename = name;
+            ImageWriterStrategy(filetype).write( this->images[name], this->output_directory + filename );
 
         }
         catch (ImageWritingError const& e) {
