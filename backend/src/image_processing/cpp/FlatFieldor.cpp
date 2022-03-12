@@ -65,7 +65,7 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
 */
 void::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef){
     //w values are constants based on the y value and patch value averages
-    this.w = ((yRef * (wAvg / pAvg)) / 100);
+    this->w = ((yRef * (wAvg / pAvg)) / 100);
 }
 
 /**
@@ -92,13 +92,13 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
                 dPix = d1->getPixel(currRow, currCol, ch);
                 aPix = a1->getPixel(currRow, currCol, ch);
                 //Need to overwrite previous image pixel in the Art Object
-                newPixel = this.w * (double(aPix - dPix) / double(wPix - dPix));
+                newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
                 a1->setPixel(currRow, currCol, ch, newPixel);
                 //Repeat for image 2
                 wPix = wh2->getPixel(currRow, currCol, ch);
                 dPix = d2->getPixel(currRow, currCol, ch);
                 aPix = a2->getPixel(currRow, currCol, ch);
-                newPixel = this.w * (double(aPix - dPix) / double(wPix - dPix));
+                newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
                 a2->setPixel(currRow, currCol, ch, newPixel);
             }
         }
