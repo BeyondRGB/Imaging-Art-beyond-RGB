@@ -24,13 +24,13 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
-    // std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
-    // calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
+    std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
+    calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
     //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
 
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
-    // img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
 
