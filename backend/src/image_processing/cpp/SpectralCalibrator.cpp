@@ -36,7 +36,7 @@ void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images
     
     // Run test with various step values
     // float sp_value = 0.5;
-    for(float sp_value = 0.2f; sp_value <= 0.4f; sp_value += 0.1f){
+    for(float sp_value = 0.1f; sp_value <= 1.5f; sp_value += 0.1f){
         std::cout << std::endl << "****************************************************************" << std::endl;
         std::cout << std::endl << "****************************************************************" << std::endl;
 
@@ -48,6 +48,7 @@ void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images
         cv::Mat ref_data_matrix = this->ref_data->as_matrix();
         // Initialize M_relf starting values
         this->init_M_refl(ref_data_matrix);
+        ref_data_matrix.release(); // No longer needed
 
         // Create Custom WeightedErrorFunction used to minimize Z
         cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
@@ -128,6 +129,12 @@ void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
 int WeightedErrorFunction::itteration_count = 0;
 
 WeightedErrorFunction::WeightedErrorFunction(cv::Mat *ref_data, cv::Mat *input_array, cv::Mat *M_refl, cv::Mat *cp_carmera_sigs, cv::Mat *R_camera){
+    /**
+     * NOTE: input_array, M_refl, R_camera are all references
+     * When the values of those matracies are updated here they are updated in SpectalCalibrator
+     * This menas that once optimization is complete SpectralCalibrator already has the resulting values
+     * See doc strings in SpectralCalibrator for details on each of these matracies 
+     */
     this->ref_data = ref_data;
     this->input_array = input_array;
     this->M_refl = M_refl;
@@ -153,6 +160,32 @@ double WeightedErrorFunction::calc(const double *x) const{
         }
     }
     
+    /**
+     * Before we can compute Z we need to compute the R_camera values
+     *  R_camera  = M_refl * cp_camera_sigs
+     * 
+     * Where
+     *  cp_camera_sigs is a 2d Matrix in the form
+     *   (cp_camera_sigs is the average pixel value from the color target in the ColorManaged image)
+     *       cp_avg_chan1_patch_1, cp_avg_chan1_patch_2, ..., cp_avg_chan1_patch_k
+     *       cp_avg_chan2_patch_1, cp_avg_chan2_patch_2, ..., cp_avg_chan2_patch_k
+     *       ...                 , ...                 , ..., ...
+     *       cp_avg_chan6_patch_1, cp_avg_chan6_patch_2, ..., cp_avg_chan6_patch_k 
+     *    
+     *  M_refl is a 2d Matrix in the form
+     *      m_1_1,  m_1_2,  ..., m_1_6
+     *      m_2_1,  m_2_2,  ..., m_2_6
+     *      ...  ,  ...  ,  ..., ...
+     *      m_36_1, m_36_2, ..., m_36_6
+     * 
+     *  R_camera is a 2d Matrix in fthe form
+     *      RLamda_1_1,  RLamda_1_2,  ..., RLamda_1_k
+     *      RLamda_2_1,  RLamda_2_2,  ..., RLamda_2_k
+     *      ...       ,  ...       ,  ..., ...
+     *      RLamda_36_1, RLamda_36_2, ..., RLamda_36_k
+     *       
+     */
+
     // Calculate R_camera from ColorPatch camera signals and current M_refl
     *this->R_camera = (*this->M_refl) * (*this->cp_carmera_sigs);
     
