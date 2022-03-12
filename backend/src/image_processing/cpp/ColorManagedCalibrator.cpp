@@ -1,6 +1,5 @@
 #include "../header/ColorManagedCalibrator.h"
 
-
 ColorManagedCalibrator::~ColorManagedCalibrator() {
 }
 
@@ -23,7 +22,7 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
+        func("Error: ColorManagedCalibrator called out of order. Missing at least 1 image assignment.");
         return;
     }
     catch (const std::logic_error& e) {
@@ -111,7 +110,7 @@ void ColorManagedCalibrator::find_optimization() {
  */
 void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     std::cout << "Updating Image" << std::endl;
-    btrgb::Image* art1 = art1 = images->getImage("art1");
+    btrgb::Image* art1 = images->getImage("art1");
     btrgb::Image* art2 = images->getImage("art2");
     btrgb::Image* art[2] = {art1, art2};
     int height = art1->height();
@@ -123,9 +122,9 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
    
     /**
     *   M is a 2d Matrix in the form
-    *       m_1,1, m_1,2, ..., m_1,6
-    *       m_2,1, m_2,2, ..., m_2,6
-    *       m_3,1, m_3,2, ..., m_3,6
+    *       m_1_1, m_1_2, ..., m_1_6
+    *       m_2_1, m_2_2, ..., m_2_6
+    *       m_3_1, m_3_2, ..., m_3_6
     * 
     *   camra_sigs is a 2d Matrix in the form
     *       px1_ch1, px2_ch1, ..., pxN_ch1
@@ -342,27 +341,6 @@ float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator
     return gamma_corrected_value;
 }
 
-// void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
-//     std::cout << std::endl;
-//     std::cout << "What is in " << name << std::endl;
-//     if (nullptr != matrix) {
-//         for (int chan = 0; chan < matrix->rows; chan++) {
-//             for (int col = 0; col < matrix->cols; col++) {
-//                 if (col != 0) {
-//                     std::cout << ", ";
-//                 }
-//                 double avg = matrix->at<double>(chan, col);
-//                 std::cout << avg;
-//             }
-//             std::cout << std::endl;// << std::endl;
-//         }
-//     }
-//     else {
-//         std::cout << "Matrix not initialized" << std::endl;
-//     }
-// }
-
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                DeltaE Function                             //
 ////////////////////////////////////////////////////////////////////////////////
@@ -414,9 +392,9 @@ double DeltaEFunction::calc(const double* x)const{
     *       z_patch_1, z_patch_2, ..., z_patch_k
     *   
     *   M is a 2d Matrix in the form
-    *       m_1,1, m_1,2, ..., m_1,6
-    *       m_2,1, m_2,2, ..., m_2,6
-    *       m_3,1, m_3,2, ..., m_3,6
+    *       m_1_1, m_1_2, ..., m_1_6
+    *       m_2_1, m_2_2, ..., m_2_6
+    *       m_3_1, m_3_2, ..., m_3_6
     * 
     *   color_patch_avg is a 2d Matrix in the form 
     *   (cp_avg is the average pixel value from the color target in the actual image)
@@ -482,8 +460,8 @@ double DeltaEFunction::calc(const double* x)const{
             btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
 
             // Calculate deltaE and add to sum
-            cmsCIELab lab1(ref_L, ref_a, ref_b);
-            cmsCIELab lab2(lab.L, lab.a, lab.b);
+            cmsCIELab lab1 = {ref_L, ref_a, ref_b};
+            cmsCIELab lab2 = {lab.L, lab.a, lab.b};
             double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
             // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
             this->delE_values->at<double>(row,col) = delE;
@@ -494,8 +472,6 @@ double DeltaEFunction::calc(const double* x)const{
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
-    //std::cout << "DeltaE: " << deltaE_avg << std::endl;
-    // btrgb::calibration::enter_to_continue();
     return deltaE_avg;
 }
 
