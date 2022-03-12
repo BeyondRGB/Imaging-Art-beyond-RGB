@@ -34,9 +34,6 @@ namespace btrgb {
     class ArtObject {
 
     private:
-        //Target Info
-        // double topEdge, leftEdge, botEdge, rightEdge;
-        // int targetRow, targetCol;
         TargetData target_data;
         std::unordered_map<std::string, Image*> images;
         ImageWriter* tiffWriter;
@@ -48,7 +45,6 @@ namespace btrgb {
 
         RefData* get_refrence_data();
 
-        // void targetInfo(double top, double left, double bot, double right, int rows, int cols);
         void setTargetInfo(TargetData td);
         double getTargetInfo(std::string type);
         int getTargetSize(std::string edge);
