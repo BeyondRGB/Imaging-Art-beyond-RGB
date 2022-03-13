@@ -101,17 +101,12 @@ void ColorPatch::init_CIELAB_values() {
 	double Y = this->get_y();
 	double Z = this->get_z();
 
-	double Xn = this->white_pts->get_white_point(WhitePoints::ValueType::Xn);
-	double Yn = this->white_pts->get_white_point(WhitePoints::ValueType::Yn);
-	double Zn = this->white_pts->get_white_point(WhitePoints::ValueType::Zn);
+	btrgb::XYZ_t xyz = {X, Y, Z};
+	btrgb::Lab_t lab =  btrgb::xyz_2_Lab(xyz, this->white_pts);
 
-	double fX = this->lab_f(X / Xn);
-	double fY = this->lab_f(Y / Yn);
-	double fZ = this->lab_f(Z / Zn);
-	
-	this->l = 116 * fY - 16;
-	this->a = 500 * (fX - fY);
-	this->b = 200 * (fY - fZ);
+	this->l = lab.L;
+	this->a = lab.a;
+	this->b = lab.b;
 }
 
 double ColorPatch::calc_k_value() {
@@ -123,13 +118,6 @@ double ColorPatch::calc_k_value() {
 		so_x_ilum_sum += oberver_value * illum_value;
 	}
 	return 100 / (so_x_ilum_sum * SAMPLING_INCREMENT);
-}
-
-double ColorPatch::lab_f(double x) {
-	if (x > 216.0 / 24389.0) {
-		return pow(x, 1.0 / 3.0);
-	}
-	return ((24389.0 / 27.0) * x + 16) / 116.0;
 }
 
 StandardObserver::ValueType ColorPatch::get_so_type(ValueType type) {
