@@ -12,7 +12,7 @@ Pipeline::Pipeline(){
 void Pipeline::callback(std::string msg) {
     msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
     std::cout << "MSG: " << msg << std::endl;
-    this->send_info(this->get_process_name(), msg);
+    this->send_info(msg, this->get_process_name());
 };
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
@@ -72,8 +72,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 
 void Pipeline::run() {
 
-    this->send_info(this->get_process_name(), "I got your msg");
-    this->send_info(this->get_process_name(), this->process_data_m->to_string());
+    this->send_info("I got your msg", this->get_process_name());
+    this->send_info( this->process_data_m->to_string(), this->get_process_name());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     std::string ref_file = this->get_ref_file();
@@ -93,12 +93,12 @@ void Pipeline::run() {
     }
 
 
-    this->send_info(this->get_process_name(), "About to init art obj...");
+    this->send_info("About to init art obj...", this->get_process_name());
     this->init_art_obj(images);
 
 
 
-    this->send_info(this->get_process_name(), "About to execute...");
+    this->send_info( "About to execute...", this->get_process_name());
     try {
         pipeline->execute(this->coms_obj_m.get(), images);
     }

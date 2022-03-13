@@ -1,6 +1,6 @@
 #include "communicator.hpp"
 
-void Communicator::send_info(std::string reporter, std::string msg) {
+void Communicator::send_info(std::string msg, std::string reporter) {
 	if (nullptr == coms_obj_m) {
 		std::cout << "No CommunicationObj set, unable to send msg.";
 		return;
