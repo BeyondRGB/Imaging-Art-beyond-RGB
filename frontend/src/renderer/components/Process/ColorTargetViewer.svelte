@@ -36,6 +36,8 @@
       showHomeControl: false,
       showFullPageControl: false,
       preserveImageSizeOnResize: false,
+      maxZoomPixelRatio: 30,
+      zoomPerScroll: 1.4,
       // zoomPerScroll: 1.5,
       visibilityRatio: 1,
     });
@@ -50,6 +52,7 @@
         console.log([viewer.viewport.getZoom(), viewer.viewport.getZoom(true)]);
       },
     });
+    viewer.addHandler("zoom", handleZoom);
   };
 
   const destoryViewer = () => {
@@ -70,6 +73,17 @@
     console.log("Color target viewer Destroy");
     destoryViewer();
   });
+
+  function handleZoom(e) {
+    if (e.zoom > 10) {
+      console.log({ "Big Zoom": e });
+      let drawer = viewer.drawer;
+      drawer.setImageSmoothingEnabled(false);
+    } else {
+      let drawer = viewer.drawer;
+      drawer.setImageSmoothingEnabled(true);
+    }
+  }
 
   $: if ($processState.currentTab === 4) {
     if (viewer && !viewer.isOpen()) {

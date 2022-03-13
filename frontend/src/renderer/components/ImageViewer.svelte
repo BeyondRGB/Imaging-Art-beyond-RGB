@@ -26,13 +26,16 @@
       showHomeControl: false,
       showFullPageControl: false,
       preserveImageSizeOnResize: true,
-      // zoomPerScroll: 1.5,
+      maxZoomPixelRatio: 30,
+      zoomPerScroll: 1.4,
       visibilityRatio: 1,
       // tileSources: {
       //   type: "image",
       //   url: placeholder,
       // },
     });
+
+    viewer.addHandler("zoom", handleZoom);
   };
 
   onDestroy(() => {
@@ -97,6 +100,14 @@
         type: "image",
         url: imageUrl,
       });
+    }
+  }
+
+  function handleZoom(e) {
+    if (e.zoom > 10) {
+      viewer.drawer.setImageSmoothingEnabled(false);
+    } else {
+      viewer.drawer.setImageSmoothingEnabled(true);
     }
   }
 </script>
