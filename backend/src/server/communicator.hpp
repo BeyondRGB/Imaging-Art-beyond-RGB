@@ -17,7 +17,7 @@ public:
 	* Send a mesage to the front end
 	* @param msg: the mesage to be sent
 	*/
-	void send_info(std::string reporter, std::string msg);
+	void send_info(std::string msg, std::string reporter);
 	/**
 	* Set the CommunicationObj to be used for sending messages
 	* @param coms_obj: the CommunicationObj to set
