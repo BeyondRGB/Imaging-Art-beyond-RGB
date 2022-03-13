@@ -21,7 +21,3 @@ void ImageCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     }
     comms->send_info("Image Calibration Done!!!", "ImageCalibrator");
 }
-
-void ImageCalibrator::my_callback(std::string str) {
-    this->callback_func("ImageCalibrator->" + str);
-}
