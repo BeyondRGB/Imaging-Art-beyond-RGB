@@ -22,12 +22,12 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: ColorManagedCalibrator called out of order. Missing at least 1 image assignment.");
+        comms->send_error("ColorManagedCalibrator called out of order. Missing at least 1 image assignment.", "Color Managed Calibration");
         return;
     }
     catch (const std::logic_error& e) {
         std::string error(e.what());
-        func("Error: " + error);
+        comms->send_error(error, "Color Managed Calibration");
         return;
     }
 
