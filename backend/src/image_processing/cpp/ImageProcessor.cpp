@@ -21,7 +21,3 @@ void ImageProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     }
     comms->send_info("Image Processing Done!!!", "ImageProcessor");
 }
-
-void ImageProcessor::my_callback(std::string str) {
-    this->callback_func("ImageProcessor->" + str);
-}
