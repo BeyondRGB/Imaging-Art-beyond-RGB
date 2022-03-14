@@ -13,7 +13,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     // Set to default for now.
     // This should be updated at some point to be settable by user
-    this->color_space = ColorSpace::ProPhoto;
+    this->color_space = btrgb::ColorSpace::ProPhoto;
 
     // Extract images and RefData from art object
     try {
@@ -250,14 +250,14 @@ void ColorManagedCalibrator::build_input_matrix() {
 
 }
 
-cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
+cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(btrgb::ColorSpace color_space){
     /**
      * @brief There are various xyz to rgb convertions matracies depending on the color space
      * the converiton matracies defined below come from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
      */
     cv::Mat convertions_matrix;
     switch(color_space){
-        case ColorSpace::Adobe_RGB_1998:
+        case btrgb::ColorSpace::Adobe_RGB_1998:
             convertions_matrix = (cv::Mat_<double>(3,3) <<
                              1.9624274, -0.6105343, -0.3413404,
                             -0.9787684,  1.9161415,  0.0334540,
@@ -265,7 +265,7 @@ cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
                     );
             break;
 
-        case ColorSpace::Wide_Gamut_RGB:
+        case btrgb::ColorSpace::Wide_Gamut_RGB:
             convertions_matrix = (cv::Mat_<double>(3,3) <<
                              1.4628067, -0.1840623, -0.2743606,
                             -0.5217933,  1.4472381,  0.0677227,
@@ -273,7 +273,7 @@ cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
                     );
             break;
 
-        case ColorSpace::sRGB:
+        case btrgb::ColorSpace::sRGB:
             convertions_matrix = (cv::Mat_<double>(3,3) <<
                              3.1338561, -1.6168667, -0.4906146,
                             -0.9787684,  1.9161415,  0.0334540,
@@ -281,7 +281,7 @@ cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
                     );
             break;
 
-        case ColorSpace::ProPhoto:
+        case btrgb::ColorSpace::ProPhoto:
         default:
             convertions_matrix = (cv::Mat_<double>(3,3) <<
                              1.3459433, -0.2556075, -0.0511118,
@@ -301,21 +301,21 @@ float ColorManagedCalibrator::clip_pixel(float px_value){
     return px_value;
 }
 
-float ColorManagedCalibrator::gamma(ColorSpace color_space){
+float ColorManagedCalibrator::gamma(btrgb::ColorSpace color_space){
     //TODO the gamma values included here are not what they should be and should
     // be updated once we know what they are.
     float gamma = 2.2;
     switch(color_space){
-        case ColorSpace::Adobe_RGB_1998:
+        case btrgb::ColorSpace::Adobe_RGB_1998:
             break;
 
-        case ColorSpace::Wide_Gamut_RGB:
+        case btrgb::ColorSpace::Wide_Gamut_RGB:
             break;
 
-        case ColorSpace::sRGB:
+        case btrgb::ColorSpace::sRGB:
             break;
 
-        case ColorSpace::ProPhoto:
+        case btrgb::ColorSpace::ProPhoto:
         default:
             gamma = 1.8;
             break;
@@ -323,7 +323,7 @@ float ColorManagedCalibrator::gamma(ColorSpace color_space){
     return gamma;
 }
 
-float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space){
+float ColorManagedCalibrator::apply_gamma(float px_value, btrgb::ColorSpace color_space){
     // TODO this is not complete yet and is more complicated than what is currently implemented
     // Update this once we know what is involved
     // float gamma = this->gamma(color_space);

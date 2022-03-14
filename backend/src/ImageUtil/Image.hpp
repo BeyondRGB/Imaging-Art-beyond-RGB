@@ -6,6 +6,8 @@
 #include <opencv2/opencv.hpp>
 #include <cppcodec/base64_rfc4648.hpp>
 
+#include "ImageUtil/ColorProfiles.hpp"
+
 /* Ways to loop:
 
     // Apply operation directly to mat.
@@ -58,16 +60,12 @@ namespace btrgb {
     typedef std::unique_ptr<std::string> base64_ptr_t;
 
     enum output_type {
-        PNG,
-        WEBP,
-        TIFF
+        PNG, WEBP, TIFF
     };
 
     enum image_quality {
-        FAST,
-        FULL
+        FAST, FULL
     };
-
 
     class Image {
         public:
@@ -94,6 +92,9 @@ namespace btrgb {
             binary_ptr_t toBinaryOfType(enum output_type type, enum image_quality quality);
             base64_ptr_t toBase64OfType(enum output_type type, enum image_quality quality);
 
+            void setColorProfile(ColorSpace color_profile);
+            ColorSpace getColorProfile();
+
             void recycle();
             int _raw_bit_depth = 0;
 
@@ -106,6 +107,7 @@ namespace btrgb {
             int _row_size = 0;
             int _col_size = 0;
             cv::Mat _opencv_mat;
+            ColorSpace _color_profile = none;
 
             void _checkInit();
     };
@@ -131,7 +133,7 @@ namespace btrgb {
         public:
             virtual char const * what() const noexcept { return "Image::initBitmap(): The number of channels must be between 1 and 10 inclusive."; }
     };
-
+    
 }
 
 const int R = 0;
