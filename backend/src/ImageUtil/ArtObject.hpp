@@ -6,7 +6,7 @@
 #include <unordered_map>
 
 #include "ImageUtil/Image.hpp"
-#include "ImageUtil/ImageWriter/ImageWriterStrategy.hpp"
+#include "ImageUtil/ImageWriter/ImageWriter.hpp"
 #include "reference_data/ref_data.hpp"
 #include "ImageUtil/ColorTarget.hpp"
 
@@ -36,7 +36,6 @@ namespace btrgb {
     private:
         TargetData target_data;
         std::unordered_map<std::string, Image*> images;
-        ImageWriter* tiffWriter;
         RefData* ref_data;
         std::string output_directory;
 
