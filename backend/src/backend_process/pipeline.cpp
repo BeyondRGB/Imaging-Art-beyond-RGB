@@ -80,7 +80,9 @@ void Pipeline::run() {
     std::string ref_file = this->get_ref_file();
     IlluminantType illuminant = this->get_illuminant_type();
     ObserverType observer = this->get_observer_type();
-    std::string out_dir = this->get_output_directory();
+    std::string out_dir;
+    try{out_dir = this->get_output_directory();}
+    catch(...) {return;}
 
 
     /* Create ArtObject */
@@ -122,9 +124,11 @@ std::string Pipeline::get_output_directory() {
     }
     catch (ParsingError e) {
         this->report_error("[Pipeline]", "Process request: invalid or missing \"destinationDirectory\" field.");
+        throw;
     }
     catch(const std::filesystem::filesystem_error& err) {
         this->report_error("[Pipeline]", "Failed to create or access output directory.");
+        throw;
     }
 
 
