@@ -103,6 +103,8 @@ public:
 		return result;
 	}
 
+	std::string peek();
+
 private:
 	/**
 	* Identifies if there is only token in the given line

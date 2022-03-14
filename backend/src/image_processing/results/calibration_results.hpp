@@ -89,12 +89,15 @@ private:
     void write_matrix(std::ostream &output_stream, cv::Mat matrix, std::string matrix_name = "");
     void write_matrix_value(std::ostream &output_stream, cv::Mat matrix, int row, int col);
     
-    cv::Mat init_matrix(std::string name, std::unordered_map<std::string, int> info_map);
+    void init_matrix(std::string name, std::unordered_map<std::string, int> info_map);
     cv::Mat create_matrix(int row_count, int col_count, int type_id);
     void append_row(std::string line, int row_num, cv::Mat matrix);
 
     void init_int(std::string name);
     void init_double(std::string name);
+
+    void scane_for_next_result();
+    void report_error(std::string error);
 };
 
 class ResultError: public std::exception{
