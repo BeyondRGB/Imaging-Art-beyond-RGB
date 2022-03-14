@@ -5,10 +5,13 @@
     connectionState,
     connect,
     currentPage,
+    messageStore,
   } from "@util/stores";
   import ImageViewer from "@components/ImageViewer.svelte";
+  import AdvOpts from "./AdvOpts.svelte";
 
   let notConnectedMode = false;
+  let info = { sender: "Waiting", message: "...", value: 0 };
 
   function reset() {
     currentPage.set("Process");
@@ -75,103 +78,138 @@
       },
     },
   };
+
+  $: if ($messageStore.length > 1) {
+    try {
+      let temp = JSON.parse($messageStore[0]);
+      if (temp["ResponseType"] === "Info") {
+        console.log("Info From Server");
+        info = temp["ResponseData"];
+        info = {
+          sender: temp["ResponseData"]["sender"],
+          message: temp["ResponseData"]["message"],
+          value: info.value,
+        };
+      } else if (temp["ResponseType"] === "Progress") {
+        console.log("Progress From Server");
+        if (temp["ResponseData"]["sender"] === info.sender) {
+          info = {
+            sender: info.sender,
+            message: info.message,
+            value: temp["ResponseData"]["value"],
+          };
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 </script>
 
 <main>
-  <div class="left">
-    <div class="state">
-      <button on:click={reset}>Reset</button>
-      <h3>
-        Current State: <button
-          class="stateSend"
-          on:click={() => sendMessage(JSON.stringify(jsonTest))}
-          >Send to Server</button
-        >
-        <!-- <button class="" on:click={() => (textValue = JSON.stringify(jsonTest))}
+  <div class="top">
+    <div class="left">
+      <div class="state">
+        <button on:click={reset}>Reset</button>
+        <h3>
+          Current State: <button
+            class="stateSend"
+            on:click={() => sendMessage(JSON.stringify(jsonTest))}
+            >Send to Server</button
+          >
+          <!-- <button class="" on:click={() => (textValue = JSON.stringify(jsonTest))}
           >Copy to Term</button
         > -->
-      </h3>
-      <div class="box">
-        <p>
-          <span class="key">RequestType</span><span
-            style="font-weight: bold; background-color: transparent;">:</span
-          > <span>Process</span>,
-        </p>
-        <p>
-          <span class="key">RequestID</span><span
-            style="font-weight: bold; background-color: transparent;">:</span
-          >
-          <span>{jsonTest.RequestID}</span>
-        </p>
-        <p>
-          <span class="key">RequestData</span><span
-            style="font-weight: bold; background-color: transparent;">:</span
-          >
-        </p>
-        <p class="px-2">
-          <span class="key">images</span><span
-            style="font-weight: bold; background-color: transparent;">:</span
-          >
+        </h3>
+        <div class="box">
+          <p>
+            <span class="key">RequestType</span><span
+              style="font-weight: bold; background-color: transparent;">:</span
+            > <span>Process</span>,
+          </p>
+          <p>
+            <span class="key">RequestID</span><span
+              style="font-weight: bold; background-color: transparent;">:</span
+            >
+            <span>{jsonTest.RequestID}</span>
+          </p>
+          <p>
+            <span class="key">RequestData</span><span
+              style="font-weight: bold; background-color: transparent;">:</span
+            >
+          </p>
+          <p class="px-2">
+            <span class="key">images</span><span
+              style="font-weight: bold; background-color: transparent;">:</span
+            >
 
-          {#each jsonTest.RequestData.images as image, index}
-            <li>
-              <span class="letter"
-                >// Image {String.fromCharCode(65 + index)}</span
-              >
-              {#each Object.keys(image) as key}
-                <li>
-                  <span class="key">{key}</span><span
-                    style="font-weight: bold; background-color: transparent;"
-                    >:</span
-                  >
-                  <span>{image[key]}</span>
-                </li>
-              {/each}
-            </li>
-          {/each}
-        </p>
-        <p>
-          <span class="key">destinationDirectory</span><span
-            style="font-weight: bold; background-color: transparent;">:</span
-          >
-          <span>{jsonTest.RequestData.destinationDirectory}</span>
-        </p>
-        <p class="px-2">
-          <span class="key">targetLoation</span><span
-            style="font-weight: bold; background-color: transparent;">:</span
-          >
+            {#each jsonTest.RequestData.images as image, index}
+              <li>
+                <span class="letter"
+                  >// Image {String.fromCharCode(65 + index)}</span
+                >
+                {#each Object.keys(image) as key}
+                  <li>
+                    <span class="key">{key}</span><span
+                      style="font-weight: bold; background-color: transparent;"
+                      >:</span
+                    >
+                    <span>{image[key]}</span>
+                  </li>
+                {/each}
+              </li>
+            {/each}
+          </p>
+          <p>
+            <span class="key">destinationDirectory</span><span
+              style="font-weight: bold; background-color: transparent;">:</span
+            >
+            <span>{jsonTest.RequestData.destinationDirectory}</span>
+          </p>
+          <p class="px-2">
+            <span class="key">targetLoation</span><span
+              style="font-weight: bold; background-color: transparent;">:</span
+            >
 
-          {#each Object.keys(jsonTest.RequestData.targetLocation) as key}
-            <li>
-              <span class="key">{key}</span><span
-                style="font-weight: bold; background-color: transparent;"
-                >:</span
-              >
-              <span>{jsonTest.RequestData.targetLocation[key]}</span>
-            </li>
-          {/each}
-        </p>
-        <p class="px-2">
-          <span class="key">refData</span><span
-            style="font-weight: bold; background-color: transparent;">:</span
-          >
+            {#each Object.keys(jsonTest.RequestData.targetLocation) as key}
+              <li>
+                <span class="key">{key}</span><span
+                  style="font-weight: bold; background-color: transparent;"
+                  >:</span
+                >
+                <span>{jsonTest.RequestData.targetLocation[key]}</span>
+              </li>
+            {/each}
+          </p>
+          <p class="px-2">
+            <span class="key">refData</span><span
+              style="font-weight: bold; background-color: transparent;">:</span
+            >
 
-          {#each Object.keys(jsonTest.RequestData.refData) as key}
-            <li>
-              <span class="key">{key}</span><span
-                style="font-weight: bold; background-color: transparent;"
-                >:</span
-              > <span>{jsonTest.RequestData.refData[key]}</span>
-            </li>
-          {/each}
-        </p>
+            {#each Object.keys(jsonTest.RequestData.refData) as key}
+              <li>
+                <span class="key">{key}</span><span
+                  style="font-weight: bold; background-color: transparent;"
+                  >:</span
+                > <span>{jsonTest.RequestData.refData[key]}</span>
+              </li>
+            {/each}
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="image">
+        <h4>{$processState.outputImage?.name}</h4>
+        <ImageViewer />
       </div>
     </div>
   </div>
-  <div class="right">
-    <div class="image">
-      <h4>{$processState.outputImage?.name}</h4>
-      <ImageViewer />
+  <div class="bottom">
+    <div class="stepper">
+      <span class="sender">{info.sender}</span>
+      <span class="message">{info.message}</span>
+      <span class="value">{info.value}</span>
     </div>
   </div>
   {#if $connectionState !== "Connected" && !notConnectedMode}
@@ -195,7 +233,22 @@
     @apply bg-gray-600 w-64 h-64 p-5 flex flex-col justify-between py-10 rounded-xl font-semibold;
   }
   main {
-    @apply w-full h-full flex justify-center items-center relative p-2;
+    @apply w-full h-full flex flex-col relative p-2;
+  }
+  .bottom {
+    @apply w-full flex justify-center items-center relative;
+  }
+  .stepper {
+    @apply w-[20vh] h-[20vh] rounded-full bg-gray-500 flex flex-col justify-center items-center;
+  }
+  .sender {
+    @apply bg-gray-500 text-lg rounded-lg;
+  }
+  .message {
+    @apply bg-gray-500 rounded-lg p-0.5;
+  }
+  .top {
+    @apply w-full h-full flex justify-center items-center overflow-hidden;
   }
   .left {
     @apply w-[30%] h-full flex justify-center items-center ml-2;

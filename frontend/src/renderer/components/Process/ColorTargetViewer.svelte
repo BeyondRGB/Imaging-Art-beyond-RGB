@@ -616,6 +616,7 @@
       transparent 80%,
       hsla(var(--color_hue), 100%, 50%, 0.3) 80%
     );
+    border: solid;
     border-color: hsl(var(--color_hue), 100%, 50%);
 
     @apply w-full h-full border-[2px] flex items-center justify-center relative overflow-hidden z-10;
@@ -700,6 +701,7 @@
     @apply w-1/4;
   }
   .target {
+    border: solid;
     border-color: hsla(var(--color_hue), 100%, 50%, 0.5);
     width: var(--color_size);
     height: var(--color_size);
@@ -707,6 +709,7 @@
   }
 
   .verTarget {
+    border: solid;
     border-color: hsla(var(--verfiy_hue), 100%, 50%, 0.5);
     width: var(--verify_size);
     height: var(--verify_size);
