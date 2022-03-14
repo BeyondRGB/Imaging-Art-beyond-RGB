@@ -11,7 +11,7 @@
   import AdvOpts from "./AdvOpts.svelte";
 
   let notConnectedMode = false;
-  let info = { sender: "Waiting", message: "...", value: 0 };
+  let info = { sender: "Waiting...", value: 0 };
 
   function reset() {
     currentPage.set("Process");
@@ -82,23 +82,12 @@
   $: if ($messageStore.length > 1) {
     try {
       let temp = JSON.parse($messageStore[0]);
-      if (temp["ResponseType"] === "Info") {
-        console.log("Info From Server");
-        info = temp["ResponseData"];
+      if (temp["ResponseType"] === "Progress") {
+        console.log("Progress From Server");
         info = {
           sender: temp["ResponseData"]["sender"],
-          message: temp["ResponseData"]["message"],
-          value: info.value,
+          value: temp["ResponseData"]["value"],
         };
-      } else if (temp["ResponseType"] === "Progress") {
-        console.log("Progress From Server");
-        if (temp["ResponseData"]["sender"] === info.sender) {
-          info = {
-            sender: info.sender,
-            message: info.message,
-            value: temp["ResponseData"]["value"],
-          };
-        }
       }
     } catch (e) {
       console.log(e);
@@ -208,7 +197,7 @@
   <div class="bottom">
     <div class="stepper">
       <span class="sender">{info.sender}</span>
-      <span class="message">{info.message}</span>
+      <!-- <span class="message">{info.message}</span> -->
       <span class="value">{info.value}</span>
     </div>
   </div>
