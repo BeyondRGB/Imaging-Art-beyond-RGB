@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "ImageUtil/ColorTarget.hpp"
+#include "ImageUtil/ColorProfiles.hpp"
 #include "utils/csv_parser.hpp"
 #include "ImgProcessingComponent.h"
 #include "reference_data/ref_data_defines.hpp"
@@ -26,9 +27,6 @@ class ColorManagedCalibrator : public ImgProcessingComponent{
  */
 
 public:
-    enum ColorSpace{
-        Adobe_RGB_1998, ProPhoto, sRGB, Wide_Gamut_RGB
-    };
 
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
@@ -54,7 +52,7 @@ private:
     double resulting_avg_deltaE;
     int solver_iteration_count;
 
-    ColorSpace color_space;
+    btrgb::ColorSpace color_space;
 
     double stp;
     int mid;
@@ -65,7 +63,7 @@ private:
      * @param color_space the ColorSpace that identifies which convertion matrix to retrive
      * @return cv::Mat
      */
-    cv::Mat rgb_convertions_matrix(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
+    cv::Mat rgb_convertions_matrix(btrgb::ColorSpace color_space=btrgb::ColorSpace::ProPhoto);
 
 
     float clip_pixel(float px_value);
@@ -77,7 +75,7 @@ private:
      * @param color_space the ColorSpace that identifies the gamma addjustment to get
      * @return float
      */
-    float gamma(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
+    float gamma(btrgb::ColorSpace color_space=btrgb::ColorSpace::ProPhoto);
 
     /**
      * @brief Applys a gamma to correct brightness
@@ -87,7 +85,7 @@ private:
      * defaults to ProPhoto
      * @return float the gamma corrected pixel value
      */
-    float apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
+    float apply_gamma(float px_value, btrgb::ColorSpace color_space=btrgb::ColorSpace::ProPhoto);
 
     /**
      * @brief Initialize the optimization InputArray(optimization_input), M, and offset

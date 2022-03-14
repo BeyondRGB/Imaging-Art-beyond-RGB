@@ -93,6 +93,7 @@ namespace btrgb {
         cv::Mat empty;
         this->_opencv_mat = empty;
         int _raw_bit_depth = 0;
+        this->_color_profile = none;
     }
 
     void inline Image::_checkInit() {
@@ -200,6 +201,14 @@ namespace btrgb {
         ));
         
         return result_base64;
+    }
+
+    void Image::setColorProfile(ColorSpace color_profile) {
+        this->_color_profile = color_profile;
+    }
+
+    ColorSpace Image::getColorProfile() {
+        return this->_color_profile;
     }
 
 }
