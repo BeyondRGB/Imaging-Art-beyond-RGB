@@ -38,9 +38,10 @@ namespace btrgb {
         std::unordered_map<std::string, Image*> images;
         ImageWriter* tiffWriter;
         RefData* ref_data;
+        std::string output_directory;
 
     public:
-        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer);
+        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory);
         ~ArtObject();
 
         RefData* get_refrence_data();
