@@ -163,10 +163,13 @@ namespace btrgb {
             throw std::logic_error("[Image::getBinaryOfType] Invalid quality type. ");
         }
 
+        /* Convert to BGR order for OpenCV. */
+        cv::Mat im_bgr;
+        cv::cvtColor(im, im_bgr, cv::COLOR_RGB2BGR);
 
         /* Encode image. */
         try {
-            cv::imencode(ftype, im, *result_binary, params);
+            cv::imencode(ftype, im_bgr, *result_binary, params);
         }
         /* Failed to encode image. */
         catch(const cv::Exception& ex) {
