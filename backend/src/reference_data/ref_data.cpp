@@ -1,6 +1,7 @@
 #include "ref_data.hpp"
 #include <iostream>
 #include <fstream>
+#include "server/globals_siglton.hpp"
 
 
 
@@ -54,6 +55,21 @@ double RefData::get_z(int row, int col) {
 	return cp->get_z();
 }
 
+double RefData::get_L(int row, int col) {
+	ColorPatch* cp = this->get_color_patch(row, col);
+	return cp->get_L();
+}
+
+double RefData::get_a(int row, int col) {
+	ColorPatch* cp = this->get_color_patch(row, col);
+	return cp->get_a();
+}
+
+double RefData::get_b(int row, int col) {
+	ColorPatch* cp = this->get_color_patch(row, col);
+	return cp->get_b();
+}
+
 ColorPatch* RefData::get_color_patch(int row, int col) {
 	if(row < this->row_count && col < this->col_count)
 		return this->color_patches[row][col];
@@ -79,6 +95,10 @@ int RefData::get_white_patch_row() {
 
 int RefData::get_white_patch_col() {
 	return this->get_white_patch()->get_col();
+}
+
+WhitePoints* RefData::get_white_pts(){
+	return this->white_pts;
 }
 
 void RefData::read_in_data(std::string file_path) {
