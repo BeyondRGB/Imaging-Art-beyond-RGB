@@ -195,10 +195,12 @@
     </div>
   </div>
   <div class="bottom">
-    <div class="stepper">
-      <span class="sender">{info.sender}</span>
-      <!-- <span class="message">{info.message}</span> -->
-      <span class="value">{info.value}</span>
+    <div class="progress-circle" style="--progress:{info.value * 100}">
+      <div class="stepper">
+        <span class="sender">{info.sender}</span>
+        <!-- <span class="message">{info.message}</span> -->
+        <span class="value">{info.value}</span>
+      </div>
     </div>
   </div>
   {#if $connectionState !== "Connected" && !notConnectedMode}
@@ -229,6 +231,13 @@
   }
   .stepper {
     @apply w-[20vh] h-[20vh] rounded-full bg-gray-500 flex flex-col justify-center items-center;
+  }
+  .progress-circle {
+    background: conic-gradient(
+      rgb(5 150 105) calc(var(--progress) * 1%),
+      #0000 0
+    );
+    @apply bg-gray-600 rounded-full p-1;
   }
   .sender {
     @apply bg-gray-500 text-lg rounded-lg;
