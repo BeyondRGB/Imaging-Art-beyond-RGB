@@ -12,7 +12,7 @@ Pipeline::Pipeline(){
 void Pipeline::callback(std::string msg) {
     msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
     std::cout << "MSG: " << msg << std::endl;
-    this->send_info(this->get_process_name(), msg);
+    this->send_info(msg, this->get_process_name());
 };
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
@@ -24,13 +24,13 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
-    //std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
-    //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
+    std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
+    calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
     //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
 
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
-   // img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
 
@@ -53,14 +53,15 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
         //Collect the information provided about the color target
-        Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
-        double topEdge = target_location.get_number("top");
-        double leftEdge = target_location.get_number("left");
-        double botEdge = target_location.get_number("bottom");
-        double rightEdge = target_location.get_number("right");
-        int numCols = target_location.get_number("cols");
-        int numRows = target_location.get_number("rows");
-        art_obj->targetInfo(topEdge, leftEdge, botEdge, rightEdge, numRows, numCols);
+        TargetData td;
+        Json target_location = this->process_data_m->get_obj("TargetLocation");
+        td.top_loc = target_location.get_number("top");
+        td.left_loc = target_location.get_number("left");
+        td.bot_loc = target_location.get_number("bottom");
+        td.right_loc = target_location.get_number("right");
+        td.col_count = target_location.get_number("cols");
+        td.row_count = target_location.get_number("rows");
+        art_obj->setTargetInfo(td);
         return true;
     }
     catch (ParsingError e) {
@@ -72,8 +73,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 
 void Pipeline::run() {
 
-    this->send_info(this->get_process_name(), "I got your msg");
-    this->send_info(this->get_process_name(), this->process_data_m->to_string());
+    this->send_info("I got your msg", this->get_process_name());
+    this->send_info( this->process_data_m->to_string(), this->get_process_name());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     std::string ref_file = this->get_ref_file();
@@ -92,12 +93,12 @@ void Pipeline::run() {
 
 
     /* Initialize ArtObject with request data */
-    this->send_info(this->get_process_name(), "About to init art obj...");
+    this->send_info("About to init art obj...", this->get_process_name());
     this->init_art_obj(images.get());
 
 
     /* Execute the pipeline on the created ArtObject */
-    this->send_info(this->get_process_name(), "About to execute...");
+    this->send_info( "About to execute...", this->get_process_name());
     try { pipeline->execute(this->coms_obj_m.get(), images.get()); }
     catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());

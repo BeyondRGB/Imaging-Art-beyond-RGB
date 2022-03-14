@@ -22,7 +22,3 @@ void PreProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     }
     comms->send_info("PreProcessing Done!!!", "PreProcessor");
 }
-
-void PreProcessor::my_callback(std::string str) {
-    this->callback_func("PreProcessor->" + str);
-}

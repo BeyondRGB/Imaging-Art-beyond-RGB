@@ -13,7 +13,21 @@ void CSVParser::close_file() {
 	this->file_m.close();
 }
 
+int CSVParser::get_line_count() {
+	this->reset_file();
+	int count = 0;
+	while (this->has_next_line()) {
+		this->get_next_line();
+		count++;
+	}
+	this->reset_file();
+	return count;
+}
 
+void CSVParser::reset_file() {
+	this->file_m.clear();
+	this->file_m.seekg(0, this->file_m.beg);
+}
 
 int CSVParser::count_line_items(std::string line, std::string delimiter) {
 	size_t start = 0;
