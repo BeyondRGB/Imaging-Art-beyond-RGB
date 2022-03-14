@@ -1,9 +1,9 @@
-if exist build\Release\resources\app\backend\res\ (
-	echo Found .\build\Release\resources\app\backend\res\
+if exist build\Release\res\ (
+	echo Found .\build\Release\res\
 ) else (
-	mkdir build\Release\resources\app\backend\res\
+	mkdir build\Release\res\
 )
 :: Copy all resrouce files to a path relative to the .exe as they will be in the deployed app
-Xcopy /y /e .\res .\build\Release\resources\app\backend\res\
+Xcopy /y /e .\res .\build\Release\res\
 cmake -B build -S .
 cmake --build .\build\ --config Release
