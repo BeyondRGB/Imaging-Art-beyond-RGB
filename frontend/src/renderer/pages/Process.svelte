@@ -57,8 +57,6 @@
   $: if ($messageStore.length > 1) {
     try {
       let temp = JSON.parse($messageStore[0]);
-      console.log(temp);
-      console.log(colorTargetID);
       if (temp["RequestID"] === colorTargetID) {
         console.log("HalfSizedPreview From Server");
         $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
@@ -73,7 +71,6 @@
   $: if ($messageStore.length > 1) {
     try {
       let temp = JSON.parse($messageStore[0]);
-      console.log(temp);
       if (temp["ResponseType"] === "ImageBase64") {
         console.log("Base64 From Server");
         $processState.outputImage = temp["ResponseData"];
