@@ -655,6 +655,13 @@
       value: 0.7,
     },
   ];
+
+  let valueGrid = [];
+  let temp = [...testData];
+  while (temp.length) valueGrid.push(temp.splice(0, 13));
+
+  console.log(valueGrid);
+  console.log(testData);
 </script>
 
 <HeatmapChart
@@ -711,11 +718,12 @@
   }}
 />
 <div class="heatmap-number-grid">
-  {#each testData as data, i}
-    <p class="heatmap-value">
-      {data.value}-
-      {data.row}/{data.col}
-    </p>
+  {#each valueGrid.reverse() as row, i}
+    {#each row as col, i}
+      <p class="heatmap-value">
+        {col.value}
+      </p>
+    {/each}
   {/each}
 </div>
 
@@ -739,10 +747,34 @@
     display: grid;
     grid-template-rows: repeat(9, auto);
     grid-template-columns: repeat(13, auto);
-    @apply absolute w-[500px] h-[500px] bg-red-500/25 
-          pt-12 pb-16 pl-6;
+    @apply absolute w-[500px] h-[500px] pt-10 pb-14 pl-6 pointer-events-none;
   }
   .heatmap-value {
-    @apply flex justify-center items-center h-full w-full;
+    @apply flex justify-center items-center h-full w-full font-bold text-black;
+  }
+  .bx--cc--chart-wrapper text {
+    @apply fill-white;
+  }
+  .bx--chart-holder .bx--overflow-menu,
+  .bx--chart-holder .bx--overflow-menu__trigger {
+    @apply hidden;
+  }
+  .bx--cc--tooltip {
+    @apply bg-gray-700 text-white;
+  }
+  .bx--cc--tooltip .content-box {
+    @apply text-white;
+  }
+  .bx--cc--tooltip .content-box .datapoint-tooltip div.label {
+    @apply hidden;
+  }
+  .bx--cc--tooltip .content-box .datapoint-tooltip p.value {
+    @apply font-bold;
+  }
+  .bx--cc--tooltip .content-box .datapoint-tooltip {
+    @apply p-2;
+  }
+  .bx--cc--tooltip .tooltip-color {
+    @apply w-2;
   }
 </style>

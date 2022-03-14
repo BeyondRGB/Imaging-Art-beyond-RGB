@@ -1,13 +1,19 @@
 <script>
   import Heatmap from "@components/Charts/Heatmap.svelte";
+  import { ChevronsDownIcon, ChevronsUpIcon } from "svelte-feather-icons";
   let open = false;
 </script>
 
 <main>
   Reports
   <button class="dropdown-report-btn" on:click={() => (open = !open)}
-    >Art 1</button
-  >
+    >Art 1
+    {#if open}
+      <ChevronsUpIcon size="1.5x" />
+    {:else}
+      <ChevronsDownIcon size="1.5x" />
+    {/if}
+  </button>
   <div class={`reports ${open ? "open-report" : ""}`}>
     <Heatmap />
   </div>
@@ -23,6 +29,6 @@
     @apply scale-y-100;
   }
   .dropdown-report-btn {
-    @apply w-full h-10;
+    @apply w-full flex flex-col justify-center items-center;
   }
 </style>
