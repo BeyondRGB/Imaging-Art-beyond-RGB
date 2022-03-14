@@ -17,6 +17,7 @@
 #include "backend_process.hpp"
 #include "reference_data/ref_data.hpp"
 
+#include <filesystem>
 #include <iostream>
 
 /*
@@ -74,6 +75,7 @@ private:
 	IlluminantType get_illuminant_type();
 	ObserverType get_observer_type();
 	std::string get_ref_file();
+	std::string get_output_directory();
 
 
 public:

@@ -8,6 +8,7 @@
 #include "illuminants.hpp"
 #include "standard_observer.hpp"
 #include "white_points.hpp"
+#include "utils/color_convertions.hpp"
 
 /**
 * Class that represents an individual collor patch in reference data
@@ -164,16 +165,6 @@ private:
 	*  Initialize CIELAB values
 	*/
 	void init_CIELAB_values();
-
-	/**
-	* Calculates the f(x) value used for calculating
-	* L*,a*,b* values
-	* @param x: double X/Xn, Y/Yn, or Z/Zn 
-	*	where X,Y,Z are the x,y,z values contained by this ColorPatch
-	*	and Xn, Yn, Zn are the Xn, Yn, Zn from the WhitePoints
-	* @return: computed double
-	*/
-	double lab_f(double x);
 	
 	/**
 	* TODO these have not yet been implemneted yet

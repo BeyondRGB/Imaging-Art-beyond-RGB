@@ -13,7 +13,7 @@ HalfSizePreview::~HalfSizePreview() {}
 
 void HalfSizePreview::run() {
 
-    Json filenames = this->process_data_m->get_array("filenames");
+    Json filenames = this->process_data_m->get_array("names");
     btrgb::LibRawReader* reader = new btrgb::LibRawReader(btrgb::LibRawReader::PREVIEW);
     std::string fname;
 
@@ -31,25 +31,7 @@ void HalfSizePreview::run() {
             btrgb::Image imObj(fname + ".HalfSize");
             imObj.initImage(im);
 
-
-            // ===============[ REPLACE CODE ]==================
-            //std::string* rsp = new std::string;
-            //rsp->reserve( 2000 * 2000 * 3 * 1); /* w x h x channels x byte depth -- Should be smaller when compressed, also not square */
-            //rsp->append(R"({"RequestID":)");
-            //rsp->append("3453456");
-            //rsp->append(R"(,"RequestType":"HalfSizePreview","RequestData":{"filename":")");
-            //rsp->append(std::regex_replace(filenames.string_at(i), std::regex("\\\\"), "\\\\"));
-            //rsp->append(R"(","dataURL": ")");
-            //btrgb::base64_ptr_t b64 = imObj.toBase64OfType(btrgb::PNG, btrgb::FAST);
-            //rsp->append(*b64);
-            //rsp->append(R"("}})");
-            //this->send_msg(*rsp);
-            //delete rsp;
-            // ===========[ End REPLACE CODE ]===============
-            // ===========[ REPLACEMENT CODE ]===============
             this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FAST);
-            // ===========[ End REPLACEMENT CODE ]===============
-
 
         }
         catch(const ParsingError& e) {
