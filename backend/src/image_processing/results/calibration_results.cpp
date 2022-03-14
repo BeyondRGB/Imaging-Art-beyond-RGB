@@ -67,7 +67,8 @@ void CalibrationResults::write_ints(std::ostream &output_stream){
     for( auto [name, value] : this->result_ints ){
         output_stream << name << std::endl;
         output_stream << R_TYPE << ":" << ResultType::INT << std::endl;
-        output_stream << value << std::endl << std::endl;
+        output_stream << value << std::endl 
+            << std::endl;
     }
 }
 
@@ -75,7 +76,8 @@ void CalibrationResults::write_doubls(std::ostream &output_stream){
     for( auto [name, value] : this->result_doubles ){
         output_stream << name << std::endl;
         output_stream << R_TYPE << ":" << ResultType::DOUBLE << std::endl;
-        output_stream << value << std::endl << std::endl;
+        output_stream << value << std::endl 
+            << std::endl;
     }
 }
 
@@ -124,20 +126,37 @@ void CalibrationResults::write_matrix_value(std::ostream &output_stream, cv::Mat
     }   
 }
 
+/**
+ * We expect result files are expected to be .csv files.
+ * All results found in this file are expected to be seperated by an empy line and be in the form
+ *          <Result Name>
+ *          <Mesult MetaData>
+ *          <Result Value/Values>
+ */
 void CalibrationResults::read_results(std::string results_file){
     if( !this->open_file(results_file) )
         throw std::runtime_error("Failed to open file: " + results_file);
+    
     while(this->has_next_line()){ 
+        
+        // Reading Result Name
         std::string name = this->get_next_line();
+        std::cout << "Reading in: " << name << std::endl;
+        
+        // Reading Result MetaData
         std::string result_info = this->get_next_line();
-
-        std::cout << name << std::endl;
-        std::cout << "Info: " << result_info << std::endl;
-
-        std::unordered_map<std::string, int> info_map = this->pars_result_info(result_info);
-        std::string  result_type = type_key_map[info_map[R_TYPE]];
+        std::unordered_map<std::string, int> info_map;
+        std::string  result_type;
+        try{
+            info_map = this->pars_result_info(result_info);
+            result_type = type_key_map[info_map[R_TYPE]];
+        }catch(ResultError e){
+            this->report_error(e.what());
+        }
+        
+        // Reading Result Value/Values
         if(result_type == type_key_map[ResultType::MATRIX]){
-            cv::Mat matrix = this->init_matrix(name, info_map);
+            this->init_matrix(name, info_map);
         }
         else if(result_type == type_key_map[ResultType::INT]){
             this->init_int(name);
@@ -145,6 +164,9 @@ void CalibrationResults::read_results(std::string results_file){
         else if(result_type == type_key_map[ResultType::DOUBLE]){
             this->init_double(name);
         }
+
+        // Set up for reading in next result
+        this->scane_for_next_result();
     }
     this->close_file();
     
@@ -152,7 +174,8 @@ void CalibrationResults::read_results(std::string results_file){
 
 void CalibrationResults::append_row(std::string line, int row_num, cv::Mat matrix){
     int col_num = 0;
-    while(this->has_next(line)){
+    // while(this->has_next(line)){
+    for(int col = 0; col < matrix.cols; col++){
         switch(matrix.type()){
             case CV_8U:
                 matrix.at<uchar>(row_num, col_num) = this->get_next<uchar>(line);
@@ -183,6 +206,8 @@ void CalibrationResults::append_row(std::string line, int row_num, cv::Mat matri
 
 std::unordered_map<std::string, int> CalibrationResults::pars_result_info(std::string info_string){
     std::unordered_map<std::string, int> info_map;
+    if(info_string.length() == 0)
+        throw ResultError("No MetaData Found");
     try{
         while(this->has_next(info_string)){
             std::string item = this->get_next<std::string>(info_string);
@@ -190,30 +215,39 @@ std::unordered_map<std::string, int> CalibrationResults::pars_result_info(std::s
             int value = this->get_next<int>(item, ":");
             info_map[key] = value; 
         }
-    }catch(std::exception e){
-        throw std::exception("Matrix Info: invalid format");
+    }catch(std::runtime_error e){
+        throw ResultError("Result MetaData: invalid format");
     } 
     return info_map;
 }
 
-cv::Mat CalibrationResults::init_matrix(std::string name, std::unordered_map<std::string, int> info_map){
-    cv::Mat matrix = this->create_matrix(info_map[ROW_COUNT], info_map[COL_COUNT], info_map[M_TYPE]);
-    
+void CalibrationResults::init_matrix(std::string name, std::unordered_map<std::string, int> info_map){
+    cv::Mat matrix;
+    if(info_map.contains(ROW_COUNT) && info_map.contains(COL_COUNT) && info_map.contains(M_TYPE)){
+        matrix = this->create_matrix(info_map[ROW_COUNT], info_map[COL_COUNT], info_map[M_TYPE]);
+    }
+    else{
+        this->report_error( name + " Matrix Result Missing MetaData");
+        return; 
+    }
     std::string line;
-        int row_num = 0;
-        while(this->has_next_line()){
-            std::string line = this->get_next_line();
-            if(line.length() == 0){
-                break;
-            }
-            // std::cout << "Line: *" << line << "* len: " << line.length() << std::endl;
-            this->append_row(line, row_num, matrix);
-            row_num++;
+    int row_num = 0;
+    for(int row = 0; row < matrix.rows; row++){   
+        if(this->peek().length() == 0){
+            this->report_error(name + " Missing Expected Matrix Row");
+            return;
         }
-        // this->write_matrix(std::cout, matrix, name);
-        this->result_matricies[name] = matrix;
-    
-    return matrix;
+        std::string line = this->get_next_line();
+        try{
+            this->append_row(line, row_num, matrix);
+        }catch(std::exception e){
+            this->report_error( name + " Missing Expected Matrix Value ");
+            return;
+        }
+        row_num++;
+    }
+    this->result_matricies[name] = matrix;
+
 }
 
 void CalibrationResults::init_int(std::string name){
@@ -221,9 +255,9 @@ void CalibrationResults::init_int(std::string name){
         std::string line = this->get_next_line();
         int value = this->get_next<int>(line);
         this->result_ints[name] = value;
-        this->get_next_line();
+        // this->get_next_line();
     }catch(std::exception e){
-        throw ResultError("Invalid Result Formating: " + name);
+        this->report_error(name + " invalid value format");
     }
 }
 
@@ -231,11 +265,10 @@ void CalibrationResults::init_double(std::string name){
     try{
         std::string line = this->get_next_line();
         double value = this->get_next<double>(line);
-        std::cout << "value: " << value << std::endl;
         this->result_doubles[name] = value;
-        this->get_next_line();
+        // this->get_next_line();
     }catch(std::exception e){
-        throw ResultError("Invalid Result Formating: " + name);
+        this->report_error(name + " invalid value format");
     }
 }
 
@@ -259,4 +292,29 @@ cv::Mat CalibrationResults::create_matrix(int row_count, int col_count, int type
             return cv::Mat_<double>(row_count, col_count);
 
     }
+}
+
+void CalibrationResults::scane_for_next_result(){
+    if(!this->has_next_line())
+        return;
+    // Ensure we move beyond any extra data from last result
+    std::string line = this->get_next_line();
+    while(line.length() != 0){
+        if(!this->has_next_line())
+            return;
+        line = this->get_next_line();
+    }
+
+    // Ensure we move passed exess white space
+    std::string next_line = this->peek();
+    while(next_line.length() == 0){
+        if(!this->has_next_line())
+            return;
+        this->get_next_line();
+        next_line = this->peek();
+    }
+}
+
+void CalibrationResults::report_error(std::string error){
+    std::cerr << "Error: " << error << std::endl;
 }
