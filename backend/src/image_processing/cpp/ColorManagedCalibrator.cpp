@@ -480,8 +480,8 @@ double DeltaEFunction::calc(const double* x)const{
             btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
 
             // Calculate deltaE and add to sum
-            cmsCIELab lab1(ref_L, ref_a, ref_b);
-            cmsCIELab lab2(lab.L, lab.a, lab.b);
+            cmsCIELab lab1 = {ref_L, ref_a, ref_b};
+            cmsCIELab lab2 = {lab.L, lab.a, lab.b};
             double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
             // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
             this->delE_values->at<double>(row,col) = delE;
