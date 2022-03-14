@@ -29,10 +29,15 @@ void RawImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     comms->send_info("Reading In Raw Image Data!", "RawImageReader");
 
     /* For each btrgb::image struct in the art object. */
+    double total = images->imageCount();
+    double count = 0;
+    comms->send_progress(0, "RawImageReader");
     for(const auto& [key, im] : *images) {
 
         try {
             comms->send_info("Loading " + im->getName() + "...", "RawImageReader");
+            count++;
+            comms->send_progress(count/total, "RawImageReader");
             if(key == "white1") {
                 this->fileReader->read(im, RawReaderStrategy::RECORD_BIT_DEPTH);
             }

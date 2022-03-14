@@ -9,6 +9,9 @@ BitDepthScaler::~BitDepthScaler() {}
 
 void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
+    double total = images->imageCount();
+    double count = 0;
+    comms->send_progress(0, "BitDepthScaler");
     for(const auto& [key, im] : *images) {
 
         /* Output message. */
@@ -35,6 +38,8 @@ void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
 
         /* Output bit depth scaled image. */
         images->outputImageAs(btrgb::TIFF, key, key + "_bd_scaled");
+        count++;
+        comms->send_progress(count/total, "BitDepthScaler");
     }
 
 }
