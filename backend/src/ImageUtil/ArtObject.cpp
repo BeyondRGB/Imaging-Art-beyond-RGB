@@ -2,8 +2,16 @@
 
 namespace btrgb {
 
-    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer) {
+    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory) {
         this->ref_data = new RefData(ref_file, ilumination, observer);
+
+        bool is_windows = output_directory.front() != '/';
+        if( is_windows && output_directory.back() != '\\' )
+            this->output_directory = output_directory + "\\";
+        else if( ! is_windows && output_directory.back() != '/' )
+            this->output_directory = output_directory + "/";
+        else
+            this->output_directory = output_directory;
     }
 
     /*
@@ -34,28 +42,35 @@ namespace btrgb {
     }
 
     //Collects the color target information from the request message and saves it in the ArtObject
-    void ArtObject::targetInfo(double top, double left, double bot, double right, int rows, int cols) {
-        topEdge = top;
-        leftEdge = left;
-        botEdge = bot;
-        rightEdge = right;
-        targetRow = rows;
-        targetCol = cols;
+    void ArtObject::setTargetInfo(TargetData target_data) {
+        this->target_data = target_data;
+    }
+
+    // Builds and returns a color target
+    // This asumes that the imageName specified actualy contains a color target
+    ColorTarget ArtObject::get_target(std::string imageName){
+        try{
+            Image* im = this->getImage(imageName);
+            ColorTarget target(im, this->target_data);
+            return target;
+        }catch(ArtObj_ImageDoesNotExist){
+            throw ArtObj_ImageDoesNotExist();
+        }
     }
 
     //Returns a normalized value of the requested edge of the color target
     double ArtObject::getTargetInfo(std::string type) {
         if (type == "top") {
-            return this->topEdge;
+            return this->target_data.top_loc;
         }
         else if (type == "bot") {
-            return this->botEdge;
+            return this->target_data.bot_loc;
         }
         else if (type == "left") {
-            return this->leftEdge;
+            return this->target_data.left_loc;
         }
         else if (type == "right") {
-            return this->rightEdge;
+            return this->target_data.right_loc;
         }
         throw std::logic_error("[ArtObject::getTargetInfo] Parameter value \""
             + type + "\" is not a valid option.");
@@ -65,10 +80,10 @@ namespace btrgb {
     //Returns the requested dimension of the color target
     int ArtObject::getTargetSize(std::string edge){
         if(edge == "row"){
-            return this->targetRow;
+            return this->target_data.row_count;
         }
         else if(edge == "col"){
-            return this->targetCol;
+            return this->target_data.col_count;
         }
         throw std::logic_error("[ArtObject::getTargetSize] Parameter value \""
             + edge + "\" is not a valid option.");
@@ -127,10 +142,9 @@ namespace btrgb {
             throw ArtObj_ImageDoesNotExist();
 
         try {
-            if(filename != "")
-                ImageWriterStrategy(filetype).write( this->images[name], filename );
-            else
-                ImageWriterStrategy(filetype).write( this->images[name] );
+            if(filename == "")
+                filename = name;
+            ImageWriterStrategy(filetype).write( this->images[name], this->output_directory + filename );
 
         }
         catch (ImageWritingError const& e) {

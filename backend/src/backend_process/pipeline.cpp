@@ -12,7 +12,7 @@ Pipeline::Pipeline(){
 void Pipeline::callback(std::string msg) {
     msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
     std::cout << "MSG: " << msg << std::endl;
-    this->send_info(this->get_process_name(), msg);
+    this->send_info(msg, this->get_process_name());
 };
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
@@ -24,13 +24,13 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
-    //std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
-    //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
+    std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
+    calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
     //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
 
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
-   // img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
 
@@ -53,14 +53,15 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
         //Collect the information provided about the color target
+        TargetData td;
         Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
-        double topEdge = target_location.get_number("top");
-        double leftEdge = target_location.get_number("left");
-        double botEdge = target_location.get_number("bottom");
-        double rightEdge = target_location.get_number("right");
-        int numCols = target_location.get_number("cols");
-        int numRows = target_location.get_number("rows");
-        art_obj->targetInfo(topEdge, leftEdge, botEdge, rightEdge, numRows, numCols);
+        td.top_loc = target_location.get_number("top");
+        td.left_loc = target_location.get_number("left");
+        td.bot_loc = target_location.get_number("bottom");
+        td.right_loc = target_location.get_number("right");
+        td.col_count = target_location.get_number("cols");
+        td.row_count = target_location.get_number("rows");
+        art_obj->setTargetInfo(td);
         return true;
     }
     catch (ParsingError e) {
@@ -72,42 +73,38 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 
 void Pipeline::run() {
 
-    this->send_info(this->get_process_name(), "I got your msg");
-    this->send_info(this->get_process_name(), this->process_data_m->to_string());
+    this->send_info("I got your msg", this->get_process_name());
+    this->send_info( this->process_data_m->to_string(), this->get_process_name());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     std::string ref_file = this->get_ref_file();
     IlluminantType illuminant = this->get_illuminant_type();
     ObserverType observer = this->get_observer_type();
+    std::string out_dir;
+    try{out_dir = this->get_output_directory();}
+    catch(...) {return;}
 
-    btrgb::ArtObject* images;
-    try {
-        images = new  btrgb::ArtObject(ref_file, illuminant, observer);
-    }
+
+    /* Create ArtObject */
+    std::unique_ptr<btrgb::ArtObject> images;
+    try { images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
     catch(const std::exception& err) {
-        std::string msg(err.what());
-        this->report_error(this->get_process_name(), "[art_obj construction]: " + msg);
-    }
-    catch(...) {
-        this->report_error(this->get_process_name(), "Some other error occured during ArtObject construction.");
+        this->report_error(this->get_process_name(), err.what());
+        return;
     }
 
 
-    this->send_info(this->get_process_name(), "About to init art obj...");
-    this->init_art_obj(images);
+    /* Initialize ArtObject with request data */
+    this->send_info("About to init art obj...", this->get_process_name());
+    this->init_art_obj(images.get());
 
 
-
-    this->send_info(this->get_process_name(), "About to execute...");
-    try {
-        pipeline->execute(this->coms_obj_m.get(), images);
-    }
+    /* Execute the pipeline on the created ArtObject */
+    this->send_info( "About to execute...", this->get_process_name());
+    try { pipeline->execute(this->coms_obj_m.get(), images.get()); }
     catch(const std::exception& err) {
-        std::string msg(err.what());
-        this->report_error(this->get_process_name(), "[pipeline execution]: " + msg);
-    }
-    catch(...) {
-        this->report_error(this->get_process_name(), "Some other error occured during pipeline execution.");
+        this->report_error(this->get_process_name(), err.what());
+        return;
     }
 
 
@@ -115,7 +112,25 @@ void Pipeline::run() {
         images->outputImageAs(btrgb::TIFF, name, name + "_final");
     }*/
 
-    delete images;
+}
+
+
+std::string Pipeline::get_output_directory() {
+    
+    try {
+        std::string dir = this->process_data_m->get_string("destinationDirectory");
+        std::filesystem::create_directories(dir);
+        return dir;
+    }
+    catch (ParsingError e) {
+        this->report_error("[Pipeline]", "Process request: invalid or missing \"destinationDirectory\" field.");
+        throw;
+    }
+    catch(const std::filesystem::filesystem_error& err) {
+        this->report_error("[Pipeline]", "Failed to create or access output directory.");
+        throw;
+    }
+
 
 }
 
