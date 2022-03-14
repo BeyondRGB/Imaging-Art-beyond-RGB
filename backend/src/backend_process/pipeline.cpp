@@ -80,35 +80,31 @@ void Pipeline::run() {
     std::string ref_file = this->get_ref_file();
     IlluminantType illuminant = this->get_illuminant_type();
     ObserverType observer = this->get_observer_type();
+    std::string out_dir;
+    try{out_dir = this->get_output_directory();}
+    catch(...) {return;}
 
-    btrgb::ArtObject* images;
-    try {
-        images = new  btrgb::ArtObject(ref_file, illuminant, observer);
-    }
+
+    /* Create ArtObject */
+    std::unique_ptr<btrgb::ArtObject> images;
+    try { images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
     catch(const std::exception& err) {
-        std::string msg(err.what());
-        this->report_error(this->get_process_name(), "[art_obj construction]: " + msg);
-    }
-    catch(...) {
-        this->report_error(this->get_process_name(), "Some other error occured during ArtObject construction.");
+        this->report_error(this->get_process_name(), err.what());
+        return;
     }
 
 
+    /* Initialize ArtObject with request data */
     this->send_info("About to init art obj...", this->get_process_name());
-    this->init_art_obj(images);
+    this->init_art_obj(images.get());
 
 
-
+    /* Execute the pipeline on the created ArtObject */
     this->send_info( "About to execute...", this->get_process_name());
-    try {
-        pipeline->execute(this->coms_obj_m.get(), images);
-    }
+    try { pipeline->execute(this->coms_obj_m.get(), images.get()); }
     catch(const std::exception& err) {
-        std::string msg(err.what());
-        this->report_error(this->get_process_name(), "[pipeline execution]: " + msg);
-    }
-    catch(...) {
-        this->report_error(this->get_process_name(), "Some other error occured during pipeline execution.");
+        this->report_error(this->get_process_name(), err.what());
+        return;
     }
 
 
@@ -116,7 +112,25 @@ void Pipeline::run() {
         images->outputImageAs(btrgb::TIFF, name, name);
     }
 
-    delete images;
+}
+
+
+std::string Pipeline::get_output_directory() {
+    
+    try {
+        std::string dir = this->process_data_m->get_string("destinationDirectory");
+        std::filesystem::create_directories(dir);
+        return dir;
+    }
+    catch (ParsingError e) {
+        this->report_error("[Pipeline]", "Process request: invalid or missing \"destinationDirectory\" field.");
+        throw;
+    }
+    catch(const std::filesystem::filesystem_error& err) {
+        this->report_error("[Pipeline]", "Failed to create or access output directory.");
+        throw;
+    }
+
 
 }
 
