@@ -17,7 +17,6 @@ void ImageProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
         double currProgress = count / total;
         comms->send_progress(currProgress, "ImageProcessor");
         component->execute(comms, images);
-        comms->send_base64(images->getImage("art1"), btrgb::PNG, btrgb::FAST);
         count++;
     }
     comms->send_info("Image Processing Done!!!", "ImageProcessor");
