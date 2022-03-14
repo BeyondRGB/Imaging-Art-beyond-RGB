@@ -54,7 +54,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         }
         //Collect the information provided about the color target
         TargetData td;
-        Json target_location = this->process_data_m->get_obj("TargetLocation");
+        Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
         td.top_loc = target_location.get_number("top");
         td.left_loc = target_location.get_number("left");
         td.bot_loc = target_location.get_number("bottom");
