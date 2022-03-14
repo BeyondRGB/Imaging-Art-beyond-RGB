@@ -11,6 +11,7 @@ using namespace cv;
 
 void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("", "PixelRegestor");
+    comms->send_progress(0, "PixelRegestor");
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
@@ -67,7 +68,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
     TermCriteria criteria(TermCriteria::COUNT + TermCriteria::EPS, iterations, termination_eps);
 
-
+    comms->send_progress(0.2, "PixelRegestor");
     try {
         std::cout << "Estimating warp matrix \n";
         //Perform image alignment
@@ -104,7 +105,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
         std::cout << "[Image Registration] Iterations possibly do not converge. Images will not be registered." << std::endl;
     }
 
-
+    comms->send_progress(1, "PixelRegestor");
     //Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "RegistrationOut1");
     images->outputImageAs(btrgb::TIFF, "art2", "RegistrationOut2");
