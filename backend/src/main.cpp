@@ -21,14 +21,14 @@ void testFunc() {
         0.345, 0.24, 0.4
     );
 
-    res.set_result_matrix("DELTA_E", r1);
-    res.set_result_matrix("M_REFL", r2);
-    res.set_result_matrix("M", r1);
+    res.store_matrix("DELTA_E", r1);
+    res.store_matrix("M_REFL", r2);
+    res.store_matrix("M", r1);
 
-    res.set_result_int("int1", 1);
-    res.set_result_int("int2", 2);
+    res.store_int("int1", 1);
+    res.store_int("int2", 2);
 
-    res.set_result_double("My_Test_Double", 5.6);
+    res.store_double("My_Test_Double", 5.6);
 
     std::string file_name = "results.csv";
 
