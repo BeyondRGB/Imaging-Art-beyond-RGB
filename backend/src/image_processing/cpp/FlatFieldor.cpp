@@ -11,6 +11,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     RefData *reference;
 
     comms->send_info("", "Flat Fielding");
+    comms->send_progress(0, "Flat Fielding");
 
     // Pull the images needed out of the Art Object
     try
@@ -55,7 +56,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     images->deleteImage("dark1");
     images->deleteImage("dark2");
 
-
+    comms->send_progress(1, "Flat Fielding");
     // Outputs TIFFs for each image group for after this step, temporary
     //images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
     //images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");

@@ -13,7 +13,6 @@ class PreProcessor: public ImgProcessingComponent {
 
 private:
     std::vector<std::shared_ptr<ImgProcessingComponent>> components;
-    CallBackFunction callback_func;
 
 public:
     explicit PreProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components);
