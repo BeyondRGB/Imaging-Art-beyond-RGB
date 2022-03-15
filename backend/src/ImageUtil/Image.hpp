@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <string>
 #include <opencv2/opencv.hpp>
+#include <cppcodec/base64_rfc4648.hpp>
 
 /* Ways to loop:
 
@@ -53,6 +54,21 @@
 
 namespace btrgb {
 
+    typedef std::unique_ptr<std::vector<uchar>> binary_ptr_t;
+    typedef std::unique_ptr<std::string> base64_ptr_t;
+
+    enum output_type {
+        PNG,
+        WEBP,
+        TIFF
+    };
+
+    enum image_quality {
+        FAST,
+        FULL
+    };
+
+
     class Image {
         public:
             Image(std::string filename);
@@ -66,21 +82,23 @@ namespace btrgb {
             int height();
             int channels();
             float* bitmap();
-            
 
             uint32_t getIndex(int row, int col, int ch);
             void setPixel(int row, int col, int ch, float value);
             float getPixel(int row, int col, int ch);
             float* getPixelPointer(int row, int col);
 
-            std::string filename();
-            void setFilename(std::string filename);
+            std::string getName();
+            void setName(std::string name);
+
+            binary_ptr_t toBinaryOfType(enum output_type type, enum image_quality quality);
+            base64_ptr_t toBase64OfType(enum output_type type, enum image_quality quality);
 
             void recycle();
             int _raw_bit_depth = 0;
 
         private:
-            std::string _filename;
+            std::string _name;
             float* _bitmap = nullptr;
             int _width = 0;
             int _height = 0;
@@ -102,6 +120,11 @@ namespace btrgb {
                 this->msg = "The Image \"" + msg + "\" has not been initialized.";
             }
             virtual char const * what() const noexcept { return  this->msg.c_str(); }
+    };
+
+    class FailedToEncode : public ImageError {
+        public:
+            virtual char const * what() const noexcept { return "[Image::to<Binary|Base64>OfType] OpenCV failed to encode image."; }
     };
 
     class UnsupportedChannels : public ImageError {

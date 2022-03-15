@@ -1,19 +1,21 @@
 #include "../header/FlatFieldor.h"
 
-//Runs the overall function for correcting the white and dark coloring of the image
-void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    btrgb::Image* art1;
-    btrgb::Image* art2;
-    btrgb::Image* white1;
-    btrgb::Image* white2;
-    btrgb::Image* dark1;
-    btrgb::Image* dark2;
-    RefData* reference;
+void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
+{
+    btrgb::Image *art1;
+    btrgb::Image *art2;
+    btrgb::Image *white1;
+    btrgb::Image *white2;
+    btrgb::Image *dark1;
+    btrgb::Image *dark2;
+    RefData *reference;
 
-    func("Flat Fielding");
+    comms->send_info("", "Flat Fielding");
+    comms->send_progress(0, "Flat Fielding");
 
-    //Pull the images needed out of the Art Object
-    try {
+    // Pull the images needed out of the Art Object
+    try
+    {
         art1 = images->getImage("art1");
         white1 = images->getImage("white1");
         dark1 = images->getImage("dark1");
@@ -22,12 +24,13 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
         dark2 = images->getImage("dark2");
         reference = images->get_refrence_data();
     }
-    catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
+    catch (const btrgb::ArtObj_ImageDoesNotExist &e)
+    {
+        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", "FlatFieldor");
         return;
     }
 
-    //Set up variables for the overall size of all the images, they are all the same size
+    // Set up variables for the overall size of all the images, they are all the same size
     int height = art1->height();
     int width = art1->width();
     int channels = art1->channels();
@@ -47,14 +50,16 @@ void FlatFieldor::execute(CallBackFunction func, btrgb::ArtObject* images) {
     wCalc(patAvg, whiteAvg, yVal);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
 
-    //Testing Image Outputs
-    //images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
-    //images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
     //Removes the white and dark images from the art object
     images->deleteImage("white1");
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
+
+    comms->send_progress(1, "Flat Fielding");
+    // Outputs TIFFs for each image group for after this step, temporary
+    images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
+    images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
 }
 
 /**
@@ -94,7 +99,7 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
                 //Need to overwrite previous image pixel in the Art Object
                 newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
                 a1->setPixel(currRow, currCol, ch, newPixel);
-                //Repeat for image 2
+                // Repeat for image 2
                 wPix = wh2->getPixel(currRow, currCol, ch);
                 dPix = d2->getPixel(currRow, currCol, ch);
                 aPix = a2->getPixel(currRow, currCol, ch);
@@ -103,4 +108,5 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
             }
         }
     }
+
 }
