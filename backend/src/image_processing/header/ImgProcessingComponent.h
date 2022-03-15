@@ -21,8 +21,6 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 #include "ImageUtil/ArtObject.hpp"
 #include "server/comunication_obj.hpp"
 
-//typedef void (*CallBackFunction)(string);
-typedef std::function<void(std::string)> CallBackFunction;
 class ImgProcessingComponent {
 public:
     virtual ~ImgProcessingComponent() {}
