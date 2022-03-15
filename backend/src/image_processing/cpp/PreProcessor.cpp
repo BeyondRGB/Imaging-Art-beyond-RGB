@@ -10,17 +10,16 @@ PreProcessor::PreProcessor(const std::vector<std::shared_ptr<ImgProcessingCompon
     }
 }
 
-void PreProcessor::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    this->callback_func = func;
-    this->callback_func("Starting PreProcessor");
+void PreProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+    comms->send_info("Starting PreProcessing", "PreProcessor");
+    double count = 0;
+    double total = this->components.size();
     for(const auto& component : this->components){
-        component->execute(std::bind(&PreProcessor::my_callback, this, std::placeholders::_1), images);
+      double currProgress = count / total;
+      comms->send_progress(currProgress, "PreProcessor");
+      component->execute(comms, images);
+      comms->send_base64(images->getImage("art1"), btrgb::PNG, btrgb::FAST);
+      count++;
     }
-    this->callback_func("PreProcessor Done!!!");
+    comms->send_info("PreProcessing Done!!!", "PreProcessor");
 }
-
-void PreProcessor::my_callback(std::string str) {
-    this->callback_func("PreProcessor->" + str);
-}
-
-

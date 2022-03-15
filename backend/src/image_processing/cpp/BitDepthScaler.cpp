@@ -7,15 +7,18 @@ BitDepthScaler::BitDepthScaler() {}
 BitDepthScaler::~BitDepthScaler() {}
 
 
-void BitDepthScaler::execute(CallBackFunction func, btrgb::ArtObject* images) {
+void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
+    double total = images->imageCount();
+    double count = 0;
+    comms->send_progress(0, "BitDepthScaler");
     for(const auto& [key, im] : *images) {
 
         /* Output message. */
         std::stringstream out3;
-        out3 << "Scaling \"" << im->filename() << "\" from " << im->_raw_bit_depth << " to 16 bits...";
-        func(out3.str());
-    
+        out3 << "Scaling \"" << im->getName() << "\" from " << im->_raw_bit_depth << " to 16 bits...";
+        comms->send_info(out3.str(), "BitDepthScaler");
+
 
         /* If the bit depth is invalid or already 16 bits: skip, do not scale anything. */
         if (im->_raw_bit_depth < 16 && im->_raw_bit_depth >= 8) {
@@ -35,6 +38,8 @@ void BitDepthScaler::execute(CallBackFunction func, btrgb::ArtObject* images) {
 
         /* Output bit depth scaled image. */
         images->outputImageAs(btrgb::TIFF, key, key + "_bd_scaled");
+        count++;
+        comms->send_progress(count/total, "BitDepthScaler");
     }
-    
+
 }

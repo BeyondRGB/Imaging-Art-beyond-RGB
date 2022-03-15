@@ -8,12 +8,12 @@
 //Testing Includes: Remove before submiting PR
 //#include "reference_data/illuminants.hpp"
 void testFunc() {
-    
+
 }
 
 
 int main(int argc, char** argv) {
-    CMDArgManager::process_args(argc, argv);
+  CMDArgManager::process_args(argc, argv);
 	bool test = true; // Set to true if you want to test something and bypass the server
 	if (GlobalsSinglton::get_instance()->is_test()) {
 		testFunc();
@@ -21,13 +21,14 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 
-    std::cout << "BeyondRBG Backend Started: listening on port 9002\n";
-    RequestServer server;
-    server.init_server();
-    server.start_server();
+	std::cout << "BeyondRBG Backend Started: listening on port 9002\n";
+	RequestServer server;
+	server.init_server();
+	server.start_server();
 
-    //Block till server shuts down
-    std::cout << "Exiting.\n";
-    delete GlobalsSinglton::get_instance();
-    
+  //Block till server shuts down
+  std::cout << "Exiting.\n";
+  delete GlobalsSinglton::get_instance();
+
+
 }
