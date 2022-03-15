@@ -10,19 +10,19 @@ CalibrationResults::~CalibrationResults(){
     }
 }
 
-void CalibrationResults::set_result_matrix(std::string key, cv::Mat result){
+void CalibrationResults::store_matrix(std::string key, cv::Mat result){
     this->result_matricies[key] = result;
 }
 
-void CalibrationResults::set_result_int(std::string key, int value){
+void CalibrationResults::store_int(std::string key, int value){
     this->result_ints[key] = value;
 }
 
-void CalibrationResults::set_result_double(std::string key, double value){
+void CalibrationResults::store_double(std::string key, double value){
     this->result_doubles[key] = value;
 }
 
-cv::Mat CalibrationResults::get_result_matrix(std::string key){
+cv::Mat CalibrationResults::get_matrix(std::string key){
     if(this->result_matricies.contains(key)){
         cv::Mat result;
         this->result_matricies[key].copyTo(result);
@@ -31,14 +31,14 @@ cv::Mat CalibrationResults::get_result_matrix(std::string key){
     throw ResultError(key + " was not found in CalibrationResults");
 }
 
-int CalibrationResults::get_result_int(std::string key){
+int CalibrationResults::get_int(std::string key){
     if(this->result_ints.contains(key)){
         return this->result_ints[key];
     }
     throw ResultError(key + " was not found in CalibrationResults");
 }
 
-double CalibrationResults::get_result_double(std::string key){
+double CalibrationResults::get_double(std::string key){
     if(this->result_doubles.contains(key)){
         return this->result_doubles[key];
     }
@@ -54,30 +54,39 @@ void CalibrationResults::write_results(std::ostream &output_stream){
 
 void CalibrationResults::write_matrices(std::ostream &output_stream){
     for( auto [name, matrix] : this->result_matricies ){
+        // Write Name
         output_stream << name << std::endl;
+        // Write MetaData
         output_stream << R_TYPE << ":" << ResultType::MATRIX << DELIMITER << 
                          ROW_COUNT <<":" << matrix.rows << DELIMITER << 
                          COL_COUNT << ":" << matrix.cols << DELIMITER <<
                          M_TYPE << ":" << matrix.type() << std::endl;
+        // Write Matrix Values
         this->write_matrix(output_stream, matrix);
     }
 }
 
 void CalibrationResults::write_ints(std::ostream &output_stream){
     for( auto [name, value] : this->result_ints ){
+        // Write Name
         output_stream << name << std::endl;
+        // Write MetaData
         output_stream << R_TYPE << ":" << ResultType::INT << std::endl;
+        // Write Value
         output_stream << value << std::endl 
-            << std::endl;
+            << std::endl; // New line to prep for next result
     }
 }
 
 void CalibrationResults::write_doubls(std::ostream &output_stream){
     for( auto [name, value] : this->result_doubles ){
+        // Write Name
         output_stream << name << std::endl;
+        // Write MetaData
         output_stream << R_TYPE << ":" << ResultType::DOUBLE << std::endl;
+        // Write Value
         output_stream << value << std::endl 
-            << std::endl;
+            << std::endl; // New line to prep for next result
     }
 }
 
@@ -87,16 +96,16 @@ void CalibrationResults::write_matrix(std::ostream &output_stream, cv::Mat matri
     }
     this->cur_mat_type = matrix.type();
     for(int row = 0; row < matrix.rows; row++){
-        // output_stream << RES_ROW(row);
         for(int col = 0; col < matrix.cols; col++){
             this->write_matrix_value(output_stream, matrix, row, col);
             if(col < matrix.cols - 1){
                 output_stream << DELIMITER;
             }
         }
+        // New line for next Row
         output_stream << std::endl;
     }
-    output_stream << std::endl;
+    output_stream << std::endl; // New line to prep for next result
 }
 
 void CalibrationResults::write_matrix_value(std::ostream &output_stream, cv::Mat matrix, int row, int col){
@@ -153,7 +162,7 @@ void CalibrationResults::read_results(std::string results_file){
         }catch(ResultError e){
             this->report_error(e.what());
         }
-        
+
         // Reading Result Value/Values
         if(result_type == type_key_map[ResultType::MATRIX]){
             this->init_matrix(name, info_map);
@@ -210,9 +219,13 @@ std::unordered_map<std::string, int> CalibrationResults::pars_result_info(std::s
         throw ResultError("No MetaData Found");
     try{
         while(this->has_next(info_string)){
+            // Get the current info_item
             std::string item = this->get_next<std::string>(info_string);
-            std::string key = this->get_next<std::string>(item, ":"); // ignore title        
+            // Get Key from current info_item
+            std::string key = this->get_next<std::string>(item, ":");
+            // Get value from current info_item
             int value = this->get_next<int>(item, ":");
+            // Store key/value
             info_map[key] = value; 
         }
     }catch(std::runtime_error e){
