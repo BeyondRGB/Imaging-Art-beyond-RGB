@@ -5,6 +5,7 @@ ColorManagedCalibrator::~ColorManagedCalibrator() {
 
 void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("", "Color Managed Calibration");
+    comms->send_progress(0, "Color Managed Calibration");
 
     btrgb::Image* art1;
     btrgb::Image* art2;
@@ -41,18 +42,22 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     // Init Matracies used in calibration
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
     this->build_input_matrix();
+    comms->send_progress(0.1, "Color Managed Calibration");
     this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
 
     // Fined M and Offsets to minimize deltaE
     std::cout << "Optimizing to minimize deltaE" << std::endl;
     this->find_optimization();
+    comms->send_progress(0.6, "Color Managed Calibration");
 
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     this->update_image(images);
+    comms->send_progress(0.9, "Color Managed Calibration");
 
     // Save resulting Matacies for latter use
     this->output_report_data();
+    comms->send_progress(1, "Color Managed Calibration");
 
     // Dont remove art1 and art2 from the ArtObject yet as they are still needed for spectral calibration
 
