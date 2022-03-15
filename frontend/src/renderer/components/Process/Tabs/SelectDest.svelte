@@ -1,8 +1,12 @@
 <script lang="ts">
   import FileSelector from "@components/FileSelector.svelte";
-
+  import { currentPage, processState } from "@util/stores";
   let filePaths = [];
   $: console.log(filePaths);
+
+  $: if (filePaths) {
+    $processState.destDir = filePaths[0];
+  }
 </script>
 
 <main>

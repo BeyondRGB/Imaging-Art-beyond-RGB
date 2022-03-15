@@ -31,7 +31,7 @@
       <FileSelector bind:filePaths />
     </div>
     <article>
-      {filePaths ? filePaths.length : 0} / 6
+      <span class="number">{filePaths ? filePaths.length : 0} / 6</span>
       <ul>
         {#if filePaths?.length > 0}
           {#each filePaths as filePath}
@@ -66,9 +66,12 @@
     @apply text-center pt-[30vh] bg-gray-500/25 m-4 h-[90%] rounded-lg;
   }
   article {
-    @apply bg-gray-800 h-full w-full m-6 overflow-auto;
+    @apply bg-gray-800 h-full w-full m-6 overflow-auto rounded-lg;
+  }
+  .number {
+    @apply flex justify-center bg-gray-700/50;
   }
   li {
-    @apply bg-gray-700 m-1 p-2;
+    @apply bg-gray-600 m-1 p-2 rounded-xl my-2;
   }
 </style>
