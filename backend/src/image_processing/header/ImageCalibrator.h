@@ -11,7 +11,6 @@
 class ImageCalibrator : public ImgProcessingComponent{
 private:
     std::vector<std::shared_ptr<ImgProcessingComponent>> components;
-    CallBackFunction callback_func;
 public:
     ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components);
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
