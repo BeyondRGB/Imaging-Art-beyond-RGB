@@ -8,8 +8,8 @@
 #include "ImageUtil/ColorTarget.hpp"
 #include "ImageUtil/Image.hpp"
 
-#define MAX std::numeric_limits<double>::max()
-#define MIN std::numeric_limits<double>::min()
+// #define MAX std::numeric_limits<double>::max()
+// #define MIN std::numeric_limits<double>::min()
 
 namespace btrgb{
     namespace calibration{
