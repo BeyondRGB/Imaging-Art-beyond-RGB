@@ -55,9 +55,11 @@ namespace btrgb {
         Image* getImage(std::string name);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
-        
+
+        int imageCount();
+
         void outputImageAs(enum output_type filetype, std::string name, std::string filename = "");
-        
+
         /* Iterators over all image entries. */
         std::unordered_map<std::string, Image*>::iterator begin() noexcept {return images.begin();};
         std::unordered_map<std::string, Image*>::iterator end() noexcept {return images.end();};

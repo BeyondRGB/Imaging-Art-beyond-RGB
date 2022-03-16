@@ -34,7 +34,9 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     btrgb::BitDepthFinder util;
     int bit_depth = -1;
 
-
+    double total = images->imageCount();
+    double count = 0;
+    comms->send_progress(0, "RawImageReader");
     for(const auto& [key, im] : *images) {
         comms->send_info("Loading " + im->getName() + "...", "ImageReader");
 
@@ -66,6 +68,9 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             /* Init btrgb::Image object. */
             im->initImage(float_im);
+            
+            count++;
+            comms->send_progress(count/total, "RawImageReader");
 
         }
         catch(const btrgb::ReaderFailedToOpenFile& e) {
@@ -83,7 +88,9 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
     for(const auto& [key, im] : *images) {
         im->_raw_bit_depth = bit_depth;
-        //images->outputImageAs(btrgb::TIFF, key, key + "_raw");
+        images->outputImageAs(btrgb::TIFF, key, key + "_raw");
     }
+    
+    comms->send_progress(1, "RawImageReader");
 
 }

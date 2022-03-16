@@ -119,7 +119,7 @@ namespace btrgb {
     void ArtObject::deleteImage(std::string name) {
         if( ! this->images.contains(name) )
             throw ArtObj_ImageDoesNotExist();
-            
+
         Image* im = this->images[name];
         delete im;
         this->images.erase(name);
@@ -132,12 +132,12 @@ namespace btrgb {
         return this->images.contains(name);
     }
 
-    
-    /* 
-     * The key of the image stored in memory to write to disk. 
+
+    /*
+     * The key of the image stored in memory to write to disk.
      */
     void ArtObject::outputImageAs(enum output_type filetype, std::string name, std::string filename) {
-        
+
         if (! this->images.contains(name))
             throw ArtObj_ImageDoesNotExist();
 
@@ -160,4 +160,7 @@ namespace btrgb {
         return this->ref_data;
     }
 
+    int ArtObject::imageCount(){
+      return this->images.size();
+    }
 }

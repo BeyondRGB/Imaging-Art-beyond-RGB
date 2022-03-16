@@ -11,7 +11,6 @@
 class ImageProcessor: public ImgProcessingComponent{
 private:
     std::vector<std::shared_ptr<ImgProcessingComponent>> components;
-    CallBackFunction callback_func;
 public:
     ImageProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components);
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
