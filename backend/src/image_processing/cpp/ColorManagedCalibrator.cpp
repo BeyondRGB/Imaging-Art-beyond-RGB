@@ -3,9 +3,10 @@
 ColorManagedCalibrator::~ColorManagedCalibrator() {
 }
 
-void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    func("Color Managed Calibration");
-    
+void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+    comms->send_info("", "Color Managed Calibration");
+    comms->send_progress(0, "Color Managed Calibration");
+
     btrgb::Image* art1;
     btrgb::Image* art2;
     ColorTarget target1;
@@ -22,15 +23,15 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: ColorManagedCalibrator called out of order. Missing at least 1 image assignment.");
+        comms->send_error("ColorManagedCalibrator called out of order. Missing at least 1 image assignment.", "Color Managed Calibration");
         return;
     }
     catch (const std::logic_error& e) {
         std::string error(e.what());
-        func("Error: " + error);
+        comms->send_error(error, "Color Managed Calibration");
         return;
     }
-    
+
     // Init Color Targets
     target1 = images->get_target(ART(1));
     target2 = images->get_target(ART(2));
@@ -41,18 +42,22 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
     // Init Matracies used in calibration
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
     this->build_input_matrix();
+    comms->send_progress(0.1, "Color Managed Calibration");
     this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
 
     // Fined M and Offsets to minimize deltaE
     std::cout << "Optimizing to minimize deltaE" << std::endl;
     this->find_optimization();
-    
+    comms->send_progress(0.6, "Color Managed Calibration");
+
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     this->update_image(images);
-    
+    comms->send_progress(0.9, "Color Managed Calibration");
+
     // Save resulting Matacies for latter use
     this->output_report_data();
+    comms->send_progress(1, "Color Managed Calibration");
 
     // Dont remove art1 and art2 from the ArtObject yet as they are still needed for spectral calibration
 
@@ -60,19 +65,19 @@ void ColorManagedCalibrator::execute(CallBackFunction func, btrgb::ArtObject* im
 
 /**
  * @brief Sets up and runs the MinProblemSolver to optimize M and offsets for min deltaE
- * 
+ *
  */
 void ColorManagedCalibrator::find_optimization() {
     // OpenCV MinProblemSolver requires the function for optimization
     // To be held in a Ptr<cv::MinProblemSolver::Function> class
     // DeltaEFunction is a class that inherits cv::MinProblemSolver::Function
     // and defines double calc(const double* x)const;
-    //      Where 
+    //      Where
     //          x is the InputArray
     //          and the return value of calc() is the average DeltaE
     // The MinProblemSolver will provide new values for the InputArray
     // and try to minimize deltaE
-    
+
     // Init DeltaEFunction
     // All params are references owned by ColorManagedCalibrator
     // This allows for access to all results (M, offset, deltaE_values) once optimization is complete
@@ -84,7 +89,7 @@ void ColorManagedCalibrator::find_optimization() {
         this->ref_data,             //
         &this->deltaE_values
     ));
-    
+
     // Init MinProblemSolver
     cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
     min_solver->setFunction(ptr_F);
@@ -93,19 +98,19 @@ void ColorManagedCalibrator::find_optimization() {
                         0.75,0.75,0.75,0.75,0.75,0.75,  // M
                         0.75,0.75,0.75,0.75,0.75,0.75,  // M
                         0.01,0.01,0.01,0.01,0.01,0.01   // Offsetr
-                    );                                
+                    );
     min_solver->setInitStep(step);
     min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50000, 1e-10));
-    
+
     // Optimize M and offset for minimized deltaE
     this->resulting_avg_deltaE = min_solver->minimize(this->optimization_input);
-    
+
     cv::Ptr<DeltaEFunction> def = ptr_F.staticCast<DeltaEFunction>();
     this->solver_iteration_count = def->get_itteration_count();
 }
 
 /***
- * Convert the sixe channels in art1 and art2 into a ColorManaged RGB image 
+ * Convert the sixe channels in art1 and art2 into a ColorManaged RGB image
  * using the optimized M and offsets
  */
 void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
@@ -115,7 +120,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     btrgb::Image* art[2] = {art1, art2};
     int height = art1->height();
     int width = art1->width();
-    
+
     // Initialize 6xN Matrix to represen our 6 channal image
     // Each row represents a single channel and N is the number total pixles for each channel
     cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
@@ -125,7 +130,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     *       m_1_1, m_1_2, ..., m_1_6
     *       m_2_1, m_2_2, ..., m_2_6
     *       m_3_1, m_3_2, ..., m_3_6
-    * 
+    *
     *   camra_sigs is a 2d Matrix in the form
     *       px1_ch1, px2_ch1, ..., pxN_ch1
     *       px1_ch2, px2_ch2, ..., pxN_ch2
@@ -133,17 +138,17 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     *       px1_ch4, px2_ch4, ..., pxN_ch4
     *       px1_ch5, px2_ch5, ..., pxN_ch5
     *       px1_ch6, px2_ch6, ..., pxN_ch6
-    * 
+    *
     *   cm_XYZ is a 2d Matrix resulting in M * six_chan in the form
     *       X1, X2, ..., XN
     *       Y1, Y2, ..., YN
     *       Z1, Z2, ..., ZN
-    *       
+    *
     */
     // Convert camra_sigs ColorManaged XYZ values
     cv::Mat cm_XYZ = this->M * camra_sigs;
     camra_sigs.release(); // No longer needed
-    
+
     // Convert ColorManaged XYZ values to ColorManaged RGB values
     cv::Mat rgb_convertion_matrix = this->rgb_convertions_matrix(this->color_space);
     cv::Mat cm_RGB = rgb_convertion_matrix * cm_XYZ;
@@ -191,7 +196,7 @@ void ColorManagedCalibrator::output_report_data(){
     // The plan is to add a Report class when the results will put.
     // It will be comming in a future PR, so for now just display results in terminal
 
-    /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */ 
+    /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */
     std::cout << "**********************\n\tResults\n**********************" << std::endl;
     btrgb::calibration::display_matrix(&this->M, "M");
     btrgb::calibration::display_matrix(&this->offest, "offset");
@@ -206,7 +211,7 @@ void ColorManagedCalibrator::build_input_matrix() {
     int row_count = 4;
     int col_count = 6;
     int item_count = row_count * col_count;
-    
+
     /** OpenCV MinProblemSolver expects a 1d Matrix as an InputArray
     * this->optimazation_input will represetn that InputArray
     * We need 2 seperate Maticies from the InputArray M, and Offset
@@ -218,7 +223,7 @@ void ColorManagedCalibrator::build_input_matrix() {
     *  M,0.25,1.15,-0.1,0.1,0.1,0.1
     *  M,-0.25,-0.25,1.5,0.1,0.1,0.1
     *  offset,0.1,0.01,0.01,0.01,0.01,0.01
-    * 
+    *
     * All values will be stored in the InputArray and Matrix Headers will be created for M, and Offset
     * Thes headers will point to the values in the InputArray and will simply represent that data in a different format
     * An change in the this->optimazation_input will be represented in M and Offset
@@ -239,27 +244,27 @@ void ColorManagedCalibrator::build_input_matrix() {
                             /*M*/       0.1, 0.1, 0.25, 0.1, 0.1, 0.5,
                             /*Offset*/  0.01,0.01,0.01,0.01,0.01,0.01
                                 );
-   
-     
+
+
     // Create Matrix Header to Represents the 1d InputArray as a 2d Matrix for easy extraction of M and offset
     cv::Mat opt_as_2d = cv::Mat(this->optimization_input).reshape(0, row_count);
     // Create Matrix Header to represent the 2d Matix M that points to the values that are in the InputArray
     this->M = opt_as_2d(cv::Rect(0, 0, col_count, row_count - 1));
     // Create Matrix Header to represent the 1d Matrix offset that points to the values that are in the InputArray
-    this->offest = opt_as_2d(cv::Rect(0, row_count - 1, col_count, 1));  
+    this->offest = opt_as_2d(cv::Rect(0, row_count - 1, col_count, 1));
     opt_as_2d.release();
-    
+
 }
 
 cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
     /**
-     * @brief There are various xyz to rgb convertions matracies depending on the color space 
+     * @brief There are various xyz to rgb convertions matracies depending on the color space
      * the converiton matracies defined below come from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
      */
     cv::Mat convertions_matrix;
     switch(color_space){
         case ColorSpace::Adobe_RGB_1998:
-            convertions_matrix = (cv::Mat_<double>(3,3) << 
+            convertions_matrix = (cv::Mat_<double>(3,3) <<
                              1.9624274, -0.6105343, -0.3413404,
                             -0.9787684,  1.9161415,  0.0334540,
                              0.0286869, -0.1406752,  1.3487655
@@ -267,7 +272,7 @@ cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
             break;
 
         case ColorSpace::Wide_Gamut_RGB:
-            convertions_matrix = (cv::Mat_<double>(3,3) << 
+            convertions_matrix = (cv::Mat_<double>(3,3) <<
                              1.4628067, -0.1840623, -0.2743606,
                             -0.5217933,  1.4472381,  0.0677227,
                              0.0349342, -0.0968930,  1.2884099
@@ -275,7 +280,7 @@ cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
             break;
 
         case ColorSpace::sRGB:
-            convertions_matrix = (cv::Mat_<double>(3,3) << 
+            convertions_matrix = (cv::Mat_<double>(3,3) <<
                              3.1338561, -1.6168667, -0.4906146,
                             -0.9787684,  1.9161415,  0.0334540,
                              0.0719453, -0.2289914 , 1.4052427
@@ -284,7 +289,7 @@ cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
 
         case ColorSpace::ProPhoto:
         default:
-            convertions_matrix = (cv::Mat_<double>(3,3) << 
+            convertions_matrix = (cv::Mat_<double>(3,3) <<
                              1.3459433, -0.2556075, -0.0511118,
                             -0.5445989,  1.5081673,  0.0205351,
                              0.0000000,  0.0000000,  1.2118128
@@ -390,28 +395,28 @@ double DeltaEFunction::calc(const double* x)const{
     *       x_patch_1, x_patch_2, ..., x_patch_k
     *       y_patch_1, y_patch_2, ..., y_patch_k
     *       z_patch_1, z_patch_2, ..., z_patch_k
-    *   
+    *
     *   M is a 2d Matrix in the form
     *       m_1_1, m_1_2, ..., m_1_6
     *       m_2_1, m_2_2, ..., m_2_6
     *       m_3_1, m_3_2, ..., m_3_6
-    * 
-    *   color_patch_avg is a 2d Matrix in the form 
+    *
+    *   color_patch_avg is a 2d Matrix in the form
     *   (cp_avg is the average pixel value from the color target in the actual image)
     *       cp_avg_chan1_patch_1, cp_avg_chan1_patch_2, ..., cp_avg_chan1_patch_k
     *       cp_avg_chan2_patch_1, cp_avg_chan2_patch_2, ..., cp_avg_chan2_patch_k
     *       ...                 , ...                 , ..., ...
-    *       cp_avg_chan6_patch_1, cp_avg_chan6_patch_2, ..., cp_avg_chan6_patch_k 
-    * 
+    *       cp_avg_chan6_patch_1, cp_avg_chan6_patch_2, ..., cp_avg_chan6_patch_k
+    *
     *   Offset is a  1d Matrix in the form
     *       offset_1, offset_2, ..., offset_6
-    * 
+    *
     *   offset_avg is a 2d Matrix computed from subtracting offset from color_patch_avg
     *       cp_avg_chan1_patch_1 - offet_1, cp_avg_chan1_patch_2 - offet_1, ..., cp_avg_chan1_patch_k - offet_1
     *       cp_avg_chan2_patch_1 - offet_2, cp_avg_chan2_patch_2 - offet_2, ..., cp_avg_chan2_patch_k - offet_2
     *       ...                  - ...    , ...                 - ...     , ..., ...                  - ...
     *       cp_avg_chan6_patch_1 - offet_6, cp_avg_chan6_patch_2 - offet_6, ..., cp_avg_chan6_patch_k - offet_6
-    */  
+    */
 
    // Create offset_avg
    int row_count = this->color_patch_avgs->rows;
@@ -424,7 +429,7 @@ double DeltaEFunction::calc(const double* x)const{
             offset_avg.at<double>(row, col) = avg - offset;
         }
     }
-    
+
     // Compute camera_xyz
     cv::Mat_<double> xyz = *this->M * offset_avg;
 
@@ -437,7 +442,7 @@ double DeltaEFunction::calc(const double* x)const{
     double L;
     double a;
     double b;
-    
+
     // Calculate AVG delta E for all ColorPatches on target
     // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
     WhitePoints* wp = this->ref_data->get_white_pts();
@@ -468,10 +473,9 @@ double DeltaEFunction::calc(const double* x)const{
             deltaE_sum += delE;
         }
     }
-    
+
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
     return deltaE_avg;
 }
-

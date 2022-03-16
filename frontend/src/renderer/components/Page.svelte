@@ -1,73 +1,81 @@
 <script lang="ts">
-	export let selectedPage: any;
-	import Modal from "svelte-simple-modal";
-	import { fade } from "svelte/transition";
-	import { modal, appSettings } from "@util/stores";
-	import TestConsole from "@components/TestConsole.svelte";
-	$: console.log($modal);
+	export let routes;
+	export let pages;
+	import { fade, fly } from "svelte/transition";
+	import { currentPage, appSettings, modal } from "@util/stores";
+	import Modal from "@components/Modal.svelte";
 
-	// in:fade={{ duration: 350, delay: 350 }}
-	// out:fade={{ duration: 350 }}
-	let isOpen = false;
+	let showModal = false;
+	$: if ($modal === "Settings" || $modal === "Home") {
+		showModal = true;
+	} else {
+		showModal = false;
+	}
+	$: console.log($currentPage);
 </script>
 
-<Modal show={$modal}>
-	<div
-		class="page dark:bg-gray-800 bg-white {$appSettings.sideNav
-			? 'sideNav'
-			: ''}"
-	>
-		{#key selectedPage}
+<div
+	bind:this={pages}
+	class="page dark:bg-gray-800 bg-white {$appSettings.sideNav ? 'sideNav' : ''}"
+>
+	{#each Object.keys(routes) as pageKey}
+		{#if routes[pageKey].page}
 			<div
 				class="content"
 				in:fade={{ duration: 250, delay: 250 }}
 				out:fade={{ duration: 250 }}
 			>
-				<svelte:component this={selectedPage} />
+				<svelte:component this={routes[pageKey].component} />
 			</div>
-		{/key}
-		<div class={`console ${isOpen ? "open" : ""}`}>
-			<div class="testBox">
-				<div class="handle" on:click={() => (isOpen = !isOpen)}>
-					{isOpen ? ">" : "<"}
-				</div>
-				<div class="con">
-					<TestConsole />
-				</div>
-			</div>
-		</div>
-	</div>
-</Modal>
+		{/if}
+	{/each}
+</div>
+{#if showModal}
+	<!-- <h2 slot="header">
+      modal
+      <small><em>adjective</em> mod·al \ˈmō-dəl\</small>
+    </h2> -->
+	{#if $modal === "Settings"}
+		<Modal
+			on:close={() => {
+				showModal = false;
+				$modal = null;
+			}}
+		>
+			<!-- <h1 slot="header">App Settings</h1> -->
+			<svelte:component this={routes.Settings.component} />
+		</Modal>
+	{:else if $modal === "Home"}
+		<Modal
+			minimal
+			on:close={() => {
+				showModal = false;
+				$modal = null;
+			}}
+		>
+			<svelte:component this={routes.Home.component} />
+		</Modal>
+	{/if}
+{/if}
 
 <style lang="postcss" local>
 	.page {
+		scroll-snap-type: y mandatory;
+		scroll-behavior: smooth;
 		overflow: hidden;
-		@apply w-full h-full pt-1 relative flex justify-center items-center;
+		@apply w-full h-full pt-1 relative flex;
+	}
+	.sideNav {
+		@apply flex-col;
 	}
 	::-webkit-scrollbar {
 		@apply w-1;
 	}
 	.content {
-		@apply w-full h-full;
+		scroll-snap-align: start;
+		@apply flex-shrink-0 w-full h-full;
 	}
-	.console {
-		@apply absolute -right-[60%] w-[60%] transition-all duration-300 z-50;
+	.modal {
+		@apply absolute w-full h-full bg-black/25 flex justify-center items-center;
 	}
-	.open {
-		@apply -right-0;
-	}
-	.handle {
-		@apply bg-gray-800 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-							text-2xl rounded-l-full border-l-2 border-t-2 border-b-2 border-gray-700;
-	}
-	.testBox {
-		@apply bg-gray-800 w-full h-full relative rounded-l-lg flex justify-center items-center
-						border-2 border-gray-700 shadow-2xl;
-	}
-	.con {
-		@apply w-full h-full;
-	}
-	/* .sideNav {
-		@apply pl-20 pb-0;
-	} */
 </style>

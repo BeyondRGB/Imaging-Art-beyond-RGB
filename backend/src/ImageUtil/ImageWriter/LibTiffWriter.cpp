@@ -6,7 +6,7 @@ namespace btrgb {
     LibTiffWriter::~LibTiffWriter() {}
 
     void LibTiffWriter::_write(Image* im, std::string filename) {
-        TIFF* img_out;
+        struct tiff* img_out;
 
         int width = im->width();
         int height = im->height();

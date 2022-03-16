@@ -26,7 +26,7 @@ public:
      * @param func TODO this should be changed to the ComsObj once merged with the communication update
      * @param images contais Images to process
      */
-    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
+    void execute(CommunicationObj *comms, btrgb::ArtObject* images) override;
     void my_callback(std::string str);
 
 private:

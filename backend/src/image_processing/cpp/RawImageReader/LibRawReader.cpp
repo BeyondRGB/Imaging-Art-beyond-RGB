@@ -22,7 +22,7 @@ void LibRawReader::read(btrgb::Image* im, bool record_bit_depth) {
     int width, height, channels, bits_per_pixel, ec;
 
     /* Open the file. */
-    ec = this->rawReader.open_file(im->filename().c_str());
+    ec = this->rawReader.open_file(im->getName().c_str());
     if(ec) {
         this->rawReader.recycle();
         throw RawReaderStrategy_FailedToOpenFile();

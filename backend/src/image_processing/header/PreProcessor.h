@@ -13,12 +13,10 @@ class PreProcessor: public ImgProcessingComponent {
 
 private:
     std::vector<std::shared_ptr<ImgProcessingComponent>> components;
-    CallBackFunction callback_func;
 
 public:
     explicit PreProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components);
-    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
-    void my_callback(std::string str);
+    void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
 };
 
