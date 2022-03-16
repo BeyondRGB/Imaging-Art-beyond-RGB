@@ -35,8 +35,8 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
     
     // Run test with various step values
-    float sp_value = 0.5;
-    // for(float sp_value = 0.1f; sp_value <= 1.5f; sp_value += 0.1f){
+    // float sp_value = 0.5;
+    for(float sp_value = 0.1f; sp_value <= 1.5f; sp_value += 0.1f){
         std::cout << std::endl << "****************************************************************" << std::endl;
         std::cout << std::endl << "****************************************************************" << std::endl;
 
@@ -46,9 +46,12 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
         
         // Convert RefData to matrix
         cv::Mat ref_data_matrix = this->ref_data->as_matrix();
+
+        // btrgb::calibration::display_matrix(&ref_data_matrix, "RefDataMat");
+
         // Initialize M_relf starting values
         this->init_M_refl(ref_data_matrix);
-        ref_data_matrix.release(); // No longer needed
+        // ref_data_matrix.release(); // No longer needed
 
         // Create Custom WeightedErrorFunction used to minimize Z
         cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
@@ -65,7 +68,13 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
         cv::Mat step;
         this->init_step(sp_value, step);
         min_solver->setInitStep(step);
-        min_solver->setTermCriteria(cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 50000, 1e-10));
+        min_solver->setTermCriteria(
+            cv::TermCriteria(
+                cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, // Term Type
+                 5000, // max itterations
+                 1e-10 // epsilon
+            )
+        );
 
 
         // btrgb::calibration::display_matrix(&this->M_refl, "Mrefl Init");
@@ -89,7 +98,7 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
         cv::Ptr<WeightedErrorFunction> def = ptr_F.staticCast<WeightedErrorFunction>();
         std::cout << "Itterations: " << def->get_itteration_count() << std::endl;
         std::cout << "Min z: " << res << std::endl;
-    }
+    }// End of testing for loop
 
     std::cout << "SpectralCalibration done" << std::endl;
 
@@ -198,7 +207,7 @@ double WeightedErrorFunction::calc(const double *x) const{
     // Calculate Z
     double z = this->calc_z(e1,e2,e3);
 
-    std::cout << "Z: " << z << " e1: " << e1 << " e2: " << e2 << " e3: " << e3 << std::endl; 
+    // std::cout << "Z: " << z << " e1: " << e1 << " e2: " << e2 << " e3: " << e3 << std::endl; 
     return z;
 }
 

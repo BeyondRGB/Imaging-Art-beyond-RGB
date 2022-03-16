@@ -99,7 +99,7 @@ void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
 }
 
 double btrgb::calibration::row_min(cv::Mat &target, int row){
-    double min = MAX;
+    double min = std::numeric_limits<double>::max();//MAX;
     for(int col = 0; col < target.cols; col++){
         double val = target.at<double>(row, col);
         if(val < min){
@@ -110,7 +110,7 @@ double btrgb::calibration::row_min(cv::Mat &target, int row){
 }
 
 double btrgb::calibration::row_max(cv::Mat &target, int row){
-    double max = MIN;
+    double max = std::numeric_limits<double>::min();//MIN;
     for(int col = 0; col < target.cols; col++){
         double val = target.at<double>(row, col);
         if(val > max){
