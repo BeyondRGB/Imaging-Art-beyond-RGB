@@ -15,14 +15,16 @@ export const processState = writable({
       id: 1,
       name: "Art 1",
       colorTargetImage: { dataURL: "", filename: "" },
-      colorTarget: {
-        top: 0.25,
-        left: 0.25,
-        bottom: 0.50,
-        right: 0.50,
-        cols: 14,
-        rows: 10,
-      },
+      colorTargets: [
+        // {
+        //   top: 0.25,
+        //   left: 0.25,
+        //   bottom: 0.50,
+        //   right: 0.50,
+        //   cols: 14,
+        //   rows: 10,
+        // },
+      ],
       fields: {
         images: [],
         whitefield: [],
@@ -65,7 +67,12 @@ export function connect() {
   socket.addEventListener('message', function (event) {
     let messageObj = [event.data, new Date()];
     messageStore.set([event.data, new Date()]);
-    messageLog.update(current => [messageObj, ...current]);
+    if (event.data.length > 1000) {
+      console.log("Recived large message");
+      messageLog.update(current => [[event.data.slice(0, 1000), new Date()], ...current]);
+    } else {
+      messageLog.update(current => [messageObj, ...current]);
+    }
   });
 }
 connect();

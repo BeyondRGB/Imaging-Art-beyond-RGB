@@ -90,7 +90,9 @@
                       class={999 > 1 ? "selected" : ""}
                       style=""
                     >
-                      {item?.name?.split("\\")?.at(-1)}
+                      {item?.name?.split("\\").length > 2
+                        ? item?.name?.split("\\").at(-1)
+                        : item?.name?.split("/").at(-1)}
                     </card>
                   {/each}
                 </itemBox>

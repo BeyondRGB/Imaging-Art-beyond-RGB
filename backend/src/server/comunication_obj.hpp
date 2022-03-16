@@ -6,13 +6,15 @@
 #define COMMUNICATION_OBJ_H
 
 #include <iostream>
+#include <jsoncons/json.hpp>
 
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_THREAD_
-#define _WEBSOCKETPP_CPP11_STRICT_ 
+#define _WEBSOCKETPP_CPP11_STRICT_
 
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
+#include "ImageUtil/Image.hpp"
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
@@ -27,20 +29,51 @@ private:
 	server* server_m = NULL;
 	websocketpp::connection_hdl connectionHandle_m;
 	websocketpp::frame::opcode::value opcode_m;
-
-public:
-	CommunicationObj() {};
-	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
-	/**
-	* Copy Constructor	
-	*/
-	CommunicationObj(const CommunicationObj& other);
-	
+	unsigned long id;
+	static unsigned char binID;
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
 	*/
 	void send_msg(std::string msg);
+	void send_bin(std::vector<uchar>& v);
+
+public:
+	CommunicationObj() {};
+	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
+	/**
+	* Copy Constructor
+	*/
+	CommunicationObj(const CommunicationObj& other);
+
+	//void send_msg(std::string msg);
+	void set_id(long newID);
+	/**
+	* Function for sending a Information Message to the front end
+	* @param msg: the message being sent to the front end
+	* @param sender: what function is sending the message
+	*/
+	void send_info(std::string msg, std::string sender);
+	/**
+	* Function for sending a Error Message to the front end
+	* @param msg: the message being sent to the front end
+	* @param sender: what function is sending the message
+	*/
+	void send_error(std::string msg, std::string sender);
+	/**
+	* Function for sending a Progress Update Message to the front end
+	* @param val: amount of progress made in a overall step
+	* @param sender: what function is sending the message
+	*/
+	void send_progress(double val, std::string sender);
+	/**
+	* Function for sending a base64 image to the front end
+	* @param image: pointer to the image object of the image being sent
+	* @param type: enum to the type of image being sent
+	* @param qual: enum for the quality of the image being sent
+	*/
+	void send_base64(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
+	void send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
 };
 
 #endif // COMMUNICATION_OBJ_H

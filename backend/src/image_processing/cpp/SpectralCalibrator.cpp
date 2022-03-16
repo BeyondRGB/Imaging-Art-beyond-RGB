@@ -1,7 +1,7 @@
 #include "../header/SpectralCalibrator.h"
 
-void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images) {
-    func("SpectralCalibration");
+void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* images) {
+    comms->send_info("", "SpectralCalibration");
     
     btrgb::Image* art1;
     btrgb::Image* art2;
@@ -15,12 +15,12 @@ void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        func("Error: Flatfielding called out of order. Missing at least 1 image assignment.");
+        comms->send_info("Error: Flatfielding called out of order. Missing at least 1 image assignment.", "SpectralCalibration");
         return;
     }
     catch (const std::logic_error& e) {
         std::string error(e.what());
-        func("Error: " + error);
+        comms->send_info("Error: " + error, "SpectralCalibration");
         return;
     }
 
@@ -35,8 +35,8 @@ void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
     
     // Run test with various step values
-    // float sp_value = 0.5;
-    for(float sp_value = 0.1f; sp_value <= 1.5f; sp_value += 0.1f){
+    float sp_value = 0.5;
+    // for(float sp_value = 0.1f; sp_value <= 1.5f; sp_value += 0.1f){
         std::cout << std::endl << "****************************************************************" << std::endl;
         std::cout << std::endl << "****************************************************************" << std::endl;
 
@@ -90,7 +90,8 @@ void SpectralCalibrator::execute(CallBackFunction func, btrgb::ArtObject* images
         std::cout << "Itterations: " << def->get_itteration_count() << std::endl;
         std::cout << "Min z: " << res << std::endl;
     }
-        
+
+    std::cout << "SpectralCalibration done" << std::endl;
 
 }
 
@@ -197,7 +198,7 @@ double WeightedErrorFunction::calc(const double *x) const{
     // Calculate Z
     double z = this->calc_z(e1,e2,e3);
 
-    // std::cout << "Z: " << z << " e1: " << e1 << " e2: " << e2 << " e3: " << e3 << std::endl; 
+    std::cout << "Z: " << z << " e1: " << e1 << " e2: " << e2 << " e3: " << e3 << std::endl; 
     return z;
 }
 
