@@ -60,7 +60,8 @@ namespace btrgb {
     enum output_type {
         PNG,
         WEBP,
-        TIFF
+        TIFF,
+        JPEG
     };
 
     enum image_quality {
@@ -92,7 +93,6 @@ namespace btrgb {
             void setName(std::string name);
 
             binary_ptr_t toBinaryOfType(enum output_type type, enum image_quality quality);
-            base64_ptr_t toBase64OfType(enum output_type type, enum image_quality quality);
 
             void recycle();
             int _raw_bit_depth = 0;
