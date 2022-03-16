@@ -20,7 +20,6 @@ void ThumbnailLoader::run() {
     btrgb::LibRawThumbnail* reader = new btrgb::LibRawThumbnail;
     std::vector<uchar>* binary = nullptr;
     std::string* rsp = nullptr;
-    std::string type;
     std::string fname;
         
     for (int i = 0; i < filenames.get_size(); i++) {
@@ -31,22 +30,12 @@ void ThumbnailLoader::run() {
 
             if( reader->is_encoded() ) {
                 std::cout << "Thumbnail is JPEG" << std::endl;
-                type = "image/jpeg";
 
                 binary = new std::vector<uchar>;
                 reader->copyBitmapTo(*binary);
                 reader->recycle();
 
-                rsp = new std::string;
-                rsp->reserve(binary->size() * 2);
-                rsp->append(R"({"RequestID":)");
-                rsp->append("3453456");
-                rsp->append(R"(,"ResponseType":"ImageBase64","ResponseData":{"name":")");
-                rsp->append(std::regex_replace(fname, std::regex("\\\\"), "\\\\"));
-                rsp->append(R"(","dataURL": "data:image/jpeg;base64,)");
-                rsp->append(cppcodec::base64_rfc4648::encode(*binary));
-                rsp->append(R"("}})");
-                this->coms_obj_m->send_msg(*rsp);
+                this->coms_obj_m->send_base64(fname, binary, btrgb::JPEG);
             }
             else {
                 std::cout << "Thumbnail is bitmap" << std::endl;
@@ -81,10 +70,6 @@ void ThumbnailLoader::run() {
         if(binary != nullptr) {
             delete binary;
             binary = nullptr;
-        }
-        if(rsp != nullptr) {
-            delete rsp;
-            rsp = nullptr;
         }
     }
 

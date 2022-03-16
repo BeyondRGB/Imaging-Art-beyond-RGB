@@ -75,21 +75,41 @@ void CommunicationObj::send_progress(double val, std::string sender){
 }
 
 void CommunicationObj::send_base64(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual){
+	btrgb::binary_ptr_t bin = image->toBinaryOfType(type, qual);
+	this->send_base64(image->getName(), bin.get(), type);
+}
+
+void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual){
+	btrgb::binary_ptr_t bin = image->toBinaryOfType(type, qual);
+	this->send_binary(image->getName(), bin.get(), type);
+}
+
+void CommunicationObj::send_base64(
+	std::string name,
+	std::vector<uchar>* direct_binary, 
+	enum btrgb::output_type type
+) {
+
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBase64");
 	jsoncons::json response_data;
-	btrgb::base64_ptr_t b64 = image->toBase64OfType(type, qual);
+	btrgb::base64_ptr_t b64 = this->createDataURL(type, direct_binary);
 	response_data.insert_or_assign("dataURL", *b64);
-	response_data.insert_or_assign("name", image->getName());
+	response_data.insert_or_assign("name", name);
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
-	//std::cout<<all_info<<std::endl;
 	send_msg(all_info);
-}
 
-void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual){
+};
+	
+void CommunicationObj::send_binary(
+	std::string name,
+	std::vector<uchar>* direct_binary,
+	enum btrgb::output_type type
+) {
+		
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
@@ -98,15 +118,41 @@ void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type 
 	switch(type) {
 			case btrgb::PNG: response_data.insert_or_assign("type", "png"); break;
 			case btrgb::WEBP: response_data.insert_or_assign("type", "webp"); break;
+			case btrgb::JPEG: response_data.insert_or_assign("type", "jpeg"); break;
+			default: throw std::logic_error("[CommunicationObj::send_binary] Invalid image type. ");
 	}
-	response_data.insert_or_assign("name", image->getName());
+	response_data.insert_or_assign("name", name);
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
-	//std::cout<<all_info<<std::endl;
 	send_msg(all_info);
-	btrgb::binary_ptr_t bin = image->toBinaryOfType(type, qual);
-	bin->push_back(binID);
-	send_bin(*bin);
+
+	/* Temporarily add binID on and send. */
+	direct_binary->push_back(binID);
+	send_bin(*direct_binary);
+	direct_binary->pop_back();
+
 	this->binID++;
+}
+
+
+btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type, std::vector<uchar>* direct_binary) {
+
+	std::string img_type;
+	switch(type) {
+		/* Supported */
+		case btrgb::PNG: img_type = "png"; break;
+		case btrgb::WEBP: img_type = "webp"; break;
+		case btrgb::JPEG: img_type = "jpeg"; break;
+		/* Unsupported */
+		case btrgb::TIFF:
+		default: throw std::logic_error("[CommunicationObj::createDataURL] Invalid image type. ");
+	}
+
+	btrgb::base64_ptr_t result_base64(new std::string(
+		"data:image/" + img_type + ";base64," + cppcodec::base64_rfc4648::encode(*direct_binary)
+	));
+	
+	return result_base64;
+
 }
