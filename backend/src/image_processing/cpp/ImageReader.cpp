@@ -64,11 +64,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
         try {
             cv::Mat raw_im;
 
-            try { _reader->open(im->getName()); }
-            catch(const btrgb::LibRawFileTypeUnsupported& e) {
-                comms->send_error("File type unknown, or unsupported by LibRaw.", "ImageReader");
-                continue;
-            }
+            _reader->open(im->getName());
             _reader->copyBitmapTo(raw_im);
             _reader->recycle();
 
@@ -100,12 +96,16 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
             comms->send_progress(count/total, "ImageReader");
 
         }
+        catch(const btrgb::LibRawFileTypeUnsupported& e) {
+            comms->send_error("File type unknown, or unsupported by LibRaw.", "ImageReader");
+            images->deleteImage(key);
+        }
         catch(const btrgb::ReaderFailedToOpenFile& e) {
-            comms->send_error(std::string(e.what()) + " || " + im->getName(), "ImageReader");
+            comms->send_error(std::string(e.what()) + " : " + im->getName(), "ImageReader");
             images->deleteImage(key);
         }
         catch(const std::runtime_error& e) {
-            comms->send_error(std::string(e.what()) + " || " + im->getName(), "ImageReader");
+            comms->send_error(std::string(e.what()) + " : " + im->getName(), "ImageReader");
             images->deleteImage(key);
         }
 
