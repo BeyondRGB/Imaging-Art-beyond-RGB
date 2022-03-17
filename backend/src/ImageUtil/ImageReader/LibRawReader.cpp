@@ -78,7 +78,10 @@ void LibRawReader::open(std::string filename) {
     error_code = this->_reader.open_file(filename.c_str());
     if(error_code) {
         this->recycle();
-        throw ReaderFailedToOpenFile();
+        if( error_code == LIBRAW_FILE_UNSUPPORTED )
+            throw LibRawFileTypeUnsupported();
+        else
+            throw ReaderFailedToOpenFile();
     }
 
     /* Unpack raw data into structures for processing. */

@@ -179,4 +179,15 @@ namespace btrgb {
         return result_binary;
     }
 
+    bool Image::is_tiff(std::string filename) {
+        if( !fs::is_regular_file(filename) ) 
+            return false;
+
+        std::string::size_type i = filename.rfind('.');
+        if( i == std::string::npos ) 
+            return false;
+
+        return filename.substr(i + 1) == "tiff";
+    }
+
 }
