@@ -1,5 +1,5 @@
-#ifndef BTRGB_LIBRAWREADER_HPP
-#define BTRGB_LIBRAWREADER_HPP
+#ifndef BTRGB_OPENCVTIFFREADER_HPP
+#define BTRGB_OPENCVTIFFREADER_HPP
 
 
 #include "ImageReaderStrategy.hpp"

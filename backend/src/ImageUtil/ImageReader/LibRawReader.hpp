@@ -29,6 +29,11 @@ class LibRawReader : public ImageReaderStrategy {
 
 };
 
+class LibRawFileTypeUnsupported : public ImageReaderStrategyError {
+    public:
+    virtual char const * what() const noexcept { return "RAW image is not supported by LibRaw."; }
+};
+
 }
 
 #endif

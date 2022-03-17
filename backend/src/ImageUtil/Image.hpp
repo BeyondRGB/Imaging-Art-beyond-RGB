@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <string>
 #include <opencv2/opencv.hpp>
-#include <cppcodec/base64_rfc4648.hpp>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 /* Ways to loop:
 
@@ -96,6 +97,8 @@ namespace btrgb {
 
             void recycle();
             int _raw_bit_depth = 0;
+            
+            static bool is_tiff(std::string filename);
 
         private:
             std::string _name;
