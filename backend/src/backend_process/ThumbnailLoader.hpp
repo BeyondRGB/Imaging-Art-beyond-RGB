@@ -1,8 +1,7 @@
 #ifndef THUMBNAILLOADER_HPP
 #define THUMBNAILLOADER_HPP
 
-#include <cppcodec/base64_rfc4648.hpp>
-
+#include "ImageUtil/ImageReader/TiffReaderOpenCV.hpp"
 #include "ImageUtil/ImageReader/LibRawThumbnail.hpp"
 #include "ImageUtil/Image.hpp"
 
@@ -17,7 +16,8 @@ public:
 
 private:
 	static unsigned int id;
-
+    void _read_raw_thumbnail(btrgb::LibRawThumbnail* reader, std::string file);
+    void _read_tiff(btrgb::TiffReaderOpenCV* reader, std::string file);
 };
 
 #endif
