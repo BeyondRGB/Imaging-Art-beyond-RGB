@@ -68,17 +68,16 @@ void ThumbnailLoader::_read_raw_thumbnail(btrgb::LibRawThumbnail* reader, std::s
         btrgb::Image imObj(file);
         imObj.initImage(im);
 
-        /* The thumbnail is small so use btrgb::FULL, otherwise the thumbnails
-            * will get upscaled to a width of 2000 pixels, wasting time and memory. */
-        this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FULL);
+        /* Send image. */
+        this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FAST);
     }
 }
 
 void ThumbnailLoader::_read_tiff(btrgb::TiffReaderOpenCV* reader, std::string file) {
     /* Open tiff. */
     reader->open(file);
-    cv::Mat im( reader->height(), reader->width(), CV_8UC(reader->channels()) );
-    reader->copyBitmapTo( (uint8_t*) im.data, im.rows * im.cols * im.channels() );
+    cv::Mat im;
+    reader->copyBitmapTo( im );
     reader->recycle();
 
     /* Wrap the Mat as an Image object. */

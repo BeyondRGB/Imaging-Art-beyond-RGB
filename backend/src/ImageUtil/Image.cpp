@@ -119,9 +119,9 @@ namespace btrgb {
         switch(quality) {
         case FAST:
 
-            /* Scale the image to have a maximum width of 2000 pixels (keep same aspect ratio). */
-            if(this->_opencv_mat.cols > 2000) {
-                double scaler = double(2000) / double(this->_opencv_mat.cols);
+            /* Scale the image to have a maximum width of 1920 pixels (keep same aspect ratio). */
+            if(this->_opencv_mat.cols > 1920) {
+                double scaler = double(1920) / double(this->_opencv_mat.cols);
                 cv::resize(this->_opencv_mat, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
             } else {
                 im = this->_opencv_mat;
