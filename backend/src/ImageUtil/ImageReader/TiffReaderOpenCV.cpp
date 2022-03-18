@@ -17,7 +17,7 @@ void TiffReaderOpenCV::recycle() {
 
 void TiffReaderOpenCV::open(std::string filename) {
     
-    cv::Mat raw_im = cv::imread(filename);
+    cv::Mat raw_im = cv::imread(filename, cv::ImreadModes::IMREAD_COLOR | cv::ImreadModes::IMREAD_ANYDEPTH);
 
     if(raw_im.data == NULL)
         throw ReaderFailedToOpenFile();

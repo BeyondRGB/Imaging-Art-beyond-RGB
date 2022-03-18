@@ -30,11 +30,16 @@ void HalfSizePreview::run() {
                 reader = raw_reader.get();
 
 
-            /* Open and quick post-process of RAW. Then, copy bitmap to a Mat. */
+            /* Open image and get Mat. */
             reader->open(fname);
-            cv::Mat im( reader->height(), reader->width(), CV_8UC(reader->channels()) );
-            reader->copyBitmapTo( (uint8_t*) im.data, im.rows * im.cols * im.channels() );
+            cv::Mat im;
+            reader->copyBitmapTo(im);
             reader->recycle();
+
+
+            /* Make sure image has a bit depth of eight. */
+            if(im.depth() == CV_16U)
+                im.convertTo(im, CV_8U, double(0xFF) / double(0xFFFF));
 
 
             /* Wrap the Mat as an Image object. */
