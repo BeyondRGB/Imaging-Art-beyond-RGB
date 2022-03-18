@@ -1,7 +1,7 @@
 #ifndef BTRGB_OPENCVTIFFREADER_HPP
 #define BTRGB_OPENCVTIFFREADER_HPP
 
-
+#include <opencv2/imgcodecs.hpp>
 #include "ImageReaderStrategy.hpp"
 
 namespace btrgb {
