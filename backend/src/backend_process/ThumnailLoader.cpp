@@ -80,6 +80,13 @@ void ThumbnailLoader::_read_tiff(btrgb::TiffReaderOpenCV* reader, std::string fi
     reader->copyBitmapTo( im );
     reader->recycle();
 
+    /* Auto bit depth. */
+    if(im.depth() == CV_16U) {
+        double min, max;
+        cv::minMaxIdx(im, &min, &max);
+        im.convertTo(im, CV_8U, 0xFF / max);
+    }
+
     /* Wrap the Mat as an Image object. */
     btrgb::Image imObj(file);
     imObj.initImage(im);
