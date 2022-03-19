@@ -75,8 +75,8 @@ public:
 	* @param type: enum to the type of image being sent
 	* @param qual: enum for the quality of the image being sent
 	*/
-	void send_base64(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
-	void send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
+	void send_base64(btrgb::Image* image, enum btrgb::image_quality qual);
+	void send_binary(btrgb::Image* image, enum btrgb::image_quality qual);
 	
 	void send_base64(
 		std::string name,

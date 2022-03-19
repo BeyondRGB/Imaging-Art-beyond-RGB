@@ -18,13 +18,15 @@ void HalfSizePreview::run() {
     std::unique_ptr<btrgb::TiffReaderOpenCV> tiff_reader(new btrgb::TiffReaderOpenCV);
     btrgb::ImageReaderStrategy* reader;
     std::string fname;
+    bool is_tiff;
 
     for (int i = 0; i < filenames.get_size(); i++) {
         try {
+            fname = filenames.string_at(i);
+            is_tiff = btrgb::Image::is_tiff(fname);
 
             /* Select image reader. */
-            fname = filenames.string_at(i);
-            if(btrgb::Image::is_tiff(fname))
+            if(is_tiff)
                 reader = tiff_reader.get();
             else
                 reader = raw_reader.get();
@@ -36,14 +38,12 @@ void HalfSizePreview::run() {
             reader->copyBitmapTo(im);
             reader->recycle();
 
-
             /* Make sure image has a bit depth of eight. */
-            if(im.depth() == CV_16U) {
+            if(is_tiff) {
                 double min, max;
                 cv::minMaxIdx(im, &min, &max);
                 im.convertTo(im, CV_8U, 0xFF / max);
             }
-
 
             /* Wrap the Mat as an Image object. */
             btrgb::Image imObj(fname + ".HalfSize");
@@ -51,7 +51,7 @@ void HalfSizePreview::run() {
 
 
             /* Send image. */
-            this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FAST);
+            this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
 
 
         }

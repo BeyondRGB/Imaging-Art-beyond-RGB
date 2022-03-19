@@ -74,14 +74,14 @@ void CommunicationObj::send_progress(double val, std::string sender){
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_base64(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual){
-	btrgb::binary_ptr_t bin = image->toBinaryOfType(type, qual);
-	this->send_base64(image->getName(), bin.get(), type);
+void CommunicationObj::send_base64(btrgb::Image* image, enum btrgb::image_quality qual){
+	btrgb::binary_ptr_t bin = image->getEncodedPNG(qual);
+	this->send_base64(image->getName(), bin.get(), btrgb::PNG);
 }
 
-void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual){
-	btrgb::binary_ptr_t bin = image->toBinaryOfType(type, qual);
-	this->send_binary(image->getName(), bin.get(), type);
+void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::image_quality qual){
+	btrgb::binary_ptr_t bin = image->getEncodedPNG(qual);
+	this->send_binary(image->getName(), bin.get(), btrgb::PNG);
 }
 
 void CommunicationObj::send_base64(
@@ -116,9 +116,8 @@ void CommunicationObj::send_binary(
 	jsoncons::json response_data;
 	response_data.insert_or_assign("id", this->binID);
 	switch(type) {
-			case btrgb::PNG: response_data.insert_or_assign("type", "png"); break;
-			case btrgb::WEBP: response_data.insert_or_assign("type", "webp"); break;
-			case btrgb::JPEG: response_data.insert_or_assign("type", "jpeg"); break;
+			case btrgb::PNG: response_data.insert_or_assign("type", "image/png"); break;
+			case btrgb::JPEG: response_data.insert_or_assign("type", "image/jpeg"); break;
 			default: throw std::logic_error("[CommunicationObj::send_binary] Invalid image type. ");
 	}
 	response_data.insert_or_assign("name", name);
@@ -142,7 +141,6 @@ btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type
 	switch(type) {
 		/* Supported */
 		case btrgb::PNG: img_type = "png"; break;
-		case btrgb::WEBP: img_type = "webp"; break;
 		case btrgb::JPEG: img_type = "jpeg"; break;
 		/* Unsupported */
 		case btrgb::TIFF:
