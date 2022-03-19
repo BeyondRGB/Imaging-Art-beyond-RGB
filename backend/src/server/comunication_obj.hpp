@@ -31,7 +31,6 @@ private:
 	websocketpp::connection_hdl connectionHandle_m;
 	websocketpp::frame::opcode::value opcode_m;
 	unsigned long id;
-	static unsigned char binID;
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send

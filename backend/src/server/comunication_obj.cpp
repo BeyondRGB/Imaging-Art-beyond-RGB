@@ -4,8 +4,6 @@
 
 #include "comunication_obj.hpp"
 
-unsigned char CommunicationObj::binID = 0;
-
 CommunicationObj::CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg) {
 	server_m = s;
 	connectionHandle_m = hd1;
@@ -114,7 +112,6 @@ void CommunicationObj::send_binary(
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
 	jsoncons::json response_data;
-	response_data.insert_or_assign("id", this->binID);
 	switch(type) {
 			case btrgb::PNG: response_data.insert_or_assign("type", "image/png"); break;
 			case btrgb::JPEG: response_data.insert_or_assign("type", "image/jpeg"); break;
@@ -127,11 +124,9 @@ void CommunicationObj::send_binary(
 	send_msg(all_info);
 
 	/* Temporarily add binID on and send. */
-	direct_binary->push_back(binID);
 	send_bin(*direct_binary);
-	direct_binary->pop_back();
 
-	this->binID++;
+	//this->binID++;
 }
 
 
