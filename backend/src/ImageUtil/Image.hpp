@@ -60,7 +60,6 @@ namespace btrgb {
 
     enum output_type {
         PNG,
-        WEBP,
         TIFF,
         JPEG
     };
@@ -79,6 +78,7 @@ namespace btrgb {
             void initImage(cv::Mat im);
 
             cv::Mat getMat();
+            cv::Mat getMatCopyAs(int cv_type);
 
             int width();
             int height();
@@ -93,7 +93,7 @@ namespace btrgb {
             std::string getName();
             void setName(std::string name);
 
-            binary_ptr_t toBinaryOfType(enum output_type type, enum image_quality quality);
+            binary_ptr_t getEncodedPNG(enum image_quality quality);
 
             void recycle();
             int _raw_bit_depth = 0;
