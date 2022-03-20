@@ -1,69 +1,86 @@
 <script lang="ts">
   import {
     sendMessage,
-    messageStore,
     processState,
     connectionState,
     connect,
+    currentPage,
   } from "@util/stores";
-  import { stringify } from "postcss";
   import ImageViewer from "@components/ImageViewer.svelte";
-  import { append, bubble } from "svelte/internal";
 
   let notConnectedMode = false;
-  let textValue;
-  let messageList = [];
-  $: messageList = [
-    [$messageStore[0], getTime($messageStore[1])],
-    ...messageList,
-  ];
 
-  $: jsonTest = {
-    RequestType: "processImg",
-    RequestID: Date.now(),
-    RequestData: {
-      Images: [
+  function reset() {
+    currentPage.set("Process");
+    processState.set({
+      currentTab: 0,
+      destDir: "",
+      imageFilePaths: [],
+      outputImage: { dataURL: "", name: "Waiting..." },
+      artStacks: [
         {
-          Art: $processState.artStacks[0].fields.images[0]?.name,
-          White: $processState.artStacks[0].fields.whitefield[0]?.name,
-          Dark: $processState.artStacks[0].fields.darkfield[0]?.name,
-        },
-        {
-          Art: $processState.artStacks[0].fields.images[1]?.name,
-          White: $processState.artStacks[0].fields.whitefield[1]?.name,
-          Dark: $processState.artStacks[0].fields.darkfield[1]?.name,
+          id: 1,
+          name: "Art 1",
+          colorTargetImage: { dataURL: "", filename: "" },
+          colorTargets: [
+            // {
+            //   top: 0.25,
+            //   left: 0.25,
+            //   bottom: 0.50,
+            //   right: 0.50,
+            //   cols: 14,
+            //   rows: 10,
+            // },
+          ],
+          fields: {
+            images: [],
+            whitefield: [],
+            darkfield: [],
+          },
         },
       ],
-      TargetLocation: $processState.artStacks[0].colorTarget,
-      RefData: {
-        RefData: "NGT_Reflectance_Data.csv",
-        StandardObserver: 1931,
-        Illuminants: "D50",
+    });
+  }
+
+  $: jsonTest = {
+    RequestType: "Process",
+    RequestID: Date.now(),
+    RequestData: {
+      images: [
+        {
+          art: $processState.artStacks[0].fields.images[0]?.name,
+          white: $processState.artStacks[0].fields.whitefield[0]?.name,
+          dark: $processState.artStacks[0].fields.darkfield[0]?.name,
+        },
+        {
+          art: $processState.artStacks[0].fields.images[1]?.name,
+          white: $processState.artStacks[0].fields.whitefield[1]?.name,
+          dark: $processState.artStacks[0].fields.darkfield[1]?.name,
+        },
+      ],
+      destinationDirectory: $processState.destDir,
+      targetLocation: {
+        top: $processState.artStacks[0].colorTargets[0]?.top,
+        left: $processState.artStacks[0].colorTargets[0]?.left,
+        bottom: $processState.artStacks[0].colorTargets[0]?.bottom,
+        right: $processState.artStacks[0].colorTargets[0]?.right,
+        cols: $processState.artStacks[0].colorTargets[0]?.cols,
+        rows: $processState.artStacks[0].colorTargets[0]?.rows,
+        size: $processState.artStacks[0].colorTargets[0]?.size,
+      },
+      refData: {
+        name: "NGT_Reflectance_Data.csv",
+        standardObserver: 1931,
+        illuminants: "D50",
       },
     },
   };
-
-  function getTime(time = new Date()) {
-    let minutes = time.getMinutes();
-    let seconds = time.getSeconds();
-    let mili = time.getMilliseconds();
-    let hours = time.getHours();
-    let ofDay = "AM";
-    if (hours > 12) {
-      hours -= 12;
-      ofDay = "PM";
-    }
-    return `${hours < 10 ? "0" : ""}${hours}:${
-      minutes < 10 ? "0" : ""
-    }${minutes}:${seconds < 10 ? "0" : ""}${seconds}:${
-      mili < 10 ? "00" : mili < 100 ? "0" : ""
-    }${mili} ${ofDay}`;
-  }
 </script>
 
 <main>
   <div class="left">
     <div class="state">
+      <button on:click={reset}>Reset</button>
       <h3>
         Current State: <button
           class="stateSend"
@@ -78,7 +95,7 @@
         <p>
           <span class="key">RequestType</span><span
             style="font-weight: bold; background-color: transparent;">:</span
-          > <span>processImg</span>,
+          > <span>Process</span>,
         </p>
         <p>
           <span class="key">RequestID</span><span
@@ -92,11 +109,11 @@
           >
         </p>
         <p class="px-2">
-          <span class="key">Images</span><span
+          <span class="key">images</span><span
             style="font-weight: bold; background-color: transparent;">:</span
           >
 
-          {#each jsonTest.RequestData.Images as image, index}
+          {#each jsonTest.RequestData.images as image, index}
             <li>
               <span class="letter"
                 >// Image {String.fromCharCode(65 + index)}</span
@@ -113,37 +130,45 @@
             </li>
           {/each}
         </p>
+        <p>
+          <span class="key">destinationDirectory</span><span
+            style="font-weight: bold; background-color: transparent;">:</span
+          >
+          <span>{jsonTest.RequestData.destinationDirectory}</span>
+        </p>
         <p class="px-2">
-          <span class="key">Target Loation</span><span
+          <span class="key">targetLoation</span><span
             style="font-weight: bold; background-color: transparent;">:</span
           >
 
-          {#each Object.keys(jsonTest.RequestData.TargetLocation) as key}
+          {#each Object.keys(jsonTest.RequestData.targetLocation) as key}
             <li>
               <span class="key">{key}</span><span
                 style="font-weight: bold; background-color: transparent;"
                 >:</span
               >
-              <span>{jsonTest.RequestData.TargetLocation[key]}</span>
+              <span>{jsonTest.RequestData.targetLocation[key]}</span>
             </li>
           {/each}
         </p>
         <p class="px-2">
-          <span class="key">Reference Data</span><span
+          <span class="key">refData</span><span
             style="font-weight: bold; background-color: transparent;">:</span
           >
 
-          {#each Object.keys(jsonTest.RequestData.RefData) as key}
+          {#each Object.keys(jsonTest.RequestData.refData) as key}
             <li>
               <span class="key">{key}</span><span
                 style="font-weight: bold; background-color: transparent;"
                 >:</span
-              > <span>{jsonTest.RequestData.RefData[key]}</span>
+              > <span>{jsonTest.RequestData.refData[key]}</span>
             </li>
           {/each}
         </p>
       </div>
     </div>
+  </div>
+  <div class="right">
     <div class="image">
       <h4>{$processState.outputImage?.name}</h4>
       <ImageViewer />
@@ -170,16 +195,19 @@
     @apply bg-gray-600 w-64 h-64 p-5 flex flex-col justify-between py-10 rounded-xl font-semibold;
   }
   main {
-    @apply w-full h-full flex justify-center items-center relative;
+    @apply w-full h-full flex justify-center items-center relative p-2;
   }
   .left {
-    @apply w-full h-full flex flex-col justify-center items-center ml-2;
+    @apply w-[30%] h-full flex justify-center items-center ml-2;
+  }
+  .right {
+    @apply w-full h-full flex justify-center items-center ml-2;
   }
   .state {
-    @apply w-full h-[45vh] py-2 flex flex-col;
+    @apply w-full h-full py-2 flex flex-col;
   }
   .image {
-    @apply w-full h-[45vh] bg-blue-600/25 relative items-center flex justify-center;
+    @apply w-full h-full bg-blue-600/25 relative items-center flex justify-center;
   }
   h4 {
     @apply text-gray-200 bg-gray-900/90 absolute top-0 pb-1 pt-0 px-2 rounded-lg z-50;

@@ -12,7 +12,7 @@ Pipeline::Pipeline(){
 void Pipeline::callback(std::string msg) {
     msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
     std::cout << "MSG: " << msg << std::endl;
-    this->send_msg(msg);
+    this->send_info(msg, this->get_process_name());
 };
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
@@ -54,7 +54,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         }
         //Collect the information provided about the color target
         TargetData td;
-        Json target_location = this->process_data_m->get_obj("TargetLocation");
+        Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
         td.top_loc = target_location.get_number("top");
         td.left_loc = target_location.get_number("left");
         td.bot_loc = target_location.get_number("bottom");
@@ -73,42 +73,38 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
 
 void Pipeline::run() {
 
-    this->send_msg("I got your msg");
-    this->send_msg(this->process_data_m->to_string());
+    this->send_info("I got your msg", this->get_process_name());
+    this->send_info( this->process_data_m->to_string(), this->get_process_name());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     std::string ref_file = this->get_ref_file();
     IlluminantType illuminant = this->get_illuminant_type();
     ObserverType observer = this->get_observer_type();
+    std::string out_dir;
+    try{out_dir = this->get_output_directory();}
+    catch(...) {return;}
 
-    btrgb::ArtObject* images;
-    try {
-        images = new  btrgb::ArtObject(ref_file, illuminant, observer);
-    }
+
+    /* Create ArtObject */
+    std::unique_ptr<btrgb::ArtObject> images;
+    try { images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
     catch(const std::exception& err) {
-        this->send_msg("[art_obj construction]");
-        this->send_msg(err.what());
-    }
-    catch(...) {
-        this->send_msg("Some other error occured during ArtObject construction.");
+        this->report_error(this->get_process_name(), err.what());
+        return;
     }
 
-    
-    this->send_msg("About to init art obj...");
-    this->init_art_obj(images);
+
+    /* Initialize ArtObject with request data */
+    this->send_info("About to init art obj...", this->get_process_name());
+    this->init_art_obj(images.get());
 
 
-
-    this->send_msg("About to execute...");
-    try {
-        pipeline->execute(std::bind(&Pipeline::callback, this, std::placeholders::_1), images);
-    }
+    /* Execute the pipeline on the created ArtObject */
+    this->send_info( "About to execute...", this->get_process_name());
+    try { pipeline->execute(this->coms_obj_m.get(), images.get()); }
     catch(const std::exception& err) {
-        this->send_msg("[pipeline execution]"); 
-        this->send_msg(err.what());
-    }
-    catch(...) {
-        this->send_msg("Some other error occured during pipeline execution.");
+        this->report_error(this->get_process_name(), err.what());
+        return;
     }
 
 
@@ -116,7 +112,25 @@ void Pipeline::run() {
         images->outputImageAs(btrgb::TIFF, name, name);
     }
 
-    delete images;
+}
+
+
+std::string Pipeline::get_output_directory() {
+    
+    try {
+        std::string dir = this->process_data_m->get_string("destinationDirectory");
+        std::filesystem::create_directories(dir);
+        return dir;
+    }
+    catch (ParsingError e) {
+        this->report_error("[Pipeline]", "Process request: invalid or missing \"destinationDirectory\" field.");
+        throw;
+    }
+    catch(const std::filesystem::filesystem_error& err) {
+        this->report_error("[Pipeline]", "Failed to create or access output directory.");
+        throw;
+    }
+
 
 }
 
@@ -162,7 +176,7 @@ std::string Pipeline::get_ref_file() {
     std::string ref_file = "";
     try {
         Json ref_data = this->process_data_m->get_obj(key_map[DataKey::RefData]);
-        ref_file = ref_data.get_string(key_map[DataKey::RefData]);
+        ref_file = ref_data.get_string("name");
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();

@@ -9,11 +9,6 @@
 #include "ImageUtil/ImageWriter/LibpngWriter.hpp"
 
 namespace btrgb {
-
-    enum output_type {
-        TIFF,
-        PNG
-    };
     
     class ImageWriterStrategy {
         
