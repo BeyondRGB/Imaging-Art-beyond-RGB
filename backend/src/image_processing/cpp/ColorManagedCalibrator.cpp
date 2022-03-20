@@ -56,7 +56,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     comms->send_progress(0.9, "Color Managed Calibration");
 
     // Save resulting Matacies for latter use
-    this->output_report_data();
+    this->output_report_data(images);
     comms->send_progress(1, "Color Managed Calibration");
 
     // Dont remove art1 and art2 from the ArtObject yet as they are still needed for spectral calibration
@@ -190,20 +190,25 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     }
 }
 
-void ColorManagedCalibrator::output_report_data(){
-    // We currently do not have a place to store the results.
-    // The plan is to add a Report class when the results will put.
-    // It will be comming in a future PR, so for now just display results in terminal
+void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
+    // // We currently do not have a place to store the results.
+    // // The plan is to add a Report class when the results will put.
+    // // It will be comming in a future PR, so for now just display results in terminal
 
-    /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */
-    std::cout << "**********************\n\tResults\n**********************" << std::endl;
-    this->display_matrix(&this->M, "M");
-    this->display_matrix(&this->offest, "offset");
-    this->display_matrix(&this->deltaE_values, "DelE Values");
-    std::cout << "Resulting DeltaE: " << this->resulting_avg_deltaE << std::endl;
-    std::cout << "Itteration Count: " << this->solver_iteration_count << std::endl;
-    std::cout << "\n*********************************************************************************************************************" << std::endl;
+    // /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */
+    // std::cout << "**********************\n\tResults\n**********************" << std::endl;
+    // this->display_matrix(&this->M, "M");
+    // this->display_matrix(&this->offest, "offset");
+    // this->display_matrix(&this->deltaE_values, "DelE Values");
+    // std::cout << "Resulting DeltaE: " << this->resulting_avg_deltaE << std::endl;
+    // std::cout << "Itteration Count: " << this->solver_iteration_count << std::endl;
+    // std::cout << "\n*********************************************************************************************************************" << std::endl;
 
+    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+    results_obj->store_double(CM_DELTA_E_AVG, this->resulting_avg_deltaE);
+    results_obj->store_matrix(CM_M, this->M);
+    results_obj->store_matrix(CM_OFFSETS, this->offest);
+    results_obj->store_matrix(CM_DLETA_E_VALUES, this->deltaE_values);
 }
 
 void ColorManagedCalibrator::build_input_matrix() {
