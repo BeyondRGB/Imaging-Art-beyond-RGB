@@ -31,6 +31,7 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ResultsProcessor()));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
 

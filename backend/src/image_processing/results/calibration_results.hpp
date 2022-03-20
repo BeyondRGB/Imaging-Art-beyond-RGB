@@ -19,6 +19,12 @@
 #define M_TYPE "cv_type_id"
 #define R_TYPE "ResultType_id"
 
+// CM Calibration Keys
+#define CM_DELTA_E_AVG     "Average DeltaE"
+#define CM_M               "CM Calibration M"
+#define CM_OFFSETS         "CM Calibration Offsets"
+#define CM_DLETA_E_VALUES  "CM Calibration DeltaE"
+
 class CalibrationResults: private CSVParser{
 
 public:
@@ -129,6 +135,14 @@ public:
      * @param output_stream the std::ostream to be used for writing.
      */
     void write_results(std::ostream &output_stream);
+
+    /**
+     * @brief Identifies if the instance of the class contains any result values
+     * 
+     * @return true 
+     * @return false 
+     */
+    bool contains_results();
 
 private:
     // Maps for storing various data types

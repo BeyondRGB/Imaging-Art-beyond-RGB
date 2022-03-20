@@ -10,6 +10,13 @@ CalibrationResults::~CalibrationResults(){
     }
 }
 
+bool CalibrationResults::contains_results(){
+    bool has_matix = this->result_matricies.size() > 0;
+    bool has_int = this->result_ints.size() > 0;
+    bool has_double = this->result_doubles.size() > 0;
+    return has_matix || has_int || has_double;
+}
+
 void CalibrationResults::store_matrix(std::string key, cv::Mat result){
     this->result_matricies[key] = result;
 }
@@ -46,9 +53,14 @@ double CalibrationResults::get_double(std::string key){
 }
 
 void CalibrationResults::write_results(std::ostream &output_stream){
-    this->write_matrices(output_stream);
-    this->write_ints(output_stream);
-    this->write_doubls(output_stream);
+    if(this->contains_results()){
+        this->write_matrices(output_stream);
+        this->write_ints(output_stream);
+        this->write_doubls(output_stream);
+    }
+    else{
+        output_stream << "No Results Reported.";
+    }
     
 }
 

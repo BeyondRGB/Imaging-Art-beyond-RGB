@@ -14,6 +14,7 @@
 #include "utils/color_convertions.hpp"
 #include "reference_data/white_points.hpp"
 #include "utils/calibration_util.hpp"
+#include "image_processing/results/calibration_results.hpp"
 
 // typedef std::function<double(cv::Mat)> MinDeltaE_function;
 
@@ -132,7 +133,7 @@ private:
      * @brief Saves optimized M and offset as well the final deltaE values
      *
      */
-    void output_report_data();
+    void output_report_data(btrgb::ArtObject* images);
 
 
 };
