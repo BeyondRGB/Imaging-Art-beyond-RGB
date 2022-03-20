@@ -686,7 +686,7 @@
       },
     },
     experimental: true,
-    height: "500px",
+    height: "75vh",
     resizable: true,
     color: {
       gradient: {
@@ -747,7 +747,7 @@
     display: grid;
     grid-template-rows: repeat(9, auto);
     grid-template-columns: repeat(13, auto);
-    @apply absolute w-[500px] h-[500px] pt-10 pb-14 pl-6 pointer-events-none;
+    @apply absolute w-[75vh] h-[75vh] pt-10 pb-14 pl-6 pointer-events-none;
   }
   .heatmap-value {
     @apply flex justify-center items-center h-full w-full font-bold text-black;
@@ -755,19 +755,19 @@
   .bx--cc--chart-wrapper text {
     @apply fill-white;
   }
-  .bx--chart-holder .bx--overflow-menu,
+  /* .bx--chart-holder .bx--overflow-menu,
   .bx--chart-holder .bx--overflow-menu__trigger {
     @apply hidden;
-  }
+  } */
   .bx--cc--tooltip {
     @apply bg-gray-700 text-white;
   }
   .bx--cc--tooltip .content-box {
     @apply text-white;
   }
-  .bx--cc--tooltip .content-box .datapoint-tooltip div.label {
+  /* .bx--cc--tooltip .content-box .datapoint-tooltip div.label {
     @apply hidden;
-  }
+  } */
   .bx--cc--tooltip .content-box .datapoint-tooltip p.value {
     @apply font-bold;
   }
