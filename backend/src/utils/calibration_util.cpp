@@ -69,6 +69,19 @@ cv::Mat btrgb::calibration::build_camra_signals_matrix(Image* art[], int art_cou
     return camra_sigs;
 }
 
+cv::Mat btrgb::calibration::calc_R_camera(cv::Mat M_refl, cv::Mat camera_sigs){
+    cv::Mat R_camera = M_refl * camera_sigs;
+    for(int row = 0; row < R_camera.rows; row++){
+        for(int col = 0; col < R_camera.cols; col++){
+            // If any value is found to be negative set it to zero
+            if(R_camera.at<double>(row,col) < 0){
+                R_camera.at<double>(row,col) = 0;
+            }
+        }
+    }
+    return R_camera;
+}
+
 void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
     bool contains_negatives = false;
     std::cout << std::endl;

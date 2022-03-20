@@ -48,6 +48,33 @@ namespace btrgb{
          * @return cv::Mat camrasigs
          */
         cv::Mat build_camra_signals_matrix(Image* images[], int art_count, int channel_count, cv::Mat* offsets=nullptr);
+
+        /**
+         * @brief Calculats R_camera and clips any value < 0 to ensure that all values are posotive
+         * 
+         *   M_refl is a 2d Matrix in the form
+         *      m_1_1,  m_1_2,  ..., m_1_6
+         *      m_2_1,  m_2_2,  ..., m_2_6
+         *      ...  ,  ...  ,  ..., ...
+         *      m_36_1, m_36_2, ..., m_36_6
+         * 
+         *   camera_sigs is a 2d Matrix in the form
+         *      camsigs_chan1_px1, camsigs_chan1_px2, ..., camsigs_chan1_pxN
+         *      camsigs_chan2_px1, camsigs_chan2_px2, ..., camsigs_chan2_pxN
+         *      ...                 , ...                 , ..., ...
+         *      camsigs_chanM_px1, camsigs_chanM_px2, ..., camsigs_chanM_pxN
+         * 
+         *  R_camera is a 2d Matrix in fthe form
+         *      RLamda_1_1,  RLamda_1_2,  ..., RLamda_1_k
+         *      RLamda_2_1,  RLamda_2_2,  ..., RLamda_2_k
+         *      ...       ,  ...       ,  ..., ...
+         *      RLamda_36_1, RLamda_36_2, ..., RLamda_36_k
+         * 
+         * @param M_refl Optimized matrix found during Spectral Calibration and stored in Results
+         * @param camera_sigs the actual pixel values from the camera weather its just from a color target or the entrier image
+         * @return cv::Mat R_camera
+         */
+        cv::Mat calc_R_camera(cv::Mat M_refl, cv::Mat camera_sigs);
     
         /**
          * @brief Helper function for displaying a matrix to stdout
