@@ -2,6 +2,7 @@
 
 void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* images) {
     comms->send_info("", "SpectralCalibration");
+    comms->send_progress(0, "SpectralCalibration");
     
     btrgb::Image* art1;
     btrgb::Image* art2;
@@ -31,25 +32,18 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     int channel_count = art1->channels();
     int target_count = std::size(targets);
 
+    comms->send_progress(0.2, "SpectralCalibration");
+
     //Init ColorTarget Averages
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
-    
-    // // Run test with various step values
-    // float sp_value = 0.5;
-    // std::cout << std::endl << "****************************************************************" << std::endl;
-    // std::cout << std::endl << "****************************************************************" << std::endl;
-
-    // std::string str = "\nTesting Step: " + std::to_string(sp_value);
-    // //func(str);
-    // std::cout << str << std::endl;
     
     // Convert RefData to matrix
     cv::Mat ref_data_matrix = this->ref_data->as_matrix();
 
-    // btrgb::calibration::display_matrix(&ref_data_matrix, "RefDataMat");
-
     // Initialize M_relf starting values
     this->init_M_refl(ref_data_matrix);
+
+    comms->send_progress(0.4, "SpectralCalibration");
 
     // Create Custom WeightedErrorFunction used to minimize Z
     cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
@@ -74,11 +68,9 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
                 1e-10 // epsilon
         )
     );
-
-
-    // btrgb::calibration::display_matrix(&this->M_refl, "Mrefl Init");
     
     std::cout << "Running Minimization." << std::endl;
+    comms->send_progress(0.5, "SpectralCalibration");
 
     TimeTracker time_tracker;
     time_tracker.start_timeing();
@@ -86,11 +78,12 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     double res = min_solver->minimize(this->input_array);
     time_tracker.end_timeing();
 
+    comms->send_progress(0.9, "SpectralCalibration");
 
     // Dsiplay Results
+    // TODO this should be removed once we have the ability to store results but for now this is the only proof that there are results
+    //==============================================================
     btrgb::calibration::display_matrix(&this->M_refl, "Mrefl After");
-    this->R_camera = this->M_refl * this->color_patch_avgs;
-    btrgb::calibration::display_matrix(&this->R_camera, "RCamera After");
     this->R_camera = btrgb::calibration::calc_R_camera(this->M_refl, this->color_patch_avgs);
     btrgb::calibration::display_matrix(&this->R_camera, "RCamera Clipped");
     time_tracker.elapsed_time_sec();
@@ -99,12 +92,12 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     cv::Ptr<WeightedErrorFunction> def = ptr_F.staticCast<WeightedErrorFunction>();
     std::cout << "Itterations: " << def->get_itteration_count() << std::endl;
     std::cout << "Min z: " << res << std::endl;
-    
+    //===============================================================
+
+    this->store_results();    
 
     std::cout << "SpectralCalibration done" << std::endl;
-
-    this->store_results();
-
+    comms->send_progress(1, "SpectralCalibration");
 }
 
 void SpectralCalibrator::init_M_refl(cv::Mat R_ref){
@@ -117,13 +110,7 @@ void SpectralCalibrator::init_M_refl(cv::Mat R_ref){
     // Create M_refl
     this->M_refl = R_ref * psudoinvers;
     // Create 1d representation of M_refl, used as input to the MinProblemSolver
-    this->input_array = cv::Mat(this->M_refl).reshape(0,1);
-
-    // btrgb::calibration::display_matrix(&R_ref, "R_ref");
-    // btrgb::calibration::display_matrix(&this->color_patch_avgs, "ColorPatch CameraSigs");
-    // btrgb::calibration::display_matrix(&psudoinvers, "Psudoinvers");
-    // btrgb::calibration::display_matrix(&M_refl, "M_refl");
-    
+    this->input_array = cv::Mat(this->M_refl).reshape(0,1);    
 }
 
 void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
