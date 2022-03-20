@@ -109,9 +109,7 @@ void Pipeline::run() {
     }
 
 
-    for(const auto& [name, img]: *images) {
-        images->outputImageAs(btrgb::TIFF, name, name);
-    }
+    
 
 }
 

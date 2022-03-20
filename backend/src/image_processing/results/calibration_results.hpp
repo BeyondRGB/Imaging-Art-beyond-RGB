@@ -28,29 +28,6 @@
 class CalibrationResults: private CSVParser{
 
 public:
-    // enum ResultMatrix{
-    //     // ColorManagedCalibration
-    //     DELTA_E,
-    //     M, 
-    //     OFFSETS,
-    //     COLOR_PATCH_AVGS,
-    //     // SpectralCalibration
-    //     M_REFL
-    // };
-    // /**
-	// * Maps ResultsMatrix enum values to a string
-	// */
-	// const std::string matrix_key_map[5] = {
-    //     // ColorManagedCalibration
-	// 	"Delta_E",
-	// 	"M", 
-    //     "Offestes", 
-    //     "ColorPatchAvgs", 
-    //     // SpectralCalibration
-    //     "M_Refl"
-	// };
-
-
     enum ResultType{
         INT, DOUBLE, MATRIX
     };
