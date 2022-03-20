@@ -17,6 +17,7 @@
 #include "backend_process.hpp"
 #include "reference_data/ref_data.hpp"
 
+#include <filesystem>
 #include <iostream>
 
 /*
@@ -32,24 +33,25 @@ class Pipeline: public BackendProcess{
 		IMAGES,
 		RefData,
 		StandardObserver,
-		Illuminants
+		Illuminants,
+		TargetLocation
 	};
 	/**
 	* Maps enum values to a string
 	*/
-	const std::string key_map[7] = {
-		"Art",
-		"White",
-		"Dark",
-		"Images",
-		"RefData",
-		"StandardObserver",
-		"Illuminants"
+	const std::string key_map[8] = {
+		"art",
+		"white",
+		"dark",
+		"images",
+		"refData",
+		"standardObserver",
+		"illuminants",
+		"targetLocation"
 	};
 
 
 private:
-	CommunicationObj coms_m;
 	int num_m;
 	static int pipeline_count;
 
@@ -73,6 +75,7 @@ private:
 	IlluminantType get_illuminant_type();
 	ObserverType get_observer_type();
 	std::string get_ref_file();
+	std::string get_output_directory();
 
 
 public:

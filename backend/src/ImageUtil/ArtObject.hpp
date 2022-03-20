@@ -38,9 +38,10 @@ namespace btrgb {
         std::unordered_map<std::string, Image*> images;
         ImageWriter* tiffWriter;
         RefData* ref_data;
+        std::string output_directory;
 
     public:
-        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer);
+        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory);
         ~ArtObject();
 
         RefData* get_refrence_data();
@@ -55,9 +56,11 @@ namespace btrgb {
         Image* getImage(std::string name);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
-        
+
+        int imageCount();
+
         void outputImageAs(enum output_type filetype, std::string name, std::string filename = "");
-        
+
         /* Iterators over all image entries. */
         std::unordered_map<std::string, Image*>::iterator begin() noexcept {return images.begin();};
         std::unordered_map<std::string, Image*>::iterator end() noexcept {return images.end();};

@@ -11,11 +11,11 @@
 
 class FlatFieldor : public ImgProcessingComponent{
 private:
-    float w1, w2;
-    void wCalc(int base, int rings, int patX, int patY, double yRef, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2);
-    void pixelOperation(int h, int w, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2);
+    float w;
+    void wCalc(float pAvg, float wAvg, double yRef);
+    void pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2);
 public:
-    void execute(CallBackFunction func, btrgb::ArtObject* images) override;
+    void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 };
 
 
