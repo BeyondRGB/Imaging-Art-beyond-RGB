@@ -34,73 +34,76 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     //Init ColorTarget Averages
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
     
-    // Run test with various step values
+    // // Run test with various step values
     // float sp_value = 0.5;
-    for(float sp_value = 0.1f; sp_value <= 1.5f; sp_value += 0.1f){
-        std::cout << std::endl << "****************************************************************" << std::endl;
-        std::cout << std::endl << "****************************************************************" << std::endl;
+    // std::cout << std::endl << "****************************************************************" << std::endl;
+    // std::cout << std::endl << "****************************************************************" << std::endl;
 
-        std::string str = "\nTesting Step: " + std::to_string(sp_value);
-        //func(str);
-        std::cout << str << std::endl;
-        
-        // Convert RefData to matrix
-        cv::Mat ref_data_matrix = this->ref_data->as_matrix();
+    // std::string str = "\nTesting Step: " + std::to_string(sp_value);
+    // //func(str);
+    // std::cout << str << std::endl;
+    
+    // Convert RefData to matrix
+    cv::Mat ref_data_matrix = this->ref_data->as_matrix();
 
-        // btrgb::calibration::display_matrix(&ref_data_matrix, "RefDataMat");
+    // btrgb::calibration::display_matrix(&ref_data_matrix, "RefDataMat");
 
-        // Initialize M_relf starting values
-        this->init_M_refl(ref_data_matrix);
-        // ref_data_matrix.release(); // No longer needed
+    // Initialize M_relf starting values
+    this->init_M_refl(ref_data_matrix);
 
-        // Create Custom WeightedErrorFunction used to minimize Z
-        cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
-                &ref_data_matrix,
-                &this->input_array,
-                &this->M_refl,
-                &this->color_patch_avgs,
-                &this->R_camera
-            ));
+    // Create Custom WeightedErrorFunction used to minimize Z
+    cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
+            &ref_data_matrix,
+            &this->input_array,
+            &this->M_refl,
+            &this->color_patch_avgs,
+            &this->R_camera
+        )
+    );
 
-        //Init MinProblemSolver
-        cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
-        min_solver->setFunction(ptr_F);
-        cv::Mat step;
-        this->init_step(sp_value, step);
-        min_solver->setInitStep(step);
-        min_solver->setTermCriteria(
-            cv::TermCriteria(
-                cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, // Term Type
-                 5000, // max itterations
-                 1e-10 // epsilon
-            )
-        );
-
-
-        // btrgb::calibration::display_matrix(&this->M_refl, "Mrefl Init");
-        
-        std::cout << "Running Minimization." << std::endl;
-
-        TimeTracker time_tracker;
-        time_tracker.start_timeing();
-        // Optimize M_refl to minimized Z
-        double res = min_solver->minimize(this->input_array);
-        time_tracker.end_timeing();
+    //Init MinProblemSolver
+    cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
+    min_solver->setFunction(ptr_F);
+    cv::Mat step;
+    this->init_step(0.5, step);
+    min_solver->setInitStep(step);
+    min_solver->setTermCriteria(
+        cv::TermCriteria(
+            cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, // Term Type
+                5000, // max itterations
+                1e-10 // epsilon
+        )
+    );
 
 
-        // Dsiplay Results
-        btrgb::calibration::display_matrix(&this->M_refl, "Mrefl After");
-        this->R_camera = this->M_refl * this->color_patch_avgs;
-        btrgb::calibration::display_matrix(&this->R_camera, "RCamera After");
-        time_tracker.elapsed_time_sec();
-        time_tracker.elapsed_time_min();
+    // btrgb::calibration::display_matrix(&this->M_refl, "Mrefl Init");
+    
+    std::cout << "Running Minimization." << std::endl;
 
-        cv::Ptr<WeightedErrorFunction> def = ptr_F.staticCast<WeightedErrorFunction>();
-        std::cout << "Itterations: " << def->get_itteration_count() << std::endl;
-        std::cout << "Min z: " << res << std::endl;
-    }// End of testing for loop
+    TimeTracker time_tracker;
+    time_tracker.start_timeing();
+    // Optimize M_refl to minimized Z
+    double res = min_solver->minimize(this->input_array);
+    time_tracker.end_timeing();
+
+
+    // Dsiplay Results
+    btrgb::calibration::display_matrix(&this->M_refl, "Mrefl After");
+    this->R_camera = this->M_refl * this->color_patch_avgs;
+    btrgb::calibration::display_matrix(&this->R_camera, "RCamera After");
+    this->R_camera = btrgb::calibration::calc_R_camera(this->M_refl, this->color_patch_avgs);
+    btrgb::calibration::display_matrix(&this->R_camera, "RCamera Clipped");
+    time_tracker.elapsed_time_sec();
+    time_tracker.elapsed_time_min();
+
+    cv::Ptr<WeightedErrorFunction> def = ptr_F.staticCast<WeightedErrorFunction>();
+    std::cout << "Itterations: " << def->get_itteration_count() << std::endl;
+    std::cout << "Min z: " << res << std::endl;
+    
 
     std::cout << "SpectralCalibration done" << std::endl;
+
+    this->store_results();
 
 }
 
@@ -129,6 +132,13 @@ void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
     for(int i = 0; i < step_len; i++){
         step.at<double>(0,i) = stp_value;
     }
+}
+
+void SpectralCalibrator::store_results(){
+    // TODO store the results in the ArtObj once that is merged in
+    std::cout << "================================\n" <<
+                 "Results have not been stored yet\n" <<
+                 "================================" << std::endl;
 }
 
 

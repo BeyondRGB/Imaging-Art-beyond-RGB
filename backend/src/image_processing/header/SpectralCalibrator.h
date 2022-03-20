@@ -65,6 +65,12 @@ private:
      */
     void init_step(double stp_value, cv::Mat &step);
 
+    /**
+     * @brief Store the results from the calibration
+     * 
+     */
+    void store_results();
+
 };
 
 
