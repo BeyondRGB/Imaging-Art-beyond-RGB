@@ -64,7 +64,7 @@ private:
 	int row_height;
 	int col_width;
 	// Size of the sample to take from a color patch as a percentage of the patch size
-	double sample_size;
+	double sample_size = 0.3;
 
 	/**
 	 * @brief Calculate the center x postiton for the specified col
