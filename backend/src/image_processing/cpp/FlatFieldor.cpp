@@ -58,8 +58,8 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 
     comms->send_progress(1, "Flat Fielding");
     // Outputs TIFFs for each image group for after this step, temporary
-    images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
-    images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
+    images->outputImageAs(btrgb::TIFF, "art1", "art1_ff");
+    images->outputImageAs(btrgb::TIFF, "art2", "art2_ff");
 }
 
 /**
@@ -108,5 +108,4 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
             }
         }
     }
-
 }
