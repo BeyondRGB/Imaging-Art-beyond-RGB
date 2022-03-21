@@ -8,6 +8,7 @@
 #include <unordered_map>
 
 #include "utils/csv_parser.hpp"
+#include "utils/jsonafiable.hpp"
 
 // #define RES_NAME "result_name"
 #define DELIMITER ","
@@ -25,7 +26,7 @@
 #define CM_OFFSETS         "CM Calibration Offsets"
 #define CM_DLETA_E_VALUES  "CM Calibration DeltaE"
 
-class CalibrationResults: private CSVParser{
+class CalibrationResults: public Jsonafiable, private CSVParser{
 
 public:
     enum ResultType{
@@ -120,6 +121,9 @@ public:
      * @return false 
      */
     bool contains_results();
+
+
+    jsoncons::json jsonafy() override;
 
 private:
     // Maps for storing various data types

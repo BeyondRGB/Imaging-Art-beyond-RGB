@@ -147,6 +147,23 @@ void CalibrationResults::write_matrix_value(std::ostream &output_stream, cv::Mat
     }   
 }
 
+jsoncons::json CalibrationResults::jsonafy(){
+    jsoncons::json body;
+    body.insert_or_assign("Test", 8);
+    body.insert_or_assign("Oh yeah", "DoDa");
+    jsoncons::json array = jsoncons::json::make_array<2>(3,2,0);
+    int c = 0;
+    for(int i = 0; i < 3; i++){
+        for(int j = 0; j < 2; j++){
+            array[i][j] = c++;
+        }
+    }
+    // jsoncons::json dbl;
+    // dbl.add<jsoncons::json>(&array);
+    body.insert_or_assign("array", array);
+    return body;
+}
+
 /**
  * We expect result files are expected to be .csv files.
  * All results found in this file are expected to be seperated by an empy line and be in the form

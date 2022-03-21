@@ -204,11 +204,11 @@ void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
     // std::cout << "Itteration Count: " << this->solver_iteration_count << std::endl;
     // std::cout << "\n*********************************************************************************************************************" << std::endl;
 
-    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
-    results_obj->store_double(CM_DELTA_E_AVG, this->resulting_avg_deltaE);
-    results_obj->store_matrix(CM_M, this->M);
-    results_obj->store_matrix(CM_OFFSETS, this->offest);
-    results_obj->store_matrix(CM_DLETA_E_VALUES, this->deltaE_values);
+    // CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+    // results_obj->store_double(CM_DELTA_E_AVG, this->resulting_avg_deltaE);
+    // results_obj->store_matrix(CM_M, this->M);
+    // results_obj->store_matrix(CM_OFFSETS, this->offest);
+    // results_obj->store_matrix(CM_DLETA_E_VALUES, this->deltaE_values);
 }
 
 void ColorManagedCalibrator::build_input_matrix() {

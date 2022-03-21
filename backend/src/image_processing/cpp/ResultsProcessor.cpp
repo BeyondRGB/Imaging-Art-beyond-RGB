@@ -18,17 +18,17 @@ void ResultsProcessor::output_images(btrgb::ArtObject* images){
 }
 
 void ResultsProcessor::output_results(btrgb::ArtObject* images){
-    CalibrationResults *calibration_res = images->get_results_obj(btrgb::ResultType::CALIBRATION);
-    CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
-    std::string output_dir = images->get_output_dir();
+    // CalibrationResults *calibration_res = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+    // CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
+    // std::string output_dir = images->get_output_dir();
 
-    std::ofstream calibration_stream;
-    calibration_stream.open(output_dir + "CalibrationResults.csv");
-    calibration_res->write_results(calibration_stream);
-    calibration_stream.close();
+    // std::ofstream calibration_stream;
+    // calibration_stream.open(output_dir + "CalibrationResults.csv");
+    // calibration_res->write_results(calibration_stream);
+    // calibration_stream.close();
 
-    std::ofstream verification_stream;
-    verification_stream.open(output_dir + "VerificationResults.csv");
-    verification_res->write_results(verification_stream);
-    verification_stream.close();
+    // std::ofstream verification_stream;
+    // verification_stream.open(output_dir + "VerificationResults.csv");
+    // verification_res->write_results(verification_stream);
+    // verification_stream.close();
 }
