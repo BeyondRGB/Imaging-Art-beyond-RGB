@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <string>
 #include <opencv2/opencv.hpp>
-#include <cppcodec/base64_rfc4648.hpp>
+#include <filesystem>
+namespace fs = std::filesystem;
 
 /* Ways to loop:
 
@@ -59,8 +60,8 @@ namespace btrgb {
 
     enum output_type {
         PNG,
-        WEBP,
-        TIFF
+        TIFF,
+        JPEG
     };
 
     enum image_quality {
@@ -77,6 +78,7 @@ namespace btrgb {
             void initImage(cv::Mat im);
 
             cv::Mat getMat();
+            cv::Mat getMatCopyAs(int cv_type);
 
             int width();
             int height();
@@ -91,11 +93,12 @@ namespace btrgb {
             std::string getName();
             void setName(std::string name);
 
-            binary_ptr_t toBinaryOfType(enum output_type type, enum image_quality quality);
-            base64_ptr_t toBase64OfType(enum output_type type, enum image_quality quality);
+            binary_ptr_t getEncodedPNG(enum image_quality quality);
 
             void recycle();
             int _raw_bit_depth = 0;
+            
+            static bool is_tiff(std::string filename);
 
         private:
             std::string _name;
