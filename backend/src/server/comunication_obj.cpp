@@ -2,6 +2,7 @@
 // Defines a class to manage communication between a process and the front end
 //
 
+#include <cppcodec/base64_rfc4648.hpp>
 #include "comunication_obj.hpp"
 
 unsigned char CommunicationObj::binID = 0;
