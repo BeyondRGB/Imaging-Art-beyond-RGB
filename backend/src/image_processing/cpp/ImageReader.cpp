@@ -7,9 +7,7 @@
 #include "image_processing/header/ImageReader.h"
 
 
-ImageReader::ImageReader(ImageReader::reader_strategy strategy) {
-    this->_set_strategy(strategy);
-}
+ImageReader::ImageReader() {}
 
 ImageReader::~ImageReader() {
     delete this->_reader;
