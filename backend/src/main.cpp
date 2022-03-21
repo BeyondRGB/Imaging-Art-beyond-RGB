@@ -32,14 +32,19 @@ void testFunc() {
 
     std::string file_name = "results.csv";
 
+    jsoncons::json j = res.jsonafy();
+    std::string out;
+    j.dump_prity(out);
+    std::cout << out << std::endl;
+
     // std::cout << "Writing " << file_name << std::endl;
     // std::ofstream file;
     // file.open(file_name);
     // res.write_results(file);
     // file.close();
 
-    std::cout << "Reading " << file_name << std::endl;
-    CalibrationResults res_in(file_name);
+    // std::cout << "Reading " << file_name << std::endl;
+    // CalibrationResults res_in(file_name);
     // try{
     //     // res_in.write_results(std::cout);
 
@@ -54,8 +59,8 @@ void testFunc() {
     //     std::cout << "Error: " << e.what() << std::endl;
     // }
     
-    std::cout << "Showing Contents" << std::endl;
-    res_in.write_results(std::cout);
+    // std::cout << "Showing Contents" << std::endl;
+    // res_in.write_results(std::cout);
 
 
 

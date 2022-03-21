@@ -25,6 +25,7 @@ public:
 	Json();
 	Json(const Json &other);
 	Json(std::string json_str);
+	Json(jsoncons::json json_obj);
 
 	/**
 	* Check to see if json contains item of given type
@@ -181,7 +182,6 @@ public:
 
 
 private:
-	Json(jsoncons::json json_obj);
 	jsoncons::json json_obj;
 
 	/**
