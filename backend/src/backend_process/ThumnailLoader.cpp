@@ -69,7 +69,7 @@ void ThumbnailLoader::_read_raw_thumbnail(btrgb::LibRawThumbnail* reader, std::s
         imObj.initImage(im);
 
         /* Send image. */
-        this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FAST);
+        this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
     }
 }
 
@@ -80,17 +80,15 @@ void ThumbnailLoader::_read_tiff(btrgb::TiffReaderOpenCV* reader, std::string fi
     reader->copyBitmapTo( im );
     reader->recycle();
 
-    /* Auto bit depth. */
-    if(im.depth() == CV_16U) {
-        double min, max;
-        cv::minMaxIdx(im, &min, &max);
-        im.convertTo(im, CV_8U, 0xFF / max);
-    }
+    /* Auto bit depth (just for displaying). */
+    double min, max;
+    cv::minMaxIdx(im, &min, &max);
+    im.convertTo(im, CV_8U, 0xFF / max);
 
     /* Wrap the Mat as an Image object. */
     btrgb::Image imObj(file);
     imObj.initImage(im);
 
     /* Send image. */
-    this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FAST);
+    this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
 }
