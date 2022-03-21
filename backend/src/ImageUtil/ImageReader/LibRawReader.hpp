@@ -16,11 +16,11 @@ class LibRawReader : public ImageReaderStrategy {
         LibRawReader(libraw_type method = UNPROCESSED);
         ~LibRawReader();
 
-        void open(std::string filename);
-        void recycle();
+        void open(std::string filename) override;
+        void recycle() override;
 
-        void copyBitmapTo(void* buffer, uint32_t size);
-        void copyBitmapTo(cv::Mat& im);
+        void copyBitmapTo(void* buffer, uint32_t size) override;
+        void copyBitmapTo(cv::Mat& im) override;
 
     private:
         LibRaw _reader;
