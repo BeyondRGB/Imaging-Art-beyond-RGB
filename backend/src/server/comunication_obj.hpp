@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <jsoncons/json.hpp>
-#include <cppcodec/base64_rfc4648.hpp>
 
 #define ASIO_STANDALONE
 #define _WEBSOCKETPP_CPP11_THREAD_
