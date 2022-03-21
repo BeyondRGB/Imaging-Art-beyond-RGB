@@ -51,7 +51,7 @@ void RequestServer::start_server() {
 }
 
 void RequestServer::msg_handler(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
-    //std::cout << "MSG: " << msg->get_payload() << std::endl;
+    
     if (msg->get_payload() == "shutdown") {
         this->shutdown();
         return;
