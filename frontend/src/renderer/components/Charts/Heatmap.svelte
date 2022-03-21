@@ -686,6 +686,19 @@
       },
     },
     experimental: true,
+    toolbar: {
+      enabled: true,
+      // controls: [
+      //   { type: "Show as table" },
+      //   { type: "Make Fullscrean" },
+      //   { type: "Zoom out" },
+      // ],
+      numberOfIcons: 1,
+    },
+    legend: {
+      enabled: true,
+      alignment: "center",
+    },
     height: "75vh",
     resizable: true,
     color: {
@@ -721,7 +734,7 @@
   {#each valueGrid.reverse() as row, i}
     {#each row as col, i}
       <p class="heatmap-value">
-        {col.value}
+        {col.value.toFixed(1)}
       </p>
     {/each}
   {/each}
@@ -740,6 +753,9 @@
   .bx--cc--axes g.axis .axis-title {
     @apply fill-white;
   }
+  .bx--overflow-menu__icon {
+    @apply fill-gray-100;
+  }
   .bx--chart-holder {
     @apply aspect-square w-auto;
   }
@@ -747,7 +763,7 @@
     display: grid;
     grid-template-rows: repeat(9, auto);
     grid-template-columns: repeat(13, auto);
-    @apply absolute w-[75vh] h-[75vh] pt-10 pb-14 pl-6 pointer-events-none;
+    @apply absolute w-[75vh] h-[75vh] pt-[8vh] pb-[10vh] pl-[4.5vh] pointer-events-none;
   }
   .heatmap-value {
     @apply flex justify-center items-center h-full w-full font-bold text-black;
@@ -757,6 +773,12 @@
   }
   /* .bx--chart-holder .bx--overflow-menu,
   .bx--chart-holder .bx--overflow-menu__trigger {
+    @apply hidden;
+  } */
+  /* .bx--chart-holder .bx--overflow-menu,
+  .bx--chart-holder
+    .bx--overflow-menu__trigger:first-child
+    .toolbar-control:first-child {
     @apply hidden;
   } */
   .bx--cc--tooltip {
@@ -776,5 +798,22 @@
   }
   .bx--cc--tooltip .tooltip-color {
     @apply w-2;
+  }
+  .bx--overflow-menu:hover,
+  .bx--overflow-menu__trigger:hover {
+    @apply bg-transparent;
+  }
+  .bx--overflow-menu.bx--overflow-menu--open:hover {
+    @apply bg-transparent;
+  }
+  .bx--chart-holder .bx--cc--toolbar .bx--overflow-menu--flip.is-open {
+    @apply bg-transparent;
+  }
+  .bx--overflow-menu-options__option:hover {
+    @apply bg-transparent;
+  }
+  .bx--overflow-menu.bx--overflow-menu--open,
+  .bx--overflow-menu.bx--overflow-menu--open .bx--overflow-menu__trigger {
+    @apply bg-transparent;
   }
 </style>
