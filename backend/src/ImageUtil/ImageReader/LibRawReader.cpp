@@ -143,13 +143,10 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
             
     /* Ignore fourth channel if present. */
     cv::Mat u16_rgb_im(_height, _width, CV_MAKETYPE(cv_depth, 3));
-    std::cout << "==========================================" << std::endl;
     if(raw_im.channels() == 4) {
-        std::cout << "|| LibRAW returned four channels, discarding the last channel." << std::endl;
         int from_to[] = { 0,0, 1,1, 2,2 };
         cv::mixChannels( &raw_im, 1, &u16_rgb_im, 1, from_to, 3);
     } else if( raw_im.channels() == 3 ) {
-        std::cout << "|| LibRAW returned three channels." << std::endl;
         u16_rgb_im = raw_im;
     } else {
         this->recycle();
@@ -157,16 +154,7 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
     }
 
 
-    if(this->_reader.imgdata.progress_flags & LIBRAW_PROGRESS_INTERPOLATE) {
-        std::cout << "Interpolated image" << std::endl;
-    }
-    else {
-        std::cout << "Did not interpolate image" << std::endl;
-    }
-
-
-    std::cout << "==========================================" << std::endl;
-
+    /* Set refernce/output image to the just read image. */
     im = u16_rgb_im;
 
 }
