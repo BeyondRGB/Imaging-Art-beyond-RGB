@@ -25,16 +25,9 @@
           id: 1,
           name: "Art 1",
           colorTargetImage: { dataURL: "", filename: "" },
-          colorTargets: [
-            // {
-            //   top: 0.25,
-            //   left: 0.25,
-            //   bottom: 0.50,
-            //   right: 0.50,
-            //   cols: 14,
-            //   rows: 10,
-            // },
-          ],
+          verificationTargetImage: { dataURL: "", filename: "" },
+          colorTarget: {},
+          verificationTarget: {},
           fields: {
             images: [],
             whitefield: [],
@@ -63,18 +56,34 @@
       ],
       destinationDirectory: $processState.destDir,
       targetLocation: {
-        top: $processState.artStacks[0].colorTargets[0]?.top,
-        left: $processState.artStacks[0].colorTargets[0]?.left,
-        bottom: $processState.artStacks[0].colorTargets[0]?.bottom,
-        right: $processState.artStacks[0].colorTargets[0]?.right,
-        cols: $processState.artStacks[0].colorTargets[0]?.cols,
-        rows: $processState.artStacks[0].colorTargets[0]?.rows,
-        size: $processState.artStacks[0].colorTargets[0]?.size,
+        top: $processState.artStacks[0].colorTarget?.top,
+        left: $processState.artStacks[0].colorTarget?.left,
+        bottom: $processState.artStacks[0].colorTarget?.bottom,
+        right: $processState.artStacks[0].colorTarget?.right,
+        cols: $processState.artStacks[0].colorTarget?.cols,
+        rows: $processState.artStacks[0].colorTarget?.rows,
+        size: $processState.artStacks[0].colorTarget?.size,
+        whitePatch: $processState.artStacks[0].colorTarget?.whitePatch,
+        refData: {
+          name: "NGT_Reflectance_Data.csv",
+          standardObserver: 1931,
+          illuminants: "D50",
+        },
       },
-      refData: {
-        name: "NGT_Reflectance_Data.csv",
-        standardObserver: 1931,
-        illuminants: "D50",
+      verificationLocation: {
+        top: $processState.artStacks[0].verificationTarget?.top,
+        left: $processState.artStacks[0].verificationTarget?.left,
+        bottom: $processState.artStacks[0].verificationTarget?.bottom,
+        right: $processState.artStacks[0].verificationTarget?.right,
+        cols: $processState.artStacks[0].verificationTarget?.cols,
+        rows: $processState.artStacks[0].verificationTarget?.rows,
+        size: $processState.artStacks[0].verificationTarget?.size,
+        whitePatch: $processState.artStacks[0].verificationTarget?.whitePatch,
+        refData: {
+          name: "NGT_Reflectance_Data.csv",
+          standardObserver: 1931,
+          illuminants: "D50",
+        },
       },
     },
   };
@@ -168,20 +177,21 @@
                 >
                 <span>{jsonTest.RequestData.targetLocation[key]}</span>
               </li>
-            {/each}
-          </p>
-          <p class="px-2">
-            <span class="key">refData</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-
-            {#each Object.keys(jsonTest.RequestData.refData) as key}
-              <li>
-                <span class="key">{key}</span><span
+              <!-- <p class="px-2">
+                <span class="key">refData</span><span
                   style="font-weight: bold; background-color: transparent;"
                   >:</span
-                > <span>{jsonTest.RequestData.refData[key]}</span>
-              </li>
+                >
+
+                {#each Object.keys(jsonTest.RequestData.refData) as key}
+                  <li>
+                    <span class="key">{key}</span><span
+                      style="font-weight: bold; background-color: transparent;"
+                      >:</span
+                    > <span>{jsonTest.RequestData.refData[key]}</span>
+                  </li>
+                {/each}
+              </p> -->
             {/each}
           </p>
         </div>
