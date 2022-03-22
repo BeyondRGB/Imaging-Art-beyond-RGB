@@ -61,6 +61,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         td.right_loc = target_location.get_number("right");
         td.col_count = target_location.get_number("cols");
         td.row_count = target_location.get_number("rows");
+        td.sample_size = target_location.get_number("size");
         art_obj->setTargetInfo(td);
         return true;
     }
