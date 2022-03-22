@@ -6,13 +6,23 @@
 
   function update() {
     if (colorPos) {
-      $processState.artStacks[0].colorTargets[0].top = colorPos.top;
-      $processState.artStacks[0].colorTargets[0].left = colorPos.left;
-      $processState.artStacks[0].colorTargets[0].bottom = colorPos.bottom;
-      $processState.artStacks[0].colorTargets[0].right = colorPos.right;
-      $processState.artStacks[0].colorTargets[0].rows = colorTarget.rows;
-      $processState.artStacks[0].colorTargets[0].cols = colorTarget.cols;
-      $processState.artStacks[0].colorTargets[0].size = colorTarget.size;
+      $processState.artStacks[0].colorTarget.top = colorPos.top;
+      $processState.artStacks[0].colorTarget.left = colorPos.left;
+      $processState.artStacks[0].colorTarget.bottom = colorPos.bottom;
+      $processState.artStacks[0].colorTarget.right = colorPos.right;
+      $processState.artStacks[0].colorTarget.rows = colorTarget.rows;
+      $processState.artStacks[0].colorTarget.cols = colorTarget.cols;
+      $processState.artStacks[0].colorTarget.size = colorTarget.size;
+    }
+
+    if (verifyPos) {
+      $processState.artStacks[0].verificationTarget.top = verifyPos.top;
+      $processState.artStacks[0].verificationTarget.left = verifyPos.left;
+      $processState.artStacks[0].verificationTarget.bottom = verifyPos.bottom;
+      $processState.artStacks[0].verificationTarget.right = verifyPos.right;
+      $processState.artStacks[0].verificationTarget.rows = verifyTarget.rows;
+      $processState.artStacks[0].verificationTarget.cols = verifyTarget.cols;
+      $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
     }
   }
 
@@ -37,9 +47,18 @@
         refData: null,
         color: 50,
         size: 0.5,
+        whitePatch: {
+          row: 1,
+          col: 1,
+        },
+        refData: {
+          name: "NGT_Reflectance_Data.csv",
+          standardObserver: 1931,
+          illuminants: "D50",
+        },
       };
       colorPos = { top: 0.25, left: 0.25, bottom: 0.5, right: 0.5 };
-      $processState.artStacks[0].colorTargets[0] = {
+      $processState.artStacks[0].colorTarget = {
         top: 0.25,
         left: 0.25,
         bottom: 0.5,
@@ -47,7 +66,17 @@
         cols: 10,
         rows: 10,
         size: 0.5,
+        whitePatch: {
+          row: 1,
+          col: 1,
+        },
+        refData: {
+          name: "NGT_Reflectance_Data.csv",
+          standardObserver: 1931,
+          illuminants: "D50",
+        },
       };
+      console.log($processState.artStacks[0].colorTarget);
     } else if (!verifyTarget) {
       verifyTarget = {
         name: "Verification Target",
@@ -56,6 +85,15 @@
         refData: null,
         color: 100,
         size: 0.5,
+        whitePatch: {
+          row: 1,
+          col: 1,
+        },
+        refData: {
+          name: "NGT_Reflectance_Data.csv",
+          standardObserver: 1931,
+          illuminants: "D50",
+        },
       };
       verifyPos = { top: 0.5, left: 0.5, bottom: 0.75, right: 0.75 };
       $processState.artStacks[0].colorTargets[1] = {
@@ -66,6 +104,15 @@
         cols: 10,
         rows: 10,
         size: 0.5,
+        whitePatch: {
+          row: 1,
+          col: 1,
+        },
+        refData: {
+          name: "NGT_Reflectance_Data.csv",
+          standardObserver: 1931,
+          illuminants: "D50",
+        },
       };
     }
   }
@@ -90,7 +137,7 @@
     let root = document.documentElement;
     root.style.setProperty("--verfiy_hue", `${verifyTarget}`);
   }
-  $: console.log($processState.artStacks[0].colorTargets);
+  $: console.log($processState.artStacks[0].colorTarget);
 
   // $: console.log([colorTarget, verifyTarget]);
 

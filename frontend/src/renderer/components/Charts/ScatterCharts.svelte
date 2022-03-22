@@ -4,6 +4,7 @@
   import { ScatterChart } from "@carbon/charts-svelte";
   import { text } from "svelte/internal";
 
+  // https://github.com/antimatter15/rgb-lab/blob/master/color.js
   function lab2rgb(lab) {
     var y = (lab[0] + 16) / 116,
       x = lab[1] / 500 + y,
