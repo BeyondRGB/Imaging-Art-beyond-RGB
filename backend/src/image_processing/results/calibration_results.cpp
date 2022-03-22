@@ -4,6 +4,10 @@ CalibrationResults::CalibrationResults(std::string results_file){
     this->read_results(results_file);
 }
 
+CalibrationResults::CalibrationResults(jsoncons::json json){
+    this->de_jsonafy(json);
+}
+
 CalibrationResults::~CalibrationResults(){
     for( auto [name, matrix] : this->result_matricies ){
         matrix.release();
@@ -69,10 +73,10 @@ void CalibrationResults::write_matrices(std::ostream &output_stream){
         // Write Name
         output_stream << name << std::endl;
         // Write MetaData
-        output_stream << R_TYPE << ":" << ResultType::MATRIX << DELIMITER << 
-                         ROW_COUNT <<":" << matrix.rows << DELIMITER << 
-                         COL_COUNT << ":" << matrix.cols << DELIMITER <<
-                         M_TYPE << ":" << matrix.type() << std::endl;
+        // output_stream << R_TYPE << ":" << ResultType::MATRIX << DELIMITER << 
+        //                  ROW_COUNT <<":" << matrix.rows << DELIMITER << 
+        //                  COL_COUNT << ":" << matrix.cols << DELIMITER <<
+        //                  M_TYPE << ":" << matrix.type() << std::endl;
         // Write Matrix Values
         this->write_matrix(output_stream, matrix);
     }
@@ -83,7 +87,7 @@ void CalibrationResults::write_ints(std::ostream &output_stream){
         // Write Name
         output_stream << name << std::endl;
         // Write MetaData
-        output_stream << R_TYPE << ":" << ResultType::INT << std::endl;
+        // output_stream << R_TYPE << ":" << ResultType::INT << std::endl;
         // Write Value
         output_stream << value << std::endl 
             << std::endl; // New line to prep for next result
@@ -95,7 +99,7 @@ void CalibrationResults::write_doubls(std::ostream &output_stream){
         // Write Name
         output_stream << name << std::endl;
         // Write MetaData
-        output_stream << R_TYPE << ":" << ResultType::DOUBLE << std::endl;
+        // output_stream << R_TYPE << ":" << ResultType::DOUBLE << std::endl;
         // Write Value
         output_stream << value << std::endl 
             << std::endl; // New line to prep for next result
@@ -149,19 +153,49 @@ void CalibrationResults::write_matrix_value(std::ostream &output_stream, cv::Mat
 
 jsoncons::json CalibrationResults::jsonafy(){
     jsoncons::json body;
-    body.insert_or_assign("Test", 8);
-    body.insert_or_assign("Oh yeah", "DoDa");
-    jsoncons::json array = jsoncons::json::make_array<2>(3,2,0);
-    int c = 0;
-    for(int i = 0; i < 3; i++){
-        for(int j = 0; j < 2; j++){
-            array[i][j] = c++;
-        }
-    }
-    // jsoncons::json dbl;
-    // dbl.add<jsoncons::json>(&array);
-    body.insert_or_assign("array", array);
+ 
+    jsoncons::json matracies = this->make_json_from_map<cv::Mat>("test", this->result_matricies);
+    body.insert_or_assign("matracies", matracies);
+
+    jsoncons::json int_values = this->make_json_from_map<int>("", this->result_ints);
+    body.insert_or_assign("int_values", int_values);
+
+    jsoncons::json double_values = this->make_json_from_map<double>("", this->result_doubles);
+    body.insert_or_assign("double_values", double_values);
+    
+    
     return body;
+}
+
+void CalibrationResults::de_jsonafy(jsoncons::json json){
+    Json parser(json);
+    std::cout << "De Jsonify" << std::endl;
+    Json matricies = parser.get_array("matracies");
+    int item_count = matricies.get_size();
+    for(int i = 0; i < item_count; i++){
+        Json matrix_json = matricies.obj_at(i);
+        std::string name = matrix_json.get_string("name");
+        cv::Mat matrix = this->reconstruct_matrix(matrix_json);
+        this->result_matricies[name] = matrix;        
+    }
+
+    Json ints =  parser.get_array("int_values");
+    item_count = ints.get_size();
+    for(int i = 0; i < item_count; i++){
+        Json int_json = ints.obj_at(i);
+        std::string name = int_json.get_string("name");
+        int value = int_json.get_value<int>("data");
+        this->result_ints[name] = value;
+    }
+
+    Json doubles =  parser.get_array("double_values");
+    item_count = doubles.get_size();
+    for(int i = 0; i < item_count; i++){
+        Json double_json = doubles.obj_at(i);
+        std::string name = double_json.get_string("name");
+        int value = double_json.get_value<double>("data");
+        this->result_doubles[name] = value;
+    }
 }
 
 /**

@@ -48,6 +48,7 @@ public:
      * @param results_file 
      */
     CalibrationResults(std::string results_file);
+    CalibrationResults(jsoncons::json json);
     ~CalibrationResults();
     
     /**
@@ -124,6 +125,8 @@ public:
 
 
     jsoncons::json jsonafy() override;
+    void de_jsonafy(jsoncons::json json) override;
+
 
 private:
     // Maps for storing various data types

@@ -137,6 +137,8 @@ public:
 	*/
 	Json obj_at(int index);
 
+	Json array_at(int index);
+
 	/**
 	* Get boolean value at index from Json Array
 	* This assumes that the json item this parser currently holds
@@ -180,6 +182,28 @@ public:
 	*/
 	Json::Type get_type();
 
+	template <typename T>
+	T get_value(std::string key){
+		validate_is_obj();
+		if (!this->has(key, Type::NUMBER)) {
+			std::string error = "Number('" + key + "') not found";
+			throw std::exception();
+		}
+		return this->json_obj.get(key).as<T>();
+	}
+
+	template <typename T>
+	T value_at(int index){
+		validate_is_array();
+		validate_bounds(index);
+		jsoncons::json item = this->json_obj[index];
+		bool b = this->is_type<T>(item);
+		if (!this->is_type<T>(item)) {
+			std::string error = "Item at index(" + std::to_string(index) + ") is not a bool";
+			throw std::exception();
+		}
+		return item.as<T>();
+	}
 
 private:
 	jsoncons::json json_obj;
@@ -208,6 +232,26 @@ private:
 	* throws ParsingError if not
 	*/
 	void validate_bounds(int index);
+
+	template <typename T>
+	bool is_type(jsoncons::json item){
+		const jsoncons::json_type type = item.type();
+		if (type == jsoncons::json_type::bool_value){
+			return std::is_same<T, bool>::value;
+		}
+		if (type == jsoncons::json_type::string_value){
+			return std::is_same<T, std::string>::value;
+		}
+		if (type == jsoncons::json_type::double_value){
+			return std::is_same<T, double>::value || 
+				   std::is_same<T, float>::value;
+		}
+		if (type == jsoncons::json_type::uint64_value ||
+			type == jsoncons::json_type::int64_value){
+			return std::is_same<T, int>::value;
+		}
+		return false;
+	}
 
 };
 
