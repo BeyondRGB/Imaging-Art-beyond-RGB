@@ -34,8 +34,11 @@ void testFunc() {
 
     jsoncons::json j = res.jsonafy();
     std::string out;
-    j.dump_prity(out);
-    std::cout << out << std::endl;
+    j.dump_pretty(out);
+
+    CalibrationResults res2(j);
+    res2.write_results(std::cout);
+    // std::cout << out << std::endl;
 
     // std::cout << "Writing " << file_name << std::endl;
     // std::ofstream file;

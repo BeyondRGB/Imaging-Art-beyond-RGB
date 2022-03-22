@@ -103,7 +103,7 @@ double Json::number_at(int index) {
 	jsoncons::json item = this->json_obj[index];
 	bool is_number = this->get_type(item) == Type::NUMBER;
 	if (!is_number) {
-		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
+		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a number");
 	}
 	return item.as<double>();
 }
@@ -114,7 +114,19 @@ Json Json::obj_at(int index) {
 	jsoncons::json item = this->json_obj[index];
 	bool is_obj = this->get_type(item) == Type::OBJECT;
 	if (!is_obj) {
-		throw ParsingError("Item at index(" + std::to_string(index) + ") is not a bool");
+		throw ParsingError("Item at index(" + std::to_string(index) + ") is not an obj");
+	}
+	Json j(item);
+	return j;
+}
+
+Json Json::array_at(int index){
+	validate_is_array();
+	validate_bounds(index);
+	jsoncons::json item = this->json_obj[index];
+	bool is_array = this->get_type(item) == Type::ARRAY;
+	if( !is_array){
+		throw ParsingError("Item at index(" + std::to_string(index) + ") is not an array");
 	}
 	Json j(item);
 	return j;
