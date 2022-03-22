@@ -19,6 +19,8 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	// Init row width and col height
 	this->row_height = this->target_height / this->row_count;
 	this->col_width = this->target_width / this->col_count;
+	// Init sampel size
+	this->sample_size = location_data.sample_size;
 }
 
 /**
@@ -35,13 +37,12 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 *		sr = (sw - 1) / 2
 * 
 */
-float ColorTarget::get_patch_avg(int row, int col, int chan, double sp) {
+float ColorTarget::get_patch_avg(int row, int col, int chan) {
 	int center_pixX = this->patch_posX(col);
 	int center_pixY = this->patch_posY(row);
-	// percentage of patch width that the sample width takes up
-	//double sp = 30.0 / 100.0; // 30%
+	// The sample_size is the size of the sample to take from a color patch as a percentage of the patch size
 	// Sample width/height
-	int sw = sp * this->col_width;
+	int sw = this->sample_size * this->col_width;
 	// Sample radious(number of pixels on either side of center)
 	int sr = (sw - 1) / 2;
 
