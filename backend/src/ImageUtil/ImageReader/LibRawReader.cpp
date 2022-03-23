@@ -26,21 +26,21 @@ void LibRawReader::recycle() {
 void LibRawReader::_configLibRawParams() {
 	libraw_output_params_t* opt = &( this->_reader.imgdata.params );
     switch(this->_method) {
+        
+        /* Do not use histogram brightness/color scaling */
+        opt->no_auto_bright = 1;
+        opt->no_auto_scale = 1;
+
+        /* Linear */
+        opt->gamm[0] = 1.0;
+        opt->gamm[1] = 1.0;
 
         case UNPROCESSED:
             /* Keep as 16 bit. */
             opt->output_bps = 16;
 
-            /* Do not use histogram brightness/color scaling */
-            opt->no_auto_bright = 1;
-            opt->no_auto_scale = 1;
-            
             /* Do not subtract camera black level. */
             opt->user_black = 0;
-
-            /* Linear */
-            opt->gamm[0] = 1.0;
-            opt->gamm[1] = 1.0;
 
             /* Don't use white balance. */
             opt->use_camera_wb = 0;
