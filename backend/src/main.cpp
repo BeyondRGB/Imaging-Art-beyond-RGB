@@ -13,7 +13,7 @@ void testFunc() {
     cv::Mat r1 = (cv::Mat_<int>(3,4) << 
         1,2,3,4,
         1,2,3,4,
-        1,2,5,60
+        1,2,5,608
     );
 
     cv::Mat r2 = (cv::Mat_<double>(2,3) <<
@@ -30,40 +30,37 @@ void testFunc() {
 
     res.store_double("My_Test_Double", 5.6);
 
-    std::string file_name = "results.csv";
+    std::string file_name = "results.btrgb";
 
     jsoncons::json j = res.jsonafy();
     std::string out;
     j.dump_pretty(out);
+    std::cout << "Writing " << file_name << std::endl;
+    std::ofstream file;
 
-    CalibrationResults res2(j);
-    res2.write_results(std::cout);
-    // std::cout << out << std::endl;
-
-    // std::cout << "Writing " << file_name << std::endl;
-    // std::ofstream file;
     // file.open(file_name);
-    // res.write_results(file);
+    // file << out;
     // file.close();
 
-    // std::cout << "Reading " << file_name << std::endl;
-    // CalibrationResults res_in(file_name);
-    // try{
-    //     // res_in.write_results(std::cout);
+    std::string csv_file_name = "results.csv";
+    file.open(csv_file_name);
+    res.write_results(file);
+    file.close();
 
-    //     std::cout << res_in.get_result_matrix("DELTA_E")<< std::endl;
-    //     std::cout << res_in.get_result_matrix("M_REFL")<< std::endl;
-    //     std::cout << "int1: " << res_in.get_result_int("int1") << std::endl;
-    //     std::cout << "my_Test_double: " << res_in.get_result_double("My_Test_Double") << std::endl;
-    // }catch(ResultError e){
-    //     std::cout << "Error: " << e.what() << std::endl;
-    // }
-    // catch(std::exception e){
-    //     std::cout << "Error: " << e.what() << std::endl;
-    // }
     
-    // std::cout << "Showing Contents" << std::endl;
-    // res_in.write_results(std::cout);
+    std::cout << "Reading" << std::endl;
+    try{
+      jsoncons::json new_json;
+      try{
+        new_json = Jsonafiable::json_from_file(file_name);
+      }catch(std::exception e){
+        std::cout << "Cant Read file: " << e.what() << std::endl;
+      }
+      CalibrationResults res2(new_json);
+      res2.write_results(std::cout);
+    }catch(std::exception e){
+      std::cout << "Error reading" << e.what() << std::endl;
+    }
 
 
 
