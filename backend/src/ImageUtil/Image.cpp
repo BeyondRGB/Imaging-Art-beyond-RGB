@@ -62,6 +62,30 @@ namespace btrgb {
         _checkInit();
         return this->_opencv_mat;
     }
+
+    cv::Mat Image::getMatCopyAs(int cv_depth) {
+        _checkInit();
+
+        double current_max, target_max;
+
+        switch(cv_depth) {
+            case CV_32F: target_max = 1; break;
+            case CV_16U: target_max = 0xFFFF; break;
+            case CV_8U: target_max = 0xFF; break;
+            default: throw std::runtime_error("[Image::getMatCopyAs] Unsupported target depth.");
+        }
+
+        switch(this->_opencv_mat.depth()) {
+            case CV_32F: current_max = 1; break;
+            case CV_16U: current_max = 0xFFFF; break;
+            case CV_8U: current_max = 0xFF; break;
+            default: throw std::runtime_error("[Image::getMatCopyAs] Unsupported current image depth.");
+        }
+
+        cv::Mat result;
+        this->_opencv_mat.convertTo(result, cv_depth, target_max / current_max);
+        return result;
+    }
             
 
     uint32_t Image::getIndex(int row, int col, int ch) {
@@ -101,73 +125,51 @@ namespace btrgb {
     }
 
 
-    binary_ptr_t Image::toBinaryOfType(enum output_type type, enum image_quality quality) {
-        binary_ptr_t result_binary(new std::vector<uchar>);
+    binary_ptr_t Image::getEncodedPNG(enum image_quality quality) {
         std::vector<int> params;
-        std::string ftype;
         cv::Mat im;
 
-        switch(type) {
-            /* Supported */
-            case PNG: ftype = ".png"; break;
-            case WEBP: ftype = ".webp"; break;
-            /* Unsupported */
-            case TIFF:
-            default: throw std::logic_error("[Image::getBinaryOfType] Invalid image type. ");
-        }
-
         switch(quality) {
+
         case FAST:
+            {cv::Mat im8u;
+                /* Convert to 8 bit. */
+                im8u = this->getMatCopyAs(CV_8U);
 
-            /* Scale the image to have a maximum width of 2000 pixels (keep same aspect ratio). */
-            if(this->_opencv_mat.cols > 2000) {
-                double scaler = double(2000) / double(this->_opencv_mat.cols);
-                cv::resize(this->_opencv_mat, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
-            } else {
-                im = this->_opencv_mat;
+                /* Scale the image to have a width of 1920 pixels (keep same aspect ratio). */
+                if(im8u.cols > 1920) {
+                    double scaler = double(1920) / double(im8u.cols);
+                    cv::resize(im8u, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
+                }
+                else {
+                    im = im8u;
+                }
             }
-
-            /* Convert to 8 bit to save space. */
-            if(im.depth() != CV_8U) {
-                im.convertTo(im, CV_8U, 0xFF);
-            }
-
             /* Set compression parameters for use later. */
-            if(type == PNG)
-                params = {
-                    cv::IMWRITE_PNG_COMPRESSION, 1,
-                    cv::IMWRITE_PNG_STRATEGY, cv::IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY,
-                };
-            else if(type == WEBP)
-                params = {cv::IMWRITE_WEBP_QUALITY, 1};
-
+            params = {
+                cv::IMWRITE_PNG_COMPRESSION, 1,
+                cv::IMWRITE_PNG_STRATEGY, cv::IMWRITE_PNG_STRATEGY_HUFFMAN_ONLY,
+            };
             break;
 
-
         case FULL:
-            im = this->_opencv_mat;
-
-            if(type == WEBP) {
-                /* Quality above 100 for lossless. */
-                params = {cv::IMWRITE_WEBP_QUALITY, 101}; 
-                if(im.depth() != CV_8U)
-                    im.convertTo(im, CV_8U, 0xFF);
-            }
-            else if(type == PNG) {
-                if(im.depth() != CV_16U)
-                    im.convertTo(im, CV_16U, 0xFFFF);
-            }
+            /* Convert to 16 bit. */
+            im = this->getMatCopyAs(CV_16U);
+            /* Use default PNG compression parameters. */
+            params = {};
             break;
 
         default:
             throw std::logic_error("[Image::getBinaryOfType] Invalid quality type. ");
         }
 
+        /* Convert to BGR order for OpenCV. */
+        cv::Mat im_bgr;
+        cv::cvtColor(im, im_bgr, cv::COLOR_RGB2BGR);
 
         /* Encode image. */
-        try {
-            cv::imencode(ftype, im, *result_binary, params);
-        }
+        binary_ptr_t result_binary(new std::vector<uchar>);
+        try { cv::imencode(".png", im_bgr, *result_binary, params); }
         /* Failed to encode image. */
         catch(const cv::Exception& ex) {
             throw FailedToEncode();
@@ -176,27 +178,15 @@ namespace btrgb {
         return result_binary;
     }
 
+    bool Image::is_tiff(std::string filename) {
+        if( !fs::is_regular_file(filename) ) 
+            return false;
 
+        std::string::size_type i = filename.rfind('.');
+        if( i == std::string::npos ) 
+            return false;
 
-    base64_ptr_t Image::toBase64OfType(enum output_type type, enum image_quality quality) {
-
-        binary_ptr_t img_bin = this->toBinaryOfType(type, quality);
-
-        std::string img_type;
-        switch(type) {
-            /* Supported */
-            case PNG: img_type = "png"; break;
-            case WEBP: img_type = "webp"; break;
-            /* Unsupported */
-            case TIFF:
-            default: throw std::logic_error("[Image::getBinaryOfType] Invalid image type. ");
-        }
-
-        base64_ptr_t result_base64(new std::string(
-            "data:image/" + img_type + ";base64," + cppcodec::base64_rfc4648::encode(*img_bin)
-        ));
-        
-        return result_base64;
+        return filename.substr(i + 1) == "tiff";
     }
 
 }

@@ -159,7 +159,7 @@ namespace btrgb {
         try {
             if(filename == "")
                 filename = name;
-            ImageWriterStrategy(filetype).write( this->images[name], this->output_directory + filename );
+            ImageWriter(filetype).write( this->images[name], this->output_directory + filename );
 
         }
         catch (ImageWritingError const& e) {

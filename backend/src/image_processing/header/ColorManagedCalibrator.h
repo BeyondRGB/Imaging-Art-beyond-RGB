@@ -34,15 +34,6 @@ public:
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
-
-    /**
-     * @brief Helper function for displaying a matrix to stdout
-     *
-     * @param matrix the matrix to be displayed
-     * @param name the name of the matrix that will be displyed along with values
-     */
-    void display_matrix(cv::Mat* matrix, std::string name);
-
 private:
     cv::Mat optimization_input;// Contains M and offset values in a 1D matrix
     cv::Mat M;// 2D Croping of optimazation_input if values are changed in either the other will be changed

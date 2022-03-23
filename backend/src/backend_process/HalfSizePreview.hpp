@@ -1,15 +1,10 @@
 #ifndef HALFSIZEPREVIEW_H
 #define HALFSIZEPREVIEW_H
 
-#include <vector>
-#include <stdint.h>
-
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <cppcodec/base64_rfc4648.hpp>
-
 #include "ImageUtil/Image.hpp"
-#include "ImageUtil/RawReading/HalfSizeReader.hpp"
+#include "ImageUtil/ImageReader/LibRawReader.hpp"
+#include "ImageUtil/ImageReader/TiffReaderOpenCV.hpp"
+#include "ImageUtil/ImageReader/ImageReaderStrategy.hpp"
 #include "utils/json.hpp"
 #include "server/comunication_obj.hpp"
 
