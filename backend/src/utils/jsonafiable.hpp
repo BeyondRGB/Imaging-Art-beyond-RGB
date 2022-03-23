@@ -2,7 +2,10 @@
 #define JSONAFIABLE_H
 
 #include <jsoncons/json.hpp>
+#include <jsoncons/decode_json.hpp>
+#include <jsoncons/json_reader.hpp>
 #include <opencv2/opencv.hpp>
+#include <fstream>
 
 #include "json.hpp"
 #include "utils/matrix_utils.hpp"
@@ -12,6 +15,8 @@ class Jsonafiable{
     public:
         virtual jsoncons::json jsonafy() = 0;
         virtual void de_jsonafy(jsoncons::json json) = 0;
+
+        static jsoncons::json json_from_file(std::string file_path);
 
         jsoncons::json make_json(std::string name, cv::Mat matrix);
         jsoncons::json make_json(std::string name, int value);

@@ -1,6 +1,26 @@
 #include "jsonafiable.hpp"
 
 
+jsoncons::json Jsonafiable::json_from_file(std::string file_path){
+
+    std::ifstream file_stream;
+    file_stream.open(file_path);
+    if(!file_stream.good()){
+        throw std::runtime_error("Failed to open file: " + file_path);
+    }
+
+    jsoncons::json_decoder<jsoncons::json> decoder;
+    jsoncons::json_stream_reader reader(file_stream, decoder);
+    
+    jsoncons::json json;
+    while (!reader.eof()){
+        reader.read_next();
+    }
+    file_stream.close();
+    json = decoder.get_result();
+    std::cout << json << std::endl;
+    return json;
+}
 
 
 jsoncons::json Jsonafiable::make_json(std::string name, cv::Mat matrix){
@@ -18,6 +38,7 @@ jsoncons::json Jsonafiable::make_json(std::string name, cv::Mat matrix){
         }
     }
     json.insert_or_assign("data", matrix_array);
+    
     return json;
 }
 
@@ -63,33 +84,38 @@ void Jsonafiable::write_matrix_value(jsoncons::json &json_array, cv::Mat matrix,
 }
 
 cv::Mat Jsonafiable::reconstruct_matrix(Json matrix_json){
-    int cols = matrix_json.get_value<int>("cols");
-    int rows = matrix_json.get_value<int>("rows");
-    int mat_type = matrix_json.get_value<int>("mat_type");
-    Json mat_values = matrix_json.get_array("data");
-    cv::Mat matrix = btrgb::matrix_utils::create_matrix(rows,cols,mat_type);
-    for(int row = 0; row < rows; row++){
-        Json row_values = mat_values.array_at(row);
-        for(int col = 0; col < cols; col++){
-            int value_i;
-            float value_f;
-            double value_d;
-            switch (mat_type){
-                case CV_32S:
-                    value_i = row_values.value_at<int>(col);
-                    btrgb::matrix_utils::insert_value<int>(matrix, row, col, value_i);
-                    break;
-                case CV_32F:
-                    value_f = row_values.value_at<float>(col);
-                    btrgb::matrix_utils::insert_value<float>(matrix, row, col, value_f);
-                    break;
-                case CV_64F:
-                default:
-                    value_d = row_values.value_at<double>(col);
-                    btrgb::matrix_utils::insert_value<double>(matrix, row, col, value_d);
-                    break;
+    cv::Mat matrix;
+    try{
+        int cols = matrix_json.get_value<int>("cols");
+        int rows = matrix_json.get_value<int>("rows");
+        int mat_type = matrix_json.get_value<int>("mat_type");
+        Json mat_values = matrix_json.get_array("data");
+        matrix = btrgb::matrix_utils::create_matrix(rows,cols,mat_type);
+        for(int row = 0; row < rows; row++){
+            Json row_values = mat_values.array_at(row);
+            for(int col = 0; col < cols; col++){
+                int value_i;
+                float value_f;
+                double value_d;
+                switch (mat_type){
+                    case CV_32S:
+                        value_i = row_values.value_at<int>(col);
+                        btrgb::matrix_utils::insert_value<int>(matrix, row, col, value_i);
+                        break;
+                    case CV_32F:
+                        value_f = row_values.value_at<float>(col);
+                        btrgb::matrix_utils::insert_value<float>(matrix, row, col, value_f);
+                        break;
+                    case CV_64F:
+                    default:
+                        value_d = row_values.value_at<double>(col);
+                        btrgb::matrix_utils::insert_value<double>(matrix, row, col, value_d);
+                        break;
+                }
             }
         }
+    }catch(std::exception e){
+        throw std::runtime_error("Corrupt Matrix Data");
     }
     return matrix;
 }
