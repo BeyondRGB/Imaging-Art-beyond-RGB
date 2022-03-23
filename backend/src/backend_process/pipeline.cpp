@@ -18,7 +18,7 @@ void Pipeline::callback(std::string msg) {
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
     std::vector<std::shared_ptr<ImgProcessingComponent>> pre_process_components;
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ImageReader(ImageReader::RAW_LibRaw)));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ImageReader()));
     //pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
@@ -61,6 +61,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         td.right_loc = target_location.get_number("right");
         td.col_count = target_location.get_number("cols");
         td.row_count = target_location.get_number("rows");
+        td.sample_size = target_location.get_number("size");
         art_obj->setTargetInfo(td);
         return true;
     }
@@ -106,11 +107,6 @@ void Pipeline::run() {
         this->report_error(this->get_process_name(), err.what());
         return;
     }
-
-
-    /*for(const auto& [name, img]: *images) {
-        images->outputImageAs(btrgb::TIFF, name, name + "_final");
-    }*/
 
 }
 

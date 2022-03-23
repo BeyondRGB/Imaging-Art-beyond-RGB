@@ -7,13 +7,15 @@
 class ImageReader: public ImgProcessingComponent {
 
     public:
-        enum reader_strategy {RAW_LibRaw, TIFF_OpenCV};
-        ImageReader(reader_strategy strategy);
+        enum reader_strategy {none, RAW_LibRaw, TIFF_OpenCV};
+        ImageReader();
         ~ImageReader();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
     private:
-        btrgb::ImageReaderStrategy* _reader;
+        reader_strategy _current_strategy = reader_strategy::none;
+        btrgb::ImageReaderStrategy* _reader = nullptr;
+        void _set_strategy(reader_strategy strategy);
 
 };
 

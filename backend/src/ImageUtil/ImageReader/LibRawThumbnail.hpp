@@ -17,15 +17,15 @@ class LibRawThumbnail : public ImageReaderStrategy {
         LibRawThumbnail();
         ~LibRawThumbnail();
 
-        void open(std::string filename);
-        void recycle();
+        void open(std::string filename) override;
+        void recycle() override;
         bool is_encoded();
         size_t length();
 
 
         void copyBitmapTo(std::vector<uchar>& buffer);
-        void copyBitmapTo(void* buffer, uint32_t size);
-        void copyBitmapTo(cv::Mat& im);
+        void copyBitmapTo(void* buffer, uint32_t size) override;
+        void copyBitmapTo(cv::Mat& im) override;
 
     private:
         LibRaw _reader;
