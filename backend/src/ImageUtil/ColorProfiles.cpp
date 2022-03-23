@@ -2,12 +2,12 @@
 
 namespace btrgb {
 
-void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
-
-    if( from == none || to == none ) {
-        throw std::logic_error("[ColorProfiles] Color space conversion to/from \"none\" not implemented.");
-    }
-
+cv::Mat ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
+    if( to == none )
+        throw std::logic_error("[ColorProfiles] Color space conversion to \"none\" not implemented.");
+    if( from == none )
+        return im;
+    
     /* Change the shape to:
      *      #channels=1, #columns=#channels, #rows=#pixels
      * then transpose to: 
@@ -31,7 +31,7 @@ void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
 
     /* Transpose the image back, and reshape to original dimensions. */
     cv::Mat result = pixels_out.t();
-    result.reshape(im.channels(), im.rows).copyTo(im);
+    return result.reshape(im.channels(), im.rows);
 
 }
 
