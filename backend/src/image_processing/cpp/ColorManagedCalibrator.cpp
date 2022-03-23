@@ -176,7 +176,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     }
     cm_RGB.release(); // No longer needed
 
-    cm_im->setColorProfile(btrgb::ColorSpace::ProPhoto);
+    cm_im->setColorProfile(this->color_space);
 
     // Store New Image and write to TIFF
     std::string name = "ColorManaged";
