@@ -11,34 +11,31 @@
         const output = document.getElementById("output");
         const images = document.getElementById("img_output");
         const ws = new WebSocket("ws://localhost:9002");
-        let blob_global;
+
+        ws.binaryType = "blob";
+        let image_header = "";
 
         ws.onmessage = (e) => {
-            console.log(e.data);
-            try {
+            if(e.data instanceof Blob) {
+                console.log("Received binary packet");
+
+                /* Get Blob and set its type. */
+                rsp = e.data;
+                rsp.type = image_header.type;
+
+                /* Create object url for blob image. */
+                let im_url = URL.createObjectURL(rsp);
+                
+                /* Use the Blob URL as the source of an image tag. */
+                let im = new Image();
+                im.src = im_url;
+                images.append(im);
+            }
+            else {
                 rsp = JSON.parse(e.data);
                 console.log(rsp);
-                if(rsp.ResponseType = "ImageBase64") {
-                    if(typeof(rsp.ResponseData.dataURL) == "string") {
-                        let im = new Image();
-                        im.src = rsp.ResponseData.dataURL;
-                        images.append(im);
-                    }
-                    else {
-                        console.error("Failed to get image thumbnail");
-                    }
-                    /*fetch(rsp.ResponseData.dataURL)
-                    .then(res => res.blob())
-                    .then(blob_data => {
-                        blob_global = blob_data;
-
-                    });*/
-                }
-            }
-            catch(SyntaxError) {
-                let m = document.createElement("div");
-                m.textContent = e.data;
-                output.appendChild(m);
+                if(rsp.ResponseType = "ImageBinary")
+                    image_header = rsp.ResponseData;
             }
         }
 
@@ -47,8 +44,8 @@
                 "RequestID": 345345,
                 "RequestType": "Thumbnails",
                 "RequestData": {
-                    "names": [/*
-                        "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_targets_1.CR2",
+                    "names": [
+                        /*"C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_targets_1.CR2",
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_white_1.CR2",
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_dark_1.CR2",
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_targets_2.CR2",
@@ -62,19 +59,19 @@
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\fuji_raws\\fuji_white_2.RAF",
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\fuji_raws\\fuji_dark_2.RAF"*/
 
-                        "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_white_2.NEF",
+                        /*"/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_white_2.NEF",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_targets_2.NEF",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_dark_2.NEF",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_white_1.NEF", 
                         "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_targets_1.NEF",
-                        "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_dark_1.NEF"
+                        "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_dark_1.NEF"*/
 
-                        /*"/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/white2_raw.tiff",
+                        "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/white2_raw.tiff",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/art2_raw.tiff",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/dark2_raw.tiff",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/white1_raw.tiff", 
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/art1_raw.tiff",
-                        "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/dark1_raw.tiff"*/
+                        "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/dark1_raw.tiff"
 
                     ]
                 }

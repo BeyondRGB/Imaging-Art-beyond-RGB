@@ -14,25 +14,49 @@ HalfSizePreview::~HalfSizePreview() {}
 void HalfSizePreview::run() {
 
     Json filenames = this->process_data_m->get_array("names");
-    btrgb::LibRawReader* reader = new btrgb::LibRawReader(btrgb::LibRawReader::PREVIEW);
+    std::unique_ptr<btrgb::LibRawReader> raw_reader(new btrgb::LibRawReader(btrgb::LibRawReader::PREVIEW));
+    std::unique_ptr<btrgb::TiffReaderOpenCV> tiff_reader(new btrgb::TiffReaderOpenCV);
+    btrgb::ImageReaderStrategy* reader;
     std::string fname;
+    bool is_tiff;
 
     for (int i = 0; i < filenames.get_size(); i++) {
         try {
             fname = filenames.string_at(i);
+            is_tiff = btrgb::Image::is_tiff(fname);
 
-            /* Open and quick post-process of RAW. Then, copy bitmap to a Mat. */
+            /* Select image reader. */
+            if(is_tiff)
+                reader = tiff_reader.get();
+            else
+                reader = raw_reader.get();
+
+
+            /* Open image and get Mat. */
             reader->open(fname);
-            cv::Mat im( reader->height(), reader->width(), CV_8UC(reader->channels()) );
-            reader->copyBitmapTo( (uint8_t*) im.data, im.rows * im.cols * im.channels() );
+            cv::Mat im;
+            reader->copyBitmapTo(im);
             reader->recycle();
+
+            /* Make sure image has a bit depth of eight. */
+            if(is_tiff) {
+                double min, max;
+                cv::minMaxIdx(im, &min, &max);
+                im.convertTo(im, CV_8U, 0xFF / max);
+            }
 
             /* Wrap the Mat as an Image object. */
             btrgb::Image imObj(fname + ".HalfSize");
             imObj.initImage(im);
 
-            this->coms_obj_m->send_base64(&imObj, btrgb::PNG, btrgb::FAST);
 
+            /* Send image. */
+            this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
+
+
+        }
+        catch(const btrgb::LibRawFileTypeUnsupported& e) {
+            this->report_error(this->get_process_name(), "File type unknown, or unsupported by LibRaw.");
         }
         catch(const ParsingError& e) {
             this->report_error(this->get_process_name(), e.what());
@@ -43,8 +67,7 @@ void HalfSizePreview::run() {
         catch(const btrgb::FailedToEncode& e) {
             this->report_error(this->get_process_name(), std::string(e.what()) + " (" + fname + ")");
         }
+        reader->recycle();
     }
-
-    delete reader;
 
 }
