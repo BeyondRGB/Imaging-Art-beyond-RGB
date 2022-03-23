@@ -273,12 +273,14 @@
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image");
     let temp = new Image();
+
     temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
-    if (imageUrl === temp.src) {
-      console.log("skip");
-    } else {
-      imageUrl = temp.src;
-    }
+    imageUrl = temp.src;
+
+    viewer.open({
+      type: "image",
+      url: imageUrl,
+    });
   }
 
   let root = document.documentElement;
@@ -371,109 +373,44 @@
     )} ({imagePoint?.x.toFixed(2)} px)
   </p>
   <div id="color-seadragon-viewer" />
-  {#if colorTarget}
-    <div class="selectorBox" id={`sBox-0`}>
-      <div class="layout">
-        <div class="gridBox" id={`gBox-0`}>
-          {#each [...Array(colorTarget.rows * colorTarget.cols).keys()].map((i) => i + 1) as boxIndex}
-            <div class="line">
-              <div class="target" />
-              <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
-            </div>
-          {/each}
-        </div>
 
-        <div class="exp top group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
+  {#each [colorTarget, verifyTarget] as target, i}
+    {#if target}
+      <div class="selectorBox" class:ver={i === 1} id={`sBox-${i}`}>
+        <div class="layout">
+          <div class="gridBox" id={`gBox-${i}`}>
+            {#each [...Array(target.rows * target.cols).keys()].map((i) => i + 1) as boxIndex}
+              <div class="line" class:ver={i === 1}>
+                <div class:target={i === 0} class:verTarget={i === 1} />
+                <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
+              </div>
+            {/each}
+          </div>
+
+          <div class="exp top group">
+            <button class="dec">
+              <MinusIcon size="1.5x" />
+            </button>
+            <button class="inc">
+              <PlusIcon size="1.5x" />
+            </button>
+          </div>
+          <div class="exp right group">
+            <button class="dec">
+              <MinusIcon size="1.5x" />
+            </button>
+            <button class="inc">
+              <PlusIcon size="1.5x" />
+            </button>
+          </div>
         </div>
-        <!-- <div class="exp left group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
-        <div class="exp right group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div>
-        <!-- <div class="exp bottom group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
+        <div class="corner tl" />
+        <div class="corner tr" />
+        <div class="corner bl" />
+        <div class="corner br" />
       </div>
-      <div class="corner tl" />
-      <div class="corner tr" />
-      <div class="corner bl" />
-      <div class="corner br" />
-    </div>
-  {/if}
-
-  {#if verifyTarget}
-    <div class="selectorBox ver" id={`sBox-1`}>
-      <div class="layout">
-        <div class="gridBox" id={`gBox-1`}>
-          {#each [...Array(verifyTarget.rows * verifyTarget.cols).keys()].map((i) => i + 1) as boxIndex}
-            <div class="line ver">
-              <div class="verTarget" />
-              <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
-            </div>
-          {/each}
-        </div>
-
-        <div class="exp top group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div>
-        <!-- <div class="exp left group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
-        <div class="exp right group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div>
-        <!-- <div class="exp bottom group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
-      </div>
-      <div class="corner tl" />
-      <div class="corner tr" />
-      <div class="corner bl" />
-      <div class="corner br" />
-    </div>
-  {/if}
+    {/if}
+  {/each}
 
   <div id="rowCol">
     Color Target:

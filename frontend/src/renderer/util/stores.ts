@@ -14,7 +14,7 @@ export const processState = writable({
     {
       id: 1,
       name: "Art 1",
-      colorTargetImage: { dataURL: "", filename: "" },
+      colorTargetImage: { dataURL: "", filename: "", },
       verificationTargetImage: { dataURL: "", filename: "" },
       colorTarget: {},
       verificationTarget: {},
