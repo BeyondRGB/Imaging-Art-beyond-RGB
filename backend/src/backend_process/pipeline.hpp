@@ -10,7 +10,7 @@
 #include "image_processing/header/ImgProcessingComponent.h"
 #include "image_processing/header/PixelRegestor.h"
 #include "image_processing/header/PreProcessor.h"
-#include "image_processing/header/RawImageReader.h"
+#include "image_processing/header/ImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
 #include "image_processing/header/ResultsProcessor.h"
 
