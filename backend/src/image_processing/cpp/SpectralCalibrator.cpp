@@ -59,7 +59,7 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
     min_solver->setFunction(ptr_F);
     // TODO We have not decided on a final value for the initial step once we do updat it here
-    double initial_stp_value = 0.5;
+    double initial_stp_value = 0.75;
     cv::Mat step;
     this->init_step(initial_stp_value, step);
     min_solver->setInitStep(step);
