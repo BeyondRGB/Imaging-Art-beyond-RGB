@@ -92,15 +92,13 @@
     console.log("New Image (Image Viewer)");
     let temp = new Image();
     temp.src = $processState.outputImage?.dataURL;
-    if (imageUrl === temp.src) {
-      console.log("skip (image viewer)");
-    } else {
-      imageUrl = temp.src;
-      viewer.open({
-        type: "image",
-        url: imageUrl,
-      });
-    }
+
+    imageUrl = temp.src;
+
+    viewer.open({
+      type: "image",
+      url: imageUrl,
+    });
   }
 
   function handleZoom(e) {

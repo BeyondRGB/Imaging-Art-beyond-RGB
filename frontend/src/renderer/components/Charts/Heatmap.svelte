@@ -680,6 +680,10 @@
         scaleType: "labels",
       },
     },
+    legend: {
+      enabled: true,
+      alignment: "center",
+    },
     heatmap: {
       colorLegend: {
         title: "",
@@ -694,10 +698,6 @@
       //   { type: "Zoom out" },
       // ],
       numberOfIcons: 1,
-    },
-    legend: {
-      enabled: true,
-      alignment: "center",
     },
     height: "75vh",
     resizable: true,
@@ -763,7 +763,7 @@
     display: grid;
     grid-template-rows: repeat(9, auto);
     grid-template-columns: repeat(13, auto);
-    @apply absolute w-[75vh] h-[75vh] pt-[8vh] pb-[10vh] pl-[4.5vh] pointer-events-none;
+    @apply absolute w-[75vh] h-[75vh] pt-[3rem] pb-[3.8rem] pl-[1.7rem] pointer-events-none;
   }
   .heatmap-value {
     @apply flex justify-center items-center h-full w-full font-bold text-black;

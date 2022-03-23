@@ -1,6 +1,7 @@
 <script>
   import Heatmap from "@components/Charts/Heatmap.svelte";
   import ScatterCharts from "@root/components/Charts/ScatterCharts.svelte";
+  import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import { ChevronsDownIcon, ChevronsUpIcon } from "svelte-feather-icons";
   let open = false;
 </script>
@@ -18,6 +19,7 @@
     <div class={`reports ${open ? "open-report" : ""}`}>
       <div class="report-item"><Heatmap /></div>
       <div class="report-item"><ScatterCharts /></div>
+      <div class="report-item"><LinearChart /></div>
     </div>
   </div>
   <div class="art">

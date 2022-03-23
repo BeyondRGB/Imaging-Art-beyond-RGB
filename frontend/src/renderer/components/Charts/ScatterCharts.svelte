@@ -322,6 +322,8 @@
       )})`
     ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
   });
+  console.log(testLC);
+  console.log(colorsLC);
 </script>
 
 <div class="scatter-charts">
