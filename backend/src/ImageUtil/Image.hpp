@@ -78,7 +78,6 @@ namespace btrgb {
             void initImage(cv::Mat im);
 
             cv::Mat getMat();
-            cv::Mat getMatCopyAs(int cv_type);
 
             int width();
             int height();
@@ -101,7 +100,9 @@ namespace btrgb {
             void recycle();
             int _raw_bit_depth = 0;
             
+            /* ====== static ======= */
             static bool is_tiff(std::string filename);
+            static cv::Mat copyMatConvertDepth(cv::Mat input, int cv_depth);
 
         private:
             std::string _name;

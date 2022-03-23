@@ -2,37 +2,151 @@
 
 namespace btrgb {
 
-cv::Mat ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
-    if( to == none )
-        throw std::logic_error("[ColorProfiles] Color space conversion to \"none\" not implemented.");
-    if( from == none )
-        return im;
+void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
+
+    if(im.channels() != 3)
+        throw std::runtime_error("[ColorProfiles::convert] Only supports three-channel images.");
+
+    else if(from == ColorSpace::none)
+        ColorProfiles::apply_gamma(im, ColorSpace::sRGB);
     
-    /* Change the shape to:
-     *      #channels=1, #columns=#channels, #rows=#pixels
-     * then transpose to: 
-     *      #channels=1, #columns=#pixels, #rows=#channels */
-    int pixel_count = im.rows * im.cols;
-    cv::Mat pixels_in = im.reshape(1, pixel_count).t();
-
-    /* Get conversion matricies. */
-    cv::Mat input_to_xyz = XYZ_to_RGB[from].inv();
-    cv::Mat xyz_to_output= XYZ_to_RGB[to];
-
-    /* Convert input color space to XYZ. */
-    cv::Mat pixels_xyz;
-    pixels_xyz = pixels_in * input_to_xyz;
-    pixels_in.release();
-
-    /* Convert XYZ to target color space. */
-    cv::Mat pixels_out;
-    pixels_out = pixels_xyz * xyz_to_output;
-    pixels_xyz.release();
-
-    /* Transpose the image back, and reshape to original dimensions. */
-    cv::Mat result = pixels_out.t();
-    return result.reshape(im.channels(), im.rows);
+    else {
+        ColorProfiles::linearize(im, from);
+        ColorProfiles::convert_to_xyz(im, from);
+        ColorProfiles::convert_to_color(im, to);
+        ColorProfiles::apply_gamma(im, to);
+    }
 
 }
+
+void ColorProfiles::multiply_conversion_matrix(cv::Mat im, cv::Mat m) {
+    /* Change the input image shape to:
+     * #channels=1, #columns=#channels, #rows=#pixels
+     * RGB
+     * RGB
+     * RGB
+     * RGB 
+     * ...
+     * [pixel_vectors] is the same underlying data as [im], 
+     * just with a different matrix header.
+     */
+    int pixel_count = im.rows * im.cols;
+    cv::Mat pixel_vectors = im.reshape(1, pixel_count);
+
+    /* Multiply matricies:
+     * It is quicker to transpose the 3x3 conversion matrix
+     * instead of the entire image. */
+    pixel_vectors *= m.t();
+
+}
+
+void ColorProfiles::convert_to_xyz(cv::Mat im, ColorSpace from) {
+    cv::Mat m;
+
+    switch(from) {
+    case ColorSpace::ProPhoto:
+        m = (cv::Mat_<float>(3,3) <<
+            0.7976749, 0.1351917, 0.0313534,
+            0.2880402, 0.7118741, 0.0000857,
+            0.0000000, 0.0000000, 0.8252100
+        ); break;
+
+    default:
+        throw std::runtime_error("[ColorProfiles::convert_to_xyz] Not implemented. ");
+    }
+
+    ColorProfiles::multiply_conversion_matrix(im, m);
+}
+
+void ColorProfiles::convert_to_color(cv::Mat im, ColorSpace to) {
+    cv::Mat m;
+
+    switch(to) {
+    case ColorSpace::ProPhoto:
+        m = (cv::Mat_<float>(3,3) <<
+             1.3459433, -0.2556075, -0.0511118,
+            -0.5445989,  1.5081673,  0.0205351,
+             0.0000000,  0.0000000,  1.2118128
+        ); break;
+
+    case ColorSpace::Adobe_RGB_1998:
+        m = (cv::Mat_<float>(3,3) <<
+             1.9624274, -0.6105343, -0.3413404,
+            -0.9787684,  1.9161415,  0.0334540,
+             0.0286869, -0.1406752,  1.3487655
+        ); break;
+
+    case ColorSpace::sRGB:
+        m = (cv::Mat_<float>(3,3) <<
+             3.1338561, -1.6168667, -0.4906146,
+            -0.9787684,  1.9161415,  0.0334540,
+             0.0719453, -0.2289914 , 1.4052427
+        ); break;
+
+    case ColorSpace::Wide_Gamut_RGB:
+        m = (cv::Mat_<float>(3,3) <<
+             1.4628067, -0.1840623, -0.2743606,
+            -0.5217933,  1.4472381,  0.0677227,
+             0.0349342, -0.0968930,  1.2884099
+        ); break;
+
+    default:
+        throw std::runtime_error("[ColorProfiles::convert_to_color] Not implemented. ");
+    }
+
+    ColorProfiles::multiply_conversion_matrix(im, m);
+}
+
+
+void ColorProfiles::linearize(cv::Mat im, ColorSpace from) {
+    #define BTRGB_PROPHOTO_INVERSE_GAMMA(x) (x >= 0.03125 ? pow(x, 1.8) : x / 16)
+
+    switch(from) {
+
+        case ColorSpace::ProPhoto:
+            im.forEach<cv::Vec3f>([](cv::Vec3f& pixel, const int* pos) -> void {
+                pixel[R] = BTRGB_PROPHOTO_INVERSE_GAMMA(pixel[R]);
+                pixel[G] = BTRGB_PROPHOTO_INVERSE_GAMMA(pixel[G]);
+                pixel[B] = BTRGB_PROPHOTO_INVERSE_GAMMA(pixel[B]);
+            }); break;
+
+        default:
+            throw std::runtime_error("[ColorProfiles::inverse_gamma] Not implemented. ");
+    }
+        
+    #undef BTRGB_PROPHOTO_INVERSE_GAMMA
+}
+
+
+void ColorProfiles::apply_gamma(cv::Mat im, ColorSpace to) {
+    #define BTRGB_PROPHOTO_GAMMA(x) (x >= 0.001953125 ? pow(x, 1/1.8) : x * 16)
+    #define BTRGB_sRGB_GAMMA(x) (x > 0.0031308 ? 1.055 * pow(x, 1/2.5) - 0.055 : x * 12.92)
+
+    int channels = im.channels();
+    switch(to) {
+
+        case ColorSpace::ProPhoto:
+            im.forEach<cv::Vec3f>([](cv::Vec3f& pixel, const int* pos) -> void {
+                pixel[R] = BTRGB_PROPHOTO_GAMMA(pixel[R]);
+                pixel[G] = BTRGB_PROPHOTO_GAMMA(pixel[G]);
+                pixel[B] = BTRGB_PROPHOTO_GAMMA(pixel[B]);
+            }); break;
+
+        case ColorSpace::sRGB:
+            im.forEach<cv::Vec3f>([](cv::Vec3f& pixel, const int* pos) -> void {
+                pixel[R] = BTRGB_sRGB_GAMMA(pixel[R]);
+                pixel[G] = BTRGB_sRGB_GAMMA(pixel[G]);
+                pixel[B] = BTRGB_sRGB_GAMMA(pixel[B]);
+            }); break;
+
+        default:
+            throw std::runtime_error("[ColorProfiles::apply_gamma] Not implemented. ");
+    }
+    
+    #undef BTRGB_PROPHOTO_GAMMA
+    #undef BTRGB_sRGB_GAMMA
+}
+
+
 
 };
