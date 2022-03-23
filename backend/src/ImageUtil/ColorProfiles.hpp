@@ -12,7 +12,7 @@ enum ColorSpace {
 
 class ColorProfiles {
 public:
-    static void convert(cv::Mat im, ColorSpace from, ColorSpace to);
+    static cv::Mat convert(cv::Mat im, ColorSpace from, ColorSpace to);
 
 };
 
@@ -20,28 +20,28 @@ public:
 const cv::Mat XYZ_to_RGB[4] = {
 
     /* Adobe RGB 1998 */
-    (cv::Mat_<double>(3,3) <<
+    (cv::Mat_<float>(3,3) <<
         1.9624274, -0.6105343, -0.3413404,
         -0.9787684,  1.9161415,  0.0334540,
         0.0286869, -0.1406752,  1.3487655
     ),
 
     /* ProPhoto */
-    (cv::Mat_<double>(3,3) <<
+    (cv::Mat_<float>(3,3) <<
         1.3459433, -0.2556075, -0.0511118,
         -0.5445989,  1.5081673,  0.0205351,
         0.0000000,  0.0000000,  1.2118128
     ),
 
     /* sRGB */
-    (cv::Mat_<double>(3,3) <<
+    (cv::Mat_<float>(3,3) <<
         3.1338561, -1.6168667, -0.4906146,
         -0.9787684,  1.9161415,  0.0334540,
         0.0719453, -0.2289914 , 1.4052427
     ),  
 
     /* Wide Gamut RGB */
-    (cv::Mat_<double>(3,3) <<
+    (cv::Mat_<float>(3,3) <<
         1.4628067, -0.1840623, -0.2743606,
         -0.5217933,  1.4472381,  0.0677227,
         0.0349342, -0.0968930,  1.2884099

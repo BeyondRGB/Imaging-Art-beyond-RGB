@@ -129,8 +129,10 @@ namespace btrgb {
             }
 
             /* Convert to 8 bit to save space. */
-            if(im.depth() != CV_8U) {
-                im.convertTo(im, CV_8U, 0xFF);
+            if(im.depth() == CV_32F) {
+                /* Convert color space. */
+                cv::Mat im_srgb = ColorProfiles::convert(im, this->_color_profile, ColorSpace::sRGB);
+                im_srgb.convertTo(im, CV_8U, 0xFF);
             }
 
             /* Set compression parameters for use later. */
@@ -147,6 +149,9 @@ namespace btrgb {
 
         case FULL:
             im = this->_opencv_mat;
+
+            /* Convert color space. */
+            im = ColorProfiles::convert(im, this->_color_profile, ColorSpace::sRGB);
 
             if(type == WEBP) {
                 /* Quality above 100 for lossless. */
