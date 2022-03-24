@@ -91,7 +91,6 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     std::string illum_str = ref_data_json.get_string(key_map[DataKey::Illuminants]);
     results_obj->store_string(GI_ILLUMINANT, illum_str);
     // White Patch Coords
-    // TODO add this once info sent from front end
     RefData *ref_data = art_obj->get_refrence_data();
     std::string coords = ref_data->get_white_patch()->get_name();
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
@@ -130,8 +129,9 @@ void Pipeline::run() {
 
     /* Execute the pipeline on the created ArtObject */
     this->send_info( "About to execute...", this->get_process_name());
-    try { pipeline->execute(this->coms_obj_m.get(), images.get()); }
-    catch(const std::exception& err) {
+    try { 
+        pipeline->execute(this->coms_obj_m.get(), images.get());
+    }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
     }
@@ -141,8 +141,13 @@ void Pipeline::run() {
 
 std::string Pipeline::get_output_directory() {
     
+	std::time_t now = std::time(0);
+	std::tm *ltm = std::localtime(&now);
+    std::string date_string = btrgb::get_date("-");
+    std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
-        std::string dir = this->process_data_m->get_string("destinationDirectory");
+        std::string base_dir = this->process_data_m->get_string("destinationDirectory");
+        std::string dir = base_dir + "/BTRGB_" + date_string + "_" + time_string + "/";
         std::filesystem::create_directories(dir);
         return dir;
     }
