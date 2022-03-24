@@ -42,14 +42,14 @@ cv::Mat btrgb::calibration::build_camra_signals_matrix(Image* art[], int art_cou
     cv::Mat camra_sigs = cv::Mat_<double>(channel_count, height * width, CV_32FC1);
     int chan_count = 3; // Each image only has 3 channels
     for(int art_i = 0; art_i < art_count; art_i++){
-        // The are image we are currently getting pixel values from
+        // The art image we are currently getting pixel values from
         btrgb::Image* art_c = art[art_i];
         for(int chan = 0; chan < chan_count; chan++){
             // The row in the six_chan matrix we are currently adding values to
             int mat_row = chan + art_i * chan_count;
             for(int row = 0; row < art_c->height(); row++){
                 int offset_index = chan + art_i * 3;
-                // The offset value subracted from each pixel, but we only need to subtract offsets if some were given
+                // The offset value subracted from each pixel, but we only need to subtract offsets if some were given. Offsets default to null
                 double offset_value = 0;
                 if(nullptr != offsets){
                     offset_value = offsets->at<double>(offset_index);
@@ -68,3 +68,76 @@ cv::Mat btrgb::calibration::build_camra_signals_matrix(Image* art[], int art_cou
     }
     return camra_sigs;
 }
+
+cv::Mat btrgb::calibration::calc_R_camera(cv::Mat M_refl, cv::Mat camera_sigs){
+    cv::Mat R_camera = M_refl * camera_sigs;
+    for(int row = 0; row < R_camera.rows; row++){
+        for(int col = 0; col < R_camera.cols; col++){
+            // If any value is found to be negative set it to zero
+            if(R_camera.at<double>(row,col) < 0){
+                R_camera.at<double>(row,col) = 0;
+            }
+        }
+    }
+    return R_camera;
+}
+
+void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
+    bool contains_negatives = false;
+    std::cout << std::endl;
+    std::cout << "What is in " << name << std::endl;
+    if (nullptr != matrix) {
+        for (int chan = 0; chan < matrix->rows; chan++) {
+            for (int col = 0; col < matrix->cols; col++) {
+                if (col != 0) {
+                    std::cout << ", ";
+                }
+                double val = matrix->at<double>(chan, col);
+                std::cout << val;
+                if(val < 0)
+                    contains_negatives = true;
+            }
+            std::cout << std::endl;// << std::endl;
+        }
+    }
+    else {
+        std::cout << "Matrix not initialized" << std::endl;
+    }
+    
+    std::cout << name << " rows: " << matrix->rows << " " << name << " cols: " << matrix->cols << std::endl;
+    if(contains_negatives)
+        std::cout << "Contains Negative Values." << std::endl;
+    else
+        std::cout << "All Values are posotive." << std::endl;
+}
+
+double btrgb::calibration::row_min(cv::Mat &target, int row){
+    double min = std::numeric_limits<double>::max();//MAX;
+    for(int col = 0; col < target.cols; col++){
+        double val = target.at<double>(row, col);
+        if(val < min){
+            min = val;
+        }
+    }
+    return min;
+}
+
+double btrgb::calibration::row_max(cv::Mat &target, int row){
+    double max = std::numeric_limits<double>::min();//MIN;
+    for(int col = 0; col < target.cols; col++){
+        double val = target.at<double>(row, col);
+        if(val > max){
+            max = val;
+        }
+    }
+    return max;
+}
+
+void btrgb::calibration::enter_to_continue(){
+        std::cout << "Enter To Continue.";
+        char c;
+        do{
+            std::cin >> std::noskipws >> c;
+            std::cout << "c: (" << c << ")" << std::endl;
+        }while(c != '\n');
+    }
