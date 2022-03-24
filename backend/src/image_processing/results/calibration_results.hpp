@@ -21,10 +21,25 @@
 #define R_TYPE "ResultType_id"
 
 // CM Calibration Keys
-#define CM_DELTA_E_AVG     "Average DeltaE"
-#define CM_M               "CM Calibration M"
-#define CM_OFFSETS         "CM Calibration Offsets"
-#define CM_DLETA_E_VALUES  "CM Calibration DeltaE"
+#define CM_DELTA_E_AVG      "CM DeltaE Mean"
+#define CM_M                "CM Optimized M"
+#define CM_OFFSETS          "CM Optimized Offsets"
+#define CM_DLETA_E_VALUES   "CM DeltaE Values"
+#define CM_CAMERA_SIGS      "CM PreCalibrated RGB Camera Signals"
+#define CM_XYZ              "CM Calibrated XYZ Values"
+#define L_CAMERA            "CM L*_camera"
+#define a_CAMERA            "CM a*_camera"
+#define b_CAMERA            "CM b*_camera"
+#define L_REF               "CM L*_ref"
+#define a_REF               "CM a*_ref"
+#define b_REF               "CM b*_ref"
+
+// Json Value Storage Keys
+#define MATRIX_KEY "matrix_values"
+#define INT_KEY "integer_values"
+#define DOUBLE_KEY "double_values"
+#define STRING_KEY "string_values"
+
 
 class CalibrationResults: public Jsonafiable, private CSVParser{
 
@@ -76,6 +91,14 @@ public:
     void store_double(std::string key, double value);
 
     /**
+     * @brief Store the given value in the results map
+     * 
+     * @param key the key to be used to access the value in the rsults map
+     * @param value the value to store
+     */
+    void store_string(std::string key, std::string value);
+
+    /**
      * @brief retrive matrix from the results map
      * 
      * @param key the key identifying the matrix
@@ -98,6 +121,14 @@ public:
      * @return double 
      */
     double get_double(std::string key);
+
+    /**
+     * @brief Retrive value from the results map
+     * 
+     * @param key the key identifying the value
+     * @return std::string 
+     */
+    std::string get_string(std::string key);
 
     /**
      * @brief Write all result values currently beeing stored by this class.
@@ -129,6 +160,7 @@ public:
     void reconstruct_matracies(Json parser);
     void reconstruct_doubles(Json parser);
     void reconstruct_ints(Json parser);
+    void reconstruct_strings(Json parser);
 
 
 private:
@@ -136,41 +168,9 @@ private:
     std::unordered_map<std::string, cv::Mat> result_matricies;
     std::unordered_map<std::string, int> result_ints;
     std::unordered_map<std::string, double> result_doubles;
+    std::unordered_map<std::string, std::string> results_strings;
     int cur_mat_type;
-
-    // /**
-    //  * @brief Reads in the given file.
-    //  * This expects that the given file be a .csv in the form
-    //  *          <Result Name>
-    //  *          <Mesult MetaData>
-    //  *          <Result Value/Values>
-    //  * Results are expected to be seperated by an empty line
-    //  * 
-    //  * This will read through the entire file and store any/all valid result entrys found.
-    //  * If the reader fails to pars a result the result will not be stored and the reader will move on to the next entry
-    //  * 
-    //  * @param results_file the file to read
-    //  */
-    // void read_results(std::string results_file);
-
-    // /**
-    //  * @brief Pars ResultMetaData
-    //  * Each Reslut entry is expected to have MetaData emediatly after the name of the result
-    //  * ResultMetaData is expected to be in the form
-    //  *      <key1>:<value1>,<key2>:<value2>, ..., <keyN>:<valueN>
-    //  * 
-    //  * The meta data stores things souchs as 
-    //  *      value type (stored as a number that maps to the enum ResultType)
-    //  *      col/row count
-    //  *      matrix value type
-    //  * 
-    //  * At minimum the meta data must include the value type
-    //  * 
-    //  * @param info_string 
-    //  * @return std::unordered_map<std::string, int> 
-    //  */
-    // std::unordered_map<std::string, int> pars_result_info(std::string info_string);
-    
+  
     /**
      * @brief Itterates over every matix stored and appends its output to the given output_stream
      * 
@@ -191,6 +191,8 @@ private:
      * @param output_stream 
      */
     void write_doubls(std::ostream &output_stream);
+
+    void write_strings(std::ostream &output_stram);
 
     /**
      * @brief Output the given matrix.
@@ -216,47 +218,6 @@ private:
      */
     void write_matrix_value(std::ostream &output_stream, cv::Mat matrix, int row, int col);
     
-    // /**
-    //  * @brief Initialize a new matrix and fill with values read in from file
-    //  * Assuming that the matrix is successfuly read in, it is stored in results map
-    //  * If any error occurs while trying to build the matrix an error is reported and the result is not stored
-    //  * 
-    //  * @param name the name of the matrix and the key that will be used to store it
-    //  * @param info_map map containing the MetaData needed to reconstruc the matrix
-    //  */
-    // void init_matrix(std::string name, std::unordered_map<std::string, int> info_map);
-    
-    // /**
-    //  * @brief Create a matrix object of specified size and type
-    //  * 
-    //  * @param row_count number of rows the matrix should have
-    //  * @param col_count number of colums the matrix should have
-    //  * @param type_id the type identifyer the matrix should have
-    //  * @return cv::Mat 
-    //  */
-    // cv::Mat create_matrix(int row_count, int col_count, int type_id);
-
-    // /**
-    //  * @brief Fills matrix colums from values found in given line on specified row
-    //  * This will extrace the values from the line and convert them to the type of the matrix
-    //  * 
-    //  * @param line a comma seperated string of values
-    //  * @param row_num the row of the matrix the line represents
-    //  * @param matrix the matrix to place values in
-    //  */
-    // void append_row(std::string line, int row_num, cv::Mat matrix);
-
-    // /**
-    //  * @brief Initialize an integer value
-    //  * 
-    //  * @param name 
-    //  */
-    // void init_int(std::string name);
-
-    // void init_double(std::string name);
-
-    // void scane_for_next_result();
-    // void report_error(std::string error);
 };
 
 class ResultError: public std::exception{

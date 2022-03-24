@@ -11,8 +11,11 @@ class ResultsProcessor : public ImgProcessingComponent{
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
     private:
-        void output_results(btrgb::ArtObject* images);
+        void output_user_results(btrgb::ArtObject* images);
+        void output_btrgb_results(btrgb::ArtObject* images);
         void output_images(btrgb::ArtObject* images);
+
+        std::string output_dir;
 };
 
 #endif //RESULTS_PROCESSOR_H

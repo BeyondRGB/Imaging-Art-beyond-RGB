@@ -69,6 +69,20 @@ cv::Mat btrgb::calibration::build_camra_signals_matrix(Image* art[], int art_cou
     return camra_sigs;
 }
 
+cv::Mat btrgb::calibration::apply_offsets(cv::Mat camera_sigs, cv::Mat offsets){
+    int row_count = camera_sigs.rows;
+    int col_count = camera_sigs.cols;
+    cv::Mat_<double> res(row_count, col_count, CV_64FC1);
+    for(int row = 0; row < row_count; row++){
+        double offset = offsets.at<double>(row);
+        for(int col = 0; col < col_count; col++){
+            double value = camera_sigs.at<double>(row,col);
+            res.at<double>(row,col) = value - offset;
+        }
+    }
+    return res;
+}
+
 cv::Mat btrgb::calibration::calc_R_camera(cv::Mat M_refl, cv::Mat camera_sigs){
     cv::Mat R_camera = M_refl * camera_sigs;
     for(int row = 0; row < R_camera.rows; row++){

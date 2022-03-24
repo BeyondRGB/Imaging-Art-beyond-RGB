@@ -51,6 +51,10 @@ private:
     double stp;
     int mid;
 
+    void fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
+                         cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
+                         cv::Mat xyz);
+
     /**
      * @brief Get the Matrix for converting xyz to rgb for the given color space
      *

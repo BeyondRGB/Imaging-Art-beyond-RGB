@@ -18,7 +18,6 @@ jsoncons::json Jsonafiable::json_from_file(std::string file_path){
     }
     file_stream.close();
     json = decoder.get_result();
-    std::cout << json << std::endl;
     return json;
 }
 
@@ -27,32 +26,39 @@ jsoncons::json Jsonafiable::make_json(std::string name, cv::Mat matrix){
     jsoncons::json json;
     int rows = matrix.rows;
     int cols = matrix.cols;
-    json.insert_or_assign("name", name);
-    json.insert_or_assign("rows", rows);
-    json.insert_or_assign("cols", cols);
-    json.insert_or_assign("mat_type", matrix.type());
+    json.insert_or_assign(NAME_KEY, name);
+    json.insert_or_assign(ROW_KEY, rows);
+    json.insert_or_assign(COL_KEY, cols);
+    json.insert_or_assign(MAT_TYPE_KEY, matrix.type());
     jsoncons::json matrix_array = jsoncons::json::make_array<2>(rows,cols);
     for(int row = 0; row < rows; row++){
         for(int col = 0; col < cols; col++){
             this->write_matrix_value(matrix_array, matrix, row,col);
         }
     }
-    json.insert_or_assign("data", matrix_array);
+    json.insert_or_assign(DATA_KEY, matrix_array);
     
     return json;
 }
 
 jsoncons::json Jsonafiable::make_json(std::string name, int value){
     jsoncons::json json;
-    json.insert_or_assign("name",name);
-    json.insert_or_assign("data", value);
+    json.insert_or_assign(NAME_KEY,name);
+    json.insert_or_assign(DATA_KEY, value);
     return json;
 }
 
 jsoncons::json Jsonafiable::make_json(std::string name, double value){
     jsoncons::json json;
-    json.insert_or_assign("name",name);
-    json.insert_or_assign("data", value);
+    json.insert_or_assign(NAME_KEY,name);
+    json.insert_or_assign(DATA_KEY, value);
+    return json;
+}
+
+jsoncons::json Jsonafiable::make_json(std::string name, std::string value){
+    jsoncons::json json;
+    json.insert_or_assign(NAME_KEY,name);
+    json.insert_or_assign(DATA_KEY, value);
     return json;
 }
 
@@ -86,10 +92,10 @@ void Jsonafiable::write_matrix_value(jsoncons::json &json_array, cv::Mat matrix,
 cv::Mat Jsonafiable::reconstruct_matrix(Json matrix_json){
     cv::Mat matrix;
     try{
-        int cols = matrix_json.get_value<int>("cols");
-        int rows = matrix_json.get_value<int>("rows");
-        int mat_type = matrix_json.get_value<int>("mat_type");
-        Json mat_values = matrix_json.get_array("data");
+        int cols = matrix_json.get_value<int>(COL_KEY);
+        int rows = matrix_json.get_value<int>(ROW_KEY);
+        int mat_type = matrix_json.get_value<int>(MAT_TYPE_KEY);
+        Json mat_values = matrix_json.get_array(DATA_KEY);
         matrix = btrgb::matrix_utils::create_matrix(rows,cols,mat_type);
         for(int row = 0; row < rows; row++){
             Json row_values = mat_values.array_at(row);

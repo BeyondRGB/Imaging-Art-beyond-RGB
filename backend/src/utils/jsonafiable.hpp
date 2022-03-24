@@ -10,6 +10,13 @@
 #include "json.hpp"
 #include "utils/matrix_utils.hpp"
 
+
+#define NAME_KEY "name"
+#define DATA_KEY "data"
+#define ROW_KEY "rows"
+#define COL_KEY "cols"
+#define MAT_TYPE_KEY "mat_type"
+
 class Jsonafiable{
 
     public:
@@ -21,9 +28,10 @@ class Jsonafiable{
         jsoncons::json make_json(std::string name, cv::Mat matrix);
         jsoncons::json make_json(std::string name, int value);
         jsoncons::json make_json(std::string name, double value);
+        jsoncons::json make_json(std::string name, std::string value);
 
         template <typename T>
-        jsoncons::json make_json_from_map(std::string name, std::unordered_map<std::string, T> values){
+        jsoncons::json make_json_from_map(std::unordered_map<std::string, T> values){
             int item_count = values.size();
             jsoncons::json json_list = jsoncons::json::make_array<1>(item_count);
             int i = 0;
