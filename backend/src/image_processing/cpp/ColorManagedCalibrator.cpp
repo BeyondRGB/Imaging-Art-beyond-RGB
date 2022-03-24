@@ -122,8 +122,9 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     int width = art1->width();
 
     // Initialize 6xN Matrix to represen our 6 channal image
+    // Each row represents a single channel and N is the number total pixles for each channel
     cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
-
+   
     /**
     *   M is a 2d Matrix in the form
     *       m_1_1, m_1_2, ..., m_1_6
@@ -199,9 +200,9 @@ void ColorManagedCalibrator::output_report_data(){
 
     /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */
     std::cout << "**********************\n\tResults\n**********************" << std::endl;
-    this->display_matrix(&this->M, "M");
-    this->display_matrix(&this->offest, "offset");
-    this->display_matrix(&this->deltaE_values, "DelE Values");
+    btrgb::calibration::display_matrix(&this->M, "M");
+    btrgb::calibration::display_matrix(&this->offest, "offset");
+    btrgb::calibration::display_matrix(&this->deltaE_values, "DelE Values");
     std::cout << "Resulting DeltaE: " << this->resulting_avg_deltaE << std::endl;
     std::cout << "Itteration Count: " << this->solver_iteration_count << std::endl;
     std::cout << "\n*********************************************************************************************************************" << std::endl;
@@ -346,27 +347,6 @@ float ColorManagedCalibrator::apply_gamma(float px_value, btrgb::ColorSpace colo
     }
     return gamma_corrected_value;
 }
-
-void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
-    std::cout << std::endl;
-    std::cout << "What is in " << name << std::endl;
-    if (nullptr != matrix) {
-        for (int chan = 0; chan < matrix->rows; chan++) {
-            for (int col = 0; col < matrix->cols; col++) {
-                if (col != 0) {
-                    std::cout << ", ";
-                }
-                double avg = matrix->at<double>(chan, col);
-                std::cout << avg;
-            }
-            std::cout << std::endl;// << std::endl;
-        }
-    }
-    else {
-        std::cout << "Matrix not initialized" << std::endl;
-    }
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                DeltaE Function                             //
