@@ -10,6 +10,7 @@
 #include "reference_data/ref_data.hpp"
 #include "reference_data/ref_data_defines.hpp"
 #include "utils/time_tracker.hpp"
+#include "image_processing/results/calibration_results.hpp"
 
 #include "ImgProcessingComponent.h"
 
@@ -69,7 +70,7 @@ private:
      * @brief Store the results from the calibration
      * 
      */
-    void store_results();
+    void store_results(btrgb::ArtObject *images);
 
 };
 

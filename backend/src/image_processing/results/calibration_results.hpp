@@ -34,6 +34,11 @@
 #define a_REF               "CM a*_ref"
 #define b_REF               "CM b*_ref"
 
+// Spectral Calibration Keys
+#define SP_R_reference  "R Reference"
+#define SP_R_camera     "Optimized R Camera"
+#define SP_M_refl       "Optimized M refl"
+
 // Json Value Storage Keys
 #define MATRIX_KEY "matrix_values"
 #define INT_KEY "integer_values"

@@ -96,7 +96,10 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     std::cout << "Min z: " << res << std::endl;
     //===============================================================
 
-    this->store_results();    
+    this->store_results(images);   
+
+    step.release();
+    ref_data_matrix.release(); 
 
     std::cout << "SpectralCalibration done" << std::endl;
     comms->send_progress(1, "SpectralCalibration");
@@ -112,7 +115,9 @@ void SpectralCalibrator::init_M_refl(cv::Mat R_ref){
     // Create M_refl
     this->M_refl = R_ref * psudoinvers;
     // Create 1d representation of M_refl, used as input to the MinProblemSolver
-    this->input_array = cv::Mat(this->M_refl).reshape(0,1);    
+    this->input_array = cv::Mat(this->M_refl).reshape(0,1);   
+
+    psudoinvers.release(); 
 }
 
 void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
@@ -123,11 +128,20 @@ void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
     }
 }
 
-void SpectralCalibrator::store_results(){
+void SpectralCalibrator::store_results(btrgb::ArtObject *images){
     // TODO store the results in the ArtObj once that is merged in
     std::cout << "================================\n" <<
                  "Results have not been stored yet\n" <<
                  "================================" << std::endl;
+    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+
+    // R refercence
+    results_obj->store_matrix(SP_R_reference, this->ref_data->as_matrix());
+    // Optimized R camera
+    results_obj->store_matrix(SP_R_camera, this->R_camera);
+    // Optimized M refl
+    results_obj->store_matrix(SP_M_refl, this->M_refl);
+    
 }
 
 

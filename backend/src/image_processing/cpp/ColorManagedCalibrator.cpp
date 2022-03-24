@@ -192,24 +192,22 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
 }
 
 void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
-    // // We currently do not have a place to store the results.
-    // // The plan is to add a Report class when the results will put.
-    // // It will be comming in a future PR, so for now just display results in terminal
-
+    // Compute Calibrated XYZ values
     cv::Mat offset_avg = btrgb::calibration::apply_offsets(this->color_patch_avgs, this->offest);
     cv::Mat cm_xyz = this->M * offset_avg;
+    // C
     cv::Mat L_camera;
     cv::Mat a_camera;
     cv::Mat b_camera;
     cv::Mat L_ref;
     cv::Mat a_ref;
     cv::Mat b_ref;
-
     this->fill_Lab_values(&L_camera, &a_camera, &b_camera,
                           &L_ref,    &a_ref,    &b_ref,
                           cm_xyz);
-
+    // Fetch Results Object to store results in
     CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+    
     // DeltaE Mean
     results_obj->store_double(CM_DELTA_E_AVG, this->resulting_avg_deltaE);
     // XYZ transformation matrix
@@ -231,6 +229,7 @@ void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
     results_obj->store_matrix(a_REF, a_ref);
     results_obj->store_matrix(b_REF, b_ref);
 
+    // Release all matracies created by this function
     offset_avg.release();
     cm_xyz.release();
     L_camera.release();
@@ -493,17 +492,6 @@ double DeltaEFunction::calc(const double* x)const{
 
    // Create offset_avg
    cv::Mat offset_avg = btrgb::calibration::apply_offsets(*this->color_patch_avgs, *this->offeset);
-//    int row_count = this->color_patch_avgs->rows;
-//    int col_count = this->color_patch_avgs->cols;
-//     cv::Mat_<double> offset_avg(row_count, col_count, CV_64FC1);
-//     for (int row = 0; row < row_count; row++) {
-//         double offset = this->offeset->at<double>(row);
-//         for (int col = 0; col < col_count; col++) {
-//             double avg = this->color_patch_avgs->at<double>(row, col);
-//             offset_avg.at<double>(row, col) = avg - offset;
-//         }
-//     }
-
 
     // Compute camera_xyz
     cv::Mat_<double> xyz = *this->M * offset_avg;
