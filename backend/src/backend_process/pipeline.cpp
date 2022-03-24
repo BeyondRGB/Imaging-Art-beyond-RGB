@@ -73,6 +73,29 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     return false;
 }
 
+void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
+    CalibrationResults *results_obj = art_obj->get_results_obj(btrgb::ResultType::GENERAL);
+    // Make/Model
+    // TODO add this once info sent from front end
+    // Target ID
+    Json ref_data = this->process_data_m->get_obj(key_map[DataKey::RefData]);
+    results_obj->store_string(GI_TARGET_ID, ref_data.get_string("name"));
+    // Target Dims
+    Json target_json = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
+    results_obj->store_int(GI_TARGET_ROWS, target_json.get_number("rows"));
+    results_obj->store_int(GI_TARGET_COLS, target_json.get_number("cols"));
+    // Observer
+    int observer_num = ref_data.get_number(key_map[DataKey::StandardObserver]);
+    results_obj->store_int(GI_OBSERVER, observer_num);
+    // Illuminant
+    std::string illum_str = ref_data.get_string(key_map[DataKey::Illuminants]);
+    results_obj->store_string(GI_ILLUMINANT, illum_str);
+    // White Patch Coords
+    // TODO add this once info sent from front end
+
+
+}
+
 void Pipeline::run() {
 
     this->send_info("I got your msg", this->get_process_name());
@@ -100,6 +123,8 @@ void Pipeline::run() {
     this->send_info("About to init art obj...", this->get_process_name());
     this->init_art_obj(images.get());
 
+    // Initialize General Info Results
+    this->init_general_info(images.get());
 
     /* Execute the pipeline on the created ArtObject */
     this->send_info( "About to execute...", this->get_process_name());

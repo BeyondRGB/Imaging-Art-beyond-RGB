@@ -35,9 +35,20 @@
 #define b_REF               "CM b*_ref"
 
 // Spectral Calibration Keys
-#define SP_R_reference  "R Reference"
-#define SP_R_camera     "Optimized R Camera"
-#define SP_M_refl       "Optimized M refl"
+#define SP_R_reference  "SP R Reference"
+#define SP_R_camera     "SP Optimized R Camera"
+#define SP_M_refl       "SP Optimized M refl"
+
+// General Info Keys
+#define GI_MAKE_MODEL         "Camera Make/Model"
+#define GI_TARGET_ID          "Target ID"
+#define GI_TARGET_ROWS        "Target Row Count"
+#define GI_TARGET_COLS        "Target Col Count"
+#define GI_OBSERVER           "Standard Observer"
+#define GI_ILLUMINANT         "Illuminant"
+#define GI_WHITE_PATCH_COORDS "White Patch Coordinates"
+#define GI_Y                  "Y white patche meas"
+#define GI_W                  "W Value"
 
 // Json Value Storage Keys
 #define MATRIX_KEY "matrix_values"

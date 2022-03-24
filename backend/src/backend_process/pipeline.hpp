@@ -17,6 +17,7 @@
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
 #include "reference_data/ref_data.hpp"
+#include "image_processing/results/calibration_results.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -77,6 +78,8 @@ private:
 	ObserverType get_observer_type();
 	std::string get_ref_file();
 	std::string get_output_directory();
+
+	void init_general_info(btrgb::ArtObject* art_obj);
 
 
 public:
