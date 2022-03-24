@@ -86,11 +86,6 @@ void CalibrationResults::write_matrices(std::ostream &output_stream){
     for( auto [name, matrix] : this->result_matricies ){
         // Write Name
         output_stream << name << std::endl;
-        // Write MetaData
-        // output_stream << R_TYPE << ":" << ResultType::MATRIX << DELIMITER << 
-        //                  ROW_COUNT <<":" << matrix.rows << DELIMITER << 
-        //                  COL_COUNT << ":" << matrix.cols << DELIMITER <<
-        //                  M_TYPE << ":" << matrix.type() << std::endl;
         // Write Matrix Values
         this->write_matrix(output_stream, matrix);
     }
