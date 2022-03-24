@@ -94,16 +94,18 @@ namespace btrgb {
      * Return pointer to specified Result Object
      * This will return a null pointer if an unknown type is specified
      */
-    // CalibrationResults *ArtObject::get_results_obj(btrgb::ResultType type){
-    //     switch (type){
-    //         case btrgb::ResultType::CALIBRATION:
-    //             return &this->calibration_res;
-    //         case btrgb::ResultType::VERIFICATION:
-    //             return &this->verification_res;            
-    //         default:
-    //             return nullptr;
-    //     }
-    // }
+    CalibrationResults *ArtObject::get_results_obj(btrgb::ResultType type){
+        switch (type){
+            case btrgb::ResultType::CALIBRATION:
+                return &this->calibration_res;
+            case btrgb::ResultType::GENERAL:
+                return &this->general_res;
+            case btrgb::ResultType::VERIFICATION:
+                return &this->verification_res;            
+            default:
+                return nullptr;
+        }
+    }
 
     /*
     * Map an image name to an existing image object.

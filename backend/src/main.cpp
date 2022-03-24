@@ -28,6 +28,8 @@ void testFunc() {
     res.store_int("int1", 1);
     res.store_int("int2", 2);
 
+    res.store_string("test", "ahahahahah");
+
     res.store_double("My_Test_Double", 5.6);
 
     std::string file_name = "results.btrgb";
@@ -38,9 +40,9 @@ void testFunc() {
     std::cout << "Writing " << file_name << std::endl;
     std::ofstream file;
 
-    // file.open(file_name);
-    // file << out;
-    // file.close();
+    file.open(file_name);
+    file << out;
+    file.close();
 
     std::string csv_file_name = "results.csv";
     file.open(csv_file_name);
