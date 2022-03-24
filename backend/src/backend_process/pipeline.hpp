@@ -1,6 +1,7 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
+// Pipeline Components
 #include "image_processing/header/BitDepthScaler.h"
 #include "image_processing/header/ChannelSelector.h"
 #include "image_processing/header/ColorManagedCalibrator.h"
@@ -18,6 +19,8 @@
 #include "backend_process.hpp"
 #include "reference_data/ref_data.hpp"
 #include "image_processing/results/calibration_results.hpp"
+#include "reference_data/ref_data.hpp"
+#include "reference_data/color_patch.hpp"
 
 #include <filesystem>
 #include <iostream>
@@ -33,7 +36,7 @@ class Pipeline: public BackendProcess{
 		WHITE,
 		DARK,
 		IMAGES,
-		RefData,
+		ReferenceData,
 		StandardObserver,
 		Illuminants,
 		TargetLocation
