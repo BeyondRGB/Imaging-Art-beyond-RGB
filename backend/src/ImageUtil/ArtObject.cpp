@@ -99,7 +99,7 @@ namespace btrgb {
             case btrgb::ResultType::CALIBRATION:
                 return &this->calibration_res;
             case btrgb::ResultType::GENERAL:
-                return &this->general_res;
+                return &this->general_info;
             case btrgb::ResultType::VERIFICATION:
                 return &this->verification_res;            
             default:
