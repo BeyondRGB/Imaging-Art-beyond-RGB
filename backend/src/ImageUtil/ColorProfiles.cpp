@@ -2,6 +2,7 @@
 
 namespace btrgb {
 
+
 void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
 
     if(im.channels() != 3)
@@ -18,6 +19,7 @@ void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
     }
 
 }
+
 
 void ColorProfiles::multiply_conversion_matrix(cv::Mat im, cv::Mat m) {
     /* Change the input image shape to:
@@ -40,6 +42,7 @@ void ColorProfiles::multiply_conversion_matrix(cv::Mat im, cv::Mat m) {
 
 }
 
+
 void ColorProfiles::convert_to_xyz(cv::Mat im, ColorSpace from) {
     cv::Mat m;
 
@@ -57,6 +60,7 @@ void ColorProfiles::convert_to_xyz(cv::Mat im, ColorSpace from) {
 
     ColorProfiles::multiply_conversion_matrix(im, m);
 }
+
 
 void ColorProfiles::convert_to_color(cv::Mat im, ColorSpace to) {
     cv::Mat m;
@@ -95,6 +99,13 @@ void ColorProfiles::convert_to_color(cv::Mat im, ColorSpace to) {
     }
 
     ColorProfiles::multiply_conversion_matrix(im, m);
+
+    #define BTRGB_CLIP_PIXEL(x) (x < 0 ? 0 : (x > 1 ? 1 : x))
+    im.forEach<cv::Vec3f>([](cv::Vec3f& pixel, const int* pos) -> void {
+        pixel[R] = BTRGB_CLIP_PIXEL(pixel[R]);
+        pixel[G] = BTRGB_CLIP_PIXEL(pixel[G]);
+        pixel[B] = BTRGB_CLIP_PIXEL(pixel[B]);
+    });
 }
 
 

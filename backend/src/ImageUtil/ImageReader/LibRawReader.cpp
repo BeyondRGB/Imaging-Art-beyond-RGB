@@ -27,40 +27,43 @@ void LibRawReader::_configLibRawParams() {
 	libraw_output_params_t* opt = &( this->_reader.imgdata.params );
     switch(this->_method) {
         
-        /* Do not use histogram brightness/color scaling */
-        opt->no_auto_bright = 1;
-        opt->no_auto_scale = 1;
+    case UNPROCESSED:
 
-        /* Linear */
-        opt->gamm[0] = 1.0;
-        opt->gamm[1] = 1.0;
+        /* Do not subtract camera black level. */
+        opt->user_black = 0;
 
-        case UNPROCESSED:
-            /* Keep as 16 bit. */
-            opt->output_bps = 16;
+        /* Don't use white balance. */
+        opt->use_camera_wb = 0;
+        opt->use_auto_wb = 0;
 
-            /* Do not subtract camera black level. */
-            opt->user_black = 0;
+        /* Don't use camera matrix if present. */
+        opt->use_camera_matrix = 0;
 
-            /* Don't use white balance. */
-            opt->use_camera_wb = 0;
-            opt->use_auto_wb = 0;
+        break;
 
-            /* Don't use camera matrix if present. */
-            opt->use_camera_matrix = 0;
+    case PREVIEW:
 
-            /* Use raw color space. */
-            opt->output_color = 0;
+        /* Use each 2x2 bayer as one pixel, skip registration. */
+        opt->half_size = 1;
 
-            break;
+        break;
 
-        case PREVIEW:
-            opt->output_bps = 8;
-            opt->half_size = 1;
-            break;
-
-        default: throw std::logic_error("[LibRawReader] Invalid method.");
+    default: throw std::logic_error("[LibRawReader] Invalid method.");
     }
+    
+    /* Keep as 16 bit. */
+    opt->output_bps = 16;
+
+    /* Do not use histogram brightness/color scaling */
+    opt->no_auto_bright = 1;
+    opt->no_auto_scale = 1;
+
+    /* Linear */
+    opt->gamm[0] = 1.0;
+    opt->gamm[1] = 1.0;
+
+    /* Use raw color space. */
+    opt->output_color = 0;
 
     /* Bi-linear interpolation. */
     opt->user_qual = 0;

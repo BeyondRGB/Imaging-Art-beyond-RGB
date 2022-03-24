@@ -105,26 +105,27 @@ namespace btrgb {
     binary_ptr_t Image::getEncodedPNG(enum image_quality quality) {
         std::vector<int> params;
         cv::Mat im;
-\
+
         /* Convert color space. */
         cv::Mat im_srgb = Image::copyMatConvertDepth(this->_opencv_mat, CV_32F);
         ColorProfiles::convert(im_srgb, this->_color_profile, ColorSpace::sRGB);
 
         switch(quality) {
         case FAST:
-            {cv::Mat im8u;
-                /* Convert to 8 bit. */
-                im8u = Image::copyMatConvertDepth(im_srgb, CV_8U);
 
-                /* Scale the image to have a width of 1920 pixels (keep same aspect ratio). */
-                if(im8u.cols > 1920) {
-                    double scaler = double(1920) / double(im8u.cols);
-                    cv::resize(im8u, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
-                }
-                else {
-                    im = im8u;
-                }
+            /* Convert to 8 bit. */
+            {cv::Mat im8u = Image::copyMatConvertDepth(im_srgb, CV_8U);
+            im_srgb.release();
+
+            /* Scale the image to have a width of 1920 pixels (keep same aspect ratio). */
+            if(im8u.cols > 1920) {
+                double scaler = double(1920) / double(im8u.cols);
+                cv::resize(im8u, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
             }
+            else {
+                im = im8u;
+            }}
+        
             /* Set compression parameters for use later. */
             params = {
                 cv::IMWRITE_PNG_COMPRESSION, 1,
@@ -133,8 +134,11 @@ namespace btrgb {
             break;
 
         case FULL:
+        
             /* Convert to 16 bit. */
-            im = this->copyMatConvertDepth(im_srgb, CV_16U);
+            im = Image::copyMatConvertDepth(im_srgb, CV_16U);
+            im_srgb.release();
+
             /* Use default PNG compression parameters. */
             params = {};
             break;

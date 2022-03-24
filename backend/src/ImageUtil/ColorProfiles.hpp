@@ -12,14 +12,28 @@ enum ColorSpace {
 
 class ColorProfiles {
 public:
+
+    /* Modifies the image to convert it between the two given color spaces. */
     static void convert(cv::Mat im, ColorSpace from, ColorSpace to);
 
 private:
+
+    /* Removes the gamma from the image according to its colorspace. */
     static void linearize(cv::Mat im, ColorSpace from);
+
+    /* Applies the gamma to the image according to its colorspace. */
     static void apply_gamma(cv::Mat im, ColorSpace to);
+
+    /* Converts an image in the given color space to XYZ. */
     static void convert_to_xyz(cv::Mat im, ColorSpace from);
+
+    /* Converts an XYZ image to the given color space. */
     static void convert_to_color(cv::Mat im, ColorSpace to);
+
+    /* Modifies an image by multiplying it by the given conversion matrix m. */
     static void multiply_conversion_matrix(cv::Mat im, cv::Mat m);
+
+    /* Channel constants. */
     static const int R = 0, G = 1, B = 2;
 
 };
