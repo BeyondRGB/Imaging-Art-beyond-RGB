@@ -36,8 +36,19 @@ void ColorProfiles::multiply_conversion_matrix(cv::Mat im, cv::Mat m) {
     cv::Mat pixel_vectors = im.reshape(1, pixel_count);
 
     /* Multiply matricies:
-     * It is quicker to transpose the 3x3 conversion matrix
-     * instead of the entire image. */
+     *
+     * Using:
+     * M: 3x3 conversion matrix
+     * I: 3xn image matrix
+     * It: nx3 image matrix (transpose of I)
+     * 
+     * OpenCV can convert from a normal image to It format 
+     * in O(1) time. The result we want is (MxI)t and that
+     * would require taking the transpose of our input format.
+     * Since we already have It we can instead use the 
+     * property: (MxI)t = It x Mt. M is only 3x3 and is
+     * easier to transpose. This also does not require an
+     * additional transpose to get back to the It format.*/
     pixel_vectors *= m.t();
 
 }

@@ -25,7 +25,7 @@ public:
     /* Converts an image in the given color space to XYZ. */
     static void convert_to_xyz(cv::Mat im, ColorSpace from);
 
-    /* Converts an XYZ image to the given color space. */
+    /* Converts an XYZ image to the given color space and clips. */
     static void convert_to_color(cv::Mat im, ColorSpace to);
 
     /* Modifies an image by multiplying it by the given conversion matrix m. */
