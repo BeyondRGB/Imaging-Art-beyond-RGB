@@ -24,6 +24,9 @@
       $processState.artStacks[0].colorTarget.size = colorTarget.size;
       $processState.artStacks[0].colorTarget.whitePatch =
         colorTarget.whitePatch;
+      $processState.artStacks[0].colorTarget.refData = {
+        name: colorTarget.refData.name,
+      };
     }
 
     if (verifyPos) {
@@ -36,6 +39,11 @@
       $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
       $processState.artStacks[0].verificationTarget.whitePatch =
         verifyTarget.whitePatch;
+      $processState.artStacks[0].verificationTarget.refData = {
+        name: verifyTarget.refData.name,
+      };
+    } else {
+      $processState.artStacks[0].verificationTarget = null;
     }
   }
 

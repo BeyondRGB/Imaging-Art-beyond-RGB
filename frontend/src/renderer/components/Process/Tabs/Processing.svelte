@@ -65,12 +65,17 @@
         size: $processState.artStacks[0].colorTarget?.size,
         whitePatch: $processState.artStacks[0].colorTarget?.whitePatch,
         refData: {
-          name: "NGT_Reflectance_Data.csv",
+          name: $processState.artStacks[0].colorTarget?.refData?.name,
           standardObserver: 1931,
           illuminants: "D50",
         },
       },
-      verificationLocation: {
+    },
+  };
+
+  $: {
+    if ($processState.artStacks[0].verificationTarget !== null) {
+      jsonTest.RequestData["verificationLocation"] = {
         top: $processState.artStacks[0].verificationTarget?.top,
         left: $processState.artStacks[0].verificationTarget?.left,
         bottom: $processState.artStacks[0].verificationTarget?.bottom,
@@ -80,15 +85,15 @@
         size: $processState.artStacks[0].verificationTarget?.size,
         whitePatch: $processState.artStacks[0].verificationTarget?.whitePatch,
         refData: {
-          name: "NGT_Reflectance_Data.csv",
+          name: $processState.artStacks[0].verificationTarget?.refData?.name,
           standardObserver: 1931,
           illuminants: "D50",
         },
-      },
-    },
-  };
+      };
+    }
+  }
 
-  $: console.log(jsonTest)
+  $: console.log(jsonTest);
 
   $: if ($messageStore.length > 1) {
     try {
