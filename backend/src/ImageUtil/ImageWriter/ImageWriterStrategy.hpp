@@ -11,8 +11,7 @@ namespace btrgb {
         public:
             ImageWriterStrategy() {}
             virtual ~ImageWriterStrategy() {}
-            virtual void write(Image* im, std::string filename);
-            virtual void write(Image* im);
+            virtual void write(Image* im, std::string filename = "");
 
         protected:
             std::string file_extension;

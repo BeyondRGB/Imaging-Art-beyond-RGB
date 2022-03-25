@@ -14,7 +14,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     // Set to default for now.
     // This should be updated at some point to be settable by user
-    this->color_space = ColorSpace::ProPhoto;
+    this->color_space = btrgb::ColorSpace::ProPhoto;
 
     // Extract images and RefData from art object
     try {
@@ -52,8 +52,12 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
-    this->update_image(images);
-    comms->send_progress(0.9, "Color Managed Calibration");
+    try { this->update_image(images); }
+    catch(btrgb::ArtObj_ImageAlreadyExists e) {
+       comms->send_error("Image already exists, could not save result.", "Color Managed Calibration");
+    } catch(btrgb::ArtObj_FailedToWriteImage e) {
+       comms->send_error("Failed to write image.", "Color Managed Calibration");
+    } comms->send_progress(0.9, "Color Managed Calibration");
 
     // Save resulting Matacies for latter use
     this->output_report_data();
@@ -149,46 +153,26 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     cv::Mat cm_XYZ = this->M * camra_sigs;
     camra_sigs.release(); // No longer needed
 
-    // Convert ColorManaged XYZ values to ColorManaged RGB values
-    cv::Mat rgb_convertion_matrix = this->rgb_convertions_matrix(this->color_space);
-    cv::Mat cm_RGB = rgb_convertion_matrix * cm_XYZ;
-    cm_XYZ.release(); // No longer neeeded
+    /* Convert result matrix to a standard, three-channel bitmap format. */
+    cv::Mat result_im = cm_XYZ.t();
+    result_im = result_im.reshape(3, height);
+    result_im.convertTo(result_im, CV_32F);
 
-    std::cout << "Creating Image" << std::endl;
+    /* Convert from XYZ to target color space and clip. */
+    btrgb::ColorProfiles::convert_to_color(result_im, this->color_space);
 
-    // We hav now converted all vaues to RGB but they are still in a format that is unusable
-    // Copy all values from cm_RGB into a usable format(cm_im)
-    // cm_im is the actual Image that will contain our final output
+    /* Apply nonlinearity of the target color space. */
+    btrgb::ColorProfiles::apply_gamma(result_im, this->color_space);
+
+    /* Wrap in Image object for storing in the ArtObject. */
     btrgb::Image* cm_im = new btrgb::Image("ColorManaged");
-    cv::Mat color_managed_data(height, width, CV_32FC3);
-    cm_im->initImage(color_managed_data);
-    for(int chan = 0; chan < 3; chan++){
-        for(int row = 0; row < height; row++){
-            for(int col = 0; col < width; col++){
-                int data_col = col + row * width;
-                float px_value = (float)cm_RGB.at<double>(chan, data_col);
-                // Clip px between 0 and 1
-                px_value = this->clip_pixel(px_value);
-                // Apply gamma to correct brightness
-                px_value = this->apply_gamma(px_value, this->color_space);
-                cm_im->setPixel(row, col, chan, px_value);
-            }
-        }
-    }
-    cm_RGB.release(); // No longer needed
+    cm_im->initImage(result_im);
+    cm_im->setColorProfile(this->color_space);
 
-    // Store New Image and write to TIFF
+    /* Store in ArtObject and output. */
     std::string name = "ColorManaged";
-    try{
-        images->setImage(name, cm_im);
-        images->outputImageAs(btrgb::output_type::TIFF, name);
-    }catch(btrgb::ArtObj_ImageAlreadyExists e){
-        std::cout << "Fail to set Img: " << e.what() << std::endl;
-    }catch(btrgb::ArtObj_FailedToWriteImage e){
-        std::cout << "Fail to write Img: " << e.what() << std::endl;
-    }catch(std::exception e){
-        std::cout << "Fail to write Img: " << e.what() << std::endl;
-    }
+    images->setImage(name, cm_im);
+    images->outputImageAs(btrgb::output_type::TIFF, name);
 }
 
 void ColorManagedCalibrator::output_report_data(){
@@ -256,95 +240,6 @@ void ColorManagedCalibrator::build_input_matrix() {
 
 }
 
-cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
-    /**
-     * @brief There are various xyz to rgb convertions matracies depending on the color space
-     * the converiton matracies defined below come from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-     */
-    cv::Mat convertions_matrix;
-    switch(color_space){
-        case ColorSpace::Adobe_RGB_1998:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             1.9624274, -0.6105343, -0.3413404,
-                            -0.9787684,  1.9161415,  0.0334540,
-                             0.0286869, -0.1406752,  1.3487655
-                    );
-            break;
-
-        case ColorSpace::Wide_Gamut_RGB:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             1.4628067, -0.1840623, -0.2743606,
-                            -0.5217933,  1.4472381,  0.0677227,
-                             0.0349342, -0.0968930,  1.2884099
-                    );
-            break;
-
-        case ColorSpace::sRGB:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             3.1338561, -1.6168667, -0.4906146,
-                            -0.9787684,  1.9161415,  0.0334540,
-                             0.0719453, -0.2289914 , 1.4052427
-                    );
-            break;
-
-        case ColorSpace::ProPhoto:
-        default:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             1.3459433, -0.2556075, -0.0511118,
-                            -0.5445989,  1.5081673,  0.0205351,
-                             0.0000000,  0.0000000,  1.2118128
-                    );
-            break;
-    }
-    return convertions_matrix;
-}
-
-float ColorManagedCalibrator::clip_pixel(float px_value){
-    if(px_value < 0)
-        px_value = 0;
-    if(px_value > 1)
-        px_value = 1;
-    return px_value;
-}
-
-float ColorManagedCalibrator::gamma(ColorSpace color_space){
-    //TODO the gamma values included here are not what they should be and should
-    // be updated once we know what they are.
-    float gamma = 2.2;
-    switch(color_space){
-        case ColorSpace::Adobe_RGB_1998:
-            break;
-
-        case ColorSpace::Wide_Gamut_RGB:
-            break;
-
-        case ColorSpace::sRGB:
-            break;
-
-        case ColorSpace::ProPhoto:
-        default:
-            gamma = 1.8;
-            break;
-    }
-    return gamma;
-}
-
-float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space){
-    // TODO this is not complete yet and is more complicated than what is currently implemented
-    // Update this once we know what is involved
-    // float gamma = this->gamma(color_space);
-    // // Apply gamma to correct brightness
-    // float gamma_corrected_value = std::pow(px_value, gamma);
-    float gamma_corrected_value;
-    if( px_value >= 0.001953125 ){
-        float exponent = 1 / 1.8;
-        gamma_corrected_value = pow(px_value, exponent);
-    }
-    else{
-        gamma_corrected_value  = px_value * 16;
-    }
-    return gamma_corrected_value;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                DeltaE Function                             //
