@@ -164,16 +164,16 @@ void CalibrationResults::write_matrix_value(std::ostream &output_stream, cv::Mat
 
 jsoncons::json CalibrationResults::jsonafy(){
     jsoncons::json body;
- 
+    // Jsonafy the result matracies
     jsoncons::json matracies = this->make_json_from_map<cv::Mat>(this->result_matricies);
     body.insert_or_assign(MATRIX_KEY, matracies);
-
+    // Jsonafy the result ints
     jsoncons::json int_values = this->make_json_from_map<int>(this->result_ints);
     body.insert_or_assign(INT_KEY, int_values);
-
+    // Jsonafy the result doubles
     jsoncons::json double_values = this->make_json_from_map<double>(this->result_doubles);
     body.insert_or_assign(DOUBLE_KEY, double_values);
-
+    // Jsonafy the result strings
     jsoncons::json string_values = this->make_json_from_map<std::string>(this->results_strings);
     body.insert_or_assign(STRING_KEY, string_values);
     
