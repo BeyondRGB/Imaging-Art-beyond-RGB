@@ -1,9 +1,5 @@
 #include "calibration_results.hpp"
 
-// CalibrationResults::CalibrationResults(std::string results_file){
-//     // this->read_results(results_file);
-// }
-
 CalibrationResults::CalibrationResults(jsoncons::json json){
     this->de_jsonafy(json);
 }
