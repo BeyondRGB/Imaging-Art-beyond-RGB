@@ -3,6 +3,15 @@
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
   import { flip } from "svelte/animate";
   import Page from "@root/components/Page.svelte";
+  import { PlusCircleIcon } from "svelte-feather-icons";
+  import Dropdown from "@root/components/Dropdown.svelte";
+
+  let refData = [
+    "NGT_Reflectance_Data.csv",
+    "APT_Reflectance_Data.csv",
+    "CCSG_Reflectance_Data.csv",
+    "CC_Classic_Reflectance_Data.csv",
+  ];
 
   function update() {
     if (colorPos) {
@@ -13,6 +22,8 @@
       $processState.artStacks[0].colorTarget.rows = colorTarget.rows;
       $processState.artStacks[0].colorTarget.cols = colorTarget.cols;
       $processState.artStacks[0].colorTarget.size = colorTarget.size;
+      $processState.artStacks[0].colorTarget.whitePatch =
+        colorTarget.whitePatch;
     }
 
     if (verifyPos) {
@@ -23,6 +34,8 @@
       $processState.artStacks[0].verificationTarget.rows = verifyTarget.rows;
       $processState.artStacks[0].verificationTarget.cols = verifyTarget.cols;
       $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
+      $processState.artStacks[0].verificationTarget.whitePatch =
+        verifyTarget.whitePatch;
     }
   }
 
@@ -58,25 +71,6 @@
         },
       };
       colorPos = { top: 0.25, left: 0.25, bottom: 0.5, right: 0.5 };
-      $processState.artStacks[0].colorTarget = {
-        top: 0.25,
-        left: 0.25,
-        bottom: 0.5,
-        right: 0.5,
-        cols: 10,
-        rows: 10,
-        size: 0.5,
-        whitePatch: {
-          row: 1,
-          col: 1,
-        },
-        refData: {
-          name: "NGT_Reflectance_Data.csv",
-          standardObserver: 1931,
-          illuminants: "D50",
-        },
-      };
-      console.log($processState.artStacks[0].colorTarget);
     } else if (!verifyTarget) {
       verifyTarget = {
         name: "Verification Target",
@@ -96,24 +90,6 @@
         },
       };
       verifyPos = { top: 0.5, left: 0.5, bottom: 0.75, right: 0.75 };
-      $processState.artStacks[0].colorTargets[1] = {
-        top: 0.25,
-        left: 0.25,
-        bottom: 0.5,
-        right: 0.5,
-        cols: 10,
-        rows: 10,
-        size: 0.5,
-        whitePatch: {
-          row: 1,
-          col: 1,
-        },
-        refData: {
-          name: "NGT_Reflectance_Data.csv",
-          standardObserver: 1931,
-          illuminants: "D50",
-        },
-      };
     }
   }
 
@@ -137,9 +113,6 @@
     let root = document.documentElement;
     root.style.setProperty("--verfiy_hue", `${verifyTarget}`);
   }
-  $: console.log($processState.artStacks[0].colorTarget);
-
-  // $: console.log([colorTarget, verifyTarget]);
 
   let targetArray;
   $: {
@@ -165,6 +138,7 @@
     />
   </div>
   <div class="right">
+    <div class="boxHead">Targets</div>
     <div class="cardBox">
       {#each targetArray as target, i (target)}
         <div
@@ -172,29 +146,40 @@
           class={`card ${i === 0 ? "colorTarget" : "verificationTarget"}`}
         >
           <h2>{target.name}</h2>
+          <input
+            type="range"
+            class="colorSlider"
+            bind:value={target.color}
+            max="360"
+          />
+
           <div class="rowcol">
             <div class="inputGroup">
-              <span>Rows</span>
+              <span>Rows:</span>
               <input
                 placeholder="1..26 [a-z]"
                 type="number"
+                min="1"
                 bind:value={target.rows}
               />
             </div>
-            <span class="times">x</span>
             <div class="inputGroup">
-              <span>Cols</span>
+              <span>Columns:</span>
               <input
                 placeholder="1..26 [a-z]"
                 type="number"
+                min="1"
                 bind:value={target.cols}
               />
             </div>
           </div>
-          <div class="extra">
-            <button>RefData</button>
-            <input type="range" bind:value={target.color} max="360" />
-            {target.color}
+          <div class="refDataDiv">
+            <span>Reference Data</span>
+            <Dropdown values={refData} bind:selected={target.refData.name} />
+          </div>
+          <div class="sizeDiv">
+            <span>Selection Area Size:</span>
+            {Math.round(target.size * 100)}%
             <input
               type="range"
               bind:value={target.size}
@@ -202,13 +187,39 @@
               max=".7"
               step=".01"
             />
-            {Math.round(target.size * 100)}%
+          </div>
+          <div class="break" />
+          <span>White Patch Location</span>
+          <div class="whitePatch">
+            <div class="inputGroup">
+              <span>Row: </span>
+              <input
+                placeholder="1..26 [a-z]"
+                type="number"
+                min="1"
+                bind:value={target.whitePatch.row}
+              />
+            </div>
+            <span class="and">&</span>
+            <div class="inputGroup">
+              <span>Col: </span>
+              <input
+                placeholder="1..26 [a-z]"
+                type="number"
+                min="1"
+                bind:value={target.whitePatch.col}
+              />
+            </div>
           </div>
           <button class="close" on:click={() => removeTarget(i)}>X</button>
         </div>
       {/each}
-      <button class="addTarget" on:click={() => addTarget()}>+</button>
     </div>
+    <button
+      class="addTarget"
+      class:removeButton={targetArray.length === 2}
+      on:click={() => addTarget()}><PlusCircleIcon size="1.75x" /></button
+    >
   </div>
 </main>
 
@@ -227,11 +238,12 @@
   }
 
   .right {
-    @apply w-[40vw] h-full flex justify-center bg-gray-700;
+    @apply w-[40vw] h-full flex flex-col m-1 bg-gray-700 pt-[5vh] items-center;
   }
 
   .cardBox {
-    @apply bg-gray-800 w-full m-6 p-2 gap-2 flex flex-col items-center;
+    @apply bg-gray-800 min-h-[60vh] w-[85%] p-2 gap-2 flex flex-col items-center
+            rounded-2xl;
   }
 
   .card {
@@ -251,14 +263,30 @@
   }
 
   .rowcol {
-    @apply flex justify-between items-center;
+    @apply flex flex-col justify-between items-center;
+  }
+
+  .whitePatch {
+    @apply flex justify-between items-center gap-1 text-base;
   }
 
   .addTarget {
-    @apply bg-green-500 w-full h-12;
+    @apply bg-green-500 w-16 h-16 transition-all rounded-full flex items-center justify-center
+            text-gray-100;
+  }
+
+  .removeButton {
+    @apply hidden;
   }
 
   .rowcol input {
+    text-align: center;
+    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
+            h-full w-12 min-w-[1rem];
+  }
+
+  .whitePatch input {
     @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
             h-full w-full;
@@ -268,9 +296,14 @@
     @apply bg-gray-700 p-2;
   }
 
-  .inputGroup {
-    @apply flex flex-col items-center;
+  .rowcol .inputGroup {
+    @apply flex justify-between items-center gap-2 w-full;
   }
+
+  .whitePatch .inputGroup {
+    @apply flex items-center gap-2;
+  }
+
   .inputGroup > span {
     @apply font-semibold;
   }
@@ -281,5 +314,50 @@
   .close {
     @apply absolute top-0 right-0 bg-transparent text-white
             hover:bg-red-600/50 hover:text-red-300;
+  }
+  .refDataDiv {
+    @apply flex justify-between items-center;
+  }
+  .break {
+    @apply w-full h-1 bg-black border-2;
+  }
+  .colorSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    background: linear-gradient(
+      to right,
+      hsl(0, 100%, 40%),
+      hsl(20, 100%, 40%),
+      hsl(40, 100%, 40%),
+      hsl(60, 100%, 40%),
+      hsl(80, 100%, 40%),
+      hsl(100, 100%, 40%),
+      hsl(120, 100%, 40%),
+      hsl(140, 100%, 40%),
+      hsl(160, 100%, 40%),
+      hsl(180, 100%, 40%),
+      hsl(200, 100%, 40%),
+      hsl(220, 100%, 40%),
+      hsl(240, 100%, 40%),
+      hsl(260, 100%, 40%),
+      hsl(280, 100%, 40%),
+      hsl(300, 100%, 40%),
+      hsl(320, 100%, 40%),
+      hsl(340, 100%, 40%),
+      hsl(360, 100%, 40%)
+    );
+    @apply w-full h-2 rounded-xl;
+  }
+  .colorSlider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    @apply w-4 h-4 bg-gray-600 cursor-pointer rounded-full outline outline-1
+          outline-gray-200;
+  }
+  .sizeDiv {
+    @apply flex justify-between items-center;
+  }
+  .sizeDiv input {
+    @apply w-1/2;
   }
 </style>

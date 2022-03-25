@@ -88,6 +88,8 @@
     },
   };
 
+  $: console.log(jsonTest)
+
   $: if ($messageStore.length > 1) {
     try {
       let temp = JSON.parse($messageStore[0]);
