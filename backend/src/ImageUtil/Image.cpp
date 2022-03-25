@@ -192,14 +192,14 @@ namespace btrgb {
         double current_max, target_max;
 
         switch(cv_depth) {
-            case CV_32F: target_max = 1; break;
+            case CV_32F: case CV_64F: target_max = 1; break;
             case CV_16U: target_max = 0xFFFF; break;
             case CV_8U: target_max = 0xFF; break;
             default: throw std::runtime_error("[Image::convertCopyMat] Unsupported target depth.");
         }
 
         switch(input.depth()) {
-            case CV_32F: current_max = 1; break;
+            case CV_32F: case CV_64F: current_max = 1; break;
             case CV_16U: current_max = 0xFFFF; break;
             case CV_8U: current_max = 0xFF; break;
             default: throw std::runtime_error("[Image::convertCopyMat] Unsupported current image depth.");
