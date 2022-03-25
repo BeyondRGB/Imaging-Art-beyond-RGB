@@ -10,15 +10,8 @@
 #include "utils/csv_parser.hpp"
 #include "utils/jsonafiable.hpp"
 
-// #define RES_NAME "result_name"
+
 #define DELIMITER ","
-// #define RES_HEADER(name) RES_NAME << DELIMITER << name
-// #define RES_ROW(row) "row" << row << DELIMITER
-// #define MATRIX_INFO(rows, cols) "r_count:"rows DELIMITER "c_count:"cols
-#define ROW_COUNT "row_count"
-#define COL_COUNT "col_count"
-#define M_TYPE "cv_type_id"
-#define R_TYPE "ResultType_id"
 
 // CM Calibration Keys
 #define CM_DELTA_E_AVG      "CM DeltaE Mean"
@@ -56,7 +49,12 @@
 #define DOUBLE_KEY "double_values"
 #define STRING_KEY "string_values"
 
-
+/**
+ * @brief Class to strore results in.
+ * This class can serialize itself into a json object and deserialize itself given a json object
+ * This class can store result data in the forms of String,Int,Double,cv::Mat
+ * 
+ */
 class CalibrationResults: public Jsonafiable, private CSVParser{
 
 public:
@@ -170,12 +168,54 @@ public:
      */
     bool contains_results();
 
-
+    /**
+     * @brief Inherited from Jsonifiable
+     * This serializes the class and adds all results contained in this class to a json object
+     * 
+     * @return jsoncons::json 
+     */
     jsoncons::json jsonafy() override;
+
+    /**
+     * @brief Inherited from Jsoifiable
+     * This de-serializes the class and reconstructs a previouse instance of this class from the given json
+     * 
+     * NOTE: if data is missing or currupt in the given json it is posible that some or all result info does not get reconstructed
+     * 
+     * @param json the json containing the information 
+     */
     void de_jsonafy(jsoncons::json json) override;
+
+    /**
+     * @brief Reconstruct all matrix data from the given json
+     * NOTE: if any data is missing or corrupt for a matix found in json that matix will be skiped
+     * 
+     * @param parser 
+     */
     void reconstruct_matracies(Json parser);
+
+    /**
+     * @brief Reconstruct all double data from given json
+     * NOTE: if any data is missing or corrup for a double found in the json that value will be skiped
+     * 
+     * @param parser 
+     */
     void reconstruct_doubles(Json parser);
+
+    /**
+     * @brief Reconstruct all int data from given json
+     * NOTE: if any data is missing or corrup for a int found in the json that value will be skiped
+     * 
+     * @param parser 
+     */
     void reconstruct_ints(Json parser);
+
+    /**
+     * @brief Reconstruct all string data from given json
+     * NOTE: if any data is missing or corrup for a string found in the json that value will be skiped
+     * 
+     * @param parser 
+     */
     void reconstruct_strings(Json parser);
 
 
