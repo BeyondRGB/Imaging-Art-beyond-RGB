@@ -18,6 +18,10 @@
 #define DARK(num) "dark"#num
 #define WHITE(num) "white"#num
 
+//
+#define CM_IMAGE_KEY "ColorManaged"
+#define SP_IMAGE_KEY "Spectral"
+
 /* How to iterate over all images in the ArtObject:
  *
  * key:     std::string

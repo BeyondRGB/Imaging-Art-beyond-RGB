@@ -159,7 +159,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     // We hav now converted all vaues to RGB but they are still in a format that is unusable
     // Copy all values from cm_RGB into a usable format(cm_im)
     // cm_im is the actual Image that will contain our final output
-    btrgb::Image* cm_im = new btrgb::Image("ColorManaged");
+    btrgb::Image* cm_im = new btrgb::Image(CM_IMAGE_KEY);
     cv::Mat color_managed_data(height, width, CV_32FC3);
     cm_im->initImage(color_managed_data);
     for(int chan = 0; chan < 3; chan++){
@@ -178,10 +178,8 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     cm_RGB.release(); // No longer needed
 
     // Store New Image and write to TIFF
-    std::string name = "ColorManaged";
     try{
-        images->setImage(name, cm_im);
-        images->outputImageAs(btrgb::output_type::TIFF, name);
+        images->setImage(CM_IMAGE_KEY, cm_im);
     }catch(btrgb::ArtObj_ImageAlreadyExists e){
         std::cout << "Fail to set Img: " << e.what() << std::endl;
     }catch(btrgb::ArtObj_FailedToWriteImage e){

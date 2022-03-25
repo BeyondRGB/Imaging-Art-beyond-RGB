@@ -25,6 +25,8 @@ namespace btrgb{
      * @return std::string 
      */
     std::string get_time(TimeType type, std::string delim=":");
+
+    std::string get_time_stamp();
 };
 
 #endif // GENERAL_UTILS_H
