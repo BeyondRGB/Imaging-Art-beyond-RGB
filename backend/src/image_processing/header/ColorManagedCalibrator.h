@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "ImageUtil/ColorTarget.hpp"
+#include "ImageUtil/ColorProfiles.hpp"
 #include "utils/csv_parser.hpp"
 #include "ImgProcessingComponent.h"
 #include "reference_data/ref_data_defines.hpp"
@@ -14,6 +15,7 @@
 #include "utils/color_convertions.hpp"
 #include "reference_data/white_points.hpp"
 #include "utils/calibration_util.hpp"
+#include "ImageUtil/ColorProfiles.hpp"
 
 // typedef std::function<double(cv::Mat)> MinDeltaE_function;
 
@@ -26,9 +28,6 @@ class ColorManagedCalibrator : public ImgProcessingComponent{
  */
 
 public:
-    enum ColorSpace{
-        Adobe_RGB_1998, ProPhoto, sRGB, Wide_Gamut_RGB
-    };
 
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
@@ -45,40 +44,10 @@ private:
     double resulting_avg_deltaE;
     int solver_iteration_count;
 
-    ColorSpace color_space;
+    btrgb::ColorSpace color_space;
 
     double stp;
     int mid;
-
-    /**
-     * @brief Get the Matrix for converting xyz to rgb for the given color space
-     *
-     * @param color_space the ColorSpace that identifies which convertion matrix to retrive
-     * @return cv::Mat
-     */
-    cv::Mat rgb_convertions_matrix(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
-
-
-    float clip_pixel(float px_value);
-
-    /**
-     * @brief Get the gamma adjustment value for the given ColorSpace
-     * Defaults to ProPhoto value
-     *
-     * @param color_space the ColorSpace that identifies the gamma addjustment to get
-     * @return float
-     */
-    float gamma(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
-
-    /**
-     * @brief Applys a gamma to correct brightness
-     *
-     * @param px_value the pixel value to apply gamma to
-     * @param color_space the color space that defines the gamma value
-     * defaults to ProPhoto
-     * @return float the gamma corrected pixel value
-     */
-    float apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
 
     /**
      * @brief Initialize the optimization InputArray(optimization_input), M, and offset
