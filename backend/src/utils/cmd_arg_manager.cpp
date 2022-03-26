@@ -50,6 +50,9 @@ void CMDArgManager::set_option(std::string key, std::string value) {
     if (key == "--app_root") {
         GlobalsSinglton::get_instance()->set_app_root(value);
     }
+    if (key == "--port") {
+        GlobalsSinglton::get_instance()->set_port(std::stoi(value));
+    }
 }
 
 void CMDArgManager::handle_other(std::string arg) {
@@ -58,6 +61,7 @@ void CMDArgManager::handle_other(std::string arg) {
             "usage: [options]\n"
             "\toptions:\n"
             "\t --test_run=<bool>: set true to bypass server and run testfunc() in main.cpp, this defaults to false\n"
+            "\t --port=<int>: The local network port for frontend/backend communication.\n"
             "\t --app_root=<path>: set path for where applications resource folder can be found\n";
         std::cout << usage_str << std::endl;
     }
