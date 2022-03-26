@@ -126,7 +126,14 @@ namespace btrgb{
          */
         double row_max(cv::Mat &target, int row);
 
+        /**
+         * @brief Debuging helper functon. Will puase and wait for user to hit enter in terminal befor proceding
+         * 
+         */
         void enter_to_continue();
+
+        btrgb::Image camera_sigs_2_image(cv::Mat camera_sigs, int image_height, int channels);
+        cv::Mat image_2_camera_sigs(btrgb::Image image, int hight, int width);
 
     }
 }
