@@ -38,11 +38,11 @@ void HalfSizePreview::run() {
             reader->copyBitmapTo(im);
             reader->recycle();
 
-            /* Make sure image has a bit depth of eight. */
+            /* Make sure image is bright enough. */
             if(is_tiff) {
                 double min, max;
                 cv::minMaxIdx(im, &min, &max);
-                im.convertTo(im, CV_8U, 0xFF / max);
+                im.convertTo(im, CV_16U, 0xFFFF / max);
             }
 
             /* Wrap the Mat as an Image object. */
