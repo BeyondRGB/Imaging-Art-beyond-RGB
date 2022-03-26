@@ -154,4 +154,22 @@ void btrgb::calibration::enter_to_continue(){
             std::cin >> std::noskipws >> c;
             std::cout << "c: (" << c << ")" << std::endl;
         }while(c != '\n');
-    }
+}
+
+btrgb::Image btrgb::calibration::camera_sigs_2_image(cv::Mat camera_sigs, int hight, int channels){
+    btrgb::Image img("SpectralCameraSigs");
+    cv::Mat transpose = camera_sigs.t();
+    cv::Mat img_data = transpose.reshape(channels, hight);
+    img.initImage(img_data);
+    transpose.release();
+    img_data.release();
+    return img;
+}
+
+cv::Mat btrgb::calibration::image_2_camera_sigs(btrgb::Image image, int hight, int width){
+    cv::Mat img_data = image.getMat();
+    img_data = img_data.reshape(1, hight * width);
+    cv::Mat camera_sigs = img_data.t();
+    img_data.release();
+    return camera_sigs;
+}
