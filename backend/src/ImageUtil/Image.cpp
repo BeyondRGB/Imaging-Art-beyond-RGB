@@ -62,30 +62,6 @@ namespace btrgb {
         _checkInit();
         return this->_opencv_mat;
     }
-
-    cv::Mat Image::getMatCopyAs(int cv_depth) {
-        _checkInit();
-
-        double current_max, target_max;
-
-        switch(cv_depth) {
-            case CV_32F: target_max = 1; break;
-            case CV_16U: target_max = 0xFFFF; break;
-            case CV_8U: target_max = 0xFF; break;
-            default: throw std::runtime_error("[Image::getMatCopyAs] Unsupported target depth.");
-        }
-
-        switch(this->_opencv_mat.depth()) {
-            case CV_32F: current_max = 1; break;
-            case CV_16U: current_max = 0xFFFF; break;
-            case CV_8U: current_max = 0xFF; break;
-            default: throw std::runtime_error("[Image::getMatCopyAs] Unsupported current image depth.");
-        }
-
-        cv::Mat result;
-        this->_opencv_mat.convertTo(result, cv_depth, target_max / current_max);
-        return result;
-    }
             
 
     uint32_t Image::getIndex(int row, int col, int ch) {
@@ -117,6 +93,7 @@ namespace btrgb {
         cv::Mat empty;
         this->_opencv_mat = empty;
         int _raw_bit_depth = 0;
+        this->_color_profile = none;
     }
 
     void inline Image::_checkInit() {
@@ -129,22 +106,26 @@ namespace btrgb {
         std::vector<int> params;
         cv::Mat im;
 
+        /* Convert color space. */
+        cv::Mat im_srgb = Image::copyMatConvertDepth(this->_opencv_mat, CV_32F);
+        ColorProfiles::convert(im_srgb, this->_color_profile, ColorSpace::sRGB);
+
         switch(quality) {
-
         case FAST:
-            {cv::Mat im8u;
-                /* Convert to 8 bit. */
-                im8u = this->getMatCopyAs(CV_8U);
 
-                /* Scale the image to have a width of 1920 pixels (keep same aspect ratio). */
-                if(im8u.cols > 1920) {
-                    double scaler = double(1920) / double(im8u.cols);
-                    cv::resize(im8u, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
-                }
-                else {
-                    im = im8u;
-                }
+            /* Convert to 8 bit. */
+            {cv::Mat im8u = Image::copyMatConvertDepth(im_srgb, CV_8U);
+            im_srgb.release();
+
+            /* Scale the image to have a width of 1920 pixels (keep same aspect ratio). */
+            if(im8u.cols > 1920) {
+                double scaler = double(1920) / double(im8u.cols);
+                cv::resize(im8u, im, cv::Size(), scaler, scaler, cv::INTER_AREA);
             }
+            else {
+                im = im8u;
+            }}
+        
             /* Set compression parameters for use later. */
             params = {
                 cv::IMWRITE_PNG_COMPRESSION, 1,
@@ -153,8 +134,11 @@ namespace btrgb {
             break;
 
         case FULL:
+        
             /* Convert to 16 bit. */
-            im = this->getMatCopyAs(CV_16U);
+            im = Image::copyMatConvertDepth(im_srgb, CV_16U);
+            im_srgb.release();
+
             /* Use default PNG compression parameters. */
             params = {};
             break;
@@ -178,6 +162,18 @@ namespace btrgb {
         return result_binary;
     }
 
+
+
+    void Image::setColorProfile(ColorSpace color_profile) {
+        this->_color_profile = color_profile;
+    }
+
+    ColorSpace Image::getColorProfile() {
+        return this->_color_profile;
+    }
+
+
+    /* ====== static ======= */
     bool Image::is_tiff(std::string filename) {
         if( !fs::is_regular_file(filename) ) 
             return false;
@@ -187,6 +183,31 @@ namespace btrgb {
             return false;
 
         return filename.substr(i + 1) == "tiff";
+    }
+            
+
+    /* ====== static ======= */
+    cv::Mat Image::copyMatConvertDepth(cv::Mat input, int cv_depth) {
+
+        double current_max, target_max;
+
+        switch(cv_depth) {
+            case CV_32F: case CV_64F: target_max = 1; break;
+            case CV_16U: target_max = 0xFFFF; break;
+            case CV_8U: target_max = 0xFF; break;
+            default: throw std::runtime_error("[Image::convertCopyMat] Unsupported target depth.");
+        }
+
+        switch(input.depth()) {
+            case CV_32F: case CV_64F: current_max = 1; break;
+            case CV_16U: current_max = 0xFFFF; break;
+            case CV_8U: current_max = 0xFF; break;
+            default: throw std::runtime_error("[Image::convertCopyMat] Unsupported current image depth.");
+        }
+
+        cv::Mat result;
+        input.convertTo(result, cv_depth, target_max / current_max);
+        return result;
     }
 
 }
