@@ -96,7 +96,7 @@ cv::Mat Jsonafiable::reconstruct_matrix(Json matrix_json){
         int rows = matrix_json.get_value<int>(ROW_KEY);
         int mat_type = matrix_json.get_value<int>(MAT_TYPE_KEY);
         Json mat_values = matrix_json.get_array(DATA_KEY);
-        matrix = btrgb::matrix_utils::create_matrix(rows,cols,mat_type);
+        matrix = cv::Mat(rows,cols, mat_type);
         for(int row = 0; row < rows; row++){
             Json row_values = mat_values.array_at(row);
             for(int col = 0; col < cols; col++){
