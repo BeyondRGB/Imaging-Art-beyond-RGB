@@ -86,33 +86,6 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
 
     this->store_spectral_img(images); 
 
-    // btrgb::Image *spImg = images->getImage(SP_IMAGE_KEY);
-    // cv::Mat img, ch[3];
-    // img = spImg->getMat();
-    // std::cout << "Spliting SP" << std::endl;
-
-    // cv::extractChannel(img,ch[0], 0);
-    // cv::imshow("ch1",ch[0]);
-    // try{
-    // cv::split(img, ch);
-    // }catch(std::exception e){
-    //     std::cerr << e.what() << std::endl;
-    // }
-    
-    // std::cout << "Setting zeroes" << std::endl;
-    // //by default opencv put channels in BGR order , so in your situation you want to copy the first channel which is blue. Set green and red channels elements to zero.
-    // ch[1]=cv::Mat::zeros(img.rows, img.cols, CV_8UC1); // green channel is set to 0
-    // ch[2]=cv::Mat::zeros(img.rows, img.cols, CV_8UC1);// red channel is set to 0
-    
-    // std::cout << "Merging" << std::endl;
-    // cv::merge(ch,3,img);
-    // std::cout << "Make image" << std::endl;
-    // btrgb::Image r("B");
-    // r.initImage(img);
-    // std::cout << "send" << std::endl;
-    // comms->send_base64(&r, btrgb::FAST);
-    // btrgb::calibration::enter_to_continue();
-
     std::cout << "SpectralCalibration done" << std::endl;
     comms->send_progress(1, "SpectralCalibration");
 }

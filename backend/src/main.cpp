@@ -9,12 +9,12 @@
 #include <opencv2/opencv.hpp>
 #include "utils/calibration_util.hpp"
 void testFunc() {
-    cv::Mat test = (cv::Mat_<int>(6,4, CV_16FC1) << 1,1,1,2,
-												    2,2,2,3,
-													3,3,3,4,
-													4,4,4,5,
-													5,5,5,6,
-													6,6,6,7);
+    cv::Mat test = (cv::Mat_<int>(6,4, CV_16FC1) << 1,2,3,4,
+												    2,3,4,5,
+													3,4,5,6,
+													4,5,6,7,
+													5,6,7,8,
+													6,7,8,9);
 
 	std::cout << test << std::endl;
 	int width = 2;
@@ -25,6 +25,9 @@ void testFunc() {
 	// btrgb::calibration::display_matrix(&imgMat, "img");
 	std::cout << imgMat << std::endl;
 	std::cout << "rows: " << imgMat.rows << " cols: " << imgMat.cols << " Chan: " << imgMat.channels() << std::endl;
+
+	cv::Mat revert = btrgb::calibration::image_2_camera_sigs(img, height, width);
+	std::cout << revert << std::endl;
 
 	// std::vector<cv::Mat> channels;
 	// for(int row = 0; row < test.rows; row++){
