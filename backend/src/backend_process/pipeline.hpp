@@ -1,6 +1,7 @@
 #ifndef PIPELINE_H
 #define PIPELINE_H
 
+// Pipeline Components
 #include "image_processing/header/BitDepthScaler.h"
 #include "image_processing/header/ChannelSelector.h"
 #include "image_processing/header/ColorManagedCalibrator.h"
@@ -12,13 +13,19 @@
 #include "image_processing/header/PreProcessor.h"
 #include "image_processing/header/ImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
+#include "image_processing/header/ResultsProcessor.h"
 
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
 #include "reference_data/ref_data.hpp"
+#include "image_processing/results/calibration_results.hpp"
+#include "reference_data/ref_data.hpp"
+#include "reference_data/color_patch.hpp"
+#include "utils/general_utils.hpp"
 
 #include <filesystem>
 #include <iostream>
+#include <ctime>
 
 /*
 Class that process's Images. Image processing includes
@@ -31,7 +38,7 @@ class Pipeline: public BackendProcess{
 		WHITE,
 		DARK,
 		IMAGES,
-		RefData,
+		ReferenceData,
 		StandardObserver,
 		Illuminants,
 		TargetLocation
@@ -70,12 +77,55 @@ private:
 	*/
 	std::shared_ptr<ImgProcessingComponent> pipelineSetup();
 
+	/**
+	 * @brief Initialize the ArtObject. 
+	 * This will populate the art object with TargetData and the initial images it will contain
+	 * 
+	 * @param art_obj pointer to the ArtObject to initialize
+	 * @return true if successfule
+	 * @return false if falure
+	 */
 	bool init_art_obj(btrgb::ArtObject* art_obj);
 
+	/**
+	 * @brief Initialize the initial General Info for this Prossessing run
+	 * 
+	 * @param art_obj the ArtObject that contains the General Info results object.
+	 */
+	void init_general_info(btrgb::ArtObject* art_obj);
+
+	/**
+	 * @brief Get the illuminant type object from the request data provided by frontend
+	 * 
+	 * @return IlluminantType 
+	 */
 	IlluminantType get_illuminant_type();
+
+	/**
+	 * @brief Get the observer type object from the request data provided by fronend
+	 * 
+	 * @return ObserverType 
+	 */
 	ObserverType get_observer_type();
+
+	/**
+	 * @brief Get the ref file from the request data provided by the frontend
+	 * 
+	 * @return std::string 
+	 */
 	std::string get_ref_file();
+
+	/**
+	 * @brief Get the output directory.
+	 * This will uses the output directory from the request data provided by the frontend as a base
+	 * and create a new folder within that directory in the form
+	 * 		BTRGB_<DATE>_<TIME>
+	 * It then returns the new dir as a string.
+	 * 
+	 * @return std::string 
+	 */
 	std::string get_output_directory();
+
 
 
 public:
