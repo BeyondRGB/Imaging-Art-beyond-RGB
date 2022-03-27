@@ -217,18 +217,7 @@ void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
     // L_ref a_ref b_ref
     results_obj->store_matrix(L_REF, L_ref);
     results_obj->store_matrix(a_REF, a_ref);
-    results_obj->store_matrix(b_REF, b_ref);
-
-    // Release all matracies created by this function
-    offset_avg.release();
-    cm_xyz.release();
-    L_camera.release();
-    a_camera.release();
-    b_camera.release();
-    L_ref.release();
-    a_ref.release();
-    b_ref.release();
-    
+    results_obj->store_matrix(b_REF, b_ref);  
 }
 
 void ColorManagedCalibrator::build_input_matrix() {
