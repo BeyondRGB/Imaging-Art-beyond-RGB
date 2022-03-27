@@ -37,6 +37,8 @@
 #define GI_TARGET_ID          "Target ID"
 #define GI_TARGET_ROWS        "Target Row Count"
 #define GI_TARGET_COLS        "Target Col Count"
+#define GI_IMG_ROWS           "Img Row Count"
+#define GI_IMG_COLS           "Img Col Count"
 #define GI_OBSERVER           "Standard Observer"
 #define GI_ILLUMINANT         "Illuminant"
 #define GI_WHITE_PATCH_COORDS "White Patch Coordinates"

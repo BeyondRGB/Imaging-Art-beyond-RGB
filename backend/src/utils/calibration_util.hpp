@@ -132,8 +132,8 @@ namespace btrgb{
          */
         void enter_to_continue();
 
-        btrgb::Image camera_sigs_2_image(cv::Mat camera_sigs, int image_height, int channels);
-        cv::Mat image_2_camera_sigs(btrgb::Image image, int hight, int width);
+        btrgb::Image* camera_sigs_2_image(cv::Mat camera_sigs, int height);
+        cv::Mat image_2_camera_sigs(btrgb::Image *image, int height, int width);
 
     }
 }

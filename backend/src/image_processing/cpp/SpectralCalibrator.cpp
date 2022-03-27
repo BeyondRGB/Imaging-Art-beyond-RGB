@@ -82,10 +82,36 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
 
     comms->send_progress(0.9, "SpectralCalibration");
 
-    this->store_results(images);   
+    this->store_results(images);  
 
-    step.release();
-    ref_data_matrix.release(); 
+    this->store_spectral_img(images); 
+
+    // btrgb::Image *spImg = images->getImage(SP_IMAGE_KEY);
+    // cv::Mat img, ch[3];
+    // img = spImg->getMat();
+    // std::cout << "Spliting SP" << std::endl;
+
+    // cv::extractChannel(img,ch[0], 0);
+    // cv::imshow("ch1",ch[0]);
+    // try{
+    // cv::split(img, ch);
+    // }catch(std::exception e){
+    //     std::cerr << e.what() << std::endl;
+    // }
+    
+    // std::cout << "Setting zeroes" << std::endl;
+    // //by default opencv put channels in BGR order , so in your situation you want to copy the first channel which is blue. Set green and red channels elements to zero.
+    // ch[1]=cv::Mat::zeros(img.rows, img.cols, CV_8UC1); // green channel is set to 0
+    // ch[2]=cv::Mat::zeros(img.rows, img.cols, CV_8UC1);// red channel is set to 0
+    
+    // std::cout << "Merging" << std::endl;
+    // cv::merge(ch,3,img);
+    // std::cout << "Make image" << std::endl;
+    // btrgb::Image r("B");
+    // r.initImage(img);
+    // std::cout << "send" << std::endl;
+    // comms->send_base64(&r, btrgb::FAST);
+    // btrgb::calibration::enter_to_continue();
 
     std::cout << "SpectralCalibration done" << std::endl;
     comms->send_progress(1, "SpectralCalibration");
@@ -122,8 +148,21 @@ void SpectralCalibrator::store_results(btrgb::ArtObject *images){
     // Optimized R camera
     results_obj->store_matrix(SP_R_camera, this->R_camera);
     // Optimized M refl
-    results_obj->store_matrix(SP_M_refl, this->M_refl);
-    
+    results_obj->store_matrix(SP_M_refl, this->M_refl); 
+   
+}
+
+void SpectralCalibrator::store_spectral_img(btrgb::ArtObject *images){
+    // Build Spectral Image
+    btrgb::Image* art1 = images->getImage("art1");
+    btrgb::Image* art2 = images->getImage("art2");
+    btrgb::Image* art[2] = {art1, art2};
+    int height = images->get_results_obj(btrgb::ResultType::GENERAL)->get_int(GI_IMG_ROWS);
+    int width = images->get_results_obj(btrgb::ResultType::GENERAL)->get_int(GI_IMG_COLS);
+    cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6);
+    btrgb::Image *spectral_img = btrgb::calibration::camera_sigs_2_image(camra_sigs, height);
+    // Save Spectral Image
+    images->setImage(SP_IMAGE_KEY, spectral_img);
 }
 
 
