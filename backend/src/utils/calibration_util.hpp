@@ -132,7 +132,40 @@ namespace btrgb{
          */
         void enter_to_continue();
 
+        /**
+         * @brief Converts the given camera_sigs to to an M channel matrix
+         * Where M is the number of rows found in camera_sigs and
+         * 
+         *   camera_sigs is a 2d Matrix in the form
+         *      camsigs_chan1_px1, camsigs_chan1_px2, ..., camsigs_chan1_pxN
+         *      camsigs_chan2_px1, camsigs_chan2_px2, ..., camsigs_chan2_pxN
+         *      ...                 , ...                 , ..., ...
+         *      camsigs_chanM_px1, camsigs_chanM_px2, ..., camsigs_chanM_pxN
+         * 
+         * 
+         * @param camera_sigs the matrix representing the camera sigs
+         * @param height the height of the image
+         *      NOTE: the number of collums found in camera_sigs is expected to be height*width if the image, as reach row in came sigs contains all pixels for a given channel
+         * @return btrgb::Image* It is the responsibility of the caller of this function to delete this pointer when done with it
+         */
         btrgb::Image* camera_sigs_2_image(cv::Mat camera_sigs, int height);
+
+        /**
+         * @brief Convert the given image to a 2d Matrix of camera_sigs
+         * 
+         *   camera_sigs is a 2d Matrix in the form
+         *      camsigs_chan1_px1, camsigs_chan1_px2, ..., camsigs_chan1_pxN
+         *      camsigs_chan2_px1, camsigs_chan2_px2, ..., camsigs_chan2_pxN
+         *      ...                 , ...                 , ..., ...
+         *      camsigs_chanM_px1, camsigs_chanM_px2, ..., camsigs_chanM_pxN
+         * 
+         * Where M is the number of channels contained in the image
+         * 
+         * @param image the image to convert
+         * @param height the height of the image in pixels
+         * @param width the width of the image in pixels
+         * @return cv::Mat 
+         */
         cv::Mat image_2_camera_sigs(btrgb::Image *image, int height, int width);
 
     }
