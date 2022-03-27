@@ -50,6 +50,30 @@ namespace btrgb{
         cv::Mat build_camra_signals_matrix(Image* images[], int art_count, int channel_count, cv::Mat* offsets=nullptr);
 
         /**
+         * @brief Create a matrix with the given offsets applied to the values of given camera sigs
+         * 
+         *  camsigs is a 2d Matrix in the form
+         *      camsigs_chan1_px1, camsigs_chan1_px2, ..., camsigs_chan1_pxN
+         *      camsigs_chan2_px1, camsigs_chan2_px2, ..., camsigs_chan2_pxN
+         *      ...                 , ...                 , ..., ...
+         *      camsigs_chanM_px1, camsigs_chanM_px2, ..., camsigs_chanM_pxN
+         * 
+         *  offsets is a 1d matrix in the form
+         *      offset1, offset2, ... offsetM
+         * 
+         *  result is a 2d Matrix in the form
+         *      camsigs_chan1_px1 - offset1, camsigs_chan1_px2 - offset1, ..., camsigs_chan1_pxN - offset1
+         *      camsigs_chan2_px1 - offset2, camsigs_chan2_px2 - offset2, ..., camsigs_chan2_pxN - offset2
+         *      ...                 , ...                 , ..., ...
+         *      camsigs_chanM_px1 - offsetM, camsigs_chanM_px2 - offsetM, ..., camsigs_chanM_pxN - offsetM
+         * 
+         * @param camrera_sigs the values to apply the offset to
+         * @param offsets the offset values to apply
+         * @return cv::Mat the resulting matrix 
+         */
+        cv::Mat apply_offsets(cv::Mat camera_sigs, cv::Mat offsets);
+
+        /**
          * @brief Calculats R_camera and clips any value < 0 to ensure that all values are posotive
          * 
          *   M_refl is a 2d Matrix in the form

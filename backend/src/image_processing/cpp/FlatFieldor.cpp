@@ -50,6 +50,9 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     wCalc(patAvg, whiteAvg, yVal);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
 
+    // Store Results
+    this->store_results(images);
+
     //Removes the white and dark images from the art object
     images->deleteImage("white1");
     images->deleteImage("white2");
@@ -108,4 +111,21 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
             }
         }
     }
+}
+
+void FlatFieldor::store_results(btrgb::ArtObject* images){
+    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
+
+    RefData *reference = images->get_refrence_data();
+    //Col and Row of the white patch on the target
+    int whiteRow = reference->get_white_patch_row();
+    int whiteCol = reference->get_white_patch_col();
+    //Collecting the y Value from the reference data
+    double y = reference->get_y(whiteRow, whiteCol);
+
+    // Y whit patch meas
+    results_obj->store_double(GI_Y, y);
+    // W Value
+    results_obj->store_double(GI_W, (double)this->w);
+
 }

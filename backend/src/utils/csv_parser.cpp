@@ -60,3 +60,13 @@ std::string CSVParser::get_next_line() {
 bool CSVParser::has_next_line() {
 	return this->file_m.peek() != EOF;
 }
+
+std::string CSVParser::peek(){
+	// Store current position
+	int current_pos = this->file_m.tellg();
+	std::string line;
+	line = this->get_next_line();
+	// Return to sored postion
+	this->file_m.seekg(current_pos, std::ios_base::beg);
+	return line;
+}

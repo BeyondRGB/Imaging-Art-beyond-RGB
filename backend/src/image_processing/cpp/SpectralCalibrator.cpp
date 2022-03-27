@@ -82,21 +82,10 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
 
     comms->send_progress(0.9, "SpectralCalibration");
 
-    // Dsiplay Results
-    // TODO this should be removed once we have the ability to store results but for now this is the only proof that there are results
-    //==============================================================
-    btrgb::calibration::display_matrix(&this->M_refl, "Mrefl After");
-    this->R_camera = btrgb::calibration::calc_R_camera(this->M_refl, this->color_patch_avgs);
-    btrgb::calibration::display_matrix(&this->R_camera, "RCamera Clipped");
-    time_tracker.elapsed_time_sec();
-    time_tracker.elapsed_time_min();
+    this->store_results(images);   
 
-    cv::Ptr<WeightedErrorFunction> def = ptr_F.staticCast<WeightedErrorFunction>();
-    std::cout << "Itterations: " << def->get_itteration_count() << std::endl;
-    std::cout << "Min z: " << res << std::endl;
-    //===============================================================
-
-    this->store_results();    
+    step.release();
+    ref_data_matrix.release(); 
 
     std::cout << "SpectralCalibration done" << std::endl;
     comms->send_progress(1, "SpectralCalibration");
@@ -112,7 +101,9 @@ void SpectralCalibrator::init_M_refl(cv::Mat R_ref){
     // Create M_refl
     this->M_refl = R_ref * psudoinvers;
     // Create 1d representation of M_refl, used as input to the MinProblemSolver
-    this->input_array = cv::Mat(this->M_refl).reshape(0,1);    
+    this->input_array = cv::Mat(this->M_refl).reshape(0,1);   
+
+    psudoinvers.release(); 
 }
 
 void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
@@ -123,11 +114,16 @@ void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
     }
 }
 
-void SpectralCalibrator::store_results(){
-    // TODO store the results in the ArtObj once that is merged in
-    std::cout << "================================\n" <<
-                 "Results have not been stored yet\n" <<
-                 "================================" << std::endl;
+void SpectralCalibrator::store_results(btrgb::ArtObject *images){
+    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+
+    // R refercence
+    results_obj->store_matrix(SP_R_reference, this->ref_data->as_matrix());
+    // Optimized R camera
+    results_obj->store_matrix(SP_R_camera, this->R_camera);
+    // Optimized M refl
+    results_obj->store_matrix(SP_M_refl, this->M_refl);
+    
 }
 
 
