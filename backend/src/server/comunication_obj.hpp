@@ -35,10 +35,11 @@ private:
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
 	*/
-	void send_msg(std::string msg);
+	//void send_msg(std::string msg);
 	void send_bin(std::vector<uchar>& v);
 
 public:
+	void send_msg(std::string msg);
 	CommunicationObj() {};
 	CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg);
 	/**
