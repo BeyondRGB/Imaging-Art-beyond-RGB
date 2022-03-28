@@ -6,12 +6,15 @@
 #include <opencv2/opencv.hpp>
 
 using namespace cv;
-
-
+using namespace std;
+//comment
 
 void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("", "PixelRegestor");
     comms->send_progress(0, "PixelRegestor");
+
+    const int MAX_FEATURES = 850;
+    const float GOOD_MATCH_PERCENT = 0.12f;
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
@@ -20,92 +23,108 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
 
-
     //Check that there is actual data in them
-    if(!im1.data || !im2.data)
+    if (!im1.data || !im2.data)
     {
-        comms->send_error("No data in OpenCv Matrixs", "PixelRegestor");
         return;
     }
 
+    // Registered image will be resotred in imReg. 
+    // The estimated homography will be stored in h. 
+    cv::Mat im2reg, h;
 
-    //Seperating the three channel matrix into multiple single channel arrays
-    //We will be using im1Split[2] as registration base
+    cv::Mat im18;
+    cv::Mat im28;
 
-    //im1Split[0] == B
-    //im1Split[1] == G
-    //im1Split[2] == R
+    //Make a copy of the data in 8bit format to allow orb dection
+    comms->send_progress(0.10, "PixelRegestor - Grayscale Copy");
+    im1.convertTo(im18, CV_8UC3, 255);
+    im2.convertTo(im28, CV_8UC3, 255);
 
-    cv::Mat im1Split[3];
-    cv::split(im1, im1Split);
+    cv::Mat im18gray, im28gray;
 
-    cv::Mat im2Split[3];
-    cv::split(im2, im2Split);
+    cv::cvtColor(im18, im18gray, cv::COLOR_RGB2GRAY);
+    cv::cvtColor(im28, im28gray, cv::COLOR_RGB2GRAY);
 
-    std::cout << "Register start \n";
+    // Variables to store keypoints and descriptors
+    std::vector<KeyPoint> keypoints1, keypoints2;
+    cv::Mat descriptors1, descriptors2;
 
-    //Warp model
-    const int warp_mode = MOTION_EUCLIDEAN;
-
-    cv::Mat warp_matrix;
-
-    std::cout << "Setting up warp matrix \n";
-
-    if (warp_mode == MOTION_HOMOGRAPHY) {
-        warp_matrix = Mat::eye(3, 3, CV_32F);
-    }
-    else {
-        warp_matrix = Mat::eye(2, 3, CV_32F);
-    }
-
-    std::cout << "Setting criteria \n";
-    //Higher iteration number, higher accuracy, higher compute time
-
-    //Takes about 8-10 seconds per iteration, recommend keeping low till testing is done.
-    int iterations = 6;
-
-    double termination_eps = 1e-10;
-
-    TermCriteria criteria(TermCriteria::COUNT + TermCriteria::EPS, iterations, termination_eps);
-
-    comms->send_progress(0.2, "PixelRegestor");
-    try {
-        std::cout << "Estimating warp matrix \n";
-        //Perform image alignment
-        findTransformECC(im1Split[1], im2Split[1], warp_matrix, warp_mode, criteria);
+    // Detect ORB features and compute descriptors.
+    comms->send_progress(0.25, "PixelRegestor - Feature Detection");
+    Ptr<Feature2D> orb = ORB::create(MAX_FEATURES);
+    orb->detectAndCompute(im18gray, Mat(), keypoints1, descriptors1);
+    orb->detectAndCompute(im28gray, Mat(), keypoints2, descriptors2);
 
 
-        //Perform three registrations, currently reusing warp matrix from Im1[1] and Im2[1]
+    // Match features.
+    comms->send_progress(0.30, "PixelRegestor - Feature Matchine");
+    std::vector<DMatch> matches;
+    Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
+    matcher->match(descriptors1, descriptors2, matches, Mat());
 
-        for (int registrationNumber = 2; registrationNumber >= 0; registrationNumber--) {
+    // Sort matches by score
+    std::sort(matches.begin(), matches.end());
 
-            std::cout << "Warping image \n";
-            std::cout << registrationNumber;
+    // Remove not so good matches
+    const int numGoodMatches = matches.size() * GOOD_MATCH_PERCENT;
+    matches.erase(matches.begin() + numGoodMatches, matches.end());
 
-            //Storage for registered channel
-            cv::Mat aligned;
+    // Extract location of good matches
+    std::vector<Point2f> points1;
+    std::vector<Point2f> points2;
+    std::vector<DMatch> good_matches;
 
-            if (warp_mode != MOTION_HOMOGRAPHY) {
-                warpAffine(im2Split[registrationNumber], aligned, warp_matrix, im1Split[1].size(), INTER_LINEAR + WARP_INVERSE_MAP);
-            }
-            else {
-                warpPerspective(im2Split[registrationNumber], aligned, warp_matrix, im1Split[1].size(), INTER_LINEAR + WARP_INVERSE_MAP);
-            }
-            std::cout << "Done \n";
-            //Overwrite the orginal single channel with the aligned channel
-            im2Split[registrationNumber] = aligned;
+    //Clean out obviously bad mathces
+    for (size_t i = 0; i < matches.size(); i++)
+    {
+        const int threshold = 15;
+        Point2f p1 = keypoints1[matches[i].queryIdx].pt;
+        Point2f p2 = keypoints2[matches[i].trainIdx].pt;
 
+        if (abs(p2.x - p1.x) < threshold && abs(p2.y - p1.y) < threshold) {
+            points1.push_back(p1);
+            points2.push_back(p2);
+            good_matches.push_back(matches[i]);
+            cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
         }
 
-
-        //Merging 3 split channels back into 1 matrix
-        cv::merge(im2Split, 3, im2);
-    }
-    catch(...) {
-        std::cout << "[Image Registration] Iterations possibly do not converge. Images will not be registered." << std::endl;
     }
 
-    comms->send_progress(1, "PixelRegestor");
+    // Draw top matches and send to front end
+    cv::Mat imMatches;
+    drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
+    cv::Mat imS;
+    cv::resize(imMatches, imS, cv::Size(), 0.25, 0.25);
+    //cv::imwrite("matches.tiff", imMatches);
+    cv::Mat matchfloat;
+    imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
+    btrgb::Image* btrgb_matches(new btrgb::Image("matches"));
+    btrgb_matches->initImage(matchfloat);
+    comms->send_base64(btrgb_matches, btrgb::PNG, btrgb::FULL);
+    images->setImage("matches", btrgb_matches);
+    images->outputImageAs(btrgb::PNG, "matches");
+    images->deleteImage("matches");
+
+
+    // Find homography
+    comms->send_progress(0.75, "PixelRegestor - Getting Homography");
+    h = findHomography(points2, points1, RANSAC);
+
+    // Use homography to warp image
+    //First param is image to be aligned, 2nd is storage for aliagned image, third is homography, fourth is size of orginal img
+    comms->send_progress(0.85, "PixelRegestor - Warping Image");
+    warpPerspective(im2, im2reg, h, im1.size());
+
+    //Copy image
+    im2reg.copyTo(im2);
+
+    // Print estimated homography, prolly want to store this somewhere for report?
+    cout << "Estimated homography : \n" << h;
+    comms->send_progress(1, "PixelRegestor - Done");
+
+    cv::waitKey();
+
     //Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "RegistrationOut1");
     images->outputImageAs(btrgb::TIFF, "art2", "RegistrationOut2");
