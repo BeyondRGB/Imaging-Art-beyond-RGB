@@ -87,7 +87,7 @@ public:
 		token = line.substr(0, pos);
 		// Remove current token from line
 		size_t erase_stop = pos + delimiter.length();
-		if (this->has_one_item(line))
+		if (this->has_one_item(line, delimiter))
 			// Erase entire line
 			erase_stop = line.length();
 		line.erase(0, erase_stop);
@@ -102,6 +102,8 @@ public:
 
 		return result;
 	}
+
+	std::string peek();
 
 private:
 	/**

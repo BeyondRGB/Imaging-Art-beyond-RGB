@@ -126,7 +126,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     cv::waitKey();
 
     //Outputs TIFFs for each image group for after this step, temporary
-    images->outputImageAs(btrgb::TIFF, "art1", "RegistrationOut1");
-    images->outputImageAs(btrgb::TIFF, "art2", "RegistrationOut2");
+    images->outputImageAs(btrgb::TIFF, "art1", "art1_rgstr");
+    images->outputImageAs(btrgb::TIFF, "art2", "art2_rgstr");
 
 }

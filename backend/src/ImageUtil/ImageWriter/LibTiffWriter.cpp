@@ -12,6 +12,16 @@ namespace btrgb {
         int height = im->height();
         int channels = im->channels();
 
+
+		/* Check if color profile is implemented. */
+		switch(im->getColorProfile()) {
+			case none: case ColorSpace::ProPhoto: case ColorSpace::Adobe_RGB_1998:
+				break;
+			default: case ColorSpace::sRGB: case ColorSpace::Wide_Gamut_RGB: 
+				throw std::logic_error("[LibTiffWriter] Color profile not implemented.");
+		}
+
+
 		cv::Mat im_16u;
 		im->getMat().convertTo(im_16u, CV_16U, 0xFFFF);
         uint16_t* bitmap = (uint16_t*) im_16u.data;
@@ -43,10 +53,28 @@ namespace btrgb {
 		/* Write all channel data in one array (a bitmap) instead of separating the channels. */
 		TIFFSetField(img_out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 
-		/* Indicate that the image is RGB. We'll need to do grayscale, perhaps 
-		* as channels, or separate images in the same file. */
+		/* Indicate that the image is RGB. */
 		TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
 		//TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+
+		/* Set color profile. */
+		switch(im->getColorProfile()) {
+
+			case none: 
+				break;
+
+			case ColorSpace::ProPhoto:
+				TIFFSetField(img_out, TIFFTAG_ICCPROFILE, ProPhoto_icm_size, ProPhoto_icm_data);
+				break;
+
+			case ColorSpace::Adobe_RGB_1998:
+				TIFFSetField(img_out, TIFFTAG_ICCPROFILE, AdobeRGB1998_icc_size, AdobeRGB1998_icc_data);
+				break;
+
+			case ColorSpace::sRGB:
+			case ColorSpace::Wide_Gamut_RGB:
+			default: throw std::logic_error("[LibTiffWriter] Invalid color profile.");
+		}
 
 		/* The written data needs to be broken up into "Strips" to make buffering easier 
 		* for TIFF readers. Rows-per-strip needs to be tagged, this is the number of 
