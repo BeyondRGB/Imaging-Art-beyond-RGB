@@ -99,21 +99,21 @@ private:
 	 * 
 	 * @return IlluminantType 
 	 */
-	IlluminantType get_illuminant_type();
+	IlluminantType get_illuminant_type(Json target_data);
 
 	/**
 	 * @brief Get the observer type object from the request data provided by fronend
 	 * 
 	 * @return ObserverType 
 	 */
-	ObserverType get_observer_type();
+	ObserverType get_observer_type(Json target_data);
 
 	/**
 	 * @brief Get the ref file from the request data provided by the frontend
 	 * 
 	 * @return std::string 
 	 */
-	std::string get_ref_file();
+	std::string get_ref_file(Json target_data);
 
 	/**
 	 * @brief Get the output directory.
