@@ -11,12 +11,12 @@
 #include <opencv2/opencv.hpp>
 
 #include "ImageUtil/Image.hpp"
-#include "ImageWriter.hpp"
+#include "ImageWriterStrategy.hpp"
 
 
 namespace btrgb {
     
-    class LibpngWriter : public ImageWriter {
+    class LibpngWriter : public ImageWriterStrategy {
 
         public:
             LibpngWriter();

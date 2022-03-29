@@ -14,7 +14,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     // Set to default for now.
     // This should be updated at some point to be settable by user
-    this->color_space = ColorSpace::ProPhoto;
+    this->color_space = btrgb::ColorSpace::ProPhoto;
 
     // Extract images and RefData from art object
     try {
@@ -52,11 +52,15 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
-    this->update_image(images);
-    comms->send_progress(0.9, "Color Managed Calibration");
+    try { this->update_image(images); }
+    catch(btrgb::ArtObj_ImageAlreadyExists e) {
+       comms->send_error("Image already exists, could not save result.", "Color Managed Calibration");
+    } catch(btrgb::ArtObj_FailedToWriteImage e) {
+       comms->send_error("Failed to write image.", "Color Managed Calibration");
+    } comms->send_progress(0.9, "Color Managed Calibration");
 
     // Save resulting Matacies for latter use
-    this->output_report_data();
+    this->output_report_data(images);
     comms->send_progress(1, "Color Managed Calibration");
 
     // Dont remove art1 and art2 from the ArtObject yet as they are still needed for spectral calibration
@@ -122,8 +126,9 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     int width = art1->width();
 
     // Initialize 6xN Matrix to represen our 6 channal image
+    // Each row represents a single channel and N is the number total pixles for each channel
     cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
-
+   
     /**
     *   M is a 2d Matrix in the form
     *       m_1_1, m_1_2, ..., m_1_6
@@ -148,62 +153,65 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     cv::Mat cm_XYZ = this->M * camra_sigs;
     camra_sigs.release(); // No longer needed
 
-    // Convert ColorManaged XYZ values to ColorManaged RGB values
-    cv::Mat rgb_convertion_matrix = this->rgb_convertions_matrix(this->color_space);
-    cv::Mat cm_RGB = rgb_convertion_matrix * cm_XYZ;
-    cm_XYZ.release(); // No longer neeeded
+    /* Convert result matrix to a standard, three-channel bitmap format. */
+    cv::Mat result_im = cm_XYZ.t();
+    result_im = result_im.reshape(3, height);
+    result_im.convertTo(result_im, CV_32F);
 
-    std::cout << "Creating Image" << std::endl;
+    /* Convert from XYZ to target color space and clip. */
+    btrgb::ColorProfiles::convert_to_color(result_im, this->color_space);
 
-    // We hav now converted all vaues to RGB but they are still in a format that is unusable
-    // Copy all values from cm_RGB into a usable format(cm_im)
-    // cm_im is the actual Image that will contain our final output
-    btrgb::Image* cm_im = new btrgb::Image("ColorManaged");
-    cv::Mat color_managed_data(height, width, CV_32FC3);
-    cm_im->initImage(color_managed_data);
-    for(int chan = 0; chan < 3; chan++){
-        for(int row = 0; row < height; row++){
-            for(int col = 0; col < width; col++){
-                int data_col = col + row * width;
-                float px_value = (float)cm_RGB.at<double>(chan, data_col);
-                // Clip px between 0 and 1
-                px_value = this->clip_pixel(px_value);
-                // Apply gamma to correct brightness
-                px_value = this->apply_gamma(px_value, this->color_space);
-                cm_im->setPixel(row, col, chan, px_value);
-            }
-        }
-    }
-    cm_RGB.release(); // No longer needed
+    /* Apply nonlinearity of the target color space. */
+    btrgb::ColorProfiles::apply_gamma(result_im, this->color_space);
 
-    // Store New Image and write to TIFF
-    std::string name = "ColorManaged";
-    try{
-        images->setImage(name, cm_im);
-        images->outputImageAs(btrgb::output_type::TIFF, name);
-    }catch(btrgb::ArtObj_ImageAlreadyExists e){
-        std::cout << "Fail to set Img: " << e.what() << std::endl;
-    }catch(btrgb::ArtObj_FailedToWriteImage e){
-        std::cout << "Fail to write Img: " << e.what() << std::endl;
-    }catch(std::exception e){
-        std::cout << "Fail to write Img: " << e.what() << std::endl;
-    }
+    
+    std::string name = CM_IMAGE_KEY;
+    /* Wrap in Image object for storing in the ArtObject. */
+    btrgb::Image* cm_im = new btrgb::Image(name);
+    cm_im->initImage(result_im);
+    cm_im->setColorProfile(this->color_space);
+
+    /* Store in ArtObject and output. */
+    images->setImage(name, cm_im);
 }
 
-void ColorManagedCalibrator::output_report_data(){
-    // We currently do not have a place to store the results.
-    // The plan is to add a Report class when the results will put.
-    // It will be comming in a future PR, so for now just display results in terminal
-
-    /** TODO Remove below Once we have Report Class implemented and integrated into ArtObj */
-    std::cout << "**********************\n\tResults\n**********************" << std::endl;
-    this->display_matrix(&this->M, "M");
-    this->display_matrix(&this->offest, "offset");
-    this->display_matrix(&this->deltaE_values, "DelE Values");
-    std::cout << "Resulting DeltaE: " << this->resulting_avg_deltaE << std::endl;
-    std::cout << "Itteration Count: " << this->solver_iteration_count << std::endl;
-    std::cout << "\n*********************************************************************************************************************" << std::endl;
-
+void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
+    // Compute Calibrated XYZ values
+    cv::Mat offset_avg = btrgb::calibration::apply_offsets(this->color_patch_avgs, this->offest);
+    cv::Mat cm_xyz = this->M * offset_avg;
+    // C
+    cv::Mat L_camera;
+    cv::Mat a_camera;
+    cv::Mat b_camera;
+    cv::Mat L_ref;
+    cv::Mat a_ref;
+    cv::Mat b_ref;
+    this->fill_Lab_values(&L_camera, &a_camera, &b_camera,
+                          &L_ref,    &a_ref,    &b_ref,
+                          cm_xyz);
+    // Fetch Results Object to store results in
+    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+    
+    // DeltaE Mean
+    results_obj->store_double(CM_DELTA_E_AVG, this->resulting_avg_deltaE);
+    // XYZ transformation matrix
+    results_obj->store_matrix(CM_M, this->M);
+    // Offsets
+    results_obj->store_matrix(CM_OFFSETS, this->offest);
+    // DeltaE for all Patches
+    results_obj->store_matrix(CM_DLETA_E_VALUES, this->deltaE_values);
+    // Camera Signals
+    results_obj->store_matrix(CM_CAMERA_SIGS, this->color_patch_avgs);
+    // CM XYZ
+    results_obj->store_matrix(CM_XYZ, cm_xyz);
+    // L_camera a_camera b_camera
+    results_obj->store_matrix(L_CAMERA, L_camera);
+    results_obj->store_matrix(a_CAMERA, a_camera);
+    results_obj->store_matrix(b_CAMERA, b_camera);
+    // L_ref a_ref b_ref
+    results_obj->store_matrix(L_REF, L_ref);
+    results_obj->store_matrix(a_REF, a_ref);
+    results_obj->store_matrix(b_REF, b_ref);  
 }
 
 void ColorManagedCalibrator::build_input_matrix() {
@@ -255,116 +263,44 @@ void ColorManagedCalibrator::build_input_matrix() {
 
 }
 
-cv::Mat ColorManagedCalibrator::rgb_convertions_matrix(ColorSpace color_space){
-    /**
-     * @brief There are various xyz to rgb convertions matracies depending on the color space
-     * the converiton matracies defined below come from http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-     */
-    cv::Mat convertions_matrix;
-    switch(color_space){
-        case ColorSpace::Adobe_RGB_1998:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             1.9624274, -0.6105343, -0.3413404,
-                            -0.9787684,  1.9161415,  0.0334540,
-                             0.0286869, -0.1406752,  1.3487655
-                    );
-            break;
 
-        case ColorSpace::Wide_Gamut_RGB:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             1.4628067, -0.1840623, -0.2743606,
-                            -0.5217933,  1.4472381,  0.0677227,
-                             0.0349342, -0.0968930,  1.2884099
-                    );
-            break;
+void ColorManagedCalibrator::fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
+                                             cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
+                                              cv::Mat xyz){
+    int row_count = this->ref_data->get_row_count();
+    int col_count = this->ref_data->get_col_count();
+    *L_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *b_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *a_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *L_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *a_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *b_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
 
-        case ColorSpace::sRGB:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             3.1338561, -1.6168667, -0.4906146,
-                            -0.9787684,  1.9161415,  0.0334540,
-                             0.0719453, -0.2289914 , 1.4052427
-                    );
-            break;
+    WhitePoints* wp = this->ref_data->get_white_pts();
+    for(int row = 0; row < row_count; row++){
+        for(int col = 0; col < col_count; col++){
+            // Get/Store L*,a*,b* values from RefData
+            L_ref->at<double>(row,col) = this->ref_data->get_L(row, col);
+            a_ref->at<double>(row,col) = this->ref_data->get_a(row, col);
+            b_ref->at<double>(row,col) = this->ref_data->get_b(row, col);
 
-        case ColorSpace::ProPhoto:
-        default:
-            convertions_matrix = (cv::Mat_<double>(3,3) <<
-                             1.3459433, -0.2556075, -0.0511118,
-                            -0.5445989,  1.5081673,  0.0205351,
-                             0.0000000,  0.0000000,  1.2118128
-                    );
-            break;
-    }
-    return convertions_matrix;
-}
-
-float ColorManagedCalibrator::clip_pixel(float px_value){
-    if(px_value < 0)
-        px_value = 0;
-    if(px_value > 1)
-        px_value = 1;
-    return px_value;
-}
-
-float ColorManagedCalibrator::gamma(ColorSpace color_space){
-    //TODO the gamma values included here are not what they should be and should
-    // be updated once we know what they are.
-    float gamma = 2.2;
-    switch(color_space){
-        case ColorSpace::Adobe_RGB_1998:
-            break;
-
-        case ColorSpace::Wide_Gamut_RGB:
-            break;
-
-        case ColorSpace::sRGB:
-            break;
-
-        case ColorSpace::ProPhoto:
-        default:
-            gamma = 1.8;
-            break;
-    }
-    return gamma;
-}
-
-float ColorManagedCalibrator::apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space){
-    // TODO this is not complete yet and is more complicated than what is currently implemented
-    // Update this once we know what is involved
-    // float gamma = this->gamma(color_space);
-    // // Apply gamma to correct brightness
-    // float gamma_corrected_value = std::pow(px_value, gamma);
-    float gamma_corrected_value;
-    if( px_value >= 0.001953125 ){
-        float exponent = 1 / 1.8;
-        gamma_corrected_value = pow(px_value, exponent);
-    }
-    else{
-        gamma_corrected_value  = px_value * 16;
-    }
-    return gamma_corrected_value;
-}
-
-void ColorManagedCalibrator::display_matrix(cv::Mat* matrix, std::string name) {
-    std::cout << std::endl;
-    std::cout << "What is in " << name << std::endl;
-    if (nullptr != matrix) {
-        for (int chan = 0; chan < matrix->rows; chan++) {
-            for (int col = 0; col < matrix->cols; col++) {
-                if (col != 0) {
-                    std::cout << ", ";
-                }
-                double avg = matrix->at<double>(chan, col);
-                std::cout << avg;
-            }
-            std::cout << std::endl;// << std::endl;
+            // Extract current camera_(x,y,z)
+            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
+            int xyz_index = col + row * col_count;
+            double x = 100 * xyz.at<double>(0, xyz_index);
+            double y = 100 * xyz.at<double>(1, xyz_index);
+            double z = 100 * xyz.at<double>(2, xyz_index);
+            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
+            btrgb::XYZ_t xyz = {x, y, z};
+            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+            // Stor L*,a*,b* values from camera sigs
+            L_camera->at<double>(row,col) = lab.L;
+            a_camera->at<double>(row,col) = lab.a;
+            b_camera->at<double>(row,col) = lab.b;
         }
     }
-    else {
-        std::cout << "Matrix not initialized" << std::endl;
-    }
+    
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                DeltaE Function                             //
@@ -439,23 +375,14 @@ double DeltaEFunction::calc(const double* x)const{
     */
 
    // Create offset_avg
-   int row_count = this->color_patch_avgs->rows;
-    int col_count = this->color_patch_avgs->cols;
-    cv::Mat_<double> offset_avg(row_count, col_count, CV_64FC1);
-    for (int row = 0; row < row_count; row++) {
-        double offset = this->offeset->at<double>(row);
-        for (int col = 0; col < col_count; col++) {
-            double avg = this->color_patch_avgs->at<double>(row, col);
-            offset_avg.at<double>(row, col) = avg - offset;
-        }
-    }
+   cv::Mat offset_avg = btrgb::calibration::apply_offsets(*this->color_patch_avgs, *this->offeset);
 
     // Compute camera_xyz
     cv::Mat_<double> xyz = *this->M * offset_avg;
 
     // Establish vars for DeltaE calculation
-    row_count = this->ref_data->get_row_count();
-    col_count = this->ref_data->get_col_count();
+    int row_count = this->ref_data->get_row_count();
+    int col_count = this->ref_data->get_col_count();
     double ref_L;
     double ref_a;
     double ref_b;

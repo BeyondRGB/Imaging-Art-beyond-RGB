@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+namespace btrgb {
 
 class BitDepthFinder {
     public:
@@ -12,5 +13,7 @@ class BitDepthFinder {
         inline int required_bits(uint16_t value);
 
 };
+
+}
 
 #endif
