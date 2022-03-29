@@ -4,8 +4,10 @@
 #include "ImageUtil/Image.hpp"
 #include "../header/NoiseReduction.h"
 #include <opencv2/opencv.hpp>
-
+#include <opencv2/imgproc.hpp>
 using namespace cv;
+#include <exception>
+using namespace std;
 
 void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("", "NoiseReduction");
@@ -20,6 +22,8 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
 
     cv::Mat Blurred1;
     cv::Mat Blurred2;
+
+
 
     //Amount to blur by 3 seems to be okish needs more testing
     int sigma = 3;
@@ -39,16 +43,34 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     im1 = im1 + sharpFactor * unsharpMask1;
     im2 = im2 + sharpFactor * unsharpMask2;
 
+    images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
+    images->outputImageAs(btrgb::TIFF, "art2", "Sharp2");
+
+
     comms->send_progress(0.5, "NoiseReduction");
 
 
     //Noise reduction
     //Several different noise reduction algos
     //Using Bilateral Filtering for highest accuracy
+    
 
-    bilateralFilter(im1, im1, sigma, sigma * 2, sigma / 2);
-    bilateralFilter(im2, im2, sigma, sigma * 2, sigma / 2);
 
+    cv::Mat filter1;
+    cv::Mat filter2;
+    try {
+
+        cv::bilateralFilter(im1, filter1, 3, 3.0, 3.0);
+        cv::bilateralFilter(im2, filter2, 3, 3.0, 3.0);
+
+        filter1.copyTo(im1);
+        filter2.copyTo(im2);
+
+    }
+    catch(exception& e)
+    {
+        std::cout << "An exception occurred. Exception Nr. " << e.what() << '\n';
+    }
 
     comms->send_progress(1, "NoiseReduction");
     //Outputs TIFFs for each image group for after this step, temporary

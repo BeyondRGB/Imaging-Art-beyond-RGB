@@ -12,6 +12,9 @@
 #include "image_processing/header/PreProcessor.h"
 #include "image_processing/header/RawImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
+#include "image_processing/header/NoiseReduction.h"
+
+
 
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
