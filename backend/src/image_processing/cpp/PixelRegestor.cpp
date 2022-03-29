@@ -101,7 +101,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
     btrgb::Image* btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
-    comms->send_base64(btrgb_matches, btrgb::PNG, btrgb::FULL);
+    comms->send_base64(btrgb_matches, btrgb::FULL);
     images->setImage("matches", btrgb_matches);
     images->outputImageAs(btrgb::PNG, "matches");
     images->deleteImage("matches");
@@ -123,7 +123,6 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     cout << "Estimated homography : \n" << h;
     comms->send_progress(1, "PixelRegestor - Done");
 
-    cv::waitKey();
 
     //Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "art1_rgstr");
