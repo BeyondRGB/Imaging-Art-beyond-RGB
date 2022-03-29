@@ -8,11 +8,11 @@ extern "C" {
 #include <opencv2/opencv.hpp>
 
 #include "ImageUtil/Image.hpp"
-#include "ImageWriter.hpp"
+#include "ImageWriterStrategy.hpp"
 
 namespace btrgb {
     
-    class LibTiffWriter: public ImageWriter {
+    class LibTiffWriter: public ImageWriterStrategy {
         public:
             LibTiffWriter();
             ~LibTiffWriter();

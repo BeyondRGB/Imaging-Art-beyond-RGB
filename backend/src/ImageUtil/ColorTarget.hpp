@@ -9,6 +9,8 @@ typedef struct target_location {
 	// Normalized locations of the four edges of the Target
 	// These are the values provided by the front end
 	double top_loc, bot_loc, left_loc, right_loc;
+	// Size of the sample to take from a color patch as a percentage of the patch size
+	double sample_size;
 	// Row and Colum count for the color Target provided by the front end
 	int row_count, col_count;
 }TargetData;
@@ -35,7 +37,7 @@ public:
 	 * @param sp the sample width as a percentage of the color patch width
 	 * @return float the average pixel value
 	 */
-	float get_patch_avg(int row, int col, int channel, double sp=0.3);
+	float get_patch_avg(int row, int col, int channel);
 	
 	/**
 	 * @brief Get the row count
@@ -61,6 +63,8 @@ private:
 	int col_count;
 	int row_height;
 	int col_width;
+	// Size of the sample to take from a color patch as a percentage of the patch size
+	double sample_size = 0.3;
 
 	/**
 	 * @brief Calculate the center x postiton for the specified col

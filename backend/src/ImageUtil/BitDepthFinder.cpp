@@ -1,5 +1,7 @@
 #include "BitDepthFinder.hpp"
 
+namespace btrgb {
+
 /* This function accounts for the small chance that, for example,
  * a 14 bit image may have one or two pixels take up 15 bits. 
  * Just in case if there were such an error, the number of pixels
@@ -78,4 +80,6 @@ int BitDepthFinder::required_bits(uint16_t value) {
         * to save time. */
     return 8;
             
+}
+
 }

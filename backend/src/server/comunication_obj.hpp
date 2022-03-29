@@ -30,13 +30,14 @@ private:
 	websocketpp::connection_hdl connectionHandle_m;
 	websocketpp::frame::opcode::value opcode_m;
 	unsigned long id;
-	static unsigned char binID;
 	/**
 	* Function for sending a message back to the front end
 	* @param msg: the message string to send
 	*/
 	//void send_msg(std::string msg);
 	void send_bin(std::vector<uchar>& v);
+	
+    btrgb::base64_ptr_t createDataURL(enum btrgb::output_type type, std::vector<uchar>* direct_binary);
 
 public:
 	void send_msg(std::string msg);
@@ -73,8 +74,20 @@ public:
 	* @param type: enum to the type of image being sent
 	* @param qual: enum for the quality of the image being sent
 	*/
-	void send_base64(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
-	void send_binary(btrgb::Image* image, enum btrgb::output_type type, enum btrgb::image_quality qual);
+	void send_base64(btrgb::Image* image, enum btrgb::image_quality qual);
+	void send_binary(btrgb::Image* image, enum btrgb::image_quality qual);
+	
+	void send_base64(
+		std::string name,
+		std::vector<uchar>* direct_binary, 
+		enum btrgb::output_type type
+	);
+
+	void send_binary(
+		std::string name,
+		std::vector<uchar>* direct_binary,
+		enum btrgb::output_type type
+	);
 };
 
 #endif // COMMUNICATION_OBJ_H
