@@ -14,6 +14,8 @@
 #include "image_processing/header/ImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
 #include "image_processing/header/ResultsProcessor.h"
+#include "image_processing/header/NoiseReduction.h"
+
 
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
