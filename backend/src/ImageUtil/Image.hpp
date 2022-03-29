@@ -4,30 +4,35 @@
 #include <stdint.h>
 #include <string>
 #include <opencv2/opencv.hpp>
-#include <cppcodec/base64_rfc4648.hpp>
+#include <filesystem>
+namespace fs = std::filesystem;
+
+#include "ImageUtil/ColorProfiles.hpp"
 
 /* Ways to loop:
 
     // Apply operation directly to mat.
     im->getMat() *= scaler;
-   
-    // Use Mat forEach loop (put variable from outside of for-loop in the capture list).
+
+    // Multi-threaded/parallel loop
     float scaler = ...
     cv::Mat im32f = im->getMat();
-    im32f.forEach<float[]>( [scaler](float (&pixel)[], const int* pos) -> void {
+    // Three channel image
+    im.forEach<cv::Vec3f>([scaler](cv::Vec3f& pixel, const int* pos) -> void {
         pixel[R] *= scaler;
         pixel[G] *= scaler;
         pixel[B] *= scaler;
     });
-
-    // Loop through every channel.
-    float scaler = ...
-    int channels = im->channels();
-    cv::Mat im32f = im->getMat();
-    im32f.forEach<float[]>( [channels](float (&pixel)[], const int* pos) -> void {
-        for( int ch = 0; ch < channels; ch++) {
+    // Six channel image
+    im.forEach<cv::Vec<float,6>([](cv::Vec<float,6>& pixel, const int* pos) -> void {
+        for( int ch = 0; ch < 6; ch++)
             pixel[ch] *= scaler;
-        }
+        pixel[R1] *= scaler;
+        pixel[G1] *= scaler;
+        pixel[B1] *= scaler;
+        pixel[R2] *= scaler;
+        pixel[G2] *= scaler;
+        pixel[B2] *= scaler;
     });
 
     // Direct looping.
@@ -59,15 +64,13 @@ namespace btrgb {
 
     enum output_type {
         PNG,
-        WEBP,
-        TIFF
+        TIFF,
+        JPEG
     };
 
     enum image_quality {
-        FAST,
-        FULL
+        FAST, FULL
     };
-
 
     class Image {
         public:
@@ -91,11 +94,17 @@ namespace btrgb {
             std::string getName();
             void setName(std::string name);
 
-            binary_ptr_t toBinaryOfType(enum output_type type, enum image_quality quality);
-            base64_ptr_t toBase64OfType(enum output_type type, enum image_quality quality);
+            binary_ptr_t getEncodedPNG(enum image_quality quality);
+
+            void setColorProfile(ColorSpace color_profile);
+            ColorSpace getColorProfile();
 
             void recycle();
             int _raw_bit_depth = 0;
+            
+            /* ====== static ======= */
+            static bool is_tiff(std::string filename);
+            static cv::Mat copyMatConvertDepth(cv::Mat input, int cv_depth);
 
         private:
             std::string _name;
@@ -106,6 +115,7 @@ namespace btrgb {
             int _row_size = 0;
             int _col_size = 0;
             cv::Mat _opencv_mat;
+            ColorSpace _color_profile = none;
 
             void _checkInit();
     };
@@ -131,7 +141,7 @@ namespace btrgb {
         public:
             virtual char const * what() const noexcept { return "Image::initBitmap(): The number of channels must be between 1 and 10 inclusive."; }
     };
-
+    
 }
 
 const int R = 0;
