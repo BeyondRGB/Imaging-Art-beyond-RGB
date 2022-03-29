@@ -26,13 +26,16 @@
       showHomeControl: false,
       showFullPageControl: false,
       preserveImageSizeOnResize: true,
-      // zoomPerScroll: 1.5,
+      maxZoomPixelRatio: 30,
+      zoomPerScroll: 1.4,
       visibilityRatio: 1,
       // tileSources: {
       //   type: "image",
       //   url: placeholder,
       // },
     });
+
+    viewer.addHandler("zoom", handleZoom);
   };
 
   onDestroy(() => {
@@ -89,14 +92,20 @@
     console.log("New Image (Image Viewer)");
     let temp = new Image();
     temp.src = $processState.outputImage?.dataURL;
-    if (imageUrl === temp.src) {
-      console.log("skip (image viewer)");
+
+    imageUrl = temp.src;
+
+    viewer.open({
+      type: "image",
+      url: imageUrl,
+    });
+  }
+
+  function handleZoom(e) {
+    if (e.zoom > 10) {
+      viewer.drawer.setImageSmoothingEnabled(false);
     } else {
-      imageUrl = temp.src;
-      viewer.open({
-        type: "image",
-        url: imageUrl,
-      });
+      viewer.drawer.setImageSmoothingEnabled(true);
     }
   }
 </script>
