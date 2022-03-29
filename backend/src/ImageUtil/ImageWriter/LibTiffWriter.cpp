@@ -85,6 +85,9 @@ namespace btrgb {
 			std::cerr << "[LibTiffWriter] Warning: could not write custom tag.\n";
 		}
 
+		/* Set software field. */
+		TIFFSetField(img_out, TIFFTAG_SOFTWARE, "BTRGB v0.0.5");
+
 		/* The written data needs to be broken up into "Strips" to make buffering easier 
 		* for TIFF readers. Rows-per-strip needs to be tagged, this is the number of 
 		* physical pixel rows of the image written in each strip. A "row" here is a bitmap
