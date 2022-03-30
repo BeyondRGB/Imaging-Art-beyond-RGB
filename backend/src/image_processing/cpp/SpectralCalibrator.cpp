@@ -82,10 +82,9 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
 
     comms->send_progress(0.9, "SpectralCalibration");
 
-    this->store_results(images);   
+    this->store_results(images);  
 
-    step.release();
-    ref_data_matrix.release(); 
+    this->store_spectral_img(images); 
 
     std::cout << "SpectralCalibration done" << std::endl;
     comms->send_progress(1, "SpectralCalibration");
@@ -122,8 +121,21 @@ void SpectralCalibrator::store_results(btrgb::ArtObject *images){
     // Optimized R camera
     results_obj->store_matrix(SP_R_camera, this->R_camera);
     // Optimized M refl
-    results_obj->store_matrix(SP_M_refl, this->M_refl);
-    
+    results_obj->store_matrix(SP_M_refl, this->M_refl); 
+   
+}
+
+void SpectralCalibrator::store_spectral_img(btrgb::ArtObject *images){
+    // Build Spectral Image
+    btrgb::Image* art1 = images->getImage("art1");
+    btrgb::Image* art2 = images->getImage("art2");
+    btrgb::Image* art[2] = {art1, art2};
+    int height = images->get_results_obj(btrgb::ResultType::GENERAL)->get_int(GI_IMG_ROWS);
+    int width = images->get_results_obj(btrgb::ResultType::GENERAL)->get_int(GI_IMG_COLS);
+    cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6);
+    btrgb::Image *spectral_img = btrgb::calibration::camera_sigs_2_image(camra_sigs, height);
+    // Save Spectral Image
+    images->setImage(SP_IMAGE_KEY, spectral_img);
 }
 
 
