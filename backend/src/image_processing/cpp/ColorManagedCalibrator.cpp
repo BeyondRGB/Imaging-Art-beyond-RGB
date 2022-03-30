@@ -270,44 +270,6 @@ void ColorManagedCalibrator::build_input_matrix() {
 }
 
 
-// void ColorManagedCalibrator::fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
-//                                              cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
-//                                               cv::Mat xyz){
-//     int row_count = this->ref_data->get_row_count();
-//     int col_count = this->ref_data->get_col_count();
-//     *L_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-//     *b_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-//     *a_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-//     *L_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-//     *a_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-//     *b_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-
-//     WhitePoints* wp = this->ref_data->get_white_pts();
-//     for(int row = 0; row < row_count; row++){
-//         for(int col = 0; col < col_count; col++){
-//             // Get/Store L*,a*,b* values from RefData
-//             L_ref->at<double>(row,col) = this->ref_data->get_L(row, col);
-//             a_ref->at<double>(row,col) = this->ref_data->get_a(row, col);
-//             b_ref->at<double>(row,col) = this->ref_data->get_b(row, col);
-
-//             // Extract current camera_(x,y,z)
-//             // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
-//             int xyz_index = col + row * col_count;
-//             double x = 100 * xyz.at<double>(0, xyz_index);
-//             double y = 100 * xyz.at<double>(1, xyz_index);
-//             double z = 100 * xyz.at<double>(2, xyz_index);
-//             // Convert camera_(x,y,z) to camera_(L*,a*,b*)
-//             btrgb::XYZ_t xyz = {x, y, z};
-//             btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
-//             // Stor L*,a*,b* values from camera sigs
-//             L_camera->at<double>(row,col) = lab.L;
-//             a_camera->at<double>(row,col) = lab.a;
-//             b_camera->at<double>(row,col) = lab.b;
-//         }
-//     }
-    
-// }
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                DeltaE Function                             //
 ////////////////////////////////////////////////////////////////////////////////
@@ -386,46 +348,47 @@ double DeltaEFunction::calc(const double* x)const{
     // Compute camera_xyz
     cv::Mat_<double> xyz = *this->M * offset_avg;
 
-    // Establish vars for DeltaE calculation
+    // // Establish vars for DeltaE calculation
     int row_count = this->ref_data->get_row_count();
     int col_count = this->ref_data->get_col_count();
-    double ref_L;
-    double ref_a;
-    double ref_b;
-    double L;
-    double a;
-    double b;
+    double deltaE_sum = btrgb::calibration::compute_deltaE_sum(this->ref_data, xyz, this->delE_values);
+    // double ref_L;
+    // double ref_a;
+    // double ref_b;
+    // double L;
+    // double a;
+    // double b;
 
-    // Calculate AVG delta E for all ColorPatches on target
-    // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
-    WhitePoints* wp = this->ref_data->get_white_pts();
-    double deltaE_sum = 0;
-    for (int row = 0; row < row_count; row++) {
-        for (int col = 0; col < col_count; col++) {
-            // Get L*,a*,b* values from RefData
-            ref_L = this->ref_data->get_L(row, col);
-            ref_a = this->ref_data->get_a(row, col);
-            ref_b = this->ref_data->get_b(row, col);
+    // // Calculate AVG delta E for all ColorPatches on target
+    // // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
+    // WhitePoints* wp = this->ref_data->get_white_pts();
+    // double deltaE_sum = 0;
+    // for (int row = 0; row < row_count; row++) {
+    //     for (int col = 0; col < col_count; col++) {
+    //         // Get L*,a*,b* values from RefData
+    //         ref_L = this->ref_data->get_L(row, col);
+    //         ref_a = this->ref_data->get_a(row, col);
+    //         ref_b = this->ref_data->get_b(row, col);
 
-            // Extract current camera_(x,y,z)
-            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
-            int xyz_index = col + row * col_count;
-            double x = 100 * xyz.at<double>(0, xyz_index);
-            double y = 100 * xyz.at<double>(1, xyz_index);
-            double z = 100 * xyz.at<double>(2, xyz_index);
-            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
-            btrgb::XYZ_t xyz = {x, y, z};
-            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+    //         // Extract current camera_(x,y,z)
+    //         // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
+    //         int xyz_index = col + row * col_count;
+    //         double x = 100 * xyz.at<double>(0, xyz_index);
+    //         double y = 100 * xyz.at<double>(1, xyz_index);
+    //         double z = 100 * xyz.at<double>(2, xyz_index);
+    //         // Convert camera_(x,y,z) to camera_(L*,a*,b*)
+    //         btrgb::XYZ_t xyz = {x, y, z};
+    //         btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
 
-            // Calculate deltaE and add to sum
-            cmsCIELab lab1 = {ref_L, ref_a, ref_b};
-            cmsCIELab lab2 = {lab.L, lab.a, lab.b};
-            double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
-            // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
-            this->delE_values->at<double>(row,col) = delE;
-            deltaE_sum += delE;
-        }
-    }
+    //         // Calculate deltaE and add to sum
+    //         cmsCIELab lab1 = {ref_L, ref_a, ref_b};
+    //         cmsCIELab lab2 = {lab.L, lab.a, lab.b};
+    //         double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+    //         // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
+    //         this->delE_values->at<double>(row,col) = delE;
+    //         deltaE_sum += delE;
+    //     }
+    // }
 
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;

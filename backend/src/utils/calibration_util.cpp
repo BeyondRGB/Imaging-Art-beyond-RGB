@@ -208,3 +208,47 @@ void btrgb::calibration::fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, c
         }
     }
 }
+
+double btrgb::calibration::compute_deltaE_sum(RefData *ref_data, cv::Mat xyz, cv::Mat *deltaE_values){
+    // Establish vars for DeltaE calculation
+    int row_count = ref_data->get_row_count();
+    int col_count = ref_data->get_col_count();
+    double ref_L;
+    double ref_a;
+    double ref_b;
+    double L;
+    double a;
+    double b;
+
+    // Calculate AVG delta E for all ColorPatches on target
+    // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
+    WhitePoints* wp = ref_data->get_white_pts();
+    double deltaE_sum = 0;
+    for (int row = 0; row < row_count; row++) {
+        for (int col = 0; col < col_count; col++) {
+            // Get L*,a*,b* values from RefData
+            ref_L = ref_data->get_L(row, col);
+            ref_a = ref_data->get_a(row, col);
+            ref_b = ref_data->get_b(row, col);
+
+            // Extract current camera_(x,y,z)
+            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
+            int xyz_index = col + row * col_count;
+            double x = 100 * xyz.at<double>(0, xyz_index);
+            double y = 100 * xyz.at<double>(1, xyz_index);
+            double z = 100 * xyz.at<double>(2, xyz_index);
+            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
+            btrgb::XYZ_t xyz = {x, y, z};
+            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+
+            // Calculate deltaE and add to sum
+            cmsCIELab lab1 = {ref_L, ref_a, ref_b};
+            cmsCIELab lab2 = {lab.L, lab.a, lab.b};
+            double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+            // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
+            deltaE_values->at<double>(row,col) = delE;
+            deltaE_sum += delE;
+        }
+    }
+    return deltaE_sum;
+}

@@ -63,6 +63,8 @@ public:
 
 	int get_white_col();
 
+	RefData *get_ref_data();
+
 private:
 	btrgb::Image* im;
 	int target_top_edge;

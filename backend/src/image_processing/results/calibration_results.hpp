@@ -45,6 +45,14 @@
 #define GI_Y                  "Y white patche meas"
 #define GI_W                  "W Value"
 
+// Verification Keys
+#define V_XYZ              "Verification Calibrated XYZ Values"
+#define V_DLETA_E_VALUES   "Verification DeltaE Values"
+#define V_DELTA_E_AVG      "Verification DeltaE Mean"
+#define V_L_CAMERA         "Verification L*_camera"
+#define V_a_CAMERA         "Verification a*_camera"
+#define V_b_CAMERA         "Verification b*_camera"
+
 // Json Value Storage Keys
 #define MATRIX_KEY "matrix_values"
 #define INT_KEY "integer_values"
