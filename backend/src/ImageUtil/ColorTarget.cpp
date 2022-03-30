@@ -21,6 +21,10 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	this->col_width = this->target_width / this->col_count;
 	// Init sampel size
 	this->sample_size = location_data.sample_size;
+	//White Patch Init
+	//On frontend patch location is base 1, so subtract 1 to make base 0 for backend interactions
+	this->white_row = location_data.w_row - 1;
+	this->white_col = location_data.w_col - 1;
 }
 
 /**
@@ -35,7 +39,7 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 *
 *		sw = 2sr + 1 // 1 for the center pixel and 2sr for pixels on either side
 *		sr = (sw - 1) / 2
-* 
+*
 */
 float ColorTarget::get_patch_avg(int row, int col, int chan) {
 	int center_pixX = this->patch_posX(col);
@@ -59,7 +63,7 @@ float ColorTarget::get_patch_avg(int row, int col, int chan) {
 
 	// The sample pixels form a square so the number of pixels is sample_width squared
 	int pixel_count = pow(sw, 2);
-	float avg = pixel_value_sum / pixel_count;	
+	float avg = pixel_value_sum / pixel_count;
 	return avg;
 }
 
@@ -88,3 +92,11 @@ int ColorTarget::get_col_count() {
 	return this->col_count;
 }
 
+
+int ColorTarget::get_white_row() {
+	return this->white_row;
+}
+
+int ColorTarget::get_white_col() {
+	return this->white_col;
+}

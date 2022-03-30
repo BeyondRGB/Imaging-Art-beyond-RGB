@@ -35,15 +35,17 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     int width = art1->width();
     int channels = art1->channels();
 
+    ColorTarget target = images->get_target("art1");
+
     //Col and Row of the white patch on the target
-    int whiteRow = reference->get_white_patch_row();
-    int whiteCol = reference->get_white_patch_col();
+    int whiteRow = target.get_white_row();
+    int whiteCol = target.get_white_col();
 
     //Collecting the y Value from the reference data
     double yVal = reference->get_y(whiteRow, whiteCol);
 
     //Getting average patch values for white and art images channel two
-    float patAvg = images->get_target("art1").get_patch_avg(whiteRow, whiteCol, 1);
+    float patAvg = target.get_patch_avg(whiteRow, whiteCol, 1);
     float whiteAvg = images->get_target("white1").get_patch_avg(whiteRow, whiteCol, 1);
 
     //Calculate w value and complete the pixel operation with set w value
