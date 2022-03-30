@@ -33,8 +33,8 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     }
 
     // Init Color Targets
-    target1 = images->get_target(ART(1));
-    target2 = images->get_target(ART(2));
+    target1 = images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
+    target2 = images->get_target(ART(2), btrgb::TargetType::GENERAL_TARGET);
     ColorTarget targets[] = { target1, target2 };
     int channel_count = art1->channels();
     int target_count = std::size(targets);

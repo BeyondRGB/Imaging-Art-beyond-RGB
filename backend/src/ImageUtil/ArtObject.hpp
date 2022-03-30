@@ -52,10 +52,10 @@ namespace btrgb {
     class ArtObject {
 
     private:
-        TargetData target_data;
+        TargetData target_data, verification_data;
         std::unordered_map<std::string, Image*> images;
         RefData* ref_data;
-        RefData* verification_data = nullptr;
+        RefData* verification_ref = nullptr;
         std::string output_directory;
         CalibrationResults general_info;
         CalibrationResults calibration_res; 
@@ -71,7 +71,7 @@ namespace btrgb {
         void setTargetInfo(TargetData td);
         double getTargetInfo(std::string type);
         int getTargetSize(std::string edge);
-        ColorTarget get_target(std::string imageName);
+        ColorTarget get_target(std::string imageName, TargetType type);
 
 
         CalibrationResults *get_results_obj(btrgb::ResultType type);
