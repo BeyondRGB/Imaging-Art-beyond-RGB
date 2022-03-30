@@ -27,16 +27,13 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
-    if(this->should_verify){
-        std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++Verify++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-    }else{
-        std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++No I will not Verify++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-
-    }
-
+    
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    if(this->should_verify){
+        img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new Verification())) ;     
+    }
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ResultsProcessor()));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
@@ -255,6 +252,7 @@ void Pipeline::init_verification(btrgb::ArtObject* images){
         TargetData vd = this->build_target_data(verification_json);
         images->init_verification_data(vd);
         this->should_verify = true;
+        this->send_info("Verivication Targe Was Provided", this->get_process_name());
 
     }catch(ParsingError e){
         this->send_info("No Verification Target provided", this->get_process_name());

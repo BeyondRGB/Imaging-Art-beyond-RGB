@@ -108,3 +108,6 @@ int ColorTarget::get_white_col() {
 	return this->white_col;
 }
 
+RefData* ColorTarget::get_ref_data(){
+	return this->ref_data;
+}
