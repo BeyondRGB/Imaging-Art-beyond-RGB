@@ -59,21 +59,6 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         // TargetData td;
         Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
         TargetData td = this->build_target_data(target_location);
-        // std::cout << target_location.to_string(true) << std::endl;
-        // td.top_loc = target_location.get_number("top");
-        // td.left_loc = target_location.get_number("left");
-        // td.bot_loc = target_location.get_number("bottom");
-        // td.right_loc = target_location.get_number("right");
-        // td.col_count = target_location.get_number("cols");
-        // td.row_count = target_location.get_number("rows");
-        // td.sample_size = target_location.get_number("size");
-        // Json white_loc = target_location.get_obj("whitePatch");
-        // td.w_row = white_loc.get_number("row");
-        // td.w_col = white_loc.get_number("col");
-        // Json ref_loc = target_location.get_obj("refData");
-        // td.ref_base = ref_loc.get_string("name");
-        // td.illum_base = ref_loc.get_string("illuminants");
-        // td.obsv_base = ref_loc.get_number("standardObserver");
         art_obj->setTargetInfo(td);
         this->send_info("TargetData initialized:", this->get_process_name());
         return true;
@@ -103,12 +88,9 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     std::string illum_str = ref_data_json.get_string(key_map[DataKey::Illuminants]);
     results_obj->store_string(GI_ILLUMINANT, illum_str);
     // White Patch Coords
-    std::cout << "GET rEF" << std::endl;
     RefData *ref_data = art_obj->get_refrence_data();
     TargetData td = build_target_data(target_json);
     std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
-    
-    std::cout << "Set AAAAAAAAAAAAAAAAAA" << std::endl;
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
 
 }
