@@ -168,6 +168,10 @@ namespace btrgb{
          */
         cv::Mat image_2_camera_sigs(btrgb::Image *image, int height, int width);
 
+        void fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
+                         cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
+                         cv::Mat xyz, RefData *ref_data);
+
     }
 }
 
