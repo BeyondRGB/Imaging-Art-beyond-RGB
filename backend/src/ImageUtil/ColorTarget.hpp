@@ -101,9 +101,9 @@ private:
 	 */
 	int patch_posY(int row);
 
-	IlluminantType set_illuminant_type(std::string illum_str);
+	// IlluminantType set_illuminant_type(std::string illum_str);
 
-	ObserverType set_observer_type(int observer_num);
+	// ObserverType set_observer_type(int observer_num);
 
 };
 #endif // !COLOR_TARGET_H

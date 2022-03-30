@@ -27,6 +27,9 @@ public:
 	RefData(std::string file_path, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
 	~RefData();
 
+	static IlluminantType get_illuminant(std::string illuminant_string);
+	static ObserverType get_observer(int observer_num);
+
 	/**
 	* Retrives a reference to a ColorPatch at a given row and col
 	* @param row: the row to get the ColorPatch from

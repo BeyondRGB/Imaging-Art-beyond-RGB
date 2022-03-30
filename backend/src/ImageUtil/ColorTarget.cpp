@@ -107,23 +107,23 @@ int ColorTarget::get_white_col() {
 	return this->white_col;
 }
 
-IlluminantType ColorTarget::set_illuminant_type(std::string illum_str) {
-    // Default to D50
-    IlluminantType type = IlluminantType::D50;
-    if (illum_str == "A") {
-        type = IlluminantType::A;
-    }
-    if (illum_str == "D65") {
-        type = IlluminantType::D65;
-    }
-    return type;
-}
+// IlluminantType ColorTarget::set_illuminant_type(std::string illum_str) {
+//     // Default to D50
+//     IlluminantType type = IlluminantType::D50;
+//     if (illum_str == "A") {
+//         type = IlluminantType::A;
+//     }
+//     if (illum_str == "D65") {
+//         type = IlluminantType::D65;
+//     }
+//     return type;
+// }
 
-ObserverType ColorTarget::set_observer_type(int observer_num) {
-    // Default to 1931
-    ObserverType type = ObserverType::SO_1931;
-    if (observer_num == 1964) {
-        type = ObserverType::SO_1964;
-    }
-    return type;
-	}
+// ObserverType ColorTarget::set_observer_type(int observer_num) {
+//     // Default to 1931
+//     ObserverType type = ObserverType::SO_1931;
+//     if (observer_num == 1964) {
+//         type = ObserverType::SO_1964;
+//     }
+//     return type;
+// }

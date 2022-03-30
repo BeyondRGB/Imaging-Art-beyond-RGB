@@ -176,17 +176,12 @@ std::string Pipeline::get_output_directory() {
 }
 
 IlluminantType Pipeline::get_illuminant_type(Json target_data) {
-    // Default to D50
-    IlluminantType type = IlluminantType::D50;
+    // Defaults to D50
+    IlluminantType type = RefData::get_illuminant("");
     try {
         Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         std::string illum_str = ref_data.get_string(key_map[DataKey::Illuminants]);
-        if (illum_str == "A") {
-            type = IlluminantType::A;
-        }
-        if (illum_str == "D65") {
-            type = IlluminantType::D65;
-        }
+        type = RefData::get_illuminant(illum_str);
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
@@ -196,14 +191,12 @@ IlluminantType Pipeline::get_illuminant_type(Json target_data) {
 }
 
 ObserverType Pipeline::get_observer_type(Json target_data) {
-    // Defailt to 1931
-    ObserverType type = ObserverType::SO_1931;
+    // Defailts to 1931
+    ObserverType type = RefData::get_observer(1931);
     try {
         Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         int observer_num = ref_data.get_number(key_map[DataKey::StandardObserver]);
-        if (observer_num == 1964) {
-            type = ObserverType::SO_1964;
-        }
+        type = RefData::get_observer(observer_num);
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();

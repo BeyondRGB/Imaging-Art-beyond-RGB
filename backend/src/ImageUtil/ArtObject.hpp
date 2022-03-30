@@ -44,6 +44,11 @@ namespace btrgb {
         VERIFICATION
     };
 
+    enum TargetType{
+        GENERAL_TARGET,
+        VERIFICATION_TARGET
+    };
+
     class ArtObject {
 
     private:
@@ -61,11 +66,13 @@ namespace btrgb {
         ~ArtObject();
 
         RefData* get_refrence_data();
+        void init_verification_data(TargetData verification_data);
 
         void setTargetInfo(TargetData td);
         double getTargetInfo(std::string type);
         int getTargetSize(std::string edge);
         ColorTarget get_target(std::string imageName);
+
 
         CalibrationResults *get_results_obj(btrgb::ResultType type);
         std::string get_output_dir();

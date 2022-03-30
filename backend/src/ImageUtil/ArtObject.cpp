@@ -185,4 +185,8 @@ namespace btrgb {
         return this->output_directory;
     }
 
+    void ArtObject::init_verification_data(TargetData verification_data){
+        
+    }
+
 }
