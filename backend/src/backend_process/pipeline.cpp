@@ -41,7 +41,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     try {
         // Extract Image Array from request data
         Json image_array = this->process_data_m->get_array(key_map[DataKey::IMAGES]);
-        
+
         std::cout << image_array.to_string(true) << std::endl;
         for (int i = 0; i < image_array.get_size(); i++) {
             // Extract each obj from array
@@ -66,6 +66,9 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         td.col_count = target_location.get_number("cols");
         td.row_count = target_location.get_number("rows");
         td.sample_size = target_location.get_number("size");
+        Json white_loc = target_location.get_obj("whitePatch");
+        td.w_row = white_loc.get_number("row");
+        td.w_col = white_loc.get_number("col");
         art_obj->setTargetInfo(td);
         this->send_info("TargetData initialized:", this->get_process_name());
         return true;
@@ -136,7 +139,7 @@ void Pipeline::run() {
 
     /* Execute the pipeline on the created ArtObject */
     this->send_info( "About to execute...", this->get_process_name());
-    try { 
+    try {
         pipeline->execute(this->coms_obj_m.get(), images.get());
     }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
@@ -147,7 +150,7 @@ void Pipeline::run() {
 
 
 std::string Pipeline::get_output_directory() {
-    
+
 	std::time_t now = std::time(0);
 	std::tm *ltm = std::localtime(&now);
     std::string date_string = btrgb::get_date("-");
