@@ -54,6 +54,7 @@
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
+    "@carbon/charts-svelte": "^0.54.13",
     "@electron-forge/cli": "^6.0.0-beta.61",
     "@electron-forge/maker-deb": "^6.0.0-beta.61",
     "@electron-forge/maker-rpm": "^6.0.0-beta.61",
@@ -64,8 +65,10 @@
     "@tsconfig/svelte": "^2.0.1",
     "@types/openseadragon": "^3.0.0",
     "autoprefixer": "^10.4.0",
+    "carbon-components-svelte": "^0.60.0",
     "concurrently": "^6.3.0",
     "cross-env": "^7.0.3",
+    "d3": "^7.3.0",
     "electron": "15.3.0",
     "openseadragon": "^3.0.0",
     "postcss": "^8.4.5",

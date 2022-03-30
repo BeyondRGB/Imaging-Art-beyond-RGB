@@ -76,7 +76,7 @@ ColorPatch* RefData::get_color_patch(int row, int col) {
 	throw std::out_of_range("Index out of bounds");
 }
 
-ColorPatch* RefData::get_white_patch() {
+ColorPatch* RefData::get_estimated_white_patch() {
 	ColorPatch* current_best = this->get_color_patch(0, 0);
 	for (int row = 0; row < this->row_count; row++) {
 		for (int col = 0; col < this->col_count; col++) {
@@ -89,12 +89,12 @@ ColorPatch* RefData::get_white_patch() {
 	return current_best;
 }
 
-int RefData::get_white_patch_row() {
-	return this->get_white_patch()->get_row();
+int RefData::get_estimated_white_patch_row() {
+	return this->get_estimated_white_patch()->get_row();
 }
 
-int RefData::get_white_patch_col() {
-	return this->get_white_patch()->get_col();
+int RefData::get_estimated_white_patch_col() {
+	return this->get_estimated_white_patch()->get_col();
 }
 
 WhitePoints* RefData::get_white_pts(){
@@ -216,7 +216,7 @@ void RefData::output_xyz() {
 	std::cout << L_values << std::endl;
 	std::cout << a_values << std::endl;
 	std::cout << b_values << std::endl << std::endl;
-	ColorPatch* cp = this->get_white_patch();
+	ColorPatch* cp = this->get_estimated_white_patch();
 	std::cout << "White Patch," << cp->get_name() << std::endl;
 	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl << std::endl;
 }

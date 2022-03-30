@@ -21,6 +21,16 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	this->col_width = this->target_width / this->col_count;
 	// Init sampel size
 	this->sample_size = location_data.sample_size;
+	// White Patch Init
+	// The TargetData has already subtraced one so this is already zero based
+	this->white_row = location_data.w_row;
+	this->white_col = location_data.w_col;
+	// Ref Data Collection
+	this->reference = location_data.ref_base;
+	this->illuminant = this->set_illuminant_type(location_data.illum_base);
+	this->observer = this->set_observer_type(location_data.obsv_base);
+	// Make the RefData
+	this->ref_data = new RefData(this->reference, this->illuminant, this->observer);
 }
 
 /**
@@ -35,7 +45,7 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 *
 *		sw = 2sr + 1 // 1 for the center pixel and 2sr for pixels on either side
 *		sr = (sw - 1) / 2
-* 
+*
 */
 float ColorTarget::get_patch_avg(int row, int col, int chan) {
 	int center_pixX = this->patch_posX(col);
@@ -59,7 +69,7 @@ float ColorTarget::get_patch_avg(int row, int col, int chan) {
 
 	// The sample pixels form a square so the number of pixels is sample_width squared
 	int pixel_count = pow(sw, 2);
-	float avg = pixel_value_sum / pixel_count;	
+	float avg = pixel_value_sum / pixel_count;
 	return avg;
 }
 
@@ -88,3 +98,32 @@ int ColorTarget::get_col_count() {
 	return this->col_count;
 }
 
+
+int ColorTarget::get_white_row() {
+	return this->white_row;
+}
+
+int ColorTarget::get_white_col() {
+	return this->white_col;
+}
+
+IlluminantType ColorTarget::set_illuminant_type(std::string illum_str) {
+    // Default to D50
+    IlluminantType type = IlluminantType::D50;
+    if (illum_str == "A") {
+        type = IlluminantType::A;
+    }
+    if (illum_str == "D65") {
+        type = IlluminantType::D65;
+    }
+    return type;
+}
+
+ObserverType ColorTarget::set_observer_type(int observer_num) {
+    // Default to 1931
+    ObserverType type = ObserverType::SO_1931;
+    if (observer_num == 1964) {
+        type = ObserverType::SO_1964;
+    }
+    return type;
+	}

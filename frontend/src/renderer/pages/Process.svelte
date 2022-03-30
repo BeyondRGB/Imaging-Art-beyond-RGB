@@ -18,6 +18,8 @@
   let tabList;
 
   let showDialog = false;
+  let binaryType = null;
+  let binaryName = null;
   let colorTargetID;
 
   let tabs: any = [
@@ -54,27 +56,19 @@
       behavior: "smooth",
     });
   }
-  $: if ($messageStore.length > 1) {
+
+  $: if ($messageStore.length > 1 && binaryType === null) {
+    console.log($messageStore[0]);
     try {
       let temp = JSON.parse($messageStore[0]);
-      console.log(temp);
-      console.log(colorTargetID);
-      if (temp["RequestID"] === colorTargetID) {
+      if (temp["ResponseType"] === "ImageBinary") {
+        console.log("Binary From Server");
+        binaryType = temp["ResponseData"]["type"];
+        binaryName = temp["ResponseData"]["name"];
+      } else if (temp["RequestID"] === colorTargetID) {
         console.log("HalfSizedPreview From Server");
         $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
-      } else if (temp["ResponseType"] === "image") {
-        $processState.outputImage = temp["ResponseData"];
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  $: if ($messageStore.length > 1) {
-    try {
-      let temp = JSON.parse($messageStore[0]);
-      console.log(temp);
-      if (temp["ResponseType"] === "ImageBase64") {
+      } else if (temp["ResponseType"] === "ImageBase64") {
         console.log("Base64 From Server");
         $processState.outputImage = temp["ResponseData"];
       } else if (temp["ResponseType"] === "image") {
@@ -83,6 +77,26 @@
     } catch (e) {
       console.log(e);
     }
+  }
+
+  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
+    console.log("creating blob");
+    let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
+    let temp = new Image();
+    // let blob = new Blob($messageStore[0], { type: binaryType });
+    temp.src = URL.createObjectURL(blob);
+    $processState.artStacks[0].colorTargetImage = {
+      //  blob: blob,
+      dataURL: temp.src,
+      filename: binaryName,
+    };
+    $processState.outputImage = {
+      //  blob: blob,
+      dataURL: temp.src,
+      name: binaryName,
+    };
+    binaryType = null;
+    binaryName = null;
   }
 
   function colorTargetPrev() {

@@ -36,23 +36,24 @@ public:
 	ColorPatch* get_color_patch(int row, int col);
 
 	/**
-	* Finds the white ColorPatch. The whit patch is the one with
+	* Finds the white ColorPatch as defined by the reference data. The whit patch is the one with
 	* the hightest y value.
+	* NOTE: this is not the same as the user defined white patch
 	* @return: a pointer to the white ColorPatch
 	*/
-	ColorPatch* get_white_patch();
+	ColorPatch* get_estimated_white_patch();
 
 	/**
-	* Get the row the white patch is in
+	* Get the row the white patch is in as defined by the reference data
 	* @return: white patch row as an int
 	*/
-	int get_white_patch_row();
+	int get_estimated_white_patch_row();
 
 	/**
-	* Get the colum the white patch is in
+	* Get the colum the white patch is in as defined by the reference data
 	* @return: white patch colum as an int
 	*/
-	int get_white_patch_col();
+	int get_estimated_white_patch_col();
 
 	/**
 	* Gets the x value from the ColorPatch at the given row and col
