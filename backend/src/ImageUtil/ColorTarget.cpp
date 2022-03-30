@@ -22,9 +22,9 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	// Init sampel size
 	this->sample_size = location_data.sample_size;
 	// White Patch Init
-	// On frontend patch location is base 1, so subtract 1 to make base 0 for backend interactions
-	this->white_row = location_data.w_row - 1;
-	this->white_col = location_data.w_col - 1;
+	// The TargetData has already subtraced one so this is already zero based
+	this->white_row = location_data.w_row;
+	this->white_col = location_data.w_col;
 	// Ref Data Collection
 	this->reference = location_data.ref_base;
 	this->illuminant = this->set_illuminant_type(location_data.illum_base);

@@ -119,9 +119,10 @@ void FlatFieldor::store_results(btrgb::ArtObject* images){
     CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
 
     RefData *reference = images->get_refrence_data();
+    ColorTarget target = images->get_target("art1");
     //Col and Row of the white patch on the target
-    int whiteRow = reference->get_white_patch_row();
-    int whiteCol = reference->get_white_patch_col();
+    int whiteRow = target.get_white_row();
+    int whiteCol = target.get_white_col();
     //Collecting the y Value from the reference data
     double y = reference->get_y(whiteRow, whiteCol);
 
