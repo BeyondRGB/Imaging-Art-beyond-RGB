@@ -165,7 +165,7 @@
 					{isOpen ? ">" : "<"}
 				</div>
 				<div class="con">
-					<TestConsole />
+					<TestConsole {isOpen} />
 				</div>
 			</div>
 		</div>
