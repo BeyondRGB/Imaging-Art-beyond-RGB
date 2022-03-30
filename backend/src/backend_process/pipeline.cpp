@@ -69,6 +69,10 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         Json white_loc = target_location.get_obj("whitePatch");
         td.w_row = white_loc.get_number("row");
         td.w_col = white_loc.get_number("col");
+        Json ref_loc = target_location.get_obj("refData");
+        td.ref_base = ref_loc.get_string("name");
+        td.illum_base = ref_loc.get_string("illuminants");
+        td.obsv_base = ref_loc.get_number("standardObserver");
         art_obj->setTargetInfo(td);
         this->send_info("TargetData initialized:", this->get_process_name());
         return true;

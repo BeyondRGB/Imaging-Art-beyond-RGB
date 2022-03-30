@@ -21,10 +21,16 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	this->col_width = this->target_width / this->col_count;
 	// Init sampel size
 	this->sample_size = location_data.sample_size;
-	//White Patch Init
-	//On frontend patch location is base 1, so subtract 1 to make base 0 for backend interactions
+	// White Patch Init
+	// On frontend patch location is base 1, so subtract 1 to make base 0 for backend interactions
 	this->white_row = location_data.w_row - 1;
 	this->white_col = location_data.w_col - 1;
+	// Ref Data Collection
+	this->reference = location_data.ref_base;
+	this->illuminant = this->set_illuminant_type(location_data.illum_base);
+	this->observer = this->set_observer_type(location_data.obsv_base);
+	// Make the RefData
+	this->ref_data = new RefData(this->reference, this->illuminant, this->observer);
 }
 
 /**
@@ -100,3 +106,24 @@ int ColorTarget::get_white_row() {
 int ColorTarget::get_white_col() {
 	return this->white_col;
 }
+
+IlluminantType ColorTarget::set_illuminant_type(std::string illum_str) {
+    // Default to D50
+    IlluminantType type = IlluminantType::D50;
+    if (illum_str == "A") {
+        type = IlluminantType::A;
+    }
+    if (illum_str == "D65") {
+        type = IlluminantType::D65;
+    }
+    return type;
+}
+
+ObserverType ColorTarget::set_observer_type(int observer_num) {
+    // Default to 1931
+    ObserverType type = ObserverType::SO_1931;
+    if (observer_num == 1964) {
+        type = ObserverType::SO_1964;
+    }
+    return type;
+	}

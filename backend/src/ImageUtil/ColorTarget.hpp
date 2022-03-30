@@ -2,6 +2,7 @@
 #define COLOR_TARGET_H
 
 #include "Image.hpp"
+#include "reference_data/ref_data.hpp"
 #include <iostream>
 #include <math.h>
 
@@ -15,6 +16,9 @@ typedef struct target_location {
 	int row_count, col_count;
 	// White Patch Info
 	int w_row, w_col;
+	// Ref Data
+	std::string ref_base, illum_base;
+	int obsv_base;
 }TargetData;
 
 /**
@@ -72,6 +76,12 @@ private:
 	// White Patch Loc
 	int white_row;
 	int white_col;
+	// Ref Data Base
+	std::string reference;
+	ObserverType observer;
+	IlluminantType illuminant;
+	// Full Ref Data
+	RefData* ref_data;
 	// Size of the sample to take from a color patch as a percentage of the patch size
 	double sample_size = 0.3;
 
@@ -90,6 +100,10 @@ private:
 	 * @return int
 	 */
 	int patch_posY(int row);
+
+	IlluminantType set_illuminant_type(std::string illum_str);
+
+	ObserverType set_observer_type(int observer_num);
 
 };
 #endif // !COLOR_TARGET_H
