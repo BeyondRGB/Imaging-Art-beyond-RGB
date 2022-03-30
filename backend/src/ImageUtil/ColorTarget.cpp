@@ -1,6 +1,6 @@
 #include "ColorTarget.hpp"
 
-ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
+ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* ref_data) {
 	this->im = im;
 
 	// The front end normalizes the location based on width, so multiply top by width instead of height
@@ -29,8 +29,9 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	this->reference = location_data.ref_base;
 	this->illuminant = RefData::get_illuminant(location_data.illum_base);
 	this->observer = RefData::get_observer(location_data.obsv_base);
+	
 	// Make the RefData
-	this->ref_data = new RefData(this->reference, this->illuminant, this->observer);
+	this->ref_data = ref_data;
 }
 
 /**
