@@ -72,6 +72,13 @@ private:
      */
     void store_results(btrgb::ArtObject *images);
 
+    /**
+     * @brief Construct and strore a 6 channel spectral Image
+     * 
+     * @param images 
+     */
+    void store_spectral_img(btrgb::ArtObject *images);
+
 };
 
 

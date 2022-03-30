@@ -65,7 +65,6 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
     btrgb_stream.open(this->output_dir + this->Pro_f_name);
     std::string json_string;
     btrgb_json.dump_pretty(json_string);
-    std::cout << "Writing Results.btrgb" << std::endl << json_string << std::endl;
     btrgb_stream << json_string;
     btrgb_stream.close();    
 }
