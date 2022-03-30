@@ -39,11 +39,9 @@ void HalfSizePreview::run() {
             reader->recycle();
 
             /* Make sure image is bright enough. */
-            if(is_tiff) {
-                double min, max;
-                cv::minMaxIdx(im, &min, &max);
-                im.convertTo(im, CV_16U, 0xFFFF / max);
-            }
+            double min, max;
+            cv::minMaxIdx(im, &min, &max);
+            im.convertTo(im, CV_16U, 0xFFFF / max);
 
             /* Wrap the Mat as an Image object. */
             btrgb::Image imObj(fname + ".HalfSize");
