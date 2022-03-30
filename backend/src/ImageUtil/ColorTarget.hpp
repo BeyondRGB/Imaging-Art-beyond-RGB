@@ -32,7 +32,7 @@ class ColorTarget {
 
 public:
 	ColorTarget() {}
-	ColorTarget(btrgb::Image* im, TargetData location_data);
+	ColorTarget(btrgb::Image* im, TargetData location_data, RefData *ref_data);
 
 	/**
 	 * @brief Calculate the average pixel value for specified color patch

@@ -55,7 +55,11 @@ namespace btrgb {
     ColorTarget ArtObject::get_target(std::string imageName, TargetType type){
         try{
             Image* im = this->getImage(imageName);
-            ColorTarget target(im, this->target_data);
+            ColorTarget target;
+            if(type == TargetType::VERIFICATION_TARGET)
+                target = ColorTarget(im, this->verification_data, this->verification_ref);
+            else
+                target = ColorTarget(im, this->target_data, this->ref_data);
             return target;
         }catch(ArtObj_ImageDoesNotExist){
             throw ArtObj_ImageDoesNotExist();
