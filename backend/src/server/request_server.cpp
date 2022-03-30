@@ -24,7 +24,7 @@ void RequestServer::init_server() {
                  ::_2));
 
         // Listen on port 9002
-        server_m.listen(port_m);
+        server_m.listen(GlobalsSinglton::get_instance()->get_port());
     }
     catch (websocketpp::exception const& e) {
         std::cout << e.what() << std::endl;
