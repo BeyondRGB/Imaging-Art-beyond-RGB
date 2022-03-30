@@ -8,8 +8,7 @@
   let colorOverlay;
   let verifyOverlay;
 
-  let colorTracker;
-  let verifyTracker;
+  let trackers = [];
 
   let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
   let viewportPoint;
@@ -36,6 +35,8 @@
       showHomeControl: false,
       showFullPageControl: false,
       preserveImageSizeOnResize: false,
+      maxZoomPixelRatio: 30,
+      zoomPerScroll: 1.4,
       // zoomPerScroll: 1.5,
       visibilityRatio: 1,
     });
@@ -50,6 +51,7 @@
         console.log([viewer.viewport.getZoom(), viewer.viewport.getZoom(true)]);
       },
     });
+    viewer.addHandler("zoom", handleZoom);
   };
 
   const destoryViewer = () => {
@@ -70,6 +72,17 @@
     console.log("Color target viewer Destroy");
     destoryViewer();
   });
+
+  function handleZoom(e) {
+    if (e.zoom > 10) {
+      console.log({ "Big Zoom": e });
+      let drawer = viewer.drawer;
+      drawer.setImageSmoothingEnabled(false);
+    } else {
+      let drawer = viewer.drawer;
+      drawer.setImageSmoothingEnabled(true);
+    }
+  }
 
   $: if ($processState.currentTab === 4) {
     if (viewer && !viewer.isOpen()) {
@@ -98,11 +111,10 @@
     viewer.removeOverlay(selBox);
     if (id === 0) {
       colorOverlay = false;
-      colorTracker.destroy();
     } else if (id === 1) {
       verifyOverlay = false;
-      verifyTracker.destroy();
     }
+    trackers[id].destroy();
   }
 
   function addOverlay(id) {
@@ -118,230 +130,142 @@
       console.log(`Adding Overlay ${id}`);
       viewer.addOverlay({
         element: selBox,
-        location: new OpenSeadragon.Rect(
-          $processState.artStacks[0].colorTargets[id].left,
-          $processState.artStacks[0].colorTargets[id].top,
-          $processState.artStacks[0].colorTargets[id].right -
-            $processState.artStacks[0].colorTargets[id].left,
-          $processState.artStacks[0].colorTargets[id].bottom -
-            $processState.artStacks[0].colorTargets[id].top
-        ),
+        location: new OpenSeadragon.Rect(0.25, 0.25, 0.25, 0.25),
       });
 
       if (id === 0) {
         colorOverlay = true;
-        colorTracker = new OpenSeadragon.MouseTracker({
-          element: `sBox-${id}`,
-          pressHandler: function (e) {
-            var overlay = viewer.getOverlayById(`sBox-${id}`);
+      } else if (id === 1) {
+        verifyOverlay = true;
+      }
+      trackers[id] = new OpenSeadragon.MouseTracker({
+        element: `sBox-${id}`,
+        pressHandler: function (e) {
+          var overlay = viewer.getOverlayById(`sBox-${id}`);
 
-            // Overlay box coords
-            let topPos = overlay.bounds.y;
-            let botPos = overlay.bounds.y + overlay.bounds.height;
-            let leftPos = overlay.bounds.x;
-            let rightPos = overlay.bounds.x + overlay.bounds.width;
+          // Overlay box coords
+          let topPos = overlay.bounds.y;
+          let botPos = overlay.bounds.y + overlay.bounds.height;
+          let leftPos = overlay.bounds.x;
+          let rightPos = overlay.bounds.x + overlay.bounds.width;
 
-            // Event Relative coords
-            let offset = viewer.viewport.deltaPointsFromPixels(e.position);
-            let eViewX = leftPos + offset.x;
-            let eViewY = topPos + offset.y;
+          // Event Relative coords
+          let offset = viewer.viewport.deltaPointsFromPixels(e.position);
+          let eViewX = leftPos + offset.x;
+          let eViewY = topPos + offset.y;
 
-            // Event Distance to Edge
-            pressPos = {
-              ele: e.originalEvent.target,
-              top: Math.abs(eViewY - topPos),
-              left: Math.abs(eViewX - leftPos),
-              right: Math.abs(eViewX - rightPos),
-              bottom: Math.abs(eViewY - botPos),
-            };
-            e.originalEvent.path.forEach((element) => {
-              if (element.classList?.length > 0) {
-                if (element.classList[0] === "inc") {
-                  console.log("increase");
-                  if (
-                    element.parentElement.classList[1] === "top" ||
-                    element.parentElement.classList[1] === "bottom"
-                  ) {
+          // Event Distance to Edge
+          pressPos = {
+            ele: e.originalEvent.target,
+            top: Math.abs(eViewY - topPos),
+            left: Math.abs(eViewX - leftPos),
+            right: Math.abs(eViewX - rightPos),
+            bottom: Math.abs(eViewY - botPos),
+          };
+          e.originalEvent.path.forEach((element) => {
+            if (element.classList?.length > 0) {
+              if (element.classList[0] === "inc") {
+                console.log("increase");
+                if (
+                  element.parentElement.classList[1] === "top" ||
+                  element.parentElement.classList[1] === "bottom"
+                ) {
+                  if (id === 0) {
                     colorTarget.rows = colorTarget.rows + 1;
-                  } else if (
-                    element.parentElement.classList[1] === "left" ||
-                    element.parentElement.classList[1] === "right"
-                  ) {
-                    colorTarget.cols = colorTarget.cols + 1;
+                  } else if (id === 1) {
+                    verifyTarget.rows = verifyTarget.rows + 1;
                   }
-                } else if (element.classList[0] === "dec") {
-                  console.log("decrease");
-                  if (
-                    element.parentElement.classList[1] === "top" ||
-                    element.parentElement.classList[1] === "bottom"
-                  ) {
+                } else if (
+                  element.parentElement.classList[1] === "left" ||
+                  element.parentElement.classList[1] === "right"
+                ) {
+                  if (id === 0) {
+                    colorTarget.cols = colorTarget.cols + 1;
+                  } else if (id === 1) {
+                    verifyTarget.cols = verifyTarget.cols + 1;
+                  }
+                }
+              } else if (element.classList[0] === "dec") {
+                console.log("decrease");
+                if (
+                  element.parentElement.classList[1] === "top" ||
+                  element.parentElement.classList[1] === "bottom"
+                ) {
+                  if (id === 0) {
                     colorTarget.rows = colorTarget.rows - 1;
-                  } else if (
-                    element.parentElement.classList[1] === "left" ||
-                    element.parentElement.classList[1] === "right"
-                  ) {
+                  } else if (id === 1) {
+                    verifyTarget.rows = verifyTarget.rows - 1;
+                  }
+                } else if (
+                  element.parentElement.classList[1] === "left" ||
+                  element.parentElement.classList[1] === "right"
+                ) {
+                  if (id === 0) {
                     colorTarget.cols = colorTarget.cols - 1;
+                  } else if (id === 1) {
+                    verifyTarget.cols = verifyTarget.cols - 1;
                   }
                 }
               }
-            });
-          },
-          dragHandler: function (e) {
-            var overlay = viewer.getOverlayById(`sBox-${id}`);
-
-            let viewDeltaPoint = viewer.viewport.deltaPointsFromPixels(e.delta);
-
-            let box = new OpenSeadragon.Rect(
-              overlay.bounds.x,
-              overlay.bounds.y,
-              overlay.width,
-              overlay.height
-            );
-
-            if (pressPos.ele.classList[1] === "tl") {
-              box.y += viewDeltaPoint.y;
-              box.height -= viewDeltaPoint.y;
-              box.x += viewDeltaPoint.x;
-              box.width -= viewDeltaPoint.x;
-            } else if (pressPos.ele.classList[1] === "tr") {
-              box.y += viewDeltaPoint.y;
-              box.height -= viewDeltaPoint.y;
-              box.width += viewDeltaPoint.x;
-            } else if (pressPos.ele.classList[1] === "bl") {
-              box.height += viewDeltaPoint.y;
-              box.x += viewDeltaPoint.x;
-              box.width -= viewDeltaPoint.x;
-            } else if (pressPos.ele.classList[1] === "br") {
-              box.height += viewDeltaPoint.y;
-              box.width += viewDeltaPoint.x;
-            } else if (
-              pressPos.ele.classList[0] === "line" ||
-              pressPos.ele.classList[0] === "target" ||
-              pressPos.ele.classList[0] === "verTarget"
-            ) {
-              box.x += viewDeltaPoint.x;
-              box.y += viewDeltaPoint.y;
             }
-            overlay.update(box);
-            overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+          });
+        },
+        dragHandler: function (e) {
+          var overlay = viewer.getOverlayById(`sBox-${id}`);
 
+          let viewDeltaPoint = viewer.viewport.deltaPointsFromPixels(e.delta);
+
+          let box = new OpenSeadragon.Rect(
+            overlay.bounds.x,
+            overlay.bounds.y,
+            overlay.width,
+            overlay.height
+          );
+
+          if (pressPos.ele.classList[1] === "tl") {
+            box.y += viewDeltaPoint.y;
+            box.height -= viewDeltaPoint.y;
+            box.x += viewDeltaPoint.x;
+            box.width -= viewDeltaPoint.x;
+          } else if (pressPos.ele.classList[1] === "tr") {
+            box.y += viewDeltaPoint.y;
+            box.height -= viewDeltaPoint.y;
+            box.width += viewDeltaPoint.x;
+          } else if (pressPos.ele.classList[1] === "bl") {
+            box.height += viewDeltaPoint.y;
+            box.x += viewDeltaPoint.x;
+            box.width -= viewDeltaPoint.x;
+          } else if (pressPos.ele.classList[1] === "br") {
+            box.height += viewDeltaPoint.y;
+            box.width += viewDeltaPoint.x;
+          } else if (
+            pressPos.ele.classList[0] === "line" ||
+            pressPos.ele.classList[0] === "target" ||
+            pressPos.ele.classList[0] === "verTarget"
+          ) {
+            box.x += viewDeltaPoint.x;
+            box.y += viewDeltaPoint.y;
+          }
+          overlay.update(box);
+          overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+
+          if (id === 0) {
             colorPos = {
               top: overlay.bounds.y,
               left: overlay.bounds.x,
               bottom: overlay.bounds.y + overlay.bounds.height,
               right: overlay.bounds.x + overlay.bounds.width,
             };
-          },
-        });
-      } else if (id === 1) {
-        verifyOverlay = true;
-        verifyTracker = new OpenSeadragon.MouseTracker({
-          element: `sBox-${id}`,
-          pressHandler: function (e) {
-            console.log("Verification press handler activeted");
-            var overlay = viewer.getOverlayById(`sBox-${id}`);
-
-            // Overlay box coords
-            let topPos = overlay.bounds.y;
-            let botPos = overlay.bounds.y + overlay.bounds.height;
-            let leftPos = overlay.bounds.x;
-            let rightPos = overlay.bounds.x + overlay.bounds.width;
-
-            // Event Relative coords
-            let offset = viewer.viewport.deltaPointsFromPixels(e.position);
-            let eViewX = leftPos + offset.x;
-            let eViewY = topPos + offset.y;
-
-            // Event Distance to Edge
-            pressPos = {
-              ele: e.originalEvent.target,
-              top: Math.abs(eViewY - topPos),
-              left: Math.abs(eViewX - leftPos),
-              right: Math.abs(eViewX - rightPos),
-              bottom: Math.abs(eViewY - botPos),
-            };
-            // console.log(e);
-            // console.log(e.originalEvent.path);
-            e.originalEvent.path.forEach((element) => {
-              if (element.classList?.length > 0) {
-                if (element.classList[0] === "inc") {
-                  console.log("increase");
-                  if (
-                    element.parentElement.classList[1] === "top" ||
-                    element.parentElement.classList[1] === "bottom"
-                  ) {
-                    verifyTarget.rows = verifyTarget.rows + 1;
-                  } else if (
-                    element.parentElement.classList[1] === "left" ||
-                    element.parentElement.classList[1] === "right"
-                  ) {
-                    verifyTarget.cols = verifyTarget.cols + 1;
-                  }
-                } else if (element.classList[0] === "dec") {
-                  console.log("decrease");
-                  if (
-                    element.parentElement.classList[1] === "top" ||
-                    element.parentElement.classList[1] === "bottom"
-                  ) {
-                    verifyTarget.rows = verifyTarget.rows - 1;
-                  } else if (
-                    element.parentElement.classList[1] === "left" ||
-                    element.parentElement.classList[1] === "right"
-                  ) {
-                    verifyTarget.cols = verifyTarget.cols - 1;
-                  }
-                }
-              }
-            });
-          },
-          dragHandler: function (e) {
-            var overlay = viewer.getOverlayById(`sBox-${id}`);
-
-            let viewDeltaPoint = viewer.viewport.deltaPointsFromPixels(e.delta);
-
-            let box = new OpenSeadragon.Rect(
-              overlay.bounds.x,
-              overlay.bounds.y,
-              overlay.width,
-              overlay.height
-            );
-
-            if (pressPos.ele.classList[1] === "tl") {
-              box.y += viewDeltaPoint.y;
-              box.height -= viewDeltaPoint.y;
-              box.x += viewDeltaPoint.x;
-              box.width -= viewDeltaPoint.x;
-            } else if (pressPos.ele.classList[1] === "tr") {
-              box.y += viewDeltaPoint.y;
-              box.height -= viewDeltaPoint.y;
-              box.width += viewDeltaPoint.x;
-            } else if (pressPos.ele.classList[1] === "bl") {
-              box.height += viewDeltaPoint.y;
-              box.x += viewDeltaPoint.x;
-              box.width -= viewDeltaPoint.x;
-            } else if (pressPos.ele.classList[1] === "br") {
-              box.height += viewDeltaPoint.y;
-              box.width += viewDeltaPoint.x;
-            } else if (
-              pressPos.ele.classList[0] === "line" ||
-              pressPos.ele.classList[0] === "target" ||
-              pressPos.ele.classList[0] === "verTarget"
-            ) {
-              box.x += viewDeltaPoint.x;
-              box.y += viewDeltaPoint.y;
-            }
-            overlay.update(box);
-            overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
-
+          } else if (id === 1) {
             verifyPos = {
               top: overlay.bounds.y,
               left: overlay.bounds.x,
               bottom: overlay.bounds.y + overlay.bounds.height,
               right: overlay.bounds.x + overlay.bounds.width,
             };
-          },
-        });
-      }
+          }
+        },
+      });
     }
   }
 
@@ -349,12 +273,14 @@
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image");
     let temp = new Image();
+
     temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
-    if (imageUrl === temp.src) {
-      console.log("skip");
-    } else {
-      imageUrl = temp.src;
-    }
+    imageUrl = temp.src;
+
+    viewer.open({
+      type: "image",
+      url: imageUrl,
+    });
   }
 
   let root = document.documentElement;
@@ -447,109 +373,44 @@
     )} ({imagePoint?.x.toFixed(2)} px)
   </p>
   <div id="color-seadragon-viewer" />
-  {#if colorTarget}
-    <div class="selectorBox" id={`sBox-0`}>
-      <div class="layout">
-        <div class="gridBox" id={`gBox-0`}>
-          {#each [...Array(colorTarget.rows * colorTarget.cols).keys()].map((i) => i + 1) as boxIndex}
-            <div class="line">
-              <div class="target" />
-              <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
-            </div>
-          {/each}
-        </div>
 
-        <div class="exp top group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
+  {#each [colorTarget, verifyTarget] as target, i}
+    {#if target}
+      <div class="selectorBox" class:ver={i === 1} id={`sBox-${i}`}>
+        <div class="layout">
+          <div class="gridBox" id={`gBox-${i}`}>
+            {#each [...Array(target.rows * target.cols).keys()].map((i) => i + 1) as boxIndex}
+              <div class="line" class:ver={i === 1}>
+                <div class:target={i === 0} class:verTarget={i === 1} />
+                <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
+              </div>
+            {/each}
+          </div>
+
+          <div class="exp top group">
+            <button class="dec">
+              <MinusIcon size="1.5x" />
+            </button>
+            <button class="inc">
+              <PlusIcon size="1.5x" />
+            </button>
+          </div>
+          <div class="exp right group">
+            <button class="dec">
+              <MinusIcon size="1.5x" />
+            </button>
+            <button class="inc">
+              <PlusIcon size="1.5x" />
+            </button>
+          </div>
         </div>
-        <!-- <div class="exp left group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
-        <div class="exp right group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div>
-        <!-- <div class="exp bottom group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
+        <div class="corner tl" />
+        <div class="corner tr" />
+        <div class="corner bl" />
+        <div class="corner br" />
       </div>
-      <div class="corner tl" />
-      <div class="corner tr" />
-      <div class="corner bl" />
-      <div class="corner br" />
-    </div>
-  {/if}
-
-  {#if verifyTarget}
-    <div class="selectorBox ver" id={`sBox-1`}>
-      <div class="layout">
-        <div class="gridBox" id={`gBox-1`}>
-          {#each [...Array(verifyTarget.rows * verifyTarget.cols).keys()].map((i) => i + 1) as boxIndex}
-            <div class="line ver">
-              <div class="verTarget" />
-              <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
-            </div>
-          {/each}
-        </div>
-
-        <div class="exp top group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div>
-        <!-- <div class="exp left group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
-        <div class="exp right group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div>
-        <!-- <div class="exp bottom group">
-          <button class="dec">
-            <MinusIcon size="1.5x" />
-          </button>
-          <button class="inc">
-            <PlusIcon size="1.5x" />
-          </button>
-        </div> -->
-      </div>
-      <div class="corner tl" />
-      <div class="corner tr" />
-      <div class="corner bl" />
-      <div class="corner br" />
-    </div>
-  {/if}
+    {/if}
+  {/each}
 
   <div id="rowCol">
     Color Target:
@@ -602,6 +463,7 @@
       transparent 80%,
       hsla(var(--color_hue), 100%, 50%, 0.3) 80%
     );
+    border: solid;
     border-color: hsl(var(--color_hue), 100%, 50%);
 
     @apply w-full h-full border-[2px] flex items-center justify-center relative overflow-hidden z-10;
@@ -686,6 +548,7 @@
     @apply w-1/4;
   }
   .target {
+    border: solid;
     border-color: hsla(var(--color_hue), 100%, 50%, 0.5);
     width: var(--color_size);
     height: var(--color_size);
@@ -693,6 +556,7 @@
   }
 
   .verTarget {
+    border: solid;
     border-color: hsla(var(--verfiy_hue), 100%, 50%, 0.5);
     width: var(--verify_size);
     height: var(--verify_size);

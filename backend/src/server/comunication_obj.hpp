@@ -36,7 +36,7 @@ private:
 	*/
 	void send_msg(std::string msg);
 	void send_bin(std::vector<uchar>& v);
-	
+
     btrgb::base64_ptr_t createDataURL(enum btrgb::output_type type, std::vector<uchar>* direct_binary);
 
 public:
@@ -73,12 +73,14 @@ public:
 	* @param type: enum to the type of image being sent
 	* @param qual: enum for the quality of the image being sent
 	*/
+	void send_reports(jsoncons::json reports);
+
 	void send_base64(btrgb::Image* image, enum btrgb::image_quality qual);
 	void send_binary(btrgb::Image* image, enum btrgb::image_quality qual);
-	
+
 	void send_base64(
 		std::string name,
-		std::vector<uchar>* direct_binary, 
+		std::vector<uchar>* direct_binary,
 		enum btrgb::output_type type
 	);
 

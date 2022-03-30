@@ -85,7 +85,7 @@ void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::image_qualit
 
 void CommunicationObj::send_base64(
 	std::string name,
-	std::vector<uchar>* direct_binary, 
+	std::vector<uchar>* direct_binary,
 	enum btrgb::output_type type
 ) {
 
@@ -102,13 +102,13 @@ void CommunicationObj::send_base64(
 	send_msg(all_info);
 
 };
-	
+
 void CommunicationObj::send_binary(
 	std::string name,
 	std::vector<uchar>* direct_binary,
 	enum btrgb::output_type type
 ) {
-		
+
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
@@ -130,6 +130,18 @@ void CommunicationObj::send_binary(
 	//this->binID++;
 }
 
+void CommunicationObj::send_reports(jsoncons::json reports) {
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "Report");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("reports", reports);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
 
 btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type, std::vector<uchar>* direct_binary) {
 
@@ -146,7 +158,7 @@ btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type
 	btrgb::base64_ptr_t result_base64(new std::string(
 		"data:image/" + img_type + ";base64," + cppcodec::base64_rfc4648::encode(*direct_binary)
 	));
-	
+
 	return result_base64;
 
 }
