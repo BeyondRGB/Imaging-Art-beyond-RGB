@@ -25,6 +25,10 @@ namespace btrgb {
 
         delete this->ref_data;
 
+        if(nullptr != this->verification_ref){
+            delete this->verification_ref;
+        }
+
     }
 
 
@@ -48,7 +52,7 @@ namespace btrgb {
 
     // Builds and returns a color target
     // This asumes that the imageName specified actualy contains a color target
-    ColorTarget ArtObject::get_target(std::string imageName){
+    ColorTarget ArtObject::get_target(std::string imageName, TargetType type){
         try{
             Image* im = this->getImage(imageName);
             ColorTarget target(im, this->target_data);
@@ -186,7 +190,11 @@ namespace btrgb {
     }
 
     void ArtObject::init_verification_data(TargetData verification_data){
-        
+        std::string ref_file = verification_data.ref_base;
+        IlluminantType illuminant = RefData::get_illuminant(verification_data.illum_base);
+        ObserverType observer = RefData::get_observer(verification_data.obsv_base);
+        this->verification_ref = new RefData(ref_file, illuminant, observer);
+        this->verification_data = verification_data;
     }
 
 }
