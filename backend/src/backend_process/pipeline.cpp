@@ -27,6 +27,9 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
+    if(this->should_verify){
+        std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++Verify++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+    }
 
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
@@ -125,6 +128,7 @@ void Pipeline::run() {
     this->send_info("About to init art obj...", this->get_process_name());
     try{
         this->init_art_obj(images.get());
+        this->init_verification(images.get());
     }catch(std::exception e){
         this->report_error(this->get_process_name(), e.what());
         return;
@@ -239,4 +243,17 @@ std::string Pipeline::get_ref_file(Json target_data) {
         throw e;
     }
     return ref_file;
+}
+
+void Pipeline::init_verification(btrgb::ArtObject* images){
+    try{
+        Json verification_json = this->process_data_m->get_obj(key_map[DataKey::VerificationLocation]);
+        TargetData vd = this->build_target_data(verification_json);
+        images->init_verification_data(vd);
+        this->should_verify = true;
+
+    }catch(ParsingError e){
+        this->send_info("No Verification Target provided", this->get_process_name());
+        this->should_verify = false;
+    }
 }
