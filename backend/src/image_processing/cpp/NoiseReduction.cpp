@@ -13,6 +13,8 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     comms->send_info("", "NoiseReduction");
     comms->send_progress(0, "NoiseReduction");
 
+    cout << "Filter Time";
+
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
     btrgb::Image* img2 = images->getImage("art2");
@@ -20,28 +22,52 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
 
-    cv::Mat Blurred1;
-    cv::Mat Blurred2;
+    cv::FileStorage file("AfterFlat.yml", cv::FileStorage::WRITE);
+    file << "matName" << im1;
 
+    cv::Mat Hblurred1;
+    cv::Mat Hblurred2;
 
+    cv::Mat Lblurred1;
+    cv::Mat Lblurred2;
 
-    //Amount to blur by 3 seems to be okish needs more testing
-    int sigma = 3;
+    //High Frequency Kernel
+    int sigma = 2;
     int ksize = (sigma * 5) | 1;
-    //Sharpen factor
-    int sharpFactor = 1;
 
+    //Low Frequency Kernel
+    //int sigmaL = 1;
+    //int ksizeL = 1.2;
 
-    GaussianBlur(im1, Blurred1, Size(ksize, ksize), sigma, sigma);
-    GaussianBlur(im2, Blurred2, Size(ksize, ksize), sigma, sigma);
+    //Sharpen Factor
+    int HsharpFactor = 1;
+    //Noise Factor
+    //int LsharpFactor = 1;
+
+    //High Freq Blur
+    GaussianBlur(im1, Hblurred1, Size(ksize, ksize), sigma, sigma);
+    GaussianBlur(im2, Hblurred2, Size(ksize, ksize), sigma, sigma);
     
-    //Create a mask
-    cv::Mat unsharpMask1 = im1 - Blurred1;
-    cv::Mat unsharpMask2 = im2 - Blurred2;
+    //Low Freq Blur
+    //GaussianBlur(im1, Lblurred1, Size(ksizeL, ksizeL), sigmaL, sigmaL);
+    //GaussianBlur(im2, Lblurred2, Size(ksizeL, ksizeL), sigmaL, sigmaL);
 
-    //Apply the mask
-    im1 = im1 + sharpFactor * unsharpMask1;
-    im2 = im2 + sharpFactor * unsharpMask2;
+    //Create high freq mask
+    cv::Mat unsharpMask1 = im1 - Hblurred1;
+    cv::Mat unsharpMask2 = im2 - Hblurred2;
+
+    //Create low freq mask
+    //cv::Mat unNoiseMask1 = im1 - Lblurred1;
+    //cv::Mat unNoiseMask2 = im2 - Lblurred2;
+
+    //Apply just high freq mask
+    im1 = im1 + HsharpFactor * unsharpMask1;
+    im2 = im2 + HsharpFactor * unsharpMask2;
+
+    //Apply both masks
+    //im1 = im1 + HsharpFactor * unsharpMask1 - LsharpFactor * unNoiseMask1;
+    //im1 = im2 + HsharpFactor * unsharpMask2 - LsharpFactor * unNoiseMask2;
+
 
     images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
     images->outputImageAs(btrgb::TIFF, "art2", "Sharp2");
@@ -53,29 +79,18 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     //Noise reduction
     //Several different noise reduction algos
     //Using Bilateral Filtering for highest accuracy
-    
-
-
     cv::Mat filter1;
     cv::Mat filter2;
-    try {
+   
+    cv::bilateralFilter(im1, filter1, 2, 3, 3);
+    cv::bilateralFilter(im2, filter2, 2, 3, 3);
 
-        cv::bilateralFilter(im1, filter1, 3, 3.0, 3.0);
-        cv::bilateralFilter(im2, filter2, 3, 3.0, 3.0);
-
-        filter1.copyTo(im1);
-        filter2.copyTo(im2);
-
-    }
-    catch(exception& e)
-    {
-        std::cout << "An exception occurred. Exception Nr. " << e.what() << '\n';
-    }
+    filter1.copyTo(im1);
+    filter2.copyTo(im2);
 
     comms->send_progress(1, "NoiseReduction");
     //Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "NoiseReduc1");
     images->outputImageAs(btrgb::TIFF, "art2", "NoiseReduc2");
-
-
+     
  }

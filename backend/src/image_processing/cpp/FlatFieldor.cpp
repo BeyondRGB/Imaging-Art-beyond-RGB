@@ -23,6 +23,11 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         white2 = images->getImage("white2");
         dark2 = images->getImage("dark2");
         reference = images->get_refrence_data();
+
+        cv::FileStorage file("beforeFlat.yml", cv::FileStorage::WRITE);
+        file << "matName" << art1;
+
+
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist &e)
     {
@@ -58,6 +63,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
+    std::cout << "flat Time";
 
     comms->send_progress(1, "Flat Fielding");
     // Outputs TIFFs for each image group for after this step, temporary
