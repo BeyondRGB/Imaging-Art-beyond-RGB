@@ -109,6 +109,11 @@ namespace btrgb {
         virtual char const * what() const noexcept { return "ArtObject Error: Failed to write image."; }
     };
 
+    class ArtObj_VerificationDataNull : public ArtObjectError {
+        public:
+        virtual char const * what() const noexcept { return "ArtObject Error: No Verification Data Exists."; }
+    };
+
 }
 
 
