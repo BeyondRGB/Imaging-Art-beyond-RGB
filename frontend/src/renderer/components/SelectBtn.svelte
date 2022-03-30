@@ -20,7 +20,6 @@
       show = true;
       computePosition(btnRef, popRef, {
         placement: "bottom",
-        middleware: [offset(4), autoPlacement({ crossAxis: true })],
       }).then(({ x, y }) => {
         Object.assign(popRef.style, {
           left: "0",
@@ -41,7 +40,7 @@
 <main class={theme}>
   <button on:click={toggleDropdown} bind:this={btnRef}>Dropdown</button>
   <hr />
-  <div bind:this={popRef} class={show ? "shown" : ""}>
+  <div bind:this={popRef} class:shown={show}>
     <li>Float</li>
     <li>Trust</li>
   </div>
@@ -55,7 +54,7 @@
     @apply bg-blue-600/50 z-20;
   }
   div {
-    @apply z-50 float-left hidden;
+    @apply z-50 hidden;
   }
   .shown {
     @apply block w-36 dark:bg-gray-700 bg-gray-50 rounded-md fixed;

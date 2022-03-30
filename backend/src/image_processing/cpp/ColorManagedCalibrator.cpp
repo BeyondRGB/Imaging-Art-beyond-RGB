@@ -175,6 +175,12 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
 
     /* Store in ArtObject and output. */
     images->setImage(name, cm_im);
+    
+    // Store img size in GeneralInfo
+    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
+    results_obj->store_int(GI_IMG_ROWS, cm_im->getMat().rows);
+    results_obj->store_int(GI_IMG_COLS, cm_im->getMat().cols);
+
 }
 
 void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
