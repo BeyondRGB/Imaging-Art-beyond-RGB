@@ -29,6 +29,9 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
     if(this->should_verify){
         std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++Verify++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+    }else{
+        std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++No I will not Verify++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+
     }
 
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
@@ -102,7 +105,6 @@ void Pipeline::run() {
 
     this->send_info("I got your msg", this->get_process_name());
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
-    std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     std::string out_dir;
     try{
@@ -143,7 +145,9 @@ void Pipeline::run() {
         return;
     }
 
+    
     /* Execute the pipeline on the created ArtObject */
+    std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
     this->send_info( "About to execute...", this->get_process_name());
     try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
