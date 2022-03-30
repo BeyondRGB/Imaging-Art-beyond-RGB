@@ -41,7 +41,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     try {
         // Extract Image Array from request data
         Json image_array = this->process_data_m->get_array(key_map[DataKey::IMAGES]);
-
+        
         std::cout << image_array.to_string(true) << std::endl;
         for (int i = 0; i < image_array.get_size(); i++) {
             // Extract each obj from array
@@ -56,23 +56,24 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
         //Collect the information provided about the color target
-        TargetData td;
+        // TargetData td;
         Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
-        std::cout << target_location.to_string(true) << std::endl;
-        td.top_loc = target_location.get_number("top");
-        td.left_loc = target_location.get_number("left");
-        td.bot_loc = target_location.get_number("bottom");
-        td.right_loc = target_location.get_number("right");
-        td.col_count = target_location.get_number("cols");
-        td.row_count = target_location.get_number("rows");
-        td.sample_size = target_location.get_number("size");
-        Json white_loc = target_location.get_obj("whitePatch");
-        td.w_row = white_loc.get_number("row");
-        td.w_col = white_loc.get_number("col");
-        Json ref_loc = target_location.get_obj("refData");
-        td.ref_base = ref_loc.get_string("name");
-        td.illum_base = ref_loc.get_string("illuminants");
-        td.obsv_base = ref_loc.get_number("standardObserver");
+        TargetData td = this->build_target_data(target_location);
+        // std::cout << target_location.to_string(true) << std::endl;
+        // td.top_loc = target_location.get_number("top");
+        // td.left_loc = target_location.get_number("left");
+        // td.bot_loc = target_location.get_number("bottom");
+        // td.right_loc = target_location.get_number("right");
+        // td.col_count = target_location.get_number("cols");
+        // td.row_count = target_location.get_number("rows");
+        // td.sample_size = target_location.get_number("size");
+        // Json white_loc = target_location.get_obj("whitePatch");
+        // td.w_row = white_loc.get_number("row");
+        // td.w_col = white_loc.get_number("col");
+        // Json ref_loc = target_location.get_obj("refData");
+        // td.ref_base = ref_loc.get_string("name");
+        // td.illum_base = ref_loc.get_string("illuminants");
+        // td.obsv_base = ref_loc.get_number("standardObserver");
         art_obj->setTargetInfo(td);
         this->send_info("TargetData initialized:", this->get_process_name());
         return true;
@@ -89,11 +90,10 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     // Make/Model
     // TODO add this once info sent from front end
     // Target ID
-    Json target_data = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
-    Json ref_data_json = target_data.get_obj(key_map[DataKey::ReferenceData]);
+    Json target_json = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
+    Json ref_data_json = target_json.get_obj(key_map[DataKey::ReferenceData]);
     results_obj->store_string(GI_TARGET_ID, ref_data_json.get_string("name"));
     // Target Dims
-    Json target_json = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
     results_obj->store_int(GI_TARGET_ROWS, target_json.get_number("rows"));
     results_obj->store_int(GI_TARGET_COLS, target_json.get_number("cols"));
     // Observer
@@ -103,8 +103,12 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     std::string illum_str = ref_data_json.get_string(key_map[DataKey::Illuminants]);
     results_obj->store_string(GI_ILLUMINANT, illum_str);
     // White Patch Coords
+    std::cout << "GET rEF" << std::endl;
     RefData *ref_data = art_obj->get_refrence_data();
-    std::string coords = ref_data->get_white_patch()->get_name();
+    TargetData td = build_target_data(target_json);
+    std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
+    
+    std::cout << "Set AAAAAAAAAAAAAAAAAA" << std::endl;
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
 
 }
@@ -115,18 +119,20 @@ void Pipeline::run() {
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
-    Json target_data = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
-    std::string ref_file = this->get_ref_file(target_data);
-    IlluminantType illuminant = this->get_illuminant_type(target_data);
-    ObserverType observer = this->get_observer_type(target_data);
     std::string out_dir;
-    try{out_dir = this->get_output_directory();}
+    try{
+        out_dir = this->get_output_directory();}
     catch(...) {return;}
 
 
     /* Create ArtObject */
     std::unique_ptr<btrgb::ArtObject> images;
-    try { images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
+    try { 
+        Json target_data = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
+        std::string ref_file = this->get_ref_file(target_data);
+        IlluminantType illuminant = this->get_illuminant_type(target_data);
+        ObserverType observer = this->get_observer_type(target_data);
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
     catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
@@ -135,15 +141,25 @@ void Pipeline::run() {
 
     /* Initialize ArtObject with request data */
     this->send_info("About to init art obj...", this->get_process_name());
-    this->init_art_obj(images.get());
+    try{
+        this->init_art_obj(images.get());
+    }catch(std::exception e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }
 
     // Initialize General Info Results
     this->send_info("About to init GeneralInfo...", this->get_process_name());
-    this->init_general_info(images.get());
+    try{
+        this->init_general_info(images.get());
+    }catch(std::exception e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }
 
     /* Execute the pipeline on the created ArtObject */
     this->send_info( "About to execute...", this->get_process_name());
-    try {
+    try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
     }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
@@ -154,7 +170,7 @@ void Pipeline::run() {
 
 
 std::string Pipeline::get_output_directory() {
-
+    
 	std::time_t now = std::time(0);
 	std::tm *ltm = std::localtime(&now);
     std::string date_string = btrgb::get_date("-");
@@ -213,6 +229,27 @@ ObserverType Pipeline::get_observer_type(Json target_data) {
     }
     return type;
 
+}
+
+TargetData Pipeline::build_target_data(Json target_json){
+    TargetData td;
+    std::cout << target_json.to_string(true) << std::endl;
+    td.top_loc = target_json.get_number("top");
+    td.left_loc = target_json.get_number("left");
+    td.bot_loc = target_json.get_number("bottom");
+    td.right_loc = target_json.get_number("right");
+    td.col_count = target_json.get_number("cols");
+    td.row_count = target_json.get_number("rows");
+    td.sample_size = target_json.get_number("size");
+    Json white_loc = target_json.get_obj("whitePatch");
+    // subtract one to make it zero based, due to front end sending 1 based.
+    td.w_row = white_loc.get_number("row") - 1;
+    td.w_col = white_loc.get_number("col") - 1;
+    Json ref_loc = target_json.get_obj("refData");
+    td.ref_base = ref_loc.get_string("name");
+    td.illum_base = ref_loc.get_string("illuminants");
+    td.obsv_base = ref_loc.get_number("standardObserver");
+    return td;
 }
 
 std::string Pipeline::get_ref_file(Json target_data) {

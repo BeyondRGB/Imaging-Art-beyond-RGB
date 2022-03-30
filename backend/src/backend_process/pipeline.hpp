@@ -126,6 +126,8 @@ private:
 	 */
 	std::string get_output_directory();
 
+	TargetData build_target_data(Json target_json);
+
 
 
 public:

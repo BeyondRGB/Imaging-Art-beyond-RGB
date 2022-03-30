@@ -50,6 +50,7 @@ namespace btrgb {
         TargetData target_data;
         std::unordered_map<std::string, Image*> images;
         RefData* ref_data;
+        RefData* verification_data = nullptr;
         std::string output_directory;
         CalibrationResults general_info;
         CalibrationResults calibration_res; 
