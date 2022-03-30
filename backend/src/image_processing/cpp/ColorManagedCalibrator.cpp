@@ -192,9 +192,9 @@ void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
     cv::Mat L_ref;
     cv::Mat a_ref;
     cv::Mat b_ref;
-    this->fill_Lab_values(&L_camera, &a_camera, &b_camera,
+    btrgb::calibration::fill_Lab_values(&L_camera, &a_camera, &b_camera,
                           &L_ref,    &a_ref,    &b_ref,
-                          cm_xyz);
+                          cm_xyz, this->ref_data);
     // Fetch Results Object to store results in
     CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
     
@@ -270,43 +270,43 @@ void ColorManagedCalibrator::build_input_matrix() {
 }
 
 
-void ColorManagedCalibrator::fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
-                                             cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
-                                              cv::Mat xyz){
-    int row_count = this->ref_data->get_row_count();
-    int col_count = this->ref_data->get_col_count();
-    *L_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *b_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *a_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *L_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *a_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *b_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+// void ColorManagedCalibrator::fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
+//                                              cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
+//                                               cv::Mat xyz){
+//     int row_count = this->ref_data->get_row_count();
+//     int col_count = this->ref_data->get_col_count();
+//     *L_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+//     *b_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+//     *a_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+//     *L_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+//     *a_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+//     *b_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
 
-    WhitePoints* wp = this->ref_data->get_white_pts();
-    for(int row = 0; row < row_count; row++){
-        for(int col = 0; col < col_count; col++){
-            // Get/Store L*,a*,b* values from RefData
-            L_ref->at<double>(row,col) = this->ref_data->get_L(row, col);
-            a_ref->at<double>(row,col) = this->ref_data->get_a(row, col);
-            b_ref->at<double>(row,col) = this->ref_data->get_b(row, col);
+//     WhitePoints* wp = this->ref_data->get_white_pts();
+//     for(int row = 0; row < row_count; row++){
+//         for(int col = 0; col < col_count; col++){
+//             // Get/Store L*,a*,b* values from RefData
+//             L_ref->at<double>(row,col) = this->ref_data->get_L(row, col);
+//             a_ref->at<double>(row,col) = this->ref_data->get_a(row, col);
+//             b_ref->at<double>(row,col) = this->ref_data->get_b(row, col);
 
-            // Extract current camera_(x,y,z)
-            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
-            int xyz_index = col + row * col_count;
-            double x = 100 * xyz.at<double>(0, xyz_index);
-            double y = 100 * xyz.at<double>(1, xyz_index);
-            double z = 100 * xyz.at<double>(2, xyz_index);
-            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
-            btrgb::XYZ_t xyz = {x, y, z};
-            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
-            // Stor L*,a*,b* values from camera sigs
-            L_camera->at<double>(row,col) = lab.L;
-            a_camera->at<double>(row,col) = lab.a;
-            b_camera->at<double>(row,col) = lab.b;
-        }
-    }
+//             // Extract current camera_(x,y,z)
+//             // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
+//             int xyz_index = col + row * col_count;
+//             double x = 100 * xyz.at<double>(0, xyz_index);
+//             double y = 100 * xyz.at<double>(1, xyz_index);
+//             double z = 100 * xyz.at<double>(2, xyz_index);
+//             // Convert camera_(x,y,z) to camera_(L*,a*,b*)
+//             btrgb::XYZ_t xyz = {x, y, z};
+//             btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+//             // Stor L*,a*,b* values from camera sigs
+//             L_camera->at<double>(row,col) = lab.L;
+//             a_camera->at<double>(row,col) = lab.a;
+//             b_camera->at<double>(row,col) = lab.b;
+//         }
+//     }
     
-}
+// }
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                DeltaE Function                             //
