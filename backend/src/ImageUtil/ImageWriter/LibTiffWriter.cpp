@@ -53,9 +53,13 @@ namespace btrgb {
 		/* Write all channel data in one array (a bitmap) instead of separating the channels. */
 		TIFFSetField(img_out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 
-		/* Indicate that the image is RGB. */
-		TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-		//TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+		/* Indicate type of image. */
+		if(channels == 3)
+			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+		else {
+			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+			TIFFSetField(img_out, TIFFTAG_EXTRASAMPLES, EXTRASAMPLE_UNSPECIFIED);
+		}
 
 		/* Set color profile. */
 		switch(im->getColorProfile()) {
