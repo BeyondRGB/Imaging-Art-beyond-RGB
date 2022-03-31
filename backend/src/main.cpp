@@ -6,7 +6,6 @@
 
 
 //Testing Includes: Remove before submiting PR
-//#include "reference_data/illuminants.hpp"
 void testFunc() {
 
 }
@@ -21,7 +20,7 @@ int main(int argc, char** argv) {
 		exit(1);
 	}
 
-	std::cout << "BeyondRBG Backend Started: listening on port 9002\n";
+	std::cout << "BeyondRBG Backend Started: listening on port " << GlobalsSinglton::get_instance()->get_port() << std::endl;
 	RequestServer server;
 	server.init_server();
 	server.start_server();

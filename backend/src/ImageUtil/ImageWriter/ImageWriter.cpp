@@ -2,18 +2,31 @@
 
 namespace btrgb {
 
-    void ImageWriter::write(Image* im) {
-        write(im, im->getName());
+    ImageWriter::ImageWriter(enum output_type file_type) {
+        switch(file_type) {
+
+            case PNG:
+                this->writer = new LibpngWriter();
+                break;
+            
+            default:
+            case TIFF:
+                this->writer = new LibTiffWriter();
+                break;
+
+        }
+    }
+
+    ImageWriter::~ImageWriter() {
+        delete this->writer;
     }
 
     void ImageWriter::write(Image* im, std::string filename) {
-
-        std::string fname = filename;
-        if (!fname.ends_with(this->file_extension))
-            fname += this->file_extension;
-
-        this->_write(im, fname);
-
+        this->writer->write(im, filename);
+    }
+    
+    void ImageWriter::write(Image* im) {
+        this->writer->write(im);
     }
 
 }

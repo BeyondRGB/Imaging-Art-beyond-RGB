@@ -2,12 +2,14 @@
 #define REF_DATA_H
 
 #include <string>
+#include <opencv2/opencv.hpp>
 //#include <iostream>
 #include "utils/csv_parser.hpp"
 #include "color_patch.hpp"
 #include "illuminants.hpp"
 #include "standard_observer.hpp"
 #include "white_points.hpp"
+
 
 
 typedef Illuminants::IlluminantType IlluminantType;
@@ -34,23 +36,24 @@ public:
 	ColorPatch* get_color_patch(int row, int col);
 
 	/**
-	* Finds the white ColorPatch. The whit patch is the one with
+	* Finds the white ColorPatch as defined by the reference data. The whit patch is the one with
 	* the hightest y value.
+	* NOTE: this is not the same as the user defined white patch
 	* @return: a pointer to the white ColorPatch
 	*/
-	ColorPatch* get_white_patch();
+	ColorPatch* get_estimated_white_patch();
 
 	/**
-	* Get the row the white patch is in
+	* Get the row the white patch is in as defined by the reference data
 	* @return: white patch row as an int
 	*/
-	int get_white_patch_row();
+	int get_estimated_white_patch_row();
 
 	/**
-	* Get the colum the white patch is in
+	* Get the colum the white patch is in as defined by the reference data
 	* @return: white patch colum as an int
 	*/
-	int get_white_patch_col();
+	int get_estimated_white_patch_col();
 
 	/**
 	* Gets the x value from the ColorPatch at the given row and col
@@ -127,6 +130,21 @@ public:
 	* Y Value,<White ColorPatch yvalue>,Row,<White ColorPatch row>,Col,<White ColorPatch col> 
 	*/
 	void output_xyz();
+
+	/**
+	 * @brief Convert refdata to a NxM matrix
+	 * 	N is the number of wavelenghts
+	 * 	M is the number of ColorPatches
+	 * The ColorPatches are added in order of
+	 * 	A1_wavlen380, A2_wavlen380, A3_wavlen380, ..., Ak_wavlen380, B1_wavlen380, ... , Kk_wavlen380
+	 *  A1_wavlen390, A2_wavlen390, A3_wavlen390, ..., Ak_wavlen390, B1_wavlen390, ... , Kk_wavlen390
+	 *  ...			, ...		  , ...			, ..., ...		   , ...		 , ... , ...								
+	 *  A1_wavlen730, A2_wavlen730, A3_wavlen730, ..., Ak_wavlen730, B1_wavlen730, ... , Kk_wavlen730
+	 * 
+	 * 
+	 * @return cv::Mat 
+	 */
+	cv::Mat as_matrix();
 
 
 private:

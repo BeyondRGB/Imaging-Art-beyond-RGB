@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "ImageUtil/ColorTarget.hpp"
+#include "ImageUtil/ColorProfiles.hpp"
 #include "utils/csv_parser.hpp"
 #include "ImgProcessingComponent.h"
 #include "reference_data/ref_data_defines.hpp"
@@ -14,6 +15,8 @@
 #include "utils/color_convertions.hpp"
 #include "reference_data/white_points.hpp"
 #include "utils/calibration_util.hpp"
+#include "image_processing/results/calibration_results.hpp"
+#include "ImageUtil/ColorProfiles.hpp"
 
 // typedef std::function<double(cv::Mat)> MinDeltaE_function;
 
@@ -26,21 +29,9 @@ class ColorManagedCalibrator : public ImgProcessingComponent{
  */
 
 public:
-    enum ColorSpace{
-        Adobe_RGB_1998, ProPhoto, sRGB, Wide_Gamut_RGB
-    };
 
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
-
-
-    /**
-     * @brief Helper function for displaying a matrix to stdout
-     *
-     * @param matrix the matrix to be displayed
-     * @param name the name of the matrix that will be displyed along with values
-     */
-    void display_matrix(cv::Mat* matrix, std::string name);
 
 private:
     cv::Mat optimization_input;// Contains M and offset values in a 1D matrix
@@ -54,40 +45,14 @@ private:
     double resulting_avg_deltaE;
     int solver_iteration_count;
 
-    ColorSpace color_space;
+    btrgb::ColorSpace color_space;
 
     double stp;
     int mid;
 
-    /**
-     * @brief Get the Matrix for converting xyz to rgb for the given color space
-     *
-     * @param color_space the ColorSpace that identifies which convertion matrix to retrive
-     * @return cv::Mat
-     */
-    cv::Mat rgb_convertions_matrix(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
-
-
-    float clip_pixel(float px_value);
-
-    /**
-     * @brief Get the gamma adjustment value for the given ColorSpace
-     * Defaults to ProPhoto value
-     *
-     * @param color_space the ColorSpace that identifies the gamma addjustment to get
-     * @return float
-     */
-    float gamma(ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
-
-    /**
-     * @brief Applys a gamma to correct brightness
-     *
-     * @param px_value the pixel value to apply gamma to
-     * @param color_space the color space that defines the gamma value
-     * defaults to ProPhoto
-     * @return float the gamma corrected pixel value
-     */
-    float apply_gamma(float px_value, ColorManagedCalibrator::ColorSpace color_space=ColorManagedCalibrator::ColorSpace::ProPhoto);
+    void fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
+                         cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
+                         cv::Mat xyz);
 
     /**
      * @brief Initialize the optimization InputArray(optimization_input), M, and offset
@@ -132,7 +97,7 @@ private:
      * @brief Saves optimized M and offset as well the final deltaE values
      *
      */
-    void output_report_data();
+    void output_report_data(btrgb::ArtObject* images);
 
 
 };

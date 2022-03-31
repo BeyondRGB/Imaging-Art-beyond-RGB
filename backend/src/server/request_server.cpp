@@ -24,7 +24,7 @@ void RequestServer::init_server() {
                  ::_2));
 
         // Listen on port 9002
-        server_m.listen(port_m);
+        server_m.listen(GlobalsSinglton::get_instance()->get_port());
     }
     catch (websocketpp::exception const& e) {
         std::cout << e.what() << std::endl;
@@ -51,11 +51,12 @@ void RequestServer::start_server() {
 }
 
 void RequestServer::msg_handler(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
-    std::cout << "MSG: " << msg->get_payload() << std::endl;
+    
     if (msg->get_payload() == "shutdown") {
         this->shutdown();
         return;
     }
+    
     std::shared_ptr<CommunicationObj> coms_obj = std::shared_ptr<CommunicationObj>(new CommunicationObj( s, hdl, msg));
     this->process_manager_m.process_request(msg->get_payload(), coms_obj);
 }
