@@ -1,26 +1,28 @@
-#ifndef IMAGEWRITER_H
-#define IMAGEWRITER_H
+#ifndef IMAGEWRITERSTRATEGY_H
+#define IMAGEWRITERSTRATEGY_H
 
 #include <string>
+
 #include "ImageUtil/Image.hpp"
+#include "ImageUtil/ImageWriter/ImageWriterStrategy.hpp"
+#include "ImageUtil/ImageWriter/LibTiffWriter.hpp"
+#include "ImageUtil/ImageWriter/LibpngWriter.hpp"
 
 namespace btrgb {
     
     class ImageWriter {
         
         public:
-            ImageWriter() {}
-            virtual ~ImageWriter() {}
-            virtual void write(Image* im, std::string filename);
-            virtual void write(Image* im);
+            ImageWriter(enum output_type file_type);
+            ~ImageWriter();
+            void write(Image* im, std::string filename);
+            void write(Image* im);
 
-        protected:
-            std::string file_extension;
-            virtual void _write(Image* im, std::string filename) = 0;
+        private:
+            ImageWriterStrategy* writer;
 
     };
 
-    class ImageWritingError : public std::exception {};
 }
 
 #endif

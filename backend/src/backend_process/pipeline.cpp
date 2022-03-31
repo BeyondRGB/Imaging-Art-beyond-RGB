@@ -18,7 +18,7 @@ void Pipeline::callback(std::string msg) {
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
     std::vector<std::shared_ptr<ImgProcessingComponent>> pre_process_components;
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new RawImageReader()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ImageReader()));
     //pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
@@ -26,11 +26,12 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
-    //calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
+    calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
 
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ResultsProcessor()));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
 
@@ -40,6 +41,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     try {
         // Extract Image Array from request data
         Json image_array = this->process_data_m->get_array(key_map[DataKey::IMAGES]);
+        
+        std::cout << image_array.to_string(true) << std::endl;
         for (int i = 0; i < image_array.get_size(); i++) {
             // Extract each obj from array
             Json obj = image_array.obj_at(i);
@@ -53,15 +56,11 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
         //Collect the information provided about the color target
-        TargetData td;
+        // TargetData td;
         Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
-        td.top_loc = target_location.get_number("top");
-        td.left_loc = target_location.get_number("left");
-        td.bot_loc = target_location.get_number("bottom");
-        td.right_loc = target_location.get_number("right");
-        td.col_count = target_location.get_number("cols");
-        td.row_count = target_location.get_number("rows");
+        TargetData td = this->build_target_data(target_location);
         art_obj->setTargetInfo(td);
+        this->send_info("TargetData initialized:", this->get_process_name());
         return true;
     }
     catch (ParsingError e) {
@@ -71,23 +70,51 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     return false;
 }
 
+void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
+    CalibrationResults *results_obj = art_obj->get_results_obj(btrgb::ResultType::GENERAL);
+    // Make/Model
+    // TODO add this once info sent from front end
+    // Target ID
+    Json target_json = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
+    Json ref_data_json = target_json.get_obj(key_map[DataKey::ReferenceData]);
+    results_obj->store_string(GI_TARGET_ID, ref_data_json.get_string("name"));
+    // Target Dims
+    results_obj->store_int(GI_TARGET_ROWS, target_json.get_number("rows"));
+    results_obj->store_int(GI_TARGET_COLS, target_json.get_number("cols"));
+    // Observer
+    int observer_num = ref_data_json.get_number(key_map[DataKey::StandardObserver]);
+    results_obj->store_int(GI_OBSERVER, observer_num);
+    // Illuminant
+    std::string illum_str = ref_data_json.get_string(key_map[DataKey::Illuminants]);
+    results_obj->store_string(GI_ILLUMINANT, illum_str);
+    // White Patch Coords
+    RefData *ref_data = art_obj->get_refrence_data();
+    TargetData td = build_target_data(target_json);
+    std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
+    results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
+
+}
+
 void Pipeline::run() {
 
     this->send_info("I got your msg", this->get_process_name());
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
-    std::string ref_file = this->get_ref_file();
-    IlluminantType illuminant = this->get_illuminant_type();
-    ObserverType observer = this->get_observer_type();
     std::string out_dir;
-    try{out_dir = this->get_output_directory();}
+    try{
+        out_dir = this->get_output_directory();}
     catch(...) {return;}
 
 
     /* Create ArtObject */
     std::unique_ptr<btrgb::ArtObject> images;
-    try { images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
+    try { 
+        Json target_data = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
+        std::string ref_file = this->get_ref_file(target_data);
+        IlluminantType illuminant = this->get_illuminant_type(target_data);
+        ObserverType observer = this->get_observer_type(target_data);
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
     catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
@@ -96,20 +123,29 @@ void Pipeline::run() {
 
     /* Initialize ArtObject with request data */
     this->send_info("About to init art obj...", this->get_process_name());
-    this->init_art_obj(images.get());
-
-
-    /* Execute the pipeline on the created ArtObject */
-    this->send_info( "About to execute...", this->get_process_name());
-    try { pipeline->execute(this->coms_obj_m.get(), images.get()); }
-    catch(const std::exception& err) {
-        this->report_error(this->get_process_name(), err.what());
+    try{
+        this->init_art_obj(images.get());
+    }catch(std::exception e){
+        this->report_error(this->get_process_name(), e.what());
         return;
     }
 
+    // Initialize General Info Results
+    this->send_info("About to init GeneralInfo...", this->get_process_name());
+    try{
+        this->init_general_info(images.get());
+    }catch(std::exception e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }
 
-    for(const auto& [name, img]: *images) {
-        images->outputImageAs(btrgb::TIFF, name, name);
+    /* Execute the pipeline on the created ArtObject */
+    this->send_info( "About to execute...", this->get_process_name());
+    try { 
+        pipeline->execute(this->coms_obj_m.get(), images.get());
+    }catch(const std::exception& err) {
+        this->report_error(this->get_process_name(), err.what());
+        return;
     }
 
 }
@@ -117,8 +153,13 @@ void Pipeline::run() {
 
 std::string Pipeline::get_output_directory() {
     
+	std::time_t now = std::time(0);
+	std::tm *ltm = std::localtime(&now);
+    std::string date_string = btrgb::get_date("-");
+    std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
-        std::string dir = this->process_data_m->get_string("destinationDirectory");
+        std::string base_dir = this->process_data_m->get_string("destinationDirectory");
+        std::string dir = base_dir + "/BTRGB_" + date_string + "_" + time_string + "/";
         std::filesystem::create_directories(dir);
         return dir;
     }
@@ -134,11 +175,11 @@ std::string Pipeline::get_output_directory() {
 
 }
 
-IlluminantType Pipeline::get_illuminant_type() {
+IlluminantType Pipeline::get_illuminant_type(Json target_data) {
     // Default to D50
     IlluminantType type = IlluminantType::D50;
     try {
-        Json ref_data = this->process_data_m->get_obj(key_map[DataKey::RefData]);
+        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         std::string illum_str = ref_data.get_string(key_map[DataKey::Illuminants]);
         if (illum_str == "A") {
             type = IlluminantType::A;
@@ -154,11 +195,11 @@ IlluminantType Pipeline::get_illuminant_type() {
     return type;
 }
 
-ObserverType Pipeline::get_observer_type() {
+ObserverType Pipeline::get_observer_type(Json target_data) {
     // Defailt to 1931
     ObserverType type = ObserverType::SO_1931;
     try {
-        Json ref_data = this->process_data_m->get_obj(key_map[DataKey::RefData]);
+        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         int observer_num = ref_data.get_number(key_map[DataKey::StandardObserver]);
         if (observer_num == 1964) {
             type = ObserverType::SO_1964;
@@ -172,10 +213,31 @@ ObserverType Pipeline::get_observer_type() {
 
 }
 
-std::string Pipeline::get_ref_file() {
+TargetData Pipeline::build_target_data(Json target_json){
+    TargetData td;
+    std::cout << target_json.to_string(true) << std::endl;
+    td.top_loc = target_json.get_number("top");
+    td.left_loc = target_json.get_number("left");
+    td.bot_loc = target_json.get_number("bottom");
+    td.right_loc = target_json.get_number("right");
+    td.col_count = target_json.get_number("cols");
+    td.row_count = target_json.get_number("rows");
+    td.sample_size = target_json.get_number("size");
+    Json white_loc = target_json.get_obj("whitePatch");
+    // subtract one to make it zero based, due to front end sending 1 based.
+    td.w_row = white_loc.get_number("row") - 1;
+    td.w_col = white_loc.get_number("col") - 1;
+    Json ref_loc = target_json.get_obj("refData");
+    td.ref_base = ref_loc.get_string("name");
+    td.illum_base = ref_loc.get_string("illuminants");
+    td.obsv_base = ref_loc.get_number("standardObserver");
+    return td;
+}
+
+std::string Pipeline::get_ref_file(Json target_data) {
     std::string ref_file = "";
     try {
-        Json ref_data = this->process_data_m->get_obj(key_map[DataKey::RefData]);
+        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         ref_file = ref_data.get_string("name");
     }
     catch (ParsingError e) {

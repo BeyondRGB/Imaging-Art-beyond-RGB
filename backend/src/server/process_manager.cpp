@@ -42,6 +42,9 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 	else if (key == "HalfSizePreview") {
 		process = std::shared_ptr<HalfSizePreview>(new HalfSizePreview());
 	}
+	else if (key == "Thumbnails") {
+		process = std::shared_ptr<ThumbnailLoader>(new ThumbnailLoader());
+	}
 	//TODO add other process instantiation here as more get created
 
 	return process;

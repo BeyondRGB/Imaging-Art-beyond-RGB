@@ -6,9 +6,10 @@
 #include <unordered_map>
 
 #include "ImageUtil/Image.hpp"
-#include "ImageUtil/ImageWriter/ImageWriterStrategy.hpp"
+#include "ImageUtil/ImageWriter/ImageWriter.hpp"
 #include "reference_data/ref_data.hpp"
 #include "ImageUtil/ColorTarget.hpp"
+#include "image_processing/results/calibration_results.hpp"
 
 // Macros for identifying images in "images" map
 // Example ART(1) will expand to "art1" ART(2) will expand to "art2"
@@ -16,6 +17,10 @@
 #define ART(num) "art"#num
 #define DARK(num) "dark"#num
 #define WHITE(num) "white"#num
+
+//
+#define CM_IMAGE_KEY "ColorManaged"
+#define SP_IMAGE_KEY "Spectral"
 
 /* How to iterate over all images in the ArtObject:
  *
@@ -29,16 +34,27 @@
  *
  */
 
+
+
 namespace btrgb {
+
+    enum ResultType{
+        CALIBRATION,
+        GENERAL,
+        VERIFICATION
+    };
 
     class ArtObject {
 
     private:
         TargetData target_data;
         std::unordered_map<std::string, Image*> images;
-        ImageWriter* tiffWriter;
         RefData* ref_data;
+        RefData* verification_data = nullptr;
         std::string output_directory;
+        CalibrationResults general_info;
+        CalibrationResults calibration_res; 
+        CalibrationResults verification_res;
 
     public:
         ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory);
@@ -50,6 +66,9 @@ namespace btrgb {
         double getTargetInfo(std::string type);
         int getTargetSize(std::string edge);
         ColorTarget get_target(std::string imageName);
+
+        CalibrationResults *get_results_obj(btrgb::ResultType type);
+        std::string get_output_dir();
 
         void newImage(std::string name, std::string filename);
         void setImage(std::string name, Image* im);

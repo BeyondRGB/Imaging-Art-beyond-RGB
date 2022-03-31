@@ -35,20 +35,25 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     int width = art1->width();
     int channels = art1->channels();
 
+    ColorTarget target = images->get_target("art1");
+
     //Col and Row of the white patch on the target
-    int whiteRow = reference->get_white_patch_row();
-    int whiteCol = reference->get_white_patch_col();
+    int whiteRow = target.get_white_row();
+    int whiteCol = target.get_white_col();
 
     //Collecting the y Value from the reference data
     double yVal = reference->get_y(whiteRow, whiteCol);
 
     //Getting average patch values for white and art images channel two
-    float patAvg = images->get_target("art1").get_patch_avg(whiteRow, whiteCol, 1);
+    float patAvg = target.get_patch_avg(whiteRow, whiteCol, 1);
     float whiteAvg = images->get_target("white1").get_patch_avg(whiteRow, whiteCol, 1);
 
     //Calculate w value and complete the pixel operation with set w value
     wCalc(patAvg, whiteAvg, yVal);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
+
+    // Store Results
+    this->store_results(images);
 
     //Removes the white and dark images from the art object
     images->deleteImage("white1");
@@ -58,8 +63,8 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 
     comms->send_progress(1, "Flat Fielding");
     // Outputs TIFFs for each image group for after this step, temporary
-    images->outputImageAs(btrgb::TIFF, "art1", "FFOut1");
-    images->outputImageAs(btrgb::TIFF, "art2", "FFOut2");
+    images->outputImageAs(btrgb::TIFF, "art1", "art1_ff");
+    images->outputImageAs(btrgb::TIFF, "art2", "art2_ff");
 }
 
 /**
@@ -108,5 +113,22 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
             }
         }
     }
+}
+
+void FlatFieldor::store_results(btrgb::ArtObject* images){
+    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
+
+    RefData *reference = images->get_refrence_data();
+    ColorTarget target = images->get_target("art1");
+    //Col and Row of the white patch on the target
+    int whiteRow = target.get_white_row();
+    int whiteCol = target.get_white_col();
+    //Collecting the y Value from the reference data
+    double y = reference->get_y(whiteRow, whiteCol);
+
+    // Y whit patch meas
+    results_obj->store_double(GI_Y, y);
+    // W Value
+    results_obj->store_double(GI_W, (double)this->w);
 
 }
