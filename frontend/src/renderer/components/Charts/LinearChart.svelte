@@ -178,13 +178,13 @@
   {/each}
 </div> -->
 <style lang="postcss" global>
-  .scatter-charts {
+  .liner-chart {
     @apply w-full flex justify-center;
   }
-  .bx--chart-holder {
+  .liner-chart .bx--chart-holder {
     @apply aspect-square w-auto;
   }
-  .bx--cc--scatter circle {
+  .liner-chart .bx--cc--scatter circle {
     fill-opacity: 1;
     r: 7;
   }
