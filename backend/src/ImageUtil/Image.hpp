@@ -100,7 +100,7 @@ namespace btrgb {
             ColorSpace getColorProfile();
 
             void recycle();
-            int _raw_bit_depth = 0;
+            std::shared_ptr<int> _raw_bit_depth;
             
             /* ====== static ======= */
             static bool is_tiff(std::string filename);
