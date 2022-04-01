@@ -22,8 +22,7 @@ class LibTiffReader : public ImageReaderStrategy {
         void copyBitmapTo(cv::Mat& im) override;
 
     private:
-        //LibRaw _reader;
-
+        struct tiff* _tiff;
 };
 
 }

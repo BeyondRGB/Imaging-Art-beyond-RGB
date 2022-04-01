@@ -4,6 +4,7 @@
 #include "ImageUtil/BitDepthFinder.hpp"
 #include "ImageUtil/ImageReader/LibRawReader.hpp"
 #include "ImageUtil/ImageReader/TiffReaderOpenCV.hpp"
+#include "ImageUtil/ImageReader/LibTiffReader.hpp"
 #include "image_processing/header/ImageReader.h"
 
 
@@ -26,14 +27,10 @@ void ImageReader::_set_strategy(reader_strategy strategy) {
     }
 
     switch(strategy) {
-        case TIFF_OpenCV:
-            this->_reader = new btrgb::TiffReaderOpenCV;
-            break;
-        case RAW_LibRaw:
-            this->_reader = new btrgb::LibRawReader;
-            break;
-        default: 
-            throw std::logic_error("[ImageReader] Invalid strategy.");
+        case TIFF_OpenCV:   this->_reader = new btrgb::TiffReaderOpenCV; break;
+        case RAW_LibRaw:    this->_reader = new btrgb::LibRawReader; break;
+        case TIFF_LibTiff:  this->_reader = new btrgb::LibTiffReader; break;
+        default: throw std::logic_error("[ImageReader] Invalid strategy.");
     }
 
     this->_current_strategy = strategy;
@@ -55,7 +52,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
         /* Initialize image reader. */
         if(btrgb::Image::is_tiff(im->getName()))
-            this->_set_strategy(TIFF_OpenCV);
+            this->_set_strategy(TIFF_LibTiff);
         else
             this->_set_strategy(RAW_LibRaw);
 

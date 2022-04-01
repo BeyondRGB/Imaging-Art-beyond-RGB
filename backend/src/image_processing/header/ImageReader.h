@@ -7,7 +7,7 @@
 class ImageReader: public ImgProcessingComponent {
 
     public:
-        enum reader_strategy {none, RAW_LibRaw, TIFF_OpenCV};
+        enum reader_strategy {none, RAW_LibRaw, TIFF_OpenCV, TIFF_LibTiff};
         ImageReader();
         ~ImageReader();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;

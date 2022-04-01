@@ -182,7 +182,8 @@ namespace btrgb {
         if( i == std::string::npos ) 
             return false;
 
-        return filename.substr(i + 1) == "tiff";
+        std::string ext = filename.substr(i + 1);
+        return ext == "tiff" || ext == "tif";
     }
             
 
