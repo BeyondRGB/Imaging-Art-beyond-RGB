@@ -2,7 +2,6 @@
 #define BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 
 #include "ImageUtil/ImageReader/ImageReaderStrategy.hpp"
-// #include "ImgProcessingComponent.h"
 #include "image_processing/header/LeafComponent.h"
 
 class ImageReader: public LeafComponent {
@@ -12,7 +11,6 @@ class ImageReader: public LeafComponent {
         ImageReader();
         ~ImageReader();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
-        // std::string get_component_list() override;
 
     private:
         reader_strategy _current_strategy = reader_strategy::none;
@@ -20,6 +18,5 @@ class ImageReader: public LeafComponent {
         void _set_strategy(reader_strategy strategy);
 
 };
-
 
 #endif //BEYOND_RGB_BACKEND_RAWIMAGEREADER_H

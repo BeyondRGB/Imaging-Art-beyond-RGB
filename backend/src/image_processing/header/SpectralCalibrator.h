@@ -12,7 +12,6 @@
 #include "utils/time_tracker.hpp"
 #include "image_processing/results/calibration_results.hpp"
 
-// #include "ImgProcessingComponent.h"
 #include "image_processing/header/LeafComponent.h"
 
 /**
@@ -22,7 +21,7 @@
  */
 class SpectralCalibrator : public LeafComponent{
 public:
-    SpectralCalibrator() : LeafComponent("SpectralCalibrator"){}
+    SpectralCalibrator() : LeafComponent("SpectralCalibration"){}
     /**
      * @brief Runs the calibration
      * 
@@ -30,7 +29,6 @@ public:
      * @param images contais Images to process
      */
     void execute(CommunicationObj *comms, btrgb::ArtObject* images) override;
-    // std::string get_component_list() override;
     void my_callback(std::string str);
 
 private:

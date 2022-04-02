@@ -1,7 +1,6 @@
 #ifndef RESULTS_PROCESSOR_H
 #define RESULTS_PROCESSOR_H
 
-// #include "ImgProcessingComponent.h"
 #include "image_processing/header/LeafComponent.h"
 #include "image_processing/results/calibration_results.hpp"
 #include "utils/general_utils.hpp"
@@ -18,7 +17,6 @@ class ResultsProcessor : public LeafComponent{
         ResultsProcessor() : LeafComponent("ResultsProcsessor"){};
         ~ResultsProcessor(){};
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
-        // std::string get_component_list() override;
 
     private:
         /**

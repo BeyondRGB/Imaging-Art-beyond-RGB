@@ -1,8 +1,8 @@
 #include "image_processing/header/ResultsProcessor.h"
 
 void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images){
-    comms->send_info("","ResultsProcessor");
-    comms->send_progress(0,"ResultsProcessor");
+    comms->send_info("",this->get_name());
+    comms->send_progress(0,this->get_name());
 
     this->output_dir = images->get_output_dir();
     this->ts_id = btrgb::get_time_stamp();
@@ -19,12 +19,12 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     this->output_user_results(images);  
     this->output_btrgb_results(images);
 
-    comms->send_progress(0.2,"ResultsProcessor");
+    comms->send_progress(0.2,this->get_name());
 
     // Output Images 
     this->output_images(images);
     
-    comms->send_progress(1,"ResultsProcessor");
+    comms->send_progress(1,this->get_name());
 }
 
 void ResultsProcessor::output_images(btrgb::ArtObject* images){
@@ -103,7 +103,3 @@ std::string ResultsProcessor::build_output_name(std::string name, std::string ex
         f_name += "." + extention;
     return f_name;
 }
-
-// std::string ResultsProcessor::get_component_list(){
-//     return "{\"ResultsProcessor\":[]}";
-// }
