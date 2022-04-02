@@ -103,3 +103,7 @@ std::string ResultsProcessor::build_output_name(std::string name, std::string ex
         f_name += "." + extention;
     return f_name;
 }
+
+std::string ResultsProcessor::get_component_list(){
+    return "{\"ResultsProcessor\":[]}";
+}

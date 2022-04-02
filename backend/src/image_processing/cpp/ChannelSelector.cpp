@@ -9,3 +9,7 @@ void ChannelSelector::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     //TODO add channel section logic here
     //sleep_for(seconds(1));
 }
+
+std::string ChannelSelector::get_component_list(){
+    return "{\"ChannelSelector\":[]}";
+}

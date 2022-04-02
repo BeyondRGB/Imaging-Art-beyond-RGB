@@ -8,6 +8,7 @@
 class PixelRegestor : public ImgProcessingComponent{
 public:
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
+    std::string get_component_list() override;
 };
 
 

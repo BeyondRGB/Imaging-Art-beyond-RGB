@@ -129,3 +129,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     images->outputImageAs(btrgb::TIFF, "art2", "art2_rgstr");
 
 }
+
+std::string PixelRegestor::get_component_list(){
+    return "{\"PixelRegestor\":[]}";
+}

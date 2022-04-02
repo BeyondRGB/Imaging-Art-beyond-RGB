@@ -11,6 +11,7 @@ class ImageReader: public ImgProcessingComponent {
         ImageReader();
         ~ImageReader();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
+        std::string get_component_list() override;
 
     private:
         reader_strategy _current_strategy = reader_strategy::none;

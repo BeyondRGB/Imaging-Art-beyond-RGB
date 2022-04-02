@@ -17,6 +17,7 @@ class ResultsProcessor : public ImgProcessingComponent{
         ResultsProcessor(){};
         ~ResultsProcessor(){};
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
+        std::string get_component_list() override;
 
     private:
         /**
