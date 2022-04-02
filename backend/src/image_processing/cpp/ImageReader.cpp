@@ -7,7 +7,7 @@
 #include "image_processing/header/ImageReader.h"
 
 
-ImageReader::ImageReader() {}
+ImageReader::ImageReader() : LeafComponent("ImageReader") {}
 
 ImageReader::~ImageReader() {
     delete this->_reader;
@@ -114,6 +114,6 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
 }
 
-std::string ImageReader::get_component_list(){
-    return "{\"ImageReader\":[]}";
-}
+// std::string ImageReader::get_component_list(){
+//     return "{\"ImageReader\":[]}";
+// }

@@ -23,6 +23,7 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 class ImgProcessingComponent {
 public:
+    ImgProcessingComponent(std::string name){ this->name = name; }
     virtual ~ImgProcessingComponent() {}
     /**
      * Pure virtual fucntion
@@ -31,6 +32,11 @@ public:
      */
     virtual void execute(CommunicationObj* comms, btrgb::ArtObject* images) = 0;
     virtual std::string get_component_list() = 0;
+
+    std::string get_name(){ return this->name; }
+
+private:
+    std::string name = "Undefined Component";
 };
 
 

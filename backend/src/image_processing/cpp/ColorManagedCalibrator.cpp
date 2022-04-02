@@ -432,7 +432,3 @@ double DeltaEFunction::calc(const double* x)const{
     double deltaE_avg = deltaE_sum / patch_count;
     return deltaE_avg;
 }
-
-std::string ColorManagedCalibrator::get_component_list(){
-    return "{\"ColorManagedCalibrator\":[]}";
-}

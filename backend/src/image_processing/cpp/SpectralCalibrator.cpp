@@ -138,9 +138,9 @@ void SpectralCalibrator::store_spectral_img(btrgb::ArtObject *images){
     images->setImage(SP_IMAGE_KEY, spectral_img);
 }
 
-std::string SpectralCalibrator::get_component_list(){
-    return "{\"SpectralCalibrator\":[]}";
-}
+// std::string SpectralCalibrator::get_component_list(){
+//     return "{\"SpectralCalibrator\":[]}";
+// }
 
 
 ////////////////////////////////////////////////////////////////

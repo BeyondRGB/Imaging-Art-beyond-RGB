@@ -130,6 +130,6 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
 }
 
-std::string PixelRegestor::get_component_list(){
-    return "{\"PixelRegestor\":[]}";
-}
+// std::string PixelRegestor::get_component_list(){
+//     return "{\"PixelRegestor\":[]}";
+// }

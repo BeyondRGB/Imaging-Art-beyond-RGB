@@ -9,7 +9,8 @@
 #include "ImageUtil/ColorTarget.hpp"
 #include "ImageUtil/ColorProfiles.hpp"
 #include "utils/csv_parser.hpp"
-#include "ImgProcessingComponent.h"
+// #include "ImgProcessingComponent.h"
+#include "image_processing/header/LeafComponent.h"
 #include "reference_data/ref_data_defines.hpp"
 #include "reference_data/ref_data.hpp"
 #include "utils/color_convertions.hpp"
@@ -20,7 +21,7 @@
 
 // typedef std::function<double(cv::Mat)> MinDeltaE_function;
 
-class ColorManagedCalibrator : public ImgProcessingComponent{
+class ColorManagedCalibrator : public LeafComponent{
 /**
  * @brief Class to manage ColorManagedCalibration of images
  * It takes the 2 art images after they have bee through preprocessing
@@ -29,10 +30,10 @@ class ColorManagedCalibrator : public ImgProcessingComponent{
  */
 
 public:
-
+    ColorManagedCalibrator() : LeafComponent("ColorManagedCalibrator"){}
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
-    std::string get_component_list() override;
+    // std::string get_component_list() override;
 
 private:
     cv::Mat optimization_input;// Contains M and offset values in a 1D matrix

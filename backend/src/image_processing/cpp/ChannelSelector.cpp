@@ -10,6 +10,6 @@ void ChannelSelector::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     //sleep_for(seconds(1));
 }
 
-std::string ChannelSelector::get_component_list(){
-    return "{\"ChannelSelector\":[]}";
-}
+// std::string ChannelSelector::get_component_list(){
+//     return "{\"ChannelSelector\":[]}";
+// }
