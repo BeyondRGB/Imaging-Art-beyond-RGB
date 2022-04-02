@@ -16,6 +16,12 @@ class Verification : public ImgProcessingComponent{
         void verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObject* images);
         void verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObject* images);
 
+    private:
+        ColorTarget target1;
+        ColorTarget target2;
+        RefData* verification_data;
+        int channel_count;
+
 
 };
 

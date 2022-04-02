@@ -99,7 +99,7 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
 }
 
 void Pipeline::run() {
-
+    std::cout << "Initializing Img Processing Pipeline" << std::endl;
     this->send_info("I got your msg", this->get_process_name());
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
 

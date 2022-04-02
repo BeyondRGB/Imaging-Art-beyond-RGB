@@ -52,6 +52,8 @@
 #define V_L_CAMERA         "Verification L*_camera"
 #define V_a_CAMERA         "Verification a*_camera"
 #define V_b_CAMERA         "Verification b*_camera"
+#define V_R_CAMERA         "Verification R_camera"
+#define V_RMSE             "Verification RMSE"
 
 // Json Value Storage Keys
 #define MATRIX_KEY "matrix_values"
