@@ -51,11 +51,13 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 }
 
 void ProcessManager::start_process(std::shared_ptr<BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj, Json request_data) {
+	std::cout << "Finalizing Process Initialization" << std::endl;
 	if (nullptr == process) {
 		this->report_error("ProcessManager", "Unknown RequestType");
 	}
 	process->set_coms_obj(coms_obj);
 	process->set_process_data(request_data);
+	std::cout << "Starting Process" << std::endl;
 	process->run();
 	std::cout << process->get_process_name() << " complete." << std::endl;
 }

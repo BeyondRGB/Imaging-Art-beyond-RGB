@@ -9,9 +9,10 @@ cv::Mat btrgb::calibration::build_target_avg_matrix(ColorTarget targets[], int t
     // Each row should hold a number of values equle to the total number of ColorPatches of one ColorTarget
     int mat_col_count = row_count * col_count;
     int mat_row_count = channel_count * target_count;
-
+    std::cout << "Initializing Matrix" << std::endl;
     cv::Mat color_patch_avgs = cv::Mat_<double>(mat_row_count, mat_col_count, CV_32FC1);
     // Iterate over each Target
+    std::cout << "Filling Matrix" << std::endl;
     for (int target_i = 0; target_i < target_count; target_i++) {
         ColorTarget target = targets[target_i];
         // For each Target visit each Channel
