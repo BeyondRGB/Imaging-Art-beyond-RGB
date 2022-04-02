@@ -18,6 +18,7 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
     }
     catch (btrgb::ArtObj_VerificationDataNull e){
         comms->send_error(e.what(), "Verification");
+        return;
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
         comms->send_error("Verification called out of order. Missing at least 1 image assignment.", "Verification");
@@ -45,11 +46,7 @@ void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObje
     // Initialize target Info
     std::cout << "Init Target Info" << std::endl;
     ColorTarget targets[] = { this->target1, this->target2 };
-    std::cout << "Getting sizes" << std::endl;
-    // int channel_count = this->art1->channels();
-    std::cout << "Chan count: " << channel_count << std::endl;
     int target_count = std::size(targets);
-    std::cout << "target count " << target_count << std::endl;
     
     // Extract M and offsets
     std::cout << "Getting Results" << std::endl;
@@ -101,7 +98,6 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
 
     // Initialize target Info
     ColorTarget targets[] = { this->target1, this->target2 };
-    // int channel_count = this->art1->channels();
     int target_count = std::size(targets);
 
     // Extract M_refl
@@ -120,10 +116,8 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
     // Init R_reference
     cv::Mat R_reference = this->verification_data->as_matrix();
 
-    std::cout << "Computing RMSE" << std::endl;
-    btrgb::calibration::display_matrix(&R_camera, "R_Camera");
-    btrgb::calibration::display_matrix(&R_reference, "R_ref");
     // Compute RMSE
+    std::cout << "Computing RMSE" << std::endl;
     double RMSE = 0;
     int N = R_camera.rows * R_camera.cols;
     for(int row = 0; row < R_reference.rows; row++){
