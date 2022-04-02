@@ -21,17 +21,3 @@ void ImageCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     }
     comms->send_info("Image Calibration Done!!!", "ImageCalibrator");
 }
-
-// std::string ImageCalibrator::get_component_list(){
-//     std::string component_list = "{\"ImageCalibrator\":[";
-//     int i = 0;
-//     for(auto  & component : this->components){
-//         if(i > 0){
-//             component_list += ",";
-//         }
-//         component_list += component->get_component_list();
-//         i++;
-//     }
-//     component_list += "]}";
-//     return component_list;
-// }

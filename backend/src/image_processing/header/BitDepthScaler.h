@@ -11,5 +11,4 @@ class BitDepthScaler : public LeafComponent {
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 };
 
-
 #endif

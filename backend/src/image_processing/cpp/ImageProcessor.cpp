@@ -5,28 +5,14 @@ ImageProcessor::ImageProcessor(const std::vector<std::shared_ptr<ImgProcessingCo
         this->init_components(components);
 }
 void ImageProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("Starting Image Processor", "ImageProcessor");
+    comms->send_info("Starting Image Processor", this->get_name());
     double count = 0;
     double total = this->components.size();
     for(auto  & component : this->components){
         double currProgress = count / total;
-        comms->send_progress(currProgress, "ImageProcessor");
+        comms->send_progress(currProgress, this->get_name());
         component->execute(comms, images);
         count++;
     }
-    comms->send_info("Image Processing Done!!!", "ImageProcessor");
+    comms->send_info("Image Processing Done!!!", this->get_name());
 }
-
-// std::string ImageProcessor::get_component_list(){
-//     std::string component_list = "{\"ImageProcessor\":[";
-//     int i = 0;
-//     for(auto  & component : this->components){
-//         if(i > 0){
-//             component_list += ",";
-//         }
-//         component_list += component->get_component_list();
-//         i++;
-//     }
-//     component_list += "]}";
-//     return component_list;
-// }
