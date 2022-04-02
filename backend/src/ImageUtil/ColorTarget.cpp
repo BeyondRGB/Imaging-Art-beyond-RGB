@@ -36,6 +36,7 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	this->observer = this->set_observer_type(location_data.obsv_base);
 	// Make the RefData
 	this->ref_data = new RefData(this->reference, this->illuminant, this->observer);
+	// Ensure that the Target size matches the RefData size
 	if( this->row_count != ref_data->get_row_count() || this->col_count != ref_data->get_col_count()){
 		throw ColorTarget_MissmatchingRefData();
 	}
