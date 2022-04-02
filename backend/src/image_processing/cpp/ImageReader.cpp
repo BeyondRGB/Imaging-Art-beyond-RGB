@@ -113,3 +113,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_progress(1, "RawImageReader");
 
 }
+
+std::string ImageReader::get_component_list(){
+    return "{\"ImageReader\":[]}";
+}

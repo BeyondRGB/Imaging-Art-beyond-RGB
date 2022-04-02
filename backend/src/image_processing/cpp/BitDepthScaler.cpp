@@ -41,3 +41,7 @@ void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     }
 
 }
+
+std::string BitDepthScaler::get_component_list(){
+    return "{\"BitDepthScaler\":[]}";
+}

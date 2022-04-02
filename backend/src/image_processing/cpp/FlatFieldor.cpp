@@ -132,3 +132,7 @@ void FlatFieldor::store_results(btrgb::ArtObject* images){
     results_obj->store_double(GI_W, (double)this->w);
 
 }
+
+std::string FlatFieldor::get_component_list(){
+    return "{\"FlatFieldor\":[]}";
+}

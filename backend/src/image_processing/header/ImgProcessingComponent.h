@@ -30,6 +30,7 @@ public:
      * processing for that particular component
      */
     virtual void execute(CommunicationObj* comms, btrgb::ArtObject* images) = 0;
+    virtual std::string get_component_list() = 0;
 };
 
 

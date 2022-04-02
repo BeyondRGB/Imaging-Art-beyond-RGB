@@ -32,6 +32,7 @@ public:
 
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
+    std::string get_component_list() override;
 
 private:
     cv::Mat optimization_input;// Contains M and offset values in a 1D matrix

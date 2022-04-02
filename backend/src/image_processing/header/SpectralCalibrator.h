@@ -28,6 +28,7 @@ public:
      * @param images contais Images to process
      */
     void execute(CommunicationObj *comms, btrgb::ArtObject* images) override;
+    std::string get_component_list() override;
     void my_callback(std::string str);
 
 private:

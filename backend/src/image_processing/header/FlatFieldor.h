@@ -13,6 +13,7 @@ private:
     void pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2);
 public:
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
+    std::string get_component_list() override;
     void store_results(btrgb::ArtObject* images);
 };
 

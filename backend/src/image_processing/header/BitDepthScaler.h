@@ -10,6 +10,7 @@ class BitDepthScaler : public ImgProcessingComponent {
         BitDepthScaler();
         ~BitDepthScaler();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
+        std::string get_component_list() override;
 };
 
 

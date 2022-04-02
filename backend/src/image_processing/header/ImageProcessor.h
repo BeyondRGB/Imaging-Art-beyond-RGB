@@ -14,6 +14,7 @@ private:
 public:
     ImageProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components);
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
+    std::string get_component_list() override;
 };
 
 
