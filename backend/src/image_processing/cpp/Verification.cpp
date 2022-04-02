@@ -5,8 +5,6 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
     comms->send_progress(0, "Verification");
 
     try {
-        // this->art1 = images->getImage(ART(1));
-        // this->art2 = images->getImage(ART(2));
         this->channel_count = images->getImage(ART(1))->channels();
 
         // Init Color Targets
@@ -36,7 +34,6 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
 
     this->verify_SP_calibration(comms, images);
 
-
     comms->send_progress(1, "Verification");
 }
 
@@ -58,9 +55,11 @@ void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObje
     std::cout << "Init Sigs" << std::endl;
     cv::Mat camera_sigs = btrgb::calibration::build_target_avg_matrix(targets, target_count, this->channel_count);
     camera_sigs = btrgb::calibration::apply_offsets(camera_sigs, offests);
+    
     // Compute xyz
     std::cout << "Comput XYZ" << std::endl;
     cv::Mat xyz = M * camera_sigs;
+    
     // Compute Lab* values
     std::cout << "Fill Lab*" << std::endl;
     cv::Mat L_camera;
@@ -75,12 +74,14 @@ void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObje
 
     int row_count = verification_data->get_row_count();
     int col_count = verification_data->get_col_count();
+    
     // DeltaE Computations
     std::cout << "Computing DeltaE" << std::endl;
     cv::Mat deltaE_values = cv::Mat_<double>(row_count, col_count, CV_32FC1);
     double deltaE_sum = btrgb::calibration::compute_deltaE_sum(verification_data, xyz, &deltaE_values);
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
+    
     // Store Verification Results
     std::cout << "Storing Results" << std::endl;
     CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
@@ -133,12 +134,4 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
     CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
     verification_res->store_matrix(V_R_CAMERA, R_camera);
     verification_res->store_double(V_RMSE, RMSE);
-
-
-
-
-    
-
-    
-
 }
