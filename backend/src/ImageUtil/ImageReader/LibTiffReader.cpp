@@ -39,6 +39,13 @@ void LibTiffReader::open(std::string filename) {
     this->_channels = channels;
     this->_depth = depth;
 
+    if(channels == 1) {
+        uint16_t planar_config;
+        TIFFGetField(this->_tiff, TIFFTAG_PLANARCONFIG, &planar_config);
+        if(planar_config != PLANARCONFIG_CONTIG)
+            throw std::runtime_error("[LibTiffReader] Only 'Chunky' planar config format is supported: " + filename);
+    }
+
     if( 
         _width <= 0 ||
         _height <= 0 ||
@@ -56,13 +63,10 @@ void LibTiffReader::copyBitmapTo(void* buffer, uint32_t size) {
     if( size < _width * _height * _channels * (_depth / 8) )
         throw std::logic_error("[LibTiffReader] Buffer size is too small.");
 
-    std::cout << "Starting copy\n";
     uint32_t strip_data_size = TIFFStripSize(this->_tiff);
-    std::cout << "Got strip size\n";
 	void* strip_data = _TIFFmalloc(strip_data_size);
     if( ! strip_data )
         throw std::runtime_error("[LibTiffReader] Memory error.");
-    std::cout << "Allocate buffer\n";
 
 	uint32_t strip_index;
 	uint32_t strip_size;
