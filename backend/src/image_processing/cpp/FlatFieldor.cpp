@@ -133,6 +133,6 @@ void FlatFieldor::store_results(btrgb::ArtObject* images){
 
 }
 
-std::string FlatFieldor::get_component_list(){
-    return "{\"FlatFieldor\":[]}";
-}
+// std::string FlatFieldor::get_component_list(){
+//     return "{\"FlatFieldor\":[]}";
+// }

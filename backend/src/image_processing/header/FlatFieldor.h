@@ -2,18 +2,20 @@
 #define BEYOND_RGB_BACKEND_FLATFIELDOR_H
 
 
-#include "ImgProcessingComponent.h"
+// #include "ImgProcessingComponent.h"
+#include "image_processing/header/LeafComponent.h"
 #include "ImageUtil/Image.hpp"
 #include "image_processing/results/calibration_results.hpp"
 
-class FlatFieldor : public ImgProcessingComponent{
+class FlatFieldor : public LeafComponent{
 private:
     float w;
     void wCalc(float pAvg, float wAvg, double yRef);
     void pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2);
 public:
+    FlatFieldor() : LeafComponent("FlatFeildor"){}
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
-    std::string get_component_list() override;
+    // std::string get_component_list() override;
     void store_results(btrgb::ArtObject* images);
 };
 

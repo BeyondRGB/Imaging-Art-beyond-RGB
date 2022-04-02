@@ -4,10 +4,9 @@
 
 #include "../header/PreProcessor.h"
 
-PreProcessor::PreProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components) {
-    for(auto & component : components){
-        this->components.push_back(component);
-    }
+PreProcessor::PreProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components)
+    : CompositComponent("PreProcessor") {
+        this->init_components(components);
 }
 
 void PreProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
@@ -24,16 +23,16 @@ void PreProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("PreProcessing Done!!!", "PreProcessor");
 }
 
-std::string PreProcessor::get_component_list(){
-    std::string component_list = "{\"PreProcessor\":[";
-    int i = 0;
-    for(auto  & component : this->components){
-        if(i > 0){
-            component_list += ",";
-        }
-        component_list += component->get_component_list();
-        i++;
-    }
-    component_list += "]}";
-    return component_list;
-}
+// std::string PreProcessor::get_component_list(){
+//     std::string component_list = "{\"PreProcessor\":[";
+//     int i = 0;
+//     for(auto  & component : this->components){
+//         if(i > 0){
+//             component_list += ",";
+//         }
+//         component_list += component->get_component_list();
+//         i++;
+//     }
+//     component_list += "]}";
+//     return component_list;
+// }

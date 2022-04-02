@@ -1,16 +1,14 @@
 #ifndef BEYOND_RGB_BACKEND_BITDEPTHSCALER_H
 #define BEYOND_RGB_BACKEND_BITDEPTHSCALER_H
 
+#include "image_processing/header/LeafComponent.h"
 
-#include "ImgProcessingComponent.h"
-
-class BitDepthScaler : public ImgProcessingComponent {
+class BitDepthScaler : public LeafComponent {
 
     public:
         BitDepthScaler();
         ~BitDepthScaler();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
-        std::string get_component_list() override;
 };
 
 
