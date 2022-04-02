@@ -131,11 +131,6 @@ void Pipeline::run() {
     this->send_info("About to init art obj...", this->get_process_name());
     try{
         this->init_art_obj(images.get());
-        // Test Target
-        images->get_target(ART(1));
-    }catch(ColorTarget_MissmatchingRefData e){
-        this->report_error(this->get_process_name(), e.what());
-        return;
     }catch(std::exception e){
         this->report_error(this->get_process_name(), e.what());
         return;
@@ -147,6 +142,12 @@ void Pipeline::run() {
         this->init_general_info(images.get());
     }catch(std::exception e){
         this->report_error(this->get_process_name(), e.what());
+        return;
+    }
+
+    // Verify Targets
+    this->send_info("Verifying ColorTargets...", this->get_process_name());
+    if( !this->verify_targets(images.get()) ){
         return;
     }
 
@@ -260,4 +261,16 @@ std::string Pipeline::get_ref_file(Json target_data) {
         throw e;
     }
     return ref_file;
+}
+
+bool Pipeline::verify_targets(btrgb::ArtObject *images){
+    try{
+        // Test Target
+        images->get_target(ART(1));
+        // TODO add verification test here when verification is set up
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return false;
+    }
+    return true;
 }
