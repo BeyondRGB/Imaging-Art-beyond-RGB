@@ -120,7 +120,9 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
     // Compute RMSE
     std::cout << "Computing RMSE" << std::endl;
     double RMSE = 0;
-    int N = R_camera.rows * R_camera.cols;
+    
+    // N should be equivilent to 36 ie. the number of wavelengths ie. the number of rows in R_camera/R_ref 
+    int N = R_camera.rows;
     for(int row = 0; row < R_reference.rows; row++){
         for(int col = 0; col < R_reference.cols; col++){
             double camera_val = R_camera.at<double>(row,col);
