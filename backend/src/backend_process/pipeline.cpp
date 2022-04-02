@@ -114,8 +114,14 @@ void Pipeline::run() {
         std::string ref_file = this->get_ref_file(target_data);
         IlluminantType illuminant = this->get_illuminant_type(target_data);
         ObserverType observer = this->get_observer_type(target_data);
-        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
-    catch(const std::exception& err) {
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); 
+    }catch(RefData_FailedToRead e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(RefData_ParssingError e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
     }
@@ -125,6 +131,11 @@ void Pipeline::run() {
     this->send_info("About to init art obj...", this->get_process_name());
     try{
         this->init_art_obj(images.get());
+        // Test Target
+        images->get_target(ART(1));
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
     }catch(std::exception e){
         this->report_error(this->get_process_name(), e.what());
         return;
@@ -143,6 +154,9 @@ void Pipeline::run() {
     this->send_info( "About to execute...", this->get_process_name());
     try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
     }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
