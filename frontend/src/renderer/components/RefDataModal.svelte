@@ -56,14 +56,24 @@
         label={"Select Refernce Data"}
         type="Single"
       />
-      {#if filePaths && filePaths.length > 0}
-        <div class="flex items-center justify-center">
-          <p class="inputLabel">Selected File:</p>
-          <div class="input">
-            {filePaths}
+      <div class="flex flex-col gap-1">
+        {#if filePaths && filePaths.length > 0}
+          <div class="flex items-center justify-center w-full">
+            <p class="inputLabel new">New File:</p>
+            <div class="input">
+              {filePaths}
+            </div>
           </div>
-        </div>
-      {/if}
+        {/if}
+        {#if $processState.artStacks[0].verificationTarget.refData}
+          <div class="flex items-center justify-center w-full">
+            <p class="inputLabel">Current File:</p>
+            <div class="input">
+              {$processState.artStacks[0].verificationTarget.refData.name}
+            </div>
+          </div>
+        {/if}
+      </div>
     </div>
     <div class="buttonGroup">
       <button class="cancel" on:click={closeModal}>Cancel</button>
@@ -93,14 +103,15 @@
     @apply w-full flex justify-between items-center gap-2;
   }
   .inputDiv {
-    @apply flex flex-col justify-center items-center;
+    @apply flex flex-col justify-center items-center gap-1;
   }
   .iconBox {
     @apply h-full bg-green-500/90 rounded-r-lg p-1;
   }
   .input {
-    @apply bg-gray-800 rounded-r-lg h-full flex items-center justify-center p-2;
+    @apply w-full bg-gray-800 rounded-r-lg h-full flex items-center justify-center p-2;
   }
+
   .buttonGroup {
     @apply flex justify-end gap-2;
   }
@@ -112,6 +123,9 @@
   }
   .inputLabel {
     @apply h-full flex justify-center items-center bg-blue-600/25 rounded-l-lg
-          px-2;
+          px-2 whitespace-nowrap;
+  }
+  .new {
+    @apply bg-green-600/25;
   }
 </style>
