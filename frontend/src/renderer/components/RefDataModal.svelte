@@ -16,8 +16,10 @@
   $: console.log($appSettings);
   $: console.log(closeModal);
   function confirm() {
+    console.log("Confirm");
     if (filePaths) {
       if ($modal === "CustomRefData") {
+        console.log("Saving to color target");
         $processState.artStacks[0].colorTarget.refData = {
           name: filePaths[0],
         };
@@ -62,6 +64,14 @@
             <p class="inputLabel new">New File:</p>
             <div class="input">
               {filePaths}
+            </div>
+          </div>
+        {/if}
+        {#if $processState.artStacks[0].colorTarget.refData}
+          <div class="flex items-center justify-center w-full">
+            <p class="inputLabel">Current File:</p>
+            <div class="input">
+              {$processState.artStacks[0].colorTarget.refData.name}
             </div>
           </div>
         {/if}
