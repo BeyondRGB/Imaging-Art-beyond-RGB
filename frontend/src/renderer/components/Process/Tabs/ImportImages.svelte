@@ -22,9 +22,7 @@
 <main>
   <left>
     <h1>Import Images</h1>
-    <p>
-      Select the folder or all images you would like to import into the program
-    </p>
+    <p>Select all images you would like to import into the program</p>
   </left>
   <right>
     <div class="fileSelector">
