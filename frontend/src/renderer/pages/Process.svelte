@@ -58,7 +58,6 @@
   }
 
   $: if ($messageStore.length > 1 && binaryType === null) {
-    console.log($messageStore[0]);
     try {
       let temp = JSON.parse($messageStore[0]);
       if (temp["ResponseType"] === "ImageBinary") {
@@ -68,10 +67,15 @@
       } else if (temp["RequestID"] === colorTargetID) {
         console.log("HalfSizedPreview From Server");
         $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
+      } else if (
+        temp["ResponseType"] === "ImageBase64" &&
+        temp["RequestID"] === $processState.thumbnailID
+      ) {
+        console.log("Thumbnail Base64 From Server");
+        $processState.imageThumbnails[temp["ResponseData"]["name"]] =
+          temp["ResponseData"]["dataURL"];
       } else if (temp["ResponseType"] === "ImageBase64") {
         console.log("Base64 From Server");
-        $processState.outputImage = temp["ResponseData"];
-      } else if (temp["ResponseType"] === "image") {
         $processState.outputImage = temp["ResponseData"];
       }
     } catch (e) {
@@ -83,36 +87,17 @@
     console.log("creating blob");
     let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
     let temp = new Image();
-    // let blob = new Blob($messageStore[0], { type: binaryType });
     temp.src = URL.createObjectURL(blob);
     $processState.artStacks[0].colorTargetImage = {
-      //  blob: blob,
       dataURL: temp.src,
       filename: binaryName,
     };
     $processState.outputImage = {
-      //  blob: blob,
       dataURL: temp.src,
       name: binaryName,
     };
     binaryType = null;
     binaryName = null;
-  }
-
-  function colorTargetPrev() {
-    colorTargetID = Math.floor(Math.random() * 999999999);
-    let msg = {
-      RequestID: colorTargetID,
-      RequestType: "HalfSizePreview",
-      RequestData: {
-        names: [$processState.artStacks[0].fields.images[0].name],
-      },
-    };
-    if ($processState.artStacks[0].fields.images[0].name.length > 2) {
-      console.log("Getting Color Target Preview");
-      console.log(msg);
-      sendMessage(JSON.stringify(msg));
-    }
   }
 
   function handleConfirm() {
@@ -151,7 +136,6 @@
       <button on:click={nextTab}>Go to Advanced Options</button>
       <button
         on:click={() => {
-          colorTargetPrev();
           $processState.currentTab += 2;
         }}
         class="nextBtn">Next: Skip Advanced Options</button

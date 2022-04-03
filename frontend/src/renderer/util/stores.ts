@@ -9,6 +9,8 @@ export const processState = writable({
   currentTab: 0,
   destDir: "",
   imageFilePaths: [],
+  thumbnailID: null,
+  imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
   artStacks: [
     {

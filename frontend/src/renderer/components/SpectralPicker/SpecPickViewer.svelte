@@ -7,14 +7,14 @@
     processState,
     sendMessage,
   } from "@util/stores";
-  import { currentPage, processState } from "@util/stores";
-  import placeholder from "@assets/placeholder.jpg";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
   import Loader from "@components/Loader.svelte";
 
   export let size = 0.01;
   export let show = true;
+
+  export let shadowPos;
 
   let viewer;
   let imageUrl;
@@ -146,6 +146,11 @@
             )
           );
           overlayShadow.drawHTML(viewer.overlaysContainer, viewer.viewport);
+          shadowPos = {
+            top: viewportPoint.x,
+            left: viewportPoint.y,
+            size,
+          };
         }
       },
     });
