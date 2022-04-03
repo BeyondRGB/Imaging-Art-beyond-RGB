@@ -23,6 +23,10 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
 
     // Output Images 
     this->output_images(images);
+
+    
+    // Store PRO_file so we can access it from Pipeline
+    images->get_results_obj(btrgb::ResultType::GENERAL)->store_string(PRO_FILE, this->output_dir + this->Pro_f_name);
     
     comms->send_progress(1,"ResultsProcessor");
 }
