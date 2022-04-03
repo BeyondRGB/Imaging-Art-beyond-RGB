@@ -92,6 +92,10 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     TargetData td = build_target_data(target_json);
     std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
+    // Store input images
+    for(const auto& [key, im] : *art_obj){
+        results_obj->store_string(key, im->getName());
+    }
 
 }
 
