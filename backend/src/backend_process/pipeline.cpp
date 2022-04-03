@@ -147,6 +147,7 @@ void Pipeline::run() {
     this->send_info( "About to execute...", this->get_process_name());
     try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
+        this->coms_obj_m->send_post_calibration_msg(images->get_output_dir());
     }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
