@@ -1,5 +1,5 @@
 <script>
-  import { currentPage, processState, modal } from "@util/stores";
+  import { currentPage, processState, modal, sendMessage } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
   import { flip } from "svelte/animate";
   import Page from "@root/components/Page.svelte";
@@ -13,6 +13,7 @@
     "CC_Classic_Reflectance_Data.csv",
     "Choose a custom file....csv",
   ];
+  let colorTargetID;
 
   function update() {
     if (colorPos) {
@@ -52,11 +53,35 @@
     }
   }
 
+  function colorTargetPrev() {
+    colorTargetID = Math.floor(Math.random() * 999999999);
+    let msg = {
+      RequestID: colorTargetID,
+      RequestType: "HalfSizePreview",
+      RequestData: {
+        names: [$processState.artStacks[0].fields.images[0].name],
+      },
+    };
+    if ($processState.artStacks[0].fields.images[0].name.length > 2) {
+      console.log("Getting Color Target Preview");
+      console.log(msg);
+      sendMessage(JSON.stringify(msg));
+    }
+  }
+
   $: if ($processState.currentTab === 5) {
     console.log("Update");
     console.log($processState);
     update();
     console.log($processState);
+  }
+
+  $: if (
+    $processState.currentTab === 4 &&
+    $processState.artStacks[0].colorTargetImage.filename.length === 0
+  ) {
+    console.log("Getting Color Target Preview");
+    colorTargetPrev();
   }
 
   let colorTarget;

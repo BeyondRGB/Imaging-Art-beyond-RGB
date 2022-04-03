@@ -1,16 +1,40 @@
 <script lang="ts">
   import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
+  import { processState, sendMessage, messageStore } from "@util/stores";
   import { slide } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import Switch from "@components/Switch.svelte";
   let brushShow = false;
   let size;
+  let shadowPos;
+
+  $: console.log(shadowPos);
+
+  function getData() {
+    console.log("Fetching Spec Data");
+    // $processState.thumbnailID = Math.floor(Math.random() * 999999999);
+    // let msg = {
+    //   RequestID: Math.floor(Math.random() * 999999999),
+    //   RequestType: "Thumbnails",
+    //   RequestData: {
+    //     names: filePaths,
+    //   },
+    // };
+    // console.log(msg);
+    // sendMessage(JSON.stringify(msg));
+  }
+
+  $: if (shadowPos !== null) {
+    console.log("Getting Est Spectrum Data");
+
+    getData();
+  }
 </script>
 
 <main>
   <div class="flex w-full justify-center h-full">
     <div id="image">
-      <SpecPickViewer bind:show={brushShow} bind:size />
+      <SpecPickViewer bind:shadowPos bind:show={brushShow} bind:size />
     </div>
     <div id="side">
       <div class="box" id="brush">
