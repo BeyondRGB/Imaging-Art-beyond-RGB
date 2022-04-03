@@ -7,7 +7,12 @@
 	import RefDataModal from "@components/RefDataModal.svelte";
 
 	let showModal = false;
-	$: if ($modal === "Settings" || $modal === "Home" || "CustomRefData") {
+	$: if (
+		$modal === "Settings" ||
+		$modal === "Home" ||
+		"CustomRefData" ||
+		"CustomRefDataVer"
+	) {
 		showModal = true;
 	} else {
 		showModal = false;
