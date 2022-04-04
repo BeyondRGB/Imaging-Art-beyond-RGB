@@ -173,6 +173,30 @@ namespace btrgb {
     }
 
 
+    void Image::setConversionMatrix(std::string key, cv::Mat m) {
+
+        if (this->_conversions.contains(key))
+            throw std::runtime_error("[Image::setConversionMatrix] Conversion matrix already exists.");
+
+        /* Only store as 32 bit floating point. */
+        if(m.type() == CV_64FC1)
+            m.convertTo(m, CV_32F);
+
+        /* We only do math with floating point images. */
+        if(m.type() != CV_32FC1)
+            throw std::runtime_error("[Image::setConversionMatrix] Only CV_32FC1 or CV_64FC1 is supported.");
+    
+        this->_conversions[key] = m;
+    }
+
+    cv::Mat Image::getConversionMatrix(std::string key) {
+        if (this->_conversions.contains(key))
+            throw std::runtime_error("[Image::setConversionMatrix] Conversion matrix does not exists.");
+
+        return this->_conversions[key];
+    }
+
+
     /* ====== static ======= */
     bool Image::is_tiff(std::string filename) {
         if( !fs::is_regular_file(filename) ) 
@@ -209,5 +233,6 @@ namespace btrgb {
         input.convertTo(result, cv_depth, target_max / current_max);
         return result;
     }
+
 
 }
