@@ -5,6 +5,7 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 #include <filesystem>
+#include <unordered_map>
 namespace fs = std::filesystem;
 
 #include "ImageUtil/ColorProfiles.hpp"
@@ -57,6 +58,10 @@ namespace fs = std::filesystem;
     }
 */
 
+#define BTRGB_M_OPT "M_opt"
+#define BTRGB_OFFSET_OPT "Offset_opt"
+#define BTRGB_M_REFL_OPT "M_refl_opt"
+
 namespace btrgb {
 
     typedef std::unique_ptr<std::vector<uchar>> binary_ptr_t;
@@ -98,13 +103,31 @@ namespace btrgb {
 
             void setColorProfile(ColorSpace color_profile);
             ColorSpace getColorProfile();
+            
+            void setConversionMatrix(std::string key, cv::Mat m);
+            cv::Mat getConversionMatrix(std::string key);
+            class ConversionsItr {
+                public:
+                    typedef std::unordered_map<std::string, cv::Mat>::iterator conv_itr;
+                    ConversionsItr(conv_itr b, conv_itr e) : _begin(b), _end(e) {}
+                    conv_itr begin() noexcept {return _begin;};
+                    conv_itr end() noexcept {return _end;};
+                private:
+                    conv_itr _begin;
+                    conv_itr _end;
+            };
+            ConversionsItr getConversionsIterator() {
+                return ConversionsItr(_conversions.begin(), _conversions.end());
+            }
+
 
             void recycle();
-            int _raw_bit_depth = 0;
+            std::shared_ptr<int> _raw_bit_depth;
             
             /* ====== static ======= */
             static bool is_tiff(std::string filename);
             static cv::Mat copyMatConvertDepth(cv::Mat input, int cv_depth);
+            
 
         private:
             std::string _name;
@@ -116,6 +139,7 @@ namespace btrgb {
             int _col_size = 0;
             cv::Mat _opencv_mat;
             ColorSpace _color_profile = none;
+            std::unordered_map<std::string, cv::Mat> _conversions;
 
             void _checkInit();
     };

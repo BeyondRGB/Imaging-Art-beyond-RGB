@@ -16,7 +16,7 @@ void ImageCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images)
         double currProgress = count / total;
         comms->send_progress(currProgress, "ImageCalibrator");
         component->execute(comms, images);
-        comms->send_base64(images->getImage("ColorManaged"), btrgb::FAST);
+        comms->send_binary(images->getImage("ColorManaged"), btrgb::FAST);
         count++;
     }
     comms->send_info("Image Calibration Done!!!", "ImageCalibrator");

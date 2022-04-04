@@ -1,10 +1,15 @@
 #include "ColorTarget.hpp"
 
-ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
+ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* ref_data) {
 	this->im = im;
 
 	// The front end normalizes the location based on width, so multiply top by width instead of height
-	int img_width = im->width();
+	int img_width = 1;
+	try{
+		img_width = im->width();
+	}catch(std::exception){
+		std::cout << "ColorTarget: Image Not initialized yet" << std::endl;
+	}
 	// Init target edge locations
 	this->target_left_edge = location_data.left_loc * img_width;
 	this->target_top_edge = location_data.top_loc * img_width;
@@ -27,10 +32,15 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data) {
 	this->white_col = location_data.w_col;
 	// Ref Data Collection
 	this->reference = location_data.ref_base;
-	this->illuminant = this->set_illuminant_type(location_data.illum_base);
-	this->observer = this->set_observer_type(location_data.obsv_base);
+	this->illuminant = RefData::get_illuminant(location_data.illum_base);
+	this->observer = RefData::get_observer(location_data.obsv_base);
+	
 	// Make the RefData
-	this->ref_data = new RefData(this->reference, this->illuminant, this->observer);
+	this->ref_data = ref_data;
+	// Ensure that the Target size matches the RefData size
+	if( this->row_count != ref_data->get_row_count() || this->col_count != ref_data->get_col_count()){
+		throw ColorTarget_MissmatchingRefData();
+	}
 }
 
 /**
@@ -107,23 +117,6 @@ int ColorTarget::get_white_col() {
 	return this->white_col;
 }
 
-IlluminantType ColorTarget::set_illuminant_type(std::string illum_str) {
-    // Default to D50
-    IlluminantType type = IlluminantType::D50;
-    if (illum_str == "A") {
-        type = IlluminantType::A;
-    }
-    if (illum_str == "D65") {
-        type = IlluminantType::D65;
-    }
-    return type;
+RefData* ColorTarget::get_ref_data(){
+	return this->ref_data;
 }
-
-ObserverType ColorTarget::set_observer_type(int observer_num) {
-    // Default to 1931
-    ObserverType type = ObserverType::SO_1931;
-    if (observer_num == 1964) {
-        type = ObserverType::SO_1964;
-    }
-    return type;
-	}
