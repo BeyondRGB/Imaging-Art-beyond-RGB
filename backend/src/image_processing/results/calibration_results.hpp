@@ -45,6 +45,8 @@
 #define GI_Y                  "Y white patche meas"
 #define GI_W                  "W Value"
 
+#define PRO_FILE              "BTRGB Results File"
+
 // Json Value Storage Keys
 #define MATRIX_KEY "matrix_values"
 #define INT_KEY "integer_values"
