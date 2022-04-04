@@ -16,6 +16,7 @@ void ReportRequest::run() {
     std::string all_data((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     Json* all_json = new Json(all_data);
     Json report_data = all_json->get_obj("CalibrationResults");
-    Json validation_data = all_json->get_obj("VerificationResults");
-    this->coms_obj_m->send_reports(report_data);
+    Json verifcation_data = all_json->get_obj("VerificationResults");
+    this->coms_obj_m->send_reports(report_data, "Calibration");
+    this->coms_obj_m->send_reports(verifcation_data, "Verification");
 }
