@@ -49,7 +49,7 @@ void HalfSizePreview::run() {
 
 
             /* Send image. */
-            this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
+            this->coms_obj_m->send_binary(&imObj, btrgb::FAST);
 
 
         }
