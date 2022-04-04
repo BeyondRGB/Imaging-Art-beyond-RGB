@@ -50,10 +50,6 @@ private:
     double stp;
     int mid;
 
-    void fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
-                         cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
-                         cv::Mat xyz);
-
     /**
      * @brief Initialize the optimization InputArray(optimization_input), M, and offset
      * The MinProblemSolver needs the InputArray to be a 1d Matrix but we need to optimiz both M and offset
