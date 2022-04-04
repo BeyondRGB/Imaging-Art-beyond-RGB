@@ -131,12 +131,12 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
         throw std::runtime_error("[LibTiffReader] This tiff was not saved with one row per strip.");
 
 
-    uint32_t row_size = TIFFStripSize(this->_tiff);
-    if(row_size != _width * _channels * sample_byte_size)
-        throw std::runtime_error("[LibTiffReader] Strip size assumption failed.");
+    uint32_t strip_size = TIFFStripSize(this->_tiff);
+    if(strip_size != _width * _channels * sample_byte_size)
+        throw std::runtime_error("[LibTiffReader] Initial strip size assumption failed.");
 
 
-	void* row_data = _TIFFmalloc(row_size);
+	void* row_data = _TIFFmalloc(strip_size);
     if( ! row_data )
         throw std::runtime_error("[LibTiffReader] Memory error.");
 
@@ -153,11 +153,14 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
     void* mat_row = cropped.data;
 	for (row_index = top; row_index <= bottom; row_index++) {
 
-		row_size = TIFFReadEncodedStrip(this->_tiff, row_index, row_data, row_size);
+		row_size = TIFFReadEncodedStrip(this->_tiff, row_index, row_data, strip_size);
 
-        if(row_size < 0) {
-	        _TIFFfree(row_data);
-            throw std::runtime_error("[LibTiffReader] Failed to get row #" + std::to_string(row_index));
+        if(row_size != strip_size) {
+            _TIFFfree(row_data);
+            if(row_size < 0)
+                throw std::runtime_error("[LibTiffReader] Failed to get row #" + std::to_string(row_index));
+            else
+                throw std::runtime_error("[LibTiffReader] Actual strip size assumption failed.");
         }
 
         memcpy(mat_row, crop_row, crop_row_size);
@@ -165,6 +168,8 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
     }
 
 	_TIFFfree(row_data);
+
+    return cropped;
 }
 
 
