@@ -21,8 +21,11 @@ class LibTiffReader : public ImageReaderStrategy {
         void copyBitmapTo(void* buffer, uint32_t size) override;
         void copyBitmapTo(cv::Mat& im) override;
 
+        cv::Mat getCrop(uint32_t left, uint32_t right, uint32_t width, uint32_t height);
+
     private:
         struct tiff* _tiff;
+
 };
 
 }
