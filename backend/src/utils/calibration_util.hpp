@@ -4,6 +4,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <limits>
+#include <lcms2.h>
 
 #include "ImageUtil/ColorTarget.hpp"
 #include "ImageUtil/Image.hpp"
@@ -167,6 +168,12 @@ namespace btrgb{
          * @return cv::Mat 
          */
         cv::Mat image_2_camera_sigs(btrgb::Image *image, int height, int width);
+
+        void fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
+                         cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
+                         cv::Mat xyz, RefData *ref_data);
+
+        double compute_deltaE_sum(RefData *ref_data, cv::Mat xyz, cv::Mat *deltaE_values);
 
     }
 }

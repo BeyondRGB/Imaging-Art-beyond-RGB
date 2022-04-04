@@ -6,6 +6,7 @@ extern "C" {
 }
 #include <string>
 #include <opencv2/opencv.hpp>
+#include <jsoncons/json.hpp>
 
 #include "ImageUtil/Image.hpp"
 #include "ImageWriterStrategy.hpp"
@@ -18,6 +19,8 @@ namespace btrgb {
             ~LibTiffWriter();
         protected:
             void _write(Image* im, std::string filename) override;
+        private:
+            std::string getCustomTag(Image* im);
     };
 
     class LibTiff_OpenFileFailed : public ImageWritingError {

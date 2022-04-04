@@ -14,6 +14,7 @@
 #include "image_processing/header/ImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
 #include "image_processing/header/ResultsProcessor.h"
+#include "image_processing/header/Verification.h"
 
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
@@ -41,12 +42,13 @@ class Pipeline: public BackendProcess{
 		ReferenceData,
 		StandardObserver,
 		Illuminants,
-		TargetLocation
+		TargetLocation,
+		VerificationLocation
 	};
 	/**
 	* Maps enum values to a string
 	*/
-	const std::string key_map[8] = {
+	const std::string key_map[9] = {
 		"art",
 		"white",
 		"dark",
@@ -54,13 +56,15 @@ class Pipeline: public BackendProcess{
 		"refData",
 		"standardObserver",
 		"illuminants",
-		"targetLocation"
+		"targetLocation",
+		"verificationLocation"
 	};
 
 
 private:
 	int num_m;
 	static int pipeline_count;
+	bool should_verify = false; // Assume there is no verification data
 
 	/*
 	A callback function given to all ImgProcessingComponents.
@@ -127,6 +131,9 @@ private:
 	std::string get_output_directory();
 
 	TargetData build_target_data(Json target_json);
+
+	void init_verification(btrgb::ArtObject* images);
+	bool verify_targets(btrgb::ArtObject *images);
 
 
 

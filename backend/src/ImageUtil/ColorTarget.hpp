@@ -32,7 +32,7 @@ class ColorTarget {
 
 public:
 	ColorTarget() {}
-	ColorTarget(btrgb::Image* im, TargetData location_data);
+	ColorTarget(btrgb::Image* im, TargetData location_data, RefData *ref_data);
 
 	/**
 	 * @brief Calculate the average pixel value for specified color patch
@@ -62,6 +62,8 @@ public:
 	int get_white_row();
 
 	int get_white_col();
+
+	RefData *get_ref_data();
 
 private:
 	btrgb::Image* im;
@@ -101,9 +103,18 @@ private:
 	 */
 	int patch_posY(int row);
 
-	IlluminantType set_illuminant_type(std::string illum_str);
-
-	ObserverType set_observer_type(int observer_num);
 
 };
+
+class ColorTargetError : public std::exception {};
+
+class ColorTarget_MissmatchingRefData : public ColorTargetError{
+	public:
+	ColorTarget_MissmatchingRefData(){};
+    virtual char const * what() const noexcept { return error.c_str(); }
+
+	private:
+	std::string error = "ColorTarget Error: Target size does not match RefData size";
+};
+
 #endif // !COLOR_TARGET_H
