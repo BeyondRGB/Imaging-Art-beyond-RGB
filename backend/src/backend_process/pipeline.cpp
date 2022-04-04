@@ -118,8 +118,14 @@ void Pipeline::run() {
         std::string ref_file = this->get_ref_file(target_data);
         IlluminantType illuminant = this->get_illuminant_type(target_data);
         ObserverType observer = this->get_observer_type(target_data);
-        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
-    catch(const std::exception& err) {
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); 
+    }catch(RefData_FailedToRead e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(RefData_ParssingError e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
     }
@@ -143,12 +149,21 @@ void Pipeline::run() {
         return;
     }
 
+    // Verify Targets
+    this->send_info("Verifying ColorTargets...", this->get_process_name());
+    if( !this->verify_targets(images.get()) ){
+        return;
+    }
+
     /* Execute the pipeline on the created ArtObject */
     this->send_info( "About to execute...", this->get_process_name());
     try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
         std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
         this->coms_obj_m->send_post_calibration_msg(Pro_file);
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
     }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
@@ -252,4 +267,16 @@ std::string Pipeline::get_ref_file(Json target_data) {
         throw e;
     }
     return ref_file;
+}
+
+bool Pipeline::verify_targets(btrgb::ArtObject *images){
+    try{
+        // Test Target
+        images->get_target(ART(1));
+        // TODO add verification test here when verification is set up
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return false;
+    }
+    return true;
 }

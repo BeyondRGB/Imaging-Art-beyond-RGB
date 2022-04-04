@@ -39,9 +39,13 @@ void ResultsProcessor::output_images(btrgb::ArtObject* images){
         std::cerr << "Failed to write CM_Image: " << e.what() << std::endl; 
     }
 
-    try{
     // Write Spectral Image
-    images->outputImageAs(btrgb::TIFF, SP_IMAGE_KEY, this->SP_f_name);
+    try{
+        btrgb::Image* sp = images->getImage(SP_IMAGE_KEY);
+        CalibrationResults* r = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+        sp->setConversionMatrix(BTRGB_M_OPT, r->get_matrix(CM_M));
+        sp->setConversionMatrix(BTRGB_OFFSET_OPT, r->get_matrix(CM_OFFSETS));
+        images->outputImageAs(btrgb::TIFF, SP_IMAGE_KEY, this->SP_f_name);
     }catch(std::exception e){
         std::cerr << "Failed to write SP_Image: " << e.what() << std::endl; 
     }
