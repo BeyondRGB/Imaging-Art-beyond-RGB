@@ -2,7 +2,7 @@
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
   import { LineChart } from "@carbon/charts-svelte";
-  import LinearChart from "./LinearChart.svelte";
+  import html2canvas from "html2canvas";
 
   let inputData = [
     {
@@ -62,6 +62,35 @@
     },
   ];
 
+  let imageDataURL;
+
+  function savePNG() {
+    html2canvas(
+      document
+        .getElementById("EstSpecChart")
+        .querySelector(".bx--chart-holder"),
+      {
+        backgroundColor: "#3a3a3c",
+        scale: window.devicePixelRatio * 2,
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+      }
+    ).then(function (canvas) {
+      console.log("Created Canvas");
+      console.log(document.querySelector(".bx--chart-holder"));
+      // document.getElementById("EstSpecChart").appendChild(canvas);
+      imageDataURL = canvas.toDataURL("image/png");
+
+      var anchor = document.createElement("a");
+      anchor.href = imageDataURL;
+      anchor.target = "_blank";
+      anchor.download = "Estimate Spectrum.png";
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+    });
+  }
+
   // let testAB = [];
   // let colorsAB = {};
   // inputData.map((value) => {
@@ -79,7 +108,8 @@
   // console.log(colorsAB);
 </script>
 
-<div class="line-chart">
+<button on:click={savePNG}>dl</button>
+<div class="line-chart" id="EstSpecChart">
   <LineChart
     data={inputData}
     options={{
@@ -109,7 +139,7 @@
         enabled: false,
       },
       toolbar: {
-        enabled: true,
+        enabled: false,
         // controls: [
         //   { type: "Show as table" },
         //   { type: "Make Fullscrean" },
@@ -128,15 +158,6 @@
   />
 </div>
 
-<!-- <div class="heatmap-number-grid">
-  {#each valueGrid.reverse() as row, i}
-    {#each row as col, i}
-      <p class="heatmap-value">
-        {col.value}
-      </p>
-    {/each}
-  {/each}
-</div> -->
 <style lang="postcss" global>
   .line-chart .bx--chart-holder {
     @apply w-auto;
@@ -152,4 +173,13 @@
   .line-chart .bx--cc--line path.line {
     stroke-width: 2%;
   }
+  /* .line-chart .bx--cc--chart-wrapper .layout-child {
+    @apply bg-indigo-600 overflow-hidden w-[50%];
+  } */
+  /* .line-chart .bx--cc--spacer {
+    @apply bg-red-600;
+  }
+  .line-chart .bx--cc--layout-column {
+    @apply bg-green-400 my-6;
+  } */
 </style>
