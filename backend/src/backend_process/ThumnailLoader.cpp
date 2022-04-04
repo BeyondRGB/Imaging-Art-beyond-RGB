@@ -18,7 +18,7 @@ void ThumbnailLoader::run() {
     std::unique_ptr<btrgb::LibRawThumbnail> raw_thumbnail_reader(new btrgb::LibRawThumbnail);
     std::unique_ptr<btrgb::TiffReaderOpenCV> tiff_reader(new btrgb::TiffReaderOpenCV);
     std::string fname;
-        
+
     for (int i = 0; i < filenames.get_size(); i++) {
         try {
 
@@ -57,7 +57,7 @@ void ThumbnailLoader::_read_raw_thumbnail(btrgb::LibRawThumbnail* reader, std::s
         reader->copyBitmapTo(*binary);
         reader->recycle();
 
-        this->coms_obj_m->send_base64(file, binary.get(), btrgb::JPEG);
+        this->coms_obj_m->send_binary(file, binary.get(), btrgb::JPEG);
     }
     else {
         cv::Mat im;
@@ -69,7 +69,7 @@ void ThumbnailLoader::_read_raw_thumbnail(btrgb::LibRawThumbnail* reader, std::s
         imObj.initImage(im);
 
         /* Send image. */
-        this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
+        this->coms_obj_m->send_binary(&imObj, btrgb::FAST);
     }
 }
 
@@ -90,5 +90,5 @@ void ThumbnailLoader::_read_tiff(btrgb::TiffReaderOpenCV* reader, std::string fi
     imObj.initImage(im);
 
     /* Send image. */
-    this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
+    this->coms_obj_m->send_binary(&imObj, btrgb::FAST);
 }
