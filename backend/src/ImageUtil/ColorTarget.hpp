@@ -105,4 +105,16 @@ private:
 
 
 };
+
+class ColorTargetError : public std::exception {};
+
+class ColorTarget_MissmatchingRefData : public ColorTargetError{
+	public:
+	ColorTarget_MissmatchingRefData(){};
+    virtual char const * what() const noexcept { return error.c_str(); }
+
+	private:
+	std::string error = "ColorTarget Error: Target size does not match RefData size";
+};
+
 #endif // !COLOR_TARGET_H

@@ -133,6 +133,8 @@ private:
 	TargetData build_target_data(Json target_json);
 
 	void init_verification(btrgb::ArtObject* images);
+	bool verify_targets(btrgb::ArtObject *images);
+
 
 
 public:

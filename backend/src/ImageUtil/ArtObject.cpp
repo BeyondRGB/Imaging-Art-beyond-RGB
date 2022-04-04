@@ -65,6 +65,8 @@ namespace btrgb {
             }
         }catch(ArtObj_ImageDoesNotExist){
             throw ArtObj_ImageDoesNotExist();
+        }catch(ColorTarget_MissmatchingRefData){
+            throw ColorTarget_MissmatchingRefData();
         }
     }
 
