@@ -89,6 +89,8 @@ public:
 		std::vector<uchar>* direct_binary,
 		enum btrgb::output_type type
 	);
+
+	void send_post_calibration_msg(std::string results_pah);
 };
 
 #endif // COMMUNICATION_OBJ_H
