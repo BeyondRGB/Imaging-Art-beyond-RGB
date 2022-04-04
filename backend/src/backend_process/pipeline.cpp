@@ -95,6 +95,10 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     TargetData td = build_target_data(target_json);
     std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
+    // Store input images
+    for(const auto& [key, im] : *art_obj){
+        results_obj->store_string(key, im->getName());
+    }
 
 }
 
@@ -116,8 +120,14 @@ void Pipeline::run() {
         std::string ref_file = this->get_ref_file(target_data);
         IlluminantType illuminant = this->get_illuminant_type(target_data);
         ObserverType observer = this->get_observer_type(target_data);
-        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
-    catch(const std::exception& err) {
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); 
+    }catch(RefData_FailedToRead e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(RefData_ParssingError e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
     }
@@ -142,12 +152,22 @@ void Pipeline::run() {
         return;
     }
 
-    
+    // Verify Targets
+    this->send_info("Verifying ColorTargets...", this->get_process_name());
+    if( !this->verify_targets(images.get()) ){
+        return;
+    }
+
     /* Execute the pipeline on the created ArtObject */
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
     this->send_info( "About to execute...", this->get_process_name());
     try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
+        std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
+        this->coms_obj_m->send_post_calibration_msg(Pro_file);
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
     }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
@@ -258,4 +278,16 @@ void Pipeline::init_verification(btrgb::ArtObject* images){
         this->send_info("No Verification Target provided", this->get_process_name());
         this->should_verify = false;
     }
+}
+
+bool Pipeline::verify_targets(btrgb::ArtObject *images){
+    try{
+        // Test Target
+        images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
+        images->get_target(ART(1), btrgb::TargetType::VERIFICATION_TARGET);
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return false;
+    }catch(btrgb::ArtObj_VerificationDataNull){}
+    return true;
 }

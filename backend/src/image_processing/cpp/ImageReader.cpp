@@ -45,7 +45,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("Reading In Raw Image Data!", "ImageReader");
 
     btrgb::BitDepthFinder util;
-    int bit_depth = -1;
+    std::shared_ptr<int> bit_depth(new int(-1));
 
     double total = images->imageCount();
     double count = 0;
@@ -73,13 +73,13 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             /* Find bit depth if image is white field #1. */
             if(key == "white1") {
-                bit_depth = util.get_bit_depth(
+                *bit_depth = util.get_bit_depth(
                     (uint16_t*) raw_im.data,    
                     raw_im.cols, 
                     raw_im.rows,
                     raw_im.channels()
                 );
-                if(bit_depth < 0)
+                if(*bit_depth < 0)
                     throw std::runtime_error(" Bit depth detection of 'white1' failed." );
             }
 
@@ -89,10 +89,10 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             /* Init btrgb::Image object. */
             im->initImage(float_im);
+            im->_raw_bit_depth = bit_depth;
             
             count++;
             comms->send_progress(count/total, "ImageReader");
-
         }
         catch(const btrgb::LibRawFileTypeUnsupported& e) {
             comms->send_error("File type unknown, or unsupported by LibRaw.", "ImageReader");

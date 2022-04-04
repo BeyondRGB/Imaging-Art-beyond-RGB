@@ -11,7 +11,14 @@ RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_ty
 	this->white_pts = new WhitePoints(so_type, illum_type);
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
-	this->read_in_data(path + file);
+	if(this->is_custom(file)){
+		std::cout << "Custom RefData: " << file << std::endl; 
+		this->read_in_data(file);
+	}
+	else{
+		std::cout << "Standard RefData: " << file << std::endl;
+		this->read_in_data(path + file);
+	}
 	this->init_color_patches();
 }
 
@@ -124,15 +131,20 @@ WhitePoints* RefData::get_white_pts(){
 
 void RefData::read_in_data(std::string file_path) {
 	if( !this->open_file(file_path) ) 
-		throw std::runtime_error("[ref_data.cpp] Failed to open file: " + file_path);
-	std::string header = this->get_next_line();
-	this->identify_data_size(header);
-	this->init_data_storage();
-	this->pars_header(header);
-	
-	while (this->has_next_line()) {
-		std::string line = this->get_next_line();
-		this->pars_line(line);
+		throw RefData_FailedToRead(file_path);
+	try{
+		std::string header = this->get_next_line();
+		this->identify_data_size(header);
+		this->init_data_storage();
+		this->pars_header(header);
+		
+		while (this->has_next_line()) {
+			std::string line = this->get_next_line();
+			this->pars_line(line);
+		}
+	}catch(std::exception e){
+		this->close_file();
+		throw RefData_ParssingError();
 	}
 	this->close_file();
 }
@@ -142,8 +154,13 @@ void RefData::pars_line(std::string line) {
 	this->get_next<int>(line);
 	for (int col = 0; col < col_count; col++) {
 		for (int row = 0; row < row_count; row++) {
-			double item = this->get_next<double>(line);
-			this->color_patches[row][col]->append(item);
+			try{
+				double item = this->get_next<double>(line);
+				this->color_patches[row][col]->append(item);
+			}catch(std::exception e){
+				std::string msg = "Row: " + std::to_string(row+1) + " Col: " + std::to_string(col+1);
+				throw RefData_ParssingError(msg);
+			}
 		}
 	}
 }
@@ -178,6 +195,9 @@ void RefData::identify_data_size(std::string header) {
 	int row_count = item_count / col_count;
 	this->row_count = row_count; 
 	this->col_count = col_count;
+	if( row_count <= 0 || col_count <= 0){
+		throw RefData_ParssingError("Invalid File Format");
+	}
 
 }
 
@@ -267,4 +287,13 @@ cv::Mat RefData::as_matrix(){
 	}
 
 	return ref_data;
+}
+
+bool RefData::is_custom(std::string file){
+	for(int i = 0; i < REF_COUNT; i++){
+		if(file == ref_files[i]){
+			return false;
+		}
+	}
+	return true;
 }

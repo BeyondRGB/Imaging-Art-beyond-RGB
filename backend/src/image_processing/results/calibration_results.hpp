@@ -55,6 +55,8 @@
 #define V_R_CAMERA         "Verification R_camera"
 #define V_RMSE             "Verification RMSE"
 
+#define PRO_FILE              "BTRGB Results File"
+
 // Json Value Storage Keys
 #define MATRIX_KEY "matrix_values"
 #define INT_KEY "integer_values"

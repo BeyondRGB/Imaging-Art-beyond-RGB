@@ -134,7 +134,9 @@ void SpectralCalibrator::store_spectral_img(btrgb::ArtObject *images){
     int width = images->get_results_obj(btrgb::ResultType::GENERAL)->get_int(GI_IMG_COLS);
     cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6);
     btrgb::Image *spectral_img = btrgb::calibration::camera_sigs_2_image(camra_sigs, height);
+
     // Save Spectral Image
+    spectral_img->setConversionMatrix(BTRGB_M_REFL_OPT, this->M_refl);
     images->setImage(SP_IMAGE_KEY, spectral_img);
 }
 

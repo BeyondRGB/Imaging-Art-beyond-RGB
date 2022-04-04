@@ -4,7 +4,12 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* re
 	this->im = im;
 
 	// The front end normalizes the location based on width, so multiply top by width instead of height
-	int img_width = im->width();
+	int img_width = 1;
+	try{
+		img_width = im->width();
+	}catch(std::exception){
+		std::cout << "ColorTarget: Image Not initialized yet" << std::endl;
+	}
 	// Init target edge locations
 	this->target_left_edge = location_data.left_loc * img_width;
 	this->target_top_edge = location_data.top_loc * img_width;
@@ -32,6 +37,10 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* re
 	
 	// Make the RefData
 	this->ref_data = ref_data;
+	// Ensure that the Target size matches the RefData size
+	if( this->row_count != ref_data->get_row_count() || this->col_count != ref_data->get_col_count()){
+		throw ColorTarget_MissmatchingRefData();
+	}
 }
 
 /**
