@@ -128,6 +128,8 @@ private:
 
 	TargetData build_target_data(Json target_json);
 
+	bool verify_targets(btrgb::ArtObject *images);
+
 
 
 public:
