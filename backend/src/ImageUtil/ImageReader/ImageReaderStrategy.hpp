@@ -22,6 +22,14 @@ class ImageReaderStrategy {
         virtual void copyBitmapTo(void* buffer, uint32_t size) = 0;
         virtual void copyBitmapTo(cv::Mat& im) = 0;
 
+        int getCVMatType() {
+            switch(_depth) {
+                case  8: return CV_8U;
+                case 16: return CV_16U;
+                default: throw std::runtime_error("[ImageReaderStrategy] Unsupported bit-depth.");
+            }
+        }
+
     protected:
         int _width = -1;
         int _height = -1;
