@@ -1,6 +1,9 @@
 #ifndef REPORTREQUEST_H
 #define REPORTREQUEST_H
 
+#include <iostream>
+#include <fstream>
+#include <streambuf>
 #include "ImageUtil/Image.hpp"
 #include "utils/json.hpp"
 #include "server/comunication_obj.hpp"
