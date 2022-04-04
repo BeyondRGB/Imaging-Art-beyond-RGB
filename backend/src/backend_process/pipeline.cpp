@@ -92,6 +92,10 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     TargetData td = build_target_data(target_json);
     std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
+    // Store input images
+    for(const auto& [key, im] : *art_obj){
+        results_obj->store_string(key, im->getName());
+    }
 
 }
 
@@ -155,6 +159,8 @@ void Pipeline::run() {
     this->send_info( "About to execute...", this->get_process_name());
     try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
+        std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
+        this->coms_obj_m->send_post_calibration_msg(Pro_file);
     }catch(ColorTarget_MissmatchingRefData e){
         this->report_error(this->get_process_name(), e.what());
         return;
