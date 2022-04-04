@@ -13,7 +13,6 @@
     "CC_Classic_Reflectance_Data.csv",
     "Choose a custom file....csv",
   ];
-  let colorTargetID;
 
   function update() {
     if (colorPos) {
@@ -54,9 +53,9 @@
   }
 
   function colorTargetPrev() {
-    colorTargetID = Math.floor(Math.random() * 999999999);
+    $processState.colorTargetID = Math.floor(Math.random() * 999999999);
     let msg = {
-      RequestID: colorTargetID,
+      RequestID: $processState.colorTargetID,
       RequestType: "HalfSizePreview",
       RequestData: {
         names: [$processState.artStacks[0].fields.images[0].name],
@@ -78,7 +77,8 @@
 
   $: if (
     $processState.currentTab === 4 &&
-    $processState.artStacks[0].colorTargetImage.filename.length === 0
+    $processState.artStacks[0].colorTargetImage.name.length === 0 &&
+    $processState.colorTargetID === null
   ) {
     console.log("Getting Color Target Preview");
     colorTargetPrev();

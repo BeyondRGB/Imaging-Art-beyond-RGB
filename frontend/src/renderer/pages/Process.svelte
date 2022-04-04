@@ -64,9 +64,10 @@
         console.log("Binary From Server");
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
-      } else if (temp["RequestID"] === colorTargetID) {
+      } else if (temp["RequestID"] === $processState.colorTargetID) {
         console.log("HalfSizedPreview From Server");
         $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
+        $processState.colorTargetID = null;
       } else if (
         temp["ResponseType"] === "ImageBase64" &&
         temp["RequestID"] === $processState.thumbnailID
