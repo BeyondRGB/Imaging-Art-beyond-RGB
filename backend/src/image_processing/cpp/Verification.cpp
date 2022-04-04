@@ -89,6 +89,9 @@ void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObje
     verification_res->store_matrix(V_L_CAMERA, L_camera);
     verification_res->store_matrix(V_a_CAMERA, a_camera);
     verification_res->store_matrix(V_b_CAMERA, b_camera);
+    verification_res->store_matrix(V_L_REF, L_ref);
+    verification_res->store_matrix(V_a_REF, a_ref);
+    verification_res->store_matrix(V_b_REF, b_ref);
     verification_res->store_matrix(V_DLETA_E_VALUES, deltaE_values);
     verification_res->store_double(V_DELTA_E_AVG, deltaE_avg);
     
@@ -112,7 +115,7 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
 
     // Init R_camera
     std::cout << "Init R_camera" << std::endl;
-    cv::Mat R_camera = M_refl * camera_sigs;
+    cv::Mat R_camera = btrgb::calibration::calc_R_camera(M_refl, camera_sigs);
 
     // Init R_reference
     cv::Mat R_reference = this->verification_data->as_matrix();
@@ -136,4 +139,5 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
     CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
     verification_res->store_matrix(V_R_CAMERA, R_camera);
     verification_res->store_double(V_RMSE, RMSE);
+    verification_res->store_matrix(V_TARGET_SIGS, camera_sigs);
 }
