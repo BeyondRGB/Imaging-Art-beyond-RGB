@@ -173,4 +173,113 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
 }
 
 
+std::string LibTiffReader::getColorProfileString() {
+    if( ! this->_is_open )
+        throw std::runtime_error("[LibTiffReader] No file opened.");
+
+    char* artist_tag = 0;
+    TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag);
+    if(!artist_tag)
+        throw std::runtime_error("[LibTiffReader] Matrix does not exist.");
+
+    std::string space;
+    try {
+        jsoncons::json custom_tag = jsoncons::json::parse(artist_tag);
+        space = custom_tag["ColorSpace"].as<std::string>();
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("[LibTiffReader] "
+            + std::string(e.what()) + " Invalid BTRGB Artist tag.\n");
+    }
+
+    return space;
+}
+
+
+cv::Mat LibTiffReader::getConversionMatrix(std::string key) {
+    if( ! this->_is_open )
+        throw std::runtime_error("[LibTiffReader] No file opened.");
+
+    char* artist_tag = 0;
+    TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag);
+    if(!artist_tag)
+        throw std::runtime_error("[LibTiffReader] Matrix does not exist.");
+
+    cv::Mat m;
+
+    try {
+        jsoncons::json custom_tag = jsoncons::json::parse(artist_tag);
+        m = this->_extractMat(custom_tag[key]);
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("[LibTiffReader] "
+            + std::string(e.what()) + " Invalid BTRGB Artist tag.\n");
+    }
+
+    return m;
+}
+
+
+std::unordered_map<std::string, cv::Mat> LibTiffReader::getConversionMatrices() {
+    if( ! this->_is_open )
+        throw std::runtime_error("[LibTiffReader] No file opened.");
+
+    std::unordered_map<std::string, cv::Mat> matrices;
+
+    char* artist_tag = 0;
+    TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag);
+    if(!artist_tag)
+        return matrices;
+
+
+    try {
+        jsoncons::json custom_tag = jsoncons::json::parse(artist_tag);
+        for (const auto& tagged_item: custom_tag.object_range()) {
+            auto tag = tagged_item.value();
+            auto name = tagged_item.key();
+
+            if(!tag.is_object() || !tag.contains("cv_type"))
+                continue;
+
+            if(matrices.contains(name))
+                continue;
+
+            matrices[name] = this->_extractMat(tag);
+        }
+
+    }
+    catch (const std::exception& e) {
+        throw std::runtime_error("[LibTiffReader] "
+            + std::string(e.what()) + " Invalid BTRGB Artist tag.\n");
+    }
+
+    return matrices;
+}
+
+
+cv::Mat LibTiffReader::_extractMat(jsoncons::json matJson) {
+
+    int rows = matJson["rows"].as<int>();
+    int cols = matJson["cols"].as<int>();
+    int type = matJson["cv_type"].as<int>();
+    jsoncons::json data = matJson["data"];
+
+    if(type != CV_32FC1)
+        throw std::runtime_error("Only CV_32FC1 is supported.");
+
+    int i = 0;
+    int num_values = rows * cols;
+    cv::Mat m(rows, cols, type);
+    float* m_data = (float*) m.data;
+
+    for(const auto& v: data.array_range()) {
+        if(i < num_values)
+            m_data[i++] = v.as<float>();
+        else
+            throw std::runtime_error("Matrix header/data mismatch.");
+    }
+
+    return m;
+}
+
 }
