@@ -31,7 +31,10 @@ static void convert(cv::Mat im,
 
 void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
 
-    if(im.channels() != 3)
+    if(from == to)
+        return;
+
+    else if(im.channels() != 3)
         throw std::runtime_error("[ColorProfiles::convert] Only supports three-channel images.");
 
     else if(from == ColorSpace::none)
