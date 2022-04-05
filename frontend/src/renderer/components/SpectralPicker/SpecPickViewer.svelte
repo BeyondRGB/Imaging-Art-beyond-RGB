@@ -162,8 +162,8 @@
           );
           overlayShadow.drawHTML(viewer.overlaysContainer, viewer.viewport);
           shadowPos = {
-            top: viewportPoint.x,
-            left: viewportPoint.y,
+            top: viewportPoint.y,
+            left: viewportPoint.x,
             size,
           };
         }

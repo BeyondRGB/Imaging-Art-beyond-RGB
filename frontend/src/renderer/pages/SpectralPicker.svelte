@@ -80,6 +80,7 @@
   $: if (
     $currentPage === "SpecPicker" &&
     $viewState.projectKey?.length > 1 &&
+    $viewState.colorManagedID === null &&
     $viewState.colorManagedImage?.filename?.length === 0
   ) {
     console.log("Getting Color Managed Image");
