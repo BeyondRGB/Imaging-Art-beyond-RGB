@@ -1,27 +1,36 @@
 <script lang="ts">
   import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
-  import { processState, sendMessage, messageStore } from "@util/stores";
+  import { processState, viewState, sendMessage } from "@util/stores";
   import { slide } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import Switch from "@components/Switch.svelte";
   let brushShow = false;
   let size;
-  let shadowPos;
+  let shadowPos = { left: 0, top: 0 };
 
   $: console.log(shadowPos);
 
+  $: console.log($viewState);
+
   function getData() {
     console.log("Fetching Spec Data");
-    // $processState.thumbnailID = Math.floor(Math.random() * 999999999);
-    // let msg = {
-    //   RequestID: Math.floor(Math.random() * 999999999),
-    //   RequestType: "Thumbnails",
-    //   RequestData: {
-    //     names: filePaths,
-    //   },
-    // };
-    // console.log(msg);
-    // sendMessage(JSON.stringify(msg));
+    if ($viewState.projectKey !== null) {
+      console.log("Found Key");
+      let msg = {
+        RequestID: Math.floor(Math.random() * 999999999),
+        RequestType: "SpectralPicker",
+        RequestData: {
+          name: $viewState.projectKey,
+          coordinates: {
+            x: shadowPos.left,
+            y: shadowPos.top,
+          },
+          size: size,
+        },
+      };
+      console.log(msg);
+      sendMessage(JSON.stringify(msg));
+    }
   }
 
   $: if (shadowPos !== null) {
