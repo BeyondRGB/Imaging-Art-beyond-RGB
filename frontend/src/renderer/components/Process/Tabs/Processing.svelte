@@ -19,6 +19,7 @@
       destDir: "",
       imageFilePaths: [],
       thumbnailID: null,
+      colorTargetID: null,
       imageThumbnails: {},
       outputImage: { dataURL: "", name: "Waiting..." },
       artStacks: [
