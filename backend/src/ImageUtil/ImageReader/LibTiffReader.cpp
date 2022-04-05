@@ -43,7 +43,7 @@ void LibTiffReader::open(std::string filename) {
     this->_depth = depth;
 
     if(channels == 1) {
-        uint16_t planar_config;
+        uint16_t planar_config = 0xffff;
         TIFFGetField(this->_tiff, TIFFTAG_PLANARCONFIG, &planar_config);
         if(planar_config != PLANARCONFIG_CONTIG)
             throw std::runtime_error("[LibTiffReader] Only 'Chunky' planar config format is supported: " + filename);
@@ -173,7 +173,7 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
 }
 
 
-std::string LibTiffReader::getColorProfileString() {
+std::string LibTiffReader::getColorSpaceString() {
     if( ! this->_is_open )
         throw std::runtime_error("[LibTiffReader] No file opened.");
 
@@ -200,10 +200,9 @@ cv::Mat LibTiffReader::getConversionMatrix(std::string key) {
     if( ! this->_is_open )
         throw std::runtime_error("[LibTiffReader] No file opened.");
 
-    char* artist_tag = 0;
-    TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag);
-    if(!artist_tag)
-        throw std::runtime_error("[LibTiffReader] Matrix does not exist.");
+    char* artist_tag;
+    if( ! TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag) )
+        throw std::runtime_error("[LibTiffReader] Image does not have artist tag.");
 
     cv::Mat m;
 
@@ -226,11 +225,9 @@ std::unordered_map<std::string, cv::Mat> LibTiffReader::getConversionMatrices() 
 
     std::unordered_map<std::string, cv::Mat> matrices;
 
-    char* artist_tag = 0;
-    TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag);
-    if(!artist_tag)
-        return matrices;
-
+    char* artist_tag;
+    if( ! TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag) )
+        throw std::runtime_error("[LibTiffReader] Image does not have artist tag.");
 
     try {
         jsoncons::json custom_tag = jsoncons::json::parse(artist_tag);
@@ -280,6 +277,15 @@ cv::Mat LibTiffReader::_extractMat(jsoncons::json matJson) {
     }
 
     return m;
+}
+
+
+void LibTiffReader::getColorProfile(uint32_t* size, void** data) {
+    if( ! this->_is_open )
+        throw std::runtime_error("[LibTiffReader] No file opened.");
+
+    if( ! TIFFGetField(this->_tiff, TIFFTAG_ICCPROFILE, size, data) )
+        throw std::runtime_error("[LibTiffReader] File does not have color profile.");
 }
 
 }
