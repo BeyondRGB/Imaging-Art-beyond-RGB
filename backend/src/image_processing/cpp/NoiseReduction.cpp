@@ -13,7 +13,7 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     comms->send_info("", "NoiseReduction");
     comms->send_progress(0, "NoiseReduction");
 
-    cout << "Filter Time";
+    cout << "Filter Time-------------------------------------------------------------------------------------------------------------------------------------\n";
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
@@ -22,7 +22,7 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
 
-    cv::FileStorage file("AfterFlat.yml", cv::FileStorage::WRITE);
+    cv::FileStorage file("inf.yml", cv::FileStorage::WRITE);
     file << "matName" << im1;
 
     cv::Mat Hblurred1;
@@ -81,8 +81,11 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     //Using Bilateral Filtering for highest accuracy
     cv::Mat filter1;
     cv::Mat filter2;
-   
+    cout << "Filter 1-------------------------------------------------------------------------------------------------------------------------------------\n";
+
     cv::bilateralFilter(im1, filter1, 2, 3, 3);
+    cout << "Filter 2-------------------------------------------------------------------------------------------------------------------------------------\n";
+
     cv::bilateralFilter(im2, filter2, 2, 3, 3);
 
     filter1.copyTo(im1);
