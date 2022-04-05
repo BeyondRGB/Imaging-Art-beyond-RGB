@@ -1,6 +1,9 @@
 #ifndef BTRGB_VIEWTIFF_HPP
 #define BTRGB_VIEWTIFF_HPP
 
+#include <fstream>
+#include <jsoncons/json.hpp>
+
 #include "ImageUtil/Image.hpp"
 #include "ImageUtil/ImageReader/LibTiffReader.hpp"
 #include "ImageUtil/ColorProfiles.hpp"

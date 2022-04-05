@@ -12,11 +12,13 @@ ViewTiff::~ViewTiff() {}
 
 void ViewTiff::run() {
 
-    std::string filename;
     std::unique_ptr<btrgb::LibTiffReader> tiff_reader(new btrgb::LibTiffReader);
     
     try {
-        filename = this->process_data_m->get_string("name");
+        std::string prj_filename = this->process_data_m->get_string("name");
+        std::ifstream prj_file(prj_filename);
+        std::string local_file = jsoncons::json::parse(prj_file)["OutPutFiles"]["CM"].as<std::string>();
+        std::string filename = prj_filename.substr(0, prj_filename.find_last_of("/\\") + 1) + local_file;
 
         if( ! btrgb::Image::is_tiff(filename) )
             throw std::runtime_error("Invalid ViewTiff JSON");
@@ -49,7 +51,7 @@ void ViewTiff::run() {
     catch(const ParsingError& e) {
         this->coms_obj_m->send_error("Invalid ViewTiff JSON", "ViewTiff");
     }
-    catch(const std::runtime_error& e) {
+    catch(const std::exception& e) {
         this->coms_obj_m->send_error(e.what(), "ViewTiff");
     }
 
