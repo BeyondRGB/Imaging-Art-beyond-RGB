@@ -5,6 +5,7 @@ extern "C" {
     #include <tiffio.h>
 }
 
+#include <jsoncons/json.hpp>
 #include "ImageReaderStrategy.hpp"
 
 namespace btrgb {
@@ -22,10 +23,13 @@ class LibTiffReader : public ImageReaderStrategy {
         void copyBitmapTo(cv::Mat& im) override;
 
         cv::Mat getCrop(uint32_t left, uint32_t right, uint32_t width, uint32_t height);
+        std::unordered_map<std::string, cv::Mat> getConversionMatrices();
+        cv::Mat getConversionMatrix(std::string key);
+        std::string getColorProfileString();
 
     private:
         struct tiff* _tiff;
-
+        cv::Mat _extractMat(jsoncons::json matJson);
 };
 
 }
