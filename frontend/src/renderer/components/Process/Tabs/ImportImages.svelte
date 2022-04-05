@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { processState } from "@util/stores";
+  import { processState, sendMessage, messageStore } from "@util/stores";
   import FileSelector from "@components/FileSelector.svelte";
+  import ImageBubble from "@components/Process/ImageBubble.svelte";
 
   let filePaths = [];
   $: console.log(filePaths);
@@ -17,31 +18,42 @@
       };
     });
   }
+
+  function getThumbnails() {
+    console.log("Getting Thumbnails");
+    $processState.thumbnailID = Math.floor(Math.random() * 999999999);
+    let msg = {
+      RequestID: $processState.thumbnailID,
+      RequestType: "Thumbnails",
+      RequestData: {
+        names: filePaths,
+      },
+    };
+    console.log(msg);
+    sendMessage(JSON.stringify(msg));
+  }
+
+  $: if (filePaths?.length > 0) {
+    console.log("Fetching Thumbnails");
+    getThumbnails();
+  }
 </script>
 
 <main>
   <left>
     <h1>Import Images</h1>
-    <p>
-      Select the folder or all images you would like to import into the program
-    </p>
+    <p>Select all images you would like to import into the program</p>
   </left>
   <right>
     <div class="fileSelector">
       <FileSelector bind:filePaths />
     </div>
+    <span class="number">{filePaths ? filePaths.length : 0} / 6</span>
     <article>
-      <span class="number">{filePaths ? filePaths.length : 0} / 6</span>
       <ul>
         {#if filePaths?.length > 0}
           {#each filePaths as filePath}
-            <li>
-              {filePath.length > 60
-                ? `${filePath.substring(0, 20)}...${filePath.substring(
-                    filePath.length - 40
-                  )}`
-                : filePath}
-            </li>
+            <ImageBubble filename={filePath} />
           {/each}
         {/if}
       </ul>
@@ -66,12 +78,12 @@
     @apply text-center pt-[30vh] bg-gray-500/25 m-4 h-[90%] rounded-lg;
   }
   article {
-    @apply bg-gray-800 h-full w-full m-6 overflow-auto rounded-lg;
+    @apply bg-gray-800 w-full min-h-[12rem] overflow-auto rounded-[32px] py-2 px-6;
   }
   .number {
     @apply flex justify-center bg-gray-700/50;
   }
-  li {
-    @apply bg-gray-600 m-1 p-2 rounded-xl my-2;
+  ul {
+    @apply flex flex-col gap-2 w-full justify-center items-center;
   }
 </style>

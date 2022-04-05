@@ -3,6 +3,7 @@
 
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
+  import ImageBubble from "./ImageBubble.svelte";
   const flipDurationMs = 200;
   function handleDndConsider(e) {
     $processState.imageFilePaths = e.detail.items;
@@ -23,9 +24,7 @@
         animate:flip={{ duration: flipDurationMs }}
         class="dark:bg-gray-600"
       >
-        {item?.name?.split("\\").length > 2
-          ? item?.name?.split("\\").at(-1)
-          : item?.name?.split("/").at(-1)}
+        <ImageBubble filename={item.name} minimal />
       </card>
     {/each}
   </section>
