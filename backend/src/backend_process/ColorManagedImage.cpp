@@ -37,7 +37,6 @@ void ColorManagedImage::run() {
             );
         } catch(const std::exception& e) {}
 
-        tiff_reader->recycle();
 
         /* Wrap the Mat as an Image object. */
         btrgb::Image imObj(filename);
@@ -54,5 +53,7 @@ void ColorManagedImage::run() {
     catch(const std::exception& e) {
         this->coms_obj_m->send_error(e.what(), "ColorManagedImage");
     }
+    
+    tiff_reader->recycle();
 
 }
