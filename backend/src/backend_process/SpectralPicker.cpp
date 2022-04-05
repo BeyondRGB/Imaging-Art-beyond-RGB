@@ -28,53 +28,48 @@ void SpectralPicker::run() {
 
         
         tiff_reader->open(filename);
-        int rel = tiff_reader->width();
-        int size = size_rel * rel;
-        int x = (x_rel * rel) - (size / 2);
-        int y = (y_rel * rel) - (size / 2);
+        int width = tiff_reader->width();
+        int height = tiff_reader->height();
+        int size = size_rel * width;
+        int radius = size/2;
+        int x = x_rel * width;
+        int y = y_rel * width;
 
-        std::cout << "size: " << size << std::endl;
+        if(x < 0 || x > width || y < 0 || y > height)
+            throw std::runtime_error("Invalid coordinates");
+
+        int left = (x - radius < 0 ? 0 : x - radius);
+        int right = (x + radius >= width ? width - 1 : x + radius);
+        int top = (y - radius < 0 ? 0 : y - radius);
+        int bot = (y + radius > height ? height : y + radius);
+
+        std::cout << "\n\n\nsize: " << size << std::endl;
         std::cout << "x: " << x << std::endl;
         std::cout << "y: " << y << std::endl;
+        std::cout << "left: " << left << std::endl;
+        std::cout << "right: " << right << std::endl;
+        std::cout << "top: " << top << std::endl;
+        std::cout << "bottom: " << bot << std::endl;
 
-        cv::Mat im = tiff_reader->getCrop(x, y, size, size);
+        cv::Mat im = tiff_reader->getCrop(left, top, right - left, bot - top);
         int channels = im.channels();
-        std::cout << "rows: " << im.rows << std::endl;
-        std::cout << "cols: " << im.cols << std::endl;
-        std::cout << "channels: " << im.channels() << std::endl;
         cv::Mat avg_cam_sig(6, 1, CV_32FC1);
 
         float* avg = (float*) avg_cam_sig.data;
         for(int z=0; z<6; z++) avg[z] = 0;
         uint16_t* im_pixel;
-        std::cout << "@#$%#$@ corect type: " << (im.depth() == CV_16U) << std::endl;
 
         for (int row = 0; row < im.rows; row++) {
             for (int col = 0; col < im.cols; col++) {
                 im_pixel = (uint16_t*) im.data + row * im.cols * channels + col * channels;
-                std::cout << "pixel address: " << im_pixel << std::endl;
                 avg[R1] += float(im_pixel[R1]);
                 avg[G1] += float(im_pixel[G1]);
                 avg[B1] += float(im_pixel[B1]);
                 avg[R2] += float(im_pixel[R2]);
                 avg[G2] += float(im_pixel[G2]);
                 avg[B2] += float(im_pixel[B2]);
-
-                std::cout << "Current R1: " << im_pixel[R1] << std::endl;
-                std::cout << "Current G1: " << im_pixel[G1] << std::endl;
-                std::cout << "Current B1: " << im_pixel[B1] << std::endl;
-                std::cout << "Current R2: " << im_pixel[R2] << std::endl;
-                std::cout << "Current G2: " << im_pixel[G2] << std::endl;
-                std::cout << "Current B2: " << im_pixel[B2] << std::endl;
             }
         }
-
-        std::cout << "Total R1: " << avg[R1] << std::endl;
-        std::cout << "Total G1: " << avg[G1] << std::endl;
-        std::cout << "Total B1: " << avg[B1] << std::endl;
-        std::cout << "Total R2: " << avg[R2] << std::endl;
-        std::cout << "Total G2: " << avg[G2] << std::endl;
-        std::cout << "Total B2: " << avg[B2] << std::endl;
 
         float num_pixels = float(0xffff) * float(im.rows * im.cols);
         std::cout << "num_pixels: " << num_pixels << std::endl;
@@ -85,22 +80,8 @@ void SpectralPicker::run() {
         avg[G2] /= num_pixels;
         avg[B2] /= num_pixels;
 
-
-        std::cout << "Avg R1: " << avg[R1] << std::endl;
-        std::cout << "Avg G1: " << avg[G1] << std::endl;
-        std::cout << "Avg B1: " << avg[B1] << std::endl;
-        std::cout << "Avg R2: " << avg[R2] << std::endl;
-        std::cout << "Avg G2: " << avg[G2] << std::endl;
-        std::cout << "Avg B2: " << avg[B2] << std::endl;
-
         cv::Mat m = tiff_reader->getConversionMatrix(BTRGB_M_REFL_OPT);
         cv::Mat spectrum = m * avg_cam_sig;
-
-        std::cout << "rows: " << spectrum.rows << std::endl;
-        std::cout << "cols: " << spectrum.cols << std::endl;
-        avg = (float*) spectrum.data;
-        for(int row = 0; row < spectrum.rows; row++)
-            std::cout << avg[row] << std::endl;
 
         this->coms_obj_m->send_spectrum((float*)spectrum.data, spectrum.rows * spectrum.cols);
 

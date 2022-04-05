@@ -113,8 +113,8 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
     int right = left + w;
     int bottom = top + h;
 
-    bool lt_valid = (left >= 0) && (top >= 0) && (left < _width, top < _height);
-    bool rb_valid = (right >= 0) && (bottom >= 0) && (right < _width, bottom < _height);
+    bool lt_valid = (left >= 0) && (top >= 0) && (left < _width) && (top < _height);
+    bool rb_valid = (right > 0) && (bottom > 0) && (right <= _width) && (bottom <= _height);
     if( ! (lt_valid && rb_valid) )
         throw std::runtime_error("[LibTiffReader] Invalid coordinates.");
 
@@ -150,9 +150,6 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
     void* crop_row = (char*)row_data + (left * _channels * sample_byte_size);
     int crop_row_size = w * _channels * sample_byte_size;
     void* mat_row = cropped.data;
-    std::cout << "crop_row addr: " << crop_row << std::endl;
-    std::cout << "crop_row_size: " << crop_row_size << std::endl;
-    std::cout << "row_data addr: " << row_data << std::endl;
 	for (row_index = top; row_index < bottom; row_index++) {
 
 		row_size = TIFFReadEncodedStrip(this->_tiff, row_index, row_data, strip_size);
@@ -167,11 +164,6 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
 
         memcpy(mat_row, crop_row, crop_row_size);
         mat_row = (char*)mat_row + crop_row_size;
-        std::cout << "mat_row addr: " << mat_row << std::endl;
-
-        for(int z=0; z<crop_row_size/2; z++)
-            std::cout << " " << ((uint16_t*)crop_row)[z];
-        std::cout << std::endl;
     }
 
 	_TIFFfree(row_data);

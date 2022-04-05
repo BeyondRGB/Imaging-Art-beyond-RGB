@@ -38,25 +38,30 @@
                     image_header = rsp.ResponseData;
             }
         }
+        let z = 0;
+        function send_test() {
+            req = {
+                "RequestID": Math.floor(Math.random() * 1000),
+                "RequestType": /*"Thumbnails",*/"SpectralPicker",
+                "RequestData": {
+                    "name": "/home/jared/Documents/senior project/output/BTRGB_2022-04-05_02-20-04/BTRGB_1649139658.btrgb",
+                    "coordinates": {
+                        "x": 0.999,
+                        "y": Math.random()
+                    },
+                    "size": 0.01
+                }
+            };
+            console.log(req);
+            ws.send(JSON.stringify(req));
+            if(z++ < 0)
+                setTimeout(send_test, 750);
+
+        }
+        
 
         ws.onopen = () => {
-            for(let i=0; i<6; i++) {
-                req = {
-                    "RequestID": 345345,
-                    "RequestType": /*"Thumbnails",*/"SpectralPicker",
-                    "RequestData": {
-                        "name": "/home/jared/Documents/senior project/output/BTRGB_2022-04-05_02-20-04/BTRGB_1649139658.btrgb",
-                        "coordinates": {
-                            "x": Math.random(),
-                            "y": Math.random()
-                        },
-                        "size": Math.random() * 0.01
-                    }
-                };
-                let j = JSON.stringify(req);
-                console.log("Request: ", j);
-                ws.send(j);
-            }
+            send_test();
 
                     /*"names": [*/
                         /*"C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_targets_1.CR2",
