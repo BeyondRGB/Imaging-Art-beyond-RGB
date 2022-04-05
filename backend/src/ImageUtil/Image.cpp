@@ -115,17 +115,18 @@ namespace btrgb {
             ColorProfiles::convert(im_srgb, this->_color_profile, ColorSpace::sRGB);
         }
 
+
+        /* Convert to 8 bit. */
+        cv::Mat im8u;
+        if(im_srgb.depth() == CV_8U)
+            im8u = im_srgb; 
+        else {
+            im8u = Image::copyMatConvertDepth(im_srgb, CV_8U);
+            im_srgb.release();
+        }
+
         switch(quality) {
         case FAST:
-
-            /* Convert to 8 bit. */
-            {cv::Mat im8u;
-            if(im_srgb.depth() == CV_8U)
-                im8u = im_srgb; 
-            else {
-                im8u = Image::copyMatConvertDepth(im_srgb, CV_8U);
-                im_srgb.release();
-            }
 
             /* Scale the image to have a width of 1920 pixels (keep same aspect ratio). */
             if(im8u.cols > 1920) {
@@ -134,7 +135,7 @@ namespace btrgb {
             }
             else {
                 im = im8u;
-            }}
+            }
         
             /* Set compression parameters for use later. */
             params = {
@@ -146,12 +147,13 @@ namespace btrgb {
         case FULL:
         
             /* Convert to 16 bit. */
-            if(im_srgb.depth() == CV_16U)
+            /*if(im_srgb.depth() == CV_16U)
                 im = im_srgb;
             else {
                 im = Image::copyMatConvertDepth(im_srgb, CV_16U);
                 im_srgb.release();
-            }
+            }*/
+            im = im8u;
 
             /* Use default PNG compression parameters. */
             params = {};
