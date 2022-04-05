@@ -29,8 +29,8 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
         return;
     }
 
-    // Registered image will be resotred in imReg. 
-    // The estimated homography will be stored in h. 
+    // Registered image will be resotred in imReg.
+    // The estimated homography will be stored in h.
     cv::Mat im2reg, h;
 
     cv::Mat im18;
@@ -101,7 +101,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
     btrgb::Image* btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
-    comms->send_base64(btrgb_matches, btrgb::FULL);
+    comms->send_binary(btrgb_matches, btrgb::FULL);
     images->setImage("matches", btrgb_matches);
     images->outputImageAs(btrgb::PNG, "matches");
     images->deleteImage("matches");
