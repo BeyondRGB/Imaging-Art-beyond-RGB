@@ -61,7 +61,7 @@ namespace btrgb {
 		else {
 			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
 			uint16_t tags[16] = {EXTRASAMPLE_UNSPECIFIED};
-			TIFFSetField(img_out, TIFFTAG_EXTRASAMPLES, channels - 3, tags);
+			TIFFSetField(img_out, TIFFTAG_EXTRASAMPLES, channels - 1, tags);
 		}
 
 		/* Set color profile. */
