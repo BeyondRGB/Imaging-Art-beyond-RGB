@@ -118,7 +118,7 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w, uint32_t
     if( ! (lt_valid && rb_valid) )
         throw std::runtime_error("[LibTiffReader] Invalid coordinates.");
 
-    int sample_byte_size = this->_depth / 2;
+    int sample_byte_size = this->_depth / 8;
 
     int cv_depth = this->getCVMatType();
     cv::Mat cropped(h, w, CV_MAKETYPE(cv_depth, _channels));
