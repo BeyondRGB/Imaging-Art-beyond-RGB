@@ -7,6 +7,8 @@ export const modal = writable(null);
 
 export const viewState = writable({
   projectKey: null,
+  colorManagedImage: { dataURL: "", filename: "" },
+  colorManagedID: null
 });
 
 // Page Stores

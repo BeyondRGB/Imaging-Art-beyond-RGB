@@ -60,7 +60,7 @@
   }
 
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-    console.log($messageStore[0]);
+    //console.log($messageStore[0]);
     console.log("New Message");
     try {
       let temp = JSON.parse($messageStore[0]);
@@ -68,6 +68,15 @@
         // Project Key handler
         console.log("CalibrationComplete Project Key From Server");
         $viewState.projectKey = temp["ResponseData"]["path"];
+      } else if (
+        // Thumbnail Binary Handler
+        temp["ResponseType"] === "ImageBinary" &&
+        temp["RequestID"] === $viewState.colorManagedID
+      ) {
+        console.log("Color Managed Binary From Server");
+        binaryType = temp["ResponseData"]["type"];
+        binaryName = temp["ResponseData"]["name"];
+        binaryFor = "ColorManaged";
       } else if (
         // Thumbnail Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
@@ -122,6 +131,11 @@
       $processState.outputImage = {
         dataURL: temp.src,
         name: binaryName,
+      };
+    } else if (binaryFor === "ColorManaged") {
+      $viewState.colorManagedImage = {
+        dataURL: temp.src,
+        filename: binaryName,
       };
     }
     binaryType = null;

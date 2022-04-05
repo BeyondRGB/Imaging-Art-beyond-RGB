@@ -1,12 +1,21 @@
 <script lang="ts">
   import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
-  import { processState, viewState, sendMessage } from "@util/stores";
+  import {
+    processState,
+    viewState,
+    sendMessage,
+    messageStore,
+    currentPage,
+  } from "@util/stores";
   import { slide } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import Switch from "@components/Switch.svelte";
   let brushShow = false;
   let size;
   let shadowPos = { left: 0, top: 0 };
+  let spectrumData;
+
+  let wavelengthArray = Array.from({ length: 35 }, (x, i) => i * 10 + 380);
 
   $: console.log(shadowPos);
 
@@ -38,6 +47,47 @@
 
     getData();
   }
+
+  $: if ($messageStore.length > 1) {
+    console.log($messageStore[0]);
+    console.log("New Message Spec");
+    try {
+      let temp = JSON.parse($messageStore[0]);
+      if (temp["ResponseType"] === "SpectralPicker") {
+        console.log("Spectrum Data From Server");
+        spectrumData = temp["ResponseData"]["spectrum"];
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  function colorManagedImage() {
+    $viewState.colorManagedID = Math.floor(Math.random() * 999999999);
+    let msg = {
+      RequestID: $viewState.colorManagedID,
+      RequestType: "ColorManagedImage",
+      RequestData: {
+        name: $viewState.projectKey,
+      },
+    };
+
+    console.log("Fetching Color Managed Image");
+    console.log(msg);
+    sendMessage(JSON.stringify(msg));
+  }
+
+  $: if (
+    $currentPage === "SpecPicker" &&
+    $viewState.projectKey?.length > 1 &&
+    $viewState.colorManagedImage?.filename?.length === 0
+  ) {
+    console.log("Getting Color Managed Image");
+    // CALL FOR CM
+    colorManagedImage();
+  }
+
+  $: console.log({ DATA: spectrumData });
 </script>
 
 <main>
@@ -46,6 +96,7 @@
       <SpecPickViewer bind:shadowPos bind:show={brushShow} bind:size />
     </div>
     <div id="side">
+      <input bind:value={$viewState.projectKey} />
       <div class="box" id="brush">
         <Switch label="Estimate Spectrum Picker" bind:checked={brushShow} />
         <input
@@ -65,7 +116,7 @@
         />
       </div>
       <div id="chart">
-        <LineChart />
+        <LineChart bind:data={spectrumData} bind:wavelengthArray />
       </div>
     </div>
   </div>
@@ -98,6 +149,10 @@
     @apply m-2 shadow-md px-2 pt-1 bg-gray-600 rounded-lg p-2;
   }
   .numberInput {
+    @apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
+          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
+  }
+  input {
     @apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
   }
