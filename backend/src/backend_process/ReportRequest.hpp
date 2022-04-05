@@ -5,7 +5,7 @@
 #include <fstream>
 #include <streambuf>
 #include "ImageUtil/Image.hpp"
-#include "utils/json.hpp"
+#include "utils/jsonafiable.hpp"
 #include "server/comunication_obj.hpp"
 
 #include "backend_process.hpp"
