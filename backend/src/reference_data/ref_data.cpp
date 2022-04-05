@@ -41,6 +41,27 @@ RefData::~RefData() {
 	delete this->color_patches;
 }
 
+IlluminantType RefData::get_illuminant(std::string illum_str){
+	// Default to D50
+    IlluminantType type = IlluminantType::D50;
+    if (illum_str == "A") {
+        type = IlluminantType::A;
+    }
+    if (illum_str == "D65") {
+        type = IlluminantType::D65;
+    }
+    return type;
+}
+
+ObserverType RefData::get_observer(int observer_num){
+	// Default to 1931
+    ObserverType type = ObserverType::SO_1931;
+    if (observer_num == 1964) {
+        type = ObserverType::SO_1964;
+    }
+    return type;
+}
+
 int RefData::get_row_count() {
 	return this->row_count;
 }

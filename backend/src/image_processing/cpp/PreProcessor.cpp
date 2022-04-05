@@ -18,7 +18,7 @@ void PreProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
       double currProgress = count / total;
       comms->send_progress(currProgress, "PreProcessor");
       component->execute(comms, images);
-      comms->send_base64(images->getImage("art1"), btrgb::FAST);
+      comms->send_binary(images->getImage("art1"), btrgb::FAST);
       count++;
     }
     comms->send_info("PreProcessing Done!!!", "PreProcessor");

@@ -27,10 +27,13 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
-
+    
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    if(this->should_verify){
+        img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new Verification())) ;     
+    }
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ResultsProcessor()));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
@@ -92,14 +95,17 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     TargetData td = build_target_data(target_json);
     std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
+    // Store input images
+    for(const auto& [key, im] : *art_obj){
+        results_obj->store_string(key, im->getName());
+    }
 
 }
 
 void Pipeline::run() {
-
+    std::cout << "Initializing Img Processing Pipeline" << std::endl;
     this->send_info("I got your msg", this->get_process_name());
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
-    std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
     std::string out_dir;
     try{
@@ -131,6 +137,7 @@ void Pipeline::run() {
     this->send_info("About to init art obj...", this->get_process_name());
     try{
         this->init_art_obj(images.get());
+        this->init_verification(images.get());
     }catch(std::exception e){
         this->report_error(this->get_process_name(), e.what());
         return;
@@ -152,9 +159,12 @@ void Pipeline::run() {
     }
 
     /* Execute the pipeline on the created ArtObject */
+    std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
     this->send_info( "About to execute...", this->get_process_name());
     try { 
         pipeline->execute(this->coms_obj_m.get(), images.get());
+        std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
+        this->coms_obj_m->send_post_calibration_msg(Pro_file);
     }catch(ColorTarget_MissmatchingRefData e){
         this->report_error(this->get_process_name(), e.what());
         return;
@@ -191,17 +201,12 @@ std::string Pipeline::get_output_directory() {
 }
 
 IlluminantType Pipeline::get_illuminant_type(Json target_data) {
-    // Default to D50
-    IlluminantType type = IlluminantType::D50;
+    // Defaults to D50
+    IlluminantType type = RefData::get_illuminant("");
     try {
         Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         std::string illum_str = ref_data.get_string(key_map[DataKey::Illuminants]);
-        if (illum_str == "A") {
-            type = IlluminantType::A;
-        }
-        if (illum_str == "D65") {
-            type = IlluminantType::D65;
-        }
+        type = RefData::get_illuminant(illum_str);
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
@@ -211,14 +216,12 @@ IlluminantType Pipeline::get_illuminant_type(Json target_data) {
 }
 
 ObserverType Pipeline::get_observer_type(Json target_data) {
-    // Defailt to 1931
-    ObserverType type = ObserverType::SO_1931;
+    // Defailts to 1931
+    ObserverType type = RefData::get_observer(1931);
     try {
         Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         int observer_num = ref_data.get_number(key_map[DataKey::StandardObserver]);
-        if (observer_num == 1964) {
-            type = ObserverType::SO_1964;
-        }
+        type = RefData::get_observer(observer_num);
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
@@ -263,14 +266,28 @@ std::string Pipeline::get_ref_file(Json target_data) {
     return ref_file;
 }
 
+void Pipeline::init_verification(btrgb::ArtObject* images){
+    try{
+        Json verification_json = this->process_data_m->get_obj(key_map[DataKey::VerificationLocation]);
+        TargetData vd = this->build_target_data(verification_json);
+        images->init_verification_data(vd);
+        this->should_verify = true;
+        this->send_info("Verivication Targe Was Provided", this->get_process_name());
+
+    }catch(ParsingError e){
+        this->send_info("No Verification Target provided", this->get_process_name());
+        this->should_verify = false;
+    }
+}
+
 bool Pipeline::verify_targets(btrgb::ArtObject *images){
     try{
         // Test Target
-        images->get_target(ART(1));
-        // TODO add verification test here when verification is set up
+        images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
+        images->get_target(ART(1), btrgb::TargetType::VERIFICATION_TARGET);
     }catch(ColorTarget_MissmatchingRefData e){
         this->report_error(this->get_process_name(), e.what());
         return false;
-    }
+    }catch(btrgb::ArtObj_VerificationDataNull){}
     return true;
 }

@@ -177,3 +177,15 @@ btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type
 	return result_base64;
 
 }
+
+void CommunicationObj::send_post_calibration_msg(std::string results_path){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "CalibrationComplete");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("path", results_path);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
