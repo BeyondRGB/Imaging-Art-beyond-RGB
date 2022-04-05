@@ -3,7 +3,7 @@
 namespace btrgb {
 
 
-static void convert(cv::Mat im,
+void ColorProfiles::convert(cv::Mat im,
         void* from_profile_data, uint32_t from_size,
         void* to_profile_data, uint32_t to_size) {
 
