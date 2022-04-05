@@ -102,6 +102,8 @@ void SpectralPicker::run() {
         for(int row = 0; row < spectrum.rows; row++)
             std::cout << avg[row] << std::endl;
 
+        this->coms_obj_m->send_spectrum((float*)spectrum.data, spectrum.rows * spectrum.cols);
+
     }
     catch(const ParsingError& e) {
         this->coms_obj_m->send_error("Invalid SpectralPicker JSON", "SpectralPicker");

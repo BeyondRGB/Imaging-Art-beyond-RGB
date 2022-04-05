@@ -40,16 +40,24 @@
         }
 
         ws.onopen = () => {
-            req = {
-                "RequestID": 345345,
-                "RequestType": /*"Thumbnails",*/"SpectralPicker",
-                "RequestData": {
-                    "name": "/home/jared/Documents/senior project/output/BTRGB_2022-04-05_02-20-04/BTRGB_1649139658.btrgb",
-                    "coordinates": {
-                        "x": 0.3456,
-                        "y": 0.5323
-                    },
-                    "size": 0.000625
+            for(let i=0; i<6; i++) {
+                req = {
+                    "RequestID": 345345,
+                    "RequestType": /*"Thumbnails",*/"SpectralPicker",
+                    "RequestData": {
+                        "name": "/home/jared/Documents/senior project/output/BTRGB_2022-04-05_02-20-04/BTRGB_1649139658.btrgb",
+                        "coordinates": {
+                            "x": Math.random(),
+                            "y": Math.random()
+                        },
+                        "size": Math.random() * 0.01
+                    }
+                };
+                let j = JSON.stringify(req);
+                console.log("Request: ", j);
+                ws.send(j);
+            }
+
                     /*"names": [*/
                         /*"C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_targets_1.CR2",
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_white_1.CR2",
@@ -79,10 +87,10 @@
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/art1_raw.tiff",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/dark1_raw.tiff"*/
 
-                    /*]*/
+                    /*]
                 }
             };
-            ws.send(JSON.stringify(req));
+            ws.send(JSON.stringify(req));*/
         };
 
         
