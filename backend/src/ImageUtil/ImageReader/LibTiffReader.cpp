@@ -79,7 +79,6 @@ void LibTiffReader::copyBitmapTo(void* buffer, uint32_t size) {
     uint32_t total_strips = TIFFNumberOfStrips(this->_tiff);
 
 	for (strip_index = 0; strip_index < total_strips; strip_index++) {
-        std::cout << "Strip #" << strip_index << std::endl;
 		strip_size = TIFFReadEncodedStrip(this->_tiff, strip_index, strip_data, strip_data_size);
         if(strip_size < 0) {
 	        _TIFFfree(strip_data);
