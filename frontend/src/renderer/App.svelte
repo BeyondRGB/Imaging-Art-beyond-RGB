@@ -9,7 +9,6 @@
 	import ManagedRgb from "@pages/ManagedRgb.svelte";
 	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
 	import Process from "@pages/Process.svelte";
-	import ProcessOld from "@root/pages/ProcessOld.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
