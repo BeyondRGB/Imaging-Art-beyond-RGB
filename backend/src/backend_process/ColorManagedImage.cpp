@@ -1,16 +1,16 @@
-#include "backend_process/ViewTiff.hpp"
+#include "backend_process/ColorManagedImage.hpp"
 
-unsigned int ViewTiff::id = 0;
+unsigned int ColorManagedImage::id = 0;
 
-ViewTiff::ViewTiff() {
-    this->set_process_name("ViewTiff(" + std::to_string(ViewTiff::id) + ")");
-    ViewTiff::id += 1;
+ColorManagedImage::ColorManagedImage() {
+    this->set_process_name("ColorManagedImage(" + std::to_string(ColorManagedImage::id) + ")");
+    ColorManagedImage::id += 1;
 }
 
-ViewTiff::~ViewTiff() {}
+ColorManagedImage::~ColorManagedImage() {}
 
 
-void ViewTiff::run() {
+void ColorManagedImage::run() {
 
     std::unique_ptr<btrgb::LibTiffReader> tiff_reader(new btrgb::LibTiffReader);
     
@@ -21,7 +21,7 @@ void ViewTiff::run() {
         std::string filename = prj_filename.substr(0, prj_filename.find_last_of("/\\") + 1) + local_file;
 
         if( ! btrgb::Image::is_tiff(filename) )
-            throw std::runtime_error("Invalid ViewTiff JSON");
+            throw std::runtime_error("Image is not a tiff file");
 
         cv::Mat im;
         tiff_reader->open(filename);
@@ -49,10 +49,10 @@ void ViewTiff::run() {
 
     }
     catch(const ParsingError& e) {
-        this->coms_obj_m->send_error("Invalid ViewTiff JSON", "ViewTiff");
+        this->coms_obj_m->send_error("Invalid ColorManagedImage JSON", "ColorManagedImage");
     }
     catch(const std::exception& e) {
-        this->coms_obj_m->send_error(e.what(), "ViewTiff");
+        this->coms_obj_m->send_error(e.what(), "ColorManagedImage");
     }
 
 }

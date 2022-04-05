@@ -45,8 +45,8 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 	else if (key == "Thumbnails") {
 		process = std::shared_ptr<ThumbnailLoader>(new ThumbnailLoader());
 	}
-	else if (key == "ViewTiff") {
-		process = std::shared_ptr<ViewTiff>(new ViewTiff());
+	else if (key == "ColorManagedImage") {
+		process = std::shared_ptr<ColorManagedImage>(new ColorManagedImage());
 	}
 	//TODO add other process instantiation here as more get created
 
