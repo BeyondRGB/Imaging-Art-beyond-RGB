@@ -14,11 +14,11 @@
 
 
 
-class ViewTiff : public BackendProcess {
+class ColorManagedImage : public BackendProcess {
 
 public:
-    ViewTiff();
-    ~ViewTiff();
+    ColorManagedImage();
+    ~ColorManagedImage();
 	void run() override;
 
 private:
