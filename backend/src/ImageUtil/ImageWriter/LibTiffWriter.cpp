@@ -56,7 +56,7 @@ namespace btrgb {
 		/* Indicate type of image. */
 		if(channels == 3)
 			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-		if(channels == 1)
+		else if(channels == 1)
 			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
 		else {
 			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
