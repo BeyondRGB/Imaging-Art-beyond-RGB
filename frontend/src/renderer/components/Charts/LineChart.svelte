@@ -3,64 +3,25 @@
   import "carbon-components/css/carbon-components.min.css";
   import { LineChart } from "@carbon/charts-svelte";
   import html2canvas from "html2canvas";
+  import { element } from "svelte/internal";
 
-  let inputData = [
-    {
-      group: "1",
-      intensity: 2,
-      wavelength: 440,
-    },
-    {
-      group: "1",
-      intensity: 3.2,
-      wavelength: 480,
-    },
-    {
-      group: "1",
-      intensity: 2.7,
-      wavelength: 520,
-    },
-    {
-      group: "1",
-      intensity: 2.3,
-      wavelength: 540,
-    },
-    {
-      group: "1",
-      intensity: 3.5,
-      wavelength: 580,
-    },
-    {
-      group: "1",
-      intensity: 3.0,
-      wavelength: 630,
-    },
-    {
-      group: "1",
-      intensity: 5.3,
-      wavelength: 730,
-    },
-    {
-      group: "1",
-      intensity: 5.0,
-      wavelength: 780,
-    },
-    {
-      group: "1",
-      intensity: 4.4,
-      wavelength: 830,
-    },
-    {
-      group: "1",
-      intensity: 5.9,
-      wavelength: 870,
-    },
-    {
-      group: "1",
-      intensity: 35,
-      wavelength: 940,
-    },
-  ];
+  export let data = [];
+  export let wavelengthArray;
+
+  let inputData = [];
+
+  $: if (data.length > 1) {
+    console.log("Creating InputData");
+    inputData = [];
+    wavelengthArray.forEach((element, i) => {
+      inputData.push({
+        group: "1",
+        intensity: data[i] * 100,
+        wavelength: element,
+      });
+    });
+    inputData = inputData;
+  }
 
   let imageDataURL;
 
@@ -106,6 +67,8 @@
   // });
   // console.log(testAB);
   // console.log(colorsAB);
+
+  $: console.log({ CHARTDATA: inputData });
 </script>
 
 <button on:click={savePNG}>dl</button>

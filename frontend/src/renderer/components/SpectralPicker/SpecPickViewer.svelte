@@ -6,6 +6,7 @@
     messageStore,
     processState,
     sendMessage,
+    viewState,
   } from "@util/stores";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
@@ -82,7 +83,7 @@
       setTimeout(() => {
         viewer.open({
           type: "image",
-          url: placeholder,
+          url: imageUrl,
         });
       }, 250);
     }
@@ -91,6 +92,20 @@
       console.log("Close Image");
       viewer.close();
     }
+  }
+
+  $: if (viewer) {
+    // console.log($processState.artStacks[0].colorTargetImage);
+    console.log("New Image (Spec Viewer)");
+    let temp = new Image();
+    temp.src = $viewState.colorManagedImage?.dataURL;
+
+    imageUrl = temp.src;
+
+    viewer.open({
+      type: "image",
+      url: imageUrl,
+    });
   }
 
   $: if (show) {
