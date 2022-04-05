@@ -25,7 +25,9 @@ class LibTiffReader : public ImageReaderStrategy {
         cv::Mat getCrop(uint32_t left, uint32_t right, uint32_t width, uint32_t height);
         std::unordered_map<std::string, cv::Mat> getConversionMatrices();
         cv::Mat getConversionMatrix(std::string key);
-        std::string getColorProfileString();
+        std::string getColorSpaceString();
+
+        void getColorProfile(uint32_t* size, void** data);
 
     private:
         struct tiff* _tiff;
