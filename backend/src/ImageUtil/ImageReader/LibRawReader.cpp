@@ -48,7 +48,7 @@ void LibRawReader::_configLibRawParams() {
 
         break;
 
-    default: throw std::logic_error("[LibRawReader] Invalid method.");
+    default: this->_error("[LibRawReader] Invalid method.");
     }
     
     /* Keep as 16 bit. */
@@ -89,17 +89,13 @@ void LibRawReader::open(std::string filename) {
 
     /* Unpack raw data into structures for processing. */
     error_code = this->_reader.unpack();
-    if(error_code) {
-        this->recycle();
-        throw std::runtime_error("[LibRaw] Failed to unpack image.");
-    }
+    if(error_code) 
+        this->_error("[LibRaw] Failed to unpack image.");
 
     /* Post-process (configured by LibRawReader::configLibRawParams) */
     error_code = this->_reader.dcraw_process();
-    if(error_code) {
-        this->recycle();
-        throw std::runtime_error("[LibRaw] Failed to process image.");
-    }
+    if(error_code)
+        this->_error("[LibRaw] Failed to process image.");
 
     /* Get the format of the bitmap result. */
     this->_reader.get_mem_image_format(&_width, &_height, &_channels, &_depth);
@@ -116,10 +112,8 @@ void LibRawReader::copyBitmapTo(void* buffer, uint32_t size) {
     int stride = this->_width * this->_channels * (_depth / 8);
     int error_code = this->_reader.copy_mem_image(buffer, stride, false);
     
-    if(error_code) {
-        this->recycle();
-        throw std::runtime_error("[LibRawReader] Failed to copy image to buffer.");
-    }
+    if(error_code)
+        this->_error("[LibRawReader] Failed to copy image to buffer.");
 }
 
 
@@ -130,7 +124,7 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
     switch(this->_depth) {
         case  8: cv_depth = CV_8U; break;
         case 16: cv_depth = CV_16U; break;
-        default: throw std::runtime_error("[LibRawReader] Internal error.");
+        default: this->_error("[LibRawReader] Bit depth not supported.");
     }
 
     
@@ -138,28 +132,59 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
     cv::Mat raw_im(_height, _width, CV_MAKETYPE(cv_depth, _channels));
     int stride = _width * _channels * (_depth / 8);
     int error_code = this->_reader.copy_mem_image(raw_im.data, stride, false);
-    if(error_code) {
-        this->recycle();
-        throw std::runtime_error("[LibRawReader] Failed to copy image to buffer.");
-    }
+    if(error_code)
+        this->_error("[LibRawReader] Failed to copy image to buffer.");
     
             
-    /* Ignore fourth channel if present. */
-    cv::Mat u16_rgb_im(_height, _width, CV_MAKETYPE(cv_depth, 3));
-    if(raw_im.channels() == 4) {
-        int from_to[] = { 0,0, 1,1, 2,2 };
-        cv::mixChannels( &raw_im, 1, &u16_rgb_im, 1, from_to, 3);
-    } else if( raw_im.channels() == 3 ) {
-        u16_rgb_im = raw_im;
-    } else {
-        this->recycle();
-        throw std::runtime_error("[LibRawReader] Unsupported number of channels." );
+    cv::Mat rgb_im(_height, _width, CV_MAKETYPE(cv_depth, 3));
+
+    /* Average two greens if present. */
+    if(raw_im.channels() == 4)
+        this->_average_greens(raw_im, rgb_im);
+
+    /* Leave the image alone. */
+    else if( raw_im.channels() == 3 )
+        rgb_im = raw_im;
+
+    /* Not three or four channels: error. */
+    else this->_error("[LibRawReader] Unsupported number of channels." );
+
+    /* Set refernce/output image to the resulting image. */
+    im = rgb_im;
+
+}
+
+
+void LibRawReader::_average_greens(cv::Mat input, cv::Mat output) {
+
+    switch(input.depth()) {
+
+        case CV_16U:
+            input.forEach<cv::Vec4w>([](cv::Vec4w& pixel, const int* pos) -> void {
+                pixel[1] = ( pixel[1] / 2 ) + ( pixel[3] / 2 );
+            });
+            break;
+
+        case CV_8U:
+            input.forEach<cv::Vec4b>([](cv::Vec4b& pixel, const int* pos) -> void {
+                pixel[1] = ( pixel[1] / 2 ) + ( pixel[3] / 2 );
+            });
+            break;
+            
+        default:
+            this->_error("[LibRawReader] tHiS sHoUlD nEvEr HaPpEn");
+
     }
 
+    int from_to[] = { 0,0, 1,1, 2,2 };
+    cv::mixChannels( &input, 1, &output, 1, from_to, 3);
 
-    /* Set refernce/output image to the just read image. */
-    im = u16_rgb_im;
+}
 
+
+void LibRawReader::_error(std::string msg) {
+    this->recycle();
+    throw std::runtime_error(msg);
 }
 
 }
