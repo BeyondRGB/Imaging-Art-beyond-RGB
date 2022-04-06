@@ -73,7 +73,7 @@ public:
 	* @param type: enum to the type of image being sent
 	* @param qual: enum for the quality of the image being sent
 	*/
-	void send_reports(jsoncons::json reports);
+	void send_reports(jsoncons::json reports, std::string report_type);
 
 	void send_spectrum(float* data, int size);
 
