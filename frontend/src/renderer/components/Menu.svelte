@@ -1,7 +1,7 @@
 <script lang="ts">
   export let routes: any;
-  export let icon: any;
   import TextLogo from "@assets/TextLogo.svg";
+  import TextLogoAlt from "@assets/TextLogoAlt.svg";
 
   import {
     currentPage,
@@ -10,7 +10,6 @@
     connectionState,
     connect,
   } from "@util/stores";
-  // import Icon from "svelte-awesome";
 
   $: theme = $appSettings.theme ? "dark" : "";
   function handleClick(newPage: any[]) {
@@ -22,24 +21,22 @@
   }
 </script>
 
-<main class="{$appSettings.sideNav ? 'sideMain' : ''} {theme}">
+<main class:sideMain={$appSettings.sideNav} class={theme}>
   <ul>
-    <div class="logoBox">
-      <p>
-        Beyond RGB <span
-          class="bg-red-600 rounded-lg p-1 font-semibold flex justify-center items-center"
-          >ALPHA
-        </span><span
-          class="bg-gray-500 rounded-lg p-0.5 font-semibold flex justify-center items-center"
-          >v0.0.5</span
-        >
-      </p>
+    <div class="logoBox" class:altLogo={$appSettings.sideNav}>
+      {#if $appSettings.sideNav}
+        <img src={TextLogoAlt} alt="app-logo" class="sideImg" />
+      {:else}
+        <img src={TextLogo} alt="app-logo" class="mainImg" />
+      {/if}
     </div>
     <div class="menuBtns">
       {#each Object.keys(routes).map((key) => [key, routes[key]]) as item, i}
         {#if item[1].isShown && !item[1].default}
           <button
-            class={$currentPage === item[0] ? "selected" : ""}
+            class:selected={$currentPage === item[0]}
+            class:disabled={item[1].disabled}
+            disabled={item[1].disabled}
             on:click={() => handleClick(item)}
           >
             <svelte:component
@@ -54,18 +51,17 @@
     </div>
     <div class="ctlBtns">
       <button on:click={() => modal.set("Home")}>
-        <!-- <Icon data={routes["Home"].icon} scale={1.75} /> -->
         <svelte:component this={routes["Home"].icon} size="1.75x" />
       </button>
 
       <button on:click={() => modal.set("Settings")}>
-        <!-- <Icon data={routes["Settings"].icon} scale={1.75} /> -->
         <svelte:component this={routes["Settings"].icon} size="1.75x" />
       </button>
 
       <button
         on:click={() => connect()}
-        class={$connectionState === "Connected" ? "connected" : "disconnected"}
+        class:connected={$connectionState === "Connected"}
+        class:disconnected={$connectionState !== "Connected"}
       />
     </div>
   </ul>
@@ -74,6 +70,19 @@
 <style lang="postcss">
   main {
     @apply w-full flex flex-col h-16 overflow-hidden border-t-[0.0625rem] border-gray-700/25;
+  }
+
+  .logoBox {
+    @apply h-full mx-[1vw] flex justify-center items-center;
+  }
+
+  .altLogo {
+    height: auto;
+    @apply mt-[3vh] mx-0.5;
+  }
+
+  .mainImg {
+    @apply h-[3.5vh] aspect-[44/7];
   }
 
   .sideMain {
@@ -108,9 +117,13 @@
           dark:text-blue-500 border-b-4 border-blue-500;
   }
 
+  .disabled {
+    @apply dark:text-gray-500/50 cursor-not-allowed dark:hover:text-gray-500;
+  }
+
   .menuBtns {
-    @apply flex h-full list-none w-[60%] whitespace-nowrap overflow-hidden 
-            self-center;
+    @apply flex list-none w-[60%] whitespace-nowrap overflow-hidden 
+            self-center justify-start;
   }
 
   .sideMain .menuBtns {
@@ -129,9 +142,7 @@
   .sideMain .ctlBtns {
     @apply flex-col py-4 px-0;
   }
-  p {
-    @apply text-xl mt-2.5 pl-3;
-  }
+
   .connected {
     @apply w-2 h-4 rounded-full bg-green-400 dark:hover:bg-green-500 dark:hover:scale-125;
   }

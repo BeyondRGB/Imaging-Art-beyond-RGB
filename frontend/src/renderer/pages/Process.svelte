@@ -22,7 +22,7 @@
   let binaryType = null;
   let binaryName = null;
   let binaryFor = null;
-  let colorTargetID;
+  let binaryID = null;
 
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
@@ -71,11 +71,12 @@
       } else if (
         // Thumbnail Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
-        temp["RequestID"] === $viewState.colorManagedID
+        $viewState.colorManagedImages.hasOwnProperty(temp["RequestID"])
       ) {
         console.log("Color Managed Binary From Server");
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
+        binaryID = temp["RequestID"];
         binaryFor = "ColorManaged";
       } else if (
         // Thumbnail Binary Handler
@@ -133,13 +134,12 @@
         name: binaryName,
       };
     } else if (binaryFor === "ColorManaged") {
-      $viewState.colorManagedImage = {
-        dataURL: temp.src,
-        filename: binaryName,
-      };
+      $viewState.colorManagedImages[binaryID]["dataURL"] = temp.src;
+      $viewState.colorManagedImages[binaryID]["filename"] = binaryName;
     }
     binaryType = null;
     binaryName = null;
+    binaryID = null;
   }
 
   function handleConfirm() {

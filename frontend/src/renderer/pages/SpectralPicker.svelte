@@ -10,10 +10,15 @@
   import { slide } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import Switch from "@components/Switch.svelte";
+  import FileSelector from "@components/FileSelector.svelte";
+
   let brushShow = false;
   let size;
   let shadowPos = { left: 0, top: 0 };
   let spectrumData;
+  let mainfilePath;
+
+  let currentTab;
 
   let wavelengthArray = Array.from({ length: 35 }, (x, i) => i * 10 + 380);
 
@@ -44,12 +49,10 @@
 
   $: if (shadowPos !== null) {
     console.log("Getting Est Spectrum Data");
-
     getData();
   }
 
   $: if ($messageStore.length > 1) {
-    console.log($messageStore[0]);
     console.log("New Message Spec");
     try {
       let temp = JSON.parse($messageStore[0]);
@@ -63,9 +66,11 @@
   }
 
   function colorManagedImage() {
-    $viewState.colorManagedID = Math.floor(Math.random() * 999999999);
+    let rand = Math.floor(Math.random() * 999999999);
+    currentTab = rand;
+    $viewState.colorManagedImages[rand] = { projectKey: $viewState.projectKey };
     let msg = {
-      RequestID: $viewState.colorManagedID,
+      RequestID: rand,
       RequestType: "ColorManagedImage",
       RequestData: {
         name: $viewState.projectKey,
@@ -79,25 +84,92 @@
 
   $: if (
     $currentPage === "SpecPicker" &&
-    $viewState.projectKey?.length > 1 &&
-    $viewState.colorManagedID === null &&
-    $viewState.colorManagedImage?.filename?.length === 0
+    $viewState.projectKey !== null &&
+    Object.keys($viewState.colorManagedImages).length === 0
   ) {
-    console.log("Getting Color Managed Image");
+    console.log("Getting FIRST Color Managed Image");
     // CALL FOR CM
     colorManagedImage();
   }
 
+  $: if (mainfilePath?.length > 0) {
+    console.log("New Project Key");
+    $viewState.projectKey = mainfilePath[0];
+  }
+
   $: console.log({ DATA: spectrumData });
+
+  $: console.log(Object.keys($viewState.colorManagedImages));
+
+  const openDialog = async () => {
+    let ipcResponse = await window.electron.handle({
+      type: "File",
+      filter: "project",
+    });
+    console.log(ipcResponse);
+    $viewState.projectKey = ipcResponse.filePaths[0];
+    colorManagedImage();
+  };
+
+  async function handleTab(tab) {
+    if (tab === "+") {
+      console.log("New Project");
+      openDialog();
+    } else {
+      console.log("Switch Image");
+      $viewState.projectKey = $viewState.colorManagedImages[tab].projectKey;
+      currentTab = tab;
+    }
+  }
+
+  $: if (currentTab === undefined) {
+    currentTab = Object.keys($viewState.colorManagedImages)[0];
+  }
 </script>
 
 <main>
-  <div class="flex w-full justify-center h-full">
-    <div id="image">
-      <SpecPickViewer bind:shadowPos bind:show={brushShow} bind:size />
+  {#if $viewState.projectKey === null}
+    <div class="noFile">
+      <div class="inputBox">
+        <h2>Select a project file to import into BeyondRGB</h2>
+        <FileSelector bind:filePaths={mainfilePath} filter="project" />
+      </div>
+    </div>
+  {/if}
+  <div class="content">
+    <div class="image-tabs">
+      <div class="tabs">
+        {#each [...Object.keys($viewState.colorManagedImages), "+"] as tab, i}
+          <button
+            class="tab"
+            class:selected={currentTab == tab}
+            on:click={() => handleTab(tab)}>{tab}</button
+          >
+        {/each}
+        {currentTab}
+      </div>
+      {#if currentTab !== undefined}
+        <div class="image">
+          {currentTab}
+          <SpecPickViewer
+            dataURL={$viewState.colorManagedImages[currentTab].dataURL}
+            bind:shadowPos
+            bind:show={brushShow}
+            bind:size
+          />
+        </div>
+      {/if}
+      <!-- <div class="image">
+        <SpecPickViewer
+          dataURL={$viewState.colorManagedImages.dataURL}
+          bind:shadowPos
+          bind:show={brushShow}
+          bind:size
+        />
+      </div> -->
     </div>
     <div id="side">
-      <input bind:value={$viewState.projectKey} />
+      {$viewState.projectKey}
       <div class="box" id="brush">
         <Switch label="Estimate Spectrum Picker" bind:checked={brushShow} />
         <input
@@ -125,10 +197,35 @@
 
 <style lang="postcss">
   main {
-    @apply flex w-full justify-center flex-col;
+    @apply flex h-full w-full justify-center flex-col relative;
   }
-  #image {
-    @apply w-[75%] self-center mx-2 mt-1;
+  .noFile {
+    @apply absolute w-full h-full z-50 flex justify-center bg-gray-800
+            items-center;
+  }
+  .inputBox {
+    @apply w-auto h-auto bg-red-600/10 flex flex-col gap-2;
+  }
+  .inputBox h2 {
+    @apply text-lg;
+  }
+  .content {
+    @apply w-full h-full flex justify-start items-center;
+  }
+  .image {
+  }
+  .image-tabs {
+    @apply w-[75%] self-center mx-2 mt-1 bg-red-500 p-2;
+  }
+  .tabs {
+    @apply w-auto h-8 bg-green-400 flex gap-2;
+  }
+  .tab {
+    @apply w-24 h-full bg-blue-400 flex justify-center items-center
+          rounded-t-xl;
+  }
+  .selected {
+    @apply bg-red-400;
   }
   #side {
     @apply w-[25%];
@@ -150,10 +247,6 @@
     @apply m-2 shadow-md px-2 pt-1 bg-gray-600 rounded-lg p-2;
   }
   .numberInput {
-    @apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
-          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
-  }
-  input {
     @apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
   }
