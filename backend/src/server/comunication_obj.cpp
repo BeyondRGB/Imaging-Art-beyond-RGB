@@ -130,11 +130,12 @@ void CommunicationObj::send_binary(
 	//this->binID++;
 }
 
-void CommunicationObj::send_reports(jsoncons::json reports) {
+void CommunicationObj::send_reports(jsoncons::json reports, std::string report_type) {
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "Report");
 	jsoncons::json response_data;
+	response_data.insert_or_assign("reportType", report_type);
 	response_data.insert_or_assign("reports", reports);
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
