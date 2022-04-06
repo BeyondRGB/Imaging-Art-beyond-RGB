@@ -42,10 +42,18 @@
 			isShown: true,
 			page: true,
 		},
-		RGB: {
-			text: "Managed RGB",
-			component: ManagedRgb,
-			icon: ImageIcon,
+		SpecPicker: {
+			text: "Image Viewer",
+			component: SpectralPicker,
+			icon: CrosshairIcon,
+			isShown: true,
+			page: true,
+		},
+
+		Reports: {
+			text: "Reports",
+			component: Reports,
+			icon: FileTextIcon,
 			isShown: true,
 			page: true,
 		},
@@ -55,27 +63,7 @@
 			icon: LayersIcon,
 			isShown: true,
 			page: true,
-		},
-		Reports: {
-			text: "Reports",
-			component: Reports,
-			icon: FileTextIcon,
-			isShown: true,
-			page: true,
-		},
-		SpecPicker: {
-			text: "Spectral Picker",
-			component: SpectralPicker,
-			icon: CrosshairIcon,
-			isShown: true,
-			page: true,
-		},
-		Demo: {
-			text: "Demo",
-			component: Demo,
-			icon: SettingsIcon,
-			isShown: true,
-			default: true,
+			disabled: true,
 		},
 		Settings: {
 			text: "Settings",
@@ -91,32 +79,40 @@
 		modal.set("Home");
 	}, 0);
 
-	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 	appSettings.set({
-		theme: darkThemeMq.matches,
+		theme: true,
 		sideNav: $appSettings.sideNav,
 	});
-	darkThemeMq.addEventListener("change", (e) => {
-		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
-	});
+	let theme = "dark";
+
+	document.documentElement.classList.add(theme);
+	document.body.classList.add(theme);
 
 	$: selectedPage = routes[$currentPage];
-	$: theme = $appSettings.theme ? "dark" : "";
-	$: if (theme !== "") {
-		console.log("Theme Change");
-		document.documentElement.classList.add(theme);
-		document.body.classList.add(theme);
-	} else {
-		document.documentElement.classList.remove("dark");
-		document.body.classList.remove("dark");
-	}
 
-	onDestroy(() => {
-		darkThemeMq.removeEventListener("change", (e) => {
-			appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
-		});
-	});
+	// --- Theme Switching Logic (Disabled as light theme is incomplete) ---
+	// $: theme = $appSettings.theme ? "dark" : "";
+	// $: if (theme !== "") {
+	// 	console.log("Theme Change");
+	// 	document.documentElement.classList.add(theme);
+	// 	document.body.classList.add(theme);
+	// } else {
+	// 	document.documentElement.classList.remove("dark");
+	// 	document.body.classList.remove("dark");
+	// }
 
+	// const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+
+	// darkThemeMq.addEventListener("change", (e) => {
+	// 	appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// });
+
+	// onDestroy(() => {
+	// 	darkThemeMq.removeEventListener("change", (e) => {
+	// 		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// 	});
+	// });
+	// ------
 	let pages;
 	$: if (pages) {
 		let activePages = [];

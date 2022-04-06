@@ -1,12 +1,13 @@
 <script lang="ts">
   import { FilePlusIcon } from "svelte-feather-icons";
   export let type = "File";
+  export let filter = "None";
   export let label = "Select Files";
   export let filePaths = [];
   export let icon = FilePlusIcon;
   let ipcResponse;
   const temp = async () => {
-    ipcResponse = await window.electron.handle(type);
+    ipcResponse = await window.electron.handle({ type, filter });
     console.log(ipcResponse);
   };
   $: {

@@ -84,7 +84,7 @@
 		scroll-snap-type: y mandatory;
 		scroll-behavior: smooth;
 		overflow: hidden;
-		@apply w-full h-full pt-1 relative flex;
+		@apply w-full h-full pt-0 relative flex;
 	}
 	.sideNav {
 		@apply flex-col;

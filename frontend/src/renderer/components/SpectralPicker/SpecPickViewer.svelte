@@ -17,6 +17,8 @@
 
   export let shadowPos;
 
+  export let dataURL;
+
   let viewer;
   let imageUrl;
 
@@ -33,7 +35,7 @@
       immediateRender: true,
       preload: true,
       showNavigator: false,
-      minZoomLevel: 0.5,
+      minZoomLevel: 0.95,
       useCanvas: true,
       showZoomControl: false,
       showHomeControl: false,
@@ -98,7 +100,7 @@
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image (Spec Viewer)");
     let temp = new Image();
-    temp.src = $viewState.colorManagedImage?.dataURL;
+    temp.src = dataURL;
 
     imageUrl = temp.src;
 

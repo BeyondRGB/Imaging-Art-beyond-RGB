@@ -46,7 +46,7 @@
   </left>
   <right>
     <div class="fileSelector">
-      <FileSelector bind:filePaths />
+      <FileSelector bind:filePaths filter="raws" />
     </div>
     <span class="number">{filePaths ? filePaths.length : 0} / 6</span>
     <article>

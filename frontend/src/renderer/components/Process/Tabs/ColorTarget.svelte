@@ -54,6 +54,7 @@
 
   function colorTargetPrev() {
     $processState.colorTargetID = Math.floor(Math.random() * 999999999);
+    console.log($processState);
     let msg = {
       RequestID: $processState.colorTargetID,
       RequestType: "HalfSizePreview",
@@ -80,6 +81,7 @@
     $processState.artStacks[0].colorTargetImage?.filename?.length === 0
   ) {
     console.log("Getting Color Target Preview");
+    console.log($processState);
     colorTargetPrev();
   }
 
