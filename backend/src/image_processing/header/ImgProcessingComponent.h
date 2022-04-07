@@ -20,6 +20,7 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 
 #include "ImageUtil/ArtObject.hpp"
 #include "server/comunication_obj.hpp"
+#include <jsoncons/json_reader.hpp>
 
 class ImgProcessingComponent {
 public:
@@ -31,7 +32,7 @@ public:
      * processing for that particular component
      */
     virtual void execute(CommunicationObj* comms, btrgb::ArtObject* images) = 0;
-    virtual std::string get_component_list() = 0;
+    virtual jsoncons::json get_component_list() = 0;
 
     std::string get_name(){ return this->name; }
 

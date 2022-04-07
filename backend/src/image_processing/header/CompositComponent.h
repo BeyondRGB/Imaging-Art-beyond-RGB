@@ -2,22 +2,20 @@
 #define COMPOSIT_COMPONENT_H
 
 #include "image_processing/header/ImgProcessingComponent.h"
+#include <jsoncons/json_reader.hpp>
 
 class CompositComponent : public ImgProcessingComponent{
     public:
         CompositComponent(std::string name) : ImgProcessingComponent(name){}
-        std::string get_component_list() override{
-            std::string component_list = "{\"" + this->get_name() + "\":[";
-            int i = 0;
+        jsoncons::json get_component_list() override{
+            jsoncons::json body;
+            body.insert_or_assign("name", this->get_name());
+            jsoncons::json component_list = jsoncons::json::make_array();
             for(auto  & component : this->components){
-                if(i > 0){
-                    component_list += ",";
-                }
-                component_list += component->get_component_list();
-                i++;
+                component_list.add(component->get_component_list());
             }
-            component_list += "]}";
-            return component_list;
+            body.insert_or_assign("component", component_list);
+            return body;
         }
 
         void init_components(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components){

@@ -142,7 +142,7 @@ void CommunicationObj::send_reports(jsoncons::json reports) {
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_pipeline_components(std::string compoents_list){
+void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "PipelineComponents");
