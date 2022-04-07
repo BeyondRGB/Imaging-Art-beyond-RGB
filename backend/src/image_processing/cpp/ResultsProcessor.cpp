@@ -85,6 +85,7 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     std::string f_name;
 
     // TODO the following should be replaced with a way to formate the files as desired by Olivia
+    ResultsFormater *formater;
 
     // Write user calibration results
     std::ofstream calibration_stream;
@@ -98,9 +99,11 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     verification_stream.close();
     // Write user General Info
     std::ofstream general_stream;
+    formater = new GeneralInfoFormater();
     general_stream.open(this->output_dir + this->GI_f_name);
-    general_info->write_results(general_stream);
+    formater->write_format(general_stream, general_info);
     general_stream.close();
+    delete formater;
 }
 
 std::string ResultsProcessor::build_output_name(std::string name, std::string extention){
