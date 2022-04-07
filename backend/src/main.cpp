@@ -6,7 +6,44 @@
 
 
 //Testing Includes: Remove before submiting PR
+#include "image_processing/results/calibration_results.hpp"
+#include "utils/jsonafiable.hpp"
+#include "utils/json.hpp"
+
+#include "image_processing/results/general_info_formater.hpp"
+
 void testFunc() {
+
+	std::string file = "C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\out\\BTRGB_2022-04-07_08-41-16\\BTRGB_1649335418.btrgb";
+	jsoncons::json res_json = Jsonafiable::json_from_file(file);
+	Json my_json(res_json);
+
+	ResultsFormater *formater;
+	try{
+		Json general_info = my_json.get_obj("GeneralInfo");
+		Json calib_json = my_json.get_obj("CalibrationResults");
+		Json ver_json = my_json.get_obj("VerificationResults");
+
+		CalibrationResults gen_info(general_info.get_jsoncons());
+		CalibrationResults calib_res(calib_json.get_jsoncons());
+		CalibrationResults ver_res(ver_json.get_jsoncons());
+
+		formater = new GeneralInfoFormater();
+
+		formater->write_format(std::cout, &gen_info);
+
+		// gen_info.write_results(std::cout);
+		// std::cout << "\n======================================================\n======================================================\n" << std::endl;
+		// calib_res.write_results(std::cout);
+		// std::cout << "\n======================================================\n======================================================\n" << std::endl;
+		// ver_res.write_results(std::cout);
+	}catch(ParsingError e){
+		std::cout << e.what() << std::endl;
+	}catch(std::exception e){
+		std::cout << "Other: " << e.what() << std::endl;
+	}
+
+	delete formater;
 }
 
 
