@@ -236,7 +236,18 @@ public:
      * 
      * @param parser 
      */
-    void reconstruct_strings(Json parser);
+    void reconstruct_strings(Json parser);/**
+     * @brief Output the given matrix.
+     * If a name is given the first line will be the matrix name. 
+     * If no name is given the first line will be the first row of the matix
+     * 
+     * Each row of the matrix is writen to its own line with each value seperated by commas
+     * 
+     * @param output_stream the stream to write to
+     * @param matrix the matrix to write
+     * @param matrix_name name of the matrix defaults to empty string
+     */
+    void write_matrix(std::ostream &output_stream, cv::Mat matrix, std::string matrix_name = "");
 
 
 private:
@@ -269,19 +280,6 @@ private:
     void write_doubls(std::ostream &output_stream);
 
     void write_strings(std::ostream &output_stram);
-
-    /**
-     * @brief Output the given matrix.
-     * If a name is given the first line will be the matrix name. 
-     * If no name is given the first line will be the first row of the matix
-     * 
-     * Each row of the matrix is writen to its own line with each value seperated by commas
-     * 
-     * @param output_stream the stream to write to
-     * @param matrix the matrix to write
-     * @param matrix_name name of the matrix defaults to empty string
-     */
-    void write_matrix(std::ostream &output_stream, cv::Mat matrix, std::string matrix_name = "");
 
     /**
      * @brief identifies what type of data is held in the given matrix and how to extract it.
