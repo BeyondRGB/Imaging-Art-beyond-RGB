@@ -60,7 +60,7 @@
   }
 
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-    //console.log($messageStore[0]);
+    console.log($messageStore[0]);
     console.log("New Message");
     try {
       let temp = JSON.parse($messageStore[0]);
@@ -142,11 +142,64 @@
     binaryID = null;
   }
 
+  $: processRequest = {
+    RequestType: "Process",
+    RequestID: Date.now(),
+    RequestData: {
+      images: [
+        {
+          art: $processState.artStacks[0].fields.images[0]?.name,
+          white: $processState.artStacks[0].fields.whitefield[0]?.name,
+          dark: $processState.artStacks[0].fields.darkfield[0]?.name,
+        },
+        {
+          art: $processState.artStacks[0].fields.images[1]?.name,
+          white: $processState.artStacks[0].fields.whitefield[1]?.name,
+          dark: $processState.artStacks[0].fields.darkfield[1]?.name,
+        },
+      ],
+      destinationDirectory: $processState.destDir,
+      targetLocation: $processState.artStacks[0].colorTarget,
+    },
+  };
+
+  $: console.log($processState.artStacks[0].colorTarget);
+  $: console.log({ processRequest });
+
+  $: {
+    if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
+      processRequest.RequestData.targetLocation["refData"][
+        "standardObserver"
+      ] = 1931;
+      processRequest.RequestData.targetLocation["refData"]["illuminants"] =
+        "D50";
+    }
+    if ($processState.artStacks[0].verificationTarget !== null) {
+      console.log("Adding Verification to Process Request");
+      console.log($processState.artStacks[0].verificationTarget);
+      processRequest.RequestData["verificationLocation"] =
+        $processState.artStacks[0].verificationTarget;
+      if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
+        processRequest.RequestData["verificationLocation"]["refData"][
+          "standardObserver"
+        ] = 1931;
+        processRequest.RequestData["verificationLocation"]["refData"][
+          "illuminants"
+        ] = "D50";
+      }
+    }
+  }
+
   function handleConfirm() {
     showDialog = false;
 
     if ($processState.currentTab !== tabs.length - 1) {
       $processState.currentTab += 1;
+      console.log("Sening Process Request");
+      console.log(processRequest);
+      setTimeout(() => {
+        sendMessage(JSON.stringify(processRequest));
+      }, 150);
     } else {
       console.log("Error overflow");
     }

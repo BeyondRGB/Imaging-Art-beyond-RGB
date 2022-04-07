@@ -151,10 +151,10 @@
 	<div class="app {theme} {$appSettings.sideNav ? 'sideMenu' : ''}">
 		<!-- <Navbar {routes} /> -->
 
-		<Menu icon={SettingsIcon} {routes} />
+		<Menu {routes} />
 
 		<Page {routes} bind:pages />
-		<div class={`console ${isOpen ? "open" : ""}`}>
+		<!-- <div class={`console ${isOpen ? "open" : ""}`}>
 			<div class="testBox">
 				<div class="handle" on:click={() => (isOpen = !isOpen)}>
 					{isOpen ? ">" : "<"}
@@ -163,7 +163,7 @@
 					<TestConsole {isOpen} />
 				</div>
 			</div>
-		</div>
+		</div> -->
 	</div>
 </main>
 
@@ -232,10 +232,7 @@
 	.open {
 		@apply -right-0;
 	}
-	.handle {
-		@apply bg-gray-800 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-							text-2xl rounded-l-full border-l-2 border-t-2 border-b-2 border-gray-700;
-	}
+
 	.testBox {
 		@apply bg-gray-800 w-full h-full relative rounded-l-lg flex justify-center items-center
 						border-2 border-gray-700 shadow-2xl;

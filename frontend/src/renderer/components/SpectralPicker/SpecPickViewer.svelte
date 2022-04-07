@@ -19,6 +19,8 @@
 
   export let dataURL;
 
+  export let loading;
+
   let viewer;
   let imageUrl;
 
@@ -35,7 +37,7 @@
       immediateRender: true,
       preload: true,
       showNavigator: false,
-      minZoomLevel: 0.95,
+      minZoomLevel: 0.9,
       useCanvas: true,
       showZoomControl: false,
       showHomeControl: false,
@@ -82,12 +84,23 @@
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
       console.log(viewer.isOpen());
+      console.log(imageUrl);
+      console.log(imageUrl.includes("undefined"));
+      if (!imageUrl.includes("undefined")) {
+        loading = false;
+      }
       setTimeout(() => {
         viewer.open({
           type: "image",
           url: imageUrl,
         });
-      }, 250);
+      }, 50);
+      if (show) {
+        console.log("Brush Enabled 1");
+        setTimeout(() => {
+          addOverlay();
+        }, 150);
+      }
     }
   } else {
     if (viewer) {
@@ -104,20 +117,31 @@
 
     imageUrl = temp.src;
 
-    viewer.open({
-      type: "image",
-      url: imageUrl,
-    });
+    setTimeout(() => {
+      viewer.open({
+        type: "image",
+        url: imageUrl,
+      });
+    }, 50);
+
+    if (show) {
+      console.log("Brush Enabled 3");
+      setTimeout(() => {
+        addOverlay();
+      }, 150);
+    } else {
+      removeOverlay();
+    }
   }
 
-  $: if (show) {
-    console.log("Add brush");
-    setTimeout(() => {
-      addOverlay();
-    }, 0);
-  } else {
-    removeOverlay();
-  }
+  // $: if (show) {
+  //   console.log("Brush Enabled 3");
+  //   setTimeout(() => {
+  //     addOverlay();
+  //   }, 0);
+  // } else {
+  //   removeOverlay();
+  // }
 
   function removeOverlay() {
     console.log("Remove Brush");
@@ -150,6 +174,7 @@
       element: "specView-brush",
       clickHandler: function (e) {
         console.log("PRESS");
+        console.log(viewer);
         if (viewer !== null) {
           var overlay = viewer.getOverlayById("specView-brush");
           var overlayShadow = viewer.getOverlayById("specView-brush-shadow");
@@ -168,6 +193,9 @@
             left: viewportPoint.x,
             size,
           };
+          console.log({ shadowPos });
+        } else {
+          console.log("Viewer NULL");
         }
       },
     });
@@ -238,7 +266,7 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-[90%] ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
+    @apply w-full ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
   }
   #specpick-seadragon-viewer {
     @apply h-full w-full;
