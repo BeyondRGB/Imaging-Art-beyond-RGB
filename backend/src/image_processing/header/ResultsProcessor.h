@@ -3,6 +3,8 @@
 
 #include "ImgProcessingComponent.h"
 #include "image_processing/results/calibration_results.hpp"
+#include "image_processing/results/results_formater.hpp"
+#include "image_processing/results/general_info_formater.hpp"
 #include "utils/general_utils.hpp"
 
 #define IMG_FILE_NAME(x, id) ("BTRGB_" x "_" id)
