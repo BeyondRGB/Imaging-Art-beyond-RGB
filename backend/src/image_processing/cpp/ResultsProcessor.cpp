@@ -1,5 +1,11 @@
 #include "image_processing/header/ResultsProcessor.h"
 
+ResultsProcessor::~ResultsProcessor(){
+    if(nullptr != this->formater){
+        delete this->formater;
+    }
+}
+
 void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images){
     comms->send_info("","ResultsProcessor");
     comms->send_progress(0,"ResultsProcessor");
@@ -10,10 +16,16 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     // Generate the file names to be used for output
     this->CM_f_name = this->build_output_name("CM");
     this->SP_f_name = this->build_output_name("SP");
-    this->CalibRes_f_name = this->build_output_name("Calibration", "csv");
-    this->VerRes_f_name = this->build_output_name("Verification", "csv");
-    this->GI_f_name = this->build_output_name("GeneralInfo", "txt");
+    // this->CalibRes_f_name = this->build_output_name("Calibration", "csv");
+    // this->VerRes_f_name = this->build_output_name("Verification", "csv");
     this->Pro_f_name = this->build_output_name("","btrgb");
+
+    this->GI_f_name = this->build_output_name("GeneralInfo", "txt");
+    this->M_color_f_name = this->build_output_name("M_color", "csv");
+    this->M_spectral_f_name = this->build_output_name("M_spectral", "csv");
+    this->R_ref_f_name = this->build_output_name("R_ref", "csv");
+    this->colorimetry_f_name = this->build_output_name("Colorimetry", "csv");
+    this->R_camera_f_name = this->build_output_name("R_camera", "csv");
     
     // Output Results
     this->output_user_results(images);  
@@ -59,8 +71,8 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
     jsoncons::json output_files;
     output_files.insert_or_assign("CM", this->CM_f_name+".tiff");
     output_files.insert_or_assign("SP", this->SP_f_name+".tiff");
-    output_files.insert_or_assign("CalibrationResults", this->CalibRes_f_name);
-    output_files.insert_or_assign("VerificationResults", this->VerRes_f_name);
+    // output_files.insert_or_assign("CalibrationResults", this->CalibRes_f_name);
+    // output_files.insert_or_assign("VerificationResults", this->VerRes_f_name);
     output_files.insert_or_assign("GineralInfo", this->GI_f_name);
     // Add all json objects to the main json body to be writen to .btrgb file
     jsoncons::json btrgb_json;
@@ -85,25 +97,34 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     std::string f_name;
 
     // TODO the following should be replaced with a way to formate the files as desired by Olivia
-    ResultsFormater *formater;
+    
+// Write user calibration results
+    // M_color
+    std::ofstream calib_stream;
+    calib_stream.open(this->output_dir + this->M_color_f_name);
+    this->set_formater(FormatType::M_COLOR);
+    this->formater->write_format(calib_stream, calibration_res);
+    calib_stream.close();
+    // M_spectral
 
-    // Write user calibration results
-    std::ofstream calibration_stream;
-    calibration_stream.open(this->output_dir + this->CalibRes_f_name);
-    calibration_res->write_results(calibration_stream);
-    calibration_stream.close();
+    // R_ref
+
+    // Colorimetry
+
+    // R_camera
+
+
     // Write user verification results
-    std::ofstream verification_stream;
-    verification_stream.open(this->output_dir + this->VerRes_f_name);
-    verification_res->write_results(verification_stream);
-    verification_stream.close();
+    // std::ofstream verification_stream;
+    // verification_stream.open(this->output_dir + this->VerRes_f_name);
+    // verification_res->write_results(verification_stream);
+    // verification_stream.close();
     // Write user General Info
     std::ofstream general_stream;
-    formater = new GeneralInfoFormater();
+    this->set_formater(FormatType::GEN_INFO);
     general_stream.open(this->output_dir + this->GI_f_name);
-    formater->write_format(general_stream, general_info);
+    this->formater->write_format(general_stream, general_info);
     general_stream.close();
-    delete formater;
 }
 
 std::string ResultsProcessor::build_output_name(std::string name, std::string extention){
@@ -113,4 +134,28 @@ std::string ResultsProcessor::build_output_name(std::string name, std::string ex
     if(extention != "")
         f_name += "." + extention;
     return f_name;
+}
+
+void ResultsProcessor::set_formater(FormatType type){
+    // Clean up the previous pointer before creating a new one
+    if(nullptr != this->formater){
+        delete this->formater;
+    }
+
+    switch(type){
+        case FormatType::GEN_INFO:
+            this->formater = new GeneralInfoFormater();
+            break;
+        case FormatType::M_COLOR:
+            this->formater = new MColorFormater();
+            break;
+        case FormatType::M_SPECTRAL:
+            break;
+        case FormatType::R_REF:
+            break;
+        case FormatType::COLORIMETRY:
+            break;
+        case FormatType::R_CAMERA:
+            break;
+    }
 }
