@@ -3,7 +3,7 @@
 #include "image_processing/header/BitDepthScaler.h"
 
 
-BitDepthScaler::BitDepthScaler() {}
+BitDepthScaler::BitDepthScaler() : LeafComponent("BitDepthScaler") {}
 BitDepthScaler::~BitDepthScaler() {}
 
 
@@ -11,14 +11,14 @@ void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
 
     double total = images->imageCount();
     double count = 0;
-    comms->send_progress(0, "BitDepthScaler");
+    comms->send_progress(0, this->get_name());
     for(const auto& [key, im] : *images) {
         int raw_bd = *(im->_raw_bit_depth);
 
         /* Output message. */
         std::stringstream out3;
+        comms->send_info(out3.str(), this->get_name());
         out3 << "Scaling \"" << im->getName() << "\" from " << raw_bd << " to 16 bits...";
-        comms->send_info(out3.str(), "BitDepthScaler");
 
 
         /* If the bit depth is invalid or already 16 bits: skip, do not scale anything. */
@@ -38,7 +38,8 @@ void BitDepthScaler::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
 
 
         count++;
-        comms->send_progress(count/total, "BitDepthScaler");
+        comms->send_progress(count/total, this->get_name());
     }
 
 }
+

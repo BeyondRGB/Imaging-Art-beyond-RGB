@@ -2,9 +2,9 @@
 #define BEYOND_RGB_BACKEND_RAWIMAGEREADER_H
 
 #include "ImageUtil/ImageReader/ImageReaderStrategy.hpp"
-#include "ImgProcessingComponent.h"
+#include "image_processing/header/LeafComponent.h"
 
-class ImageReader: public ImgProcessingComponent {
+class ImageReader: public LeafComponent {
 
     public:
         enum reader_strategy {none, RAW_LibRaw, TIFF_OpenCV};
@@ -18,6 +18,5 @@ class ImageReader: public ImgProcessingComponent {
         void _set_strategy(reader_strategy strategy);
 
 };
-
 
 #endif //BEYOND_RGB_BACKEND_RAWIMAGEREADER_H

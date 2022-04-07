@@ -143,6 +143,18 @@ void CommunicationObj::send_reports(jsoncons::json reports, std::string report_t
 	send_msg(all_info);
 }
 
+void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "PipelineComponents");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("component_json", compoents_list);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
 
 btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type, std::vector<uchar>* direct_binary) {
 

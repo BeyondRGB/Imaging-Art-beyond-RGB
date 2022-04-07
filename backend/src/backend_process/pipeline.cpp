@@ -162,6 +162,7 @@ void Pipeline::run() {
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
     this->send_info( "About to execute...", this->get_process_name());
     try { 
+        this->coms_obj_m->send_pipeline_components(pipeline->get_component_list());
         pipeline->execute(this->coms_obj_m.get(), images.get());
         std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
         this->coms_obj_m->send_post_calibration_msg(Pro_file);
