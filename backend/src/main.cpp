@@ -11,6 +11,7 @@
 #include "utils/json.hpp"
 
 #include "image_processing/results/general_info_formater.hpp"
+#include "image_processing/results/m_color_formater.hpp"
 
 void testFunc() {
 
@@ -28,9 +29,9 @@ void testFunc() {
 		CalibrationResults calib_res(calib_json.get_jsoncons());
 		CalibrationResults ver_res(ver_json.get_jsoncons());
 
-		formater = new GeneralInfoFormater();
+		formater = new MColorFormater();
 
-		formater->write_format(std::cout, &gen_info);
+		formater->write_format(std::cout, &calib_res);
 
 		// gen_info.write_results(std::cout);
 		// std::cout << "\n======================================================\n======================================================\n" << std::endl;
