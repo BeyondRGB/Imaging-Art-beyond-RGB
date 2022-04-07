@@ -71,7 +71,7 @@
   $: console.log({ CHARTDATA: inputData });
 </script>
 
-<button on:click={savePNG}>dl</button>
+<button on:click={savePNG}>[WIP]</button>
 <div class="line-chart" id="EstSpecChart">
   <LineChart
     data={inputData}
@@ -136,6 +136,17 @@
   .line-chart .bx--cc--line path.line {
     stroke-width: 2%;
   }
+
+  .line-chart .bx--chart-holder.filled,
+  .bx--chart-holder.fullscreen {
+    @apply bg-transparent;
+  }
+
+  .line-chart .bx--chart-holder.filled .bx--cc--chart-wrapper,
+  .bx--chart-holder.fullscreen .bx--cc--chart-wrapper {
+    @apply bg-transparent;
+  }
+
   /* .line-chart .bx--cc--chart-wrapper .layout-child {
     @apply bg-indigo-600 overflow-hidden w-[50%];
   } */

@@ -25,8 +25,8 @@
     @apply w-12 h-6 flex items-center flex-shrink-0 ml-2 p-0 rounded-full 
           duration-300 ease-in-out after:w-6 after:h-6 
           after:rounded-full after:shadow-md dark:after:shadow-md after:duration-300 
-          dark:bg-gray-800/20 bg-gray-300 peer-checked:after:translate-x-6
-          group-hover:after:translate-x-0.5 ring-0 dark:after:bg-gray-600 
+          dark:bg-gray-800/30 bg-gray-300 peer-checked:after:translate-x-6
+          group-hover:after:translate-x-0.5 ring-0 dark:after:bg-gray-100/75 
           after:bg-white dark:peer-checked:bg-blue-500 peer-checked:bg-blue-400;
   }
 

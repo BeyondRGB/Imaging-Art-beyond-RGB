@@ -1,6 +1,6 @@
 <script lang="ts">
   import {
-    sendMessage,
+    viewState,
     processState,
     connectionState,
     connect,
@@ -29,7 +29,7 @@
           colorTargetImage: { dataURL: "", filename: "" },
           verificationTargetImage: { dataURL: "", filename: "" },
           colorTarget: {},
-          verificationTarget: {},
+          verificationTarget: null,
           fields: {
             images: [],
             whitefield: [],
@@ -39,63 +39,6 @@
       ],
     });
   }
-
-  $: jsonTest = {
-    RequestType: "Process",
-    RequestID: Date.now(),
-    RequestData: {
-      images: [
-        {
-          art: $processState.artStacks[0].fields.images[0]?.name,
-          white: $processState.artStacks[0].fields.whitefield[0]?.name,
-          dark: $processState.artStacks[0].fields.darkfield[0]?.name,
-        },
-        {
-          art: $processState.artStacks[0].fields.images[1]?.name,
-          white: $processState.artStacks[0].fields.whitefield[1]?.name,
-          dark: $processState.artStacks[0].fields.darkfield[1]?.name,
-        },
-      ],
-      destinationDirectory: $processState.destDir,
-      targetLocation: {
-        top: $processState.artStacks[0].colorTarget?.top,
-        left: $processState.artStacks[0].colorTarget?.left,
-        bottom: $processState.artStacks[0].colorTarget?.bottom,
-        right: $processState.artStacks[0].colorTarget?.right,
-        cols: $processState.artStacks[0].colorTarget?.cols,
-        rows: $processState.artStacks[0].colorTarget?.rows,
-        size: $processState.artStacks[0].colorTarget?.size,
-        whitePatch: $processState.artStacks[0].colorTarget?.whitePatch,
-        refData: {
-          name: $processState.artStacks[0].colorTarget?.refData?.name,
-          standardObserver: 1931,
-          illuminants: "D50",
-        },
-      },
-    },
-  };
-
-  $: {
-    if ($processState.artStacks[0].verificationTarget !== null) {
-      jsonTest.RequestData["verificationLocation"] = {
-        top: $processState.artStacks[0].verificationTarget?.top,
-        left: $processState.artStacks[0].verificationTarget?.left,
-        bottom: $processState.artStacks[0].verificationTarget?.bottom,
-        right: $processState.artStacks[0].verificationTarget?.right,
-        cols: $processState.artStacks[0].verificationTarget?.cols,
-        rows: $processState.artStacks[0].verificationTarget?.rows,
-        size: $processState.artStacks[0].verificationTarget?.size,
-        whitePatch: $processState.artStacks[0].verificationTarget?.whitePatch,
-        refData: {
-          name: $processState.artStacks[0].verificationTarget?.refData?.name,
-          standardObserver: 1931,
-          illuminants: "D50",
-        },
-      };
-    }
-  }
-
-  $: console.log(jsonTest);
 
   $: if ($messageStore.length > 1) {
     try {
@@ -114,98 +57,10 @@
 </script>
 
 <main>
+  {#if $viewState.projectKey?.length > 1}
+    COMPLETED
+  {/if}
   <div class="top">
-    <div class="left">
-      <div class="state">
-        <button on:click={reset}>Reset</button>
-        <h3>
-          Current State: <button
-            class="stateSend"
-            on:click={() => sendMessage(JSON.stringify(jsonTest))}
-            >Send to Server</button
-          >
-          <!-- <button class="" on:click={() => (textValue = JSON.stringify(jsonTest))}
-          >Copy to Term</button
-        > -->
-        </h3>
-        <div class="box">
-          <p>
-            <span class="key">RequestType</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            > <span>Process</span>,
-          </p>
-          <p>
-            <span class="key">RequestID</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-            <span>{jsonTest.RequestID}</span>
-          </p>
-          <p>
-            <span class="key">RequestData</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-          </p>
-          <p class="px-2">
-            <span class="key">images</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-
-            {#each jsonTest.RequestData.images as image, index}
-              <li>
-                <span class="letter"
-                  >// Image {String.fromCharCode(65 + index)}</span
-                >
-                {#each Object.keys(image) as key}
-                  <li>
-                    <span class="key">{key}</span><span
-                      style="font-weight: bold; background-color: transparent;"
-                      >:</span
-                    >
-                    <span>{image[key]}</span>
-                  </li>
-                {/each}
-              </li>
-            {/each}
-          </p>
-          <p>
-            <span class="key">destinationDirectory</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-            <span>{jsonTest.RequestData.destinationDirectory}</span>
-          </p>
-          <p class="px-2">
-            <span class="key">targetLoation</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-
-            {#each Object.keys(jsonTest.RequestData.targetLocation) as key}
-              <li>
-                <span class="key">{key}</span><span
-                  style="font-weight: bold; background-color: transparent;"
-                  >:</span
-                >
-                <span>{jsonTest.RequestData.targetLocation[key]}</span>
-              </li>
-              <!-- <p class="px-2">
-                <span class="key">refData</span><span
-                  style="font-weight: bold; background-color: transparent;"
-                  >:</span
-                >
-
-                {#each Object.keys(jsonTest.RequestData.refData) as key}
-                  <li>
-                    <span class="key">{key}</span><span
-                      style="font-weight: bold; background-color: transparent;"
-                      >:</span
-                    > <span>{jsonTest.RequestData.refData[key]}</span>
-                  </li>
-                {/each}
-              </p> -->
-            {/each}
-          </p>
-        </div>
-      </div>
-    </div>
     <div class="right">
       <div class="image">
         <h4>{$processState.outputImage?.name}</h4>
