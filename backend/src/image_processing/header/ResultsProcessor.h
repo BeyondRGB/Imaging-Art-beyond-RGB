@@ -5,6 +5,7 @@
 #include "image_processing/results/calibration_results.hpp"
 #include "image_processing/results/results_formater.hpp"
 #include "image_processing/results/general_info_formater.hpp"
+#include "image_processing/results/m_color_formater.hpp"
 #include "utils/general_utils.hpp"
 
 #define IMG_FILE_NAME(x, id) ("BTRGB_" x "_" id)
@@ -15,9 +16,19 @@
  * 
  */
 class ResultsProcessor : public ImgProcessingComponent{
+    
     public:
+        enum FormatType{
+            GEN_INFO,
+            M_COLOR,
+            M_SPECTRAL,
+            R_REF,
+            COLORIMETRY,
+            R_CAMERA
+        };
+    
         ResultsProcessor(){};
-        ~ResultsProcessor(){};
+        ~ResultsProcessor();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
     private:
@@ -46,15 +57,26 @@ class ResultsProcessor : public ImgProcessingComponent{
 
         std::string build_output_name(std::string name, std::string extention="");
 
+        void set_formater(FormatType type);
+
+        ResultsFormater *formater = nullptr;
+
         std::string output_dir;
         std::string ts_id;
 
         std::string CM_f_name;
         std::string SP_f_name;
         std::string Pro_f_name;
-        std::string CalibRes_f_name;
-        std::string VerRes_f_name;
+        // std::string CalibRes_f_name;
+        // std::string VerRes_f_name;
+
         std::string GI_f_name;
+        std::string M_color_f_name;
+        std::string M_spectral_f_name;
+        std::string R_ref_f_name;
+        std::string colorimetry_f_name;
+        std::string R_camera_f_name;
+
 };
 
 #endif //RESULTS_PROCESSOR_H

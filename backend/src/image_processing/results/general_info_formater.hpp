@@ -4,7 +4,6 @@
 #include "image_processing/results/results_formater.hpp"
 
 #define IMG_NAME_COUNT 8
-#define GEN_INFO_DELIM
 
 class GeneralInfoFormater : public ResultsFormater{
 
