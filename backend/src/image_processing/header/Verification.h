@@ -1,15 +1,15 @@
 #ifndef VERIFICATION_H
 #define VERIFICATION_H
 
-#include "image_processing/header/ImgProcessingComponent.h"
+#include "image_processing/header/LeafComponent.h"
 #include "utils/calibration_util.hpp"
 
 // #include <lcms2.h>
 
-class Verification : public ImgProcessingComponent{
+class Verification : public LeafComponent{
 
     public:
-        Verification(){};
+        Verification() : LeafComponent("Verification"){};
         ~Verification(){};
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
