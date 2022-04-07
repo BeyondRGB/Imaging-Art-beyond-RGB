@@ -147,7 +147,7 @@ void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list){
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "PipelineComponents");
 	jsoncons::json response_data;
-	response_data.insert_or_assign("component_list", compoents_list);
+	response_data.insert_or_assign("component_json", compoents_list);
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
