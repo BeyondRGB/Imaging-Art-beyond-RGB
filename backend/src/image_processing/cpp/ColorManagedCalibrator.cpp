@@ -4,8 +4,8 @@ ColorManagedCalibrator::~ColorManagedCalibrator() {
 }
 
 void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("", "Color Managed Calibration");
-    comms->send_progress(0, "Color Managed Calibration");
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     btrgb::Image* art1;
     btrgb::Image* art2;
@@ -23,18 +23,18 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        comms->send_error("ColorManagedCalibrator called out of order. Missing at least 1 image assignment.", "Color Managed Calibration");
+        comms->send_error("ColorManagedCalibrator called out of order. Missing at least 1 image assignment.", this->get_name());
         return;
     }
     catch (const std::logic_error& e) {
         std::string error(e.what());
-        comms->send_error(error, "Color Managed Calibration");
+        comms->send_error(error, this->get_name());
         return;
     }
 
     // Init Color Targets
-    target1 = images->get_target(ART(1));
-    target2 = images->get_target(ART(2));
+    target1 = images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
+    target2 = images->get_target(ART(2), btrgb::TargetType::GENERAL_TARGET);
     ColorTarget targets[] = { target1, target2 };
     int channel_count = art1->channels();
     int target_count = std::size(targets);
@@ -42,26 +42,26 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     // Init Matracies used in calibration
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
     this->build_input_matrix();
-    comms->send_progress(0.1, "Color Managed Calibration");
+    comms->send_progress(0.1, this->get_name());
     this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
 
     // Fined M and Offsets to minimize deltaE
     std::cout << "Optimizing to minimize deltaE" << std::endl;
     this->find_optimization();
-    comms->send_progress(0.6, "Color Managed Calibration");
+    comms->send_progress(0.6, this->get_name());
 
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     try { this->update_image(images); }
     catch(btrgb::ArtObj_ImageAlreadyExists e) {
-       comms->send_error("Image already exists, could not save result.", "Color Managed Calibration");
+       comms->send_error("Image already exists, could not save result.", this->get_name());
     } catch(btrgb::ArtObj_FailedToWriteImage e) {
-       comms->send_error("Failed to write image.", "Color Managed Calibration");
-    } comms->send_progress(0.9, "Color Managed Calibration");
+       comms->send_error("Failed to write image.", this->get_name());
+    } comms->send_progress(0.9, this->get_name());
 
     // Save resulting Matacies for latter use
     this->output_report_data(images);
-    comms->send_progress(1, "Color Managed Calibration");
+    comms->send_progress(1, this->get_name());
 
     // Dont remove art1 and art2 from the ArtObject yet as they are still needed for spectral calibration
 
@@ -194,9 +194,9 @@ void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
     cv::Mat L_ref;
     cv::Mat a_ref;
     cv::Mat b_ref;
-    this->fill_Lab_values(&L_camera, &a_camera, &b_camera,
+    btrgb::calibration::fill_Lab_values(&L_camera, &a_camera, &b_camera,
                           &L_ref,    &a_ref,    &b_ref,
-                          cm_xyz);
+                          cm_xyz, this->ref_data);
     // Fetch Results Object to store results in
     CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
     
@@ -271,44 +271,6 @@ void ColorManagedCalibrator::build_input_matrix() {
 
 }
 
-
-void ColorManagedCalibrator::fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
-                                             cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
-                                              cv::Mat xyz){
-    int row_count = this->ref_data->get_row_count();
-    int col_count = this->ref_data->get_col_count();
-    *L_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *b_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *a_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *L_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *a_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-    *b_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
-
-    WhitePoints* wp = this->ref_data->get_white_pts();
-    for(int row = 0; row < row_count; row++){
-        for(int col = 0; col < col_count; col++){
-            // Get/Store L*,a*,b* values from RefData
-            L_ref->at<double>(row,col) = this->ref_data->get_L(row, col);
-            a_ref->at<double>(row,col) = this->ref_data->get_a(row, col);
-            b_ref->at<double>(row,col) = this->ref_data->get_b(row, col);
-
-            // Extract current camera_(x,y,z)
-            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
-            int xyz_index = col + row * col_count;
-            double x = 100 * xyz.at<double>(0, xyz_index);
-            double y = 100 * xyz.at<double>(1, xyz_index);
-            double z = 100 * xyz.at<double>(2, xyz_index);
-            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
-            btrgb::XYZ_t xyz = {x, y, z};
-            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
-            // Stor L*,a*,b* values from camera sigs
-            L_camera->at<double>(row,col) = lab.L;
-            a_camera->at<double>(row,col) = lab.a;
-            b_camera->at<double>(row,col) = lab.b;
-        }
-    }
-    
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 //                                DeltaE Function                             //
@@ -388,47 +350,13 @@ double DeltaEFunction::calc(const double* x)const{
     // Compute camera_xyz
     cv::Mat_<double> xyz = *this->M * offset_avg;
 
-    // Establish vars for DeltaE calculation
+    // // Establish vars for DeltaE calculation
     int row_count = this->ref_data->get_row_count();
     int col_count = this->ref_data->get_col_count();
-    double ref_L;
-    double ref_a;
-    double ref_b;
-    double L;
-    double a;
-    double b;
 
-    // Calculate AVG delta E for all ColorPatches on target
-    // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
-    WhitePoints* wp = this->ref_data->get_white_pts();
-    double deltaE_sum = 0;
-    for (int row = 0; row < row_count; row++) {
-        for (int col = 0; col < col_count; col++) {
-            // Get L*,a*,b* values from RefData
-            ref_L = this->ref_data->get_L(row, col);
-            ref_a = this->ref_data->get_a(row, col);
-            ref_b = this->ref_data->get_b(row, col);
-
-            // Extract current camera_(x,y,z)
-            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
-            int xyz_index = col + row * col_count;
-            double x = 100 * xyz.at<double>(0, xyz_index);
-            double y = 100 * xyz.at<double>(1, xyz_index);
-            double z = 100 * xyz.at<double>(2, xyz_index);
-            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
-            btrgb::XYZ_t xyz = {x, y, z};
-            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
-
-            // Calculate deltaE and add to sum
-            cmsCIELab lab1 = {ref_L, ref_a, ref_b};
-            cmsCIELab lab2 = {lab.L, lab.a, lab.b};
-            double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
-            // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
-            this->delE_values->at<double>(row,col) = delE;
-            deltaE_sum += delE;
-        }
-    }
-
+    // Compute DeltaE values/sum
+    double deltaE_sum = btrgb::calibration::compute_deltaE_sum(this->ref_data, xyz, this->delE_values);
+    
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
