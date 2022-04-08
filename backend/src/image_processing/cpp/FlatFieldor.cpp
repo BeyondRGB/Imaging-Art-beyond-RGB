@@ -10,8 +10,8 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     btrgb::Image *dark2;
     RefData *reference;
 
-    comms->send_info("", "Flat Fielding");
-    comms->send_progress(0, "Flat Fielding");
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     // Pull the images needed out of the Art Object
     try
@@ -26,7 +26,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist &e)
     {
-        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", "FlatFieldor");
+        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", this->get_name());
         return;
     }
 
@@ -35,7 +35,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     int width = art1->width();
     int channels = art1->channels();
 
-    ColorTarget target = images->get_target("art1");
+    ColorTarget target = images->get_target("art1", btrgb::TargetType::GENERAL_TARGET);
 
     //Col and Row of the white patch on the target
     int whiteRow = target.get_white_row();
@@ -46,7 +46,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 
     //Getting average patch values for white and art images channel two
     float patAvg = target.get_patch_avg(whiteRow, whiteCol, 1);
-    float whiteAvg = images->get_target("white1").get_patch_avg(whiteRow, whiteCol, 1);
+    float whiteAvg = images->get_target("white1", btrgb::TargetType::GENERAL_TARGET).get_patch_avg(whiteRow, whiteCol, 1);
 
     //Calculate w value and complete the pixel operation with set w value
     wCalc(patAvg, whiteAvg, yVal);
@@ -61,7 +61,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     images->deleteImage("dark1");
     images->deleteImage("dark2");
 
-    comms->send_progress(1, "Flat Fielding");
+    comms->send_progress(1, this->get_name());
     // Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "art1_ff");
     images->outputImageAs(btrgb::TIFF, "art2", "art2_ff");
@@ -119,7 +119,7 @@ void FlatFieldor::store_results(btrgb::ArtObject* images){
     CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
 
     RefData *reference = images->get_refrence_data();
-    ColorTarget target = images->get_target("art1");
+    ColorTarget target = images->get_target("art1", btrgb::TargetType::GENERAL_TARGET);
     //Col and Row of the white patch on the target
     int whiteRow = target.get_white_row();
     int whiteCol = target.get_white_col();

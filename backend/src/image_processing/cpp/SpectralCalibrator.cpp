@@ -1,8 +1,8 @@
 #include "../header/SpectralCalibrator.h"
 
 void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* images) {
-    comms->send_info("", "SpectralCalibration");
-    comms->send_progress(0, "SpectralCalibration");
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
     
     btrgb::Image* art1;
     btrgb::Image* art2;
@@ -16,23 +16,23 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
         this->ref_data = images->get_refrence_data();
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        comms->send_info("Error: Flatfielding called out of order. Missing at least 1 image assignment.", "SpectralCalibration");
+        comms->send_info("Error: Flatfielding called out of order. Missing at least 1 image assignment.", this->get_name());
         return;
     }
     catch (const std::logic_error& e) {
         std::string error(e.what());
-        comms->send_info("Error: " + error, "SpectralCalibration");
+        comms->send_info("Error: " + error, this->get_name());
         return;
     }
 
     // Init Color Targets
-    target1 = images->get_target(ART(1));
-    target2 = images->get_target(ART(2));
+    target1 = images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
+    target2 = images->get_target(ART(2), btrgb::TargetType::GENERAL_TARGET);
     ColorTarget targets[] = { target1, target2 };
     int channel_count = art1->channels();
     int target_count = std::size(targets);
 
-    comms->send_progress(0.2, "SpectralCalibration");
+    comms->send_progress(0.2, this->get_name());
 
     //Init ColorTarget Averages
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
@@ -43,7 +43,7 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     // Initialize M_relf starting values
     this->init_M_refl(ref_data_matrix);
 
-    comms->send_progress(0.4, "SpectralCalibration");
+    comms->send_progress(0.4, this->get_name());
 
     // Create Custom WeightedErrorFunction used to minimize Z
     cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
@@ -72,7 +72,7 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     );
     
     std::cout << "Running Minimization." << std::endl;
-    comms->send_progress(0.5, "SpectralCalibration");
+    comms->send_progress(0.5, this->get_name());
 
     TimeTracker time_tracker;
     time_tracker.start_timeing();
@@ -80,14 +80,14 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     double res = min_solver->minimize(this->input_array);
     time_tracker.end_timeing();
 
-    comms->send_progress(0.9, "SpectralCalibration");
+    comms->send_progress(0.9, this->get_name());
 
     this->store_results(images);  
 
     this->store_spectral_img(images); 
 
     std::cout << "SpectralCalibration done" << std::endl;
-    comms->send_progress(1, "SpectralCalibration");
+    comms->send_progress(1, this->get_name());
 }
 
 void SpectralCalibrator::init_M_refl(cv::Mat R_ref){
@@ -139,6 +139,7 @@ void SpectralCalibrator::store_spectral_img(btrgb::ArtObject *images){
     spectral_img->setConversionMatrix(BTRGB_M_REFL_OPT, this->M_refl);
     images->setImage(SP_IMAGE_KEY, spectral_img);
 }
+
 
 
 ////////////////////////////////////////////////////////////////
