@@ -10,8 +10,8 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     btrgb::Image *dark2;
     RefData *reference;
 
-    comms->send_info("", "Flat Fielding");
-    comms->send_progress(0, "Flat Fielding");
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     // Pull the images needed out of the Art Object
     try
@@ -26,7 +26,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist &e)
     {
-        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", "FlatFieldor");
+        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", this->get_name());
         return;
     }
 
@@ -61,7 +61,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     images->deleteImage("dark1");
     images->deleteImage("dark2");
 
-    comms->send_progress(1, "Flat Fielding");
+    comms->send_progress(1, this->get_name());
     // Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "art1_ff");
     images->outputImageAs(btrgb::TIFF, "art2", "art2_ff");

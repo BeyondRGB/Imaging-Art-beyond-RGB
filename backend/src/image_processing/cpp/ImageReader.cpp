@@ -8,7 +8,7 @@
 #include "image_processing/header/ImageReader.h"
 
 
-ImageReader::ImageReader() {}
+ImageReader::ImageReader() : LeafComponent("ImageReader") {}
 
 ImageReader::~ImageReader() {
     delete this->_reader;
@@ -39,16 +39,16 @@ void ImageReader::_set_strategy(reader_strategy strategy) {
 
 
 void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("Reading In Raw Image Data!", "ImageReader");
+    comms->send_info("Reading In Raw Image Data!", this->get_name());
 
     btrgb::BitDepthFinder util;
     std::shared_ptr<int> bit_depth(new int(-1));
 
     double total = images->imageCount();
     double count = 0;
-    comms->send_progress(0, "RawImageReader");
+    comms->send_progress(0, this->get_name());
     for(const auto& [key, im] : *images) {
-        comms->send_info("Loading " + im->getName() + "...", "ImageReader");
+        comms->send_info("Loading " + im->getName() + "...", this->get_name());
 
         /* Initialize image reader. */
         if(btrgb::Image::is_tiff(im->getName()))
@@ -89,24 +89,25 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
             im->_raw_bit_depth = bit_depth;
             
             count++;
-            comms->send_progress(count/total, "ImageReader");
+            comms->send_progress(count/total, this->get_name());
+
         }
         catch(const btrgb::LibRawFileTypeUnsupported& e) {
-            comms->send_error("File type unknown, or unsupported by LibRaw.", "ImageReader");
+            comms->send_error("File type unknown, or unsupported by LibRaw.", this->get_name());
             images->deleteImage(key);
         }
         catch(const btrgb::ReaderFailedToOpenFile& e) {
-            comms->send_error(std::string(e.what()) + " : " + im->getName(), "ImageReader");
+            comms->send_error(std::string(e.what()) + " : " + im->getName(), this->get_name());
             images->deleteImage(key);
         }
         catch(const std::runtime_error& e) {
-            comms->send_error(std::string(e.what()) + " : " + im->getName(), "ImageReader");
+            comms->send_error(std::string(e.what()) + " : " + im->getName(), this->get_name());
             images->deleteImage(key);
         }
 
 
     }
     
-    comms->send_progress(1, "RawImageReader");
+    comms->send_progress(1, this->get_name());
 
 }
