@@ -24,12 +24,12 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
         comms->send_error("ColorManagedCalibrator called out of order. Missing at least 1 image assignment.", this->get_name());
-        return;
+        throw;
     }
     catch (const std::logic_error& e) {
         std::string error(e.what());
         comms->send_error(error, this->get_name());
-        return;
+        throw;
     }
 
     // Init Color Targets
@@ -55,8 +55,10 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     try { this->update_image(images); }
     catch(btrgb::ArtObj_ImageAlreadyExists e) {
        comms->send_error("Image already exists, could not save result.", this->get_name());
+       throw;
     } catch(btrgb::ArtObj_FailedToWriteImage e) {
        comms->send_error("Failed to write image.", this->get_name());
+       throw;
     } comms->send_progress(0.9, this->get_name());
 
     // Save resulting Matacies for latter use

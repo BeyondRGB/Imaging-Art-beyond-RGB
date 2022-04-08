@@ -30,15 +30,15 @@ void ThumbnailLoader::run() {
 
         }
         catch(btrgb::ReaderFailedToOpenFile& e) {
-            this->coms_obj_m->send_error("Failed to open file " + fname, "ThumbnailLoader");
+            this->coms_obj_m->send_error("Failed to open file " + fname, "ThumbnailLoader", btrgb::BENING);
             std::cerr << "Failed to open file " + fname << std::endl;
         }
         catch(std::runtime_error& e) {
-            this->coms_obj_m->send_error(e.what(), "ThumbnailLoader");
+            this->coms_obj_m->send_error(e.what(), "ThumbnailLoader", btrgb::BENING);
             std::cerr << e.what() << std::endl;
         }
         catch(...) {
-            this->coms_obj_m->send_error("[ThumbnailLoader] Unknown error.", "ThumbnailLoader");
+            this->coms_obj_m->send_error("[ThumbnailLoader] Unknown error.", "ThumbnailLoader", btrgb::BENING);
             std::cerr << "[ThumbnailLoader] Unknown error." << std::endl;
         }
 
