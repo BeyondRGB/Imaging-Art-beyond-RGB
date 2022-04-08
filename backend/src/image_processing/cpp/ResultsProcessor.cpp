@@ -106,7 +106,10 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     this->formater->write_format(calib_stream, calibration_res);
     calib_stream.close();
     // M_spectral
-
+    calib_stream.open(this->output_dir + this->M_spectral_f_name);
+    this->set_formater(FormatType::M_SPECTRAL);
+    this->formater->write_format(calib_stream, calibration_res);
+    calib_stream.close();
     // R_ref
 
     // Colorimetry
@@ -150,6 +153,7 @@ void ResultsProcessor::set_formater(FormatType type){
             this->formater = new MColorFormater();
             break;
         case FormatType::M_SPECTRAL:
+            this->formater = new MSpectralFormater();
             break;
         case FormatType::R_REF:
             break;
