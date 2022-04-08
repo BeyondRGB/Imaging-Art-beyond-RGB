@@ -16,16 +16,15 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
     }
     catch (btrgb::ArtObj_VerificationDataNull e){
         comms->send_error(e.what(), "Verification");
-        return;
+        throw;
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
         comms->send_error("Verification called out of order. Missing at least 1 image assignment.", "Verification");
-        return;
+        throw;
     }
     catch (const std::logic_error& e) {
-        std::string error(e.what());
-        comms->send_error(error, "Verification");
-        return;
+        comms->send_error(e.what(), "Verification");
+        throw;
     }
 
     this->verify_CM_calibration(comms, images);

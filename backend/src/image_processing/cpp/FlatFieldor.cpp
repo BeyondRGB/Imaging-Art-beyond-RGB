@@ -27,7 +27,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     catch (const btrgb::ArtObj_ImageDoesNotExist &e)
     {
         comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", this->get_name());
-        return;
+        throw;
     }
 
     // Set up variables for the overall size of all the images, they are all the same size

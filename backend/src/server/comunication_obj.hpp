@@ -19,6 +19,11 @@
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
+namespace btrgb {
+	const bool CRITICAL = true;
+	const bool BENING = false;
+}
+
 /**
 * Class used for sending mesages to the front end.
 * An instance of the class gets created when a new msg is recieved from the forntedn.
@@ -60,7 +65,7 @@ public:
 	* @param msg: the message being sent to the front end
 	* @param sender: what function is sending the message
 	*/
-	void send_error(std::string msg, std::string sender);
+	void send_error(std::string msg, std::string sender, bool critical=true);
 	/**
 	* Function for sending a Progress Update Message to the front end
 	* @param val: amount of progress made in a overall step
