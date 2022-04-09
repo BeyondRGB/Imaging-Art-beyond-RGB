@@ -7,7 +7,15 @@ HalfSizePreview::~HalfSizePreview() {}
 
 void HalfSizePreview::run() {
 
-    Json filenames = this->process_data_m->get_array("names");
+    Json filenames;
+    try {
+        filenames = this->process_data_m->get_array("names");
+    }
+    catch(const std::exception& e) {
+        this->coms_obj_m->send_error("[HalfSizePreview] Invalid request.", "HalfSizePreview");
+        return;
+    }
+    
     std::unique_ptr<btrgb::LibRawReader> raw_reader(new btrgb::LibRawReader(btrgb::LibRawReader::PREVIEW));
     std::unique_ptr<btrgb::LibTiffReader> tiff_reader(new btrgb::LibTiffReader);
     btrgb::ImageReaderStrategy* reader;
