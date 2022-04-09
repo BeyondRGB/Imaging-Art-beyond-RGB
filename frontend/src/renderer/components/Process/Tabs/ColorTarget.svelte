@@ -85,7 +85,8 @@
 
   $: if (
     $processState.currentTab === 4 &&
-    $processState.artStacks[0].colorTargetImage?.filename?.length === 0
+    $processState.artStacks[0].colorTargetImage?.filename?.length === 0 &&
+    $processState.artStacks[0].fields.images[0] != null
   ) {
     console.log("Getting Color Target Preview");
     console.log($processState);
