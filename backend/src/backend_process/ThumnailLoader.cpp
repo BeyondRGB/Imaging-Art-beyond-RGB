@@ -1,4 +1,3 @@
-#include <regex>
 #include "backend_process/ThumbnailLoader.hpp"
 
 ThumbnailLoader::~ThumbnailLoader() {}
@@ -23,16 +22,13 @@ void ThumbnailLoader::run() {
 
             }
             catch(btrgb::ReaderFailedToOpenFile& e) {
-                this->coms_obj_m->send_error("Failed to open file " + fname, "ThumbnailLoader");
-                std::cerr << "Failed to open file " + fname << std::endl;
+                this->coms_obj_m->send_error("Failed to open file " + fname, "ThumbnailLoader", btrgb::BENING);
             }
             catch(std::runtime_error& e) {
-                this->coms_obj_m->send_error(e.what(), "ThumbnailLoader");
-                std::cerr << e.what() << std::endl;
+                this->coms_obj_m->send_error(e.what(), "ThumbnailLoader", btrgb::BENING);
             }
             catch(...) {
-                this->coms_obj_m->send_error("[ThumbnailLoader] Unknown error.", "ThumbnailLoader");
-                std::cerr << "[ThumbnailLoader] Unknown error." << std::endl;
+                this->coms_obj_m->send_error("[ThumbnailLoader] Unknown error.", "ThumbnailLoader", btrgb::BENING);
             }
 
             raw_thumbnail_reader->recycle();
@@ -40,7 +36,7 @@ void ThumbnailLoader::run() {
         }
     }
     catch(const std::exception& e) {
-        this->coms_obj_m->send_error("[ThumbnailLoader] Invalid request.", "ThumbnailLoader");
+        this->coms_obj_m->send_error("[ThumbnailLoader] Invalid request.", "ThumbnailLoader", btrgb::CRITICAL);
         return;
     }
 

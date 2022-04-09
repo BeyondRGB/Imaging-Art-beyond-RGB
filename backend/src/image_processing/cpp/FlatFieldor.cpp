@@ -23,11 +23,11 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         white2 = images->getImage("white2");
         dark2 = images->getImage("dark2");
         reference = images->get_refrence_data();
+
     }
-    catch (const btrgb::ArtObj_ImageDoesNotExist &e)
+    catch (const std::exception &e)
     {
-        comms->send_error("Error: Flatfielding called out of order. Missing at least 1 image assignment.", this->get_name());
-        return;
+        throw ImgProcessingComponent::error(e.what(), this->get_name());
     }
 
     // Set up variables for the overall size of all the images, they are all the same size
@@ -60,6 +60,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
+    std::cout << "flat Time";
 
     comms->send_progress(1, this->get_name());
     // Outputs TIFFs for each image group for after this step, temporary
