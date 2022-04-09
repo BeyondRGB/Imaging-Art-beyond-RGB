@@ -9,6 +9,8 @@
   let modal;
 
   export let minimal = false;
+  export let customExit = false;
+  export let component;
 
   $: theme = $appSettings.theme ? "dark" : "";
 
@@ -56,10 +58,13 @@
     bind:this={modal}
     transition:fly={{ y: window.innerHeight, duration: 250, opacity: 0 }}
   >
-    <slot />
+    <!-- <slot /> -->
+    <svelte:component this={component} closeModal={close} />
 
     <!-- svelte-ignore a11y-autofocus -->
-    <button class="closeDia" autofocus on:click={close}>close modal</button>
+    {#if !customExit}
+      <button class="closeDia" autofocus on:click={close}>close modal</button>
+    {/if}
   </div>
 {:else}
   <div
@@ -71,7 +76,8 @@
     <button class="closeHome" on:click={close}
       ><ChevronDownIcon size="2x" /></button
     >
-    <slot />
+    <!-- <slot /> -->
+    <svelte:component this={component} />
   </div>
 {/if}
 

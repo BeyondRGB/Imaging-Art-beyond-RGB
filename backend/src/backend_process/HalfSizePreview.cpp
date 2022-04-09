@@ -15,7 +15,7 @@ void HalfSizePreview::run() {
 
     Json filenames = this->process_data_m->get_array("names");
     std::unique_ptr<btrgb::LibRawReader> raw_reader(new btrgb::LibRawReader(btrgb::LibRawReader::PREVIEW));
-    std::unique_ptr<btrgb::TiffReaderOpenCV> tiff_reader(new btrgb::TiffReaderOpenCV);
+    std::unique_ptr<btrgb::LibTiffReader> tiff_reader(new btrgb::LibTiffReader);
     btrgb::ImageReaderStrategy* reader;
     std::string fname;
     bool is_tiff;

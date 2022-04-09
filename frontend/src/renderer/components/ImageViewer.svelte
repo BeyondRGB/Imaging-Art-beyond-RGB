@@ -1,12 +1,5 @@
 <script lang="ts">
-  import {
-    currentPage,
-    messageStore,
-    processState,
-    sendMessage,
-  } from "@util/stores";
   import { currentPage, processState } from "@util/stores";
-  import placeholder from "@assets/placeholder.jpg";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
   import Loader from "@components/Loader.svelte";
