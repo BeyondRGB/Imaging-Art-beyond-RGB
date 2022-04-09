@@ -25,7 +25,7 @@
 	class="page dark:bg-gray-800 bg-white {$appSettings.sideNav ? 'sideNav' : ''}"
 >
 	{#each Object.keys(routes) as pageKey}
-		{#if routes[pageKey].page}
+		{#if routes[pageKey].page && !routes[pageKey].disabled}
 			<div
 				class="content"
 				in:fade={{ duration: 250, delay: 250 }}

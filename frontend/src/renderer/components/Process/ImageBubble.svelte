@@ -63,41 +63,45 @@
   };
 </script>
 
-<div
-  class:bubble={!minimal}
-  on:mouseenter={toggleDropdown}
-  on:mouseleave={toggleDropdown}
-  bind:this={btnRef}
->
-  {#if minimal}
-    {filename.split("\\").length > 2
-      ? filename.split("\\").at(-1)
-      : filename.split("/").at(-1)}
-  {:else}
-    <ImageIcon size="1.5x" />
-    {filename}
-  {/if}
-</div>
-
-<div class="body" class:small={minimal} bind:this={popRef} class:shown={show}>
-  <img src={$processState.imageThumbnails[filename]} alt={filename} />
-</div>
+<main class="group">
+  <div
+    class:bubble={!minimal}
+    on:mouseenter={toggleDropdown}
+    on:mouseleave={toggleDropdown}
+    bind:this={btnRef}
+  >
+    {#if minimal}
+      {filename.split("\\").length > 2
+        ? filename.split("\\").at(-1)
+        : filename.split("/").at(-1)}
+    {:else}
+      <ImageIcon size="1.5x" />
+      {filename}
+    {/if}
+  </div>
+  <!-- class:shown={show} -->
+  <div class="body" class:small={minimal} bind:this={popRef}>
+    <img src={$processState.imageThumbnails[filename]} alt={filename} />
+  </div>
+</main>
 
 <style lang="postcss">
+  main {
+    @apply w-full h-full;
+  }
   .bubble {
     @apply bg-gray-600 py-2 rounded-3xl hover:bg-gray-500/25
             flex justify-between items-center text-[1.05rem] px-4 gap-1;
   }
   .body {
-    @apply bg-gray-600 z-50 hidden fixed max-w-[35vw] p-1;
+    @apply bg-gray-700/75  -z-50 fixed max-w-[35vw] p-1
+           group-hover:z-50 rounded-md transition-all 
+          delay-300;
   }
   .small {
     @apply max-w-[25vw];
   }
   img {
     @apply w-full h-full;
-  }
-  .shown {
-    @apply block rounded-md fixed bg-gray-700/75;
   }
 </style>

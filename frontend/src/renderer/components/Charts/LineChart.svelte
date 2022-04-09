@@ -7,6 +7,7 @@
 
   export let data = [];
   export let wavelengthArray;
+  export let shadowPos;
 
   let inputData = [];
 
@@ -26,17 +27,12 @@
   let imageDataURL;
 
   function savePNG() {
-    html2canvas(
-      document
-        .getElementById("EstSpecChart")
-        .querySelector(".bx--chart-holder"),
-      {
-        backgroundColor: "#3a3a3c",
-        scale: window.devicePixelRatio * 2,
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
-      }
-    ).then(function (canvas) {
+    html2canvas(document.getElementById("EstSpecChart"), {
+      backgroundColor: "#3a3a3c",
+      scale: window.devicePixelRatio * 2,
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight,
+    }).then(function (canvas) {
       console.log("Created Canvas");
       console.log(document.querySelector(".bx--chart-holder"));
       // document.getElementById("EstSpecChart").appendChild(canvas);
@@ -73,6 +69,8 @@
 
 <button on:click={savePNG}>[WIP]</button>
 <div class="line-chart" id="EstSpecChart">
+  left(x):{shadowPos?.left}
+  top(y):{shadowPos?.top}
   <LineChart
     data={inputData}
     options={{

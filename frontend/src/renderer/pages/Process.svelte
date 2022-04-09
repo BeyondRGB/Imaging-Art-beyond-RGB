@@ -237,7 +237,7 @@
       >
     {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
       <button on:click={() => (showDialog = true)} class="nextBtn"
-        >Confirm</button
+        >Begin Processing</button
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
@@ -319,7 +319,8 @@
     @apply w-full h-full;
   } */
   .tab {
-    @apply w-16 h-1 rounded-full bg-blue-400 self-center mx-2;
+    @apply w-16 h-2 rounded-full bg-blue-400 self-center mx-2 ring-1 ring-blue-400
+          transition-all duration-700 ease-out;
   }
   #backBtn {
     @apply absolute h-8 py-0 ml-2 my-2;

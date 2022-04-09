@@ -5,23 +5,23 @@
   export let label = "Select Files";
   export let filePaths = [];
   export let icon = FilePlusIcon;
+  export let largeText = false;
   let ipcResponse;
   const temp = async () => {
     ipcResponse = await window.electron.handle({ type, filter });
     console.log(ipcResponse);
   };
-  $: {
-    console.log(ipcResponse);
-  }
-  $: {
-    console.log(ipcResponse?.filePaths);
-    filePaths = ipcResponse?.filePaths;
+  $: if (ipcResponse) {
+    if (!ipcResponse.canceled) {
+      filePaths = ipcResponse?.filePaths;
+    }
   }
 </script>
 
 <main>
   <button
     class="group"
+    class:largeText
     on:click={async () => {
       await temp();
     }}
@@ -38,6 +38,9 @@
   }
   button {
     @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
+  }
+  .largeText {
+    @apply text-lg;
   }
   .icon {
     @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;

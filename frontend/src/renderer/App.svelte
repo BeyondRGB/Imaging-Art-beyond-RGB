@@ -1,18 +1,15 @@
 <script lang="ts">
 	import { currentPage, appSettings, modal } from "@util/stores";
 	// Components
-	// import Navbar from "@components/Navbar.svelte";
 	import Menu from "@components/Menu.svelte";
 	import Page from "@components/Page.svelte";
 	// Pages
 	import Home from "@pages/Home.svelte";
-	import ManagedRgb from "@pages/ManagedRgb.svelte";
 	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
 	import Process from "@pages/Process.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
-	import Demo from "@pages/Demo.svelte";
 	import TestConsole from "@components/TestConsole.svelte";
 
 	import {
@@ -36,7 +33,7 @@
 			default: true,
 		},
 		Process: {
-			text: "Process",
+			text: "Select & Process",
 			component: Process,
 			icon: ApertureIcon,
 			isShown: true,
@@ -51,7 +48,7 @@
 		},
 
 		Reports: {
-			text: "Reports",
+			text: "Calibration Reports",
 			component: Reports,
 			icon: FileTextIcon,
 			isShown: true,
@@ -117,7 +114,7 @@
 	$: if (pages) {
 		let activePages = [];
 		Object.keys(routes).map((key) => {
-			if (routes[key].page) {
+			if (routes[key].page && !routes[key].disabled) {
 				activePages.push(key);
 			}
 		});
@@ -178,7 +175,7 @@
 		height: 100%;
 		margin: 0 auto;
 		@apply bg-white dark:bg-gray-800 dark:border-gray-600 border-red-600 select-none
-						dark:text-gray-50;
+						dark:text-gray-50 text-base;
 	}
 	main {
 		height: 100%;
