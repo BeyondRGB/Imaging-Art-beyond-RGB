@@ -165,6 +165,26 @@ std::string Pipeline::get_output_directory() {
 
 }
 
+
+std::string Pipeline::get_sharpen_type() {
+
+    //default to no sharpening
+    std::string sharpen_string = "N";
+    try {
+        sharpen_string = this->process_data_m->get_string("sharpenString");
+        if (sharpen_string == "H" || sharpen_string == "M" || sharpen_string == "L" || sharpen_string == "N") {
+            return sharpen_string;
+        }
+    }
+    catch (ParsingError e) {
+        this->report_error("[Pipeline]", "Process request: invalid sharpen option");
+        throw;
+    }
+    return sharpen_string;
+}
+
+
+
 IlluminantType Pipeline::get_illuminant_type() {
     // Default to D50
     IlluminantType type = IlluminantType::D50;

@@ -28,69 +28,49 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     cv::Mat Hblurred1;
     cv::Mat Hblurred2;
 
-    cv::Mat Lblurred1;
-    cv::Mat Lblurred2;
+    //High Frequency Kernel larger sigma = more sharp
+    //Low = 0.5  Med = 1  High = 1.5
 
-    //High Frequency Kernel
-    int sigma = 2;
-    int ksize = (sigma * 5) | 1;
+    string sharpen = images->get_sharpen_type();
 
-    //Low Frequency Kernel
-    //int sigmaL = 1;
-    //int ksizeL = 1.2;
+    //Sharpen value passed in 
+    if (sharpen == "L" || sharpen == "M" || sharpen == "H") {
+        int sigma;
+        if (sharpen == "L") {
+            sigma = 0.5;
+        }
+        else if (sharpen == "M") {
+            sigma = 1;
+        }
+        else {
+            sigma = 1.5;
+        }
+        int ksize = (sigma * 5) | 1;
 
-    //Sharpen Factor
-    int HsharpFactor = 1;
-    //Noise Factor
-    //int LsharpFactor = 1;
+        //Sharpen Factor
+        int HsharpFactor = 1;
 
-    //High Freq Blur
-    GaussianBlur(im1, Hblurred1, Size(ksize, ksize), sigma, sigma);
-    GaussianBlur(im2, Hblurred2, Size(ksize, ksize), sigma, sigma);
-    
-    //Low Freq Blur
-    //GaussianBlur(im1, Lblurred1, Size(ksizeL, ksizeL), sigmaL, sigmaL);
-    //GaussianBlur(im2, Lblurred2, Size(ksizeL, ksizeL), sigmaL, sigmaL);
+        //High Freq Blur
+        GaussianBlur(im1, Hblurred1, Size(ksize, ksize), sigma, sigma);
+        GaussianBlur(im2, Hblurred2, Size(ksize, ksize), sigma, sigma);
 
-    //Create high freq mask
-    cv::Mat unsharpMask1 = im1 - Hblurred1;
-    cv::Mat unsharpMask2 = im2 - Hblurred2;
+        //Create high freq mask
+        cv::Mat unsharpMask1 = im1 - Hblurred1;
+        cv::Mat unsharpMask2 = im2 - Hblurred2;
 
-    //Create low freq mask
-    //cv::Mat unNoiseMask1 = im1 - Lblurred1;
-    //cv::Mat unNoiseMask2 = im2 - Lblurred2;
+        //Apply high freq mask
+        im1 = im1 + HsharpFactor * unsharpMask1;
+        im2 = im2 + HsharpFactor * unsharpMask2;
 
-    //Apply just high freq mask
-    im1 = im1 + HsharpFactor * unsharpMask1;
-    im2 = im2 + HsharpFactor * unsharpMask2;
+        //Output sharpened image
+        images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
+        images->outputImageAs(btrgb::TIFF, "art2", "Sharp2");
 
-    //Apply both masks
-    //im1 = im1 + HsharpFactor * unsharpMask1 - LsharpFactor * unNoiseMask1;
-    //im1 = im2 + HsharpFactor * unsharpMask2 - LsharpFactor * unNoiseMask2;
-
-
-    images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
-    images->outputImageAs(btrgb::TIFF, "art2", "Sharp2");
-
-
-    comms->send_progress(0.5, "NoiseReduction");
-
-
-    //Noise reduction
-    //Several different noise reduction algos
-    //Using Bilateral Filtering for highest accuracy
-    cv::Mat filter1;
-    cv::Mat filter2;
-   
-    cv::bilateralFilter(im1, filter1, 2, 3, 3);
-    cv::bilateralFilter(im2, filter2, 2, 3, 3);
-
-    filter1.copyTo(im1);
-    filter2.copyTo(im2);
-
-    comms->send_progress(1, "NoiseReduction");
-    //Outputs TIFFs for each image group for after this step, temporary
-    images->outputImageAs(btrgb::TIFF, "art1", "NoiseReduc1");
-    images->outputImageAs(btrgb::TIFF, "art2", "NoiseReduc2");
-     
+        comms->send_progress(0.5, "Sharpening");
+        comms->send_progress(1, "Sharpening");
+    }
+    //Sharpen value default 0 or invalid value, don't sharpen
+    else {
+        comms->send_progress(1, "Skipping Sharpening");
+    }
  }
