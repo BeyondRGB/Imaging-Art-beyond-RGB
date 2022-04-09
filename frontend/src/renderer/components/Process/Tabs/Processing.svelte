@@ -8,7 +8,6 @@
     messageStore,
   } from "@util/stores";
   import ImageViewer from "@components/ImageViewer.svelte";
-  import AdvOpts from "./AdvOpts.svelte";
 
   let notConnectedMode = false;
   let info = { sender: "Waiting...", value: 0 };
@@ -19,6 +18,9 @@
       currentTab: 0,
       destDir: "",
       imageFilePaths: [],
+      thumbnailID: null,
+      colorTargetID: null,
+      imageThumbnails: {},
       outputImage: { dataURL: "", name: "Waiting..." },
       artStacks: [
         {

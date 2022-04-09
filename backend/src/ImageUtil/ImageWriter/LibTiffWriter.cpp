@@ -56,9 +56,12 @@ namespace btrgb {
 		/* Indicate type of image. */
 		if(channels == 3)
 			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+		else if(channels == 1)
+			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
 		else {
 			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
-			TIFFSetField(img_out, TIFFTAG_EXTRASAMPLES, EXTRASAMPLE_UNSPECIFIED);
+			uint16_t tags[16] = {EXTRASAMPLE_UNSPECIFIED};
+			TIFFSetField(img_out, TIFFTAG_EXTRASAMPLES, channels - 1, tags);
 		}
 
 		/* Set color profile. */
