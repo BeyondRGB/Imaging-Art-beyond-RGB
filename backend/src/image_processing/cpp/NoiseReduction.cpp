@@ -22,24 +22,20 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
 
-    cv::FileStorage file("AfterFlat.yml", cv::FileStorage::WRITE);
-    file << "matName" << im1;
-
     cv::Mat Hblurred1;
     cv::Mat Hblurred2;
 
     //High Frequency Kernel larger sigma = more sharp
     //Low = 0.5  Med = 1  High = 1.5
-
-    string sharpen = images->get_sharpen_type();
+    std::cout << SharpenFactor;
 
     //Sharpen value passed in 
-    if (sharpen == "L" || sharpen == "M" || sharpen == "H") {
+    if (SharpenFactor == "L" || SharpenFactor == "M" || SharpenFactor == "H") {
         int sigma;
-        if (sharpen == "L") {
+        if (SharpenFactor == "L") {
             sigma = 0.5;
         }
-        else if (sharpen == "M") {
+        else if (SharpenFactor == "M") {
             sigma = 1;
         }
         else {

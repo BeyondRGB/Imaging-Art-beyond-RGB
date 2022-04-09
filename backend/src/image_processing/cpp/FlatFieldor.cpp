@@ -24,10 +24,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         dark2 = images->getImage("dark2");
         reference = images->get_refrence_data();
 
-        cv::FileStorage file("beforeFlat.yml", cv::FileStorage::WRITE);
-        file << "matName" << art1;
-
-
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist &e)
     {
