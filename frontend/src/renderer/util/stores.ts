@@ -12,7 +12,9 @@ export const viewState = writable({
 
 // Page Stores
 export const processState = writable({
-  currentTab: 0,
+  currentTab: 4,
+  pipelineComponents: [],
+  pipelineProgress: {},
   destDir: "",
   imageFilePaths: [],
   thumbnailID: null,
@@ -79,8 +81,7 @@ export function close() {
 
 export const sendMessage = (message) => {
   if (socket.readyState === 1) {
-    let messageObj = [message, new Date(), true];
-    messageLog.update(current => [messageObj, ...current]);
+    console.log({ SendMessage: message });
     socket.send(message);
   }
 };
