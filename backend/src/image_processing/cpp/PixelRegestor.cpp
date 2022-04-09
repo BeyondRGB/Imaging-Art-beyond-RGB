@@ -13,7 +13,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("", "PixelRegestor");
     comms->send_progress(0, "PixelRegestor");
 
-    const int MAX_FEATURES = 850;
+    const int MAX_FEATURES = 500;
     const float GOOD_MATCH_PERCENT = 0.12f;
 
     //Grab the image data from the art object
