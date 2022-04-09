@@ -285,8 +285,23 @@ cv::Mat RefData::as_matrix(){
 			// std::cout << std::endl << std::endl;
 		}
 	}
-
 	return ref_data;
+}
+
+cv::Mat RefData::xyz_as_matrix(){
+	int col_count = this->row_count * this->col_count;
+	cv::Mat xyz = cv::Mat_<double>(3, col_count, CV_32FC1);
+	for(int row = 0; row < this->row_count; row++){
+		for(int col = 0; col < this->col_count; col++){
+			int mat_col = col + row * this->col_count;
+			ColorPatch *cp = this->get_color_patch(row, col);
+			std::cout << cp->get_name() << std::endl;
+			xyz.at<double>(0, mat_col) = cp->get_x();
+			xyz.at<double>(1, mat_col) = cp->get_y();
+			xyz.at<double>(2, mat_col) = cp->get_z();
+		}
+	}
+	return xyz;
 }
 
 bool RefData::is_custom(std::string file){
