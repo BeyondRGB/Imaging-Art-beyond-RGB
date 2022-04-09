@@ -10,19 +10,15 @@
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
-	import TestConsole from "@components/TestConsole.svelte";
 
 	import {
 		HomeIcon,
 		SettingsIcon,
-		ImageIcon,
 		LayersIcon,
 		FileTextIcon,
 		CrosshairIcon,
 		ApertureIcon,
 	} from "svelte-feather-icons";
-
-	import { onDestroy } from "svelte";
 
 	const routes: any = {
 		Home: {
@@ -85,8 +81,6 @@
 	document.documentElement.classList.add(theme);
 	document.body.classList.add(theme);
 
-	$: selectedPage = routes[$currentPage];
-
 	// --- Theme Switching Logic (Disabled as light theme is incomplete) ---
 	// $: theme = $appSettings.theme ? "dark" : "";
 	// $: if (theme !== "") {
@@ -140,27 +134,13 @@
 			});
 		}
 	}
-
-	let isOpen = false;
 </script>
 
 <main class={theme}>
-	<div class="app {theme} {$appSettings.sideNav ? 'sideMenu' : ''}">
-		<!-- <Navbar {routes} /> -->
-
+	<div class="app {theme}" class:sideMenu={$appSettings.sideNav}>
 		<Menu {routes} />
 
 		<Page {routes} bind:pages />
-		<!-- <div class={`console ${isOpen ? "open" : ""}`}>
-			<div class="testBox">
-				<div class="handle" on:click={() => (isOpen = !isOpen)}>
-					{isOpen ? ">" : "<"}
-				</div>
-				<div class="con">
-					<TestConsole {isOpen} />
-				</div>
-			</div>
-		</div> -->
 	</div>
 </main>
 
@@ -221,25 +201,5 @@
 	/* Handle on hover */
 	::-webkit-scrollbar-thumb:hover {
 		@apply bg-gray-500;
-	}
-
-	.console {
-		@apply absolute -right-[60%] w-[60%] transition-all duration-300 z-50;
-	}
-	.open {
-		@apply -right-0;
-	}
-
-	.testBox {
-		@apply bg-gray-800 w-full h-full relative rounded-l-lg flex justify-center items-center
-						border-2 border-gray-700 shadow-2xl;
-	}
-	.con {
-		@apply w-full h-full;
-	}
-
-	.menuNavIcon {
-		fill: transparent;
-		stroke-width: 8%;
 	}
 </style>
