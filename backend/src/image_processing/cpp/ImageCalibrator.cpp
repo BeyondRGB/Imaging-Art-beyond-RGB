@@ -4,10 +4,9 @@
 
 #include "../header/ImageCalibrator.h"
 
-ImageCalibrator::ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components) {
-    for(auto & component : components){
-        this->components.push_back(component);
-    }
+ImageCalibrator::ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components)
+     : CompositComponent("ImageCalibrator"){
+        this->init_components(components);
 }
 void ImageCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("Starting Image Calibration", "ImageCalibrator");
@@ -17,7 +16,7 @@ void ImageCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images)
         double currProgress = count / total;
         comms->send_progress(currProgress, "ImageCalibrator");
         component->execute(comms, images);
-        comms->send_base64(images->getImage("ColorManaged"), btrgb::FAST);
+        comms->send_binary(images->getImage("ColorManaged"), btrgb::FAST);
         count++;
     }
     comms->send_info("Image Calibration Done!!!", "ImageCalibrator");

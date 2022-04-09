@@ -7,6 +7,7 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
+#include "server/globals_siglton.hpp"
 #include "comunication_obj.hpp"
 #include "process_manager.hpp"
 
@@ -21,7 +22,6 @@ class RequestServer {
 private:
 	server server_m;
 	ProcessManager process_manager_m;
-	int port_m = 9002; // should this be defined by a config file?
 	/**
 	* Handler that gets called any time a new msg comes in on port_m
 	*/
