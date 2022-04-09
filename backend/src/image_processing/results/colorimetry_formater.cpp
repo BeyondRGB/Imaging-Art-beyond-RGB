@@ -1,8 +1,6 @@
 #include "image_processing/results/colorimetry_formater.hpp"
 #include <opencv2/opencv.hpp>
 
-#include "utils/calibration_util.hpp"
-
 void ColorimetryFormater::write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type){
     
     #define DELIM ","
@@ -49,13 +47,8 @@ void ColorimetryFormater::write_format(std::ostream &output_stream, CalibrationR
         }
         xyz_ref = results->get_matrix(CM_XYZ_REF);
     }catch(ResultError e){
-        std::cout << "Got E: " << e.what() << std::endl;
         throw e;
     }
-
-    
-    btrgb::calibration::display_matrix(&camera_sigs, "Colorimetry cam sigs");
-
 
     // Write Header
     this->write_header(output_stream, DELIM); 

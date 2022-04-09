@@ -58,7 +58,7 @@
 #define V_a_REF            "Verification a*_ref"
 #define V_b_REF            "Verification b*_ref"
 #define V_TARGET_SIGS      "Verification Target Signal Averages"
-
+#define V_R_reference      "Verification R_ref"
 #define V_R_CAMERA         "Verification R_camera"
 #define V_RMSE             "Verification RMSE"
 
