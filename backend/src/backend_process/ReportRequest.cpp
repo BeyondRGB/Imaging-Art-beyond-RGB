@@ -1,13 +1,6 @@
 #include <regex>
 #include "backend_process/ReportRequest.hpp"
 
-unsigned int ReportRequest::id = 0;
-
-ReportRequest::ReportRequest() {
-    this->set_process_name("Report(" + std::to_string(ReportRequest::id) + ")");
-    ReportRequest::id += 1;
-}
-
 ReportRequest::~ReportRequest() {}
 
 void ReportRequest::run() {

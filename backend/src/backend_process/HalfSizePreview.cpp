@@ -1,12 +1,6 @@
 #include <regex>
 #include "backend_process/HalfSizePreview.hpp"
 
-unsigned int HalfSizePreview::id = 0;
-
-HalfSizePreview::HalfSizePreview() {
-    this->set_process_name("GetHalfSizePreview(" + std::to_string(HalfSizePreview::id) + ")");
-    HalfSizePreview::id += 1;
-}
 
 HalfSizePreview::~HalfSizePreview() {}
 
