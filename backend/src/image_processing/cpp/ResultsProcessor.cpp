@@ -21,15 +21,15 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     this->Pro_f_name = this->build_output_name("","btrgb");
 
     this->GI_f_name = this->build_output_name("GeneralInfo", "txt");
-    this->M_color_f_name = this->build_output_name("M_color", "csv");
-    this->M_spectral_f_name = this->build_output_name("M_spectral", "csv");
-    this->R_ref_f_name = this->build_output_name("R_ref", "csv");
-    this->colorimetry_f_name = this->build_output_name("Colorimetry", "csv");
-    this->R_camera_f_name = this->build_output_name("R_camera", "csv");
+    // this->M_color_f_name = this->build_output_name("M_color", "csv");
+    // this->M_spectral_f_name = this->build_output_name("M_spectral", "csv");
+    // this->R_ref_f_name = this->build_output_name("R_ref", "csv");
+    // this->colorimetry_f_name = this->build_output_name("Colorimetry", "csv");
+    // this->R_camera_f_name = this->build_output_name("R_camera", "csv");
     
     // Output Results
-    this->output_user_results(images);  
     this->output_btrgb_results(images);
+    this->output_user_results(images);  
 
     comms->send_progress(0.2,"ResultsProcessor");
 
@@ -90,31 +90,41 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
 }
 
 void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
-    CalibrationResults *calibration_res = images->get_results_obj(btrgb::ResultType::CALIBRATION);
-    CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
+    cv::Mat xyz_ref = images->get_refrence_data()->xyz_as_matrix();
     CalibrationResults *general_info = images->get_results_obj(btrgb::ResultType::GENERAL);
-    std::string output_dir = images->get_output_dir();
+    CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
+    CalibrationResults *calibration_res = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+    
+    
+    // std::string output_dir = images->get_output_dir();
     std::string f_name;
 
     // TODO the following should be replaced with a way to formate the files as desired by Olivia
     
 // Write user calibration results
     // M_color
-    std::ofstream calib_stream;
-    calib_stream.open(this->output_dir + this->M_color_f_name);
-    this->set_formater(FormatType::M_COLOR);
-    this->formater->write_format(calib_stream, calibration_res);
-    calib_stream.close();
+    f_name = this->build_output_name("M_color", "csv");
+    this->write_formated_results(f_name, FormatType::M_COLOR, calibration_res);
     // M_spectral
-    calib_stream.open(this->output_dir + this->M_spectral_f_name);
-    this->set_formater(FormatType::M_SPECTRAL);
-    this->formater->write_format(calib_stream, calibration_res);
-    calib_stream.close();
+    f_name = this->build_output_name("M_spectral", "csv");
+    this->write_formated_results(f_name, FormatType::M_SPECTRAL, calibration_res);
     // R_ref
+    f_name = this->build_output_name("R_ref", "csv");
 
     // Colorimetry
+    calibration_res->store_matrix(CM_XYZ_REF, xyz_ref);
+    f_name = this->build_output_name("Colorimetry", "csv");
+    this->write_formated_results(f_name, FormatType::COLORIMETRY, calibration_res);
 
     // R_camera
+
+    // Verification
+    if(verification_res->contains_results()){
+        // Colorimetry
+        verification_res->store_matrix(CM_XYZ_REF, xyz_ref);
+        f_name = this->build_output_name("ColorimetryVerification", "csv");
+        this->write_formated_results(f_name, FormatType::COLORIMETRY, verification_res);
+    }
 
 
     // Write user verification results
@@ -158,8 +168,17 @@ void ResultsProcessor::set_formater(FormatType type){
         case FormatType::R_REF:
             break;
         case FormatType::COLORIMETRY:
+            this->formater = new ColorimetryFormater();
             break;
         case FormatType::R_CAMERA:
             break;
     }
+}
+
+void ResultsProcessor::write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj){
+    std::ofstream f_stream;
+    f_stream.open(this->output_dir + file_name);
+    this->set_formater(format_type);
+    this->formater->write_format(f_stream, results_obj);
+    f_stream.close();
 }

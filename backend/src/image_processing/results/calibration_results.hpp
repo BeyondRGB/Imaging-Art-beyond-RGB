@@ -20,6 +20,7 @@
 #define CM_DLETA_E_VALUES   "CM DeltaE Values"
 #define CM_CAMERA_SIGS      "CM PreCalibrated RGB Camera Signals"
 #define CM_XYZ              "CM Calibrated XYZ Values"
+#define CM_XYZ_REF              "CM Ref XYZ Values"
 #define L_CAMERA            "CM L*_camera"
 #define a_CAMERA            "CM a*_camera"
 #define b_CAMERA            "CM b*_camera"
