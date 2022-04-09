@@ -130,6 +130,15 @@ private:
 
 
 
+
+	/**
+	* @brief get the sharpen type
+	* Gets a string corresponding to the level of sharpening needed
+	* N for disabled or L M H
+	* @return std::string
+	*/
+	std::string get_sharpen_type();
+
 public:
 	Pipeline();
 
