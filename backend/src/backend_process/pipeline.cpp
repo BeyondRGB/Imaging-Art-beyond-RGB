@@ -166,7 +166,7 @@ void Pipeline::run() {
         pipeline->execute(this->coms_obj_m.get(), images.get());
         std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
         this->coms_obj_m->send_post_calibration_msg(Pro_file);
-    } catch(const Pipeline::error& e) {
+    } catch(const ImgProcessingComponent::error& e) {
         this->report_error(e.who(), e.what());
         return;
     }

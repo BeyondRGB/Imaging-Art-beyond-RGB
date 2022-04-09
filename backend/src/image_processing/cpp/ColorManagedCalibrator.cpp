@@ -23,7 +23,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
         this->ref_data = images->get_refrence_data();
     }
     catch (const std::exception& e) {
-        throw Pipeline::error(e.what(), this->get_name());
+        throw ImgProcessingComponent::error(e.what(), this->get_name());
     }
 
     // Init Color Targets
@@ -50,7 +50,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
         this->update_image(images);
     }
     catch(const std::exception& e) {
-       throw Pipeline::error(e.what(), this->get_name());
+       throw ImgProcessingComponent::error(e.what(), this->get_name());
     }
     comms->send_progress(0.9, this->get_name());
 

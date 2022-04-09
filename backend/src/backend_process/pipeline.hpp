@@ -146,17 +146,6 @@ public:
 	*/
 	void run() override;
 
-
-	class error : public std::runtime_error {
-		private:
-			std::string sender;
-        public:
-			error(std::string msg, std::string sender) 
-				: std::runtime_error(msg) { this->sender = sender; }
-			const std::string who() const noexcept { return this->sender; }
-	};
-
-
 };
 
 
