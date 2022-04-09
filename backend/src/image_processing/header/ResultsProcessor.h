@@ -70,15 +70,14 @@ class ResultsProcessor : public ImgProcessingComponent{
         std::string CM_f_name;
         std::string SP_f_name;
         std::string Pro_f_name;
-        // std::string CalibRes_f_name;
-        // std::string VerRes_f_name;
 
         std::string GI_f_name;
-        // std::string M_color_f_name;
-        // std::string M_spectral_f_name;
-        // std::string R_ref_f_name;
-        // std::string colorimetry_f_name;
-        // std::string R_camera_f_name;
+        std::string M_color_f_name;
+        std::string M_spectral_f_name;
+        std::string colorimetry_f_name;
+        std::string R_camera_f_name;
+        std::string colorimetry_ver_f_name;
+        std::string R_camera_ver_f_name;
 
 };
 
