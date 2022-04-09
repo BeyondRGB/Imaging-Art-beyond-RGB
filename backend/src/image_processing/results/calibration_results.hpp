@@ -12,6 +12,7 @@
 
 
 #define DELIMITER ","
+#define OUTPUT_PREFIX "BeyondRGB_"
 
 // CM Calibration Keys
 #define CM_DELTA_E_AVG      "CM DeltaE Mean"

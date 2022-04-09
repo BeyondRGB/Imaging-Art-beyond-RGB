@@ -94,14 +94,9 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     CalibrationResults *general_info = images->get_results_obj(btrgb::ResultType::GENERAL);
     CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
     CalibrationResults *calibration_res = images->get_results_obj(btrgb::ResultType::CALIBRATION);
-    
-    
-    // std::string output_dir = images->get_output_dir();
+ 
     std::string f_name;
-
-    // TODO the following should be replaced with a way to formate the files as desired by Olivia
     
-// Write user calibration results
     // M_color
     f_name = this->build_output_name("M_color", "csv");
     this->write_formated_results(f_name, FormatType::M_COLOR, calibration_res);
@@ -127,12 +122,8 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     }
 
 
-    // Write user verification results
-    // std::ofstream verification_stream;
-    // verification_stream.open(this->output_dir + this->VerRes_f_name);
-    // verification_res->write_results(verification_stream);
-    // verification_stream.close();
-    // Write user General Info
+   
+    // GeneralInfo
     std::ofstream general_stream;
     this->set_formater(FormatType::GEN_INFO);
     general_stream.open(this->output_dir + this->GI_f_name);
@@ -141,9 +132,9 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
 }
 
 std::string ResultsProcessor::build_output_name(std::string name, std::string extention){
-    std::string f_name = "BTRGB_" + name + "_" + this->ts_id;
+    std::string f_name = OUTPUT_PREFIX + name + "_" + this->ts_id;
     if(name == "")
-        f_name = "BTRGB_" + this->ts_id;
+        f_name = OUTPUT_PREFIX + this->ts_id;
     if(extention != "")
         f_name += "." + extention;
     return f_name;
