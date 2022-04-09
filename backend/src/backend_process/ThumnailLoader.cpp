@@ -1,13 +1,6 @@
 #include <regex>
 #include "backend_process/ThumbnailLoader.hpp"
 
-unsigned int ThumbnailLoader::id = 0;
-
-ThumbnailLoader::ThumbnailLoader() {
-    this->set_process_name("ThumbnailLoader(" + std::to_string(ThumbnailLoader::id) + ")");
-    ThumbnailLoader::id += 1;
-}
-
 ThumbnailLoader::~ThumbnailLoader() {}
 
 
