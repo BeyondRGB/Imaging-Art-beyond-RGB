@@ -92,17 +92,8 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
             comms->send_progress(count/total, this->get_name());
 
         }
-        catch(const btrgb::LibRawFileTypeUnsupported& e) {
-            comms->send_error("File type unknown, or unsupported by LibRaw.", this->get_name());
-            throw;
-        }
-        catch(const btrgb::ReaderFailedToOpenFile& e) {
-            comms->send_error(std::string(e.what()) + " : " + im->getName(), this->get_name());
-            throw;
-        }
-        catch(const std::runtime_error& e) {
-            comms->send_error(std::string(e.what()) + " : " + im->getName(), this->get_name());
-            throw;
+        catch(const std::exception& e) {
+            throw Pipeline::error(std::string(e.what()) + " (" + im->getName() + ")", this->get_name());
         }
 
 

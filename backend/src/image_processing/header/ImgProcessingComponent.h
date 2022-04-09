@@ -21,6 +21,7 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 #include "ImageUtil/ArtObject.hpp"
 #include "server/comunication_obj.hpp"
 #include <jsoncons/json_reader.hpp>
+#include "backend_process/pipeline.hpp"
 
 class ImgProcessingComponent {
 public:
