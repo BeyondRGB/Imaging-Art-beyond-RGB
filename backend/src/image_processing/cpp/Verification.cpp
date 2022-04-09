@@ -15,7 +15,7 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
         std::cout << "Initialized General Verification Data" << std::endl;
     }
     catch (const std::exception& e) {
-        throw Pipeline::error(e.what(), "Verification");
+        throw ImgProcessingComponent::error(e.what(), "Verification");
     }
 
     this->verify_CM_calibration(comms, images);

@@ -93,7 +93,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
         }
         catch(const std::exception& e) {
-            throw Pipeline::error(std::string(e.what()) + " (" + im->getName() + ")", this->get_name());
+            throw ImgProcessingComponent::error(std::string(e.what()) + " (" + im->getName() + ")", this->get_name());
         }
 
 

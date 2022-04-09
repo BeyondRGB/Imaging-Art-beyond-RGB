@@ -26,7 +26,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     }
     catch (const std::exception &e)
     {
-        throw Pipeline::error(e.what(), this->get_name());
+        throw ImgProcessingComponent::error(e.what(), this->get_name());
     }
 
     // Set up variables for the overall size of all the images, they are all the same size

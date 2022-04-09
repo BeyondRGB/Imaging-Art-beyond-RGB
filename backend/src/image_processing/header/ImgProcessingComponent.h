@@ -21,7 +21,6 @@ using namespace std::chrono; // nanoseconds, system_clock, seconds
 #include "ImageUtil/ArtObject.hpp"
 #include "server/comunication_obj.hpp"
 #include <jsoncons/json_reader.hpp>
-#include "backend_process/pipeline.hpp"
 
 class ImgProcessingComponent {
 public:
@@ -36,6 +35,15 @@ public:
     virtual jsoncons::json get_component_list() = 0;
 
     std::string get_name(){ return this->name; }
+
+	class error : public std::runtime_error {
+		private:
+			std::string sender;
+        public:
+			error(std::string msg, std::string sender) 
+				: std::runtime_error(msg) { this->sender = sender; }
+			const std::string who() const noexcept { return this->sender; }
+	};
 
 private:
     std::string name = "Undefined Component";
