@@ -16,16 +16,15 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     // Generate the file names to be used for output
     this->CM_f_name = this->build_output_name("CM");
     this->SP_f_name = this->build_output_name("SP");
-    // this->CalibRes_f_name = this->build_output_name("Calibration", "csv");
-    // this->VerRes_f_name = this->build_output_name("Verification", "csv");
     this->Pro_f_name = this->build_output_name("","btrgb");
 
-    this->GI_f_name = this->build_output_name("GeneralInfo", "txt");
-    // this->M_color_f_name = this->build_output_name("M_color", "csv");
-    // this->M_spectral_f_name = this->build_output_name("M_spectral", "csv");
-    // this->R_ref_f_name = this->build_output_name("R_ref", "csv");
-    // this->colorimetry_f_name = this->build_output_name("Colorimetry", "csv");
-    // this->R_camera_f_name = this->build_output_name("R_camera", "csv");
+    this->GI_f_name = this->build_output_name("GeneralInfo", "csv");
+    this->M_color_f_name = this->build_output_name("M_color", "csv");
+    this->M_spectral_f_name = this->build_output_name("M_spectral", "csv");
+    this->colorimetry_f_name = this->build_output_name("Colorimetry", "csv");
+    this->R_camera_f_name = this->build_output_name("R_camera", "csv");
+    this->colorimetry_ver_f_name = this->build_output_name("ColorimetryVerification", "csv");
+    this->R_camera_ver_f_name = this->build_output_name("R_cameraVerification", "csv");
     
     // Output Results
     this->output_btrgb_results(images);
@@ -71,9 +70,13 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
     jsoncons::json output_files;
     output_files.insert_or_assign("CM", this->CM_f_name+".tiff");
     output_files.insert_or_assign("SP", this->SP_f_name+".tiff");
-    // output_files.insert_or_assign("CalibrationResults", this->CalibRes_f_name);
-    // output_files.insert_or_assign("VerificationResults", this->VerRes_f_name);
     output_files.insert_or_assign("GineralInfo", this->GI_f_name);
+    output_files.insert_or_assign("M_color", this->M_color_f_name);
+    output_files.insert_or_assign("M_spectral", this->M_spectral_f_name);
+    output_files.insert_or_assign("Colorimetry", this->colorimetry_f_name);
+    output_files.insert_or_assign("R_camera", this->R_camera_f_name);
+    output_files.insert_or_assign("ColorimetryVerification", this->colorimetry_ver_f_name);
+    output_files.insert_or_assign("R_cameraVerification", this->R_camera_ver_f_name);
     // Add all json objects to the main json body to be writen to .btrgb file
     jsoncons::json btrgb_json;
     btrgb_json.insert_or_assign("OutPutFiles", output_files);
@@ -98,21 +101,21 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     std::string f_name;
     
     // M_color
-    f_name = this->build_output_name("M_color", "csv");
+    f_name = this->M_color_f_name;
     this->write_formated_results(f_name, FormatType::M_COLOR, calibration_res, ResultObjType::CALIBRATION);
     // M_spectral
-    f_name = this->build_output_name("M_spectral", "csv");
+    f_name = this->M_spectral_f_name;
     this->write_formated_results(f_name, FormatType::M_SPECTRAL, calibration_res, ResultObjType::CALIBRATION);
     // Colorimetry
     calibration_res->store_matrix(CM_XYZ_REF, xyz_ref);
-    f_name = this->build_output_name("Colorimetry", "csv");
+    f_name = this->colorimetry_f_name;
     this->write_formated_results(f_name, FormatType::COLORIMETRY, calibration_res, ResultObjType::CALIBRATION);
     // R_camera
     int row_count = general_info->get_int(GI_TARGET_ROWS);
     int col_count = general_info->get_int(GI_TARGET_COLS);
     calibration_res->store_int(GI_TARGET_COLS, col_count);
     calibration_res->store_int(GI_TARGET_ROWS, row_count);
-    f_name = this->build_output_name("R_camera", "csv");
+    f_name = this->R_camera_f_name;
     this->write_formated_results(f_name, FormatType::R_CAMERA, calibration_res, ResultObjType::CALIBRATION);
 
     // Verification
@@ -120,14 +123,14 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
         // Colorimetry
         xyz_ref = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->xyz_as_matrix();
         verification_res->store_matrix(CM_XYZ_REF, xyz_ref);
-        f_name = this->build_output_name("ColorimetryVerification", "csv");
+        f_name = this->colorimetry_ver_f_name;
         this->write_formated_results(f_name, FormatType::COLORIMETRY, verification_res, ResultObjType::VERIFICATION);
         // R_camera
         row_count = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->get_row_count();
         col_count = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->get_col_count();
         verification_res->store_int(GI_TARGET_COLS, col_count);
         verification_res->store_int(GI_TARGET_ROWS, row_count);
-        f_name = this->build_output_name("R_cameraVerification", "csv");
+        f_name = this->R_camera_ver_f_name;
         this->write_formated_results(f_name, FormatType::R_CAMERA, verification_res, ResultObjType::VERIFICATION);
     }
 
