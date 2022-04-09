@@ -17,12 +17,9 @@
 class ColorManagedImage : public BackendProcess {
 
 public:
-    ColorManagedImage();
+    ColorManagedImage(std::string name) : BackendProcess(name) {};
     ~ColorManagedImage();
 	void run() override;
-
-private:
-	static unsigned int id;
 
 };
 

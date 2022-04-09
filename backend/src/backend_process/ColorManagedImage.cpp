@@ -1,12 +1,5 @@
 #include "backend_process/ColorManagedImage.hpp"
 
-unsigned int ColorManagedImage::id = 0;
-
-ColorManagedImage::ColorManagedImage() {
-    this->set_process_name("ColorManagedImage(" + std::to_string(ColorManagedImage::id) + ")");
-    ColorManagedImage::id += 1;
-}
-
 ColorManagedImage::~ColorManagedImage() {}
 
 

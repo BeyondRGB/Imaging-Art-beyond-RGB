@@ -10,12 +10,11 @@
 class ThumbnailLoader : public BackendProcess {
 
 public:
-    ThumbnailLoader();
+    ThumbnailLoader(std::string name) : BackendProcess(name) {};
     ~ThumbnailLoader();
 	void run() override;
 
 private:
-	static unsigned int id;
     void _read_raw_thumbnail(btrgb::LibRawThumbnail* reader, std::string file);
     void _read_tiff(btrgb::LibTiffReader* reader, std::string file);
 };
