@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import { svelte } from '@sveltejs/vite-plugin-svelte'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,5 +13,6 @@ export default defineConfig({
       configFile: 'svelte.config.js'
     }),
     tsconfigPaths(),
-  ]
-})
+  ],
+  optimizeDeps: { include: ['@carbon/charts'] }
+});

@@ -10,7 +10,7 @@
 #include "standard_observer.hpp"
 #include "white_points.hpp"
 
-
+#define REF_COUNT 4
 
 typedef Illuminants::IlluminantType IlluminantType;
 typedef StandardObserver::ObserverType ObserverType;
@@ -22,10 +22,19 @@ typedef StandardObserver::ObserverType ObserverType;
 * and provide Tristimulus/CIELAB values
 */
 class RefData: public CSVParser {
+	const std::string ref_files[REF_COUNT] = {
+		"APT_Reflectance_Data.csv",
+		"CC_Classic_Reflectance_Data.csv",
+		"CCSG_Reflectance_Data.csv",
+		"NGT_Reflectance_Data.csv"
+	};
 
 public:
 	RefData(std::string file_path, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
 	~RefData();
+
+	static IlluminantType get_illuminant(std::string illuminant_string);
+	static ObserverType get_observer(int observer_num);
 
 	/**
 	* Retrives a reference to a ColorPatch at a given row and col
@@ -36,23 +45,24 @@ public:
 	ColorPatch* get_color_patch(int row, int col);
 
 	/**
-	* Finds the white ColorPatch. The whit patch is the one with
+	* Finds the white ColorPatch as defined by the reference data. The whit patch is the one with
 	* the hightest y value.
+	* NOTE: this is not the same as the user defined white patch
 	* @return: a pointer to the white ColorPatch
 	*/
-	ColorPatch* get_white_patch();
+	ColorPatch* get_estimated_white_patch();
 
 	/**
-	* Get the row the white patch is in
+	* Get the row the white patch is in as defined by the reference data
 	* @return: white patch row as an int
 	*/
-	int get_white_patch_row();
+	int get_estimated_white_patch_row();
 
 	/**
-	* Get the colum the white patch is in
+	* Get the colum the white patch is in as defined by the reference data
 	* @return: white patch colum as an int
 	*/
-	int get_white_patch_col();
+	int get_estimated_white_patch_col();
 
 	/**
 	* Gets the x value from the ColorPatch at the given row and col
@@ -185,6 +195,8 @@ private:
 	*/
 	void init_color_patches();
 
+	bool is_custom(std::string file);
+
 	ColorPatch*** color_patches;
 	StandardObserver* observer = nullptr;
 	Illuminants* illuminants = nullptr;
@@ -194,5 +206,27 @@ private:
 	int col_count;
 
 	
+};
+
+class RefDataError : public std::exception {};
+
+class RefData_FailedToRead : public RefDataError{
+	public:
+	RefData_FailedToRead(){};
+	RefData_FailedToRead(std::string file){this->error = "RefData Error: failed to read " + file;}
+    virtual char const * what() const noexcept { return error.c_str(); }
+
+	private:
+	std::string error = "RefData Read Error";
+};
+
+class RefData_ParssingError : public RefDataError{
+	public:
+	RefData_ParssingError(){};
+	RefData_ParssingError(std::string msg){this->error = "RefData Parsing Error: invalid file format -> " + msg;}
+    virtual char const * what() const noexcept { return error.c_str(); }
+
+	private:
+	std::string error = "RefData Parsing Error";
 };
 #endif //REF_DATA_H

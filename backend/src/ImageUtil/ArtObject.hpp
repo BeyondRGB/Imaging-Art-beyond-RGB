@@ -44,12 +44,18 @@ namespace btrgb {
         VERIFICATION
     };
 
+    enum TargetType{
+        GENERAL_TARGET,
+        VERIFICATION_TARGET
+    };
+
     class ArtObject {
 
     private:
-        TargetData target_data;
+        TargetData target_data, verification_data;
         std::unordered_map<std::string, Image*> images;
         RefData* ref_data;
+        RefData* verification_ref = nullptr;
         std::string output_directory;
         CalibrationResults general_info;
         CalibrationResults calibration_res; 
@@ -60,11 +66,13 @@ namespace btrgb {
         ~ArtObject();
 
         RefData* get_refrence_data();
+        void init_verification_data(TargetData verification_data);
 
         void setTargetInfo(TargetData td);
         double getTargetInfo(std::string type);
         int getTargetSize(std::string edge);
-        ColorTarget get_target(std::string imageName);
+        ColorTarget get_target(std::string imageName, TargetType type);
+
 
         CalibrationResults *get_results_obj(btrgb::ResultType type);
         std::string get_output_dir();
@@ -99,6 +107,11 @@ namespace btrgb {
     class ArtObj_FailedToWriteImage : public ArtObjectError {
         public:
         virtual char const * what() const noexcept { return "ArtObject Error: Failed to write image."; }
+    };
+
+    class ArtObj_VerificationDataNull : public ArtObjectError {
+        public:
+        virtual char const * what() const noexcept { return "ArtObject Error: No Verification Data Exists."; }
     };
 
 }

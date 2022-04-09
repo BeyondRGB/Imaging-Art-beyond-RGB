@@ -4,27 +4,30 @@ import { writable, derived } from 'svelte/store';
 export const currentPage = writable(null);
 export const appSettings = writable({ theme: false, sideNav: true });
 export const modal = writable(null);
+
+export const viewState = writable({
+  projectKey: null,
+  colorManagedImage: { dataURL: "", filename: "" },
+  colorManagedID: null
+});
+
 // Page Stores
 export const processState = writable({
   currentTab: 0,
   destDir: "",
   imageFilePaths: [],
+  thumbnailID: null,
+  colorTargetID: null,
+  imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
   artStacks: [
     {
       id: 1,
       name: "Art 1",
-      colorTargetImage: { dataURL: "", filename: "" },
-      colorTargets: [
-        // {
-        //   top: 0.25,
-        //   left: 0.25,
-        //   bottom: 0.50,
-        //   right: 0.50,
-        //   cols: 14,
-        //   rows: 10,
-        // },
-      ],
+      colorTargetImage: { dataURL: "", filename: "", },
+      verificationTargetImage: { dataURL: "", filename: "" },
+      colorTarget: {},
+      verificationTarget: {},
       fields: {
         images: [],
         whitefield: [],

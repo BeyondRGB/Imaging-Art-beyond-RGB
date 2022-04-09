@@ -4,10 +4,11 @@
 #include "ImageUtil/BitDepthFinder.hpp"
 #include "ImageUtil/ImageReader/LibRawReader.hpp"
 #include "ImageUtil/ImageReader/TiffReaderOpenCV.hpp"
+#include "ImageUtil/ImageReader/LibTiffReader.hpp"
 #include "image_processing/header/ImageReader.h"
 
 
-ImageReader::ImageReader() {}
+ImageReader::ImageReader() : LeafComponent("ImageReader") {}
 
 ImageReader::~ImageReader() {
     delete this->_reader;
@@ -26,14 +27,10 @@ void ImageReader::_set_strategy(reader_strategy strategy) {
     }
 
     switch(strategy) {
-        case TIFF_OpenCV:
-            this->_reader = new btrgb::TiffReaderOpenCV;
-            break;
-        case RAW_LibRaw:
-            this->_reader = new btrgb::LibRawReader;
-            break;
-        default: 
-            throw std::logic_error("[ImageReader] Invalid strategy.");
+        case TIFF_OpenCV:   this->_reader = new btrgb::TiffReaderOpenCV; break;
+        case RAW_LibRaw:    this->_reader = new btrgb::LibRawReader; break;
+        case TIFF_LibTiff:  this->_reader = new btrgb::LibTiffReader; break;
+        default: throw std::logic_error("[ImageReader] Invalid strategy.");
     }
 
     this->_current_strategy = strategy;
@@ -42,20 +39,20 @@ void ImageReader::_set_strategy(reader_strategy strategy) {
 
 
 void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("Reading In Raw Image Data!", "ImageReader");
+    comms->send_info("Reading In Raw Image Data!", this->get_name());
 
     btrgb::BitDepthFinder util;
-    int bit_depth = -1;
+    std::shared_ptr<int> bit_depth(new int(-1));
 
     double total = images->imageCount();
     double count = 0;
-    comms->send_progress(0, "RawImageReader");
+    comms->send_progress(0, this->get_name());
     for(const auto& [key, im] : *images) {
-        comms->send_info("Loading " + im->getName() + "...", "ImageReader");
+        comms->send_info("Loading " + im->getName() + "...", this->get_name());
 
         /* Initialize image reader. */
         if(btrgb::Image::is_tiff(im->getName()))
-            this->_set_strategy(TIFF_OpenCV);
+            this->_set_strategy(TIFF_LibTiff);
         else
             this->_set_strategy(RAW_LibRaw);
 
@@ -73,13 +70,13 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             /* Find bit depth if image is white field #1. */
             if(key == "white1") {
-                bit_depth = util.get_bit_depth(
+                *bit_depth = util.get_bit_depth(
                     (uint16_t*) raw_im.data,    
                     raw_im.cols, 
                     raw_im.rows,
                     raw_im.channels()
                 );
-                if(bit_depth < 0)
+                if(*bit_depth < 0)
                     throw std::runtime_error(" Bit depth detection of 'white1' failed." );
             }
 
@@ -89,27 +86,28 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             /* Init btrgb::Image object. */
             im->initImage(float_im);
+            im->_raw_bit_depth = bit_depth;
             
             count++;
-            comms->send_progress(count/total, "ImageReader");
+            comms->send_progress(count/total, this->get_name());
 
         }
         catch(const btrgb::LibRawFileTypeUnsupported& e) {
-            comms->send_error("File type unknown, or unsupported by LibRaw.", "ImageReader");
+            comms->send_error("File type unknown, or unsupported by LibRaw.", this->get_name());
             images->deleteImage(key);
         }
         catch(const btrgb::ReaderFailedToOpenFile& e) {
-            comms->send_error(std::string(e.what()) + " : " + im->getName(), "ImageReader");
+            comms->send_error(std::string(e.what()) + " : " + im->getName(), this->get_name());
             images->deleteImage(key);
         }
         catch(const std::runtime_error& e) {
-            comms->send_error(std::string(e.what()) + " : " + im->getName(), "ImageReader");
+            comms->send_error(std::string(e.what()) + " : " + im->getName(), this->get_name());
             images->deleteImage(key);
         }
 
 
     }
     
-    comms->send_progress(1, "RawImageReader");
+    comms->send_progress(1, this->get_name());
 
 }

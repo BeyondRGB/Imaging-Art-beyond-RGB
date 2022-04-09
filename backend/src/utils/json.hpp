@@ -28,16 +28,22 @@ public:
 	Json(jsoncons::json json_obj);
 
 	/**
+	* Gets the jsoncons obj
+	* @return: the jsoncons::json object
+	*/
+	jsoncons::json get_jsoncons();
+
+	/**
 	* Check to see if json contains item of given type
 	* @param key: the key to the item to be checked for
 	* @param type: the Json::Type to check for
-	*	if none given this will default to ANNY and 
+	*	if none given this will default to ANNY and
 	*	will only check that the key exists
 	* @return: true if key exists and is of given type
 	*	false if key does not exist or does not match type
 	*/
 	bool has(std::string key, Type type = Type::ANNY);
-	
+
 	/**
 	* Extract boolean value from Json
 	* This assumes that the json item this parser currently holds
@@ -85,7 +91,7 @@ public:
 	* @return: the numeric value for given key
 	*/
 	double get_number(std::string key);
-	
+
 	/**
 	* Extract string value from Json
 	* This assumes that the json item this parser currently holds
@@ -243,7 +249,7 @@ private:
 			return std::is_same<T, std::string>::value;
 		}
 		if (type == jsoncons::json_type::double_value){
-			return std::is_same<T, double>::value || 
+			return std::is_same<T, double>::value ||
 				   std::is_same<T, float>::value;
 		}
 		if (type == jsoncons::json_type::uint64_value ||

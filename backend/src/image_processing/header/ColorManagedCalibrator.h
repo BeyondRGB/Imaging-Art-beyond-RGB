@@ -9,7 +9,7 @@
 #include "ImageUtil/ColorTarget.hpp"
 #include "ImageUtil/ColorProfiles.hpp"
 #include "utils/csv_parser.hpp"
-#include "ImgProcessingComponent.h"
+#include "image_processing/header/LeafComponent.h"
 #include "reference_data/ref_data_defines.hpp"
 #include "reference_data/ref_data.hpp"
 #include "utils/color_convertions.hpp"
@@ -18,9 +18,7 @@
 #include "image_processing/results/calibration_results.hpp"
 #include "ImageUtil/ColorProfiles.hpp"
 
-// typedef std::function<double(cv::Mat)> MinDeltaE_function;
-
-class ColorManagedCalibrator : public ImgProcessingComponent{
+class ColorManagedCalibrator : public LeafComponent{
 /**
  * @brief Class to manage ColorManagedCalibration of images
  * It takes the 2 art images after they have bee through preprocessing
@@ -29,7 +27,7 @@ class ColorManagedCalibrator : public ImgProcessingComponent{
  */
 
 public:
-
+    ColorManagedCalibrator() : LeafComponent("ColorManagedCalibrator"){}
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
@@ -49,10 +47,6 @@ private:
 
     double stp;
     int mid;
-
-    void fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
-                         cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
-                         cv::Mat xyz);
 
     /**
      * @brief Initialize the optimization InputArray(optimization_input), M, and offset

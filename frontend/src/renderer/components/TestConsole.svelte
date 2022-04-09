@@ -10,6 +10,7 @@
   import { flip } from "svelte/animate";
   let notConnectedMode = false;
   let textValue;
+  export let isOpen;
 
   function getTime(time = new Date()) {
     let minutes = time.getMinutes();
@@ -47,44 +48,46 @@
         on:click={() => ($messageLog = [])}>clear</button
       >
     </h4>
-    <div class="term">
-      {#each $messageLog as message (message)}
-        <div
-          class={`message ${message[2] ? "request" : "response"}`}
-          animate:flip={{ duration: 250 }}
-        >
-          {#if message[2]}
-            {#if message[0]?.length > 128}
-              <details class="requestDropdown">
-                <summary class="reqTime">
-                  [Expand: {message[0].length} chars] {"<"} ({getTime(
-                    message[1]
-                  )})</summary
+    {#if isOpen}
+      <div class="term">
+        {#each $messageLog as message (message)}
+          <div
+            class={`message ${message[2] ? "request" : "response"}`}
+            animate:flip={{ duration: 250 }}
+          >
+            {#if message[2]}
+              {#if message[0]?.length > 128}
+                <details class="requestDropdown">
+                  <summary class="reqTime">
+                    [Expand: {message[0].length} chars] {"<"} ({getTime(
+                      message[1]
+                    )})</summary
+                  >
+                  <code>{message[0]}</code>
+                </details>
+              {:else}
+                <div class="requestMessage">
+                  <p class="reqTime">{"<"} ({getTime(message[1])})</p>
+                  <p class="reqMsg">{message[0]}</p>
+                </div>
+              {/if}
+            {:else if message[0]?.length > 512}
+              <details class="responseDropdown">
+                <summary
+                  >{getTime(message[1])}) > [Expand: {message[0].length}+ chars]
+                  {message[0].substring(0, 256)} ...</summary
                 >
-                <code>{message[0]}</code>
+                <code>{message[0]} ...</code>
               </details>
             {:else}
-              <div class="requestMessage">
-                <p class="reqTime">{"<"} ({getTime(message[1])})</p>
-                <p class="reqMsg">{message[0]}</p>
+              <div class="responseMessage">
+                ({getTime(message[1])}) > {message[0]}
               </div>
             {/if}
-          {:else if message[0]?.length > 512}
-            <details class="responseDropdown">
-              <summary
-                >{getTime(message[1])}) > [Expand: {message[0].length}+ chars]
-                {message[0].substring(0, 256)} ...</summary
-              >
-              <code>{message[0]} ...</code>
-            </details>
-          {:else}
-            <div class="responseMessage">
-              ({getTime(message[1])}) > {message[0]}
-            </div>
-          {/if}
-        </div>
-      {/each}
-    </div>
+          </div>
+        {/each}
+      </div>
+    {/if}
   </div>
 </main>
 

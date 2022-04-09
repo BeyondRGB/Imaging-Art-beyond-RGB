@@ -34,6 +34,9 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   if (arg === "Dir") {
     properties = ["openDirectory"];
   }
+  if (arg === "Single") {
+    properties = ["openFile"];
+  }
   const dia = await dialog.showOpenDialog({
     properties
   }).then(result => {

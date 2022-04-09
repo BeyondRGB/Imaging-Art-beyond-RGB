@@ -85,7 +85,7 @@ void CommunicationObj::send_binary(btrgb::Image* image, enum btrgb::image_qualit
 
 void CommunicationObj::send_base64(
 	std::string name,
-	std::vector<uchar>* direct_binary, 
+	std::vector<uchar>* direct_binary,
 	enum btrgb::output_type type
 ) {
 
@@ -102,13 +102,13 @@ void CommunicationObj::send_base64(
 	send_msg(all_info);
 
 };
-	
+
 void CommunicationObj::send_binary(
 	std::string name,
 	std::vector<uchar>* direct_binary,
 	enum btrgb::output_type type
 ) {
-		
+
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "ImageBinary");
@@ -130,6 +130,46 @@ void CommunicationObj::send_binary(
 	//this->binID++;
 }
 
+void CommunicationObj::send_reports(jsoncons::json reports, std::string report_type) {
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "Report");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("reportType", report_type);
+	response_data.insert_or_assign("reports", reports);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
+void CommunicationObj::send_spectrum(float* data, int size) {
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "SpectralPicker");
+	jsoncons::json response_data;
+	response_data["size"] = size;
+	response_data["spectrum"] = jsoncons::json::make_array(size);
+	for( int i=0; i<size; i++)
+		response_data["spectrum"][i] = data[i];
+		info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
+void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "PipelineComponents");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("component_json", compoents_list);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
 
 btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type, std::vector<uchar>* direct_binary) {
 
@@ -146,7 +186,19 @@ btrgb::base64_ptr_t CommunicationObj::createDataURL(enum btrgb::output_type type
 	btrgb::base64_ptr_t result_base64(new std::string(
 		"data:image/" + img_type + ";base64," + cppcodec::base64_rfc4648::encode(*direct_binary)
 	));
-	
+
 	return result_base64;
 
+}
+
+void CommunicationObj::send_post_calibration_msg(std::string results_path){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "CalibrationComplete");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("path", results_path);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
 }

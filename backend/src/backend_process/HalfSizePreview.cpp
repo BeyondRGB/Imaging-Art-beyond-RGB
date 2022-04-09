@@ -15,7 +15,7 @@ void HalfSizePreview::run() {
 
     Json filenames = this->process_data_m->get_array("names");
     std::unique_ptr<btrgb::LibRawReader> raw_reader(new btrgb::LibRawReader(btrgb::LibRawReader::PREVIEW));
-    std::unique_ptr<btrgb::TiffReaderOpenCV> tiff_reader(new btrgb::TiffReaderOpenCV);
+    std::unique_ptr<btrgb::LibTiffReader> tiff_reader(new btrgb::LibTiffReader);
     btrgb::ImageReaderStrategy* reader;
     std::string fname;
     bool is_tiff;
@@ -39,11 +39,9 @@ void HalfSizePreview::run() {
             reader->recycle();
 
             /* Make sure image is bright enough. */
-            if(is_tiff) {
-                double min, max;
-                cv::minMaxIdx(im, &min, &max);
-                im.convertTo(im, CV_16U, 0xFFFF / max);
-            }
+            double min, max;
+            cv::minMaxIdx(im, &min, &max);
+            im.convertTo(im, CV_16U, 0xFFFF / max);
 
             /* Wrap the Mat as an Image object. */
             btrgb::Image imObj(fname + ".HalfSize");
@@ -51,7 +49,7 @@ void HalfSizePreview::run() {
 
 
             /* Send image. */
-            this->coms_obj_m->send_base64(&imObj, btrgb::FAST);
+            this->coms_obj_m->send_binary(&imObj, btrgb::FAST);
 
 
         }
