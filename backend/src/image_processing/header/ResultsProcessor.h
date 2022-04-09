@@ -1,7 +1,7 @@
 #ifndef RESULTS_PROCESSOR_H
 #define RESULTS_PROCESSOR_H
 
-#include "ImgProcessingComponent.h"
+#include "image_processing/header/LeafComponent.h"
 #include "image_processing/results/calibration_results.hpp"
 #include "image_processing/results/results_formater.hpp"
 #include "image_processing/results/general_info_formater.hpp"
@@ -18,7 +18,7 @@
  * It is responsible for outputing results of the calibration process including outputing the final image and any/all results reported
  * 
  */
-class ResultsProcessor : public ImgProcessingComponent{
+class ResultsProcessor : public LeafComponent{
     typedef ResultsFormater::ResultObjType ResultObjType;
     public:
         enum FormatType{
@@ -28,8 +28,7 @@ class ResultsProcessor : public ImgProcessingComponent{
             COLORIMETRY,
             R_CAMERA
         };
-    
-        ResultsProcessor(){};
+        ResultsProcessor() : LeafComponent("ResultsProcsessor"){};
         ~ResultsProcessor();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 

@@ -16,7 +16,7 @@ void ThumbnailLoader::run() {
     Json filenames = this->process_data_m->get_array("names");
 
     std::unique_ptr<btrgb::LibRawThumbnail> raw_thumbnail_reader(new btrgb::LibRawThumbnail);
-    std::unique_ptr<btrgb::TiffReaderOpenCV> tiff_reader(new btrgb::TiffReaderOpenCV);
+    std::unique_ptr<btrgb::LibTiffReader> tiff_reader(new btrgb::LibTiffReader);
     std::string fname;
 
     for (int i = 0; i < filenames.get_size(); i++) {
@@ -30,15 +30,15 @@ void ThumbnailLoader::run() {
 
         }
         catch(btrgb::ReaderFailedToOpenFile& e) {
-            this->coms_obj_m->send_error("Failed to open file " + fname, "ThumbnailLoader");
+            this->coms_obj_m->send_error("Failed to open file " + fname, "ThumbnailLoader", btrgb::BENING);
             std::cerr << "Failed to open file " + fname << std::endl;
         }
         catch(std::runtime_error& e) {
-            this->coms_obj_m->send_error(e.what(), "ThumbnailLoader");
+            this->coms_obj_m->send_error(e.what(), "ThumbnailLoader", btrgb::BENING);
             std::cerr << e.what() << std::endl;
         }
         catch(...) {
-            this->coms_obj_m->send_error("[ThumbnailLoader] Unknown error.", "ThumbnailLoader");
+            this->coms_obj_m->send_error("[ThumbnailLoader] Unknown error.", "ThumbnailLoader", btrgb::BENING);
             std::cerr << "[ThumbnailLoader] Unknown error." << std::endl;
         }
 
@@ -73,7 +73,7 @@ void ThumbnailLoader::_read_raw_thumbnail(btrgb::LibRawThumbnail* reader, std::s
     }
 }
 
-void ThumbnailLoader::_read_tiff(btrgb::TiffReaderOpenCV* reader, std::string file) {
+void ThumbnailLoader::_read_tiff(btrgb::LibTiffReader* reader, std::string file) {
     /* Open tiff. */
     reader->open(file);
     cv::Mat im;

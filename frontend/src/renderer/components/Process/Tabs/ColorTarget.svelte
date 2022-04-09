@@ -1,5 +1,5 @@
 <script>
-  import { currentPage, processState } from "@util/stores";
+  import { currentPage, processState, modal, sendMessage } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
   import { flip } from "svelte/animate";
   import Page from "@root/components/Page.svelte";
@@ -11,6 +11,7 @@
     "APT_Reflectance_Data.csv",
     "CCSG_Reflectance_Data.csv",
     "CC_Classic_Reflectance_Data.csv",
+    "Choose a custom file....csv",
   ];
 
   function update() {
@@ -24,9 +25,11 @@
       $processState.artStacks[0].colorTarget.size = colorTarget.size;
       $processState.artStacks[0].colorTarget.whitePatch =
         colorTarget.whitePatch;
-      $processState.artStacks[0].colorTarget.refData = {
-        name: colorTarget.refData.name,
-      };
+      if (colorTarget.refData.name !== "CUSTOM DATA") {
+        $processState.artStacks[0].colorTarget.refData = {
+          name: colorTarget.refData.name,
+        };
+      }
     }
 
     if (verifyPos) {
@@ -39,11 +42,29 @@
       $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
       $processState.artStacks[0].verificationTarget.whitePatch =
         verifyTarget.whitePatch;
-      $processState.artStacks[0].verificationTarget.refData = {
-        name: verifyTarget.refData.name,
-      };
+      if (verifyTarget.refData.name !== "CUSTOM DATA") {
+        $processState.artStacks[0].verificationTarget.refData = {
+          name: verifyTarget.refData.name,
+        };
+      }
     } else {
       $processState.artStacks[0].verificationTarget = null;
+    }
+  }
+
+  function colorTargetPrev() {
+    $processState.colorTargetID = Math.floor(Math.random() * 999999999);
+    let msg = {
+      RequestID: $processState.colorTargetID,
+      RequestType: "HalfSizePreview",
+      RequestData: {
+        names: [$processState.artStacks[0].fields.images[0].name],
+      },
+    };
+    if ($processState.artStacks[0].fields.images[0].name.length > 2) {
+      console.log("Getting Color Target Preview");
+      console.log(msg);
+      sendMessage(JSON.stringify(msg));
     }
   }
 
@@ -53,6 +74,16 @@
     update();
     console.log($processState);
   }
+
+  $: if (
+    $processState.currentTab === 4 &&
+    $processState.artStacks[0].colorTargetImage?.filename?.length === 0
+  ) {
+    console.log("Getting Color Target Preview");
+    colorTargetPrev();
+  }
+
+  $: console.log($processState);
 
   let colorTarget;
   let colorPos;
@@ -134,6 +165,17 @@
   }
 
   // $: console.log(targetArray);
+
+  $: if (colorTarget?.refData?.name === "Choose a custom file....csv") {
+    console.log("OPENING CUSTOM REF MODAL");
+    modal.set("CustomRefData");
+    colorTarget.refData.name = "CUSTOM DATA";
+  }
+  $: if (verifyTarget?.refData?.name === "Choose a custom file....csv") {
+    console.log("OPENING CUSTOM REF MODAL VER");
+    modal.set("CustomRefDataVer");
+    verifyTarget.refData.name = "CUSTOM DATA";
+  }
 </script>
 
 <main>
@@ -183,7 +225,11 @@
           </div>
           <div class="refDataDiv">
             <span>Reference Data</span>
-            <Dropdown values={refData} bind:selected={target.refData.name} />
+            <Dropdown
+              values={refData}
+              bind:selected={target.refData.name}
+              spaceLast
+            />
           </div>
           <div class="sizeDiv">
             <span>Selection Area Size:</span>
