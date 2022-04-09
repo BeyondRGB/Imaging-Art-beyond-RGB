@@ -14,17 +14,8 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
         this->verification_data = target1.get_ref_data();
         std::cout << "Initialized General Verification Data" << std::endl;
     }
-    catch (btrgb::ArtObj_VerificationDataNull e){
-        comms->send_error(e.what(), "Verification");
-        throw;
-    }
-    catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        comms->send_error("Verification called out of order. Missing at least 1 image assignment.", "Verification");
-        throw;
-    }
-    catch (const std::logic_error& e) {
-        comms->send_error(e.what(), "Verification");
-        throw;
+    catch (const std::exception& e) {
+        throw Pipeline::error(e.what(), "Verification");
     }
 
     this->verify_CM_calibration(comms, images);
