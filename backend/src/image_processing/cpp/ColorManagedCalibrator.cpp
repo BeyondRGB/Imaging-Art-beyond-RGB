@@ -4,8 +4,8 @@ ColorManagedCalibrator::~ColorManagedCalibrator() {
 }
 
 void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("", "Color Managed Calibration");
-    comms->send_progress(0, "Color Managed Calibration");
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     btrgb::Image* art1;
     btrgb::Image* art2;
@@ -22,14 +22,8 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
         art2 = images->getImage(ART(2));
         this->ref_data = images->get_refrence_data();
     }
-    catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        comms->send_error("ColorManagedCalibrator called out of order. Missing at least 1 image assignment.", "Color Managed Calibration");
-        return;
-    }
-    catch (const std::logic_error& e) {
-        std::string error(e.what());
-        comms->send_error(error, "Color Managed Calibration");
-        return;
+    catch (const std::exception& e) {
+        throw ImgProcessingComponent::error(e.what(), this->get_name());
     }
 
     // Init Color Targets
@@ -42,26 +36,27 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     // Init Matracies used in calibration
     this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
     this->build_input_matrix();
-    comms->send_progress(0.1, "Color Managed Calibration");
+    comms->send_progress(0.1, this->get_name());
     this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
 
     // Fined M and Offsets to minimize deltaE
     std::cout << "Optimizing to minimize deltaE" << std::endl;
     this->find_optimization();
-    comms->send_progress(0.6, "Color Managed Calibration");
+    comms->send_progress(0.6, this->get_name());
 
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
-    try { this->update_image(images); }
-    catch(btrgb::ArtObj_ImageAlreadyExists e) {
-       comms->send_error("Image already exists, could not save result.", "Color Managed Calibration");
-    } catch(btrgb::ArtObj_FailedToWriteImage e) {
-       comms->send_error("Failed to write image.", "Color Managed Calibration");
-    } comms->send_progress(0.9, "Color Managed Calibration");
+    try {
+        this->update_image(images);
+    }
+    catch(const std::exception& e) {
+       throw ImgProcessingComponent::error(e.what(), this->get_name());
+    }
+    comms->send_progress(0.9, this->get_name());
 
     // Save resulting Matacies for latter use
     this->output_report_data(images);
-    comms->send_progress(1, "Color Managed Calibration");
+    comms->send_progress(1, this->get_name());
 
     // Dont remove art1 and art2 from the ArtObject yet as they are still needed for spectral calibration
 

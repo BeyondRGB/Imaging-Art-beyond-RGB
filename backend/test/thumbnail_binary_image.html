@@ -38,13 +38,32 @@
                     image_header = rsp.ResponseData;
             }
         }
+        let z = 0;
+        function send_test() {
+            req = {
+                "RequestID": Math.floor(Math.random() * 1000),
+                "RequestType": /*"Thumbnails",*/"SpectralPicker",
+                "RequestData": {
+                    "name": "/home/jared/Documents/senior project/output/BTRGB_2022-04-05_02-20-04/BTRGB_1649139658.btrgb",
+                    "coordinates": {
+                        "x": Math.random(),
+                        "y": Math.random() / 2
+                    },
+                    "size": Math.random() * 0.02
+                }
+            };
+            console.log(req);
+            ws.send(JSON.stringify(req));
+            if(z++ < 10)
+                setTimeout(send_test, 750);
+
+        }
+        
 
         ws.onopen = () => {
-            req = {
-                "RequestID": 345345,
-                "RequestType": "Thumbnails",
-                "RequestData": {
-                    "names": [
+            send_test();
+
+                    /*"names": [*/
                         /*"C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_targets_1.CR2",
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_white_1.CR2",
                         "C:\\Users\\Jared\\Desktop\\Files\\BTRGB\\cannon_raws\\canon_dark_1.CR2",
@@ -66,17 +85,17 @@
                         "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_targets_1.NEF",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_raws/nikon_dark_1.NEF"*/
 
-                        "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/white2_raw.tiff",
+                       /* "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/white2_raw.tiff",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/art2_raw.tiff",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/dark2_raw.tiff",
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/white1_raw.tiff", 
                         "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/art1_raw.tiff",
-                        "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/dark1_raw.tiff"
+                        "/Users/jared/Documents/Senior Project/test_images/nikon_tiffs/dark1_raw.tiff"*/
 
-                    ]
+                    /*]
                 }
             };
-            ws.send(JSON.stringify(req));
+            ws.send(JSON.stringify(req));*/
         };
 
         

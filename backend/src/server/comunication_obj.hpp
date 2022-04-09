@@ -19,6 +19,11 @@
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
+namespace btrgb {
+	const bool CRITICAL = true;
+	const bool BENING = false;
+}
+
 /**
 * Class used for sending mesages to the front end.
 * An instance of the class gets created when a new msg is recieved from the forntedn.
@@ -59,8 +64,9 @@ public:
 	* Function for sending a Error Message to the front end
 	* @param msg: the message being sent to the front end
 	* @param sender: what function is sending the message
+	* @param critical: indicates process has stopped running (defaults to true)
 	*/
-	void send_error(std::string msg, std::string sender);
+	void send_error(std::string msg, std::string sender, bool critical=true);
 	/**
 	* Function for sending a Progress Update Message to the front end
 	* @param val: amount of progress made in a overall step
@@ -74,6 +80,9 @@ public:
 	* @param qual: enum for the quality of the image being sent
 	*/
 	void send_reports(jsoncons::json reports, std::string report_type);
+
+	void send_spectrum(float* data, int size);
+	void send_pipeline_components(jsoncons::json compoents_list);
 
 	void send_base64(btrgb::Image* image, enum btrgb::image_quality qual);
 	void send_binary(btrgb::Image* image, enum btrgb::image_quality qual);

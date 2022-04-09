@@ -7,8 +7,8 @@ ResultsProcessor::~ResultsProcessor(){
 }
 
 void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images){
-    comms->send_info("","ResultsProcessor");
-    comms->send_progress(0,"ResultsProcessor");
+    comms->send_info("",this->get_name());
+    comms->send_progress(0,this->get_name());
 
     this->output_dir = images->get_output_dir();
     this->ts_id = btrgb::get_time_stamp();
@@ -30,7 +30,7 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     this->output_btrgb_results(images);
     this->output_user_results(images);  
 
-    comms->send_progress(0.2,"ResultsProcessor");
+    comms->send_progress(0.2,this->get_name());
 
     // Output Images 
     this->output_images(images);
@@ -39,7 +39,7 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     // Store PRO_file so we can access it from Pipeline
     images->get_results_obj(btrgb::ResultType::GENERAL)->store_string(PRO_FILE, this->output_dir + this->Pro_f_name);
     
-    comms->send_progress(1,"ResultsProcessor");
+    comms->send_progress(1,this->get_name());
 }
 
 void ResultsProcessor::output_images(btrgb::ArtObject* images){
