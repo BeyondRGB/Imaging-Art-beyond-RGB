@@ -4,9 +4,15 @@
 	import { fade, fly } from "svelte/transition";
 	import { currentPage, appSettings, modal } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
+	import RefDataModal from "@components/RefDataModal.svelte";
 
 	let showModal = false;
-	$: if ($modal === "Settings" || $modal === "Home") {
+	$: if (
+		$modal === "Settings" ||
+		$modal === "Home" ||
+		"CustomRefData" ||
+		"CustomRefDataVer"
+	) {
 		showModal = true;
 	} else {
 		showModal = false;
@@ -37,24 +43,39 @@
     </h2> -->
 	{#if $modal === "Settings"}
 		<Modal
+			component={routes.Settings.component}
 			on:close={() => {
 				showModal = false;
 				$modal = null;
 			}}
-		>
-			<!-- <h1 slot="header">App Settings</h1> -->
-			<svelte:component this={routes.Settings.component} />
-		</Modal>
+		/>
 	{:else if $modal === "Home"}
 		<Modal
+			component={routes.Home.component}
 			minimal
 			on:close={() => {
 				showModal = false;
 				$modal = null;
 			}}
-		>
-			<svelte:component this={routes.Home.component} />
-		</Modal>
+		/>
+	{:else if $modal === "CustomRefData"}
+		<Modal
+			component={RefDataModal}
+			customExit
+			on:close={() => {
+				showModal = false;
+				$modal = null;
+			}}
+		/>
+	{:else if $modal === "CustomRefDataVer"}
+		<Modal
+			component={RefDataModal}
+			customExit
+			on:close={() => {
+				showModal = false;
+				$modal = null;
+			}}
+		/>
 	{/if}
 {/if}
 
