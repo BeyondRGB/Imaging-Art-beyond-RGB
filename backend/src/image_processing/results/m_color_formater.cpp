@@ -1,7 +1,7 @@
 #include "image_processing/results/m_color_formater.hpp"
 #include <opencv2/opencv.hpp>
 
-void MColorFormater::write_format(std::ostream &output_stream, CalibrationResults *results){
+void MColorFormater::write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type){
     cv::Mat M;
     cv::Mat offset;
     try{

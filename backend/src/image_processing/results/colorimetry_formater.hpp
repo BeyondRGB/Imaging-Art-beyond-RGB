@@ -30,7 +30,7 @@ class ColorimetryFormater : public ResultsFormater{
         void write_header(std::ostream &output_stream, std::string delim);
 
     public:
-        void write_format(std::ostream &output_stream, CalibrationResults *results) override;
+        void write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type) override;
 
 };
 

@@ -37,7 +37,7 @@ class GeneralInfoFormater : public ResultsFormater{
         
 
     public:
-        void write_format(std::ostream &output_stream, CalibrationResults *results) override;
+        void write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type) override;
 
 };
 

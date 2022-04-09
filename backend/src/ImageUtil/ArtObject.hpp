@@ -65,7 +65,7 @@ namespace btrgb {
         ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory);
         ~ArtObject();
 
-        RefData* get_refrence_data();
+        RefData* get_refrence_data(btrgb::TargetType target_type=btrgb::TargetType::GENERAL_TARGET);
         void init_verification_data(TargetData verification_data);
 
         void setTargetInfo(TargetData td);

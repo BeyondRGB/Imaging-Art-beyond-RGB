@@ -18,7 +18,7 @@
  * 
  */
 class ResultsProcessor : public ImgProcessingComponent{
-    
+    typedef ResultsFormater::ResultObjType ResultObjType;
     public:
         enum FormatType{
             GEN_INFO,
@@ -60,7 +60,7 @@ class ResultsProcessor : public ImgProcessingComponent{
         std::string build_output_name(std::string name, std::string extention="");
 
         void set_formater(FormatType type);
-        void write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj);
+        void write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj, ResultObjType result_type);
 
         ResultsFormater *formater = nullptr;
 

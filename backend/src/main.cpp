@@ -13,6 +13,7 @@
 #include "image_processing/results/general_info_formater.hpp"
 #include "image_processing/results/m_color_formater.hpp"
 #include "image_processing/results/colorimetry_formater.hpp"
+#include "image_processing/results/r_camera_fromater.hpp"
 
 #include "reference_data/ref_data.hpp"
 
@@ -37,10 +38,15 @@ void testFunc() {
 		CalibrationResults ver_res(ver_json.get_jsoncons());
 
 		calib_res.store_matrix(CM_XYZ_REF, xyz);
+		ver_res.store_matrix(CM_XYZ_REF, xyz);
+		int row_count = gen_info.get_int(GI_TARGET_ROWS);
+		int col_count = gen_info.get_int(GI_TARGET_COLS);
+		calib_res.store_int(GI_TARGET_COLS, col_count);
+		calib_res.store_int(GI_TARGET_ROWS, row_count);
 
 		formater = new ColorimetryFormater();
 
-		formater->write_format(std::cout, &calib_res);
+		formater->write_format(std::cout, &ver_res, ResultsFormater::ResultObjType::VERIFICATION);
 
 		// gen_info.write_results(std::cout);
 		// std::cout << "\n======================================================\n======================================================\n" << std::endl;
