@@ -22,14 +22,8 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
         art2 = images->getImage(ART(2));
         this->ref_data = images->get_refrence_data();
     }
-    catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        comms->send_error("ColorManagedCalibrator called out of order. Missing at least 1 image assignment.", this->get_name());
-        return;
-    }
-    catch (const std::logic_error& e) {
-        std::string error(e.what());
-        comms->send_error(error, this->get_name());
-        return;
+    catch (const std::exception& e) {
+        throw ImgProcessingComponent::error(e.what(), this->get_name());
     }
 
     // Init Color Targets
@@ -52,12 +46,13 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
-    try { this->update_image(images); }
-    catch(btrgb::ArtObj_ImageAlreadyExists e) {
-       comms->send_error("Image already exists, could not save result.", this->get_name());
-    } catch(btrgb::ArtObj_FailedToWriteImage e) {
-       comms->send_error("Failed to write image.", this->get_name());
-    } comms->send_progress(0.9, this->get_name());
+    try {
+        this->update_image(images);
+    }
+    catch(const std::exception& e) {
+       throw ImgProcessingComponent::error(e.what(), this->get_name());
+    }
+    comms->send_progress(0.9, this->get_name());
 
     // Save resulting Matacies for latter use
     this->output_report_data(images);
