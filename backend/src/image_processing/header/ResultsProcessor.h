@@ -7,6 +7,7 @@
 #include "image_processing/results/general_info_formater.hpp"
 #include "image_processing/results/m_color_formater.hpp"
 #include "image_processing/results/m_spectral_formater.hpp"
+#include "image_processing/results/colorimetry_formater.hpp"
 #include "utils/general_utils.hpp"
 
 #define IMG_FILE_NAME(x, id) ("BTRGB_" x "_" id)
@@ -59,6 +60,7 @@ class ResultsProcessor : public ImgProcessingComponent{
         std::string build_output_name(std::string name, std::string extention="");
 
         void set_formater(FormatType type);
+        void write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj);
 
         ResultsFormater *formater = nullptr;
 
@@ -72,11 +74,11 @@ class ResultsProcessor : public ImgProcessingComponent{
         // std::string VerRes_f_name;
 
         std::string GI_f_name;
-        std::string M_color_f_name;
-        std::string M_spectral_f_name;
-        std::string R_ref_f_name;
-        std::string colorimetry_f_name;
-        std::string R_camera_f_name;
+        // std::string M_color_f_name;
+        // std::string M_spectral_f_name;
+        // std::string R_ref_f_name;
+        // std::string colorimetry_f_name;
+        // std::string R_camera_f_name;
 
 };
 
