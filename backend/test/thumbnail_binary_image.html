@@ -39,23 +39,17 @@
             }
         }
         let z = 0;
+        let procs = ["Process", "HalfSizePreview", "Thumbnails", "ColorManagedImage", "SpectralPicker", "Reports"];
         function send_test() {
             req = {
                 "RequestID": Math.floor(Math.random() * 1000),
-                "RequestType": /*"Thumbnails",*/"SpectralPicker",
-                "RequestData": {
-                    "name": "/home/jared/Documents/senior project/output/BTRGB_2022-04-05_02-20-04/BTRGB_1649139658.btrgb",
-                    "coordinates": {
-                        "x": Math.random(),
-                        "y": Math.random() / 2
-                    },
-                    "size": Math.random() * 0.02
-                }
+                "RequestType": procs[z % procs.length],
+                "RequestData": {}
             };
             console.log(req);
             ws.send(JSON.stringify(req));
             if(z++ < 10)
-                setTimeout(send_test, 750);
+                setTimeout(send_test, 250);
 
         }
         

@@ -5,8 +5,14 @@ ThumbnailLoader::~ThumbnailLoader() {}
 
 
 void ThumbnailLoader::run() {
-
-    Json filenames = this->process_data_m->get_array("names");
+    Json filenames;
+    try {
+        filenames = this->process_data_m->get_array("names");
+    }
+    catch(const std::exception& e) {
+        this->coms_obj_m->send_error("[ThumbnailLoader] Invalid request.", "ThumbnailLoader");
+        return;
+    }
 
     std::unique_ptr<btrgb::LibRawThumbnail> raw_thumbnail_reader(new btrgb::LibRawThumbnail);
     std::unique_ptr<btrgb::LibTiffReader> tiff_reader(new btrgb::LibTiffReader);
