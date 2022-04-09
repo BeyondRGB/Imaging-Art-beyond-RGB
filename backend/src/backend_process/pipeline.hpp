@@ -14,7 +14,9 @@
 #include "image_processing/header/ImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
 #include "image_processing/header/ResultsProcessor.h"
+#include "image_processing/header/NoiseReduction.h"
 #include "image_processing/header/Verification.h"
+
 
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
@@ -136,6 +138,15 @@ private:
 	bool verify_targets(btrgb::ArtObject *images);
 
 
+
+
+	/**
+	* @brief get the sharpen type
+	* Gets a string corresponding to the level of sharpening needed
+	* N for disabled or L M H
+	* @return std::string
+	*/
+	std::string get_sharpen_type();
 
 public:
 	Pipeline();
