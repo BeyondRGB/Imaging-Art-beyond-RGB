@@ -9,6 +9,8 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
+    //Sharpening and Noise Reduction
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
@@ -153,7 +155,11 @@ void Pipeline::run() {
         pipeline->execute(this->coms_obj_m.get(), images.get());
         std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
         this->coms_obj_m->send_post_calibration_msg(Pro_file);
-    }catch(ColorTarget_MissmatchingRefData e){
+    } catch(const ImgProcessingComponent::error& e) {
+        this->report_error(e.who(), e.what());
+        return;
+    }
+    catch(ColorTarget_MissmatchingRefData e){
         this->report_error(this->get_process_name(), e.what());
         return;
     }catch(const std::exception& err) {
@@ -187,6 +193,25 @@ std::string Pipeline::get_output_directory() {
 
 
 }
+
+
+std::string Pipeline::get_sharpen_type() {
+
+    //default to no sharpening
+    std::string sharpen_string = "N";
+    try {
+        sharpen_string = this->process_data_m->get_string("sharpenString");
+        if (sharpen_string == "H" || sharpen_string == "M" || sharpen_string == "L" || sharpen_string == "N") {
+            return sharpen_string;
+        }
+    }
+    catch (ParsingError e) {  
+    }
+    return sharpen_string;
+}
+
+
+
 
 IlluminantType Pipeline::get_illuminant_type(Json target_data) {
     // Defaults to D50
