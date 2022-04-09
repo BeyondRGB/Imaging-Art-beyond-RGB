@@ -35,39 +35,20 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     int sigma = 2;
     int ksize = (sigma * 5) | 1;
 
-    //Low Frequency Kernel
-    //int sigmaL = 1;
-    //int ksizeL = 1.2;
-
     //Sharpen Factor
     int HsharpFactor = 1;
-    //Noise Factor
-    //int LsharpFactor = 1;
 
     //High Freq Blur
     GaussianBlur(im1, Hblurred1, Size(ksize, ksize), sigma, sigma);
     GaussianBlur(im2, Hblurred2, Size(ksize, ksize), sigma, sigma);
     
-    //Low Freq Blur
-    //GaussianBlur(im1, Lblurred1, Size(ksizeL, ksizeL), sigmaL, sigmaL);
-    //GaussianBlur(im2, Lblurred2, Size(ksizeL, ksizeL), sigmaL, sigmaL);
-
     //Create high freq mask
     cv::Mat unsharpMask1 = im1 - Hblurred1;
     cv::Mat unsharpMask2 = im2 - Hblurred2;
 
-    //Create low freq mask
-    //cv::Mat unNoiseMask1 = im1 - Lblurred1;
-    //cv::Mat unNoiseMask2 = im2 - Lblurred2;
-
     //Apply just high freq mask
     im1 = im1 + HsharpFactor * unsharpMask1;
     im2 = im2 + HsharpFactor * unsharpMask2;
-
-    //Apply both masks
-    //im1 = im1 + HsharpFactor * unsharpMask1 - LsharpFactor * unNoiseMask1;
-    //im1 = im2 + HsharpFactor * unsharpMask2 - LsharpFactor * unNoiseMask2;
-
 
     images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
     images->outputImageAs(btrgb::TIFF, "art2", "Sharp2");

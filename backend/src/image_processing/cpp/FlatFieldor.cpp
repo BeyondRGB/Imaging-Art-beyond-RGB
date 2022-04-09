@@ -8,18 +8,24 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     btrgb::Image *white2;
     btrgb::Image *dark1;
     btrgb::Image *dark2;
-    btrgb::Image* art1copy;
 
     RefData *reference;
 
     comms->send_info("", "Flat Fielding");
     comms->send_progress(0, "Flat Fielding");
 
+    btrgb::Image* art1copy = new btrgb::Image("art1copy");
+
+
     // Pull the images needed out of the Art Object
     try
     {
         art1 = images->getImage("art1");
-        art1copy = images->getImage("art1");
+        cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
+        art1copy->initImage(copy);
+
+
+
         white1 = images->getImage("white1");
         dark1 = images->getImage("dark1");
         art2 = images->getImage("art2");
@@ -37,7 +43,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         images->outputImageAs(btrgb::TIFF, "dark2", "dark2");
 
 
-        
+        /*
         cv::FileStorage file("art1.yml", cv::FileStorage::WRITE);
         cv::Mat im1 = art1->getMat();
         file << "matName" << im1;
@@ -49,7 +55,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         cv::FileStorage file2("dark1.yml", cv::FileStorage::WRITE);
         cv::Mat im3 = dark1->getMat();
         file2 << "matName" << im3;
-        
+        */
 
 
 
@@ -89,6 +95,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
+    delete art1copy;
     std::cout << "flat Time";
 
     comms->send_progress(1, "Flat Fielding");
@@ -125,6 +132,7 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int currRow, currCol, ch;
     int stuckPixelCounter = 0;
+    int uncorrectedCounter = 0;
     double wPix, dPix, aPix, newPixel;
     for (currRow = 0; currRow < h; currRow++) {
         for (currCol = 0; currCol < wid; currCol++) {
@@ -145,10 +153,10 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
                     stuckPixelCounter++;
 
                     
-                    std::cout << "Dead \n";
-                    std::cout << wPix << "\n";
-                    std::cout << dPix << "\n";
-                    std::cout << aPix << "\n";
+                    //std::cout << "Dead \n";
+                    //std::cout << wPix << "\n";
+                    //std::cout << dPix << "\n";
+                    //std::cout << aPix << "\n";
 
                     //Get different pixels todo make this not suck.
                     //Large blobs are dead so we must look at a bunch
@@ -275,54 +283,61 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
                         aPixH = aPix;
                     }
 
-
+                    //Blend the dead pixels into their neighbors
                     wPix = double((wPixA + wPixB + wPixC + wPixD + wPixE + wPixF + wPixG + wPixH) / 8);
                     dPix = double((dPixA + dPixB + dPixC + dPixD + dPixE + dPixF + dPixG + dPixH) / 8);
                     aPix = double((aPixA + aPixB + aPixC + aPixD + aPixE + aPixF + aPixG + aPixH) / 8);
 
-                    std::cout << "Corrected \n";
-                    std::cout << wPix << "\n";
-                    std::cout << dPix << "\n";
-                    std::cout << aPix << "\n";
+                    //std::cout << "Corrected \n";
+                    //std::cout << wPix << "\n";
+                    //std::cout << dPix << "\n";
+                    //std::cout << aPix << "\n";
+
+                    //std::cout << "Art blend targets \n";
+
+                    //std::cout << aPixA << "\n";
+                    //std::cout << aPixB << "\n";
+                    //std::cout << aPixC << "\n";
+                    //std::cout << aPixD << "\n";
+                    //std::cout << aPixE << "\n";
+                    //std::cout << aPixF << "\n";
+                    //std::cout << aPixG << "\n";
+                    //std::cout << aPixH << "\n";
 
 
-                    std::cout << aPixA << "\n";
-                    std::cout << aPixB << "\n";
-                    std::cout << aPixC << "\n";
-                    std::cout << aPixD << "\n";
-                    std::cout << aPixE << "\n";
-                    std::cout << aPixF << "\n";
-                    std::cout << aPixG << "\n";
-                    std::cout << aPixH << "\n";
-
-
-                    getchar();
+                    //getchar();
                
                     //Calibrate
                     
 
                     newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
-                    a1->setPixel(currRow, currCol, ch, newPixel);
 
-                    
+
+
+                    //NAN catch just set to 0;
                     if (newPixel != newPixel) {
-                        getchar();
-                        std::cout << aPixA << "\n";
-                        std::cout << aPixB << "\n";
-                        std::cout << aPixC << "\n";
-                        std::cout << aPixD << "\n";
-                        std::cout << aPixE << "\n";
-                        std::cout << aPixF << "\n";
-                        std::cout << aPixG << "\n";
-                        std::cout << aPixH << "\n";
-
-
+                        uncorrectedCounter++;
                         std::cout << "NAN" << "\n";
                         std::cout << wPix << "\n";
                         std::cout << dPix << "\n";
                         std::cout << aPix << "\n";
+                        newPixel = 0;
                     }
-                    
+
+
+                    //INF catch just set to 0;
+                    if (isinf(newPixel)) {
+                        uncorrectedCounter++;
+                        std::cout << "INF" << "\n";
+                        std::cout << wPix << "\n";
+                        std::cout << dPix << "\n";
+                        std::cout << aPix << "\n";
+                        newPixel = 0;
+                    }
+
+                    //Done set pixel
+                    a1->setPixel(currRow, currCol, ch, newPixel);
+
 
                 }
                 //Normal pixels continue with normal correction.
