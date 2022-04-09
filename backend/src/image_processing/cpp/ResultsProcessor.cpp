@@ -108,6 +108,12 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
     f_name = this->build_output_name("Colorimetry", "csv");
     this->write_formated_results(f_name, FormatType::COLORIMETRY, calibration_res, ResultObjType::CALIBRATION);
     // R_camera
+    int row_count = general_info->get_int(GI_TARGET_ROWS);
+    int col_count = general_info->get_int(GI_TARGET_COLS);
+    calibration_res->store_int(GI_TARGET_COLS, col_count);
+    calibration_res->store_int(GI_TARGET_ROWS, row_count);
+    f_name = this->build_output_name("R_camera", "csv");
+    this->write_formated_results(f_name, FormatType::R_CAMERA, calibration_res, ResultObjType::CALIBRATION);
 
     // Verification
     if(verification_res->contains_results()){
@@ -117,10 +123,14 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
         f_name = this->build_output_name("ColorimetryVerification", "csv");
         this->write_formated_results(f_name, FormatType::COLORIMETRY, verification_res, ResultObjType::VERIFICATION);
         // R_camera
+        row_count = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->get_row_count();
+        col_count = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->get_col_count();
+        verification_res->store_int(GI_TARGET_COLS, col_count);
+        verification_res->store_int(GI_TARGET_ROWS, row_count);
+        f_name = this->build_output_name("R_cameraVerification", "csv");
+        this->write_formated_results(f_name, FormatType::R_CAMERA, verification_res, ResultObjType::VERIFICATION);
     }
 
-
-   
     // GeneralInfo
     f_name = this->GI_f_name;
     this->write_formated_results(f_name, FormatType::GEN_INFO, general_info, ResultObjType::GENERAL);
@@ -151,12 +161,11 @@ void ResultsProcessor::set_formater(FormatType type){
         case FormatType::M_SPECTRAL:
             this->formater = new MSpectralFormater();
             break;
-        case FormatType::R_REF:
-            break;
         case FormatType::COLORIMETRY:
             this->formater = new ColorimetryFormater();
             break;
         case FormatType::R_CAMERA:
+            this->formater = new RCameraFormater();
             break;
     }
 }

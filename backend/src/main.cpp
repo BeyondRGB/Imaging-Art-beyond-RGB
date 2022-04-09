@@ -19,7 +19,7 @@
 
 void testFunc() {
 
-	std::string file = "C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\out\\BTRGB_2022-04-07_08-41-16\\BTRGB_1649335418.btrgb";
+	std::string file = "C:\\Users\\ThinkPad41\\Documents\\School\\CurrentCourses\\BeyondRGB\\test_pics\\out\\BeyondRGB_2022-04-09_17-16-05\\BeyondRGB_1649539068.btrgb";
 	jsoncons::json res_json = Jsonafiable::json_from_file(file);
 	Json my_json(res_json);
 
@@ -37,14 +37,16 @@ void testFunc() {
 		CalibrationResults calib_res(calib_json.get_jsoncons());
 		CalibrationResults ver_res(ver_json.get_jsoncons());
 
-		calib_res.store_matrix(CM_XYZ_REF, xyz);
-		ver_res.store_matrix(CM_XYZ_REF, xyz);
+		// calib_res.store_matrix(CM_XYZ_REF, xyz);
+		// ver_res.store_matrix(CM_XYZ_REF, xyz);
 		int row_count = gen_info.get_int(GI_TARGET_ROWS);
 		int col_count = gen_info.get_int(GI_TARGET_COLS);
 		calib_res.store_int(GI_TARGET_COLS, col_count);
 		calib_res.store_int(GI_TARGET_ROWS, row_count);
+		ver_res.store_int(GI_TARGET_COLS, col_count);
+		ver_res.store_int(GI_TARGET_ROWS, row_count);
 
-		formater = new ColorimetryFormater();
+		formater = new RCameraFormater();
 
 		formater->write_format(std::cout, &ver_res, ResultsFormater::ResultObjType::VERIFICATION);
 

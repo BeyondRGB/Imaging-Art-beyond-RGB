@@ -8,6 +8,7 @@
 #include "image_processing/results/m_color_formater.hpp"
 #include "image_processing/results/m_spectral_formater.hpp"
 #include "image_processing/results/colorimetry_formater.hpp"
+#include "image_processing/results/r_camera_fromater.hpp"
 #include "utils/general_utils.hpp"
 
 #define IMG_FILE_NAME(x, id) ("BTRGB_" x "_" id)
@@ -24,7 +25,6 @@ class ResultsProcessor : public ImgProcessingComponent{
             GEN_INFO,
             M_COLOR,
             M_SPECTRAL,
-            R_REF,
             COLORIMETRY,
             R_CAMERA
         };
