@@ -3,7 +3,7 @@
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
   import { flip } from "svelte/animate";
   import Page from "@root/components/Page.svelte";
-  import { PlusCircleIcon } from "svelte-feather-icons";
+  import { PlusCircleIcon, XCircleIcon } from "svelte-feather-icons";
   import Dropdown from "@root/components/Dropdown.svelte";
 
   let refData = [
@@ -12,6 +12,13 @@
     "CCSG_Reflectance_Data.csv",
     "CC_Classic_Reflectance_Data.csv",
     "Choose a custom file....csv",
+  ];
+
+  let refDataMeta = [
+    { rows: 10, cols: 13 },
+    { rows: 4, cols: 6 },
+    { rows: 10, cols: 14 },
+    { rows: 4, cols: 6 },
   ];
 
   function update() {
@@ -95,11 +102,11 @@
   function addTarget() {
     if (!colorTarget) {
       colorTarget = {
-        name: "Color Target",
+        name: "Calibration Target",
         rows: 10,
         cols: 10,
         refData: null,
-        color: 50,
+        color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
         size: 0.5,
         whitePatch: {
           row: 1,
@@ -118,7 +125,7 @@
         rows: 10,
         cols: 10,
         refData: null,
-        color: 100,
+        color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
         size: 0.5,
         whitePatch: {
           row: 1,
@@ -137,8 +144,10 @@
   function removeTarget(id) {
     console.log("Remove");
     if (id === 0) {
-      console.log("Removeing Color Target");
-      colorTarget = null;
+      if (verifyTarget == null) {
+        console.log("Removeing Color Target");
+        colorTarget = null;
+      }
     } else if (id === 1) {
       console.log("Removeing Verify Target");
       verifyTarget = null;
@@ -178,6 +187,19 @@
     modal.set("CustomRefDataVer");
     verifyTarget.refData.name = "CUSTOM DATA";
   }
+
+  $: if (refData.includes(colorTarget?.refData?.name)) {
+    let index = refData.findIndex((x) => x === colorTarget.refData.name);
+
+    colorTarget.rows = refDataMeta[index].rows;
+    colorTarget.cols = refDataMeta[index].cols;
+  }
+  $: if (refData.includes(verifyTarget?.refData?.name)) {
+    let index = refData.findIndex((x) => x === verifyTarget.refData.name);
+
+    verifyTarget.rows = refDataMeta[index].rows;
+    verifyTarget.cols = refDataMeta[index].cols;
+  }
 </script>
 
 <main>
@@ -190,7 +212,7 @@
     />
   </div>
   <div class="right">
-    <div class="boxHead">Targets</div>
+    <!-- <div class="boxHead">Targets</div> -->
     <div class="cardBox">
       {#each targetArray as target, i (target)}
         <div
@@ -250,9 +272,10 @@
             <div class="inputGroup">
               <span>Row: </span>
               <input
-                placeholder="1..26 [a-z]"
+                placeholder="1..26"
                 type="number"
                 min="1"
+                max={target.rows}
                 bind:value={target.whitePatch.row}
               />
             </div>
@@ -260,14 +283,23 @@
             <div class="inputGroup">
               <span>Col: </span>
               <input
-                placeholder="1..26 [a-z]"
+                placeholder="1..26"
                 type="number"
                 min="1"
+                max={target.cols}
                 bind:value={target.whitePatch.col}
               />
             </div>
           </div>
-          <button class="close" on:click={() => removeTarget(i)}>X</button>
+
+          <button
+            class="close"
+            disabled={i === 0 &&
+              typeof verifyTarget != "undefined" &&
+              verifyTarget != null}
+            on:click={() => removeTarget(i)}
+            ><XCircleIcon size="1.25x" /></button
+          >
         </div>
       {/each}
     </div>
@@ -357,7 +389,7 @@
   }
 
   .whitePatch .inputGroup {
-    @apply flex items-center gap-2;
+    @apply flex items-center gap-2 w-full;
   }
 
   .inputGroup > span {
@@ -368,8 +400,8 @@
   }
 
   .close {
-    @apply absolute top-0 right-0 bg-transparent text-white
-            hover:bg-red-600/50 hover:text-red-300;
+    @apply absolute top-0 right-0 bg-transparent text-gray-100
+            hover:bg-red-600/50 hover:text-white ring-0 p-1;
   }
   .refDataDiv {
     @apply flex justify-between items-center;

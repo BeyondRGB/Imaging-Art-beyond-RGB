@@ -7,6 +7,11 @@
     messageStore,
     currentPage,
   } from "@util/stores";
+  import {
+    XCircleIcon,
+    Maximize2Icon,
+    Minimize2Icon,
+  } from "svelte-feather-icons";
   import { fly } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import Switch from "@components/Switch.svelte";
@@ -114,9 +119,10 @@
       type: "File",
       filter: "project",
     });
-    console.log(ipcResponse);
-    $viewState.projectKey = ipcResponse.filePaths[0];
-    colorManagedImage();
+    if (!ipcResponse.canceled) {
+      $viewState.projectKey = ipcResponse.filePaths[0];
+      colorManagedImage();
+    }
   };
 
   async function handleTab(tab) {
@@ -130,9 +136,30 @@
     }
   }
 
+  function handleCloseTab(tab) {
+    delete $viewState.colorManagedImages[tab];
+
+    if (currentTab === tab) {
+      console.log("Deleting current tab");
+      currentTab = Object.keys($viewState.colorManagedImages)[0];
+      console.log({ CURRENTTAB: currentTab });
+      if (currentTab !== undefined) {
+        $viewState.projectKey =
+          $viewState.colorManagedImages[currentTab].projectKey;
+      } else {
+        $viewState.projectKey = null;
+      }
+    } else {
+      console.log("Not current tab");
+      currentTab = currentTab;
+    }
+  }
+
   $: if (currentTab === undefined) {
     currentTab = Object.keys($viewState.colorManagedImages)[0];
   }
+
+  let isFullScreen = window.innerHeight == screen.height;
 </script>
 
 <main>
@@ -145,111 +172,112 @@
     </div>
   {/if}
   <div class="content" id="picker-content">
-    <div class="image-tabs">
-      <button
-        class="fullBtn"
-        on:click={() => {
-          if (window.innerHeight == screen.height) {
-            document.exitFullscreen();
-          } else {
-            document.querySelector(".image-tabs").requestFullscreen();
-          }
-        }}>FULL</button
-      >
-      <div class="tabs">
-        {#each [...Object.keys($viewState.colorManagedImages), "+"] as tab, i}
-          <button
-            class="tab"
-            class:selected={currentTab == tab}
-            on:click={() => handleTab(tab)}
-          >
-            {#if tab !== "+"}
-              {i + 1}
-            {:else}
-              {tab}
-            {/if}
-          </button>
-        {/each}
-      </div>
-      {#if currentTab !== undefined}
-        <div class="image-container">
-          {#if loading}
-            <div class="loading">
-              <div class="loading-box">Loading<span class="loader" /></div>
-            </div>
+    <div class="panel">
+      <div class="image-tabs" class:aspect={expand}>
+        <button
+          class="fullBtn"
+          on:click={() => {
+            if (isFullScreen) {
+              document.exitFullscreen();
+              isFullScreen = false;
+            } else {
+              document.querySelector(".image-tabs").requestFullscreen();
+              isFullScreen = true;
+            }
+          }}
+        >
+          {#if isFullScreen}
+            <Minimize2Icon size="1.25x" />
+          {:else}
+            <Maximize2Icon size="1.25x" />
           {/if}
-
-          <div class="floatBox" class:notExpanded={!expand}>
-            <div class="handle" on:click={() => (expand = !expand)}>
-              {expand ? ">" : "<"}
+        </button>
+        <div class="tabs">
+          {#each [...Object.keys($viewState.colorManagedImages), "+"] as tab, i}
+            <div class="tab">
+              {#if tab !== "+"}
+                <button
+                  disabled={loading}
+                  on:click={() => handleCloseTab(tab)}
+                  class="closeTab"><XCircleIcon size="1x" /></button
+                >
+              {/if}
+              <button
+                class="btnTab"
+                class:selected={currentTab == tab}
+                disabled={loading}
+                on:click={() => handleTab(tab)}
+              >
+                {#if tab !== "+"}
+                  {i + 1}
+                {:else}
+                  {tab}
+                {/if}
+              </button>
             </div>
-            <div class="box" id="brush">
-              <Switch label="Enable Spectrum Picker" bind:checked={brushShow} />
-              <div class="sizeSettings">
-                Set Brush Size:
-                <div class="flex justify-center items-center gap-1">
-                  <input
-                    type="range"
-                    min="0.001"
-                    max="0.1"
-                    step=".0005"
-                    bind:value={size}
-                  />
-                  <input
-                    class="numberInput"
-                    type="number"
-                    min="0.001"
-                    max="0.1"
-                    step=".0005"
-                    bind:value={size}
-                  />
+          {/each}
+        </div>
+        {#if currentTab !== undefined}
+          <div class="image-container">
+            {#if loading}
+              <div class="loading">
+                <div class="loading-box">Loading<span class="loader" /></div>
+              </div>
+            {/if}
+
+            <div class="floatBox" class:notExpanded={!expand}>
+              <div class="handle" on:click={() => (expand = !expand)}>
+                {expand ? ">" : "<"}
+              </div>
+              <div class="box" id="brush">
+                <Switch
+                  label="Enable Spectrum Picker"
+                  bind:checked={brushShow}
+                />
+                <div class="sizeSettings">
+                  Set Brush Size:
+                  <div class="flex justify-center items-center gap-1">
+                    <input
+                      type="range"
+                      min="0.001"
+                      max="0.1"
+                      step=".0005"
+                      bind:value={size}
+                    />
+                    <input
+                      class="numberInput"
+                      type="number"
+                      min="0.001"
+                      max="0.1"
+                      step=".0005"
+                      bind:value={size}
+                    />
+                  </div>
                 </div>
               </div>
+              <div class="chart">
+                <LineChart
+                  bind:data={spectrumData}
+                  bind:wavelengthArray
+                  bind:shadowPos
+                />
+              </div>
             </div>
-            <div id="chart">
-              <LineChart bind:data={spectrumData} bind:wavelengthArray />
-            </div>
-          </div>
 
-          <SpecPickViewer
-            bind:dataURL={$viewState.colorManagedImages[currentTab].dataURL}
-            bind:shadowPos
-            bind:show={brushShow}
-            bind:size
-            bind:loading
-          />
-        </div>
+            <SpecPickViewer
+              bind:dataURL={$viewState.colorManagedImages[currentTab].dataURL}
+              bind:shadowPos
+              bind:show={brushShow}
+              bind:size
+              bind:loading
+            />
+          </div>
+        {/if}
+      </div>
+      {#if !expand}
+        <div class="side" />
       {/if}
     </div>
-    {#if !expand}
-      <div
-        class="side"
-        in:fly={{ x: -200, duration: 500 }}
-        out:fly={{ x: -200, duration: 500 }}
-      >
-        <div class="box" id="brush">
-          <Switch label="Enable Spectrum Picker" bind:checked={brushShow} />
-          <input
-            type="range"
-            min="0.001"
-            max="0.1"
-            step=".0005"
-            bind:value={size}
-          />
-          <input
-            class="numberInput"
-            type="number"
-            min="0.001"
-            max="0.1"
-            step=".0005"
-            bind:value={size}
-          />
-        </div>
-        <div id="chart">
-          <LineChart bind:data={spectrumData} bind:wavelengthArray />
-        </div>
-      </div>
-    {/if}
   </div>
 </main>
 
@@ -258,7 +286,7 @@
     @apply flex h-full w-full justify-center flex-col relative;
   }
   .noFile {
-    @apply absolute w-full h-full z-50 flex justify-center bg-gray-800
+    @apply absolute w-full h-full z-[99] flex justify-center bg-gray-800
             items-center;
   }
   .inputBox {
@@ -271,27 +299,44 @@
   .content {
     @apply w-full h-full flex justify-center items-center p-6;
   }
+  .panel {
+    @apply w-full h-full flex justify-center items-center;
+  }
   .image-container {
-    @apply relative w-full h-full bg-gray-500 overflow-hidden;
+    @apply relative w-full h-full bg-gray-500 overflow-visible;
   }
   .image {
     @apply bg-green-400 overflow-auto h-[90%] aspect-[3/2];
   }
   .image-tabs {
-    @apply w-full h-[90%] bg-red-500/50 rounded-t-lg overflow-auto relative 
+    @apply h-full w-full bg-red-500/50 rounded-t-lg relative
     flex flex-col;
   }
+
+  .aspect {
+    @apply aspect-[145/100] w-auto;
+  }
   .tabs {
-    @apply w-auto h-8 bg-gray-700 flex gap-1 pt-1 px-1 rounded-t-lg;
+    @apply w-auto bg-gray-700 flex gap-1 pt-1 px-1 rounded-t-lg;
   }
   .tab {
+    @apply relative;
+  }
+  .btnTab {
     @apply w-16 h-full bg-gray-700 flex justify-center items-center
-          rounded-t-xl rounded-b-none focus:ring-0;
+          rounded-t-xl rounded-b-none relative;
+  }
+
+  .closeTab {
+    @apply absolute -right-0.5 -top-0.5 flex justify-center items-center
+            p-0.5 bg-transparent ring-0 text-gray-400 
+            hover:bg-red-500/50 hover:text-white z-[49];
   }
 
   .floatBox {
-    @apply absolute h-auto w-[30vw] bg-gray-600/75 z-50 right-0 transition-all duration-500
-            translate-x-0;
+    border: 1px solid red;
+    @apply absolute h-auto w-[30vw] bg-gray-500/75 z-[49] right-0 transition-all duration-500
+            translate-x-0 border border-gray-700 rounded-bl-xl;
   }
 
   .notExpanded {
@@ -299,7 +344,7 @@
   }
 
   .loading {
-    @apply bg-gray-700 absolute w-full h-full z-50 flex justify-center items-center;
+    @apply bg-gray-700 absolute w-full h-full z-[49] flex justify-center items-center;
   }
   .loading-box {
     @apply h-full flex flex-col gap-2 justify-center items-center
@@ -348,14 +393,15 @@
   }
 
   .side {
-    @apply w-1/3;
+    @apply h-full w-[45vw];
   }
 
   .fullBtn {
-    @apply absolute right-0 m-1 z-50;
+    @apply absolute right-0 m-1 z-50 p-1 bg-transparent ring-0
+            hover:bg-green-500/25 transition-all duration-500;
   }
 
-  #chart {
+  .chart {
     @apply bg-gray-600 m-2 p-2 pb-4 rounded-lg pr-4;
   }
 
@@ -367,9 +413,11 @@
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
   }
   .handle {
-    @apply bg-gray-800 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-							text-2xl rounded-l-full border-l-2 border-t-2 border-b-2 border-gray-700;
+    border: 1px solid red;
+    @apply bg-gray-500/75 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
+							text-2xl rounded-l-full border border-r-[0px] border-gray-800;
   }
+
   .sizeSettings {
     @apply flex justify-between items-center text-base pl-4;
   }

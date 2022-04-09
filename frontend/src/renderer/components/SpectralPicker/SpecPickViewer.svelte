@@ -1,16 +1,7 @@
 <script lang="ts">
-  import placeholder from "@assets/placeholder.jpg";
-
-  import {
-    currentPage,
-    messageStore,
-    processState,
-    sendMessage,
-    viewState,
-  } from "@util/stores";
+  import { currentPage } from "@util/stores";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
-  import Loader from "@components/Loader.svelte";
 
   export let size = 0.01;
   export let show = true;
@@ -45,11 +36,7 @@
       preserveImageSizeOnResize: true,
       maxZoomPixelRatio: 30,
       zoomPerScroll: 1.4,
-      visibilityRatio: 1,
-      // tileSources: {
-      //   type: "image",
-      //   url: placeholder,
-      // },
+      visibilityRatio: 0.7,
     });
 
     viewer.addHandler("zoom", handleZoom);
