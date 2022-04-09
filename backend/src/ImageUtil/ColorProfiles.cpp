@@ -3,9 +3,38 @@
 namespace btrgb {
 
 
+void ColorProfiles::convert(cv::Mat im,
+        void* from_profile_data, uint32_t from_size,
+        void* to_profile_data, uint32_t to_size) {
+
+    cmsUInt32Number type;
+    switch(im.depth()) {
+        case CV_16U: type = TYPE_RGB_16; break;
+        case CV_8U: type = TYPE_RGB_8; break;
+        case CV_32F: type = TYPE_RGB_FLT; break;
+        default: 
+            throw std::runtime_error("[ColorProfiles::convert] Mat type not supported.");
+    }
+
+    cmsHPROFILE from_profile, to_profile;
+    from_profile = cmsOpenProfileFromMem(from_profile_data, from_size);
+    to_profile = cmsOpenProfileFromMem(to_profile_data, to_size);
+
+    cmsHTRANSFORM colorspace_transform;
+    colorspace_transform = cmsCreateTransform(from_profile, type, to_profile, type, INTENT_PERCEPTUAL, 0);
+    cmsDoTransform(colorspace_transform, im.data, im.data, im.rows * im.cols);
+    cmsDeleteTransform(colorspace_transform);
+
+    cmsCloseProfile(from_profile);
+    cmsCloseProfile(to_profile);
+}
+
 void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
 
-    if(im.channels() != 3)
+    if(from == to)
+        return;
+
+    else if(im.channels() != 3)
         throw std::runtime_error("[ColorProfiles::convert] Only supports three-channel images.");
 
     else if(from == ColorSpace::none)
