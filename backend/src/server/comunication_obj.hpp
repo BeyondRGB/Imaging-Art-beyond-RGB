@@ -75,6 +75,9 @@ public:
 	*/
 	void send_reports(jsoncons::json reports, std::string report_type);
 
+	void send_spectrum(float* data, int size);
+	void send_pipeline_components(jsoncons::json compoents_list);
+
 	void send_base64(btrgb::Image* image, enum btrgb::image_quality qual);
 	void send_binary(btrgb::Image* image, enum btrgb::image_quality qual);
 
