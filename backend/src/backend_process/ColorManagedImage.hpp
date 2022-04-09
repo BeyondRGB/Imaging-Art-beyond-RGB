@@ -1,10 +1,12 @@
-#ifndef HALFSIZEPREVIEW_H
-#define HALFSIZEPREVIEW_H
+#ifndef BTRGB_VIEWTIFF_HPP
+#define BTRGB_VIEWTIFF_HPP
+
+#include <fstream>
+#include <jsoncons/json.hpp>
 
 #include "ImageUtil/Image.hpp"
-#include "ImageUtil/ImageReader/LibRawReader.hpp"
 #include "ImageUtil/ImageReader/LibTiffReader.hpp"
-#include "ImageUtil/ImageReader/ImageReaderStrategy.hpp"
+#include "ImageUtil/ColorProfiles.hpp"
 #include "utils/json.hpp"
 #include "server/comunication_obj.hpp"
 
@@ -12,11 +14,11 @@
 
 
 
-class HalfSizePreview : public BackendProcess {
+class ColorManagedImage : public BackendProcess {
 
 public:
-    HalfSizePreview();
-    ~HalfSizePreview();
+    ColorManagedImage();
+    ~ColorManagedImage();
 	void run() override;
 
 private:
