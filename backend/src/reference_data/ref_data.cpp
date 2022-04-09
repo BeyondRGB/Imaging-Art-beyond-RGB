@@ -295,7 +295,6 @@ cv::Mat RefData::xyz_as_matrix(){
 		for(int col = 0; col < this->col_count; col++){
 			int mat_col = col + row * this->col_count;
 			ColorPatch *cp = this->get_color_patch(row, col);
-			std::cout << cp->get_name() << std::endl;
 			xyz.at<double>(0, mat_col) = cp->get_x();
 			xyz.at<double>(1, mat_col) = cp->get_y();
 			xyz.at<double>(2, mat_col) = cp->get_z();

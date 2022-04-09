@@ -113,6 +113,8 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
     std::cout << "Buiding Cam sigs" << std::endl;
     cv::Mat camera_sigs = btrgb::calibration::build_target_avg_matrix(targets, target_count, this->channel_count);
 
+    btrgb::calibration::display_matrix(&camera_sigs, "Verification Target Sigs");
+
     // Init R_camera
     std::cout << "Init R_camera" << std::endl;
     cv::Mat R_camera = btrgb::calibration::calc_R_camera(M_refl, camera_sigs);

@@ -1,7 +1,7 @@
 #include "image_processing/results/m_spectral_formater.hpp"
 #include <opencv2/opencv.hpp>
 
-void MSpectralFormater::write_format(std::ostream &output_stream, CalibrationResults *results){
+void MSpectralFormater::write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type){
     cv::Mat M;
     try{
         M = results->get_matrix(SP_M_refl);

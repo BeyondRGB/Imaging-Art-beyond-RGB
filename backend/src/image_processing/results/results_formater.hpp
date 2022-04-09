@@ -9,7 +9,11 @@
 class ResultsFormater{
 
     public:
-    virtual void write_format(std::ostream &output_stream, CalibrationResults *results) = 0;
+    enum ResultObjType{
+        GENERAL, CALIBRATION, VERIFICATION
+    };
+
+    virtual void write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type) = 0;
 
 };
 

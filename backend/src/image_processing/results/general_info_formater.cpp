@@ -1,6 +1,6 @@
 #include "image_processing/results/general_info_formater.hpp"
 
-void GeneralInfoFormater::write_format(std::ostream &output_stream, CalibrationResults *results){
+void GeneralInfoFormater::write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type){
     #define INDENT "\t"
     #define GI_DELIM ','
 
