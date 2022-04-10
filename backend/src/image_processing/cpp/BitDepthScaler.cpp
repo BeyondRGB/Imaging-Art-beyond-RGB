@@ -3,7 +3,7 @@
 #include "image_processing/header/BitDepthScaler.h"
 
 
-BitDepthScaler::BitDepthScaler() : LeafComponent("BitDepthScaler") {}
+BitDepthScaler::BitDepthScaler() : LeafComponent("BitDepth Scaler") {}
 BitDepthScaler::~BitDepthScaler() {}
 
 
