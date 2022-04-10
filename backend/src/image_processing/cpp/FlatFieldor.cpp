@@ -8,7 +8,11 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     btrgb::Image *white2;
     btrgb::Image *dark1;
     btrgb::Image *dark2;
+    btrgb::Image *target1;
+    btrgb::Image *target2;
     RefData *reference;
+
+    bool target_found = false;
 
     comms->send_info("", this->get_name());
     comms->send_progress(0, this->get_name());
@@ -23,6 +27,13 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         white2 = images->getImage("white2");
         dark2 = images->getImage("dark2");
         reference = images->get_refrence_data();
+        try{
+            target1 = images->getImage(TARGET(1));
+            target2 = images->getImage(TARGET(2));
+            target_found = true;
+        }catch (std::exception e){
+            target_found = false;
+        }
 
     }
     catch (const std::exception &e)
@@ -51,6 +62,13 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     //Calculate w value and complete the pixel operation with set w value
     wCalc(patAvg, whiteAvg, yVal);
     pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2);
+
+    if(target_found){
+        height = target1->height();
+        width = target1->width();
+        channels = target1->channels();
+        pixelOperation(height, width, channels, target1, target2, white1, white2, dark1, dark2);
+    }
 
     // Store Results
     this->store_results(images);
