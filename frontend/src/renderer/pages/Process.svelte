@@ -182,7 +182,10 @@
           $processState.artStacks[0].fields.targetB[0]?.name;
       }
     }
-    if ($processState.artStacks[0].verificationTarget !== null) {
+    if (
+      $processState.artStacks[0].verificationTarget != null &&
+      Object.keys($processState.artStacks[0].verificationTarget).length > 0
+    ) {
       console.log("Adding Verification to Process Request");
       console.log($processState.artStacks[0].verificationTarget);
       processRequest.RequestData["verificationLocation"] =

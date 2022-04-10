@@ -30,7 +30,7 @@ export const processState = writable({
       colorTargetImage: { dataURL: "", filename: "", },
       verificationTargetImage: { dataURL: "", filename: "" },
       colorTarget: {},
-      verificationTarget: null,
+      verificationTarget: {},
       sharpenString: "N",
       fields: {
         imageA: [],
@@ -77,7 +77,6 @@ export function connect() {
   });
 
   socket.addEventListener('message', function (event) {
-    console.log({ RECIVED: event.data });
     messageStore.set([event.data, new Date()]);
   });
 }
@@ -90,7 +89,6 @@ export function close() {
 
 export const sendMessage = (message) => {
   if (socket.readyState === 1) {
-    console.log({ SendMessage: message });
     socket.send(message);
   }
 };
