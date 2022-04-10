@@ -14,7 +14,7 @@
  */
 class ResultsProcessor : public LeafComponent{
     public:
-        ResultsProcessor() : LeafComponent("Results Procsessor"){};
+        ResultsProcessor() : LeafComponent("Results Procsessing"){};
         ~ResultsProcessor(){};
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 

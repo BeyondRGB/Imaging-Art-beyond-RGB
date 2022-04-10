@@ -8,7 +8,7 @@
 #include "image_processing/header/ImageReader.h"
 
 
-ImageReader::ImageReader() : LeafComponent("Image Reader") {}
+ImageReader::ImageReader() : LeafComponent("Image Reading") {}
 
 ImageReader::~ImageReader() {
     delete this->_reader;
