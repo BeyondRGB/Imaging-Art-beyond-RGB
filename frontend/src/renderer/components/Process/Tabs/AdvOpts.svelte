@@ -5,6 +5,10 @@
 
   let selected = "None";
 
+  $: if ($processState.currentTab === 3 && !$processState.completedTabs[3]) {
+    $processState.completedTabs[3] = true;
+  }
+
   $: if (selected) {
     $processState.artStacks[0].sharpenString = selected.slice(0, 1);
   }

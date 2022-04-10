@@ -7,6 +7,7 @@ export const modal = writable(null);
 
 export const viewState = writable({
   projectKey: null,
+
   colorManagedImages: {},
   reports: {
     calibration: null,
@@ -17,10 +18,13 @@ export const viewState = writable({
 // Page Stores
 export const processState = writable({
   currentTab: 0,
+  completedTabs: [false, false, false, false],
+  pipelineComplete: false,
   destDir: "",
   imageFilePaths: [],
   thumbnailID: null,
   colorTargetID: null,
+  CMID: null,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
   artStacks: [
@@ -30,7 +34,7 @@ export const processState = writable({
       colorTargetImage: { dataURL: "", filename: "", },
       verificationTargetImage: { dataURL: "", filename: "" },
       colorTarget: {},
-      verificationTarget: {},
+      verificationTarget: null,
       sharpenString: "N",
       fields: {
         imageA: [],
@@ -77,6 +81,7 @@ export function connect() {
   });
 
   socket.addEventListener('message', function (event) {
+    console.log({ RECIVED: event.data });
     messageStore.set([event.data, new Date()]);
   });
 }
@@ -89,6 +94,7 @@ export function close() {
 
 export const sendMessage = (message) => {
   if (socket.readyState === 1) {
+    console.log({ SendMessage: message });
     socket.send(message);
   }
 };

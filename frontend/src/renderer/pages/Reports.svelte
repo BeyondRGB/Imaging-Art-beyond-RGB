@@ -124,7 +124,7 @@
 
   .noFile {
     @apply absolute w-full h-full z-[99] flex justify-center bg-gray-800
-            items-center;
+            items-center top-0 left-0;
   }
   .inputBox {
     @apply w-auto h-auto bg-gray-700 flex flex-col gap-2 justify-center items-center

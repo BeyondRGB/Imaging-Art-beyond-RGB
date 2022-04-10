@@ -37,6 +37,13 @@
     console.log("Fetching Thumbnails");
     getThumbnails();
   }
+
+  $: if (
+    $processState.imageFilePaths.length >= 6 &&
+    !$processState.completedTabs[0]
+  ) {
+    $processState.completedTabs[0] = true;
+  }
 </script>
 
 <main>

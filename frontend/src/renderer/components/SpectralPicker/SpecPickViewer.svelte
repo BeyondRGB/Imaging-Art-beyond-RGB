@@ -70,9 +70,6 @@
   $: if ($currentPage === "SpecPicker") {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
-      console.log(viewer.isOpen());
-      console.log(imageUrl);
-      console.log(imageUrl.includes("undefined"));
       if (!imageUrl.includes("undefined")) {
         loading = false;
       }
