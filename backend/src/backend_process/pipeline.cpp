@@ -107,7 +107,7 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     if(option == "H")
         option_string = "High";
     else if(option == "M")
-        option_string = "Medeum";
+        option_string = "Medium";
     else if(option == "L")
         option_string = "Low";
     results_obj->store_string(GI_ADVANCED_FILTERS, option_string);
