@@ -84,7 +84,7 @@
         </div>
         <div class="report-info">
           Mean ΔE: {parseFloat(
-            $viewState.reports.calibration["double_values"][0]["data"]
+            $viewState.reports.calibration?.["double_values"]?.[0]?.["data"]
           ).toFixed(4)}
         </div>
       </div>
