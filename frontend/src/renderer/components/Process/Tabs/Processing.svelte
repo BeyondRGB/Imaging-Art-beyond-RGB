@@ -72,8 +72,9 @@
 
   function handleComplete(id) {
     if (id === 0) {
-      currentPage.set("SpecPicker");
       reset();
+      currentPage.set("SpecPicker");
+      console.log({ RESETING: $currentPage });
     } else if (id === 1) {
       // open in election
     } else if (id === 2) {
@@ -155,7 +156,7 @@
                       {/if}
                     {/each}
                   {/if}
-                  {#if pipelineComponents[component1][component2]["name"].includes("Results")}
+                  {#if pipelineComponents[component1][component2]["name"].includes("Results") || pipelineComponents[component1][component2]["name"].includes("Verifi")}
                     <div
                       class="progress-circle"
                       class:completed={pipelineProgress[
@@ -233,7 +234,7 @@
             text-lg ring-1 ring-gray-600 p-1;
   }
   .steps {
-    @apply flex w-full justify-between gap-2;
+    @apply flex w-full justify-center gap-2;
   }
   .completedBox {
     @apply w-full h-full absolute bg-black/50 z-50 flex justify-center items-center;
@@ -258,7 +259,7 @@
     );
     background-size: 400% 400%;
     animation: gradient 5s ease infinite;
-    @apply bg-gray-600 h-[10vw] w-[10vw] rounded-full p-1 relative;
+    @apply bg-gray-600 h-[8vw] w-[8vw] rounded-full p-1 relative;
   }
 
   .progress-circle.completed {
