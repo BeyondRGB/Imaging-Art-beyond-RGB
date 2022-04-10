@@ -14,7 +14,9 @@
 #include "image_processing/header/ImageReader.h"
 #include "image_processing/header/SpectralCalibrator.h"
 #include "image_processing/header/ResultsProcessor.h"
+#include "image_processing/header/NoiseReduction.h"
 #include "image_processing/header/Verification.h"
+
 
 #include "server/comunication_obj.hpp"
 #include "backend_process.hpp"
@@ -62,8 +64,6 @@ class Pipeline: public BackendProcess{
 
 
 private:
-	int num_m;
-	static int pipeline_count;
 	bool should_verify = false; // Assume there is no verification data
 
 	/*
@@ -137,15 +137,23 @@ private:
 
 
 
+
+	/**
+	* @brief get the sharpen type
+	* Gets a string corresponding to the level of sharpening needed
+	* N for disabled or L M H
+	* @return std::string
+	*/
+	std::string get_sharpen_type();
+
 public:
-	Pipeline();
+	Pipeline(std::string name) : BackendProcess(name) {};
 
 	/*
 	Override of the run method inherited from BackendProcess
 	This gets called by the ProcessManager to start this process
 	*/
 	void run() override;
-
 
 };
 
