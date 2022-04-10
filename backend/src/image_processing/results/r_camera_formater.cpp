@@ -1,5 +1,7 @@
 #include "image_processing/results/r_camera_fromater.hpp"
 
+#include "utils/calibration_util.hpp"
+
 void RCameraFormater::write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type){
     #define DELIM ","
     cv::Mat R_camera;
@@ -8,12 +10,15 @@ void RCameraFormater::write_format(std::ostream &output_stream, CalibrationResul
     int row_count;
     int col_count;
 
+    btrgb::calibration::display_matrix(&R_ref, "DisplayR_ref");
+
     std::cout << "R_Camera" << std::endl;
 
     try{
         if(format_type == ResultObjType::CALIBRATION){
             R_camera = results->get_matrix(SP_R_camera);
             R_ref = results->get_matrix(SP_R_reference);
+            rmse = results->get_double(SP_RMSE);
         }
         else if(format_type == ResultObjType::VERIFICATION){
             R_camera = results->get_matrix(V_R_CAMERA);
@@ -24,22 +29,20 @@ void RCameraFormater::write_format(std::ostream &output_stream, CalibrationResul
         row_count = results->get_int(GI_TARGET_ROWS);
         col_count = results->get_int(GI_TARGET_COLS);
     }catch(ResultError e){
-        std::cout << "Got e: " << e.what() << std::endl;
         throw e;
     }
 
-
+    // Write R_camera
     output_stream << "R_camera" << std::endl;
     this->write_header(output_stream, row_count, col_count, DELIM);
     this->write_matrix(output_stream, R_camera, row_count, col_count, DELIM);
-    
+    // Write R_ref
     output_stream << "R_reference" << std::endl;
     this->write_header(output_stream, row_count, col_count, DELIM);
     this->write_matrix(output_stream, R_ref, row_count, col_count, DELIM);
+    // Write RMSE
+    output_stream << "RMSE" << DELIM << rmse;
 
-    if(format_type == ResultObjType::VERIFICATION){
-        output_stream << "RMSE" << DELIM << rmse;
-    }
 
     #undef DELIM
 
@@ -62,7 +65,7 @@ void RCameraFormater::write_matrix(std::ostream &output_stream, cv::Mat matrix, 
             for(int row = 0; row < row_count; row++){
                 int mat_col = col + row * col_count;
                 output_stream << delim;
-                output_stream << matrix.at<double>(row, mat_col);
+                output_stream << matrix.at<double>(wavelen, mat_col);
             }
         }
         output_stream << std::endl;
