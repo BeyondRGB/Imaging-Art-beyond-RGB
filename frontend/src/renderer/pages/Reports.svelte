@@ -74,32 +74,33 @@
         <FileSelector bind:filePaths={mainfilePath} filter="project" />
       </div>
     </div>
+  {:else}
+    <div class="art">
+      <div class="report-header" class:show={$currentPage === "Reports"}>
+        <div class="report-name">
+          {$viewState.projectKey?.split("\\").length > 2
+            ? $viewState.projectKey?.split("\\").at(-1)
+            : $viewState.projectKey?.split("/").at(-1)}
+        </div>
+        <div class="report-info">
+          Mean ΔE: {parseFloat(
+            $viewState.reports.calibration["double_values"][0]["data"]
+          ).toFixed(4)}
+        </div>
+      </div>
+      <div class="reports">
+        <div class="report-item">
+          <Heatmap bind:data={$viewState.reports.calibration} />
+        </div>
+        <div class="report-item">
+          <ScatterCharts bind:data={$viewState.reports.calibration} />
+        </div>
+        <div class="report-item">
+          <LinearChart bind:data={$viewState.reports.calibration} />
+        </div>
+      </div>
+    </div>
   {/if}
-  <div class="art">
-    <div class="report-header" class:show={$currentPage === "Reports"}>
-      <div class="report-name">
-        {$viewState.projectKey.split("\\").length > 2
-          ? $viewState.projectKey.split("\\").at(-1)
-          : $viewState.projectKey.split("/").at(-1)}
-      </div>
-      <div class="report-info">
-        Mean ΔE: {parseFloat(
-          $viewState.reports.calibration["double_values"][0]["data"]
-        ).toFixed(4)}
-      </div>
-    </div>
-    <div class="reports">
-      <div class="report-item">
-        <Heatmap bind:data={$viewState.reports.calibration} />
-      </div>
-      <div class="report-item">
-        <ScatterCharts bind:data={$viewState.reports.calibration} />
-      </div>
-      <div class="report-item">
-        <LinearChart bind:data={$viewState.reports.calibration} />
-      </div>
-    </div>
-  </div>
 </main>
 
 <style lang="postcss" global>
@@ -133,10 +134,11 @@
     @apply text-xl;
   }
   .report-header {
-    @apply fixed w-full top-0 bg-gray-800 z-[10000] flex flex-col p-4 rounded-b-xl scale-0;
+    @apply fixed w-full top-0 bg-gray-800 z-[10000] flex flex-col p-4 rounded-b-xl -translate-y-full
+            transition-all delay-150 duration-300 ease-in;
   }
   .report-header.show {
-    @apply scale-100;
+    @apply translate-y-0;
   }
   .report-name {
     @apply text-4xl;
