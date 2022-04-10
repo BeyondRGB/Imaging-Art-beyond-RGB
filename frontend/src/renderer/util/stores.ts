@@ -8,13 +8,15 @@ export const modal = writable(null);
 export const viewState = writable({
   projectKey: null,
   colorManagedImages: {},
+  reports: {
+    calibration: null,
+    verification: null
+  }
 });
 
 // Page Stores
 export const processState = writable({
-  currentTab: 4,
-  pipelineComponents: [],
-  pipelineProgress: {},
+  currentTab: 0,
   destDir: "",
   imageFilePaths: [],
   thumbnailID: null,
@@ -69,6 +71,7 @@ export function connect() {
   });
 
   socket.addEventListener('message', function (event) {
+    console.log({ RECIVED: event.data });
     messageStore.set([event.data, new Date()]);
   });
 }

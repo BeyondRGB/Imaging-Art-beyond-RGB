@@ -110,14 +110,6 @@
         // base64 output handler
         console.log("Base64 From Server");
         $processState.outputImage = temp["ResponseData"];
-      } else if (temp["ResponseType"] === "Progress") {
-        console.log("Progress From Server");
-        $processState.pipelineProgress[temp["ResponseData"]["sender"]] =
-          temp["ResponseData"]["value"];
-      } else if (temp["ResponseType"] === "PipelineComponents") {
-        console.log("Pipeline Components From Server");
-        $processState.pipelineComponents =
-          temp["ResponseData"]["component_json"];
       }
     } catch (e) {
       console.log(e);
