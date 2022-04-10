@@ -32,101 +32,55 @@
     ];
   }
 
-  let inputData = [
-    {
-      lcam: 73,
-      lref: 70,
-    },
-    {
-      lcam: 24,
-      lref: 20,
-    },
-    {
-      lcam: 39,
-      lref: 35,
-    },
-    {
-      lcam: 6,
-      lref: 8,
-    },
-    {
-      lcam: 96,
-      lref: 93,
-    },
-    {
-      lcam: 85,
-      lref: 88,
-    },
-    {
-      lcam: 23,
-      lref: 19,
-    },
-    {
-      lcam: 67,
-      lref: 66,
-    },
-    {
-      lcam: 46,
-      lref: 47,
-    },
-    {
-      lcam: 90,
-      lref: 94,
-    },
-    {
-      lcam: 70,
-      lref: 73,
-    },
-    {
-      lcam: 44,
-      lref: 46,
-    },
-    {
-      lcam: 68,
-      lref: 66,
-    },
-    {
-      lcam: 9,
-      lref: 12,
-    },
-    {
-      lcam: 80,
-      lref: 76,
-    },
-    {
-      lcam: 40,
-      lref: 45,
-    },
-    {
-      lcam: 12,
-      lref: 11,
-    },
-    {
-      lcam: 69,
-      lref: 72,
-    },
-  ];
+  export let data;
 
-  let testAB = [];
-  let colorsAB = {};
-  inputData.map((value) => {
-    let rgb = lab2rgb([(value.lcam + value.lref) / 2, 0, 0]);
-    testAB.push({
-      group: `L*ref(${value.lref})-L*cam(${value.lcam})`,
-      lref: value.lref,
-      lcam: value.lcam,
+  $: if (data?.["matrix_values"]) {
+    let chartData = [];
+    data["matrix_values"]
+      .find((ele) => ele.name === "CM L*_camera")
+      ["data"].map((row, i) => {
+        row.map((colData, k) => {
+          chartData = [
+            ...chartData,
+            {
+              col: String.fromCharCode(k + 65),
+              row: i + 1,
+              lcam: data["matrix_values"].find(
+                (ele) => ele.name === "CM L*_camera"
+              )["data"][i][k],
+              lref: data["matrix_values"].find(
+                (ele) => ele.name === "CM L*_ref"
+              )["data"][i][k],
+            },
+          ];
+        });
+      });
+
+    chartData.map((value) => {
+      let rgb = lab2rgb([(value.lcam + value.lref) / 2, 0, 0]);
+      dataLL.push({
+        group: `${value.col}:${value.row}`,
+        lref: value.lref,
+        lcam: value.lcam,
+      });
+      colors[
+        `${value.col}:${value.row}`
+      ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
     });
-    colorsAB[
-      `L*ref(${value.lref})-L*cam(${value.lcam})`
-    ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-  });
-  console.log(testAB);
-  console.log(colorsAB);
+
+    console.log("=====================");
+    console.log(data);
+    console.log(chartData);
+    console.log(dataLL);
+  }
+
+  let dataLL = [];
+  let colors = {};
 </script>
 
 <div class="liner-chart">
   <ScatterChart
-    data={testAB}
+    data={dataLL}
     options={{
       title: "L*ref vs L*cam",
       axes: {
@@ -162,7 +116,7 @@
       height: "70vh",
       resizable: true,
       color: {
-        scale: colorsAB,
+        scale: colors,
       },
     }}
   />

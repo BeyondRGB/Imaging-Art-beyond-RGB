@@ -32,325 +32,97 @@
     ];
   }
 
-  let inputData = [
-    {
-      a: 56,
-      b: 65,
-      l: 100,
-    },
-    {
-      a: 117,
-      b: -115,
-      l: 38,
-    },
-    {
-      a: 71,
-      b: -122,
-      l: 7,
-    },
-    {
-      a: -40,
-      b: -90,
-      l: 50,
-    },
-    {
-      a: 78,
-      b: 68,
-      l: 91,
-    },
-    {
-      a: 66,
-      b: 25,
-      l: 59,
-    },
-    {
-      a: 65,
-      b: 121,
-      l: 18,
-    },
-    {
-      a: -71,
-      b: 127,
-      l: 5,
-    },
-    {
-      a: -103,
-      b: -127,
-      l: 93,
-    },
-    {
-      a: -67,
-      b: 127,
-      l: 85,
-    },
-    {
-      a: 117,
-      b: -35,
-      l: 71,
-    },
-    {
-      a: -61,
-      b: -128,
-      l: 99,
-    },
-    {
-      a: -59,
-      b: 88,
-      l: 6,
-    },
-    {
-      a: 57,
-      b: -100,
-      l: 68,
-    },
-    {
-      a: 32,
-      b: 22,
-      l: 56,
-    },
-    {
-      a: -33,
-      b: 96,
-      l: 86,
-    },
-    {
-      a: 49,
-      b: -61,
-      l: 99,
-    },
-    {
-      a: -110,
-      b: 61,
-      l: 93,
-    },
-    {
-      a: 24,
-      b: 102,
-      l: 25,
-    },
-    {
-      a: 25,
-      b: -96,
-      l: 99,
-    },
-    {
-      a: 83,
-      b: 6,
-      l: 5,
-    },
-    {
-      a: 39,
-      b: -10,
-      l: 30,
-    },
-    {
-      a: 36,
-      b: -22,
-      l: 54,
-    },
-    {
-      a: -55,
-      b: 80,
-      l: 91,
-    },
-    {
-      a: -5,
-      b: -115,
-      l: 22,
-    },
-    {
-      a: -117,
-      b: 124,
-      l: 34,
-    },
-    {
-      a: -125,
-      b: -57,
-      l: 28,
-    },
-    {
-      a: -103,
-      b: -47,
-      l: 87,
-    },
-    {
-      a: -58,
-      b: -124,
-      l: 71,
-    },
-    {
-      a: 68,
-      b: 94,
-      l: 26,
-    },
-    {
-      a: 60,
-      b: 71,
-      l: 38,
-    },
-    {
-      a: 18,
-      b: -91,
-      l: 26,
-    },
-    {
-      a: -67,
-      b: 112,
-      l: 62,
-    },
-    {
-      a: -43,
-      b: -12,
-      l: 37,
-    },
-    {
-      a: 25,
-      b: -41,
-      l: 55,
-    },
-    {
-      a: 19,
-      b: -15,
-      l: 88,
-    },
-    {
-      a: 45,
-      b: -125,
-      l: 64,
-    },
-    {
-      a: 35,
-      b: 15,
-      l: 67,
-    },
-    {
-      a: -73,
-      b: 48,
-      l: 49,
-    },
-    {
-      a: -42,
-      b: -1,
-      l: 93,
-    },
-    {
-      a: -61,
-      b: 80,
-      l: 14,
-    },
-    {
-      a: -29,
-      b: -89,
-      l: 91,
-    },
-    {
-      a: -17,
-      b: -15,
-      l: 68,
-    },
-    {
-      a: -78,
-      b: -69,
-      l: 25,
-    },
-    {
-      a: 36,
-      b: -99,
-      l: 74,
-    },
-    {
-      a: 103,
-      b: -119,
-      l: 50,
-    },
-    {
-      a: 59,
-      b: 21,
-      l: 18,
-    },
-    {
-      a: -39,
-      b: -15,
-      l: 33,
-    },
-    {
-      a: 94,
-      b: -47,
-      l: 85,
-    },
-    {
-      a: -63,
-      b: -92,
-      l: 82,
-    },
-  ];
+  export let data;
 
-  let testAB = [];
-  let colorsAB = {};
-  inputData.map((value) => {
-    let rgb = lab2rgb([value.l, value.a, value.b]);
-    testAB.push({
-      group: `R(${Math.round(rgb[0])})-G(${Math.round(rgb[1])})-B(${Math.round(
-        rgb[2]
-      )})`,
-      a: value.a,
-      b: value.b,
+  $: if (data?.["matrix_values"]) {
+    let chartData = [];
+    data["matrix_values"]
+      .find((ele) => ele.name === "CM L*_camera")
+      ["data"].map((row, i) => {
+        row.map((colData, k) => {
+          chartData = [
+            ...chartData,
+            {
+              col: String.fromCharCode(k + 65),
+              row: i + 1,
+              l: data["matrix_values"].find(
+                (ele) => ele.name === "CM L*_camera"
+              )["data"][i][k],
+              a: data["matrix_values"].find(
+                (ele) => ele.name === "CM a*_camera"
+              )["data"][i][k],
+              b: data["matrix_values"].find(
+                (ele) => ele.name === "CM b*_camera"
+              )["data"][i][k],
+            },
+          ];
+        });
+      });
+
+    chartData.map((value) => {
+      let rgb = lab2rgb([value.l, value.a, value.b]);
+      dataAB.push({
+        group: `${value.col}:${value.row}`,
+        a: value.a,
+        b: value.b,
+      });
+      colorsAB[
+        `${value.col}:${value.row}`
+      ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
     });
-    colorsAB[
-      `R(${Math.round(rgb[0])})-G(${Math.round(rgb[1])})-B(${Math.round(
-        rgb[2]
-      )})`
-    ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-  });
-  console.log(testAB);
-  console.log(colorsAB);
 
-  let testLC = [];
+    chartData.map((value) => {
+      let rgb = lab2rgb([value.l, value.a, value.b]);
+      dataLC.push({
+        group: `${value.col}:${value.row}`,
+        l: value.l,
+        c: Math.sqrt(value.a * value.a + value.b * value.b),
+      });
+      colorsLC[
+        `${value.col}:${value.row}`
+      ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+    });
+  }
+
+  let dataLC = [];
   let colorsLC = {};
-  inputData.map((value) => {
-    let rgb = lab2rgb([value.l, value.a, value.b]);
-    testLC.push({
-      group: `R(${Math.round(rgb[0])})-G(${Math.round(rgb[1])})-B(${Math.round(
-        rgb[2]
-      )})`,
-      l: value.l,
-      c: Math.sqrt(value.a * value.a + value.b * value.b),
-    });
-    colorsLC[
-      `R(${Math.round(rgb[0])})-G(${Math.round(rgb[1])})-B(${Math.round(
-        rgb[2]
-      )})`
-    ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-  });
-  console.log(testLC);
-  console.log(colorsLC);
+  let dataAB = [];
+  let colorsAB = {};
 </script>
 
 <div class="scatter-charts">
   <ScatterChart
-    data={testAB}
+    data={dataAB}
     options={{
       title: "a* vs b*",
       axes: {
         bottom: {
           title: "a*",
           mapsTo: "a",
+          // ticks: {
+          //   values: [
+          //     -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120,
+          //   ],
+          // },
+          // domain: [-128, 128],
           ticks: {
-            values: [
-              -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120,
-            ],
+            min: -120,
+            max: 120,
           },
-          domain: [-128, 128],
         },
         left: {
           title: "b*",
           mapsTo: "b",
+          // ticks: {
+          //   values: [
+          //     -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120,
+          //   ],
+          // },
+          // domain: [-128, 128],
           ticks: {
-            values: [
-              -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120,
-            ],
+            min: -120,
+            max: 120,
           },
-          domain: [-128, 128],
         },
       },
       legend: {
@@ -373,7 +145,7 @@
     }}
   />
   <ScatterChart
-    data={testLC}
+    data={dataLC}
     options={{
       title: "L* vs C*",
       axes: {
@@ -381,17 +153,17 @@
           title: "c*",
           mapsTo: "c",
           ticks: {
-            values: [0, 20, 40, 60, 80, 100],
+            min: 0,
+            max: 100,
           },
-          domain: [0, 100],
         },
         left: {
           title: "L*",
           mapsTo: "l",
           ticks: {
-            values: [0, 20, 40, 60, 80, 100],
+            min: 0,
+            max: 100,
           },
-          domain: [0, 100],
         },
       },
       legend: {

@@ -8,17 +8,19 @@
     messageStore,
   } from "@util/stores";
   import ImageViewer from "@components/ImageViewer.svelte";
-  import { each } from "svelte/internal";
 
   let notConnectedMode = false;
-  let info = { sender: "Waiting...", value: 0 };
+
+  let pipelineComponents = {};
+  let pipelineProgress = {};
 
   function reset() {
     currentPage.set("Process");
+    $processState.currentTab = 0;
+    pipelineComponents = {};
+    pipelineProgress = {};
     processState.set({
       currentTab: 0,
-      pipelineComponents: [],
-      pipelineProgress: null,
       destDir: "",
       imageFilePaths: [],
       thumbnailID: null,
@@ -43,53 +45,50 @@
     });
   }
 
-  let temp = {
-    component: [
-      {
-        component: [
-          {
-            name: "ImageReader",
-          },
-          {
-            name: "BitDepthScaler",
-          },
-          {
-            name: "Flat Fielding",
-          },
-          {
-            name: "PixelRegestor",
-          },
-        ],
-        name: "PreProcessor",
-      },
-      {
-        component: [
-          {
-            name: "ColorManagedCalibrator",
-          },
-          {
-            name: "SpectralCalibration",
-          },
-        ],
-        name: "ImageCalibrator",
-      },
-      {
-        name: "ResultsProcsessor",
-      },
-    ],
-    name: "ImageProcessor",
-  };
+  $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
+    console.log($messageStore[0]);
+    console.log("New Message PROCESSING");
+    try {
+      let temp = JSON.parse($messageStore[0]);
+      if (temp["ResponseType"] === "Progress") {
+        // Progress Update
+        console.log("Progress From Server");
+        pipelineProgress[temp["ResponseData"]["sender"]] =
+          temp["ResponseData"]["value"];
+      } else if (temp["ResponseType"] === "PipelineComponents") {
+        // Pipeline Components
+        console.log("Pipeline Components From Server");
+        pipelineComponents = temp["ResponseData"]["component_json"];
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
-  $: console.log([
-    $processState.pipelineProgress,
-    $processState.pipelineComponents,
-  ]);
-  console.log(temp);
+  function handleComplete(id) {
+    if (id === 0) {
+      currentPage.set("SpecPicker");
+      reset();
+    } else if (id === 1) {
+      // open in election
+    } else if (id === 2) {
+      reset();
+    }
+  }
 </script>
 
 <main>
   {#if $viewState.projectKey?.length > 1}
-    COMPLETED
+    <div class="completedBox">
+      <div class="completedOptions">
+        <button on:click={() => handleComplete(0)}>View Image</button>
+        <button disabled on:click={() => handleComplete(1)}
+          >Open File Location</button
+        >
+        <button on:click={() => handleComplete(2)}>Process Another Image</button
+        >
+      </div>
+    </div>
   {/if}
   <div class="top">
     <div class="right">
@@ -100,67 +99,90 @@
     </div>
   </div>
   <div class="bottom">
-    {#each Object.keys(temp) as component1, i1}
-      {#if component1 !== "name"}
-        {#each Object.keys(temp[component1]) as component2, i2}
-          <div class="stepGroup">
-            <div class="stepTitle">{temp[component1][component2]["name"]}</div>
-            <div class="steps">
-              {#if component2 !== "name"}
-                {#each Object.keys(temp[component1][component2]) as component3, i3}
-                  {#if component3 !== "name"}
-                    {#each Object.keys(temp[component1][component2][component3]) as component4, i4}
-                      <div
-                        class="progress-circle"
-                        style="--progress:{$processState.pipelineProgress[
-                          temp[component1][component2][component3][component4][
-                            'name'
-                          ]
-                        ] * 100}"
-                      >
-                        <div class="stepper">
-                          <span class="sender"
-                            >{temp[component1][component2][component3][
-                              component4
-                            ]["name"]}</span
+    <div class="stepBox">
+      {#if Object.keys(pipelineComponents).length < 1}
+        <div class="waitingBox">
+          <div class="waitingMsg">Waiting</div>
+        </div>
+      {:else}
+        {#each Object.keys(pipelineComponents) as component1, i1}
+          {#if component1 !== "name"}
+            {#each Object.keys(pipelineComponents[component1]) as component2, i2}
+              <div class="stepGroup">
+                <div class="stepTitle">
+                  {pipelineComponents[component1][component2]["name"]}
+                </div>
+                <div class="steps">
+                  {#if component2 !== "name"}
+                    {#each Object.keys(pipelineComponents[component1][component2]) as component3, i3}
+                      {#if component3 !== "name"}
+                        {#each Object.keys(pipelineComponents[component1][component2][component3]) as component4, i4}
+                          <div
+                            class="progress-circle"
+                            class:completed={pipelineProgress[
+                              pipelineComponents[component1][component2][
+                                component3
+                              ][component4]["name"]
+                            ] === 1}
                           >
-                          <span class="value"
-                            >{$processState.pipelineProgress[
-                              temp[component1][component2][component3][
-                                component4
-                              ]["name"]
-                            ]}</span
-                          >
-                        </div>
-                      </div>
+                            <div
+                              class="progress-overlay"
+                              style="--progress:{pipelineComponents[component1][
+                                component2
+                              ][component3][component4]['name'] in
+                              pipelineProgress
+                                ? pipelineProgress[
+                                    pipelineComponents[component1][component2][
+                                      component3
+                                    ][component4]['name']
+                                  ] * 100
+                                : 0}"
+                            />
+                            <div class="stepper">
+                              <span class="sender"
+                                >{pipelineComponents[component1][component2][
+                                  component3
+                                ][component4]["name"]}</span
+                              >
+                            </div>
+                          </div>
+                        {/each}
+                      {/if}
                     {/each}
                   {/if}
-                {/each}
-              {/if}
-              {#if temp[component1][component2]["name"].includes("Results")}
-                <div
-                  class="progress-circle"
-                  style="--progress:{$processState.pipelineProgress[
-                    temp[component1][component2]['name']
-                  ] * 100}"
-                >
-                  <div class="stepper">
-                    <span class="sender"
-                      >{temp[component1][component2]["name"]}</span
+                  {#if pipelineComponents[component1][component2]["name"].includes("Results")}
+                    <div
+                      class="progress-circle"
+                      class:completed={pipelineProgress[
+                        pipelineComponents[component1][component2]["name"]
+                      ] === 1}
                     >
-                    <span class="value"
-                      >{$processState.pipelineProgress[
-                        temp[component1][component2]["name"]
-                      ]}</span
-                    >
-                  </div>
+                      <div
+                        class="progress-overlay"
+                        style="--progress:{pipelineComponents[component1][
+                          component2
+                        ]['name'] in pipelineProgress
+                          ? pipelineProgress[
+                              pipelineComponents[component1][component2]['name']
+                            ] * 100
+                          : 0}"
+                      />
+                      <div class="stepper">
+                        <span class="sender"
+                          >{pipelineComponents[component1][component2][
+                            "name"
+                          ]}</span
+                        >
+                      </div>
+                    </div>
+                  {/if}
                 </div>
-              {/if}
-            </div>
-          </div>
+              </div>
+            {/each}
+          {/if}
         {/each}
       {/if}
-    {/each}
+    </div>
   </div>
   {#if $connectionState !== "Connected" && !notConnectedMode}
     <div class="notConnected">
@@ -183,48 +205,101 @@
     @apply bg-gray-600 w-64 h-64 p-5 flex flex-col justify-between py-10 rounded-xl font-semibold;
   }
   main {
-    @apply w-full h-full flex flex-col relative p-2;
+    @apply w-full h-full flex flex-col relative p-2 gap-2;
   }
   .bottom {
-    @apply w-full h-full flex justify-center items-center relative overflow-auto gap-2;
+    @apply w-full h-auto flex flex-col justify-center items-center relative gap-2;
+  }
+  .stepBox {
+    @apply w-[90%] flex justify-between items-center relative gap-2;
   }
   .stepper {
-    @apply w-[20vh] h-[20vh] rounded-full bg-gray-500 flex flex-col justify-center items-center;
-  }
-  .progress-circle {
-    background: conic-gradient(
-      rgb(5 150 105) calc(var(--progress) * 1%),
-      #0000 0
-    );
-    @apply bg-gray-600 rounded-full p-1;
-  }
-  .sender {
-    @apply bg-gray-500 text-lg rounded-lg;
-  }
-  .message {
-    @apply bg-gray-500 rounded-lg p-0.5;
+    margin-left: 5%;
+    margin-top: 5%;
+    overflow-wrap: break-word;
+    @apply w-[90%] h-[90%] rounded-full bg-gray-600 flex flex-col justify-center items-center
+            absolute top-0 left-0;
   }
   .stepTitle {
-    @apply bg-red-500;
+    @apply text-white;
   }
   .stepGroup {
-    @apply bg-green-300 flex flex-col;
+    @apply gap-1 flex flex-col justify-items-center items-center
+            text-lg ring-1 ring-gray-600 p-1;
   }
   .steps {
-    @apply bg-blue-400 flex;
+    @apply flex w-full justify-between gap-2;
   }
+  .completedBox {
+    @apply w-full h-full absolute bg-black/50 z-50 flex justify-center items-center;
+  }
+  .completedOptions {
+    @apply w-1/2 bg-red-500 flex flex-col p-1 rounded-lg gap-2;
+  }
+  .completedOptions button {
+    @apply w-full h-full;
+  }
+  .sender {
+    word-break: break-word;
+    white-space: pre-line;
+    @apply w-[90%] bg-gray-600 text-base flex rounded-lg justify-center items-center;
+  }
+  .progress-circle {
+    background: linear-gradient(
+      90deg,
+      rgb(224, 62, 62) 0%,
+      rgb(68, 217, 83) 50%,
+      rgb(66, 86, 215) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient 5s ease infinite;
+    @apply bg-gray-600 h-[10vw] w-[10vw] rounded-full p-1 relative;
+  }
+
+  .progress-circle.completed {
+    background: 0;
+    @apply bg-green-500;
+  }
+  .progress-overlay {
+    background: conic-gradient(
+      #0000 calc(var(--progress) * 1%),
+      rgb(125, 123, 123) 0
+    );
+
+    @apply w-full h-full absolute top-0 left-0 rounded-full;
+  }
+  .progress-bar {
+    @apply bg-gray-600 w-full h-8 rounded-3xl overflow-hidden;
+  }
+
+  .progress-bar .bar {
+    width: calc(var(--progress) * 1%);
+    background: linear-gradient(
+      90deg,
+      hsla(188, 100%, 50%, 1) 0%,
+      hsla(206, 100%, 50%, 1) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient 2s ease infinite;
+
+    @apply h-full;
+  }
+
+  .waitingBox {
+    @apply w-full h-[10vw] flex justify-center items-center;
+  }
+
+  .waitingMsg {
+    @apply text-xl;
+  }
+
   .top {
     @apply w-full h-full flex justify-center items-center overflow-hidden;
-  }
-  .left {
-    @apply w-[30%] h-full flex justify-center items-center ml-2;
   }
   .right {
     @apply w-full h-full flex justify-center items-center ml-2;
   }
-  .state {
-    @apply w-full h-full py-2 flex flex-col;
-  }
+
   .image {
     @apply w-full h-full bg-blue-600/25 relative items-center flex justify-center;
   }
@@ -234,30 +309,28 @@
   span {
     @apply bg-gray-700 text-gray-200 font-semibold whitespace-nowrap select-text;
   }
-  .letter {
-    @apply bg-transparent font-bold text-blue-500 select-none;
-  }
   .cont {
     @apply bg-red-500;
   }
-  .key {
-    @apply bg-transparent font-bold text-red-500/75 select-none;
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    25% {
+      background-position: 50% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    75% {
+      background-position: 50% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
-  h3 {
-    @apply text-lg;
-  }
-  /* .imgTitle {
-    @apply absolute top-0 z-50 bg-gray-900/75 pb-1 px-2 pt-0 rounded-lg text-gray-200;
-  } */
-  .box {
-    @apply overflow-y-auto w-full h-full bg-gray-900 text-gray-100 text-sm;
-  }
-  li {
-    @apply px-2 p-1 list-none;
-  }
-  .stateSend {
-    @apply bg-blue-500/50 h-full;
-  }
+
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
