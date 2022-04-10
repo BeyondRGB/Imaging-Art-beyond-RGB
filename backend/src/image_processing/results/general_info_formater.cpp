@@ -37,6 +37,8 @@ void GeneralInfoFormater::write_format(std::ostream &output_stream, CalibrationR
         this->get_result<double>(GI_Y, results) << std::endl;
     output_stream << GI_W << GI_DELIM <<
         this->get_result<double>(GI_W, results) << std::endl;
+    output_stream << GI_ADVANCED_FILTERS << GI_DELIM <<
+        this->get_result<std::string>(GI_ADVANCED_FILTERS, results) << std::endl;
     
     #undef GI_DELIM
 }

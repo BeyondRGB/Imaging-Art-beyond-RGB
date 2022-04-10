@@ -47,6 +47,7 @@
 #define GI_WHITE_PATCH_COORDS "White Patch Coordinates"
 #define GI_Y                  "Y white patche meas"
 #define GI_W                  "W Value"
+#define GI_ADVANCED_FILTERS   "Sharpaning/NoiseReduction Filter Settings"
 
 // Verification Keys
 #define V_XYZ              "Verification Calibrated XYZ Values"
