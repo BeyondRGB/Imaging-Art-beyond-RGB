@@ -46,6 +46,10 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("art" + std::to_string(i + 1)), art_file);
             art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
+            try{
+                std::string target_file = obj.get_string(key_map[DataKey::TARGET_IMG]);
+                art_obj->newImage(("target" + std::to_string(i + 1)), target_file);
+            }catch(ParsingError e){ /* No target provided. We expect the target to be in the art image */ }
         }
         //Collect the information provided about the color target
         // TargetData td;
