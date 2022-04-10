@@ -17,6 +17,7 @@
 #define ART(num) "art"#num
 #define DARK(num) "dark"#num
 #define WHITE(num) "white"#num
+#define TARGET(num) "target"#num
 
 //
 #define CM_IMAGE_KEY "ColorManaged"
