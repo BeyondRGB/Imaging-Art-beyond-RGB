@@ -148,17 +148,18 @@
     RequestData: {
       images: [
         {
-          art: $processState.artStacks[0].fields.images[0]?.name,
-          white: $processState.artStacks[0].fields.whitefield[0]?.name,
-          dark: $processState.artStacks[0].fields.darkfield[0]?.name,
+          art: $processState.artStacks[0].fields.imageA[0]?.name,
+          white: $processState.artStacks[0].fields.flatfieldA[0]?.name,
+          dark: $processState.artStacks[0].fields.darkfieldA[0]?.name,
         },
         {
-          art: $processState.artStacks[0].fields.images[1]?.name,
-          white: $processState.artStacks[0].fields.whitefield[1]?.name,
-          dark: $processState.artStacks[0].fields.darkfield[1]?.name,
+          art: $processState.artStacks[0].fields.imageB[0]?.name,
+          white: $processState.artStacks[0].fields.flatfieldB[0]?.name,
+          dark: $processState.artStacks[0].fields.darkfieldB[0]?.name,
         },
       ],
       destinationDirectory: $processState.destDir,
+      sharpenString: $processState.artStacks[0].sharpenString,
       targetLocation: $processState.artStacks[0].colorTarget,
     },
   };
@@ -173,6 +174,13 @@
       ] = 1931;
       processRequest.RequestData.targetLocation["refData"]["illuminants"] =
         "D50";
+
+      if ($processState.artStacks[0].fields.targetA.length !== 0) {
+        processRequest.RequestData.images[0]["target"] =
+          $processState.artStacks[0].fields.targetA[0]?.name;
+        processRequest.RequestData.images[1]["target"] =
+          $processState.artStacks[0].fields.targetB[0]?.name;
+      }
     }
     if ($processState.artStacks[0].verificationTarget !== null) {
       console.log("Adding Verification to Process Request");

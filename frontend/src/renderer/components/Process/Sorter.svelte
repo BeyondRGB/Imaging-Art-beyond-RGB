@@ -48,6 +48,7 @@
     //   },
     // ];
   }
+  let targetToggle = false;
 </script>
 
 <main>
@@ -60,51 +61,83 @@
         items: $processState.artStacks,
         flipDurationMs,
         type: "col",
+        dragDisabled: true,
       }}
       on:consider={(e) => handleDndConsiderCol(e)}
       on:finalize={(e) => handleDndFinalizeCol(e)}
     >
       {#each $processState.artStacks as column (column.id)}
-        <div
-          class="column dark:bg-blue-700/25 bg-blue-200"
-          animate:flip={{ duration: flipDurationMs * 2 }}
-        >
-          <h1>{column.name}</h1>
+        <div class="column" animate:flip={{ duration: flipDurationMs * 2 }}>
+          <h1>Image Stack</h1>
+          <div class="targetToggle">
+            <input
+              type="checkbox"
+              id="targetToggle"
+              bind:checked={targetToggle}
+            />
+
+            <label for="targetToggle">Seperate Target Image</label>
+          </div>
           <button
             id="removeBtn"
             on:click={() => handleCloseCol(column.id)}
             class="dark:hover:bg-red-400/50">X</button
           >
-          <div class="flex">
-            <item>
-              {#each Object.entries(column.fields) as field (field[0])}
-                <span>{field[0]}</span>
-                <itemBox
-                  class={"strict"}
-                  use:dndzone={{ items: field[1], flipDurationMs }}
-                  on:consider={(e) => handleDndConsider(column.id, field[0], e)}
-                  on:finalize={(e) => handleDndFinalize(column.id, field[0], e)}
-                >
-                  {#each field[1] as item (item.id)}
-                    <card
-                      animate:flip={{ duration: flipDurationMs }}
-                      class="selected"
-                    >
-                      <ImageBubble filename={item.name} minimal />
-                    </card>
-                  {/each}
-                </itemBox>
-              {/each}
-            </item>
+          <div class="colBody">
+            {#each Object.entries(column.fields) as field, i (field[0])}
+              <!-- {#if field[0] != } -->
+              <div
+                class="row"
+                class:hide={field[0].includes("target") && !targetToggle}
+              >
+                {#if i % 2 === 0}
+                  <span class="fieldTitle">{field[0].slice(0, -1)}</span>
+                {/if}
+                <div class="rowBody">
+                  {#if i < 2}
+                    <span>{field[0][field[0].length - 1]}</span>
+                  {:else}
+                    <br />
+                  {/if}
+
+                  <div
+                    class="box strict"
+                    use:dndzone={{
+                      items: field[1],
+                      flipDurationMs,
+                      dropFromOthersDisabled:
+                        $processState.artStacks[
+                          $processState.artStacks.findIndex(
+                            (c) => c.id === column.id
+                          )
+                        ].fields[field[0]]?.length > 0,
+                    }}
+                    on:consider={(e) =>
+                      handleDndConsider(column.id, field[0], e)}
+                    on:finalize={(e) =>
+                      handleDndFinalize(column.id, field[0], e)}
+                  >
+                    {#each field[1] as item (item.id)}
+                      <card
+                        animate:flip={{ duration: flipDurationMs }}
+                        class="selected"
+                      >
+                        <ImageBubble filename={item.name} minimal />
+                      </card>
+                    {/each}
+                  </div>
+                </div>
+              </div>
+            {/each}
           </div>
         </div>
       {/each}
     </section>
-    <button
+    <!-- <button
       id="addBtn"
       on:click={handleAddCol}
       class="dark:hover:bg-green-400/50">+</button
-    >
+    > -->
   </div>
 </main>
 
@@ -118,23 +151,39 @@
   #heap {
     @apply relative;
   }
+  .colBody {
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-template-columns: repeat(2, auto);
+    @apply bg-gray-700/25 text-base rounded-xl p-0.5 relative;
+  }
+  .fieldTitle {
+    @apply absolute top-0 left-1/2 w-full flex justify-center items-center;
+  }
+  .row {
+    @apply flex w-full scale-100 transition-all relative;
+  }
+  .hide {
+    @apply scale-0 h-0;
+  }
+  .rowBody {
+    @apply flex flex-col w-full p-0.5 px-1;
+  }
 
   section {
     @apply flex relative;
   }
   .column {
-    @apply w-full rounded-lg m-1 p-1 relative shadow-md;
-  }
-  item {
-    @apply text-base justify-center flex-col;
+    @apply w-full rounded-lg p-2 gap-1 relative shadow-md bg-gray-500/75 flex flex-col;
   }
 
   span {
     @apply self-center;
   }
 
-  itemBox {
-    @apply flex h-12 rounded-lg w-full p-1 min-h-[2.2rem];
+  .box {
+    @apply flex h-12 rounded-lg w-full p-1 min-w-[8rem] ring-2 ring-gray-600/50
+            justify-center items-center;
   }
 
   card {

@@ -62,14 +62,21 @@
   function colorTargetPrev() {
     $processState.colorTargetID = Math.floor(Math.random() * 999999999);
     console.log($processState);
+
+    let targetImage = $processState.artStacks[0].fields.imageA[0].name;
+    if ($processState.artStacks[0].fields.targetA.length !== 0) {
+      console.log("Found Target");
+      targetImage = $processState.artStacks[0].fields.targetA[0].name;
+    }
+
     let msg = {
       RequestID: $processState.colorTargetID,
       RequestType: "HalfSizePreview",
       RequestData: {
-        names: [$processState.artStacks[0].fields.images[0].name],
+        names: [targetImage],
       },
     };
-    if ($processState.artStacks[0].fields.images[0].name.length > 2) {
+    if ($processState.artStacks[0].fields.imageA[0].name.length > 2) {
       console.log("Getting Color Target Preview");
       console.log(msg);
       sendMessage(JSON.stringify(msg));
@@ -86,7 +93,7 @@
   $: if (
     $processState.currentTab === 4 &&
     $processState.artStacks[0].colorTargetImage?.filename?.length === 0 &&
-    $processState.artStacks[0].fields.images[0] != null
+    $processState.artStacks[0].fields.imageA[0] != null
   ) {
     console.log("Getting Color Target Preview");
     console.log($processState);

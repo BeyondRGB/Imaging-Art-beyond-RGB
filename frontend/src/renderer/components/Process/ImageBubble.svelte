@@ -41,24 +41,24 @@
       show = false;
     } else {
       show = true;
-      computePosition(btnRef, popRef, {
-        strategy: "fixed",
-        placement: "bottom",
-        middleware: [
-          offset({
-            mainAxis: 4,
-            // crossAxis: -50,
-          }),
-          inline(),
-          autoPlacement(),
-        ],
-      }).then(({ x, y }) => {
-        Object.assign(popRef.style, {
-          left: "0",
-          top: "0",
-          transform: `translate(${Math.round(x)}px,${Math.round(y)}px)`,
-        });
-      });
+      // computePosition(btnRef, popRef, {
+      //   strategy: "fixed",
+      //   placement: "bottom",
+      //   middleware: [
+      //     offset({
+      //       mainAxis: 4,
+      //       // crossAxis: -50,
+      //     }),
+      //     inline(),
+      //     autoPlacement(),
+      //   ],
+      // }).then(({ x, y }) => {
+      //   Object.assign(popRef.style, {
+      //     left: "0",
+      //     top: "0",
+      //     transform: `translate(${Math.round(x)}px,${Math.round(y)}px)`,
+      //   });
+      // });
     }
   };
 </script>
@@ -80,7 +80,8 @@
     {/if}
   </div>
   <!-- class:shown={show} -->
-  <div class="body" class:small={minimal} bind:this={popRef}>
+  <!-- bind:this={popRef} -->
+  <div class="body">
     <img src={$processState.imageThumbnails[filename]} alt={filename} />
   </div>
 </main>
@@ -94,12 +95,9 @@
             flex justify-between items-center text-[1.05rem] px-4 gap-1;
   }
   .body {
-    @apply bg-gray-700/75  -z-50 fixed max-w-[35vw] p-1
-           group-hover:z-50 rounded-md transition-all 
-          delay-300;
-  }
-  .small {
-    @apply max-w-[25vw];
+    @apply bg-gray-700/75 w-0 opacity-0 fixed max-w-[35vw] p-1
+           group-hover:w-full group-hover:opacity-100 rounded-md transition-all 
+           bottom-0 left-24 delay-100;
   }
   img {
     @apply w-full h-full;

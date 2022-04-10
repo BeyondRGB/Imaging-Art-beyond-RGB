@@ -31,10 +31,16 @@ export const processState = writable({
       verificationTargetImage: { dataURL: "", filename: "" },
       colorTarget: {},
       verificationTarget: null,
+      sharpenString: "N",
       fields: {
-        images: [],
-        whitefield: [],
-        darkfield: [],
+        imageA: [],
+        imageB: [],
+        targetA: [],
+        targetB: [],
+        flatfieldA: [],
+        flatfieldB: [],
+        darkfieldA: [],
+        darkfieldB: [],
       },
     },]
 });

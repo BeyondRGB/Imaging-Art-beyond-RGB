@@ -94,7 +94,7 @@
 	}
 	.content {
 		scroll-snap-align: start;
-		@apply flex-shrink-0 w-full h-full;
+		@apply flex-shrink-0 w-full h-full relative;
 	}
 	.modal {
 		@apply absolute w-full h-full bg-black/25 flex justify-center items-center;
