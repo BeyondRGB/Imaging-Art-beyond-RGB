@@ -8,6 +8,13 @@
   $: if (filePaths) {
     $processState.destDir = filePaths[0];
   }
+  $: if (
+    filePaths &&
+    filePaths[0]?.length > 1 &&
+    !$processState.completedTabs[1]
+  ) {
+    $processState.completedTabs[1] = true;
+  }
 </script>
 
 <main>

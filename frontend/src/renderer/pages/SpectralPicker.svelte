@@ -80,7 +80,9 @@
       (Object.keys($viewState.colorManagedImages).length + 1000) * 1000 +
       Math.floor(Math.random() * 999);
     currentTab = rand;
-    $viewState.colorManagedImages[rand] = { projectKey: $viewState.projectKey };
+    // $viewState.colorManagedImages[rand] = { projectKey: $viewState.projectKey };
+    $viewState.colorManagedImages[rand] = {};
+    $processState.CMID = rand;
     let msg = {
       RequestID: rand,
       RequestType: "ColorManagedImage",

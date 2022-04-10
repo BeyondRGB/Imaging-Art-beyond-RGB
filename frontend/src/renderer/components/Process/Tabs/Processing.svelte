@@ -55,7 +55,12 @@
     console.log("New Message PROCESSING");
     try {
       let temp = JSON.parse($messageStore[0]);
-      if (temp["ResponseType"] === "Progress") {
+      if (temp["ResponseType"] === "CalibrationComplete") {
+        // Project Key handler
+        console.log("CalibrationComplete Project Key From Server");
+        $viewState.projectKey = temp["ResponseData"]["path"];
+        $processState.pipelineComplete = true;
+      } else if (temp["ResponseType"] === "Progress") {
         // Progress Update
         console.log("Progress From Server");
         pipelineProgress[temp["ResponseData"]["sender"]] =
@@ -84,7 +89,7 @@
 </script>
 
 <main>
-  {#if $viewState.projectKey?.length > 1}
+  {#if $processState.pipelineComplete}
     <div class="completedBox">
       <div class="completedOptions">
         <button on:click={() => handleComplete(0)}>View Image</button>
@@ -240,15 +245,16 @@
     @apply w-full h-full absolute bg-black/50 z-50 flex justify-center items-center;
   }
   .completedOptions {
-    @apply w-1/2 bg-red-500 flex flex-col p-1 rounded-lg gap-2;
+    @apply w-1/2 bg-gray-700 flex flex-col p-2 rounded-lg gap-2;
   }
   .completedOptions button {
-    @apply w-full h-full;
+    @apply w-full h-full text-xl;
   }
   .sender {
     word-break: break-word;
     white-space: pre-line;
-    @apply w-[90%] bg-gray-600 text-base flex rounded-lg justify-center items-center;
+    @apply w-[90%] bg-gray-600 text-base flex rounded-lg justify-center items-center
+          text-center;
   }
   .progress-circle {
     background: linear-gradient(
@@ -273,22 +279,6 @@
     );
 
     @apply w-full h-full absolute top-0 left-0 rounded-full;
-  }
-  .progress-bar {
-    @apply bg-gray-600 w-full h-8 rounded-3xl overflow-hidden;
-  }
-
-  .progress-bar .bar {
-    width: calc(var(--progress) * 1%);
-    background: linear-gradient(
-      90deg,
-      hsla(188, 100%, 50%, 1) 0%,
-      hsla(206, 100%, 50%, 1) 100%
-    );
-    background-size: 400% 400%;
-    animation: gradient 2s ease infinite;
-
-    @apply h-full;
   }
 
   .waitingBox {

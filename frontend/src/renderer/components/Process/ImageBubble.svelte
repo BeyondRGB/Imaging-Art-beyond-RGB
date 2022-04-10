@@ -6,7 +6,6 @@
     offset,
     flip,
     inline,
-    autoUpdate,
   } from "@floating-ui/dom";
   import { processState } from "@util/stores";
   import { onDestroy, onMount } from "svelte";

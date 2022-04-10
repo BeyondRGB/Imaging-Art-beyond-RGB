@@ -64,14 +64,10 @@
     console.log("New Message");
     try {
       let temp = JSON.parse($messageStore[0]);
-      if (temp["ResponseType"] === "CalibrationComplete") {
-        // Project Key handler
-        console.log("CalibrationComplete Project Key From Server");
-        $viewState.projectKey = temp["ResponseData"]["path"];
-      } else if (
-        // Thumbnail Binary Handler
+      if (
+        // CM Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
-        $viewState.colorManagedImages.hasOwnProperty(temp["RequestID"])
+        temp["RequestID"] === $processState.CMID
       ) {
         console.log("Color Managed Binary From Server");
         binaryType = temp["ResponseData"]["type"];
@@ -134,8 +130,15 @@
         name: binaryName,
       };
     } else if (binaryFor === "ColorManaged") {
-      $viewState.colorManagedImages[binaryID]["dataURL"] = temp.src;
-      $viewState.colorManagedImages[binaryID]["filename"] = binaryName;
+      //$viewState.colorManagedImages[binaryName] = temp.src;
+      console.log($viewState.colorManagedImages);
+      // $viewState.colorManagedImages[binaryID]["dataURL"] = temp.src;
+      // $viewState.colorManagedImages[binaryID]["filename"] = binaryName;
+      console.log(binaryID);
+      $viewState.colorManagedImages[binaryID] = {
+        dataURL: temp.src,
+        name: binaryName,
+      };
     }
     binaryType = null;
     binaryName = null;
@@ -223,12 +226,12 @@
       <button id="backBtn" on:click={prevTab}>Back</button>
 
       <tabs>
-        {#each tabs as tab}
+        {#each tabs as tab, i}
           {#if !tab.hidden}
             <div
-              class="tab {tabs[$processState.currentTab].name !== tab.name
-                ? 'none'
-                : ''}"
+              class="tab"
+              class:completed={$processState.completedTabs[i]}
+              class:selected={tabs[$processState.currentTab].name === tab.name}
               id={tab.name}
             />
           {/if}
@@ -330,8 +333,15 @@
     @apply w-full h-full;
   } */
   .tab {
-    @apply w-16 h-2 rounded-full bg-blue-400 self-center mx-2 ring-1 ring-blue-400
+    @apply w-16 h-2 rounded-full bg-gray-400 self-center mx-2 ring-1 ring-gray-400
           transition-all duration-700 ease-out;
+  }
+
+  .selected {
+    @apply bg-blue-400 ring-blue-400;
+  }
+  .completed {
+    @apply bg-green-400 ring-green-400;
   }
   #backBtn {
     @apply absolute h-8 py-0 ml-2 my-2;

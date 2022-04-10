@@ -76,9 +76,13 @@
         names: [targetImage],
       },
     };
-    if ($processState.artStacks[0].fields.imageA[0].name.length > 2) {
+    if (
+      $processState.artStacks[0].fields.imageA[0].name.length > 2 &&
+      !loading
+    ) {
       console.log("Getting Color Target Preview");
       console.log(msg);
+      loading = true;
       sendMessage(JSON.stringify(msg));
     }
   }
@@ -106,6 +110,8 @@
   let colorPos;
   let verifyTarget;
   let verifyPos;
+
+  let loading = false;
 
   function addTarget() {
     if (!colorTarget) {
@@ -208,16 +214,30 @@
     verifyTarget.rows = refDataMeta[index].rows;
     verifyTarget.cols = refDataMeta[index].cols;
   }
+
+  $: console.log({ LOADING: loading });
+
+  $: if (colorTarget != null && !$processState.completedTabs[4]) {
+    $processState.completedTabs[4] = true;
+  }
 </script>
 
 <main>
   <div class="left">
-    <ColorTargetViewer
-      bind:colorTarget
-      bind:verifyTarget
-      bind:colorPos
-      bind:verifyPos
-    />
+    <div class="image-container">
+      {#if loading}
+        <div class="loading">
+          <div class="loading-box">Loading<span class="loader" /></div>
+        </div>
+      {/if}
+      <ColorTargetViewer
+        bind:colorTarget
+        bind:verifyTarget
+        bind:colorPos
+        bind:verifyPos
+        bind:loading
+      />
+    </div>
   </div>
   <div class="right">
     <!-- <div class="boxHead">Targets</div> -->
@@ -345,7 +365,9 @@
   .card {
     @apply rounded-lg w-full min-h-[4rem] p-4 flex flex-col gap-1 relative;
   }
-
+  .image-container {
+    @apply relative w-full h-auto bg-gray-500 overflow-visible;
+  }
   .colorTarget {
     background-color: hsl(var(--color_hue), 100%, 30%);
   }
@@ -455,5 +477,50 @@
   }
   .sizeDiv input {
     @apply w-1/2;
+  }
+
+  .loading {
+    @apply bg-gray-700 absolute w-full h-full z-[49] flex justify-center items-center;
+  }
+  .loading-box {
+    @apply h-full flex flex-col gap-2 justify-center items-center
+            text-2xl;
+  }
+  .loader {
+    /* position: absolute; */
+    width: 48px;
+    height: 48px;
+    background: #11ff00;
+    transform: rotateX(65deg) rotate(45deg);
+    /* remove bellows command for perspective change */
+    transform: perspective(200px) rotateX(65deg) rotate(45deg);
+    color: rgb(255, 0, 0);
+    animation: layers1 1s linear infinite alternate;
+    @apply z-50;
+  }
+  .loader:after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(0, 0, 255);
+    animation: layerTr 1s linear infinite alternate;
+  }
+
+  @keyframes layers1 {
+    0% {
+      box-shadow: 0px 0px 0 0px;
+    }
+    90%,
+    100% {
+      box-shadow: 20px 20px 0 -4px;
+    }
+  }
+  @keyframes layerTr {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    100% {
+      transform: translate(-25px, -25px) scale(1);
+    }
   }
 </style>

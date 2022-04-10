@@ -20,6 +20,8 @@
   export let colorPos;
   export let verifyPos;
 
+  export let loading;
+
   let imageUrl;
 
   const createViewer = () => {
@@ -87,7 +89,11 @@
   $: if ($processState.currentTab === 4) {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
-      console.log(viewer.isOpen());
+      console.log({ IMAGEURL: imageUrl });
+      console.log({ INCLUDES: imageUrl.includes("blob") });
+      if (imageUrl.includes("blob")) {
+        loading = false;
+      }
       viewer.open({
         type: "image",
         url: imageUrl,
