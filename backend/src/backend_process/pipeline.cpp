@@ -300,8 +300,8 @@ void Pipeline::init_verification(btrgb::ArtObject* images){
 bool Pipeline::verify_targets(btrgb::ArtObject *images){
     try{
         // Test Target
-        images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
-        images->get_target(ART(1), btrgb::TargetType::VERIFICATION_TARGET);
+        images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
+        images->get_target(TARGET(1), btrgb::TargetType::VERIFICATION_TARGET);
     }catch(ColorTarget_MissmatchingRefData e){
         this->report_error(this->get_process_name(), e.what());
         return false;

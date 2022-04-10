@@ -53,14 +53,14 @@ namespace btrgb {
     // Builds and returns a color target
     // This asumes that the imageName specified actualy contains a color target
     ColorTarget ArtObject::get_target(std::string imageName, TargetType type){
-        // If a target is requested but we dont have it assume that its in the art image
+        // If a target is requested and it does not exist it must then be in the art image
         if(imageName == TARGET(1) && !this->images.contains(imageName)){
             imageName = ART(1);
         }
         if(imageName == TARGET(2) && !this->images.contains(imageName)){
             imageName = ART(2);
         }
-        
+
         try{
             Image* im = this->getImage(imageName);
             if(type == TargetType::VERIFICATION_TARGET){
