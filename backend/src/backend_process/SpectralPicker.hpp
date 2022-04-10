@@ -17,12 +17,9 @@
 class SpectralPicker : public BackendProcess {
 
 public:
-    SpectralPicker();
+    SpectralPicker(std::string name) : BackendProcess(name) {};
     ~SpectralPicker();
 	void run() override;
-
-private:
-	static unsigned int id;
 
 };
 
