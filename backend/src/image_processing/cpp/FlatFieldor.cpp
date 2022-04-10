@@ -23,6 +23,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         white2 = images->getImage("white2");
         dark2 = images->getImage("dark2");
         reference = images->get_refrence_data();
+
     }
     catch (const std::exception &e)
     {
@@ -59,6 +60,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
+    std::cout << "flat Time";
 
     comms->send_progress(1, this->get_name());
     // Outputs TIFFs for each image group for after this step, temporary
