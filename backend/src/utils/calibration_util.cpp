@@ -253,3 +253,19 @@ double btrgb::calibration::compute_deltaE_sum(RefData *ref_data, cv::Mat xyz, cv
     }
     return deltaE_sum;
 }
+
+double btrgb::calibration::compute_RMSE(cv::Mat R_camera, cv::Mat R_ref){
+    double RMSE = 0;
+    
+    // N should be equivilent to 36 ie. the number of wavelengths ie. the number of rows in R_camera/R_ref 
+    int N = R_camera.rows;
+    for(int row = 0; row < R_ref.rows; row++){
+        for(int col = 0; col < R_ref.cols; col++){
+            double camera_val = R_camera.at<double>(row,col);
+            double ref_data_value = R_ref.at<double>(row, col);
+            RMSE += pow((camera_val - ref_data_value), 2) / N;
+        }
+    }
+    RMSE = sqrt(RMSE);
+    return RMSE;
+}

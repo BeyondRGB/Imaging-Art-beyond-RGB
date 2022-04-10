@@ -33,6 +33,7 @@
 #define SP_R_reference  "SP R Reference"
 #define SP_R_camera     "SP Optimized R Camera"
 #define SP_M_refl       "SP Optimized M refl"
+#define SP_RMSE         "SP RMSE"
 
 // General Info Keys
 #define GI_MAKE_MODEL         "Camera Make/Model"
