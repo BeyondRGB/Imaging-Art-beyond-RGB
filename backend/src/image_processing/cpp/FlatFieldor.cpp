@@ -35,7 +35,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     int width = art1->width();
     int channels = art1->channels();
 
-    ColorTarget target = images->get_target("art1", btrgb::TargetType::GENERAL_TARGET);
+    ColorTarget target = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
 
     //Col and Row of the white patch on the target
     int whiteRow = target.get_white_row();
@@ -120,7 +120,7 @@ void FlatFieldor::store_results(btrgb::ArtObject* images){
     CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
 
     RefData *reference = images->get_refrence_data();
-    ColorTarget target = images->get_target("art1", btrgb::TargetType::GENERAL_TARGET);
+    ColorTarget target = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
     //Col and Row of the white patch on the target
     int whiteRow = target.get_white_row();
     int whiteCol = target.get_white_col();
