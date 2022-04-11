@@ -7,17 +7,24 @@ export const modal = writable(null);
 
 export const viewState = writable({
   projectKey: null,
-  colorManagedImage: { dataURL: "", filename: "" },
-  colorManagedID: null
+
+  colorManagedImages: {},
+  reports: {
+    calibration: null,
+    verification: null
+  }
 });
 
 // Page Stores
 export const processState = writable({
   currentTab: 0,
+  completedTabs: [false, false, false, false],
+  pipelineComplete: false,
   destDir: "",
   imageFilePaths: [],
   thumbnailID: null,
   colorTargetID: null,
+  CMID: null,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
   artStacks: [
@@ -28,10 +35,16 @@ export const processState = writable({
       verificationTargetImage: { dataURL: "", filename: "" },
       colorTarget: {},
       verificationTarget: {},
+      sharpenString: "N",
       fields: {
-        images: [],
-        whitefield: [],
-        darkfield: [],
+        imageA: [],
+        imageB: [],
+        targetA: [],
+        targetB: [],
+        flatfieldA: [],
+        flatfieldB: [],
+        darkfieldA: [],
+        darkfieldB: [],
       },
     },]
 });
@@ -68,14 +81,8 @@ export function connect() {
   });
 
   socket.addEventListener('message', function (event) {
-    let messageObj = [event.data, new Date()];
+    console.log({ RECIVED: event.data });
     messageStore.set([event.data, new Date()]);
-    if (event.data.length > 1000) {
-      console.log("Recived large message");
-      messageLog.update(current => [[event.data.slice(0, 1000), new Date()], ...current]);
-    } else {
-      messageLog.update(current => [messageObj, ...current]);
-    }
   });
 }
 connect();
@@ -87,8 +94,7 @@ export function close() {
 
 export const sendMessage = (message) => {
   if (socket.readyState === 1) {
-    let messageObj = [message, new Date(), true];
-    messageLog.update(current => [messageObj, ...current]);
+    console.log({ SendMessage: message });
     socket.send(message);
   }
 };

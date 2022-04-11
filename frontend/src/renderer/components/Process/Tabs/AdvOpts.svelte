@@ -1,4 +1,17 @@
 <script lang="ts">
+  import Dropdown from "@root/components/Dropdown.svelte";
+  import { processState } from "@util/stores";
+  let sharpingSettings = ["None", "Low", "Medium", "High"];
+
+  let selected = "None";
+
+  $: if ($processState.currentTab === 3 && !$processState.completedTabs[3]) {
+    $processState.completedTabs[3] = true;
+  }
+
+  $: if (selected) {
+    $processState.artStacks[0].sharpenString = selected.slice(0, 1);
+  }
 </script>
 
 <main>
@@ -6,7 +19,14 @@
     <h1>Advanced Options</h1>
     <p>Warning: Only select Advanced Options if you know what you are doing!</p>
   </left>
-  <right> [PLACEHOLDER] </right>
+  <right>
+    <div class="settings">
+      <div class="sharpness">
+        <p>Sharpening Level</p>
+        <Dropdown values={sharpingSettings} bind:selected isFile={false} />
+      </div>
+    </div>
+  </right>
 </main>
 
 <style lang="postcss">
@@ -22,10 +42,14 @@
   h1 {
     @apply text-3xl;
   }
-  p {
-    @apply text-center pt-[30vh] bg-gray-500/25 m-6 h-[90%] rounded-lg;
+  .settings {
+    @apply w-[75%] flex justify-center items-start;
   }
-  input {
-    @apply translate-y-[35vh];
+  .settings .sharpness {
+    @apply flex w-full max-w-lg justify-between bg-gray-600 rounded-xl p-2;
+  }
+
+  .sharpness p {
+    @apply text-xl;
   }
 </style>

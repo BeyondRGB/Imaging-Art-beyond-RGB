@@ -9,7 +9,7 @@
 
 <main>
   <div id="image">
-    <Canvas bind:imageKeys={channels} bind:isSync bind:showNav />
+    <!-- <Canvas bind:imageKeys={channels} bind:isSync bind:showNav /> -->
   </div>
   <div id="side">
     <!-- <Switch label="Truecolor" /> -->

@@ -5,7 +5,8 @@
 using namespace cv;
 using namespace std;
 
-void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
+{
     comms->send_info("", this->get_name());
     comms->send_progress(0, this->get_name());
 
@@ -101,7 +102,6 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     orb->detectAndCompute(im18gray, Mat(), keypoints1, descriptors1);
     orb->detectAndCompute(im28gray, Mat(), keypoints2, descriptors2);
 
-
     // Match features.
     prog = this->calc_progress(0.30, (float)cycle, (float)cycle_count);
     comms->send_progress(prog, this->get_name());
@@ -121,20 +121,20 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     std::vector<Point2f> points2;
     std::vector<DMatch> good_matches;
 
-    //Clean out obviously bad mathces
+    // Clean out obviously bad mathces
     for (size_t i = 0; i < matches.size(); i++)
     {
         const int threshold = 15;
         Point2f p1 = keypoints1[matches[i].queryIdx].pt;
         Point2f p2 = keypoints2[matches[i].trainIdx].pt;
 
-        if (abs(p2.x - p1.x) < threshold && abs(p2.y - p1.y) < threshold) {
+        if (abs(p2.x - p1.x) < threshold && abs(p2.y - p1.y) < threshold)
+        {
             points1.push_back(p1);
             points2.push_back(p2);
             good_matches.push_back(matches[i]);
             //cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
         }
-
     }
 
     // Draw top matches and send to front end
@@ -142,10 +142,10 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
     cv::Mat imS;
     cv::resize(imMatches, imS, cv::Size(), 0.25, 0.25);
-    //cv::imwrite("matches.tiff", imMatches);
+    // cv::imwrite("matches.tiff", imMatches);
     cv::Mat matchfloat;
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
-    btrgb::Image* btrgb_matches(new btrgb::Image("matches"));
+    btrgb::Image *btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
     comms->send_binary(btrgb_matches, btrgb::FULL);
 
@@ -160,7 +160,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     comms->send_progress(prog, this->get_name());
     warpPerspective(im2, im2reg, h, im1.size());
 
-    //Copy image
+    // Copy image
     im2reg.copyTo(im2);
 
     // Print estimated homography, prolly want to store this somewhere for report?

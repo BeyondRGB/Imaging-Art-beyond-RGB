@@ -2,7 +2,6 @@
   import { currentPage, processState } from "@util/stores";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
-  import Loader from "@components/Loader.svelte";
   let viewer;
   let imageUrl;
 

@@ -84,11 +84,11 @@
 <style lang="postcss">
   .modal-background {
     background: rgba(0, 0, 0, 0.6);
-    @apply fixed top-0 left-0 w-full h-full z-50;
+    @apply fixed top-0 left-0 w-full h-full z-[9999];
   }
 
   .modal {
-    @apply absolute flex flex-col items-center justify-center z-50 w-full h-full;
+    @apply absolute flex flex-col items-center justify-center z-[9999] w-full h-full;
   }
 
   .box {

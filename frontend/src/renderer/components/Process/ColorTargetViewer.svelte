@@ -20,6 +20,8 @@
   export let colorPos;
   export let verifyPos;
 
+  export let loading;
+
   let imageUrl;
 
   const createViewer = () => {
@@ -87,7 +89,11 @@
   $: if ($processState.currentTab === 4) {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
-      console.log(viewer.isOpen());
+      console.log({ IMAGEURL: imageUrl });
+      console.log({ INCLUDES: imageUrl.includes("blob") });
+      if (imageUrl.includes("blob")) {
+        loading = false;
+      }
       viewer.open({
         type: "image",
         url: imageUrl,
@@ -367,11 +373,6 @@
 </script>
 
 <main>
-  <p>
-    top: {viewportPoint?.y.toFixed(3)} ({imagePoint?.y.toFixed(2)} px) | left: {viewportPoint?.x.toFixed(
-      3
-    )} ({imagePoint?.x.toFixed(2)} px)
-  </p>
   <div id="color-seadragon-viewer" />
 
   {#each [colorTarget, verifyTarget] as target, i}
@@ -411,21 +412,6 @@
       </div>
     {/if}
   {/each}
-
-  <div id="rowCol">
-    Color Target:
-    <p>
-      top: {colorPos?.top?.toFixed(4)} | left: {colorPos?.left?.toFixed(4)} | bottom:
-      {colorPos?.bottom?.toFixed(4)} | right: {colorPos?.right?.toFixed(4)}
-    </p>
-  </div>
-  <div id="rowCol">
-    Verification Target:
-    <p>
-      top: {verifyPos?.top?.toFixed(4)} | left: {verifyPos?.left?.toFixed(4)} | bottom:
-      {verifyPos?.bottom?.toFixed(4)} | right: {verifyPos?.right?.toFixed(4)}
-    </p>
-  </div>
 </main>
 
 <style lang="postcss">
@@ -434,6 +420,10 @@
     --verfiy_hue: 100;
     --verify_size: 50%;
     --color_size: 50%;
+  }
+
+  button {
+    @apply ring-0;
   }
 
   main {
@@ -448,7 +438,7 @@
       linear-gradient(to bottom, black 2px, transparent 1px),
       radial-gradient(circle, #000000 3px, rgba(0, 0, 0, 0) 1px); */
 
-    @apply bg-transparent relative ring-2 ring-blue-700 filter;
+    @apply bg-transparent relative filter;
   }
   .gridBox {
     display: grid;

@@ -10,6 +10,7 @@
   import { ChevronDownIcon, ChevronUpIcon } from "svelte-feather-icons";
   export let values: string[];
   export let selected;
+  export let isFile = true;
 
   let show = false;
   export let spaceLast = false;
@@ -49,7 +50,7 @@
 {/if}
 
 <button class="refDataBtn" on:click={toggleDropdown} bind:this={btnRef}
-  ><span class="btnText">{selected.slice(0, -4)}</span>
+  ><span class="btnText">{isFile ? selected.slice(0, -4) : selected}</span>
   <div class="iconSqu">
     {#if show}
       <ChevronUpIcon size="1.5x" />
@@ -70,7 +71,7 @@
         show = false;
       }}
     >
-      {value.slice(0, -4)}
+      {isFile ? value.slice(0, -4) : value}
     </li>
   {/each}
 </div>
