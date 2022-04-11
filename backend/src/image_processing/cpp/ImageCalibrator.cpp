@@ -9,7 +9,7 @@ ImageCalibrator::ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessing
         this->init_components(components);
 }
 void ImageCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("Starting Image Calibration", "ImageCalibrator");
+    comms->send_info("Starting Image Calibration", "Image Calibration");
     double count = 0;
     double total = this->components.size();
     for(auto  & component : this->components){

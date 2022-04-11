@@ -9,7 +9,7 @@ class NoiseReduction : public LeafComponent {
 private: std::string SharpenFactor;
 public:
     ~NoiseReduction() {};
-    NoiseReduction(std::string SharpenFactor) : LeafComponent("NoiseReduction"), SharpenFactor(SharpenFactor) {};
+    NoiseReduction(std::string SharpenFactor) : LeafComponent("Noise Reduction"), SharpenFactor(SharpenFactor) {};
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 };
 

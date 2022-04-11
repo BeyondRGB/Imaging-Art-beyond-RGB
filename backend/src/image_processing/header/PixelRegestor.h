@@ -6,7 +6,7 @@
 
 class PixelRegestor : public LeafComponent{
 public:
-    PixelRegestor() : LeafComponent("PixelRegestor"){}
+    PixelRegestor() : LeafComponent("Pixel Registration"){}
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 };
 
