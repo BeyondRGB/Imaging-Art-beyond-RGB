@@ -9,8 +9,22 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_info("", this->get_name());
     comms->send_progress(0, this->get_name());
 
-    const int MAX_FEATURES = 500;
-    const float GOOD_MATCH_PERCENT = 0.12f;
+    int MAX_FEATURES;
+
+    //More feature slower but better
+    if (RegistrationFactor == "L") {
+        MAX_FEATURES = 400;
+    }
+    else if (RegistrationFactor == "M") {
+        MAX_FEATURES = 600;
+    }
+    else if (RegistrationFactor == "H") {
+        MAX_FEATURES = 1000;
+    }
+    else {
+        MAX_FEATURES = 600;
+    }
+    const float GOOD_MATCH_PERCENT = 0.25f;
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
@@ -82,7 +96,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
             points1.push_back(p1);
             points2.push_back(p2);
             good_matches.push_back(matches[i]);
-            cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
+            //cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
         }
 
     }
