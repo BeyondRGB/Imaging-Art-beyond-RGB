@@ -33,11 +33,16 @@
   }
 
   export let data;
+  export let matrix = "CM";
 
   $: if (data?.["matrix_values"]) {
+    dataLC = [];
+    colorsLC = {};
+    dataAB = [];
+    colorsAB = {};
     let chartData = [];
     data["matrix_values"]
-      .find((ele) => ele.name === "CM L*_camera")
+      .find((ele) => ele.name === `${matrix} L*_camera`)
       ["data"].map((row, i) => {
         row.map((colData, k) => {
           chartData = [
@@ -46,13 +51,13 @@
               col: String.fromCharCode(k + 65),
               row: i + 1,
               l: data["matrix_values"].find(
-                (ele) => ele.name === "CM L*_camera"
+                (ele) => ele.name === `${matrix} L*_camera`
               )["data"][i][k],
               a: data["matrix_values"].find(
-                (ele) => ele.name === "CM a*_camera"
+                (ele) => ele.name === `${matrix} a*_camera`
               )["data"][i][k],
               b: data["matrix_values"].find(
-                (ele) => ele.name === "CM b*_camera"
+                (ele) => ele.name === `${matrix} b*_camera`
               )["data"][i][k],
             },
           ];

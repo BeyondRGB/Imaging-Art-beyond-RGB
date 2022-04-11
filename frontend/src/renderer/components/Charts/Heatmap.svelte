@@ -3,16 +3,21 @@
   import "carbon-components/css/carbon-components.min.css";
   import { HeatmapChart } from "@carbon/charts-svelte";
   export let data;
+
+  export let matrixName = "CM DeltaE Values";
+
   $: if (data?.["matrix_values"]) {
+    mapData = [];
+    valueGrid = [];
     let temp = [];
     data["matrix_values"]
-      .find((ele) => ele.name === "CM DeltaE Values")
+      .find((ele) => ele.name === matrixName)
       ["data"].map((row, i) => {
         let num_rows = data["matrix_values"].find(
-          (ele) => ele.name === "CM DeltaE Values"
+          (ele) => ele.name === matrixName
         )["rows"];
         let num_cols = data["matrix_values"].find(
-          (ele) => ele.name === "CM DeltaE Values"
+          (ele) => ele.name === matrixName
         )["cols"];
         row.map((colData, k) => {
           mapData = [
@@ -21,7 +26,7 @@
               col: String.fromCharCode(k + 65),
               row: num_rows - i,
               value: data["matrix_values"].find(
-                (ele) => ele.name === "CM DeltaE Values"
+                (ele) => ele.name === matrixName
               )["data"][num_rows - i - 1][k],
             },
           ];
@@ -37,9 +42,7 @@
       valueGrid.push(
         temp.splice(
           0,
-          data["matrix_values"].find((ele) => ele.name === "CM DeltaE Values")[
-            "cols"
-          ]
+          data["matrix_values"].find((ele) => ele.name === matrixName)["cols"]
         )
       );
     }
@@ -50,7 +53,7 @@
 </script>
 
 {#if data}
-  <div class="heatmap-chart">
+  <div class="heatmap-chart {matrixName}">
     <HeatmapChart
       data={mapData}
       options={{
@@ -117,7 +120,12 @@
         },
       }}
     />
-    <div class="heatmap-number-grid">
+    <div
+      class="heatmap-number-grid"
+      style="--row:{valueGrid != null
+        ? valueGrid.length
+        : 0}; --col:{valueGrid != null ? valueGrid[0].length : 0};"
+    >
       {#each valueGrid as row, i}
         {#each row as col, i}
           <p class="heatmap-value">
@@ -150,8 +158,8 @@
   }
   .heatmap-number-grid {
     display: grid;
-    grid-template-rows: repeat(9, auto);
-    grid-template-columns: repeat(13, auto);
+    grid-template-rows: repeat(calc(var(--row) - 1), auto);
+    grid-template-columns: repeat(var(--col), auto);
     @apply absolute w-[75vh] h-[75vh] pt-[3rem] pb-[3.8rem] pl-[1.9rem] pointer-events-none
             top-0 left-0;
   }
