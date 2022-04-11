@@ -6,7 +6,7 @@
 class ChannelSelector : public LeafComponent{
     
 public:
-    ChannelSelector() : LeafComponent("ChannelSelector"){}
+    ChannelSelector() : LeafComponent("Channel Selector"){}
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
 };

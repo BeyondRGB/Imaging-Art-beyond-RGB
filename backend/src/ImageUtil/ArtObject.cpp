@@ -193,7 +193,10 @@ namespace btrgb {
     }
 
 
-    RefData* ArtObject::get_refrence_data() {
+    RefData* ArtObject::get_refrence_data(btrgb::TargetType target_type) {
+        if(target_type == btrgb::TargetType::VERIFICATION_TARGET){
+            return this->verification_ref;
+        }
         return this->ref_data;
     }
 

@@ -53,9 +53,22 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
         return;
     }
 
-    
-    const int MAX_FEATURES = 500;
-    const float GOOD_MATCH_PERCENT = 0.12f;
+    int MAX_FEATURES;
+    const float GOOD_MATCH_PERCENT = 0.25f;
+
+    //More feature slower but better
+    if (RegistrationFactor == "L") {
+        MAX_FEATURES = 400;
+    }
+    else if (RegistrationFactor == "M") {
+        MAX_FEATURES = 600;
+    }
+    else if (RegistrationFactor == "H") {
+        MAX_FEATURES = 1000;
+    }
+    else {
+        MAX_FEATURES = 600;
+    }
 
     float prog = 0;
 
@@ -68,7 +81,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
 
     //Make a copy of the data in 8bit format to allow orb dection
     prog = this->calc_progress(0.10, (float)cycle, (float)cycle_count);
-    comms->send_progress(prog, this->get_name() + " - Grayscale Copy");
+    comms->send_progress(prog, this->get_name());
     im1.convertTo(im18, CV_8UC3, 255);
     im2.convertTo(im28, CV_8UC3, 255);
 
@@ -83,7 +96,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
 
     // Detect ORB features and compute descriptors.
     prog = this->calc_progress(0.25, (float)cycle, (float)cycle_count);
-    comms->send_progress(prog, this->get_name() + " - Feature Detection");
+    comms->send_progress(prog, this->get_name());
     Ptr<Feature2D> orb = ORB::create(MAX_FEATURES);
     orb->detectAndCompute(im18gray, Mat(), keypoints1, descriptors1);
     orb->detectAndCompute(im28gray, Mat(), keypoints2, descriptors2);
@@ -91,7 +104,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
 
     // Match features.
     prog = this->calc_progress(0.30, (float)cycle, (float)cycle_count);
-    comms->send_progress(prog, this->get_name() + " - Feature Matchine");
+    comms->send_progress(prog, this->get_name());
     std::vector<DMatch> matches;
     Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
     matcher->match(descriptors1, descriptors2, matches, Mat());
@@ -119,7 +132,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
             points1.push_back(p1);
             points2.push_back(p2);
             good_matches.push_back(matches[i]);
-            cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
+            //cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
         }
 
     }
@@ -138,13 +151,13 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
 
     // Find homography
     prog = this->calc_progress(0.75, (float)cycle, (float)cycle_count);
-    comms->send_progress(prog, this->get_name() + " - Getting Homography");
+    comms->send_progress(prog, this->get_name());
     h = findHomography(points2, points1, RANSAC);
 
     // Use homography to warp image
     //First param is image to be aligned, 2nd is storage for aliagned image, third is homography, fourth is size of orginal img
     prog = this->calc_progress(0.85, (float)cycle, (float)cycle_count);
-    comms->send_progress(prog, this->get_name() + " - Warping Image");
+    comms->send_progress(prog, this->get_name());
     warpPerspective(im2, im2reg, h, im1.size());
 
     //Copy image
@@ -153,7 +166,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     // Print estimated homography, prolly want to store this somewhere for report?
     cout << "Estimated homography : \n" << h;
     prog = this->calc_progress(1, (float)cycle, (float)cycle_count);
-    comms->send_progress(prog, this->get_name() + " - Done");
+    comms->send_progress(prog, this->get_name());
 }
 
 float PixelRegestor::calc_progress(float progress, float cycle, float cycle_count){
