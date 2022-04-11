@@ -35,7 +35,9 @@
 
   function nextTab() {
     if ($processState.currentTab !== tabs.length - 1) {
-      $processState.currentTab += 1;
+      if ($processState.completedTabs[$processState.currentTab]) {
+        $processState.currentTab += 1;
+      }
     } else {
       console.log("Error overflow");
     }
@@ -245,7 +247,9 @@
       <button on:click={nextTab}>Go to Advanced Options</button>
       <button
         on:click={() => {
-          $processState.currentTab += 2;
+          if ($processState.completedTabs[$processState.currentTab]) {
+            $processState.currentTab += 2;
+          }
         }}
         class="nextBtn">Next: Skip Advanced Options</button
       >
@@ -262,11 +266,7 @@
 
   <div class={`confirmModal ${showDialog ? "show" : ""}`}>
     <div class="confirmDialog">
-      <span class="warning">Warning:</span>
-      <p>
-        Are you sure all information is accurate, you will not be able to go
-        back
-      </p>
+      <p>Ensure all information is correct before confirming</p>
       <div class="btnGroup">
         <button class="cancel" on:click={() => (showDialog = false)}
           >Cancel</button
@@ -311,7 +311,7 @@
   }
 
   .confirmDialog p {
-    @apply bg-gray-800/25 rounded-md flex justify-center p-2;
+    @apply bg-gray-800/25 rounded-md flex justify-center p-2 text-lg mt-10;
   }
 
   .warning {
