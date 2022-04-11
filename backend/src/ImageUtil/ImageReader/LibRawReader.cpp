@@ -139,8 +139,10 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
     cv::Mat rgb_im(_height, _width, CV_MAKETYPE(cv_depth, 3));
 
     /* Average two greens if present. */
-    if(raw_im.channels() == 4)
-        this->_average_greens(raw_im, rgb_im);
+    if(raw_im.channels() == 4 && _depth == 16)
+        this->_average_greens<ushort>(raw_im, rgb_im);
+    else if(raw_im.channels() == 4 && _depth == 8)
+        this->_average_greens<uchar>(raw_im, rgb_im);
 
     /* Leave the image alone. */
     else if( raw_im.channels() == 3 )
@@ -154,28 +156,13 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
 
 }
 
-
+template <typename T>
 void LibRawReader::_average_greens(cv::Mat input, cv::Mat output) {
 
-    switch(input.depth()) {
-
-        case CV_16U:
-            input.forEach<cv::Vec4w>([](cv::Vec4w& pixel, const int* pos) -> void {
-                pixel[1] = ( pixel[1] / 2 ) + ( pixel[3] / 2 );
-            });
-            break;
-
-        case CV_8U:
-            input.forEach<cv::Vec4b>([](cv::Vec4b& pixel, const int* pos) -> void {
-                pixel[1] = ( pixel[1] / 2 ) + ( pixel[3] / 2 );
-            });
-            break;
-            
-        default:
-            this->_error("[LibRawReader] tHiS sHoUlD nEvEr HaPpEn");
-
-    }
-
+    input.forEach<cv::Vec<T,4>>([](cv::Vec<T,4>& pixel, const int* pos) -> void {
+        pixel[1] = ( pixel[1] / 2 ) + ( pixel[3] / 2 );
+    });
+      
     int from_to[] = { 0,0, 1,1, 2,2 };
     cv::mixChannels( &input, 1, &output, 1, from_to, 3);
 
@@ -188,3 +175,6 @@ void LibRawReader::_error(std::string msg) {
 }
 
 }
+
+template void btrgb::LibRawReader::_average_greens<ushort>(cv::Mat input, cv::Mat output);
+template void btrgb::LibRawReader::_average_greens<uchar>(cv::Mat input, cv::Mat output);
