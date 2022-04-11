@@ -54,7 +54,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
 
     // Match features.
-    comms->send_progress(0.30, this->get_name() + " - Feature Matchine");
+    comms->send_progress(0.30, this->get_name() + " - Feature Matching");
     std::vector<DMatch> matches;
     Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
     matcher->match(descriptors1, descriptors2, matches, Mat());

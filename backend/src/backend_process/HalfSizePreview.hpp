@@ -15,12 +15,9 @@
 class HalfSizePreview : public BackendProcess {
 
 public:
-    HalfSizePreview();
+    HalfSizePreview(std::string name) : BackendProcess(name) {};
     ~HalfSizePreview();
 	void run() override;
-
-private:
-	static unsigned int id;
 
 };
 

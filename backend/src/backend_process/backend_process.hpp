@@ -18,6 +18,7 @@ CommunicationObj's to send msgs to the front end.
 class BackendProcess: public Communicator{
 
 public:
+	BackendProcess(std::string name);
 	virtual ~BackendProcess() {}
 	/*
 	Pure virtual run function
@@ -30,13 +31,7 @@ public:
 	@return the name of the process,
 		if no name is set this will return "Undefined Process"
 	*/
-	std::string get_process_name() { return m_name; }
-	
-	/*
-	Sets the process name
-	@param name: the string to set the name to
-	*/
-	void set_process_name(std::string name) { m_name = name; }
+	std::string get_process_name() { return name; }
 
 	/**
 	* Set the process data.
@@ -46,11 +41,13 @@ public:
 	*	data should be the json obj found in the RequestData feild in original request string
 	*/
 	void set_process_data(Json data) { process_data_m = std::shared_ptr<Json>(new Json(data)); }
+
 private:
-	std::string m_name = "Undefined Process";
+	static unsigned int pid;
+	std::string name = "Undefined Process";
 
 protected:
 	std::shared_ptr<Json> process_data_m;
 };
 
-#endif // !BACKEND_PROCESS_H
+#endif
