@@ -45,13 +45,14 @@ void CommunicationObj::send_info(std::string msg, std::string sender){
 	send_msg(all_info);
 }
 
-void CommunicationObj::send_error(std::string msg, std::string sender){
+void CommunicationObj::send_error(std::string msg, std::string sender, bool critical){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "Error");
 	jsoncons::json response_data;
 	response_data.insert_or_assign("message", msg);
 	response_data.insert_or_assign("sender", sender);
+	response_data.insert_or_assign("critical", critical);
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);
@@ -137,6 +138,33 @@ void CommunicationObj::send_reports(jsoncons::json reports, std::string report_t
 	jsoncons::json response_data;
 	response_data.insert_or_assign("reportType", report_type);
 	response_data.insert_or_assign("reports", reports);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
+void CommunicationObj::send_spectrum(float* data, int size) {
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "SpectralPicker");
+	jsoncons::json response_data;
+	response_data["size"] = size;
+	response_data["spectrum"] = jsoncons::json::make_array(size);
+	for( int i=0; i<size; i++)
+		response_data["spectrum"][i] = data[i];
+		info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
+void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "PipelineComponents");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("component_json", compoents_list);
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;
 	info_body.dump(all_info);

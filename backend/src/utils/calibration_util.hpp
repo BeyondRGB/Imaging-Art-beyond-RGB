@@ -175,6 +175,8 @@ namespace btrgb{
 
         double compute_deltaE_sum(RefData *ref_data, cv::Mat xyz, cv::Mat *deltaE_values);
 
+        double compute_RMSE(cv::Mat R_camera, cv::Mat R_ref);
+
     }
 }
 
