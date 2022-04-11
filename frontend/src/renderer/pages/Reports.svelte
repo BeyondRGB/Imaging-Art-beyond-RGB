@@ -198,7 +198,7 @@
   }
   .report-header {
     width: calc(100% - 6rem);
-    @apply fixed top-0 min-h-[15vh] bg-gray-800 z-[10000] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
+    @apply fixed top-0 min-h-[15vh] bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
             transition-all delay-150 duration-300 ease-in justify-between;
   }
   .close-report {

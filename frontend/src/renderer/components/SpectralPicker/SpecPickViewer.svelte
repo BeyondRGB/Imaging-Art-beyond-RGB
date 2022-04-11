@@ -7,6 +7,7 @@
   export let show = true;
 
   export let shadowPos;
+  export let trueShadowPos;
 
   export let dataURL;
 
@@ -177,7 +178,12 @@
             left: viewportPoint.x,
             size,
           };
-          console.log({ shadowPos });
+          let pixelCoords =
+            viewer.viewport.viewportToImageCoordinates(viewportPoint);
+          trueShadowPos = {
+            top: pixelCoords.y,
+            left: pixelCoords.x,
+          };
         } else {
           console.log("Viewer NULL");
         }
