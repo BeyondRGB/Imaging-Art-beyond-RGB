@@ -51,7 +51,7 @@
   }
 
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-    console.log($messageStore[0]);
+    //console.log($messageStore[0]);
     console.log("New Message PROCESSING");
     try {
       let temp = JSON.parse($messageStore[0]);

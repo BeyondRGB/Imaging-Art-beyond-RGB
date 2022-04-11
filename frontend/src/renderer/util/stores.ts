@@ -34,7 +34,7 @@ export const processState = writable({
       colorTargetImage: { dataURL: "", filename: "", },
       verificationTargetImage: { dataURL: "", filename: "" },
       colorTarget: {},
-      verificationTarget: null,
+      verificationTarget: {},
       sharpenString: "N",
       fields: {
         imageA: [],

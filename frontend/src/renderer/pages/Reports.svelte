@@ -10,6 +10,7 @@
   import ScatterCharts from "@root/components/Charts/ScatterCharts.svelte";
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import FileSelector from "@components/FileSelector.svelte";
+  import Switch from "@root/components/Switch.svelte";
   import { ChevronsDownIcon, ChevronsUpIcon } from "svelte-feather-icons";
   let open = false;
 
@@ -64,6 +65,24 @@
   }
 
   $: console.log($viewState.reports);
+
+  $: isVerification =
+    $viewState.reports.verification != null &&
+    $viewState.reports.verification["double_values"].length > 0;
+
+  let showVerification = false;
+
+  $: console.log(isVerification);
+
+  function handleCloseReport() {
+    $viewState.projectKey = null;
+    $viewState.reports = {
+      calibration: null,
+      verification: null,
+    };
+    toggle = false;
+    mainfilePath = null;
+  }
 </script>
 
 <main class="reports-main">
@@ -77,26 +96,67 @@
   {:else}
     <div class="art">
       <div class="report-header" class:show={$currentPage === "Reports"}>
-        <div class="report-name">
-          {$viewState.projectKey?.split("\\").length > 2
-            ? $viewState.projectKey?.split("\\").at(-1)
-            : $viewState.projectKey?.split("/").at(-1)}
+        <button class="close-report" on:click={handleCloseReport}>X</button>
+        <div class="report-left">
+          <div class="report-name">
+            {$viewState.projectKey?.split("\\").length > 2
+              ? $viewState.projectKey?.split("\\").at(-1)
+              : $viewState.projectKey?.split("/").at(-1)}
+          </div>
+          <div class="report-info">
+            Mean ΔE: {parseFloat(
+              $viewState.reports.calibration?.["double_values"]?.[0]?.["data"]
+            ).toFixed(4)}
+          </div>
+
+          {#if isVerification}
+            <div class="report-info">
+              Verification Mean ΔE: {parseFloat(
+                $viewState.reports.verification?.["double_values"]?.[0]?.[
+                  "data"
+                ]
+              ).toFixed(4)}
+            </div>
+          {/if}
         </div>
-        <div class="report-info">
-          Mean ΔE: {parseFloat(
-            $viewState.reports.calibration?.["double_values"]?.[0]?.["data"]
-          ).toFixed(4)}
+        <div class="report-right">
+          {#if isVerification}
+            <Switch
+              bind:checked={showVerification}
+              label={"Show Verification"}
+              large
+            />
+          {/if}
         </div>
       </div>
       <div class="reports">
-        <div class="report-item">
-          <Heatmap bind:data={$viewState.reports.calibration} />
-        </div>
-        <div class="report-item">
-          <ScatterCharts bind:data={$viewState.reports.calibration} />
-        </div>
-        <div class="report-item">
-          <LinearChart bind:data={$viewState.reports.calibration} />
+        <div class="reportBody">
+          <div class="report-item">
+            <Heatmap
+              data={showVerification
+                ? $viewState.reports.verification
+                : $viewState.reports.calibration}
+              matrixName={showVerification
+                ? "Verification DeltaE Values"
+                : "CM DeltaE Values"}
+            />
+          </div>
+          <div class="report-item">
+            <ScatterCharts
+              data={showVerification
+                ? $viewState.reports.verification
+                : $viewState.reports.calibration}
+              matrix={showVerification ? "Verification" : "CM"}
+            />
+          </div>
+          <div class="report-item">
+            <LinearChart
+              data={showVerification
+                ? $viewState.reports.verification
+                : $viewState.reports.calibration}
+              matrix={showVerification ? "Verification" : "CM"}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -111,6 +171,9 @@
     @apply flex flex-col relative;
   }
   .reports {
+    @apply w-full h-full flex flex-col gap-2;
+  }
+  .reportBody {
     transform-origin: left top;
     @apply w-full h-full transition-all duration-300
           bg-gray-700 rounded-b-2xl p-4 flex flex-col items-center justify-center;
@@ -134,13 +197,30 @@
     @apply text-xl;
   }
   .report-header {
-    @apply fixed w-full top-0 bg-gray-800 z-[10000] flex flex-col p-4 rounded-b-xl -translate-y-full
-            transition-all delay-150 duration-300 ease-in;
+    width: calc(100% - 6rem);
+    @apply fixed top-0 min-h-[15vh] bg-gray-800 z-[10000] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
+            transition-all delay-150 duration-300 ease-in justify-between;
+  }
+  .close-report {
+    @apply absolute top-0 right-0;
   }
   .report-header.show {
     @apply translate-y-0;
   }
+  .report-left {
+    @apply w-full flex flex-col justify-center;
+  }
+
+  .report-right {
+    @apply w-full rounded-xl overflow-auto;
+  }
   .report-name {
     @apply text-4xl;
+  }
+  .reports h2 {
+    @apply w-full text-3xl;
+  }
+  .verificationBar {
+    @apply w-full h-full bg-gray-500 flex flex-col p-2 rounded-xl;
   }
 </style>
