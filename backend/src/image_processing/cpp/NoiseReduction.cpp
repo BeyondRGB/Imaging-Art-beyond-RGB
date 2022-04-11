@@ -10,10 +10,8 @@ using namespace cv;
 using namespace std;
 
 void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("", "NoiseReduction");
-    comms->send_progress(0, "NoiseReduction");
-
-    cout << "Filter Time-------------------------------------------------------------------------------------------------------------------------------------\n";
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
@@ -22,21 +20,29 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
 
-    cv::FileStorage file("inf.yml", cv::FileStorage::WRITE);
-    file << "matName" << im1;
-
     cv::Mat Hblurred1;
     cv::Mat Hblurred2;
 
-    cv::Mat Lblurred1;
-    cv::Mat Lblurred2;
+    //High Frequency Kernel larger sigma = more sharp
+    //Low = 0.5  Med = 1  High = 1.5
+    std::cout << SharpenFactor;
+    int sigma = 0.5;
 
-    //High Frequency Kernel
-    int sigma = 2;
-    int ksize = (sigma * 5) | 1;
-
+    //Sharpen value passed in 
+    if (SharpenFactor == "L") {
+        sigma = 0.5;
+    }
+    else if (SharpenFactor == "M") {
+        sigma = 1;
+    }
+    else if (SharpenFactor == "H"){
+        sigma = 1.5;
+    }
+    
     //Sharpen Factor
     int HsharpFactor = 1;
+
+    int ksize = (sigma * 5) | 1;
 
     //High Freq Blur
     GaussianBlur(im1, Hblurred1, Size(ksize, ksize), sigma, sigma);
@@ -53,26 +59,24 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
     images->outputImageAs(btrgb::TIFF, "art2", "Sharp2");
 
-
-    comms->send_progress(0.5, "NoiseReduction");
-
+    comms->send_progress(0, this->get_name());
 
     //Noise reduction
-    //Several different noise reduction algos
     //Using Bilateral Filtering for highest accuracy
+    //Filter can't run in place must copy to temp matrixs
     cv::Mat filter1;
     cv::Mat filter2;
-    cout << "Filter 1-------------------------------------------------------------------------------------------------------------------------------------\n";
+    int noiseReducKernel = 2;
+    cv::bilateralFilter(im1, filter1, noiseReducKernel, noiseReducKernel * 2, noiseReducKernel / 2);
+    comms->send_progress(0, this->get_name());
 
-    cv::bilateralFilter(im1, filter1, 2, 3, 3);
-    cout << "Filter 2-------------------------------------------------------------------------------------------------------------------------------------\n";
+    cv::bilateralFilter(im2, filter2, noiseReducKernel, noiseReducKernel * 2, noiseReducKernel / 2);
 
-    cv::bilateralFilter(im2, filter2, 2, 3, 3);
-
+    //Copy back to art object
     filter1.copyTo(im1);
     filter2.copyTo(im2);
 
-    comms->send_progress(1, "NoiseReduction");
+    comms->send_progress(0, this->get_name());
     //Outputs TIFFs for each image group for after this step, temporary
     images->outputImageAs(btrgb::TIFF, "art1", "NoiseReduc1");
     images->outputImageAs(btrgb::TIFF, "art2", "NoiseReduc2");

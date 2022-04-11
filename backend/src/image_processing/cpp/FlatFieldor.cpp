@@ -11,8 +11,9 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 
     RefData *reference;
 
-    comms->send_info("", "Flat Fielding");
-    comms->send_progress(0, "Flat Fielding");
+
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     //Unmodified copies used for dead pixel correction in flat fielding.
     btrgb::Image* art1copy = new btrgb::Image("art1copy");
@@ -428,7 +429,6 @@ void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb
         }
     }
     int corrected = stuckPixelCounter - uncorrectedCounter;
-    std::cout << "SUCCESSFULL FLATFIELD HANDING LMAO----------------------------------------- \n";
     std::cout << "Stuck/Dead Pixels Detected - " << stuckPixelCounter / 6<< "\n";
     std::cout << "Stuck/Dead Pixels Corrected - " << corrected / 6 << "\n";
     std::cout << "Stuck/Dead Pixels Uncorrected - " << uncorrectedCounter / 6<< "\n";
