@@ -1,12 +1,5 @@
 #include "backend_process/SpectralPicker.hpp"
 
-unsigned int SpectralPicker::id = 0;
-
-SpectralPicker::SpectralPicker() {
-    this->set_process_name("SpectralPicker(" + std::to_string(SpectralPicker::id) + ")");
-    SpectralPicker::id += 1;
-}
-
 SpectralPicker::~SpectralPicker() {}
 
 
