@@ -15,13 +15,10 @@
 class ReportRequest : public BackendProcess {
 
 public:
-    ReportRequest();
+    ReportRequest(std::string name) : BackendProcess(name) {};
     ~ReportRequest();
 	void run() override;
-
-private:
-	static unsigned int id;
-
+    
 };
 
 
