@@ -4,13 +4,12 @@
 
 #include "../header/ImageCalibrator.h"
 
-ImageCalibrator::ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components) {
-    for(auto & component : components){
-        this->components.push_back(component);
-    }
+ImageCalibrator::ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components)
+     : CompositComponent("ImageCalibrator"){
+        this->init_components(components);
 }
 void ImageCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("Starting Image Calibration", "ImageCalibrator");
+    comms->send_info("Starting Image Calibration", "Image Calibration");
     double count = 0;
     double total = this->components.size();
     for(auto  & component : this->components){

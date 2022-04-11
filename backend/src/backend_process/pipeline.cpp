@@ -1,19 +1,6 @@
 #include "ImageUtil/ArtObject.hpp"
 #include "pipeline.hpp"
 
-int Pipeline::pipeline_count = 0;
-
-Pipeline::Pipeline(){
-    pipeline_count++;
-    num_m = pipeline_count;
-    this->set_process_name("Img Processing Pipeline (" + std::to_string(num_m) + ")");
-};
-
-void Pipeline::callback(std::string msg) {
-    msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
-    std::cout << "MSG: " << msg << std::endl;
-    this->send_info(msg, this->get_process_name());
-};
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
@@ -22,6 +9,10 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ChannelSelector()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
+    //Sharpening and Noise Reduction
+    if(this->get_sharpen_type() != "N"){
+        pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
+    }
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
@@ -99,6 +90,16 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     for(const auto& [key, im] : *art_obj){
         results_obj->store_string(key, im->getName());
     }
+    // Store Filtering Options
+    std::string option = this->get_sharpen_type();
+    std::string option_string = "None";
+    if(option == "H")
+        option_string = "High";
+    else if(option == "M")
+        option_string = "Medium";
+    else if(option == "L")
+        option_string = "Low";
+    results_obj->store_string(GI_ADVANCED_FILTERS, option_string);
 
 }
 
@@ -162,10 +163,15 @@ void Pipeline::run() {
     std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
     this->send_info( "About to execute...", this->get_process_name());
     try { 
+        this->coms_obj_m->send_pipeline_components(pipeline->get_component_list());
         pipeline->execute(this->coms_obj_m.get(), images.get());
         std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
         this->coms_obj_m->send_post_calibration_msg(Pro_file);
-    }catch(ColorTarget_MissmatchingRefData e){
+    } catch(const ImgProcessingComponent::error& e) {
+        this->report_error(e.who(), e.what());
+        return;
+    }
+    catch(ColorTarget_MissmatchingRefData e){
         this->report_error(this->get_process_name(), e.what());
         return;
     }catch(const std::exception& err) {
@@ -184,7 +190,7 @@ std::string Pipeline::get_output_directory() {
     std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
         std::string base_dir = this->process_data_m->get_string("destinationDirectory");
-        std::string dir = base_dir + "/BTRGB_" + date_string + "_" + time_string + "/";
+        std::string dir = base_dir + "/" + OUTPUT_PREFIX + date_string + "_" + time_string + "/";
         std::filesystem::create_directories(dir);
         return dir;
     }
@@ -199,6 +205,25 @@ std::string Pipeline::get_output_directory() {
 
 
 }
+
+
+std::string Pipeline::get_sharpen_type() {
+
+    //default to no sharpening
+    std::string sharpen_string = "N";
+    try {
+        sharpen_string = this->process_data_m->get_string("sharpenString");
+        if (sharpen_string == "H" || sharpen_string == "M" || sharpen_string == "L" || sharpen_string == "N") {
+            return sharpen_string;
+        }
+    }
+    catch (ParsingError e) {  
+    }
+    return sharpen_string;
+}
+
+
+
 
 IlluminantType Pipeline::get_illuminant_type(Json target_data) {
     // Defaults to D50

@@ -7,11 +7,12 @@
     flip,
     inline,
   } from "@floating-ui/dom";
+  import { ChevronDownIcon, ChevronUpIcon } from "svelte-feather-icons";
   export let values: string[];
   export let selected;
 
   let show = false;
-
+  export let spaceLast = false;
   let btnRef;
   let popRef;
 
@@ -46,31 +47,38 @@
 {#if show}
   <div class="background" on:click={() => (show = false)} />
 {/if}
-<main>
-  <button on:click={toggleDropdown} bind:this={btnRef}
-    >{selected.slice(0, -4)}</button
-  >
-  <hr />
-  <div class="body" bind:this={popRef} class:shown={show}>
-    {#each values as value}
-      <li
-        on:click={() => {
-          selected = value;
-          show = false;
-        }}
-      >
-        {value.slice(0, -4)}
-      </li>
-    {/each}
-  </div>
-</main>
+
+<button class="refDataBtn" on:click={toggleDropdown} bind:this={btnRef}
+  ><span class="btnText">{selected.slice(0, -4)}</span>
+  <div class="iconSqu">
+    {#if show}
+      <ChevronUpIcon size="1.5x" />
+    {:else}
+      <ChevronDownIcon size="1.5x" />
+    {/if}
+  </div></button
+>
+
+<div class="body" bind:this={popRef} class:shown={show}>
+  {#each values as value, i}
+    {#if spaceLast && i === values.length - 1}
+      <div class="sep" />
+    {/if}
+    <li
+      on:click={() => {
+        selected = value;
+        show = false;
+      }}
+    >
+      {value.slice(0, -4)}
+    </li>
+  {/each}
+</div>
 
 <style lang="postcss">
-  main {
-    @apply flex justify-center;
-  }
-  button {
-    @apply bg-blue-600/50 z-50 text-sm w-full;
+  .refDataBtn {
+    @apply bg-gray-800/75 z-50 text-sm flex justify-between items-center
+          gap-1 p-0 pl-1;
   }
   .body {
     @apply bg-gray-600 z-50 hidden fixed;
@@ -83,5 +91,14 @@
   }
   .background {
     @apply fixed top-0 left-0 w-full h-full z-10 block float-none;
+  }
+  .iconSqu {
+    @apply bg-blue-600/75 h-full w-full rounded-r-lg p-0.5 py-1;
+  }
+  .btnText {
+    @apply p-0.5 py-1 whitespace-nowrap;
+  }
+  .sep {
+    @apply bg-gray-500 h-0.5 flex justify-center items-center mx-4 rounded-lg my-0.5;
   }
 </style>

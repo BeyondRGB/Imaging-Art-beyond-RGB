@@ -1,8 +1,14 @@
 #include "image_processing/header/ResultsProcessor.h"
 
+ResultsProcessor::~ResultsProcessor(){
+    if(nullptr != this->formater){
+        delete this->formater;
+    }
+}
+
 void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images){
-    comms->send_info("","ResultsProcessor");
-    comms->send_progress(0,"ResultsProcessor");
+    comms->send_info("",this->get_name());
+    comms->send_progress(0,this->get_name());
 
     this->output_dir = images->get_output_dir();
     this->ts_id = btrgb::get_time_stamp();
@@ -10,16 +16,21 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     // Generate the file names to be used for output
     this->CM_f_name = this->build_output_name("CM");
     this->SP_f_name = this->build_output_name("SP");
-    this->CalibRes_f_name = this->build_output_name("Calibration", "csv");
-    this->VerRes_f_name = this->build_output_name("Verification", "csv");
-    this->GI_f_name = this->build_output_name("GeneralInfo", "txt");
     this->Pro_f_name = this->build_output_name("","btrgb");
+
+    this->GI_f_name = this->build_output_name("GeneralInfo", "csv");
+    this->M_color_f_name = this->build_output_name("M_color", "csv");
+    this->M_spectral_f_name = this->build_output_name("M_spectral", "csv");
+    this->colorimetry_f_name = this->build_output_name("Colorimetry", "csv");
+    this->R_camera_f_name = this->build_output_name("R_camera", "csv");
+    this->colorimetry_ver_f_name = this->build_output_name("ColorimetryVerification", "csv");
+    this->R_camera_ver_f_name = this->build_output_name("R_cameraVerification", "csv");
     
     // Output Results
-    this->output_user_results(images);  
     this->output_btrgb_results(images);
+    this->output_user_results(images);  
 
-    comms->send_progress(0.2,"ResultsProcessor");
+    comms->send_progress(0.2,this->get_name());
 
     // Output Images 
     this->output_images(images);
@@ -28,7 +39,7 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     // Store PRO_file so we can access it from Pipeline
     images->get_results_obj(btrgb::ResultType::GENERAL)->store_string(PRO_FILE, this->output_dir + this->Pro_f_name);
     
-    comms->send_progress(1,"ResultsProcessor");
+    comms->send_progress(1,this->get_name());
 }
 
 void ResultsProcessor::output_images(btrgb::ArtObject* images){
@@ -59,9 +70,13 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
     jsoncons::json output_files;
     output_files.insert_or_assign("CM", this->CM_f_name+".tiff");
     output_files.insert_or_assign("SP", this->SP_f_name+".tiff");
-    output_files.insert_or_assign("CalibrationResults", this->CalibRes_f_name);
-    output_files.insert_or_assign("VerificationResults", this->VerRes_f_name);
     output_files.insert_or_assign("GineralInfo", this->GI_f_name);
+    output_files.insert_or_assign("M_color", this->M_color_f_name);
+    output_files.insert_or_assign("M_spectral", this->M_spectral_f_name);
+    output_files.insert_or_assign("Colorimetry", this->colorimetry_f_name);
+    output_files.insert_or_assign("R_camera", this->R_camera_f_name);
+    output_files.insert_or_assign("ColorimetryVerification", this->colorimetry_ver_f_name);
+    output_files.insert_or_assign("R_cameraVerification", this->R_camera_ver_f_name);
     // Add all json objects to the main json body to be writen to .btrgb file
     jsoncons::json btrgb_json;
     btrgb_json.insert_or_assign("OutPutFiles", output_files);
@@ -78,36 +93,90 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
 }
 
 void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
-    CalibrationResults *calibration_res = images->get_results_obj(btrgb::ResultType::CALIBRATION);
-    CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
+    cv::Mat xyz_ref = images->get_refrence_data()->xyz_as_matrix();
     CalibrationResults *general_info = images->get_results_obj(btrgb::ResultType::GENERAL);
-    std::string output_dir = images->get_output_dir();
+    CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
+    CalibrationResults *calibration_res = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+ 
     std::string f_name;
+    
+    // M_color
+    f_name = this->M_color_f_name;
+    this->write_formated_results(f_name, FormatType::M_COLOR, calibration_res, ResultObjType::CALIBRATION);
+    // M_spectral
+    f_name = this->M_spectral_f_name;
+    this->write_formated_results(f_name, FormatType::M_SPECTRAL, calibration_res, ResultObjType::CALIBRATION);
+    // Colorimetry
+    calibration_res->store_matrix(CM_XYZ_REF, xyz_ref);
+    f_name = this->colorimetry_f_name;
+    this->write_formated_results(f_name, FormatType::COLORIMETRY, calibration_res, ResultObjType::CALIBRATION);
+    // R_camera
+    int row_count = general_info->get_int(GI_TARGET_ROWS);
+    int col_count = general_info->get_int(GI_TARGET_COLS);
+    calibration_res->store_int(GI_TARGET_COLS, col_count);
+    calibration_res->store_int(GI_TARGET_ROWS, row_count);
+    f_name = this->R_camera_f_name;
+    this->write_formated_results(f_name, FormatType::R_CAMERA, calibration_res, ResultObjType::CALIBRATION);
 
-    // TODO the following should be replaced with a way to formate the files as desired by Olivia
+    // Verification
+    if(verification_res->contains_results()){
+        // Colorimetry
+        xyz_ref = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->xyz_as_matrix();
+        verification_res->store_matrix(CM_XYZ_REF, xyz_ref);
+        f_name = this->colorimetry_ver_f_name;
+        this->write_formated_results(f_name, FormatType::COLORIMETRY, verification_res, ResultObjType::VERIFICATION);
+        // R_camera
+        row_count = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->get_row_count();
+        col_count = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->get_col_count();
+        verification_res->store_int(GI_TARGET_COLS, col_count);
+        verification_res->store_int(GI_TARGET_ROWS, row_count);
+        f_name = this->R_camera_ver_f_name;
+        this->write_formated_results(f_name, FormatType::R_CAMERA, verification_res, ResultObjType::VERIFICATION);
+    }
 
-    // Write user calibration results
-    std::ofstream calibration_stream;
-    calibration_stream.open(this->output_dir + this->CalibRes_f_name);
-    calibration_res->write_results(calibration_stream);
-    calibration_stream.close();
-    // Write user verification results
-    std::ofstream verification_stream;
-    verification_stream.open(this->output_dir + this->VerRes_f_name);
-    verification_res->write_results(verification_stream);
-    verification_stream.close();
-    // Write user General Info
-    std::ofstream general_stream;
-    general_stream.open(this->output_dir + this->GI_f_name);
-    general_info->write_results(general_stream);
-    general_stream.close();
+    // GeneralInfo
+    f_name = this->GI_f_name;
+    this->write_formated_results(f_name, FormatType::GEN_INFO, general_info, ResultObjType::GENERAL);
 }
 
 std::string ResultsProcessor::build_output_name(std::string name, std::string extention){
-    std::string f_name = "BTRGB_" + name + "_" + this->ts_id;
+    std::string f_name = OUTPUT_PREFIX + name + "_" + this->ts_id;
     if(name == "")
-        f_name = "BTRGB_" + this->ts_id;
+        f_name = OUTPUT_PREFIX + this->ts_id;
     if(extention != "")
         f_name += "." + extention;
     return f_name;
+}
+
+void ResultsProcessor::set_formater(FormatType type){
+    // Clean up the previous pointer before creating a new one
+    if(nullptr != this->formater){
+        delete this->formater;
+    }
+
+    switch(type){
+        case FormatType::GEN_INFO:
+            this->formater = new GeneralInfoFormater();
+            break;
+        case FormatType::M_COLOR:
+            this->formater = new MColorFormater();
+            break;
+        case FormatType::M_SPECTRAL:
+            this->formater = new MSpectralFormater();
+            break;
+        case FormatType::COLORIMETRY:
+            this->formater = new ColorimetryFormater();
+            break;
+        case FormatType::R_CAMERA:
+            this->formater = new RCameraFormater();
+            break;
+    }
+}
+
+void ResultsProcessor::write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj, ResultObjType result_type){
+    std::ofstream f_stream;
+    f_stream.open(this->output_dir + file_name);
+    this->set_formater(format_type);
+    this->formater->write_format(f_stream, results_obj, result_type);
+    f_stream.close();
 }

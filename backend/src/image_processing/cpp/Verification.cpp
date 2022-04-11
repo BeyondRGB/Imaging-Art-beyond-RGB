@@ -14,18 +14,8 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
         this->verification_data = target1.get_ref_data();
         std::cout << "Initialized General Verification Data" << std::endl;
     }
-    catch (btrgb::ArtObj_VerificationDataNull e){
-        comms->send_error(e.what(), "Verification");
-        return;
-    }
-    catch (const btrgb::ArtObj_ImageDoesNotExist& e) {
-        comms->send_error("Verification called out of order. Missing at least 1 image assignment.", "Verification");
-        return;
-    }
-    catch (const std::logic_error& e) {
-        std::string error(e.what());
-        comms->send_error(error, "Verification");
-        return;
+    catch (const std::exception& e) {
+        throw ImgProcessingComponent::error(e.what(), "Verification");
     }
 
     this->verify_CM_calibration(comms, images);
@@ -122,21 +112,12 @@ void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObje
 
     // Compute RMSE
     std::cout << "Computing RMSE" << std::endl;
-    double RMSE = 0;
-    
-    // N should be equivilent to 36 ie. the number of wavelengths ie. the number of rows in R_camera/R_ref 
-    int N = R_camera.rows;
-    for(int row = 0; row < R_reference.rows; row++){
-        for(int col = 0; col < R_reference.cols; col++){
-            double camera_val = R_camera.at<double>(row,col);
-            double ref_data_value = R_reference.at<double>(row, col);
-            RMSE += pow((camera_val - ref_data_value), 2) / N;
-        }
-    }
-    RMSE = sqrt(RMSE);
+    double RMSE = btrgb::calibration::compute_RMSE(R_camera, R_reference);
 
     // Store Results:
     CalibrationResults *verification_res = images->get_results_obj(btrgb::ResultType::VERIFICATION);
+    cv::Mat R_ref = images->get_refrence_data(btrgb::TargetType::VERIFICATION_TARGET)->as_matrix();
+    verification_res->store_matrix(V_R_reference, R_ref);
     verification_res->store_matrix(V_R_CAMERA, R_camera);
     verification_res->store_double(V_RMSE, RMSE);
     verification_res->store_matrix(V_TARGET_SIGS, camera_sigs);
