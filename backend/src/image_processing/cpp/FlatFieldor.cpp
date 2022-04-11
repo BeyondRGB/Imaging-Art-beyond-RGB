@@ -28,7 +28,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         art1copy->initImage(copy);
 
         art2 = images->getImage("art2");
-        cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
+        cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
         art2copy->initImage(copy2);
 
 
