@@ -1,6 +1,6 @@
 <script lang="ts">
   import {
-    sendMessage,
+    viewState,
     processState,
     connectionState,
     connect,
@@ -10,16 +10,24 @@
   import ImageViewer from "@components/ImageViewer.svelte";
 
   let notConnectedMode = false;
-  let info = { sender: "Waiting...", value: 0 };
+
+  let pipelineComponents = {};
+  let pipelineProgress = {};
 
   function reset() {
     currentPage.set("Process");
+    $processState.currentTab = 0;
+    pipelineComponents = {};
+    pipelineProgress = {};
     processState.set({
       currentTab: 0,
+      completedTabs: [false, false, false, false],
+      pipelineComplete: false,
       destDir: "",
       imageFilePaths: [],
       thumbnailID: null,
       colorTargetID: null,
+      CMID: null,
       imageThumbnails: {},
       outputImage: { dataURL: "", name: "Waiting..." },
       artStacks: [
@@ -30,182 +38,74 @@
           verificationTargetImage: { dataURL: "", filename: "" },
           colorTarget: {},
           verificationTarget: {},
+          sharpenString: "N",
           fields: {
-            images: [],
-            whitefield: [],
-            darkfield: [],
+            imageA: [],
+            imageB: [],
+            targetA: [],
+            targetB: [],
+            flatfieldA: [],
+            flatfieldB: [],
+            darkfieldA: [],
+            darkfieldB: [],
           },
         },
       ],
     });
   }
 
-  $: jsonTest = {
-    RequestType: "Process",
-    RequestID: Date.now(),
-    RequestData: {
-      images: [
-        {
-          art: $processState.artStacks[0].fields.images[0]?.name,
-          white: $processState.artStacks[0].fields.whitefield[0]?.name,
-          dark: $processState.artStacks[0].fields.darkfield[0]?.name,
-        },
-        {
-          art: $processState.artStacks[0].fields.images[1]?.name,
-          white: $processState.artStacks[0].fields.whitefield[1]?.name,
-          dark: $processState.artStacks[0].fields.darkfield[1]?.name,
-        },
-      ],
-      destinationDirectory: $processState.destDir,
-      targetLocation: {
-        top: $processState.artStacks[0].colorTarget?.top,
-        left: $processState.artStacks[0].colorTarget?.left,
-        bottom: $processState.artStacks[0].colorTarget?.bottom,
-        right: $processState.artStacks[0].colorTarget?.right,
-        cols: $processState.artStacks[0].colorTarget?.cols,
-        rows: $processState.artStacks[0].colorTarget?.rows,
-        size: $processState.artStacks[0].colorTarget?.size,
-        whitePatch: $processState.artStacks[0].colorTarget?.whitePatch,
-        refData: {
-          name: $processState.artStacks[0].colorTarget?.refData?.name,
-          standardObserver: 1931,
-          illuminants: "D50",
-        },
-      },
-    },
-  };
-
-  $: {
-    if ($processState.artStacks[0].verificationTarget !== null) {
-      jsonTest.RequestData["verificationLocation"] = {
-        top: $processState.artStacks[0].verificationTarget?.top,
-        left: $processState.artStacks[0].verificationTarget?.left,
-        bottom: $processState.artStacks[0].verificationTarget?.bottom,
-        right: $processState.artStacks[0].verificationTarget?.right,
-        cols: $processState.artStacks[0].verificationTarget?.cols,
-        rows: $processState.artStacks[0].verificationTarget?.rows,
-        size: $processState.artStacks[0].verificationTarget?.size,
-        whitePatch: $processState.artStacks[0].verificationTarget?.whitePatch,
-        refData: {
-          name: $processState.artStacks[0].verificationTarget?.refData?.name,
-          standardObserver: 1931,
-          illuminants: "D50",
-        },
-      };
-    }
-  }
-
-  $: console.log(jsonTest);
-
-  $: if ($messageStore.length > 1) {
+  $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
+    //console.log($messageStore[0]);
+    console.log("New Message PROCESSING");
     try {
       let temp = JSON.parse($messageStore[0]);
-      if (temp["ResponseType"] === "Progress") {
+      if (temp["ResponseType"] === "CalibrationComplete") {
+        // Project Key handler
+        console.log("CalibrationComplete Project Key From Server");
+        $viewState.projectKey = temp["ResponseData"]["path"];
+        $processState.pipelineComplete = true;
+      } else if (temp["ResponseType"] === "Progress") {
+        // Progress Update
         console.log("Progress From Server");
-        info = {
-          sender: temp["ResponseData"]["sender"],
-          value: temp["ResponseData"]["value"],
-        };
+        pipelineProgress[temp["ResponseData"]["sender"]] =
+          temp["ResponseData"]["value"];
+      } else if (temp["ResponseType"] === "PipelineComponents") {
+        // Pipeline Components
+        console.log("Pipeline Components From Server");
+        pipelineComponents = temp["ResponseData"]["component_json"];
       }
     } catch (e) {
       console.log(e);
     }
   }
+
+  function handleComplete(id) {
+    if (id === 0) {
+      reset();
+      currentPage.set("SpecPicker");
+      console.log({ RESETING: $currentPage });
+    } else if (id === 1) {
+      // open in election
+    } else if (id === 2) {
+      reset();
+    }
+  }
 </script>
 
 <main>
-  <div class="top">
-    <div class="left">
-      <div class="state">
-        <button on:click={reset}>Reset</button>
-        <h3>
-          Current State: <button
-            class="stateSend"
-            on:click={() => sendMessage(JSON.stringify(jsonTest))}
-            >Send to Server</button
-          >
-          <!-- <button class="" on:click={() => (textValue = JSON.stringify(jsonTest))}
-          >Copy to Term</button
-        > -->
-        </h3>
-        <div class="box">
-          <p>
-            <span class="key">RequestType</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            > <span>Process</span>,
-          </p>
-          <p>
-            <span class="key">RequestID</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-            <span>{jsonTest.RequestID}</span>
-          </p>
-          <p>
-            <span class="key">RequestData</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-          </p>
-          <p class="px-2">
-            <span class="key">images</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-
-            {#each jsonTest.RequestData.images as image, index}
-              <li>
-                <span class="letter"
-                  >// Image {String.fromCharCode(65 + index)}</span
-                >
-                {#each Object.keys(image) as key}
-                  <li>
-                    <span class="key">{key}</span><span
-                      style="font-weight: bold; background-color: transparent;"
-                      >:</span
-                    >
-                    <span>{image[key]}</span>
-                  </li>
-                {/each}
-              </li>
-            {/each}
-          </p>
-          <p>
-            <span class="key">destinationDirectory</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-            <span>{jsonTest.RequestData.destinationDirectory}</span>
-          </p>
-          <p class="px-2">
-            <span class="key">targetLoation</span><span
-              style="font-weight: bold; background-color: transparent;">:</span
-            >
-
-            {#each Object.keys(jsonTest.RequestData.targetLocation) as key}
-              <li>
-                <span class="key">{key}</span><span
-                  style="font-weight: bold; background-color: transparent;"
-                  >:</span
-                >
-                <span>{jsonTest.RequestData.targetLocation[key]}</span>
-              </li>
-              <!-- <p class="px-2">
-                <span class="key">refData</span><span
-                  style="font-weight: bold; background-color: transparent;"
-                  >:</span
-                >
-
-                {#each Object.keys(jsonTest.RequestData.refData) as key}
-                  <li>
-                    <span class="key">{key}</span><span
-                      style="font-weight: bold; background-color: transparent;"
-                      >:</span
-                    > <span>{jsonTest.RequestData.refData[key]}</span>
-                  </li>
-                {/each}
-              </p> -->
-            {/each}
-          </p>
-        </div>
+  {#if $processState.pipelineComplete}
+    <div class="completedBox">
+      <div class="completedOptions">
+        <button on:click={() => handleComplete(0)}>View Image</button>
+        <button disabled on:click={() => handleComplete(1)}
+          >Open File Location</button
+        >
+        <button on:click={() => handleComplete(2)}>Process Another Image</button
+        >
       </div>
     </div>
+  {/if}
+  <div class="top">
     <div class="right">
       <div class="image">
         <h4>{$processState.outputImage?.name}</h4>
@@ -214,12 +114,89 @@
     </div>
   </div>
   <div class="bottom">
-    <div class="progress-circle" style="--progress:{info.value * 100}">
-      <div class="stepper">
-        <span class="sender">{info.sender}</span>
-        <!-- <span class="message">{info.message}</span> -->
-        <span class="value">{info.value}</span>
-      </div>
+    <div class="stepBox">
+      {#if Object.keys(pipelineComponents).length < 1}
+        <div class="waitingBox">
+          <div class="waitingMsg">Waiting</div>
+        </div>
+      {:else}
+        {#each Object.keys(pipelineComponents) as component1, i1}
+          {#if component1 !== "name"}
+            {#each Object.keys(pipelineComponents[component1]) as component2, i2}
+              <div class="stepGroup">
+                <div class="stepTitle">
+                  {pipelineComponents[component1][component2]["name"]}
+                </div>
+                <div class="steps">
+                  {#if component2 !== "name"}
+                    {#each Object.keys(pipelineComponents[component1][component2]) as component3, i3}
+                      {#if component3 !== "name"}
+                        {#each Object.keys(pipelineComponents[component1][component2][component3]) as component4, i4}
+                          <div
+                            class="progress-circle"
+                            class:completed={pipelineProgress[
+                              pipelineComponents[component1][component2][
+                                component3
+                              ][component4]["name"]
+                            ] === 1}
+                          >
+                            <div
+                              class="progress-overlay"
+                              style="--progress:{pipelineComponents[component1][
+                                component2
+                              ][component3][component4]['name'] in
+                              pipelineProgress
+                                ? pipelineProgress[
+                                    pipelineComponents[component1][component2][
+                                      component3
+                                    ][component4]['name']
+                                  ] * 100
+                                : 0}"
+                            />
+                            <div class="stepper">
+                              <span class="sender"
+                                >{pipelineComponents[component1][component2][
+                                  component3
+                                ][component4]["name"]}</span
+                              >
+                            </div>
+                          </div>
+                        {/each}
+                      {/if}
+                    {/each}
+                  {/if}
+                  {#if pipelineComponents[component1][component2]["name"].includes("Results") || pipelineComponents[component1][component2]["name"].includes("Verifi")}
+                    <div
+                      class="progress-circle"
+                      class:completed={pipelineProgress[
+                        pipelineComponents[component1][component2]["name"]
+                      ] === 1}
+                    >
+                      <div
+                        class="progress-overlay"
+                        style="--progress:{pipelineComponents[component1][
+                          component2
+                        ]['name'] in pipelineProgress
+                          ? pipelineProgress[
+                              pipelineComponents[component1][component2]['name']
+                            ] * 100
+                          : 0}"
+                      />
+                      <div class="stepper">
+                        <span class="sender"
+                          >{pipelineComponents[component1][component2][
+                            "name"
+                          ]}</span
+                        >
+                      </div>
+                    </div>
+                  {/if}
+                </div>
+              </div>
+            {/each}
+          {/if}
+        {/each}
+      {/if}
     </div>
   </div>
   {#if $connectionState !== "Connected" && !notConnectedMode}
@@ -243,39 +220,86 @@
     @apply bg-gray-600 w-64 h-64 p-5 flex flex-col justify-between py-10 rounded-xl font-semibold;
   }
   main {
-    @apply w-full h-full flex flex-col relative p-2;
+    @apply w-full h-full flex flex-col relative p-2 gap-2;
   }
   .bottom {
-    @apply w-full flex justify-center items-center relative;
+    @apply w-full h-auto flex flex-col justify-center items-center relative gap-2;
+  }
+  .stepBox {
+    @apply w-[90%] flex justify-between items-center relative gap-2;
   }
   .stepper {
-    @apply w-[20vh] h-[20vh] rounded-full bg-gray-500 flex flex-col justify-center items-center;
+    margin-left: 5%;
+    margin-top: 5%;
+    overflow-wrap: break-word;
+    @apply w-[90%] h-[90%] rounded-full bg-gray-600 flex flex-col justify-center items-center
+            absolute top-0 left-0;
   }
-  .progress-circle {
-    background: conic-gradient(
-      rgb(5 150 105) calc(var(--progress) * 1%),
-      #0000 0
-    );
-    @apply bg-gray-600 rounded-full p-1;
+  .stepTitle {
+    @apply text-white;
+  }
+  .stepGroup {
+    @apply gap-1 flex flex-col justify-items-center items-center
+            text-lg ring-1 ring-gray-600 p-1;
+  }
+  .steps {
+    @apply flex w-full justify-center gap-2;
+  }
+  .completedBox {
+    @apply w-full h-full absolute bg-black/50 z-50 flex justify-center items-center;
+  }
+  .completedOptions {
+    @apply w-1/2 bg-gray-700 flex flex-col p-2 rounded-lg gap-2;
+  }
+  .completedOptions button {
+    @apply w-full h-full text-xl;
   }
   .sender {
-    @apply bg-gray-500 text-lg rounded-lg;
+    word-break: break-word;
+    white-space: pre-line;
+    @apply w-[90%] bg-gray-600 text-base flex rounded-full justify-center items-center
+          text-center;
   }
-  .message {
-    @apply bg-gray-500 rounded-lg p-0.5;
+  .progress-circle {
+    background: linear-gradient(
+      90deg,
+      rgb(224, 62, 62) 0%,
+      rgb(68, 217, 83) 50%,
+      rgb(66, 86, 215) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient 5s ease infinite;
+    @apply bg-gray-600 h-[8vw] w-[8vw] rounded-full p-1 relative;
   }
+
+  .progress-circle.completed {
+    background: 0;
+    @apply bg-green-500;
+  }
+  .progress-overlay {
+    background: conic-gradient(
+      #0000 calc(var(--progress) * 1%),
+      rgb(125, 123, 123) 0
+    );
+
+    @apply w-full h-full absolute top-0 left-0 rounded-full;
+  }
+
+  .waitingBox {
+    @apply w-full h-[10vw] flex justify-center items-center;
+  }
+
+  .waitingMsg {
+    @apply text-xl;
+  }
+
   .top {
     @apply w-full h-full flex justify-center items-center overflow-hidden;
-  }
-  .left {
-    @apply w-[30%] h-full flex justify-center items-center ml-2;
   }
   .right {
     @apply w-full h-full flex justify-center items-center ml-2;
   }
-  .state {
-    @apply w-full h-full py-2 flex flex-col;
-  }
+
   .image {
     @apply w-full h-full bg-blue-600/25 relative items-center flex justify-center;
   }
@@ -285,30 +309,28 @@
   span {
     @apply bg-gray-700 text-gray-200 font-semibold whitespace-nowrap select-text;
   }
-  .letter {
-    @apply bg-transparent font-bold text-blue-500 select-none;
-  }
   .cont {
     @apply bg-red-500;
   }
-  .key {
-    @apply bg-transparent font-bold text-red-500/75 select-none;
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    25% {
+      background-position: 50% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    75% {
+      background-position: 50% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
-  h3 {
-    @apply text-lg;
-  }
-  /* .imgTitle {
-    @apply absolute top-0 z-50 bg-gray-900/75 pb-1 px-2 pt-0 rounded-lg text-gray-200;
-  } */
-  .box {
-    @apply overflow-y-auto w-full h-full bg-gray-900 text-gray-100 text-sm;
-  }
-  li {
-    @apply px-2 p-1 list-none;
-  }
-  .stateSend {
-    @apply bg-blue-500/50 h-full;
-  }
+
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
   }

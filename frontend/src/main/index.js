@@ -31,14 +31,38 @@ process.on('loaded', (event, args) => {
 
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
   let properties = ['openFile', 'multiSelections'];
-  if (arg === "Dir") {
+  let filters = [];
+  console.log(arg);
+  if (arg.type === "Dir") {
     properties = ["openDirectory"];
   }
-  if (arg === "Single") {
+  if (arg.type === "Single") {
     properties = ["openFile"];
   }
+
+  if (arg.filter === "csv") {
+    filters.push({
+      "name": "csv file",
+      "extensions": ["csv"]
+    });
+  }
+  if (arg.filter === "raws") {
+    filters.push({
+      "name": "raw & tiff file",
+      "extensions": ["cr2", "raf", "nef", "arq", "arw", "tiff", "tif"]
+    });
+  }
+  if (arg.filter === "project") {
+    filters.push({
+      "name": "BeyondRGB project file",
+      "extensions": ["btrgb"]
+    });
+  }
+
+
   const dia = await dialog.showOpenDialog({
-    properties
+    properties,
+    filters
   }).then(result => {
     return result;
   }).catch(err => {
