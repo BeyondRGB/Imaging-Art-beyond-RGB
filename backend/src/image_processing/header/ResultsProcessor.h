@@ -3,6 +3,12 @@
 
 #include "image_processing/header/LeafComponent.h"
 #include "image_processing/results/calibration_results.hpp"
+#include "image_processing/results/results_formater.hpp"
+#include "image_processing/results/general_info_formater.hpp"
+#include "image_processing/results/m_color_formater.hpp"
+#include "image_processing/results/m_spectral_formater.hpp"
+#include "image_processing/results/colorimetry_formater.hpp"
+#include "image_processing/results/r_camera_fromater.hpp"
 #include "utils/general_utils.hpp"
 
 #define IMG_FILE_NAME(x, id) ("BTRGB_" x "_" id)
@@ -13,9 +19,17 @@
  * 
  */
 class ResultsProcessor : public LeafComponent{
+    typedef ResultsFormater::ResultObjType ResultObjType;
     public:
-        ResultsProcessor() : LeafComponent("ResultsProcsessor"){};
-        ~ResultsProcessor(){};
+        enum FormatType{
+            GEN_INFO,
+            M_COLOR,
+            M_SPECTRAL,
+            COLORIMETRY,
+            R_CAMERA
+        };
+        ResultsProcessor() : LeafComponent("Results Procsessing"){};
+        ~ResultsProcessor();
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
     private:
@@ -44,15 +58,26 @@ class ResultsProcessor : public LeafComponent{
 
         std::string build_output_name(std::string name, std::string extention="");
 
+        void set_formater(FormatType type);
+        void write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj, ResultObjType result_type);
+
+        ResultsFormater *formater = nullptr;
+
         std::string output_dir;
         std::string ts_id;
 
         std::string CM_f_name;
         std::string SP_f_name;
         std::string Pro_f_name;
-        std::string CalibRes_f_name;
-        std::string VerRes_f_name;
+
         std::string GI_f_name;
+        std::string M_color_f_name;
+        std::string M_spectral_f_name;
+        std::string colorimetry_f_name;
+        std::string R_camera_f_name;
+        std::string colorimetry_ver_f_name;
+        std::string R_camera_ver_f_name;
+
 };
 
 #endif //RESULTS_PROCESSOR_H

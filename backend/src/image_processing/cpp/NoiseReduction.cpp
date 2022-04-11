@@ -10,8 +10,8 @@ using namespace cv;
 using namespace std;
 
 void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("", "NoiseReduction");
-    comms->send_progress(0, "NoiseReduction");
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     cout << "Filter Time";
 
@@ -54,12 +54,12 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
         images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
         images->outputImageAs(btrgb::TIFF, "art2", "Sharp2");
 
-        comms->send_progress(0.5, "Sharpening");
-        comms->send_progress(1, "Sharpening");
+        comms->send_progress(0.5, this->get_name());
+        comms->send_progress(1, this->get_name());
     }
     //Sharpen value default 0 or invalid value, don't sharpen
     else {
-        comms->send_progress(1, "Skipping Sharpening");
+        comms->send_progress(1, this->get_name());
     }
  }
 
