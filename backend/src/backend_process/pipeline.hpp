@@ -64,8 +64,6 @@ class Pipeline: public BackendProcess{
 
 
 private:
-	int num_m;
-	static int pipeline_count;
 	bool should_verify = false; // Assume there is no verification data
 
 	/*
@@ -149,7 +147,7 @@ private:
 	std::string get_sharpen_type();
 
 public:
-	Pipeline();
+	Pipeline(std::string name) : BackendProcess(name) {};
 
 	/*
 	Override of the run method inherited from BackendProcess

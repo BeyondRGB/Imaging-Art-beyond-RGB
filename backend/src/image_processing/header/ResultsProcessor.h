@@ -28,8 +28,9 @@ class ResultsProcessor : public LeafComponent{
             COLORIMETRY,
             R_CAMERA
         };
-        ResultsProcessor() : LeafComponent("ResultsProcsessor"){};
+        ResultsProcessor() : LeafComponent("Results Procsessing"){};
         ~ResultsProcessor();
+
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
     private:

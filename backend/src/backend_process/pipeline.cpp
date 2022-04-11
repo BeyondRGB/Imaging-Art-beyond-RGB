@@ -1,19 +1,6 @@
 #include "ImageUtil/ArtObject.hpp"
 #include "pipeline.hpp"
 
-int Pipeline::pipeline_count = 0;
-
-Pipeline::Pipeline(){
-    pipeline_count++;
-    num_m = pipeline_count;
-    this->set_process_name("Img Processing Pipeline (" + std::to_string(num_m) + ")");
-};
-
-void Pipeline::callback(std::string msg) {
-    msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
-    std::cout << "MSG: " << msg << std::endl;
-    this->send_info(msg, this->get_process_name());
-};
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
@@ -23,7 +10,9 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     //Sharpening and Noise Reduction
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
+    if(this->get_sharpen_type() != "N"){
+        pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
+    }
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
