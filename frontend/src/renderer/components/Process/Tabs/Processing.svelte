@@ -21,10 +21,13 @@
     pipelineProgress = {};
     processState.set({
       currentTab: 0,
+      completedTabs: [false, false, false, false],
+      pipelineComplete: false,
       destDir: "",
       imageFilePaths: [],
       thumbnailID: null,
       colorTargetID: null,
+      CMID: null,
       imageThumbnails: {},
       outputImage: { dataURL: "", name: "Waiting..." },
       artStacks: [
@@ -34,7 +37,8 @@
           colorTargetImage: { dataURL: "", filename: "" },
           verificationTargetImage: { dataURL: "", filename: "" },
           colorTarget: {},
-          verificationTarget: null,
+          verificationTarget: {},
+          sharpenString: "N",
           fields: {
             imageA: [],
             imageB: [],
