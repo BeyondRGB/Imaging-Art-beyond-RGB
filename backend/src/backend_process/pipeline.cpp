@@ -13,7 +13,7 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     if(this->get_sharpen_type() != "N"){
         pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
     }
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor(this->get_registration_type())));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
@@ -222,6 +222,22 @@ std::string Pipeline::get_sharpen_type() {
     return sharpen_string;
 }
 
+
+
+std::string Pipeline::get_registration_type() {
+
+    //default to no sharpening
+    std::string registration_string = "M";
+    try {
+        registration_string = this->process_data_m->get_string("sharpenString");
+        if (registration_string == "H" || registration_string == "M" || registration_string == "L") {
+            return registration_string;
+        }
+    }
+    catch (ParsingError e) {
+    }
+    return registration_string;
+}
 
 
 
