@@ -257,7 +257,7 @@
   .sender {
     word-break: break-word;
     white-space: pre-line;
-    @apply w-[90%] bg-gray-600 text-base flex rounded-lg justify-center items-center
+    @apply w-[90%] bg-gray-600 text-base flex rounded-full justify-center items-center
           text-center;
   }
   .progress-circle {
