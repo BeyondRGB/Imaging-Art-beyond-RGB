@@ -4,6 +4,7 @@
     messageStore,
     processState,
     sendMessage,
+    viewState,
   } from "@util/stores";
 
   import Settings from "@components/Process/Settings.svelte";
@@ -18,6 +19,9 @@
   let tabList;
 
   let showDialog = false;
+  let binaryType = null;
+  let binaryName = null;
+  let binaryFor = null;
   let colorTargetID;
 
   let tabs: any = [
@@ -54,51 +58,88 @@
       behavior: "smooth",
     });
   }
-  $: if ($messageStore.length > 1) {
+
+  $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
+    //console.log($messageStore[0]);
+    console.log("New Message");
     try {
       let temp = JSON.parse($messageStore[0]);
-      console.log(temp);
-      console.log(colorTargetID);
-      if (temp["RequestID"] === colorTargetID) {
+      if (temp["ResponseType"] === "CalibrationComplete") {
+        // Project Key handler
+        console.log("CalibrationComplete Project Key From Server");
+        $viewState.projectKey = temp["ResponseData"]["path"];
+      } else if (
+        // Thumbnail Binary Handler
+        temp["ResponseType"] === "ImageBinary" &&
+        temp["RequestID"] === $viewState.colorManagedID
+      ) {
+        console.log("Color Managed Binary From Server");
+        binaryType = temp["ResponseData"]["type"];
+        binaryName = temp["ResponseData"]["name"];
+        binaryFor = "ColorManaged";
+      } else if (
+        // Thumbnail Binary Handler
+        temp["ResponseType"] === "ImageBinary" &&
+        temp["RequestID"] === $processState.thumbnailID
+      ) {
+        console.log("Thumbnail Binary From Server");
+        binaryType = temp["ResponseData"]["type"];
+        binaryName = temp["ResponseData"]["name"];
+        binaryFor = "Thumbnail";
+      } else if (temp["ResponseType"] === "ImageBinary") {
+        // Color target and output binary handler
+        console.log("Binary From Server");
+        binaryType = temp["ResponseData"]["type"];
+        binaryName = temp["ResponseData"]["name"];
+        binaryFor = "Output";
+      } else if (temp["RequestID"] === $processState.colorTargetID) {
+        // Base64 Halfsize handler
         console.log("HalfSizedPreview From Server");
         $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
-      } else if (temp["ResponseType"] === "image") {
-        $processState.outputImage = temp["ResponseData"];
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  $: if ($messageStore.length > 1) {
-    try {
-      let temp = JSON.parse($messageStore[0]);
-      console.log(temp);
-      if (temp["ResponseType"] === "ImageBase64") {
+        $processState.colorTargetID = null;
+      } else if (
+        // Base64 Thumbnail Handler
+        temp["ResponseType"] === "ImageBase64" &&
+        temp["RequestID"] === $processState.thumbnailID
+      ) {
+        console.log("Thumbnail Base64 From Server");
+        $processState.imageThumbnails[temp["ResponseData"]["name"]] =
+          temp["ResponseData"]["dataURL"];
+      } else if (temp["ResponseType"] === "ImageBase64") {
+        // base64 output handler
         console.log("Base64 From Server");
         $processState.outputImage = temp["ResponseData"];
-      } else if (temp["ResponseType"] === "image") {
-        $processState.outputImage = temp["ResponseData"];
       }
     } catch (e) {
       console.log(e);
     }
   }
 
-  function colorTargetPrev() {
-    colorTargetID = Math.floor(Math.random() * 999999999);
-    let msg = {
-      RequestID: colorTargetID,
-      RequestType: "HalfSizePreview",
-      RequestData: {
-        names: [$processState.artStacks[0].fields.images[0].name],
-      },
-    };
-    if ($processState.artStacks[0].fields.images[0].name.length > 2) {
-      console.log("Getting Color Target Preview");
-      console.log(msg);
-      sendMessage(JSON.stringify(msg));
+  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
+    console.log("creating blob");
+    let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
+    let temp = new Image();
+    temp.src = URL.createObjectURL(blob);
+
+    if (binaryFor === "Thumbnail") {
+      $processState.imageThumbnails[binaryName] = temp.src;
+    } else if (binaryFor === "Output") {
+      $processState.artStacks[0].colorTargetImage = {
+        dataURL: temp.src,
+        filename: binaryName,
+      };
+      $processState.outputImage = {
+        dataURL: temp.src,
+        name: binaryName,
+      };
+    } else if (binaryFor === "ColorManaged") {
+      $viewState.colorManagedImage = {
+        dataURL: temp.src,
+        filename: binaryName,
+      };
     }
+    binaryType = null;
+    binaryName = null;
   }
 
   function handleConfirm() {
@@ -137,7 +178,6 @@
       <button on:click={nextTab}>Go to Advanced Options</button>
       <button
         on:click={() => {
-          colorTargetPrev();
           $processState.currentTab += 2;
         }}
         class="nextBtn">Next: Skip Advanced Options</button

@@ -1,8 +1,8 @@
 #include "image_processing/header/ResultsProcessor.h"
 
 void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images){
-    comms->send_info("","ResultsProcessor");
-    comms->send_progress(0,"ResultsProcessor");
+    comms->send_info("",this->get_name());
+    comms->send_progress(0,this->get_name());
 
     this->output_dir = images->get_output_dir();
     this->ts_id = btrgb::get_time_stamp();
@@ -19,12 +19,16 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     this->output_user_results(images);  
     this->output_btrgb_results(images);
 
-    comms->send_progress(0.2,"ResultsProcessor");
+    comms->send_progress(0.2,this->get_name());
 
     // Output Images 
     this->output_images(images);
+
     
-    comms->send_progress(1,"ResultsProcessor");
+    // Store PRO_file so we can access it from Pipeline
+    images->get_results_obj(btrgb::ResultType::GENERAL)->store_string(PRO_FILE, this->output_dir + this->Pro_f_name);
+    
+    comms->send_progress(1,this->get_name());
 }
 
 void ResultsProcessor::output_images(btrgb::ArtObject* images){
@@ -35,9 +39,13 @@ void ResultsProcessor::output_images(btrgb::ArtObject* images){
         std::cerr << "Failed to write CM_Image: " << e.what() << std::endl; 
     }
 
-    try{
     // Write Spectral Image
-    images->outputImageAs(btrgb::TIFF, SP_IMAGE_KEY, this->SP_f_name);
+    try{
+        btrgb::Image* sp = images->getImage(SP_IMAGE_KEY);
+        CalibrationResults* r = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+        sp->setConversionMatrix(BTRGB_M_OPT, r->get_matrix(CM_M));
+        sp->setConversionMatrix(BTRGB_OFFSET_OPT, r->get_matrix(CM_OFFSETS));
+        images->outputImageAs(btrgb::TIFF, SP_IMAGE_KEY, this->SP_f_name);
     }catch(std::exception e){
         std::cerr << "Failed to write SP_Image: " << e.what() << std::endl; 
     }
@@ -65,7 +73,6 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
     btrgb_stream.open(this->output_dir + this->Pro_f_name);
     std::string json_string;
     btrgb_json.dump_pretty(json_string);
-    std::cout << "Writing Results.btrgb" << std::endl << json_string << std::endl;
     btrgb_stream << json_string;
     btrgb_stream.close();    
 }

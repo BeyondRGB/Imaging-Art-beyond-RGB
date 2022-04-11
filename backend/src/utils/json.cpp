@@ -172,7 +172,7 @@ Json::Type Json::get_type(jsoncons::json item) {
 		return Type::BOOL;
 	if (type == jsoncons::json_type::string_value)
 		return Type::STRING;
-	if (type == jsoncons::json_type::double_value || 
+	if (type == jsoncons::json_type::double_value ||
 		type == jsoncons::json_type::uint64_value ||
 		type == jsoncons::json_type::int64_value  ||
 		type == jsoncons::json_type::half_value)
@@ -191,4 +191,8 @@ std::string Json::to_string(bool should_beutify) {
 	else
 		this->json_obj.dump(str);
 	return str;
+}
+
+jsoncons::json Json::get_jsoncons() {
+		return this->json_obj;
 }

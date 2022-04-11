@@ -15,6 +15,7 @@
 #include "image_processing/header/SpectralCalibrator.h"
 #include "image_processing/header/ResultsProcessor.h"
 #include "image_processing/header/NoiseReduction.h"
+#include "image_processing/header/Verification.h"
 
 
 #include "server/comunication_obj.hpp"
@@ -43,12 +44,13 @@ class Pipeline: public BackendProcess{
 		ReferenceData,
 		StandardObserver,
 		Illuminants,
-		TargetLocation
+		TargetLocation,
+		VerificationLocation
 	};
 	/**
 	* Maps enum values to a string
 	*/
-	const std::string key_map[8] = {
+	const std::string key_map[9] = {
 		"art",
 		"white",
 		"dark",
@@ -56,13 +58,13 @@ class Pipeline: public BackendProcess{
 		"refData",
 		"standardObserver",
 		"illuminants",
-		"targetLocation"
+		"targetLocation",
+		"verificationLocation"
 	};
 
 
 private:
-	int num_m;
-	static int pipeline_count;
+	bool should_verify = false; // Assume there is no verification data
 
 	/*
 	A callback function given to all ImgProcessingComponents.
@@ -101,21 +103,21 @@ private:
 	 * 
 	 * @return IlluminantType 
 	 */
-	IlluminantType get_illuminant_type();
+	IlluminantType get_illuminant_type(Json target_data);
 
 	/**
 	 * @brief Get the observer type object from the request data provided by fronend
 	 * 
 	 * @return ObserverType 
 	 */
-	ObserverType get_observer_type();
+	ObserverType get_observer_type(Json target_data);
 
 	/**
 	 * @brief Get the ref file from the request data provided by the frontend
 	 * 
 	 * @return std::string 
 	 */
-	std::string get_ref_file();
+	std::string get_ref_file(Json target_data);
 
 	/**
 	 * @brief Get the output directory.
@@ -128,17 +130,30 @@ private:
 	 */
 	std::string get_output_directory();
 
+	TargetData build_target_data(Json target_json);
 
+	void init_verification(btrgb::ArtObject* images);
+	bool verify_targets(btrgb::ArtObject *images);
+
+
+
+
+	/**
+	* @brief get the sharpen type
+	* Gets a string corresponding to the level of sharpening needed
+	* N for disabled or L M H
+	* @return std::string
+	*/
+	std::string get_sharpen_type();
 
 public:
-	Pipeline();
+	Pipeline(std::string name) : BackendProcess(name) {};
 
 	/*
 	Override of the run method inherited from BackendProcess
 	This gets called by the ProcessManager to start this process
 	*/
 	void run() override;
-
 
 };
 

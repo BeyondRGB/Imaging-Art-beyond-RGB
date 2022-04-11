@@ -11,7 +11,14 @@ RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_ty
 	this->white_pts = new WhitePoints(so_type, illum_type);
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
-	this->read_in_data(path + file);
+	if(this->is_custom(file)){
+		std::cout << "Custom RefData: " << file << std::endl; 
+		this->read_in_data(file);
+	}
+	else{
+		std::cout << "Standard RefData: " << file << std::endl;
+		this->read_in_data(path + file);
+	}
 	this->init_color_patches();
 }
 
@@ -32,6 +39,27 @@ RefData::~RefData() {
 		delete this->color_patches[row];
 	}
 	delete this->color_patches;
+}
+
+IlluminantType RefData::get_illuminant(std::string illum_str){
+	// Default to D50
+    IlluminantType type = IlluminantType::D50;
+    if (illum_str == "A") {
+        type = IlluminantType::A;
+    }
+    if (illum_str == "D65") {
+        type = IlluminantType::D65;
+    }
+    return type;
+}
+
+ObserverType RefData::get_observer(int observer_num){
+	// Default to 1931
+    ObserverType type = ObserverType::SO_1931;
+    if (observer_num == 1964) {
+        type = ObserverType::SO_1964;
+    }
+    return type;
 }
 
 int RefData::get_row_count() {
@@ -76,7 +104,7 @@ ColorPatch* RefData::get_color_patch(int row, int col) {
 	throw std::out_of_range("Index out of bounds");
 }
 
-ColorPatch* RefData::get_white_patch() {
+ColorPatch* RefData::get_estimated_white_patch() {
 	ColorPatch* current_best = this->get_color_patch(0, 0);
 	for (int row = 0; row < this->row_count; row++) {
 		for (int col = 0; col < this->col_count; col++) {
@@ -89,12 +117,12 @@ ColorPatch* RefData::get_white_patch() {
 	return current_best;
 }
 
-int RefData::get_white_patch_row() {
-	return this->get_white_patch()->get_row();
+int RefData::get_estimated_white_patch_row() {
+	return this->get_estimated_white_patch()->get_row();
 }
 
-int RefData::get_white_patch_col() {
-	return this->get_white_patch()->get_col();
+int RefData::get_estimated_white_patch_col() {
+	return this->get_estimated_white_patch()->get_col();
 }
 
 WhitePoints* RefData::get_white_pts(){
@@ -103,15 +131,20 @@ WhitePoints* RefData::get_white_pts(){
 
 void RefData::read_in_data(std::string file_path) {
 	if( !this->open_file(file_path) ) 
-		throw std::runtime_error("[ref_data.cpp] Failed to open file: " + file_path);
-	std::string header = this->get_next_line();
-	this->identify_data_size(header);
-	this->init_data_storage();
-	this->pars_header(header);
-	
-	while (this->has_next_line()) {
-		std::string line = this->get_next_line();
-		this->pars_line(line);
+		throw RefData_FailedToRead(file_path);
+	try{
+		std::string header = this->get_next_line();
+		this->identify_data_size(header);
+		this->init_data_storage();
+		this->pars_header(header);
+		
+		while (this->has_next_line()) {
+			std::string line = this->get_next_line();
+			this->pars_line(line);
+		}
+	}catch(std::exception e){
+		this->close_file();
+		throw RefData_ParssingError();
 	}
 	this->close_file();
 }
@@ -121,8 +154,13 @@ void RefData::pars_line(std::string line) {
 	this->get_next<int>(line);
 	for (int col = 0; col < col_count; col++) {
 		for (int row = 0; row < row_count; row++) {
-			double item = this->get_next<double>(line);
-			this->color_patches[row][col]->append(item);
+			try{
+				double item = this->get_next<double>(line);
+				this->color_patches[row][col]->append(item);
+			}catch(std::exception e){
+				std::string msg = "Row: " + std::to_string(row+1) + " Col: " + std::to_string(col+1);
+				throw RefData_ParssingError(msg);
+			}
 		}
 	}
 }
@@ -157,6 +195,9 @@ void RefData::identify_data_size(std::string header) {
 	int row_count = item_count / col_count;
 	this->row_count = row_count; 
 	this->col_count = col_count;
+	if( row_count <= 0 || col_count <= 0){
+		throw RefData_ParssingError("Invalid File Format");
+	}
 
 }
 
@@ -216,7 +257,7 @@ void RefData::output_xyz() {
 	std::cout << L_values << std::endl;
 	std::cout << a_values << std::endl;
 	std::cout << b_values << std::endl << std::endl;
-	ColorPatch* cp = this->get_white_patch();
+	ColorPatch* cp = this->get_estimated_white_patch();
 	std::cout << "White Patch," << cp->get_name() << std::endl;
 	std::cout << "Y Value, " << cp->get_y() << ",Row," << cp->get_row() << ",Col," << cp->get_col() << std::endl << std::endl << std::endl;
 }
@@ -246,4 +287,13 @@ cv::Mat RefData::as_matrix(){
 	}
 
 	return ref_data;
+}
+
+bool RefData::is_custom(std::string file){
+	for(int i = 0; i < REF_COUNT; i++){
+		if(file == ref_files[i]){
+			return false;
+		}
+	}
+	return true;
 }

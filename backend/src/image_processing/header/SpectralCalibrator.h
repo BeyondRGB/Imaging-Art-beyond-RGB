@@ -12,15 +12,16 @@
 #include "utils/time_tracker.hpp"
 #include "image_processing/results/calibration_results.hpp"
 
-#include "ImgProcessingComponent.h"
+#include "image_processing/header/LeafComponent.h"
 
 /**
  * @brief Runs the SpectralCalibration
  * when done outputs results to a Results object held by the given ArtObj
  * 
  */
-class SpectralCalibrator : public ImgProcessingComponent{
+class SpectralCalibrator : public LeafComponent{
 public:
+    SpectralCalibrator() : LeafComponent("Spectral Calibration"){}
     /**
      * @brief Runs the calibration
      * 
@@ -71,6 +72,13 @@ private:
      * 
      */
     void store_results(btrgb::ArtObject *images);
+
+    /**
+     * @brief Construct and strore a 6 channel spectral Image
+     * 
+     * @param images 
+     */
+    void store_spectral_img(btrgb::ArtObject *images);
 
 };
 

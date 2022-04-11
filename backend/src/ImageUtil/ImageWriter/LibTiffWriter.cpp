@@ -53,9 +53,16 @@ namespace btrgb {
 		/* Write all channel data in one array (a bitmap) instead of separating the channels. */
 		TIFFSetField(img_out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 
-		/* Indicate that the image is RGB. */
-		TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
-		//TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+		/* Indicate type of image. */
+		if(channels == 3)
+			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_RGB);
+		else if(channels == 1)
+			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+		else {
+			TIFFSetField(img_out, TIFFTAG_PHOTOMETRIC, PHOTOMETRIC_MINISBLACK);
+			uint16_t tags[16] = {EXTRASAMPLE_UNSPECIFIED};
+			TIFFSetField(img_out, TIFFTAG_EXTRASAMPLES, channels - 1, tags);
+		}
 
 		/* Set color profile. */
 		switch(im->getColorProfile()) {
@@ -75,6 +82,18 @@ namespace btrgb {
 			case ColorSpace::Wide_Gamut_RGB:
 			default: throw std::logic_error("[LibTiffWriter] Invalid color profile.");
 		}
+
+		/* Set custom application tags as artist. */
+		try {
+			std::string t = this->getCustomTag(im);
+			TIFFSetField(img_out, TIFFTAG_ARTIST, t.c_str());
+		}
+		catch(...) {
+			std::cerr << "[LibTiffWriter] Warning: could not write custom tag.\n";
+		}
+
+		/* Set software field. */
+		TIFFSetField(img_out, TIFFTAG_SOFTWARE, "BTRGB v0.0.5");
 
 		/* The written data needs to be broken up into "Strips" to make buffering easier 
 		* for TIFF readers. Rows-per-strip needs to be tagged, this is the number of 
@@ -128,4 +147,45 @@ namespace btrgb {
 		/* ==============[ Close tiff file ]================== */
 		TIFFClose(img_out);
     }
+
+
+    std::string LibTiffWriter::getCustomTag(Image* im) {
+		jsoncons::json json_tag;
+
+		/* Set color profile indicator. */
+		switch(im->getColorProfile()) {
+			case none: 
+				break;
+			case ColorSpace::ProPhoto: 
+				json_tag["ColorSpace"] = "ProPhoto"; break;
+			case ColorSpace::Adobe_RGB_1998: 
+				json_tag["ColorSpace"] = "Adobe_RGB_1998"; break;
+			case ColorSpace::sRGB:
+				json_tag["ColorSpace"] = "sRGB"; break;
+			case ColorSpace::Wide_Gamut_RGB:
+				json_tag["ColorSpace"] = "Wide_Gamut_RGB"; break;
+			default: throw std::logic_error("[LibTiffWriter] Invalid color profile.");
+		}
+
+		/* Set conversion matricies. */
+		for(const auto& [key, m] : im->getConversionsIterator()) {
+			jsoncons::json json_mat;
+			
+			int data_length = m.rows * m.cols;
+			float* mat_data = (float*) m.data;
+
+			json_mat["rows"] = m.rows;
+			json_mat["cols"] = m.cols;
+			json_mat["cv_type"] = m.type();
+
+			json_mat["data"] = jsoncons::json::make_array<1>(data_length);
+			for(int i = 0; i < data_length; i++)
+				json_mat["data"][i] = mat_data[i];
+
+			json_tag[key] = json_mat;
+        }
+
+		/* Return resulting json. */
+		return json_tag.to_string();
+	}
 }

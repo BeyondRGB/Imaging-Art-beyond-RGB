@@ -3,7 +3,7 @@
 
 #include "ImageUtil/Image.hpp"
 #include "ImageUtil/ImageReader/LibRawReader.hpp"
-#include "ImageUtil/ImageReader/TiffReaderOpenCV.hpp"
+#include "ImageUtil/ImageReader/LibTiffReader.hpp"
 #include "ImageUtil/ImageReader/ImageReaderStrategy.hpp"
 #include "utils/json.hpp"
 #include "server/comunication_obj.hpp"
@@ -15,12 +15,9 @@
 class HalfSizePreview : public BackendProcess {
 
 public:
-    HalfSizePreview();
+    HalfSizePreview(std::string name) : BackendProcess(name) {};
     ~HalfSizePreview();
 	void run() override;
-
-private:
-	static unsigned int id;
 
 };
 

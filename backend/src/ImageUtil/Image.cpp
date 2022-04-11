@@ -107,15 +107,26 @@ namespace btrgb {
         cv::Mat im;
 
         /* Convert color space. */
-        cv::Mat im_srgb = Image::copyMatConvertDepth(this->_opencv_mat, CV_32F);
-        ColorProfiles::convert(im_srgb, this->_color_profile, ColorSpace::sRGB);
+        cv::Mat im_srgb;
+        if(this->_color_profile == ColorSpace::sRGB)
+            im_srgb = this->_opencv_mat;
+        else {
+            im_srgb = Image::copyMatConvertDepth(this->_opencv_mat, CV_32F);
+            ColorProfiles::convert(im_srgb, this->_color_profile, ColorSpace::sRGB);
+        }
+
+
+        /* Convert to 8 bit. */
+        cv::Mat im8u;
+        if(im_srgb.depth() == CV_8U)
+            im8u = im_srgb; 
+        else {
+            im8u = Image::copyMatConvertDepth(im_srgb, CV_8U);
+            im_srgb.release();
+        }
 
         switch(quality) {
         case FAST:
-
-            /* Convert to 8 bit. */
-            {cv::Mat im8u = Image::copyMatConvertDepth(im_srgb, CV_8U);
-            im_srgb.release();
 
             /* Scale the image to have a width of 1920 pixels (keep same aspect ratio). */
             if(im8u.cols > 1920) {
@@ -124,7 +135,7 @@ namespace btrgb {
             }
             else {
                 im = im8u;
-            }}
+            }
         
             /* Set compression parameters for use later. */
             params = {
@@ -136,8 +147,13 @@ namespace btrgb {
         case FULL:
         
             /* Convert to 16 bit. */
-            im = Image::copyMatConvertDepth(im_srgb, CV_16U);
-            im_srgb.release();
+            /*if(im_srgb.depth() == CV_16U)
+                im = im_srgb;
+            else {
+                im = Image::copyMatConvertDepth(im_srgb, CV_16U);
+                im_srgb.release();
+            }*/
+            im = im8u;
 
             /* Use default PNG compression parameters. */
             params = {};
@@ -173,6 +189,30 @@ namespace btrgb {
     }
 
 
+    void Image::setConversionMatrix(std::string key, cv::Mat m) {
+
+        if (this->_conversions.contains(key))
+            throw std::runtime_error("[Image::setConversionMatrix] Conversion matrix already exists.");
+
+        /* Only store as 32 bit floating point. */
+        if(m.type() == CV_64FC1)
+            m.convertTo(m, CV_32F);
+
+        /* We only do math with floating point images. */
+        if(m.type() != CV_32FC1)
+            throw std::runtime_error("[Image::setConversionMatrix] Only CV_32FC1 or CV_64FC1 is supported.");
+    
+        this->_conversions[key] = m;
+    }
+
+    cv::Mat Image::getConversionMatrix(std::string key) {
+        if (this->_conversions.contains(key))
+            throw std::runtime_error("[Image::setConversionMatrix] Conversion matrix does not exists.");
+
+        return this->_conversions[key];
+    }
+
+
     /* ====== static ======= */
     bool Image::is_tiff(std::string filename) {
         if( !fs::is_regular_file(filename) ) 
@@ -182,7 +222,8 @@ namespace btrgb {
         if( i == std::string::npos ) 
             return false;
 
-        return filename.substr(i + 1) == "tiff";
+        std::string ext = filename.substr(i + 1);
+        return ext == "tiff" || ext == "tif";
     }
             
 
@@ -209,5 +250,6 @@ namespace btrgb {
         input.convertTo(result, cv_depth, target_max / current_max);
         return result;
     }
+
 
 }

@@ -1,19 +1,15 @@
-//
-// Created by ThinkPad41 on 10/10/2021.
-//
 #include "ImageUtil/Image.hpp"
 #include "../header/PixelRegestor.h"
 #include <opencv2/opencv.hpp>
 
 using namespace cv;
 using namespace std;
-//comment
 
 void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("", "PixelRegestor");
-    comms->send_progress(0, "PixelRegestor");
+    comms->send_info("", this->get_name());
+    comms->send_progress(0, this->get_name());
 
-    const int MAX_FEATURES = 850;
+    const int MAX_FEATURES = 500;
     const float GOOD_MATCH_PERCENT = 0.12f;
 
     //Grab the image data from the art object
@@ -29,15 +25,15 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
         return;
     }
 
-    // Registered image will be resotred in imReg. 
-    // The estimated homography will be stored in h. 
+    // Registered image will be resotred in imReg.
+    // The estimated homography will be stored in h.
     cv::Mat im2reg, h;
 
     cv::Mat im18;
     cv::Mat im28;
 
     //Make a copy of the data in 8bit format to allow orb dection
-    comms->send_progress(0.10, "PixelRegestor - Grayscale Copy");
+    comms->send_progress(0.10, this->get_name() + " - Grayscale Copy");
     im1.convertTo(im18, CV_8UC3, 255);
     im2.convertTo(im28, CV_8UC3, 255);
 
@@ -51,14 +47,14 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     cv::Mat descriptors1, descriptors2;
 
     // Detect ORB features and compute descriptors.
-    comms->send_progress(0.25, "PixelRegestor - Feature Detection");
+    comms->send_progress(0.25, this->get_name() + " - Feature Detection");
     Ptr<Feature2D> orb = ORB::create(MAX_FEATURES);
     orb->detectAndCompute(im18gray, Mat(), keypoints1, descriptors1);
     orb->detectAndCompute(im28gray, Mat(), keypoints2, descriptors2);
 
 
     // Match features.
-    comms->send_progress(0.30, "PixelRegestor - Feature Matchine");
+    comms->send_progress(0.30, this->get_name() + " - Feature Matching");
     std::vector<DMatch> matches;
     Ptr<DescriptorMatcher> matcher = DescriptorMatcher::create("BruteForce-Hamming");
     matcher->match(descriptors1, descriptors2, matches, Mat());
@@ -101,19 +97,19 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
     btrgb::Image* btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
-    comms->send_base64(btrgb_matches, btrgb::FULL);
+    comms->send_binary(btrgb_matches, btrgb::FULL);
     images->setImage("matches", btrgb_matches);
     images->outputImageAs(btrgb::PNG, "matches");
     images->deleteImage("matches");
 
 
     // Find homography
-    comms->send_progress(0.75, "PixelRegestor - Getting Homography");
+    comms->send_progress(0.75, this->get_name() + " - Getting Homography");
     h = findHomography(points2, points1, RANSAC);
 
     // Use homography to warp image
     //First param is image to be aligned, 2nd is storage for aliagned image, third is homography, fourth is size of orginal img
-    comms->send_progress(0.85, "PixelRegestor - Warping Image");
+    comms->send_progress(0.85, this->get_name() + " - Warping Image");
     warpPerspective(im2, im2reg, h, im1.size());
 
     //Copy image
@@ -121,7 +117,7 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
     // Print estimated homography, prolly want to store this somewhere for report?
     cout << "Estimated homography : \n" << h;
-    comms->send_progress(1, "PixelRegestor - Done");
+    comms->send_progress(1, this->get_name() + " - Done");
 
 
     //Outputs TIFFs for each image group for after this step, temporary
