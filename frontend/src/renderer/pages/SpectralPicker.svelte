@@ -21,6 +21,7 @@
   let brushShow = false;
   let size;
   let shadowPos = { left: 0, top: 0 };
+  let trueShadowPos = { left: "0px", top: "0px" };
   let spectrumData;
   let mainfilePath;
 
@@ -261,7 +262,7 @@
                 <LineChart
                   bind:data={spectrumData}
                   bind:wavelengthArray
-                  bind:shadowPos
+                  bind:trueShadowPos
                 />
               </div>
             </div>
@@ -269,6 +270,7 @@
             <SpecPickViewer
               bind:dataURL={$viewState.colorManagedImages[currentTab].dataURL}
               bind:shadowPos
+              bind:trueShadowPos
               bind:show={brushShow}
               bind:size
               bind:loading
