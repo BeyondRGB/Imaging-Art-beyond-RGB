@@ -10,7 +10,9 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     //Sharpening and Noise Reduction
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
+    if(this->get_sharpen_type() != "N"){
+        pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
+    }
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
@@ -88,6 +90,16 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     for(const auto& [key, im] : *art_obj){
         results_obj->store_string(key, im->getName());
     }
+    // Store Filtering Options
+    std::string option = this->get_sharpen_type();
+    std::string option_string = "None";
+    if(option == "H")
+        option_string = "High";
+    else if(option == "M")
+        option_string = "Medium";
+    else if(option == "L")
+        option_string = "Low";
+    results_obj->store_string(GI_ADVANCED_FILTERS, option_string);
 
 }
 
@@ -178,7 +190,7 @@ std::string Pipeline::get_output_directory() {
     std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
         std::string base_dir = this->process_data_m->get_string("destinationDirectory");
-        std::string dir = base_dir + "/BTRGB_" + date_string + "_" + time_string + "/";
+        std::string dir = base_dir + "/" + OUTPUT_PREFIX + date_string + "_" + time_string + "/";
         std::filesystem::create_directories(dir);
         return dir;
     }
