@@ -359,11 +359,11 @@
 
   .cardBox {
     @apply bg-gray-800 min-h-[60vh] w-[85%] p-2 gap-2 flex flex-col items-center
-            rounded-2xl;
+            rounded-2xl overflow-auto;
   }
 
   .card {
-    @apply rounded-lg w-full min-h-[4rem] p-4 flex flex-col gap-1 relative;
+    @apply rounded-lg w-full h-full p-4 flex flex-col gap-1 relative;
   }
   .image-container {
     @apply relative w-full h-auto bg-gray-500 overflow-visible;
