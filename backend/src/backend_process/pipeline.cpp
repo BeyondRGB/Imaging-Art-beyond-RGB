@@ -1,19 +1,6 @@
 #include "ImageUtil/ArtObject.hpp"
 #include "pipeline.hpp"
 
-int Pipeline::pipeline_count = 0;
-
-Pipeline::Pipeline(){
-    pipeline_count++;
-    num_m = pipeline_count;
-    this->set_process_name("Img Processing Pipeline (" + std::to_string(num_m) + ")");
-};
-
-void Pipeline::callback(std::string msg) {
-    msg = "{pipeline(" + std::to_string(num_m) + "):" + msg + "}";
-    std::cout << "MSG: " << msg << std::endl;
-    this->send_info(msg, this->get_process_name());
-};
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
@@ -23,16 +10,21 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new BitDepthScaler()));
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new FlatFieldor()));
     //Sharpening and Noise Reduction
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction()));
+    if(this->get_sharpen_type() != "N"){
+        pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
+    }
     pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new SpectralCalibrator()));
-
+    
     std::vector<std::shared_ptr<ImgProcessingComponent>> img_process_components;
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new PreProcessor(pre_process_components)));
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ImageCalibrator(calibration_components)));
+    if(this->should_verify){
+        img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new Verification())) ;     
+    }
     img_process_components.push_back(std::shared_ptr<ImgProcessingComponent>(new ResultsProcessor()));
 
     return std::shared_ptr<ImgProcessingComponent>(new ImageProcessor(img_process_components));
@@ -43,6 +35,8 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     try {
         // Extract Image Array from request data
         Json image_array = this->process_data_m->get_array(key_map[DataKey::IMAGES]);
+        
+        std::cout << image_array.to_string(true) << std::endl;
         for (int i = 0; i < image_array.get_size(); i++) {
             // Extract each obj from array
             Json obj = image_array.obj_at(i);
@@ -56,16 +50,11 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
         }
         //Collect the information provided about the color target
-        TargetData td;
+        // TargetData td;
         Json target_location = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
-        td.top_loc = target_location.get_number("top");
-        td.left_loc = target_location.get_number("left");
-        td.bot_loc = target_location.get_number("bottom");
-        td.right_loc = target_location.get_number("right");
-        td.col_count = target_location.get_number("cols");
-        td.row_count = target_location.get_number("rows");
-        td.sample_size = target_location.get_number("size");
+        TargetData td = this->build_target_data(target_location);
         art_obj->setTargetInfo(td);
+        this->send_info("TargetData initialized:", this->get_process_name());
         return true;
     }
     catch (ParsingError e) {
@@ -80,10 +69,10 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     // Make/Model
     // TODO add this once info sent from front end
     // Target ID
-    Json ref_data_json = this->process_data_m->get_obj(key_map[DataKey::ReferenceData]);
+    Json target_json = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
+    Json ref_data_json = target_json.get_obj(key_map[DataKey::ReferenceData]);
     results_obj->store_string(GI_TARGET_ID, ref_data_json.get_string("name"));
     // Target Dims
-    Json target_json = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
     results_obj->store_int(GI_TARGET_ROWS, target_json.get_number("rows"));
     results_obj->store_int(GI_TARGET_COLS, target_json.get_number("cols"));
     // Observer
@@ -94,29 +83,42 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     results_obj->store_string(GI_ILLUMINANT, illum_str);
     // White Patch Coords
     RefData *ref_data = art_obj->get_refrence_data();
-    std::string coords = ref_data->get_white_patch()->get_name();
+    TargetData td = build_target_data(target_json);
+    std::string coords = ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
+    // Store input images
+    for(const auto& [key, im] : *art_obj){
+        results_obj->store_string(key, im->getName());
+    }
 
 }
 
 void Pipeline::run() {
-
+    std::cout << "Initializing Img Processing Pipeline" << std::endl;
     this->send_info("I got your msg", this->get_process_name());
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
-    std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
 
-    std::string ref_file = this->get_ref_file();
-    IlluminantType illuminant = this->get_illuminant_type();
-    ObserverType observer = this->get_observer_type();
     std::string out_dir;
-    try{out_dir = this->get_output_directory();}
+    try{
+        out_dir = this->get_output_directory();}
     catch(...) {return;}
 
 
     /* Create ArtObject */
     std::unique_ptr<btrgb::ArtObject> images;
-    try { images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); }
-    catch(const std::exception& err) {
+    try { 
+        Json target_data = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
+        std::string ref_file = this->get_ref_file(target_data);
+        IlluminantType illuminant = this->get_illuminant_type(target_data);
+        ObserverType observer = this->get_observer_type(target_data);
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); 
+    }catch(RefData_FailedToRead e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(RefData_ParssingError e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
     }
@@ -124,15 +126,44 @@ void Pipeline::run() {
 
     /* Initialize ArtObject with request data */
     this->send_info("About to init art obj...", this->get_process_name());
-    this->init_art_obj(images.get());
+    try{
+        this->init_art_obj(images.get());
+        this->init_verification(images.get());
+    }catch(std::exception e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }
 
     // Initialize General Info Results
-    this->init_general_info(images.get());
+    this->send_info("About to init GeneralInfo...", this->get_process_name());
+    try{
+        this->init_general_info(images.get());
+    }catch(std::exception e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
+    }
+
+    // Verify Targets
+    this->send_info("Verifying ColorTargets...", this->get_process_name());
+    if( !this->verify_targets(images.get()) ){
+        return;
+    }
 
     /* Execute the pipeline on the created ArtObject */
+    std::shared_ptr<ImgProcessingComponent> pipeline = pipelineSetup();
     this->send_info( "About to execute...", this->get_process_name());
     try { 
+        this->coms_obj_m->send_pipeline_components(pipeline->get_component_list());
         pipeline->execute(this->coms_obj_m.get(), images.get());
+        std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
+        this->coms_obj_m->send_post_calibration_msg(Pro_file);
+    } catch(const ImgProcessingComponent::error& e) {
+        this->report_error(e.who(), e.what());
+        return;
+    }
+    catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return;
     }catch(const std::exception& err) {
         this->report_error(this->get_process_name(), err.what());
         return;
@@ -165,18 +196,32 @@ std::string Pipeline::get_output_directory() {
 
 }
 
-IlluminantType Pipeline::get_illuminant_type() {
-    // Default to D50
-    IlluminantType type = IlluminantType::D50;
+
+std::string Pipeline::get_sharpen_type() {
+
+    //default to no sharpening
+    std::string sharpen_string = "N";
     try {
-        Json ref_data = this->process_data_m->get_obj(key_map[DataKey::ReferenceData]);
+        sharpen_string = this->process_data_m->get_string("sharpenString");
+        if (sharpen_string == "H" || sharpen_string == "M" || sharpen_string == "L" || sharpen_string == "N") {
+            return sharpen_string;
+        }
+    }
+    catch (ParsingError e) {  
+    }
+    return sharpen_string;
+}
+
+
+
+
+IlluminantType Pipeline::get_illuminant_type(Json target_data) {
+    // Defaults to D50
+    IlluminantType type = RefData::get_illuminant("");
+    try {
+        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         std::string illum_str = ref_data.get_string(key_map[DataKey::Illuminants]);
-        if (illum_str == "A") {
-            type = IlluminantType::A;
-        }
-        if (illum_str == "D65") {
-            type = IlluminantType::D65;
-        }
+        type = RefData::get_illuminant(illum_str);
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
@@ -185,15 +230,13 @@ IlluminantType Pipeline::get_illuminant_type() {
     return type;
 }
 
-ObserverType Pipeline::get_observer_type() {
-    // Defailt to 1931
-    ObserverType type = ObserverType::SO_1931;
+ObserverType Pipeline::get_observer_type(Json target_data) {
+    // Defailts to 1931
+    ObserverType type = RefData::get_observer(1931);
     try {
-        Json ref_data = this->process_data_m->get_obj(key_map[DataKey::ReferenceData]);
+        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         int observer_num = ref_data.get_number(key_map[DataKey::StandardObserver]);
-        if (observer_num == 1964) {
-            type = ObserverType::SO_1964;
-        }
+        type = RefData::get_observer(observer_num);
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
@@ -203,10 +246,31 @@ ObserverType Pipeline::get_observer_type() {
 
 }
 
-std::string Pipeline::get_ref_file() {
+TargetData Pipeline::build_target_data(Json target_json){
+    TargetData td;
+    std::cout << target_json.to_string(true) << std::endl;
+    td.top_loc = target_json.get_number("top");
+    td.left_loc = target_json.get_number("left");
+    td.bot_loc = target_json.get_number("bottom");
+    td.right_loc = target_json.get_number("right");
+    td.col_count = target_json.get_number("cols");
+    td.row_count = target_json.get_number("rows");
+    td.sample_size = target_json.get_number("size");
+    Json white_loc = target_json.get_obj("whitePatch");
+    // subtract one to make it zero based, due to front end sending 1 based.
+    td.w_row = white_loc.get_number("row") - 1;
+    td.w_col = white_loc.get_number("col") - 1;
+    Json ref_loc = target_json.get_obj("refData");
+    td.ref_base = ref_loc.get_string("name");
+    td.illum_base = ref_loc.get_string("illuminants");
+    td.obsv_base = ref_loc.get_number("standardObserver");
+    return td;
+}
+
+std::string Pipeline::get_ref_file(Json target_data) {
     std::string ref_file = "";
     try {
-        Json ref_data = this->process_data_m->get_obj(key_map[DataKey::ReferenceData]);
+        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
         ref_file = ref_data.get_string("name");
     }
     catch (ParsingError e) {
@@ -215,4 +279,30 @@ std::string Pipeline::get_ref_file() {
         throw e;
     }
     return ref_file;
+}
+
+void Pipeline::init_verification(btrgb::ArtObject* images){
+    try{
+        Json verification_json = this->process_data_m->get_obj(key_map[DataKey::VerificationLocation]);
+        TargetData vd = this->build_target_data(verification_json);
+        images->init_verification_data(vd);
+        this->should_verify = true;
+        this->send_info("Verivication Targe Was Provided", this->get_process_name());
+
+    }catch(ParsingError e){
+        this->send_info("No Verification Target provided", this->get_process_name());
+        this->should_verify = false;
+    }
+}
+
+bool Pipeline::verify_targets(btrgb::ArtObject *images){
+    try{
+        // Test Target
+        images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
+        images->get_target(ART(1), btrgb::TargetType::VERIFICATION_TARGET);
+    }catch(ColorTarget_MissmatchingRefData e){
+        this->report_error(this->get_process_name(), e.what());
+        return false;
+    }catch(btrgb::ArtObj_VerificationDataNull){}
+    return true;
 }

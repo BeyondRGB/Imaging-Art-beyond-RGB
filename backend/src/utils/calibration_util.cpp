@@ -9,9 +9,10 @@ cv::Mat btrgb::calibration::build_target_avg_matrix(ColorTarget targets[], int t
     // Each row should hold a number of values equle to the total number of ColorPatches of one ColorTarget
     int mat_col_count = row_count * col_count;
     int mat_row_count = channel_count * target_count;
-
+    std::cout << "Initializing Matrix" << std::endl;
     cv::Mat color_patch_avgs = cv::Mat_<double>(mat_row_count, mat_col_count, CV_32FC1);
     // Iterate over each Target
+    std::cout << "Filling Matrix" << std::endl;
     for (int target_i = 0; target_i < target_count; target_i++) {
         ColorTarget target = targets[target_i];
         // For each Target visit each Channel
@@ -154,4 +155,101 @@ void btrgb::calibration::enter_to_continue(){
             std::cin >> std::noskipws >> c;
             std::cout << "c: (" << c << ")" << std::endl;
         }while(c != '\n');
+}
+
+btrgb::Image* btrgb::calibration::camera_sigs_2_image(cv::Mat camera_sigs, int height){
+    btrgb::Image *img = new btrgb::Image("Spectral");
+    cv::Mat transpose = camera_sigs.t();
+    cv::Mat img_data = transpose.reshape(camera_sigs.rows, height);
+    img->initImage(img_data);
+    return img;
+}
+
+cv::Mat btrgb::calibration::image_2_camera_sigs(btrgb::Image *image, int height, int width){
+    cv::Mat img_data = image->getMat();
+    img_data = img_data.reshape(1, height * width);
+    cv::Mat camera_sigs = img_data.t();
+    return camera_sigs;
+}
+
+void btrgb::calibration::fill_Lab_values(cv::Mat *L_camera, cv::Mat *a_camera, cv::Mat *b_camera,
+                         cv::Mat *L_ref,    cv::Mat *a_ref,    cv::Mat *b_ref,
+                         cv::Mat xyz, RefData *ref_data){
+    
+    int row_count = ref_data->get_row_count();
+    int col_count = ref_data->get_col_count();
+    *L_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *b_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *a_camera = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *L_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *a_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+    *b_ref = cv::Mat_<double>(row_count, col_count, CV_64FC1);
+
+    WhitePoints* wp = ref_data->get_white_pts();
+    for(int row = 0; row < row_count; row++){
+        for(int col = 0; col < col_count; col++){
+            // Get/Store L*,a*,b* values from RefData
+            L_ref->at<double>(row,col) = ref_data->get_L(row, col);
+            a_ref->at<double>(row,col) = ref_data->get_a(row, col);
+            b_ref->at<double>(row,col) = ref_data->get_b(row, col);
+
+            // Extract current camera_(x,y,z)
+            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
+            int xyz_index = col + row * col_count;
+            double x = 100 * xyz.at<double>(0, xyz_index);
+            double y = 100 * xyz.at<double>(1, xyz_index);
+            double z = 100 * xyz.at<double>(2, xyz_index);
+            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
+            btrgb::XYZ_t xyz = {x, y, z};
+            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+            // Stor L*,a*,b* values from camera sigs
+            L_camera->at<double>(row,col) = lab.L;
+            a_camera->at<double>(row,col) = lab.a;
+            b_camera->at<double>(row,col) = lab.b;
+        }
     }
+}
+
+double btrgb::calibration::compute_deltaE_sum(RefData *ref_data, cv::Mat xyz, cv::Mat *deltaE_values){
+    // Establish vars for DeltaE calculation
+    int row_count = ref_data->get_row_count();
+    int col_count = ref_data->get_col_count();
+    double ref_L;
+    double ref_a;
+    double ref_b;
+    double L;
+    double a;
+    double b;
+
+    // Calculate AVG delta E for all ColorPatches on target
+    // delta E is the difference in color between the RefData and the actual image Target(xyz Mat)
+    WhitePoints* wp = ref_data->get_white_pts();
+    double deltaE_sum = 0;
+    for (int row = 0; row < row_count; row++) {
+        for (int col = 0; col < col_count; col++) {
+            // Get L*,a*,b* values from RefData
+            ref_L = ref_data->get_L(row, col);
+            ref_a = ref_data->get_a(row, col);
+            ref_b = ref_data->get_b(row, col);
+
+            // Extract current camera_(x,y,z)
+            // Scale each by 100 because everything in xyz is between 0-1 and we need to match the scale of the RefData
+            int xyz_index = col + row * col_count;
+            double x = 100 * xyz.at<double>(0, xyz_index);
+            double y = 100 * xyz.at<double>(1, xyz_index);
+            double z = 100 * xyz.at<double>(2, xyz_index);
+            // Convert camera_(x,y,z) to camera_(L*,a*,b*)
+            btrgb::XYZ_t xyz = {x, y, z};
+            btrgb::Lab_t lab = btrgb::xyz_2_Lab(xyz, wp);
+
+            // Calculate deltaE and add to sum
+            cmsCIELab lab1 = {ref_L, ref_a, ref_b};
+            cmsCIELab lab2 = {lab.L, lab.a, lab.b};
+            double delE = cmsCIE2000DeltaE(&lab1, &lab2, 1, 1, 1);
+            // Store value in matrix. This matrix will hold the actual deltaE values for each patch for the min avg found
+            deltaE_values->at<double>(row,col) = delE;
+            deltaE_sum += delE;
+        }
+    }
+    return deltaE_sum;
+}

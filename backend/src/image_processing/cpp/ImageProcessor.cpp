@@ -1,23 +1,18 @@
-//
-// Created by ThinkPad41 on 10/10/2021.
-//
-
 #include "../header/ImageProcessor.h"
 
-ImageProcessor::ImageProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components) {
-    for(auto & component : components){
-        this->components.push_back(component);
-    }
+ImageProcessor::ImageProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components)
+    : CompositComponent("Image Processing") {
+        this->init_components(components);
 }
 void ImageProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
-    comms->send_info("Starting Image Processor", "ImageProcessor");
+    comms->send_info("Starting Image Processor", this->get_name());
     double count = 0;
     double total = this->components.size();
     for(auto  & component : this->components){
         double currProgress = count / total;
-        comms->send_progress(currProgress, "ImageProcessor");
+        comms->send_progress(currProgress, this->get_name());
         component->execute(comms, images);
         count++;
     }
-    comms->send_info("Image Processing Done!!!", "ImageProcessor");
+    comms->send_info("Image Processing Done!!!", this->get_name());
 }

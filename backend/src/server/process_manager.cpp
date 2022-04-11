@@ -34,28 +34,38 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 
 std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key) {
 	std::shared_ptr<BackendProcess> process(nullptr);
-	std::cout << "ProcessKey: " << key << std::endl;
-	if (key == "Process") {
-		std::cout << "Creating Pipeline" << std::endl;
-		process = std::shared_ptr<Pipeline>(new Pipeline());
-	}
-	else if (key == "HalfSizePreview") {
-		process = std::shared_ptr<HalfSizePreview>(new HalfSizePreview());
-	}
-	else if (key == "Thumbnails") {
-		process = std::shared_ptr<ThumbnailLoader>(new ThumbnailLoader());
-	}
-	//TODO add other process instantiation here as more get created
+	std::cout << "RequestType: " << key << std::endl;
+
+	if (key == "Process")
+		process = std::shared_ptr<Pipeline>(new Pipeline("Pipeline"));
+	
+	else if (key == "HalfSizePreview")
+		process = std::shared_ptr<HalfSizePreview>(new HalfSizePreview(key));
+	
+	else if (key == "Thumbnails")
+		process = std::shared_ptr<ThumbnailLoader>(new ThumbnailLoader(key));
+	
+	else if (key == "ColorManagedImage")
+		process = std::shared_ptr<ColorManagedImage>(new ColorManagedImage(key));
+	
+	else if (key == "SpectralPicker")
+		process = std::shared_ptr<SpectralPicker>(new SpectralPicker(key));
+	
+	else if (key == "Reports")
+		process = std::shared_ptr<ReportRequest>(new ReportRequest(key));
+	
 
 	return process;
 }
 
 void ProcessManager::start_process(std::shared_ptr<BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj, Json request_data) {
+	std::cout << "Finalizing Process Initialization" << std::endl;
 	if (nullptr == process) {
 		this->report_error("ProcessManager", "Unknown RequestType");
 	}
 	process->set_coms_obj(coms_obj);
 	process->set_process_data(request_data);
+	std::cout << "Starting Process" << std::endl;
 	process->run();
 	std::cout << process->get_process_name() << " complete." << std::endl;
 }
