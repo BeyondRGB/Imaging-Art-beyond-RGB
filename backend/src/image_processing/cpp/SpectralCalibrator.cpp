@@ -26,8 +26,8 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     }
 
     // Init Color Targets
-    target1 = images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
-    target2 = images->get_target(ART(2), btrgb::TargetType::GENERAL_TARGET);
+    target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
+    target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
     ColorTarget targets[] = { target1, target2 };
     int channel_count = art1->channels();
     int target_count = std::size(targets);
@@ -115,13 +115,17 @@ void SpectralCalibrator::init_step(double stp_value, cv::Mat &step){
 
 void SpectralCalibrator::store_results(btrgb::ArtObject *images){
     CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::CALIBRATION);
+    cv::Mat R_ref = this->ref_data->as_matrix();
+    double RMSE = btrgb::calibration::compute_RMSE(this->R_camera, R_ref);
 
     // R refercence
-    results_obj->store_matrix(SP_R_reference, this->ref_data->as_matrix());
+    results_obj->store_matrix(SP_R_reference, R_ref);
     // Optimized R camera
     results_obj->store_matrix(SP_R_camera, this->R_camera);
     // Optimized M refl
     results_obj->store_matrix(SP_M_refl, this->M_refl); 
+    // RMSE
+    results_obj->store_double(SP_RMSE, RMSE);
    
 }
 

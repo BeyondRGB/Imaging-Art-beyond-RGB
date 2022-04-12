@@ -141,19 +141,34 @@ public:
 	void output_xyz();
 
 	/**
-	 * @brief Convert refdata to a NxM matrix
-	 * 	N is the number of wavelenghts
-	 * 	M is the number of ColorPatches
+	 * @brief Convert refdata to a MxN matrix
+	 * 	M is the number of wavelenghts
+	 * 	N is the number of ColorPatches
 	 * The ColorPatches are added in order of
-	 * 	A1_wavlen380, A2_wavlen380, A3_wavlen380, ..., Ak_wavlen380, B1_wavlen380, ... , Kk_wavlen380
-	 *  A1_wavlen390, A2_wavlen390, A3_wavlen390, ..., Ak_wavlen390, B1_wavlen390, ... , Kk_wavlen390
+	 * 	A1_wavlen380, B1_wavlen380, C1_wavlen380, ..., K1_wavlen380, A2_wavlen380, ... , Kk_wavlen380
+	 *  A1_wavlen390, B1_wavlen390, C1_wavlen390, ..., K1_wavlen390, A2_wavlen390, ... , Kk_wavlen390
 	 *  ...			, ...		  , ...			, ..., ...		   , ...		 , ... , ...								
-	 *  A1_wavlen730, A2_wavlen730, A3_wavlen730, ..., Ak_wavlen730, B1_wavlen730, ... , Kk_wavlen730
+	 *  A1_wavlen730, B1_wavlen730, C1_wavlen730, ..., K1_wavlen730, A2_wavlen730, ... , Kk_wavlen730
 	 * 
 	 * 
 	 * @return cv::Mat 
 	 */
 	cv::Mat as_matrix();
+
+	/**
+	 * @brief Out put the xyz_ref as a 3XN matrix
+	 * where 
+	 * 	N is the number of ColorPatches
+	 * 	n is the number of rows
+	 * 	k is the number of colums
+	 * The ColorPatches are added in order of
+	 * 	x_A:0, x_B:0, ..., x_k:0, x_A:1, x_B:1, ..., x_k:1, ..., x_k:n
+	 * 	y_A:0, y_B:0, ..., y_k:0, y_A:1, y_B:1, ..., y_k:1, ..., y_k:n
+	 * 	z_A:0, z_B:0, ..., z_k:0, z_A:1, z_B:1, ..., z_k:1, ..., z_k:n
+	 * 
+	 * @return cv::Mat 
+	 */
+	cv::Mat xyz_as_matrix();
 
 
 private:

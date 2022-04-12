@@ -22,7 +22,7 @@
   let binaryType = null;
   let binaryName = null;
   let binaryFor = null;
-  let colorTargetID;
+  let binaryID = null;
 
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
@@ -35,7 +35,9 @@
 
   function nextTab() {
     if ($processState.currentTab !== tabs.length - 1) {
-      $processState.currentTab += 1;
+      if ($processState.completedTabs[$processState.currentTab]) {
+        $processState.currentTab += 1;
+      }
     } else {
       console.log("Error overflow");
     }
@@ -64,18 +66,15 @@
     console.log("New Message");
     try {
       let temp = JSON.parse($messageStore[0]);
-      if (temp["ResponseType"] === "CalibrationComplete") {
-        // Project Key handler
-        console.log("CalibrationComplete Project Key From Server");
-        $viewState.projectKey = temp["ResponseData"]["path"];
-      } else if (
-        // Thumbnail Binary Handler
+      if (
+        // CM Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
-        temp["RequestID"] === $viewState.colorManagedID
+        temp["RequestID"] === $processState.CMID
       ) {
         console.log("Color Managed Binary From Server");
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
+        binaryID = temp["RequestID"];
         binaryFor = "ColorManaged";
       } else if (
         // Thumbnail Binary Handler
@@ -133,13 +132,78 @@
         name: binaryName,
       };
     } else if (binaryFor === "ColorManaged") {
-      $viewState.colorManagedImage = {
+      //$viewState.colorManagedImages[binaryName] = temp.src;
+      console.log($viewState.colorManagedImages);
+      // $viewState.colorManagedImages[binaryID]["dataURL"] = temp.src;
+      // $viewState.colorManagedImages[binaryID]["filename"] = binaryName;
+      console.log(binaryID);
+      $viewState.colorManagedImages[binaryID] = {
         dataURL: temp.src,
-        filename: binaryName,
+        name: binaryName,
       };
     }
     binaryType = null;
     binaryName = null;
+    binaryID = null;
+  }
+
+  $: processRequest = {
+    RequestType: "Process",
+    RequestID: Date.now(),
+    RequestData: {
+      images: [
+        {
+          art: $processState.artStacks[0].fields.imageA[0]?.name,
+          white: $processState.artStacks[0].fields.flatfieldA[0]?.name,
+          dark: $processState.artStacks[0].fields.darkfieldA[0]?.name,
+        },
+        {
+          art: $processState.artStacks[0].fields.imageB[0]?.name,
+          white: $processState.artStacks[0].fields.flatfieldB[0]?.name,
+          dark: $processState.artStacks[0].fields.darkfieldB[0]?.name,
+        },
+      ],
+      destinationDirectory: $processState.destDir,
+      sharpenString: $processState.artStacks[0].sharpenString,
+      targetLocation: $processState.artStacks[0].colorTarget,
+    },
+  };
+
+  $: console.log($processState.artStacks[0].colorTarget);
+  $: console.log({ processRequest });
+
+  $: {
+    if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
+      processRequest.RequestData.targetLocation["refData"][
+        "standardObserver"
+      ] = 1931;
+      processRequest.RequestData.targetLocation["refData"]["illuminants"] =
+        "D50";
+
+      if ($processState.artStacks[0].fields.targetA.length !== 0) {
+        processRequest.RequestData.images[0]["target"] =
+          $processState.artStacks[0].fields.targetA[0]?.name;
+        processRequest.RequestData.images[1]["target"] =
+          $processState.artStacks[0].fields.targetB[0]?.name;
+      }
+    }
+    if (
+      $processState.artStacks[0].verificationTarget != null &&
+      Object.keys($processState.artStacks[0].verificationTarget).length > 0
+    ) {
+      console.log("Adding Verification to Process Request");
+      console.log($processState.artStacks[0].verificationTarget);
+      processRequest.RequestData["verificationLocation"] =
+        $processState.artStacks[0].verificationTarget;
+      if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
+        processRequest.RequestData["verificationLocation"]["refData"][
+          "standardObserver"
+        ] = 1931;
+        processRequest.RequestData["verificationLocation"]["refData"][
+          "illuminants"
+        ] = "D50";
+      }
+    }
   }
 
   function handleConfirm() {
@@ -147,6 +211,11 @@
 
     if ($processState.currentTab !== tabs.length - 1) {
       $processState.currentTab += 1;
+      console.log("Sening Process Request");
+      console.log(processRequest);
+      setTimeout(() => {
+        sendMessage(JSON.stringify(processRequest));
+      }, 150);
     } else {
       console.log("Error overflow");
     }
@@ -159,12 +228,12 @@
       <button id="backBtn" on:click={prevTab}>Back</button>
 
       <tabs>
-        {#each tabs as tab}
+        {#each tabs as tab, i}
           {#if !tab.hidden}
             <div
-              class="tab {tabs[$processState.currentTab].name !== tab.name
-                ? 'none'
-                : ''}"
+              class="tab"
+              class:completed={$processState.completedTabs[i]}
+              class:selected={tabs[$processState.currentTab].name === tab.name}
               id={tab.name}
             />
           {/if}
@@ -178,13 +247,15 @@
       <button on:click={nextTab}>Go to Advanced Options</button>
       <button
         on:click={() => {
-          $processState.currentTab += 2;
+          if ($processState.completedTabs[$processState.currentTab]) {
+            $processState.currentTab += 2;
+          }
         }}
         class="nextBtn">Next: Skip Advanced Options</button
       >
     {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
       <button on:click={() => (showDialog = true)} class="nextBtn"
-        >Confirm</button
+        >Begin Processing</button
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
@@ -195,11 +266,7 @@
 
   <div class={`confirmModal ${showDialog ? "show" : ""}`}>
     <div class="confirmDialog">
-      <span class="warning">Warning:</span>
-      <p>
-        Are you sure all information is accurate, you will not be able to go
-        back
-      </p>
+      <p>Ensure all information is correct before confirming</p>
       <div class="btnGroup">
         <button class="cancel" on:click={() => (showDialog = false)}
           >Cancel</button
@@ -244,7 +311,7 @@
   }
 
   .confirmDialog p {
-    @apply bg-gray-800/25 rounded-md flex justify-center p-2;
+    @apply bg-gray-800/25 rounded-md flex justify-center p-2 text-lg mt-10;
   }
 
   .warning {
@@ -266,7 +333,15 @@
     @apply w-full h-full;
   } */
   .tab {
-    @apply w-16 h-1 rounded-full bg-blue-400 self-center mx-2;
+    @apply w-16 h-2 rounded-full bg-gray-400 self-center mx-2 ring-1 ring-gray-400
+          transition-all duration-700 ease-out;
+  }
+
+  .selected {
+    @apply bg-blue-400 ring-blue-400;
+  }
+  .completed {
+    @apply bg-green-400 ring-green-400;
   }
   #backBtn {
     @apply absolute h-8 py-0 ml-2 my-2;

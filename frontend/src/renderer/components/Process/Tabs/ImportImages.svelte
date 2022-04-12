@@ -37,6 +37,13 @@
     console.log("Fetching Thumbnails");
     getThumbnails();
   }
+
+  $: if (
+    $processState.imageFilePaths.length >= 6 &&
+    !$processState.completedTabs[0]
+  ) {
+    $processState.completedTabs[0] = true;
+  }
 </script>
 
 <main>
@@ -46,7 +53,7 @@
   </left>
   <right>
     <div class="fileSelector">
-      <FileSelector bind:filePaths />
+      <FileSelector bind:filePaths filter="raws" largeText />
     </div>
     <span class="number">{filePaths ? filePaths.length : 0} / 6</span>
     <article>
