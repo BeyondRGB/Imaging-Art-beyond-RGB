@@ -25,8 +25,10 @@ void GeneralInfoFormater::write_format(std::ostream &output_stream, CalibrationR
         
 
     output_stream << "\nGeneral Info" << std::endl;
-    output_stream << GI_MAKE_MODEL << GI_DELIM <<
-        this->get_result<std::string>(GI_MAKE_MODEL, results) << std::endl;
+    output_stream << GI_MAKE << GI_DELIM <<
+        this->get_result<std::string>(GI_MAKE, results) << std::endl;
+    output_stream << GI_MODEL << GI_DELIM <<
+        this->get_result<std::string>(GI_MODEL, results) << std::endl;
     output_stream << GI_OBSERVER << GI_DELIM <<
         this->get_result<int>(GI_OBSERVER, results) << std::endl;
     output_stream << GI_ILLUMINANT << GI_DELIM <<

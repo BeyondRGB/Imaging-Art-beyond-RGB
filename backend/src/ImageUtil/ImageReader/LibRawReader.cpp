@@ -1,5 +1,7 @@
 #include "LibRawReader.hpp"
 
+static void exif_callback(void*, int, int, int, unsigned int, void*, INT64);
+
 namespace btrgb {
 
 LibRawReader::LibRawReader(LibRawReader::libraw_type method) {
@@ -87,6 +89,9 @@ void LibRawReader::open(std::string filename) {
             throw ReaderFailedToOpenFile();
     }
 
+    /* Set the exif callback which will run for each exif tag. */
+    this->_reader.set_exifparser_handler(exif_callback, &(this->_tags));
+
     /* Unpack raw data into structures for processing. */
     error_code = this->_reader.unpack();
     if(error_code) {
@@ -163,3 +168,28 @@ void LibRawReader::copyBitmapTo(cv::Mat& im) {
 }
 
 }
+
+
+static void exif_callback(void *context, int tag, int type, int len, unsigned int ord, void *ifp, INT64 base) {
+    #define BTRGB_BUFFER_LENGTH 128
+
+    LibRaw_abstract_datastream* data = static_cast<LibRaw_abstract_datastream*>(ifp);
+    btrgb::exif *tags = static_cast<btrgb::exif*>(context);
+    static char buffer[BTRGB_BUFFER_LENGTH] = {0};
+    
+    tag &= 0x0fffff; // Undo (ifdN + 1) << 20)
+    switch (tag) {
+        case btrgb::TAG_MAKE:
+            data->read(buffer, sizeof(char), BTRGB_BUFFER_LENGTH);
+            tags->make = buffer;
+            break;
+        case btrgb::TAG_MODEL:
+            data->read(buffer, sizeof(char), BTRGB_BUFFER_LENGTH);
+            tags->model = buffer;
+            break;
+        default: break;
+    }
+
+    #undef BTRGB_BUFFER_LENGTH
+} 
+
