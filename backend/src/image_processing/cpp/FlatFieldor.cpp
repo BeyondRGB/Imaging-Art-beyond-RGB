@@ -102,12 +102,27 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     comms->send_progress(1, this->get_name());
 
 
-
+    //If there are seperate targets needs to copy to do dead pixel detection
     if (target_found) {
+
+        btrgb::Image* target1copy = new btrgb::Image("target1copy");
+        btrgb::Image* target2copy = new btrgb::Image("target2copy");
+
+        cv::Mat tcopy = btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
+        target1copy->initImage(tcopy);
+
+        cv::Mat tcopy2 = btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
+        target1copy->initImage(tcopy2);
+
         height = target1->height();
         width = target1->width();
         channels = target1->channels();
-        pixelOperation(height, width, channels, target1, target2, white1, white2, dark1, dark2);
+        pixelOperation(height, width, channels, target1, white1, dark1, target1copy);
+        pixelOperation(height, width, channels, target2, white2, dark2, target2copy);
+
+        delete target1copy;
+        delete target2copy;
+
     }
 
     // Store Results
@@ -120,6 +135,8 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     images->deleteImage("dark2");
     delete art1copy;
     delete art2copy;
+
+
 
     comms->send_progress(1, this->get_name());
     // Outputs TIFFs for each image group for after this step, temporary
