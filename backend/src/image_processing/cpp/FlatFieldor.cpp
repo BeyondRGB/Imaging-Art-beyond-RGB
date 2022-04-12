@@ -85,7 +85,10 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     //Perform flatfielding and dead pixel cleanup
     
     pixelOperation(height, width, channels, art1, white1, dark1, art1copy);
+    comms->send_progress(0.5, this->get_name());
+
     pixelOperation(height, width, channels, art2, white2, dark2, art2copy);
+    comms->send_progress(1, this->get_name());
 
 
 
