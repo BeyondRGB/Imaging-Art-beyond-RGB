@@ -20,23 +20,11 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     comms->send_info("", this->get_name());
     comms->send_progress(0, this->get_name());
 
-    //Unmodified copies used for dead pixel correction in flat fielding.
-    btrgb::Image* art1copy = new btrgb::Image("art1copy");
-    btrgb::Image* art2copy = new btrgb::Image("art2copy");
-
-
     // Pull the images needed out of the Art Object
     try
     {
         art1 = images->getImage("art1");
-        cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
-        art1copy->initImage(copy);
-
         art2 = images->getImage("art2");
-        cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
-        art2copy->initImage(copy2);
-
-
         white1 = images->getImage("white1");
         dark1 = images->getImage("dark1");
         white2 = images->getImage("white2");
@@ -51,20 +39,6 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
             target_found = false;
         }
 
-        //Uncomment to write pixel data to file.
-        /*
-        cv::FileStorage file("art1.yml", cv::FileStorage::WRITE);
-        cv::Mat im1 = art1->getMat();
-        file << "matName" << im1;
-
-        cv::FileStorage file1("white1.yml", cv::FileStorage::WRITE);
-        cv::Mat im2 = white1->getMat();
-        file1 << "matName" << im2;
-
-        cv::FileStorage file2("dark1.yml", cv::FileStorage::WRITE);
-        cv::Mat im3 = dark1->getMat();
-        file2 << "matName" << im3;
-        */
     }
     catch (const btrgb::ArtObj_ImageDoesNotExist& e)
     {
@@ -93,34 +67,58 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     //Calculate w value and complete the pixel operation with set w value
     wCalc(patAvg, whiteAvg, yVal);
 
+
     //Perform flatfielding and dead pixel cleanup
+
+
+    //Image set 1-----------------------------------------------------------
+    btrgb::Image* art1copy = new btrgb::Image("art1copy");
+    cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
+    art1copy->initImage(copy);
 
     pixelOperation(height, width, channels, art1, white1, dark1, art1copy);
     comms->send_progress(0.5, this->get_name());
 
+    delete art1copy;
+
+
+    //Image set 2-----------------------------------------------------------
+    btrgb::Image* art2copy = new btrgb::Image("art2copy");
+    cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
+    art2copy->initImage(copy2);
+
     pixelOperation(height, width, channels, art2, white2, dark2, art2copy);
     comms->send_progress(1, this->get_name());
+
+    delete art2copy;
 
 
     //If there are seperate targets needs to copy to do dead pixel detection
     if (target_found) {
 
-        btrgb::Image* target1copy = new btrgb::Image("target1copy");
-        btrgb::Image* target2copy = new btrgb::Image("target2copy");
-
-        cv::Mat tcopy = btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
-        target1copy->initImage(tcopy);
-
-        cv::Mat tcopy2 = btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
-        target1copy->initImage(tcopy2);
 
         height = target1->height();
         width = target1->width();
         channels = target1->channels();
+
+
+        //Copy and delete instantly after operation
+        btrgb::Image* target1copy = new btrgb::Image("target1copy");
+        cv::Mat tcopy = btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
+        target1copy->initImage(tcopy);
+
         pixelOperation(height, width, channels, target1, white1, dark1, target1copy);
-        pixelOperation(height, width, channels, target2, white2, dark2, target2copy);
 
         delete target1copy;
+
+
+        //Copy and delete instantly after operation
+        btrgb::Image* target2copy = new btrgb::Image("target2copy");
+        cv::Mat tcopy2 = btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
+        target2copy->initImage(tcopy2);
+
+        pixelOperation(height, width, channels, target2, white2, dark2, target2copy);
+
         delete target2copy;
 
     }
@@ -133,8 +131,6 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
     images->deleteImage("white2");
     images->deleteImage("dark1");
     images->deleteImage("dark2");
-    delete art1copy;
-    delete art2copy;
 
 
 
