@@ -84,7 +84,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
                 CalibrationResults* r = images->get_results_obj(btrgb::ResultType::GENERAL);
                 r->store_string(GI_MAKE, tags.make);
-                r->store_string(GI_MAKE, tags.model);
+                r->store_string(GI_MODEL, tags.model);
             }
 
             /* Convert to floating point. */
