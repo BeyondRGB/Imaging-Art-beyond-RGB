@@ -39,8 +39,12 @@ void PixelRegestor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
     cv::Mat im18gray, im28gray;
 
+
+    //Todo add check for memory
     cv::cvtColor(im18, im18gray, cv::COLOR_RGB2GRAY);
     cv::cvtColor(im28, im28gray, cv::COLOR_RGB2GRAY);
+
+
 
     // Variables to store keypoints and descriptors
     std::vector<KeyPoint> keypoints1, keypoints2;

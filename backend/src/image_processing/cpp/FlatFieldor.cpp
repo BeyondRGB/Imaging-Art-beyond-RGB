@@ -1,5 +1,7 @@
 #include "../header/FlatFieldor.h"
 #include <iostream>
+#include <boost/range/irange.hpp>
+
 void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 {
     btrgb::Image *art1;
@@ -81,7 +83,11 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
     wCalc(patAvg, whiteAvg, yVal);
 
     //Perform flatfielding and dead pixel cleanup
-    pixelOperation(height, width, channels, art1, art2, white1, white2, dark1, dark2, art1copy, art2copy);
+    
+    pixelOperation(height, width, channels, art1, white1, dark1, art1copy);
+    pixelOperation(height, width, channels, art2, white2, dark2, art2copy);
+
+
 
     // Store Results
     this->store_results(images);
@@ -123,315 +129,101 @@ void::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef){
 * @param d1: dark1 image
 * @param d2 : dark2 image
 */
-void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2, btrgb::Image* a1c, btrgb::Image* a2c){
+void::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image* a, btrgb::Image* wh, btrgb::Image* d, btrgb::Image* ac){
     //For loop is for every pixel in the image, and gets a corrisponding pixel from white and dark images
     //Every Channel value for each pixel needs to be adjusted based on the w for that group of images
     int currRow, currCol, ch;
     int stuckPixelCounter = 0;
     int uncorrectedCounter = 0;
+
     double wPix, dPix, aPix, newPixel;
     for (currRow = 0; currRow < h; currRow++) {
         for (currCol = 0; currCol < wid; currCol++) {
             for (ch = 0; ch < c; ch++) {
 
                 //Get pixel from all three images
-                wPix = wh1->getPixel(currRow, currCol, ch);
-                dPix = d1->getPixel(currRow, currCol, ch);
-                aPix = a1->getPixel(currRow, currCol, ch);
+                wPix = wh->getPixel(currRow, currCol, ch);
+                dPix = d->getPixel(currRow, currCol, ch);
+                aPix = ac->getPixel(currRow, currCol, ch);
+          
+                    //If pixel in white and dark targets are equal pixel is stuck / dead
+                    if (double(wPix == dPix)) {
 
-                //If pixel in white and dark targets are equal pixel is stuck / dead
-                if (double(wPix == dPix)) {
+                        stuckPixelCounter++;
 
-                    //Stuck pixel detected
-                    stuckPixelCounter++;
+                        //Radius to perform dead pixel correction
+                        int radius = 2;
 
-                    //Get different pixels todo make this not suck.
-                    //Large blobs are dead so we must look at a bunch
+                        //Hold the final average value
+                        double artPixelTotalValue = 0.0;
+                        double whitePixeTotallValue = 0.0;
+                        double darkPixeTotallValue = 0.0;
 
-                    // X = stuck
-                    /*
-                           EAF
-                           CXD
-                           GBH
+                        //Total number of neighboring pixels looked at
+                        int pixelCount = 0;
 
+                        //make sure the selection area doesn't go over the edge
+                        int left = (currCol - radius < 0 ? 0 : currCol - radius);
+                        int right = (currCol + radius >= wid ? wid - 1 : currCol + radius);
+                        int top = (currRow - radius < 0 ? 0 : currRow - radius);
+                        int bot = (currRow + radius > h ? h : currRow + radius);
 
-                           R
-                           O
-                           W
+                        for (auto xIndex : boost::irange(left,right)) {
+                            for (auto yIndex : boost::irange(top, bot)) {
 
-                           Column
-                    */
-                    double wPixA, dPixA, aPixA;
-                    double wPixB, dPixB, aPixB;
-                    double wPixC, dPixC, aPixC;
-                    double wPixD, dPixD, aPixD;
-                    double wPixE, dPixE, aPixE;
-                    double wPixF, dPixF, aPixF;
-                    double wPixG, dPixG, aPixG;
-                    double wPixH, dPixH, aPixH;
+                                //Grab the values
+                                double artPixel = ac->getPixel(yIndex, xIndex, ch);
+                                double whitePixel = wh->getPixel(yIndex, xIndex, ch);
+                                double darkPixel = d->getPixel(yIndex, xIndex, ch);
+                            
+                                if (whitePixel != darkPixel) {
+                                    //Neighbor is not dead, so use to correct
+                                    pixelCount++;
+                                    artPixelTotalValue += artPixel;
+                                    whitePixeTotallValue += whitePixel;
+                                    darkPixeTotallValue += darkPixel;
+                                }
+                                else {
+                                    //Neighbor pixel is dead do nothing
+                                }
+                            }
+                        }
 
-                    //A
-                    if (currRow != 0) {
-                        wPixA = wh1->getPixel(currRow - 1, currCol, ch);
-                        dPixA = d1->getPixel(currRow - 1, currCol, ch);
-                        aPixA = a1c->getPixel(currRow - 1, currCol, ch);
+                        //Average values
+                        artPixelTotalValue = artPixelTotalValue / pixelCount;
+                        whitePixeTotallValue = whitePixeTotallValue / pixelCount;
+                        darkPixeTotallValue = darkPixeTotallValue / pixelCount;
+
+                        //Perform flatfielding on these new values
+                        newPixel = this->w * (double(artPixelTotalValue - darkPixeTotallValue) / double(whitePixeTotallValue - darkPixeTotallValue));
+
+                        //Final sanity checks, ensure no invalid values get by
+                        //NAN catch just set to 0;
+                        if (newPixel != newPixel) {
+                            uncorrectedCounter++;
+                            newPixel = 0;
+                        }
+                        //INF catch just set to 0;
+                        if (isinf(newPixel)) {
+                            uncorrectedCounter++;
+                            newPixel = 0;
+                        }
+                        //Done set pixel in artwork
+                        a->setPixel(currRow, currCol, ch, newPixel);
                     }
+
+                    //Normal pixels flatfield as normal
                     else {
-                        wPixA = wPix;
-                        dPixA = dPix;
-                        aPixA = aPix;
-                    }
-                    //B
-                    if (currRow != h) {
-                        wPixB = wh1->getPixel(currRow + 1, currCol, ch);
-                        dPixB = d1->getPixel(currRow + 1, currCol, ch);
-                        aPixB = a1c->getPixel(currRow + 1, currCol, ch);
-                    }
-                    else {
-                        wPixB = wPix;
-                        dPixB = dPix;
-                        aPixB = aPix;
-                    }
-                    //C
-                    if (currCol != 0) {
-                        wPixC = wh1->getPixel(currRow, currCol - 1, ch);
-                        dPixC = d1->getPixel(currRow, currCol - 1, ch);
-                        aPixC = a1c->getPixel(currRow, currCol - 1, ch);
-                    }
-                    else {
-                        wPixC = wPix;
-                        dPixC = dPix;
-                        aPixC = aPix;
-                    }
-                    //D
-                    if (currCol != wid) {
-                        wPixD = wh1->getPixel(currRow, currCol + 1, ch);
-                        dPixD = d1->getPixel(currRow, currCol + 1, ch);
-                        aPixD = a1c->getPixel(currRow, currCol + 1, ch);
-                    }
-                    else {
-                        wPixD = wPix;
-                        dPixD = dPix;
-                        aPixD = aPix;
-                    }
-                    //E
-                    if (currRow != 0 && currCol != 0) {
-                        wPixE = wh1->getPixel(currRow - 1, currCol - 1, ch);
-                        dPixE = d1->getPixel(currRow - 1, currCol - 1, ch);
-                        aPixE = a1c->getPixel(currRow - 1, currCol - 1, ch);
-                    }
-                    else {
-                        wPixE = wPix;
-                        dPixE = dPix;
-                        aPixE = aPix;
-                    }
-                    //F
-                    if (currRow != 0 && currCol != h) {
-                        wPixF = wh1->getPixel(currRow - 1, currCol + 1, ch);
-                        dPixF = d1->getPixel(currRow - 1, currCol + 1, ch);
-                        aPixF = a1c->getPixel(currRow - 1, currCol + 1, ch);
-                    }
-                    else {
-                        wPixF = wPix;
-                        dPixF = dPix;
-                        aPixF = aPix;
-                    }
-                    //G
-                    if (currRow != h && currCol != 0) {
-                        wPixG = wh1->getPixel(currRow + 1, currCol - 1, ch);
-                        dPixG = d1->getPixel(currRow + 1, currCol - 1, ch);
-                        aPixG = a1c->getPixel(currRow + 1, currCol - 1, ch);
-                    }
-                    else {
-                        wPixG = wPix;
-                        dPixG = dPix;
-                        aPixG = aPix;
-                    }
-                    //H
-                    if (currRow != h && currCol != wid) {
-                        wPixH = wh1->getPixel(currRow + 1, currCol + 1, ch);
-                        dPixH = d1->getPixel(currRow + 1, currCol + 1, ch);
-                        aPixH = a1c->getPixel(currRow + 1, currCol + 1, ch);
-                    }
-                    else {
-                        wPixH = wPix;
-                        dPixH = dPix;
-                        aPixH = aPix;
-                    }
-                    //Blend the dead pixels into their neighbors
-                    wPix = double((wPixA + wPixB + wPixC + wPixD + wPixE + wPixF + wPixG + wPixH) / 8);
-                    dPix = double((dPixA + dPixB + dPixC + dPixD + dPixE + dPixF + dPixG + dPixH) / 8);
-                    aPix = double((aPixA + aPixB + aPixC + aPixD + aPixE + aPixF + aPixG + aPixH) / 8);
-
-                    //Flat field the new pixel value
-                    newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
-
-                    //Some larger groups may have a center pixel slip by. Following checks forces them to 0 and logs it.
-                    //NAN catch just set to 0;
-                    if (newPixel != newPixel) {
-                        uncorrectedCounter++;
-                        newPixel = 0;
-                    }
-
-                    //INF catch just set to 0;
-                    if (isinf(newPixel)) {
-                        uncorrectedCounter++;
-                        newPixel = 0;
-                    }
-                    //Done set pixel in artwork
-                    a1->setPixel(currRow, currCol, ch, newPixel);
-
-                }
-                //Normal pixels continue with normal correction.
-                else {
-                    newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
-                    a1->setPixel(currRow, currCol, ch, newPixel);
-                }
-
-                //Repeat for image set 2
-
-                //Get pixel from all three images
-                wPix = wh2->getPixel(currRow, currCol, ch);
-                dPix = d2->getPixel(currRow, currCol, ch);
-                aPix = a2->getPixel(currRow, currCol, ch);
-
-                //If pixel in white and dark targets are equal pixel is stuck / dead
-                if (double(wPix == dPix)) {
-                    //Stuck pixel detected
-                    stuckPixelCounter++;
-                    double wPixA, dPixA, aPixA;
-                    double wPixB, dPixB, aPixB;
-                    double wPixC, dPixC, aPixC;
-                    double wPixD, dPixD, aPixD;
-                    double wPixE, dPixE, aPixE;
-                    double wPixF, dPixF, aPixF;
-                    double wPixG, dPixG, aPixG;
-                    double wPixH, dPixH, aPixH;
-
-                    //A
-                    if (currRow != 0) {
-                        wPixA = wh2->getPixel(currRow - 1, currCol, ch);
-                        dPixA = d2->getPixel(currRow - 1, currCol, ch);
-                        aPixA = a2c->getPixel(currRow - 1, currCol, ch);
-                    }
-                    else {
-                        wPixA = wPix;
-                        dPixA = dPix;
-                        aPixA = aPix;
-                    }
-                    //B
-                    if (currRow != h) {
-                        wPixB = wh2->getPixel(currRow + 1, currCol, ch);
-                        dPixB = d2->getPixel(currRow + 1, currCol, ch);
-                        aPixB = a2c->getPixel(currRow + 1, currCol, ch);
-                    }
-                    else {
-                        wPixB = wPix;
-                        dPixB = dPix;
-                        aPixB = aPix;
-                    }
-                    //C
-                    if (currCol != 0) {
-                        wPixC = wh2->getPixel(currRow, currCol - 1, ch);
-                        dPixC = d2->getPixel(currRow, currCol - 1, ch);
-                        aPixC = a2c->getPixel(currRow, currCol - 1, ch);
-                    }
-                    else {
-                        wPixC = wPix;
-                        dPixC = dPix;
-                        aPixC = aPix;
-                    }
-                    //D
-                    if (currCol != wid) {
-                        wPixD = wh2->getPixel(currRow, currCol + 1, ch);
-                        dPixD = d2->getPixel(currRow, currCol + 1, ch);
-                        aPixD = a2c->getPixel(currRow, currCol + 1, ch);
-                    }
-                    else {
-                        wPixD = wPix;
-                        dPixD = dPix;
-                        aPixD = aPix;
-                    }
-                    //E
-                    if (currRow != 0 && currCol != 0) {
-                        wPixE = wh2->getPixel(currRow - 1, currCol - 1, ch);
-                        dPixE = d2->getPixel(currRow - 1, currCol - 1, ch);
-                        aPixE = a2c->getPixel(currRow - 1, currCol - 1, ch);
-                    }
-                    else {
-                        wPixE = wPix;
-                        dPixE = dPix;
-                        aPixE = aPix;
-                    }
-                    //F
-                    if (currRow != 0 && currCol != h) {
-                        wPixF = wh2->getPixel(currRow - 1, currCol + 1, ch);
-                        dPixF = d2->getPixel(currRow - 1, currCol + 1, ch);
-                        aPixF = a2c->getPixel(currRow - 1, currCol + 1, ch);
-                    }
-                    else {
-                        wPixF = wPix;
-                        dPixF = dPix;
-                        aPixF = aPix;
-                    }
-                    //G
-                    if (currRow != h && currCol != 0) {
-                        wPixG = wh2->getPixel(currRow + 1, currCol - 1, ch);
-                        dPixG = d2->getPixel(currRow + 1, currCol - 1, ch);
-                        aPixG = a2c->getPixel(currRow + 1, currCol - 1, ch);
-                    }
-                    else {
-                        wPixG = wPix;
-                        dPixG = dPix;
-                        aPixG = aPix;
-                    }
-                    //H
-                    if (currRow != h && currCol != wid) {
-                        wPixH = wh2->getPixel(currRow + 1, currCol + 1, ch);
-                        dPixH = d2->getPixel(currRow + 1, currCol + 1, ch);
-                        aPixH = a2c->getPixel(currRow + 1, currCol + 1, ch);
-                    }
-                    else {
-                        wPixH = wPix;
-                        dPixH = dPix;
-                        aPixH = aPix;
-                    }
-                    //Blend the dead pixels into their neighbors
-                    wPix = double((wPixA + wPixB + wPixC + wPixD + wPixE + wPixF + wPixG + wPixH) / 8);
-                    dPix = double((dPixA + dPixB + dPixC + dPixD + dPixE + dPixF + dPixG + dPixH) / 8);
-                    aPix = double((aPixA + aPixB + aPixC + aPixD + aPixE + aPixF + aPixG + aPixH) / 8);
-
-                    //Flat field the new pixel value
-                    newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
-
-                    //Some larger groups may have a center pixel slip by. Following checks forces them to 0 and logs it.
-                    //NAN catch just set to 0;
-                    if (newPixel != newPixel) {
-                        uncorrectedCounter++;
-                        newPixel = 0;
-                    }
-
-                    //INF catch just set to 0;
-                    if (isinf(newPixel)) {
-                        uncorrectedCounter++;
-                        newPixel = 0;
-                    }
-                    //Done set pixel in artwork
-                    a2->setPixel(currRow, currCol, ch, newPixel);
-
-                }
-                //Normal pixels continue with normal correction.
-                else {
-                    newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
-                    a2->setPixel(currRow, currCol, ch, newPixel);
-                }
+                        newPixel = this->w * (double(aPix - dPix) / double(wPix - dPix));
+                        a->setPixel(currRow, currCol, ch, newPixel);
+                    } 
             }
         }
     }
     int corrected = stuckPixelCounter - uncorrectedCounter;
-    std::cout << "Stuck/Dead Pixels Detected - " << stuckPixelCounter / 6<< "\n";
-    std::cout << "Stuck/Dead Pixels Corrected - " << corrected / 6 << "\n";
-    std::cout << "Stuck/Dead Pixels Uncorrected - " << uncorrectedCounter / 6<< "\n";
+    std::cout << "Stuck/Dead Pixels Detected - " << stuckPixelCounter / 3 << "\n";
+    std::cout << "Stuck/Dead Pixels Corrected - " << corrected / 3 << "\n";
+    std::cout << "Stuck/Dead Pixels Uncorrected - " << uncorrectedCounter / 3 << "\n";
 }
 
 void FlatFieldor::store_results(btrgb::ArtObject* images) {
