@@ -1,5 +1,20 @@
 <script lang="ts">
   import Sorter from "@components/Process/Sorter.svelte";
+  import { currentPage, processState } from "@util/stores";
+  $: if ($processState.artStacks[0].fields) {
+    let done = true;
+    Object.keys($processState.artStacks[0].fields).map((ele) => {
+      if (
+        $processState.artStacks[0].fields[ele].length === 0 &&
+        !ele.includes("target")
+      ) {
+        done = false;
+      }
+    });
+    if (done && !$processState.completedTabs[2]) {
+      $processState.completedTabs[2] = true;
+    }
+  }
 </script>
 
 <main>

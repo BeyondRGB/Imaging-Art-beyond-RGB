@@ -12,6 +12,7 @@
 
 
 #define DELIMITER ","
+#define OUTPUT_PREFIX "BeyondRGB_"
 
 // CM Calibration Keys
 #define CM_DELTA_E_AVG      "CM DeltaE Mean"
@@ -20,6 +21,7 @@
 #define CM_DLETA_E_VALUES   "CM DeltaE Values"
 #define CM_CAMERA_SIGS      "CM PreCalibrated RGB Camera Signals"
 #define CM_XYZ              "CM Calibrated XYZ Values"
+#define CM_XYZ_REF              "CM Ref XYZ Values"
 #define L_CAMERA            "CM L*_camera"
 #define a_CAMERA            "CM a*_camera"
 #define b_CAMERA            "CM b*_camera"
@@ -31,6 +33,7 @@
 #define SP_R_reference  "SP R Reference"
 #define SP_R_camera     "SP Optimized R Camera"
 #define SP_M_refl       "SP Optimized M refl"
+#define SP_RMSE         "SP RMSE"
 
 // General Info Keys
 #define GI_MAKE_MODEL         "Camera Make/Model"
@@ -44,6 +47,7 @@
 #define GI_WHITE_PATCH_COORDS "White Patch Coordinates"
 #define GI_Y                  "Y white patche meas"
 #define GI_W                  "W Value"
+#define GI_ADVANCED_FILTERS   "Sharpaning/NoiseReduction Filter Settings"
 
 // Verification Keys
 #define V_XYZ              "Verification Calibrated XYZ Values"
@@ -56,7 +60,7 @@
 #define V_a_REF            "Verification a*_ref"
 #define V_b_REF            "Verification b*_ref"
 #define V_TARGET_SIGS      "Verification Target Signal Averages"
-
+#define V_R_reference      "Verification R_ref"
 #define V_R_CAMERA         "Verification R_camera"
 #define V_RMSE             "Verification RMSE"
 
@@ -236,7 +240,18 @@ public:
      * 
      * @param parser 
      */
-    void reconstruct_strings(Json parser);
+    void reconstruct_strings(Json parser);/**
+     * @brief Output the given matrix.
+     * If a name is given the first line will be the matrix name. 
+     * If no name is given the first line will be the first row of the matix
+     * 
+     * Each row of the matrix is writen to its own line with each value seperated by commas
+     * 
+     * @param output_stream the stream to write to
+     * @param matrix the matrix to write
+     * @param matrix_name name of the matrix defaults to empty string
+     */
+    void write_matrix(std::ostream &output_stream, cv::Mat matrix, std::string matrix_name = "");
 
 
 private:
@@ -269,19 +284,6 @@ private:
     void write_doubls(std::ostream &output_stream);
 
     void write_strings(std::ostream &output_stram);
-
-    /**
-     * @brief Output the given matrix.
-     * If a name is given the first line will be the matrix name. 
-     * If no name is given the first line will be the first row of the matix
-     * 
-     * Each row of the matrix is writen to its own line with each value seperated by commas
-     * 
-     * @param output_stream the stream to write to
-     * @param matrix the matrix to write
-     * @param matrix_name name of the matrix defaults to empty string
-     */
-    void write_matrix(std::ostream &output_stream, cv::Mat matrix, std::string matrix_name = "");
 
     /**
      * @brief identifies what type of data is held in the given matrix and how to extract it.

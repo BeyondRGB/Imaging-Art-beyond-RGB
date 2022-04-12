@@ -12,8 +12,8 @@
 
 <main>
   <div class="settings">
-    <SelectBtn />
-    <Switch label="Dark Mode" bind:checked={$appSettings.theme} />
+    Settings:
+    <!-- <Switch label="Dark Mode" bind:checked={$appSettings.theme} /> -->
     <Switch label="Side Menu" bind:checked={$appSettings.sideNav} />
   </div>
 </main>

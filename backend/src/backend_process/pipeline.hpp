@@ -45,12 +45,13 @@ class Pipeline: public BackendProcess{
 		StandardObserver,
 		Illuminants,
 		TargetLocation,
-		VerificationLocation
+		VerificationLocation,
+		TARGET_IMG
 	};
 	/**
 	* Maps enum values to a string
 	*/
-	const std::string key_map[9] = {
+	const std::string key_map[10] = {
 		"art",
 		"white",
 		"dark",
@@ -59,7 +60,8 @@ class Pipeline: public BackendProcess{
 		"standardObserver",
 		"illuminants",
 		"targetLocation",
-		"verificationLocation"
+		"verificationLocation",
+		"target"
 	};
 
 
@@ -135,9 +137,6 @@ private:
 	void init_verification(btrgb::ArtObject* images);
 	bool verify_targets(btrgb::ArtObject *images);
 
-
-
-
 	/**
 	* @brief get the sharpen type
 	* Gets a string corresponding to the level of sharpening needed
@@ -145,6 +144,16 @@ private:
 	* @return std::string
 	*/
 	std::string get_sharpen_type();
+
+
+	/**
+	* @brief get the registration
+	* Gets a string corresponding to the level of registration needed
+	* L M H | M is default
+	* @return std::string
+	*/
+	std::string get_registration_type();
+
 
 public:
 	Pipeline(std::string name) : BackendProcess(name) {};

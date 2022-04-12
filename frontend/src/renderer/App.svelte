@@ -1,31 +1,24 @@
 <script lang="ts">
 	import { currentPage, appSettings, modal } from "@util/stores";
 	// Components
-	// import Navbar from "@components/Navbar.svelte";
 	import Menu from "@components/Menu.svelte";
 	import Page from "@components/Page.svelte";
 	// Pages
 	import Home from "@pages/Home.svelte";
-	import ManagedRgb from "@pages/ManagedRgb.svelte";
 	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
 	import Process from "@pages/Process.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
-	import Demo from "@pages/Demo.svelte";
-	import TestConsole from "@components/TestConsole.svelte";
 
 	import {
 		HomeIcon,
 		SettingsIcon,
-		ImageIcon,
 		LayersIcon,
 		FileTextIcon,
 		CrosshairIcon,
 		ApertureIcon,
 	} from "svelte-feather-icons";
-
-	import { onDestroy } from "svelte";
 
 	const routes: any = {
 		Home: {
@@ -36,16 +29,24 @@
 			default: true,
 		},
 		Process: {
-			text: "Process",
+			text: "Select & Process",
 			component: Process,
 			icon: ApertureIcon,
 			isShown: true,
 			page: true,
 		},
-		RGB: {
-			text: "Managed RGB",
-			component: ManagedRgb,
-			icon: ImageIcon,
+		SpecPicker: {
+			text: "Image Viewer",
+			component: SpectralPicker,
+			icon: CrosshairIcon,
+			isShown: true,
+			page: true,
+		},
+
+		Reports: {
+			text: "Calibration Reports",
+			component: Reports,
+			icon: FileTextIcon,
 			isShown: true,
 			page: true,
 		},
@@ -55,27 +56,7 @@
 			icon: LayersIcon,
 			isShown: true,
 			page: true,
-		},
-		Reports: {
-			text: "Reports",
-			component: Reports,
-			icon: FileTextIcon,
-			isShown: true,
-			page: true,
-		},
-		SpecPicker: {
-			text: "Spectral Picker",
-			component: SpectralPicker,
-			icon: CrosshairIcon,
-			isShown: true,
-			page: true,
-		},
-		Demo: {
-			text: "Demo",
-			component: Demo,
-			icon: SettingsIcon,
-			isShown: true,
-			default: true,
+			disabled: true,
 		},
 		Settings: {
 			text: "Settings",
@@ -91,37 +72,43 @@
 		modal.set("Home");
 	}, 0);
 
-	const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 	appSettings.set({
-		theme: darkThemeMq.matches,
+		theme: true,
 		sideNav: $appSettings.sideNav,
 	});
-	darkThemeMq.addEventListener("change", (e) => {
-		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
-	});
+	let theme = "dark";
 
-	$: selectedPage = routes[$currentPage];
-	$: theme = $appSettings.theme ? "dark" : "";
-	$: if (theme !== "") {
-		console.log("Theme Change");
-		document.documentElement.classList.add(theme);
-		document.body.classList.add(theme);
-	} else {
-		document.documentElement.classList.remove("dark");
-		document.body.classList.remove("dark");
-	}
+	document.documentElement.classList.add(theme);
+	document.body.classList.add(theme);
 
-	onDestroy(() => {
-		darkThemeMq.removeEventListener("change", (e) => {
-			appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
-		});
-	});
+	// --- Theme Switching Logic (Disabled as light theme is incomplete) ---
+	// $: theme = $appSettings.theme ? "dark" : "";
+	// $: if (theme !== "") {
+	// 	console.log("Theme Change");
+	// 	document.documentElement.classList.add(theme);
+	// 	document.body.classList.add(theme);
+	// } else {
+	// 	document.documentElement.classList.remove("dark");
+	// 	document.body.classList.remove("dark");
+	// }
 
+	// const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+
+	// darkThemeMq.addEventListener("change", (e) => {
+	// 	appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// });
+
+	// onDestroy(() => {
+	// 	darkThemeMq.removeEventListener("change", (e) => {
+	// 		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// 	});
+	// });
+	// ------
 	let pages;
 	$: if (pages) {
 		let activePages = [];
 		Object.keys(routes).map((key) => {
-			if (routes[key].page) {
+			if (routes[key].page && !routes[key].disabled) {
 				activePages.push(key);
 			}
 		});
@@ -147,27 +134,13 @@
 			});
 		}
 	}
-
-	let isOpen = false;
 </script>
 
 <main class={theme}>
-	<div class="app {theme} {$appSettings.sideNav ? 'sideMenu' : ''}">
-		<!-- <Navbar {routes} /> -->
-
-		<Menu icon={SettingsIcon} {routes} />
+	<div class="app {theme}" class:sideMenu={$appSettings.sideNav}>
+		<Menu {routes} />
 
 		<Page {routes} bind:pages />
-		<div class={`console ${isOpen ? "open" : ""}`}>
-			<div class="testBox">
-				<div class="handle" on:click={() => (isOpen = !isOpen)}>
-					{isOpen ? ">" : "<"}
-				</div>
-				<div class="con">
-					<TestConsole {isOpen} />
-				</div>
-			</div>
-		</div>
 	</div>
 </main>
 
@@ -182,7 +155,7 @@
 		height: 100%;
 		margin: 0 auto;
 		@apply bg-white dark:bg-gray-800 dark:border-gray-600 border-red-600 select-none
-						dark:text-gray-50;
+						dark:text-gray-50 text-base;
 	}
 	main {
 		height: 100%;
@@ -228,28 +201,5 @@
 	/* Handle on hover */
 	::-webkit-scrollbar-thumb:hover {
 		@apply bg-gray-500;
-	}
-
-	.console {
-		@apply absolute -right-[60%] w-[60%] transition-all duration-300 z-50;
-	}
-	.open {
-		@apply -right-0;
-	}
-	.handle {
-		@apply bg-gray-800 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-							text-2xl rounded-l-full border-l-2 border-t-2 border-b-2 border-gray-700;
-	}
-	.testBox {
-		@apply bg-gray-800 w-full h-full relative rounded-l-lg flex justify-center items-center
-						border-2 border-gray-700 shadow-2xl;
-	}
-	.con {
-		@apply w-full h-full;
-	}
-
-	.menuNavIcon {
-		fill: transparent;
-		stroke-width: 8%;
 	}
 </style>

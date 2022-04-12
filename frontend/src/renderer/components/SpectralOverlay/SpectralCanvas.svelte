@@ -1,7 +1,7 @@
 <script>
-  import placeholder from "@assets/placeholder.jpg";
-  import placeholder1 from "@assets/placeholderAlt1.jpg";
-  import placeholder2 from "@assets/placeholderAlt2.jpg";
+  // import placeholder from "@assets/placeholder.jpg";
+  // import placeholder1 from "@assets/placeholderAlt1.jpg";
+  // import placeholder2 from "@assets/placeholderAlt2.jpg";
   import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
   import { draggable } from "svelte-drag";
   import "@util/openseadragon-curtian-sync.js";
@@ -9,6 +9,8 @@
   export let isSync;
   export let imageKeys;
   export let showNav;
+
+  let placeholder, placeholder1, placeholder2;
 
   let prevShowNav = showNav;
   let viewer;
