@@ -33,7 +33,7 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
 
     //High Frequency Kernel larger sigma = more sharp
     //Low = 0.5  Med = 1  High = 1.5
-    int sigma = 0.5;
+    double sigma = 0.5;
 
     //Sharpen value passed in 
     if (SharpenFactor == "L") {
