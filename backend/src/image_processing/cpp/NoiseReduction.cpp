@@ -70,7 +70,7 @@ void NoiseReduction::apply_filter(btrgb::Image* img1, btrgb::Image* img2, int si
     //Low = 0.5  Med = 1  High = 1.5
 
     //Sharpen value passed in 
-    int ksize = (sigma * 5) | 1;
+    double ksize = (sigma * 5) | 1;
 
     //Sharpen Factor
     int HsharpFactor = 1;
