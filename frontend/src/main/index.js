@@ -1,7 +1,18 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
-var child = require('child_process').execFile;
+const child_process = require('child_process');
+const getPortSync = require('get-port-sync');
+
+let freePort = null;
+
+try {
+  freePort = getPortSync();
+  console.log(freePort);
+} catch (e) {
+  console.log(e);
+}
 var executablePath;
+var loader;
 
 if (process.platform == 'win32')
   executablePath = path.join(__dirname, '../../lib/app.exe');
@@ -19,14 +30,16 @@ process.on('loaded', (event, args) => {
   console.log(app.getAppPath());
 
   // Start Backend Server
-  child(executablePath, [`--app_root=${app.getAppPath()}`], (err, data) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
+  loader = child_process.spawn(executablePath, [`--app_root=${app.getAppPath()}`, `--port=${freePort}`], { detached: true });
+});
 
-    console.log(data.toString());
-  });
+app.on('before-quit', function () {
+  console.log("Quiting");
+  process.kill(loader.pid);
+});
+
+ipcMain.handle('ipc-getPort', async (event, arg) => {
+  return freePort;
 });
 
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
@@ -71,13 +84,13 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   return dia;
 });
 
-process.on('loaded', (event, args) => {
-  console.log('LOADED');
-  console.log(process.resourcesPath);
-  // console.log(process.getCPUUsage());
-  // console.log(process.getProcessMemoryInfo());
-  console.log(app.getAppPath());
-});
+// process.on('loaded', (event, args) => {
+//   console.log('LOADED');
+//   console.log(process.resourcesPath);
+//   // console.log(process.getCPUUsage());
+//   // console.log(process.getProcessMemoryInfo());
+//   console.log(app.getAppPath());
+// });
 
 const createWindow = () => {
   // Create the browser window.
