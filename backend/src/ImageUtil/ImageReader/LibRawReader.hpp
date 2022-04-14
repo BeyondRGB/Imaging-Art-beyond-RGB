@@ -26,7 +26,6 @@ class LibRawReader : public ImageReaderStrategy {
         LibRaw _reader;
         void _configLibRawParams();
         enum libraw_type _method = UNPROCESSED;
-        template <typename T> void _average_greens(cv::Mat input, cv::Mat output);
         void _error(std::string msg);
 
 };
