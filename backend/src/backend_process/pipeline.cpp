@@ -13,7 +13,7 @@ std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     if(this->get_sharpen_type() != "N"){
         pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new NoiseReduction(this->get_sharpen_type())));
     }
-    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor()));
+    pre_process_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new PixelRegestor(this->get_registration_type())));
     //Set up Calibration components
     std::vector<std::shared_ptr<ImgProcessingComponent>> calibration_components;
     calibration_components.push_back(static_cast<const std::shared_ptr <ImgProcessingComponent>>(new ColorManagedCalibrator()));
@@ -48,6 +48,10 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
             art_obj->newImage(("art" + std::to_string(i + 1)), art_file);
             art_obj->newImage(("white" + std::to_string(i + 1)), white_file);
             art_obj->newImage(("dark" + std::to_string(i + 1)), dark_file);
+            try{
+                std::string target_file = obj.get_string(key_map[DataKey::TARGET_IMG]);
+                art_obj->newImage(("target" + std::to_string(i + 1)), target_file);
+            }catch(ParsingError e){ /* No target provided. We expect the target to be in the art image */ }
         }
         //Collect the information provided about the color target
         // TargetData td;
@@ -224,6 +228,22 @@ std::string Pipeline::get_sharpen_type() {
 
 
 
+std::string Pipeline::get_registration_type() {
+
+    //default to no sharpening
+    std::string registration_string = "M";
+    try {
+        registration_string = this->process_data_m->get_string("sharpenString");
+        if (registration_string == "H" || registration_string == "M" || registration_string == "L") {
+            return registration_string;
+        }
+    }
+    catch (ParsingError e) {
+    }
+    return registration_string;
+}
+
+
 
 IlluminantType Pipeline::get_illuminant_type(Json target_data) {
     // Defaults to D50
@@ -308,8 +328,8 @@ void Pipeline::init_verification(btrgb::ArtObject* images){
 bool Pipeline::verify_targets(btrgb::ArtObject *images){
     try{
         // Test Target
-        images->get_target(ART(1), btrgb::TargetType::GENERAL_TARGET);
-        images->get_target(ART(1), btrgb::TargetType::VERIFICATION_TARGET);
+        images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
+        images->get_target(TARGET(1), btrgb::TargetType::VERIFICATION_TARGET);
     }catch(ColorTarget_MissmatchingRefData e){
         this->report_error(this->get_process_name(), e.what());
         return false;

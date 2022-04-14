@@ -8,8 +8,8 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
         this->channel_count = images->getImage(ART(1))->channels();
 
         // Init Color Targets
-        this->target1 = images->get_target(ART(1), btrgb::TargetType::VERIFICATION_TARGET);
-        this->target2 = images->get_target(ART(2), btrgb::TargetType::VERIFICATION_TARGET);
+        this->target1 = images->get_target(TARGET(1), btrgb::TargetType::VERIFICATION_TARGET);
+        this->target2 = images->get_target(TARGET(2), btrgb::TargetType::VERIFICATION_TARGET);
 
         this->verification_data = target1.get_ref_data();
         std::cout << "Initialized General Verification Data" << std::endl;
