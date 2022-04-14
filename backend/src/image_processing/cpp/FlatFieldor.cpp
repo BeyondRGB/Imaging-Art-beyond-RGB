@@ -35,7 +35,8 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
             target2 = images->getImage(TARGET(2));
             target_found = true;
         }
-        catch (std::exception e) {
+        catch (const btrgb::ArtObj_ImageDoesNotExist& e){
+
             target_found = false;
         }
 
