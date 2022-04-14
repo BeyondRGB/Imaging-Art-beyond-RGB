@@ -18,18 +18,19 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
     btrgb::Image* img2 = images->getImage("art2");
+    btrgb::Image* target1;
+    btrgb::Image* target2;
+    bool targets_found = false;
 
-    cv::Mat im1 = img1->getMat();
-    cv::Mat im2 = img2->getMat();
+    try{
+        target1 = images->getImage(TARGET(1));
+        target2 = images->getImage(TARGET(2));
+        targets_found = true;
+    }catch(std::exception e){
+        targets_found = false;
+    }
 
-    cv::Mat Hblurred1;
-    cv::Mat Hblurred2;
-
-    //High Frequency Kernel larger sigma = more sharp
-    //Low = 0.5  Med = 1  High = 1.5
-    std::cout << SharpenFactor;
-
-    //Sharpen value passed in 
+    // //Sharpen value passed in 
     if (SharpenFactor == "L" || SharpenFactor == "M" || SharpenFactor == "H") {
         int sigma;
         if (SharpenFactor == "L") {
@@ -41,22 +42,13 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
         else {
             sigma = 1.5;
         }
-        int ksize = (sigma * 5) | 1;
 
-        //Sharpen Factor
-        int HsharpFactor = 1;
+        this->apply_filter(img1, img2, sigma);
 
-        //High Freq Blur
-        GaussianBlur(im1, Hblurred1, Size(ksize, ksize), sigma, sigma);
-        GaussianBlur(im2, Hblurred2, Size(ksize, ksize), sigma, sigma);
-
-        //Create high freq mask
-        cv::Mat unsharpMask1 = im1 - Hblurred1;
-        cv::Mat unsharpMask2 = im2 - Hblurred2;
-
-        //Apply high freq mask
-        im1 = im1 + HsharpFactor * unsharpMask1;
-        im2 = im2 + HsharpFactor * unsharpMask2;
+        if(targets_found){
+            this->apply_filter(target1, target2, sigma);
+        }
+    
 
         //Output sharpened image
         images->outputImageAs(btrgb::TIFF, "art1", "Sharp1");
@@ -69,4 +61,34 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
     else {
         comms->send_progress(1, this->get_name());
     }
+ }
+
+ void NoiseReduction::apply_filter(btrgb::Image *img1, btrgb::Image *img2, int sigma){
+    cv::Mat im1 = img1->getMat();
+    cv::Mat im2 = img2->getMat();
+
+    cv::Mat Hblurred1;
+    cv::Mat Hblurred2;
+
+    //High Frequency Kernel larger sigma = more sharp
+    //Low = 0.5  Med = 1  High = 1.5
+    std::cout << SharpenFactor;
+
+    //Sharpen value passed in 
+    int ksize = (sigma * 5) | 1;
+
+    //Sharpen Factor
+    int HsharpFactor = 1;
+
+    //High Freq Blur
+    GaussianBlur(im1, Hblurred1, Size(ksize, ksize), sigma, sigma);
+    GaussianBlur(im2, Hblurred2, Size(ksize, ksize), sigma, sigma);
+
+    //Create high freq mask
+    cv::Mat unsharpMask1 = im1 - Hblurred1;
+    cv::Mat unsharpMask2 = im2 - Hblurred2;
+
+    //Apply high freq mask
+    im1 = im1 + HsharpFactor * unsharpMask1;
+    im2 = im2 + HsharpFactor * unsharpMask2;
  }

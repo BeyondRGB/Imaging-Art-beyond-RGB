@@ -57,6 +57,7 @@
         bind:filePaths
         label={"Select Refernce Data"}
         type="Single"
+        filter="csv"
       />
       <div class="flex flex-col gap-1">
         {#if filePaths && filePaths.length > 0}
@@ -67,19 +68,19 @@
             </div>
           </div>
         {/if}
-        {#if $processState.artStacks[0].colorTarget.refData}
+        {#if $processState.artStacks[0].colorTarget?.refData}
           <div class="flex items-center justify-center w-full">
             <p class="inputLabel">Current File:</p>
             <div class="input">
-              {$processState.artStacks[0].colorTarget.refData.name}
+              {$processState.artStacks[0].colorTarget?.refData?.name}
             </div>
           </div>
         {/if}
-        {#if $processState.artStacks[0].verificationTarget.refData}
+        {#if $processState.artStacks[0].verificationTarget?.refData}
           <div class="flex items-center justify-center w-full">
             <p class="inputLabel">Current File:</p>
             <div class="input">
-              {$processState.artStacks[0].verificationTarget.refData.name}
+              {$processState.artStacks[0].verificationTarget?.refData?.name}
             </div>
           </div>
         {/if}
