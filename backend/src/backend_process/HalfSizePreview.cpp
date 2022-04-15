@@ -35,6 +35,15 @@ void HalfSizePreview::run() {
                 reader->copyBitmapTo(im);
                 reader->recycle();
 
+                /* Ignore 4th channel if present. */
+                if(im.channels() == 4) {
+                    cv::Mat rg1bg2 = im;
+                    im.release();
+                    im.create(rg1bg2.rows, rg1bg2.cols, CV_MAKE_TYPE(rg1bg2.depth(), 3));
+                    int from_to[] = { 0,0, 1,1, 2,2 };
+                    cv::mixChannels( &rg1bg2, 1, &im, 1, from_to, 3);
+                }
+
                 /* Make sure image is bright enough. */
                 double min, max;
                 cv::minMaxIdx(im, &min, &max);

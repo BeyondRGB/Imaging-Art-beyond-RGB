@@ -88,7 +88,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
              * are both greens and average them. */
             cv::Mat result_im;
             if( float_im.channels() == 4 )
-                btrgb::_average_greens<float>(float_im, result_im);
+                this->_average_greens(float_im, result_im);
             else 
                 result_im = float_im;
 
@@ -112,4 +112,15 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 }
 
 
-template void btrgb::_average_greens<float>(cv::Mat input, cv::Mat output);
+void ImageReader::_average_greens(cv::Mat input, cv::Mat output) {
+
+    input.forEach<cv::Vec4f>([](cv::Vec4f& pixel, const int* pos) -> void {
+        pixel[1] = ( pixel[1] + pixel[3] ) / 2 ;
+    });
+    
+    int from_to[] = { 0,0, 1,1, 2,2 };
+    output.create(input.rows, input.cols, CV_MAKE_TYPE(input.depth(), 3));
+    cv::mixChannels( &input, 1, &output, 1, from_to, 3);
+}
+
+
