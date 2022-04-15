@@ -36,7 +36,8 @@
 #define SP_RMSE         "SP RMSE"
 
 // General Info Keys
-#define GI_MAKE_MODEL         "Camera Make/Model"
+#define GI_MAKE               "Camera Make"
+#define GI_MODEL              "Camera Model"
 #define GI_TARGET_ID          "Target ID"
 #define GI_TARGET_ROWS        "Target Row Count"
 #define GI_TARGET_COLS        "Target Col Count"

@@ -61,6 +61,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             _reader->open(im->getName());
             _reader->copyBitmapTo(raw_im);
+            btrgb::exif tags = _reader->getExifData(); 
             _reader->recycle();
 
 
@@ -70,14 +71,20 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             /* Find bit depth if image is white field #1. */
             if(key == "white1") {
+        
                 *bit_depth = util.get_bit_depth(
                     (uint16_t*) raw_im.data,    
                     raw_im.cols, 
                     raw_im.rows,
                     raw_im.channels()
                 );
+
                 if(*bit_depth < 0)
                     throw std::runtime_error(" Bit depth detection of 'white1' failed." );
+
+                CalibrationResults* r = images->get_results_obj(btrgb::ResultType::GENERAL);
+                r->store_string(GI_MAKE, tags.make);
+                r->store_string(GI_MODEL, tags.model);
             }
 
             /* Convert to floating point. */
@@ -95,6 +102,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
             /* Init btrgb::Image object. */
             im->initImage(result_im);
             im->_raw_bit_depth = bit_depth;
+            im->setExifTags(tags);
             
             count++;
             comms->send_progress(count/total, this->get_name());
