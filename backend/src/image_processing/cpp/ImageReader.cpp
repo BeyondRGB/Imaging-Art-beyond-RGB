@@ -91,8 +91,16 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
             cv::Mat float_im;
             raw_im.convertTo(float_im, CV_32F, 1.0/0xFFFF);
 
+            /* If there are four channels, assume the 2nd & 4th channels
+             * are both greens and average them. */
+            cv::Mat result_im;
+            if( float_im.channels() == 4 )
+                this->_average_greens(float_im, result_im);
+            else 
+                result_im = float_im;
+
             /* Init btrgb::Image object. */
-            im->initImage(float_im);
+            im->initImage(result_im);
             im->_raw_bit_depth = bit_depth;
             im->setExifTags(tags);
             
@@ -110,3 +118,17 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_progress(1, this->get_name());
 
 }
+
+
+void ImageReader::_average_greens(cv::Mat& input, cv::Mat& output) {
+
+    input.forEach<cv::Vec4f>([](cv::Vec4f& pixel, const int* pos) -> void {
+        pixel[1] = ( pixel[1] + pixel[3] ) / 2 ;
+    });
+    
+    int from_to[] = { 0,0, 1,1, 2,2 };
+    output.create(input.rows, input.cols, CV_MAKETYPE(input.depth(), 3));
+    cv::mixChannels( &input, 1, &output, 1, from_to, 3);
+}
+
+
