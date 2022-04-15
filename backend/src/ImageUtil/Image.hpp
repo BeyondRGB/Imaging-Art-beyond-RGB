@@ -8,6 +8,7 @@
 #include <unordered_map>
 namespace fs = std::filesystem;
 
+#include "btrgb.hpp"
 #include "ImageUtil/ColorProfiles.hpp"
 
 /* Ways to loop:
@@ -58,9 +59,6 @@ namespace fs = std::filesystem;
     }
 */
 
-#define BTRGB_M_OPT "M_opt"
-#define BTRGB_OFFSET_OPT "Offset_opt"
-#define BTRGB_M_REFL_OPT "M_refl_opt"
 
 namespace btrgb {
 
@@ -103,6 +101,9 @@ namespace btrgb {
 
             void setColorProfile(ColorSpace color_profile);
             ColorSpace getColorProfile();
+
+            void setExifTags(exif tags) {this->_tags = tags;}
+            exif getExifTags() {return this->_tags;}
             
             void setConversionMatrix(std::string key, cv::Mat m);
             cv::Mat getConversionMatrix(std::string key);
@@ -137,6 +138,7 @@ namespace btrgb {
             int _channels = 0;
             int _row_size = 0;
             int _col_size = 0;
+            exif _tags;
             cv::Mat _opencv_mat;
             ColorSpace _color_profile = none;
             std::unordered_map<std::string, cv::Mat> _conversions;
