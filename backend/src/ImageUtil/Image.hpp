@@ -67,8 +67,6 @@ namespace btrgb {
     typedef std::unique_ptr<std::vector<uchar>> binary_ptr_t;
     typedef std::unique_ptr<std::string> base64_ptr_t;
 
-    template <typename T> void _average_greens(cv::Mat input, cv::Mat output);
-
     enum output_type {
         PNG,
         TIFF,
