@@ -11,6 +11,7 @@
   function handleDndFinalize(e) {
     $processState.imageFilePaths = e.detail.items;
   }
+  $: console.log($processState.imageFilePaths);
 </script>
 
 <main class="dark:bg-blue-700/25">

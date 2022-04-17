@@ -16,6 +16,10 @@ export const viewState = writable({
 });
 
 // Page Stores
+export const customRefData = writable({
+  calibration: null,
+  verification: null
+});
 export const processState = writable({
   currentTab: 0,
   completedTabs: [false, false, false, false],

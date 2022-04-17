@@ -19,10 +19,8 @@
 
 <main>
   <left>
-    <h1>Specifiy File Roles</h1>
-    <p>
-      Drag and drop the images to there corresponding role in the Spectral Image
-    </p>
+    <h1>Specifiy Image Roles</h1>
+    <p>Drag and drop each image into its appropriate rote</p>
   </left>
   <right>
     <div>
