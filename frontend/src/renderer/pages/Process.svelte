@@ -244,14 +244,14 @@
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
     {#if tabs[$processState.currentTab + 1]?.name === "Advanced Options"}
-      <button on:click={nextTab}>Go to Advanced Options</button>
+      <button on:click={nextTab}>Optional Filtering</button>
       <button
         on:click={() => {
           if ($processState.completedTabs[$processState.currentTab]) {
             $processState.currentTab += 2;
           }
         }}
-        class="nextBtn">Next: Skip Advanced Options</button
+        class="nextBtn">Next: Skip Optional Filtering</button
       >
     {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
       <button on:click={() => (showDialog = true)} class="nextBtn"

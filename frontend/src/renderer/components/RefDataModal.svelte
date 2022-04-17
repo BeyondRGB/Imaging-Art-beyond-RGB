@@ -1,6 +1,6 @@
 <script lang="ts">
   import Switch from "@components/Switch.svelte";
-  import { appSettings, processState } from "@util/stores";
+  import { appSettings, processState, customRefData } from "@util/stores";
   import { modal } from "@util/stores";
   import { DownloadCloudIcon } from "svelte-feather-icons";
   import SelectBtn from "@components/SelectBtn.svelte";
@@ -20,11 +20,11 @@
     if (filePaths) {
       if ($modal === "CustomRefData") {
         console.log("Saving to color target");
-        $processState.artStacks[0].colorTarget.refData = {
+        $customRefData.calibration = {
           name: filePaths[0],
         };
       } else if ($modal === "CustomRefDataVer") {
-        $processState.artStacks[0].verificationTarget.refData = {
+        $customRefData.verification = {
           name: filePaths[0],
         };
       }
