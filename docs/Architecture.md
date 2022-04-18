@@ -19,7 +19,7 @@ The technologies selected to build this application were chosen to help facilita
 CMake, an open source software for automating our backend build system.
 
 # High Level Design
-At a high level our application functions much like a web application, due to the tech stack chosen. The user interacts with the UI running in Electron, the frontend sends requests to the backend which is listening for TCP requests via websockets on a port that is determined at runtime depending on available ports at the time. Upon receiving a request the backend spins up a process to perform the necessary task and sends info back to the front end.
+At a high level our application functions much like a web application, due to the tech stack chosen. The user interacts with the UI running in Electron, the [frontend](./FrontendDesign.md) sends requests to the [backend](./BackendDesign.md) which is listening for TCP requests via websockets on a port that is determined at runtime depending on available ports at the time. Upon receiving a request the backend spins up a process to perform the necessary task and sends info back to the front end.
  
 ![Diagram 5.](./resources/BackendArchetecture.png)
 *Diagram 5. Shows a high level representation of the relationship between the frontend and backend, as well as some of the important classes involved upon the backend receiving a request.*
