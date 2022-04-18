@@ -25,7 +25,6 @@
     };
 
     console.log("Fetching Reports");
-    console.log(msg);
     sendMessage(JSON.stringify(msg));
   }
 
@@ -35,7 +34,6 @@
     $viewState.projectKey !== null &&
     !toggle
   ) {
-    console.log("Getting FIRST Report");
     // CALL FOR REPORTS
     toggle = true;
     getReports();
@@ -47,9 +45,9 @@
   }
 
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
+    console.log("New Message REPORTS");
     try {
       let temp = JSON.parse($messageStore[0]);
-      console.log(temp);
       if (temp["ResponseType"] === "Report") {
         // Report handler
         console.log("Report From Server");
@@ -64,15 +62,11 @@
     }
   }
 
-  $: console.log($viewState.reports);
-
   $: isVerification =
     $viewState.reports.verification != null &&
     $viewState.reports.verification["double_values"].length > 0;
 
   let showVerification = false;
-
-  $: console.log(isVerification);
 
   function handleCloseReport() {
     $viewState.projectKey = null;
@@ -165,7 +159,7 @@
 
 <style lang="postcss" global>
   .reports-main {
-    @apply flex flex-col w-full h-full overflow-y-scroll pt-[15vh];
+    @apply flex flex-col w-full h-full overflow-y-scroll pt-[20vh];
   }
   .art {
     @apply flex flex-col relative;
@@ -176,10 +170,12 @@
   .reportBody {
     transform-origin: left top;
     @apply w-full h-full transition-all duration-300
-          bg-gray-700 rounded-b-2xl p-4 flex flex-col items-center justify-center;
+          bg-gray-700 rounded-b-2xl p-4 flex flex-col items-center justify-center
+          gap-2;
   }
   .report-item {
-    @apply w-full h-full flex justify-center items-center;
+    @apply w-auto h-full flex justify-center items-center bg-gray-800 ring-1 ring-gray-500
+          p-4 pr-8 rounded-xl;
   }
   .dropdown-report-btn {
     @apply w-full flex flex-col justify-center items-center z-50;
@@ -198,7 +194,8 @@
   }
   .report-header {
     width: calc(100% - 6rem);
-    @apply fixed top-0 min-h-[15vh] bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
+    height: 20vh;
+    @apply fixed top-0 bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
             transition-all delay-150 duration-300 ease-in justify-between;
   }
   .close-report {

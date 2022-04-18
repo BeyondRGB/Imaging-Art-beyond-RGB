@@ -20,7 +20,7 @@
 <main>
   <left>
     <h1>Specifiy Image Roles</h1>
-    <p>Drag and drop each image into its appropriate rote</p>
+    <p>Drag and drop each image into its appropriate role</p>
   </left>
   <right>
     <div>

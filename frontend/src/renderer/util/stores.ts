@@ -8,7 +8,7 @@ export const modal = writable(null);
 export const viewState = writable({
   projectKey: null,
 
-  colorManagedImages: {},
+  colorManagedImage: { dataURL: "", name: "Waiting..." },
   reports: {
     calibration: null,
     verification: null
