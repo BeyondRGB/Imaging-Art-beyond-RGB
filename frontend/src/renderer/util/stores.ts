@@ -55,11 +55,14 @@ export const connectionState = writable('Not Connected');
 
 
 // Websocket
-let socket = new WebSocket('ws://localhost:9002');
+// let socket = new WebSocket('ws://localhost:9002');
+let socket;
 
-export function connect() {
+export async function connect() {
   console.log({ "Attempting to Connect": socket });
-  socket = new WebSocket('ws://localhost:9002');
+  let ipcResponse = await window.electron.getPort();
+  console.log(ipcResponse);
+  socket = new WebSocket(`ws://localhost:${ipcResponse}`);
   socket.addEventListener('open', function (event) {
     console.log("Connected!");
     connectionState.set("Connected");
