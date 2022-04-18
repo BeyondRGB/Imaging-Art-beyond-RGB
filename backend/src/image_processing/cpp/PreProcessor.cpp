@@ -1,7 +1,7 @@
 #include "../header/PreProcessor.h"
 
 PreProcessor::PreProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components)
-    : CompositComponent("PreProcessing") {
+    : CompositComponent("Pre-processor") {
         this->init_components(components);
 }
 
