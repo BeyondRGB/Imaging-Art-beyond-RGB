@@ -12,7 +12,7 @@ public:
     ~NoiseReduction() {};
     NoiseReduction(std::string SharpenFactor) : LeafComponent("Noise Reduction"), SharpenFactor(SharpenFactor) {};
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
-    void apply_filter(btrgb::Image *img1, btrgb::Image *img2, int sigma);
+    void apply_filter(btrgb::Image *img1, btrgb::Image *img2);
 };
 
 
