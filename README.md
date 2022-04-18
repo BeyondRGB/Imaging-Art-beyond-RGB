@@ -46,17 +46,17 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 - If an additional dependency is ever added to "dependencies.txt", first run:
   - `.\config_depends.bat`
 - To build: 
-  - `.\win10_debug` or `.\win10_release.bat`
-- To run:
-  - `cd .\build\Debug\` or `cd .\build\Release\`
-  - `.\app.exe`
+  - `.\win10_debug.bat` or `.\win10_release.bat`
+  - Build automatically copied to fronted for testing.
 
 ### Fronted build
 - `cd .\frontend\` from project root.
 - If frontend configuration is ever changed, first run:
   - `npm ci`
-- To run:
-  - `npm run preview` or `npm run dev`
+
+### Run:
+- `cd .\frontend\` from project root.
+- `npm run preview` or `npm run dev`
 
 ### Release
 - `cd .\backend\` from project root.

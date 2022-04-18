@@ -18,7 +18,7 @@ The following describes the steps needed to get the back end environment of this
   **Note:** this will take some time to complet, as some of the dependencies take a while to download and install. After this is complete you should see a new ```vcpkg``` folder within ```Imaging-Art-beyond-RGB\backend\```
   - run ```win10-build_debug.bat``` this will configure CMake and compile the application. When this is done you should see a new ```build``` folder within ```Imaging-Art-beyond-RGB\backend\```
   - ```cd Imaging-Art-beyond-RGB\backend\build\Debug```
-  - run ```app.exe``` you should see ```BeyondRBG Backend Started: listening on port 9002```, if so your all set up and the back end is currently running. ```ctr+c``` to terminate the program.
+  - run ```beyond-rgb-backend.exe``` you should see ```BeyondRBG Backend Started: listening on port 9002```, if so your all set up and the back end is currently running. ```ctr+c``` to terminate the program.
 
 ### Mac OS Backend
 - Setup Environment

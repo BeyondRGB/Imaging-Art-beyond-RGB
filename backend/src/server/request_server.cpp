@@ -6,11 +6,9 @@ using websocketpp::lib::bind;
 
 void RequestServer::init_server() {
     try {
-        // Set logging settings
-        server_m.set_access_channels(
-            websocketpp::log::alevel::all);
-        server_m.clear_access_channels(
-            websocketpp::log::alevel::frame_payload);
+        // Clear logging settings
+        server_m.clear_access_channels(websocketpp::log::alevel::all);
+        server_m.set_access_channels(websocketpp::log::alevel::none);
 
         // Initialize Asio
         server_m.init_asio();
