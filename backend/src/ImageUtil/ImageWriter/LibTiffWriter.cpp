@@ -96,7 +96,7 @@ namespace btrgb {
 		TIFFSetField(img_out, TIFFTAG_SOFTWARE, "BTRGB v1.0.0");
 
 		/* Set make and model if available. */
-		btrgb::exif tags = im->setExifTags();
+		btrgb::exif tags = im->getExifTags();
 		if(tags.make != btrgb::UNSPECIFIED)
 			TIFFSetField(img_out, TIFFTAG_MAKE, tags.make.c_str());
 		if(tags.model != btrgb::UNSPECIFIED)
