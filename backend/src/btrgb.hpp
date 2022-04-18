@@ -31,9 +31,10 @@ namespace btrgb {
 
 const int TAG_MAKE = 0x010f;
 const int TAG_MODEL = 0x0110;
+const std::string UNSPECIFIED = "unspecified"
 struct exif {
-    std::string make = "unspecified";
-    std::string model = "unspecified";
+    std::string make = UNSPECIFIED;
+    std::string model = UNSPECIFIED;
 };
 
 }
