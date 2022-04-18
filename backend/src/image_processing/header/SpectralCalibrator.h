@@ -21,7 +21,7 @@
  */
 class SpectralCalibrator : public LeafComponent{
 public:
-    SpectralCalibrator() : LeafComponent("Spectral Calibration"){}
+    SpectralCalibrator() : LeafComponent("Spectral Calibrating"){}
     /**
      * @brief Runs the calibration
      * 

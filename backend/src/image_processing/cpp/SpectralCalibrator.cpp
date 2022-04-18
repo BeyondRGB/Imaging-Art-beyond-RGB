@@ -141,6 +141,7 @@ void SpectralCalibrator::store_spectral_img(btrgb::ArtObject *images){
 
     // Save Spectral Image
     spectral_img->setConversionMatrix(BTRGB_M_REFL_OPT, this->M_refl);
+    spectral_img->setExifTags(art1->getExifTags());
     images->setImage(SP_IMAGE_KEY, spectral_img);
 }
 

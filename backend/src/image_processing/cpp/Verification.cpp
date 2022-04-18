@@ -1,8 +1,8 @@
 #include "image_processing/header/Verification.h"
 
 void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
-    comms->send_info("Starting Verification", "Verification");
-    comms->send_progress(0, "Verification");
+    comms->send_info("Starting Verification", this->get_name());
+    comms->send_progress(0, this->get_name());
 
     try {
         this->channel_count = images->getImage(ART(1))->channels();
@@ -15,20 +15,20 @@ void Verification::execute(CommunicationObj *comms, btrgb::ArtObject *images){
         std::cout << "Initialized General Verification Data" << std::endl;
     }
     catch (const std::exception& e) {
-        throw ImgProcessingComponent::error(e.what(), "Verification");
+        throw ImgProcessingComponent::error(e.what(), this->get_name());
     }
 
     this->verify_CM_calibration(comms, images);
 
-    comms->send_progress(0.5, "Verification");
+    comms->send_progress(0.5, this->get_name());
 
     this->verify_SP_calibration(comms, images);
 
-    comms->send_progress(1, "Verification");
+    comms->send_progress(1, this->get_name());
 }
 
 void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObject* images){
-    comms->send_info("Starting CM Verification", "Verification");
+    comms->send_info("Starting CM Verification", this->get_name());
 
     // Initialize target Info
     std::cout << "Init Target Info" << std::endl;
@@ -88,7 +88,7 @@ void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObje
 }
 
 void Verification::verify_SP_calibration(CommunicationObj* comms, btrgb::ArtObject* images){
-    comms->send_info("Starting SP Verification", "Verification");
+    comms->send_info("Starting SP Verification", this->get_name());
 
     // Initialize target Info
     ColorTarget targets[] = { this->target1, this->target2 };
