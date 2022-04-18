@@ -1,8 +1,7 @@
 #!/bin/sh
 
-if [ -e ../backend/build/Release/app ]
+if [ -e ../backend/build/Release/beyond-rgb-backend ]
 then
-	echo Found ../backend/build/Release/app
 
 	if [ -d "./lib/" ]; then rm -rf "./lib/"; fi
 	mkdir "./lib/"
@@ -11,7 +10,7 @@ then
 	mkdir "./res/"
 
 	# Copy executable
-	cp -v ../backend/build/Release/app ./lib
+	cp -v ../backend/build/Release/beyond-rgb-backend ./lib
 
 	# Copy all backend resource files
 	cp -rv ../backend/res/* ./res
