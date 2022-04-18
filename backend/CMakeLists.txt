@@ -37,41 +37,41 @@ file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 message(STATUS "Headers: ${HEADERS}")
 message(STATUS "Source Files: ${SOURCES}")
 #   Create .exe
-add_executable(app ${SOURCES})
+add_executable(beyond-rgb-backend ${SOURCES})
 #   Set all source include files (ie. *.h)
-target_include_directories(app PUBLIC ${headers})
-target_include_directories(app PUBLIC "src/")
+target_include_directories(beyond-rgb-backend PUBLIC ${headers})
+target_include_directories(beyond-rgb-backend PUBLIC "src/")
 
 #----------------------------------------------------
 #	Add VCPKG provided target_link_libraties Here
 #----------------------------------------------------
-target_link_libraries(app PRIVATE websocketpp::websocketpp)
-target_link_libraries(app PRIVATE asio asio::asio)
-target_link_libraries(app PRIVATE jsoncons)
-target_include_directories(app PRIVATE ${CPPCODEC_INCLUDE_DIRS})
-TARGET_LINK_LIBRARIES ( app PRIVATE ${OpenCV_LIBS} )
+target_link_libraries(beyond-rgb-backend PRIVATE websocketpp::websocketpp)
+target_link_libraries(beyond-rgb-backend PRIVATE asio asio::asio)
+target_link_libraries(beyond-rgb-backend PRIVATE jsoncons)
+target_include_directories(beyond-rgb-backend PRIVATE ${CPPCODEC_INCLUDE_DIRS})
+TARGET_LINK_LIBRARIES ( beyond-rgb-backend PRIVATE ${OpenCV_LIBS} )
 
 
-target_include_directories(app PRIVATE ${TIFF_INCLUDE_DIR}) 
-target_link_libraries(app PRIVATE ${TIFF_LIBRARIES})
+target_include_directories(beyond-rgb-backend PRIVATE ${TIFF_INCLUDE_DIR}) 
+target_link_libraries(beyond-rgb-backend PRIVATE ${TIFF_LIBRARIES})
 
-target_compile_definitions(app PRIVATE ${LibRaw_r_DEFINITIONS})
-target_include_directories(app PRIVATE ${LibRaw_INCLUDE_DIR})
-target_link_libraries(app PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
+target_compile_definitions(beyond-rgb-backend PRIVATE ${LibRaw_r_DEFINITIONS})
+target_include_directories(beyond-rgb-backend PRIVATE ${LibRaw_INCLUDE_DIR})
+target_link_libraries(beyond-rgb-backend PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
 # LibPNG
 if( ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-windows")
-    target_link_libraries(app PRIVATE png)
+    target_link_libraries(beyond-rgb-backend PRIVATE png)
 else()
-    target_link_libraries(app PRIVATE png_static)
+    target_link_libraries(beyond-rgb-backend PRIVATE png_static)
 endif()
 
 
 # Pthreads & OpenMP on Windows & Linux
 if( NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx")
-    target_link_libraries(app PRIVATE Threads::Threads)
-    target_link_libraries(app PRIVATE OpenMP::OpenMP_CXX)
+    target_link_libraries(beyond-rgb-backend PRIVATE Threads::Threads)
+    target_link_libraries(beyond-rgb-backend PRIVATE OpenMP::OpenMP_CXX)
 endif()
 
 # Need the c++ standard explicitly stated for compiling on OSX.
-set_property(TARGET app PROPERTY CXX_STANDARD 20)
+set_property(TARGET beyond-rgb-backend PROPERTY CXX_STANDARD 20)
