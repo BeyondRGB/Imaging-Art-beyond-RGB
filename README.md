@@ -14,6 +14,7 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 # Documentaiont
 * [Architecture](./docs/Architecture.md)
 * [CommunicationsAPI](./docs/CommunicationsAPI.md)
+* [BackednDesign](./docs/BackendDesign.md)
 
 # Development and release environment set-up
 ## Windows 10/11
