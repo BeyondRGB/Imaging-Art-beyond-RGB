@@ -11,6 +11,8 @@ Olivia Kuzio
 ### Senior Project Team
 Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 
+# Documentaiont
+* [CommunicationsAPI](./docs/CommunicationsAPI.md)
 
 # Development and release environment set-up
 ## Windows 10/11
