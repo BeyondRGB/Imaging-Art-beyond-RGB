@@ -254,8 +254,13 @@
         class="nextBtn">Next: Skip Optional Filtering</button
       >
     {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
-      <button on:click={() => (showDialog = true)} class="nextBtn"
-        >Begin Processing</button
+      <button
+        on:click={() => {
+          if ($processState.completedTabs[$processState.currentTab]) {
+            showDialog = true;
+          }
+        }}
+        class="nextBtn">Begin Processing</button
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
@@ -266,7 +271,7 @@
 
   <div class={`confirmModal ${showDialog ? "show" : ""}`}>
     <div class="confirmDialog">
-      <p>Ensure all information is correct before confirming</p>
+      <p>Are you sure you're ready to proceed?</p>
       <div class="btnGroup">
         <button class="cancel" on:click={() => (showDialog = false)}
           >Cancel</button
