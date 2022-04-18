@@ -3,7 +3,7 @@ const path = require('path');
 const child_process = require('child_process');
 const getPortSync = require('get-port-sync');
 
-let freePort = null;
+let freePort = 47382;
 
 try {
   freePort = getPortSync();
@@ -30,7 +30,20 @@ process.on('loaded', (event, args) => {
   console.log(app.getAppPath());
 
   // Start Backend Server
-  loader = child_process.spawn(executablePath, [`--app_root=${app.getAppPath()}`, `--port=${freePort}`], { detached: true });
+  loader = child_process.spawn(
+      executablePath, [
+        `--app_root=${app.getAppPath()}`, 
+        `--port=${freePort}`
+      ], { 
+        detached: true
+      }
+  );
+  loader.stdout.on('data', (data) => {
+    console.log(`[Backend stdout]\n${data}`);
+  });
+  loader.stderr.on('data', (data) => {
+    console.log(`========[ BACKEND STDERR ]=======\n${data}`);
+  });
 });
 
 app.on('before-quit', function () {
@@ -62,7 +75,7 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   if (arg.filter === "raws") {
     filters.push({
       "name": "raw & tiff file",
-      "extensions": ["cr2", "raf", "nef", "arq", "arw", "tiff", "tif"]
+      "extensions": ["cr2", "raf", "nef", "arq", "arw", "tiff", "tif", "dng"]
     });
   }
   if (arg.filter === "project") {
