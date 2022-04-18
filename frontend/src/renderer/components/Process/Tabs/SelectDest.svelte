@@ -9,8 +9,8 @@
     $processState.destDir = filePaths[0];
   }
   $: if (
-    filePaths &&
-    filePaths[0]?.length > 1 &&
+    $processState.destDir &&
+    $processState.destDir?.length > 1 &&
     !$processState.completedTabs[1]
   ) {
     $processState.completedTabs[1] = true;
@@ -40,7 +40,7 @@
             Destination Folder:
           </div>
           <div class="folderLoc">
-            {filePaths[0]}
+            {$processState.destDir}
           </div>
         </div>
       {/if}
