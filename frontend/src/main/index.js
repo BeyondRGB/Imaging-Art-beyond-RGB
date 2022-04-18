@@ -7,7 +7,7 @@ let freePort = 47382;
 
 try {
   if (process.env.ELEC_ENV === 'dev') {
-    freePort = 9069;
+    freePort = 9002;
   } else {
     freePort = getPortSync();
   }
