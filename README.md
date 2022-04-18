@@ -12,6 +12,7 @@ Olivia Kuzio
 Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 
 # Documentaiont
+* [Architecture](./docs/Architecture.md)
 * [CommunicationsAPI](./docs/CommunicationsAPI.md)
 
 # Development and release environment set-up
