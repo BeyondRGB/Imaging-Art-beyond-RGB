@@ -4,21 +4,11 @@ if [ -e ../backend/build/Release/app ]
 then
 	echo Found ../backend/build/Release/app
 
-	# Make sure the backend/lib folder exists
-	if [ -d ./lib ]
-	then
-		echo Found ./lib
-	else
-		mkdir -p ./lib
-	fi
+	if [ -d "./lib/" ]; then rm -rf "./lib/"; fi
+	mkdir "./lib/"
 
-	# Make sure the backend/res folder exists
-	if [ -d ./res ]
-	then
-		echo Found ./res
-	else
-		mkdir -p ./res
-	fi
+	if [ -d "./res/" ]; then rm -rf "./res/"; fi
+	mkdir "./res/"
 
 	# Copy executable
 	cp -v ../backend/build/Release/app ./lib
