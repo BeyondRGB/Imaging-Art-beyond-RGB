@@ -129,12 +129,7 @@
         name: binaryName,
       };
     } else if (binaryFor === "ColorManaged") {
-      //$viewState.colorManagedImages[binaryName] = temp.src;
-      console.log($viewState.colorManagedImages);
-      // $viewState.colorManagedImages[binaryID]["dataURL"] = temp.src;
-      // $viewState.colorManagedImages[binaryID]["filename"] = binaryName;
-      console.log(binaryID);
-      $viewState.colorManagedImages[binaryID] = {
+      $viewState.colorManagedImage = {
         dataURL: temp.src,
         name: binaryName,
       };
