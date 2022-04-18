@@ -15,7 +15,6 @@
   let pipelineProgress = {};
 
   function reset() {
-    currentPage.set("Process");
     $processState.currentTab = 0;
     pipelineComponents = {};
     pipelineProgress = {};

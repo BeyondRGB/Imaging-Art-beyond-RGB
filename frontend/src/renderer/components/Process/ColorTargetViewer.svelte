@@ -275,7 +275,7 @@
     }
   }
 
-  $: if (viewer) {
+  $: if (viewer && !viewer.isOpen()) {
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image");
     let temp = new Image();
@@ -385,6 +385,8 @@
                 class="line"
                 class:ver={i === 1}
                 class:whitePoint={i !== 1 &&
+                  target.whitePatch.row != null &&
+                  target.whitePatch.col != null &&
                   target.whitePatch.row +
                     (target.whitePatch.col - 1) * target.rows ===
                     boxIndex}
@@ -393,6 +395,8 @@
                   class:target={i === 0}
                   class:verTarget={i === 1}
                   class:whitePoint={i !== 1 &&
+                    target.whitePatch.row != null &&
+                    target.whitePatch.col != null &&
                     target.whitePatch.row +
                       (target.whitePatch.col - 1) * target.rows ===
                       boxIndex}

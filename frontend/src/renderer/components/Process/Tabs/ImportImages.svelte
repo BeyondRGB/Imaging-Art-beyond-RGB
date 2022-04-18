@@ -31,6 +31,7 @@
     };
     console.log(msg);
     sendMessage(JSON.stringify(msg));
+    filePaths = [];
   }
 
   $: if (filePaths?.length > 0) {

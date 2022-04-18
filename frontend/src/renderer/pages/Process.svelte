@@ -1,13 +1,11 @@
 <script lang="ts">
   import {
-    currentPage,
     messageStore,
     processState,
     sendMessage,
     viewState,
   } from "@util/stores";
 
-  import Settings from "@components/Process/Settings.svelte";
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
   import ImportImages from "@components/Process/Tabs/ImportImages.svelte";
   import SelectDest from "@components/Process/Tabs/SelectDest.svelte";
@@ -15,7 +13,6 @@
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
   import Layout from "@components/Process/Layout.svelte";
-  import { time_ranges_to_array } from "svelte/internal";
   let tabList;
 
   let showDialog = false;
@@ -172,7 +169,7 @@
   $: console.log($processState.artStacks[0].colorTarget);
   $: console.log({ processRequest });
 
-  $: {
+  $: if (processRequest != null) {
     if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
       processRequest.RequestData.targetLocation["refData"][
         "standardObserver"

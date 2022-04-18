@@ -6,14 +6,21 @@
     sendMessage,
   } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
-  import { flip } from "svelte/animate";
-  import Page from "@root/components/Page.svelte";
   import {
     PlusCircleIcon,
     XCircleIcon,
     AlertTriangleIcon,
   } from "svelte-feather-icons";
   import Dropdown from "@root/components/Dropdown.svelte";
+
+  let colorTarget;
+  let colorPos;
+  let verifyTarget;
+  let verifyPos;
+
+  let targetArray;
+
+  let loading = false;
 
   let refData = [
     "NGT_Reflectance_Data.csv",
@@ -41,14 +48,13 @@
       $processState.artStacks[0].colorTarget.size = colorTarget.size;
       $processState.artStacks[0].colorTarget.whitePatch =
         colorTarget.whitePatch;
+      $processState.artStacks[0].colorTarget.refData = colorTarget.refData;
       if (colorTarget.refData.name !== "CUSTOM DATA") {
-        $processState.artStacks[0].colorTarget.refData = {
-          name: colorTarget.refData.name,
-        };
+        $processState.artStacks[0].colorTarget.refData.name =
+          colorTarget.refData.name;
       } else {
-        $processState.artStacks[0].colorTarget.refData = {
-          name: $customRefData.calibration.name,
-        };
+        $processState.artStacks[0].colorTarget.refData.name =
+          $customRefData.calibration.name;
       }
     }
 
@@ -62,18 +68,24 @@
       $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
       $processState.artStacks[0].verificationTarget.whitePatch =
         verifyTarget.whitePatch;
+      $processState.artStacks[0].verificationTarget.refData =
+        verifyTarget.refData;
       if (verifyTarget.refData.name !== "CUSTOM DATA") {
-        $processState.artStacks[0].verificationTarget.refData = {
-          name: verifyTarget.refData.name,
-        };
+        $processState.artStacks[0].verificationTarget.refData.name =
+          verifyTarget.refData.name;
       }
-    } else if (verifyTarget.refData.name === "CUSTOM DATA") {
-      $processState.artStacks[0].verificationTarget.refData = {
-        name: $customRefData.verification.name,
-      };
     } else {
       $processState.artStacks[0].verificationTarget = null;
     }
+
+    colorTarget = null;
+    colorPos = null;
+    verifyTarget = null;
+    verifyPos = null;
+
+    targetArray = null;
+
+    loading = false;
   }
 
   function colorTargetPrev() {
@@ -123,20 +135,12 @@
 
   $: console.log($processState);
 
-  let colorTarget;
-  let colorPos;
-  let verifyTarget;
-  let verifyPos;
-
-  let loading = false;
-
   function addTarget() {
     if (!colorTarget) {
       colorTarget = {
         name: "Calibration Target",
         rows: 10,
         cols: 10,
-        refData: null,
         color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
         size: 0.5,
         whitePatch: {
@@ -155,7 +159,6 @@
         name: "Verification Target",
         rows: 10,
         cols: 10,
-        refData: null,
         color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
         size: 0.5,
         whitePatch: {
@@ -195,7 +198,6 @@
     root.style.setProperty("--verfiy_hue", `${verifyTarget}`);
   }
 
-  let targetArray;
   $: {
     targetArray = [];
     if (colorTarget) {
@@ -245,6 +247,7 @@
     colorTarget.whitePatch.row != null &&
     colorTarget.whitePatch.col != null
   ) {
+    console.log("Hi");
     $processState.completedTabs[4] = true;
   }
 </script>
