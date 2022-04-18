@@ -27,7 +27,7 @@ class ColorManagedCalibrator : public LeafComponent{
  */
 
 public:
-    ColorManagedCalibrator() : LeafComponent("Color Managed Calibration"){}
+    ColorManagedCalibrator() : LeafComponent("Color Calibrating"){}
     ~ColorManagedCalibrator();
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 
