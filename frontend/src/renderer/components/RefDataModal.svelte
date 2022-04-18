@@ -46,7 +46,7 @@
         href={RefDataTemplate}
         download="RefDataTemplate.csv"
         ><button class="downloadBtn">
-          Download Template
+          Open Template
           <div class="iconBox"><DownloadCloudIcon size="1.25x" /></div>
         </button></a
       >
@@ -55,7 +55,7 @@
     <div class="inputDiv">
       <FileSelector
         bind:filePaths
-        label={"Select Refernce Data"}
+        label={"Select Reference Data"}
         type="Single"
         filter="csv"
       />

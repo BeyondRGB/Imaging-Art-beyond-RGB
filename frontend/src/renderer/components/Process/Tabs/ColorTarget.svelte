@@ -8,7 +8,11 @@
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
   import { flip } from "svelte/animate";
   import Page from "@root/components/Page.svelte";
-  import { PlusCircleIcon, XCircleIcon } from "svelte-feather-icons";
+  import {
+    PlusCircleIcon,
+    XCircleIcon,
+    AlertTriangleIcon,
+  } from "svelte-feather-icons";
   import Dropdown from "@root/components/Dropdown.svelte";
 
   let refData = [
@@ -136,11 +140,11 @@
         color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
         size: 0.5,
         whitePatch: {
-          row: 1,
-          col: 1,
+          row: null,
+          col: null,
         },
         refData: {
-          name: "NGT_Reflectance_Data.csv",
+          name: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -159,7 +163,7 @@
           col: 1,
         },
         refData: {
-          name: "NGT_Reflectance_Data.csv",
+          name: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -231,7 +235,16 @@
 
   $: console.log({ LOADING: loading });
 
-  $: if (colorTarget != null && !$processState.completedTabs[4]) {
+  $: if (
+    colorTarget != null &&
+    !$processState.completedTabs[4] &&
+    colorTarget.refData.name !== "---None---.csv" &&
+    (verifyTarget != null
+      ? verifyTarget.refData.name !== "---None---.csv"
+      : true) &&
+    colorTarget.whitePatch.row != null &&
+    colorTarget.whitePatch.col != null
+  ) {
     $processState.completedTabs[4] = true;
   }
 </script>
@@ -309,10 +322,18 @@
               </div>
             </div>
             <div class="refDataDiv">
-              <span>Reference Data</span>
+              <span class="validatedTitle">
+                {#if target.refData.name === "---None---.csv"}
+                  <span class="invalid"
+                    ><AlertTriangleIcon size="1.5x" />
+                  </span>
+                {/if}
+                Reference Data:</span
+              >
               <Dropdown
                 values={refData}
                 bind:selected={target.refData.name}
+                invalid={target.refData.name === "---None---.csv"}
                 spaceLast
               />
             </div>
@@ -327,32 +348,42 @@
                 step=".01"
               />
             </div>
-            <div class="break" />
-            <span>White Patch Location</span>
-            <div class="whitePatch">
-              <div class="inputGroup">
-                <span>Row: </span>
-                <input
-                  placeholder="1..26"
-                  type="number"
-                  min="1"
-                  max={target.rows}
-                  bind:value={target.whitePatch.row}
-                />
+            {#if i !== 1}
+              <div class="break" />
+              <div class="whitePatchBox">
+                {#if target.whitePatch.row === null || target.whitePatch.col === null}
+                  <span class="invalid"
+                    ><AlertTriangleIcon size="1.5x" />
+                  </span>
+                {/if}
+                <div class="whitePatchInfo">
+                  <span> White Patch Location</span>
+                  <div class="whitePatch">
+                    <div class="inputGroup">
+                      <span>Row: </span>
+                      <input
+                        placeholder="Row #"
+                        type="number"
+                        min="1"
+                        max={target.rows}
+                        bind:value={target.whitePatch.row}
+                      />
+                    </div>
+                    <span class="and">&</span>
+                    <div class="inputGroup">
+                      <span>Col: </span>
+                      <input
+                        placeholder="Col #"
+                        type="number"
+                        min="1"
+                        max={target.cols}
+                        bind:value={target.whitePatch.col}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <span class="and">&</span>
-              <div class="inputGroup">
-                <span>Col: </span>
-                <input
-                  placeholder="1..26"
-                  type="number"
-                  min="1"
-                  max={target.cols}
-                  bind:value={target.whitePatch.col}
-                />
-              </div>
-            </div>
-
+            {/if}
             <button
               class="close"
               disabled={i === 0 &&
@@ -396,7 +427,16 @@
   }
 
   .card {
-    @apply rounded-lg w-full h-auto p-4 flex flex-col gap-2 relative;
+    @apply rounded-lg w-full h-auto p-[1.5vw] flex flex-col gap-2 relative font-semibold;
+  }
+  .invalid {
+    @apply text-red-600;
+  }
+  .whitePatchBox {
+    @apply w-full flex justify-center items-center gap-2;
+  }
+  .whitePatchInfo {
+    @apply flex flex-col w-full;
   }
 
   .addCard {
@@ -418,6 +458,9 @@
   }
   .colorTarget {
     background-color: hsl(var(--color_hue), 100%, 30%);
+  }
+  .validatedTitle {
+    @apply flex items-center justify-center gap-2;
   }
 
   .verificationTarget {
