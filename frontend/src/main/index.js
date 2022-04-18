@@ -6,7 +6,11 @@ const getPortSync = require('get-port-sync');
 let freePort = 47382;
 
 try {
-  freePort = getPortSync();
+  if (process.env.ELEC_ENV === 'dev') {
+    freePort = 9069;
+  } else {
+    freePort = getPortSync();
+  }
   console.log(freePort);
 } catch (e) {
   console.log(e);
@@ -31,12 +35,12 @@ process.on('loaded', (event, args) => {
 
   // Start Backend Server
   loader = child_process.spawn(
-      executablePath, [
-        `--app_root=${app.getAppPath()}`, 
-        `--port=${freePort}`
-      ], { 
-        detached: true
-      }
+    executablePath, [
+    `--app_root=${app.getAppPath()}`,
+    `--port=${freePort}`
+  ], {
+    detached: true
+  }
   );
   loader.stdout.on('data', (data) => {
     console.log(`[Backend stdout]\n${data}`);
