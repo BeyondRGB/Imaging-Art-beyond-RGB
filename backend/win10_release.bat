@@ -1,9 +1,18 @@
-if exist build\Release\res\ (
-	echo Found .\build\Release\res\
-) else (
-	mkdir build\Release\res\
-)
-:: Copy all resrouce files to a path relative to the .exe as they will be in the deployed app
-Xcopy /y /e .\res .\build\Release\res\
-cmake -B build -S .
+
+:: Delete old build from frontend folder
+if exist "..\frontend\lib\" RD /S /Q "..\frontend\lib\"
+if exist "..\frontend\res\" RD /S /Q "..\frontend\res\"
+
+:: Build 
+cmake -B build -S . -DVCPKG_TARGET_TRIPLET=x64-windows
+if errorlevel 1 exit
 cmake --build .\build\ --config Release
+if errorlevel 1 exit
+
+:: Copy .exe and libraries
+mkdir "..\frontend\lib\"
+Xcopy /y ".\build\Release\" "..\frontend\lib\"
+
+:: Copy all backend resource files
+mkdir "..\frontend\res\"
+Xcopy /y /e ".\res\" "..\frontend\res\"
