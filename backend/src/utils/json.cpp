@@ -22,7 +22,7 @@ bool Json::has(std::string key, Type type) {
 	bool contains = this->json_obj.contains(key);
 	bool is_type = false;
 	if (contains) {
-		jsoncons::json item = this->json_obj.get(key);
+		jsoncons::json item = this->json_obj[key];
 		Type item_type = this->get_type(item);
 		if (item_type == type || type == Type::ANNY) {
 			is_type = true;
@@ -36,7 +36,7 @@ bool Json::get_bool(std::string key) {
 	if (!this->has(key, Type::BOOL)) {
 		throw ParsingError("Bool('" + key + "') not found");
 	}
-	return this->json_obj.get(key).as<bool>();
+	return this->json_obj[key].as<bool>();
 }
 
 std::string Json::get_string(std::string key) {
@@ -44,7 +44,7 @@ std::string Json::get_string(std::string key) {
 	if (!this->has(key, Type::STRING)) {
 		throw ParsingError("String('" + key + "') not found");
 	}
-	return this->json_obj.get(key).as<std::string>();
+	return this->json_obj[key].as<std::string>();
 }
 
 double Json::get_number(std::string key) {
@@ -52,7 +52,7 @@ double Json::get_number(std::string key) {
 	if (!this->has(key, Type::NUMBER)) {
 		throw ParsingError("Number('" + key + "') not found");
 	}
-	return this->json_obj.get(key).as<double>();
+	return this->json_obj[key].as<double>();
 }
 
 Json Json::get_obj(std::string key) {
@@ -60,7 +60,7 @@ Json Json::get_obj(std::string key) {
 	if (!this->has(key, Type::OBJECT)) {
 		throw ParsingError("Object('" + key + "') not found");
 	}
-	jsoncons::json obj = this->json_obj.get(key).as<jsoncons::json>();
+	jsoncons::json obj = this->json_obj[key].as<jsoncons::json>();
 	Json json(obj);
 	return json;
 }
@@ -70,7 +70,7 @@ Json Json::get_array(std::string key) {
 	if (!this->has(key, Type::ARRAY)) {
 		throw ParsingError("Array('" + key + "') not found");
 	}
-	jsoncons::json array = this->json_obj.get(key).as<jsoncons::json>();;
+	jsoncons::json array = this->json_obj[key].as<jsoncons::json>();;
 	Json j(array);
 	return j;
 }
