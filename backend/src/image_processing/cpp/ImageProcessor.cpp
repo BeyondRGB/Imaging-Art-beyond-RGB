@@ -1,7 +1,7 @@
 #include "../header/ImageProcessor.h"
 
 ImageProcessor::ImageProcessor(const std::vector<std::shared_ptr<ImgProcessingComponent>> &components)
-    : CompositComponent("Profiler") {
+    : CompositComponent("Image Processor") {
         this->init_components(components);
 }
 void ImageProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
