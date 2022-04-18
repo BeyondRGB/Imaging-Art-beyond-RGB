@@ -26,6 +26,7 @@ class LibRawReader : public ImageReaderStrategy {
         LibRaw _reader;
         void _configLibRawParams();
         enum libraw_type _method = UNPROCESSED;
+        void _error(std::string msg);
 
 };
 
