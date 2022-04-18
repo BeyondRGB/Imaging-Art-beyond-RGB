@@ -15,9 +15,9 @@ var executablePath;
 var loader;
 
 if (process.platform == 'win32')
-  executablePath = path.join(__dirname, '../../lib/app.exe');
+  executablePath = path.join(__dirname, '../../lib/beyond-rgb-backend.exe');
 else {
-  executablePath = path.join(__dirname, '../../lib/app');
+  executablePath = path.join(__dirname, '../../lib/beyond-rgb-backend');
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.

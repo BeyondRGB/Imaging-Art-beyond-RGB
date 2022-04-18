@@ -13,7 +13,7 @@ if [ $? -ne 0 ]; then exit; fi
 
 # Copy executable over
 mkdir ../frontend/lib/
-cp -v ./build/Debug/app ../frontend/lib/
+cp -v ./build/Debug/beyond-rgb-backend ../frontend/lib/
 
 # Copy resource files over.
 mkdir ../frontend/res/
