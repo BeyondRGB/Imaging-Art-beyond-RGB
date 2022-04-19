@@ -3,7 +3,6 @@
   import { appSettings, processState, customRefData } from "@util/stores";
   import { modal } from "@util/stores";
   import { DownloadCloudIcon } from "svelte-feather-icons";
-  import SelectBtn from "@components/SelectBtn.svelte";
   import RefDataTemplate from "@assets/RefDataTemplate.csv?url";
   import FileSelector from "@components/FileSelector.svelte";
 

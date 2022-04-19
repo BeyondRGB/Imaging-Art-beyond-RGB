@@ -100,36 +100,6 @@
     $viewState.projectKey = mainfilePath[0];
   }
 
-  // async function handleTab(tab) {
-  //   if (tab === "+") {
-  //     console.log("New Project");
-  //     openDialog();
-  //   } else {
-  //     console.log("Switch Image");
-  //     $viewState.projectKey = $viewState.colorManagedImages[tab].projectKey;
-  //     currentTab = tab;
-  //   }
-  // }
-
-  // function handleCloseTab(tab) {
-  //   delete $viewState.colorManagedImages[tab];
-
-  //   if (currentTab === tab) {
-  //     console.log("Deleting current tab");
-  //     currentTab = Object.keys($viewState.colorManagedImages)[0];
-  //     console.log({ CURRENTTAB: currentTab });
-  //     if (currentTab !== undefined) {
-  //       $viewState.projectKey =
-  //         $viewState.colorManagedImages[currentTab].projectKey;
-  //     } else {
-  //       $viewState.projectKey = null;
-  //     }
-  //   } else {
-  //     console.log("Not current tab");
-  //     currentTab = currentTab;
-  //   }
-  // }
-
   let isFullScreen = window.innerHeight == screen.height;
 
   function closeImage() {

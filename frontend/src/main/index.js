@@ -112,9 +112,14 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 650,
+    width: 1200,
+    height: 800,
     autoHideMenuBar: true,
+    backgroundColor: "#2c2c2e",
+    minWidth: 600,
+    minHeight: 300,
+    title: "Beyond RGB",
+    icon: path.join(__dirname, '../../assets/icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
