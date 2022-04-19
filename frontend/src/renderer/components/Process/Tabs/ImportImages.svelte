@@ -31,6 +31,7 @@
     };
     console.log(msg);
     sendMessage(JSON.stringify(msg));
+    filePaths = [];
   }
 
   $: if (filePaths?.length > 0) {
@@ -49,18 +50,17 @@
 <main>
   <left>
     <h1>Import Images</h1>
-    <p>Select all images you would like to import into the program</p>
+    <p>Select the image set you would like to process</p>
   </left>
   <right>
     <div class="fileSelector">
       <FileSelector bind:filePaths filter="raws" largeText />
     </div>
-    <span class="number">{filePaths ? filePaths.length : 0} / 6</span>
     <article>
       <ul>
-        {#if filePaths?.length > 0}
-          {#each filePaths as filePath}
-            <ImageBubble filename={filePath} />
+        {#if $processState.imageFilePaths?.length > 0}
+          {#each $processState.imageFilePaths as filePath}
+            <ImageBubble filename={filePath.name} />
           {/each}
         {/if}
       </ul>
@@ -76,7 +76,7 @@
     @apply bg-gray-600 w-full h-full p-6 flex-col overflow-auto;
   }
   right {
-    @apply bg-gray-700 w-full h-full p-6 flex flex-col justify-center items-center;
+    @apply bg-gray-700 w-full h-full p-6 flex flex-col justify-center items-center gap-4;
   }
   h1 {
     @apply text-3xl;

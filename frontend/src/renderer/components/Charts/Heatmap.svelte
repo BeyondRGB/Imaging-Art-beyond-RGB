@@ -52,7 +52,7 @@
   let valueGrid = [];
 </script>
 
-{#if data}
+{#if mapData?.length > 1}
   <div class="heatmap-chart {matrixName}">
     <HeatmapChart
       data={mapData}
@@ -77,6 +77,7 @@
         heatmap: {
           colorLegend: {
             title: "",
+            type: "linear",
           },
         },
         experimental: true,
@@ -138,24 +139,6 @@
 {/if}
 
 <style lang="postcss" global>
-  .bx--cc--grid rect.chart-grid-backdrop {
-    @apply fill-gray-600;
-  }
-  .bx--cc--axes g.axis g.tick text {
-    @apply fill-white;
-  }
-  .bx--cc--title p.title {
-    @apply text-white;
-  }
-  .bx--cc--axes g.axis .axis-title {
-    @apply fill-white;
-  }
-  .bx--overflow-menu__icon {
-    @apply fill-gray-100;
-  }
-  .bx--chart-holder {
-    @apply aspect-square w-auto;
-  }
   .heatmap-number-grid {
     display: grid;
     grid-template-rows: repeat(calc(var(--row) - 1), auto);
@@ -166,31 +149,33 @@
   .heatmap-value {
     @apply flex justify-center items-center h-full w-full font-bold text-black;
   }
-  .bx--cc--chart-wrapper text {
-    @apply fill-white;
-  }
   .heatmap-chart {
     @apply relative;
   }
-  /* .bx--chart-holder .bx--overflow-menu,
-  .bx--chart-holder .bx--overflow-menu__trigger {
-    @apply hidden;
-  } */
-  /* .bx--chart-holder .bx--overflow-menu,
-  .bx--chart-holder
-    .bx--overflow-menu__trigger:first-child
-    .toolbar-control:first-child {
-    @apply hidden;
-  } */
+
+  /* Global Chart Styles */
+  .bx--cc--chart-wrapper text {
+    @apply fill-white;
+  }
+  .bx--cc--grid rect.chart-grid-backdrop {
+    @apply fill-gray-700;
+  }
+  .bx--cc--axes g.axis g.tick text {
+    @apply fill-white;
+  }
+  .bx--cc--title p.title {
+    @apply text-white;
+  }
+  .bx--cc--axes g.axis .axis-title {
+    @apply fill-white;
+  }
+  /* --- Tooltip */
   .bx--cc--tooltip {
     @apply bg-gray-700 text-white;
   }
   .bx--cc--tooltip .content-box {
     @apply text-white;
   }
-  /* .bx--cc--tooltip .content-box .datapoint-tooltip div.label {
-    @apply hidden;
-  } */
   .bx--cc--tooltip .content-box .datapoint-tooltip p.value {
     @apply font-bold;
   }
@@ -199,6 +184,13 @@
   }
   .bx--cc--tooltip .tooltip-color {
     @apply w-2;
+  }
+  /* --- */
+  .bx--chart-holder {
+    @apply aspect-square w-auto;
+  }
+  .bx--overflow-menu__icon {
+    @apply fill-gray-100;
   }
   .bx--overflow-menu:hover,
   .bx--overflow-menu__trigger:hover {
@@ -217,6 +209,7 @@
   .bx--overflow-menu.bx--overflow-menu--open .bx--overflow-menu__trigger {
     @apply bg-transparent;
   }
+
   .heatmap-chart .bx--cc--axes g.axis .axis-title {
     @apply hidden;
   }

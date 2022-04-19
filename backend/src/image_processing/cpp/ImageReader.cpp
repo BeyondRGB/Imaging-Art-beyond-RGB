@@ -8,7 +8,7 @@
 #include "image_processing/header/ImageReader.h"
 
 
-ImageReader::ImageReader() : LeafComponent("Image Reading") {}
+ImageReader::ImageReader() : LeafComponent("Reading") {}
 
 ImageReader::~ImageReader() {
     delete this->_reader;
@@ -61,6 +61,7 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             _reader->open(im->getName());
             _reader->copyBitmapTo(raw_im);
+            btrgb::exif tags = _reader->getExifData(); 
             _reader->recycle();
 
 
@@ -70,23 +71,38 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
 
             /* Find bit depth if image is white field #1. */
             if(key == "white1") {
+        
                 *bit_depth = util.get_bit_depth(
                     (uint16_t*) raw_im.data,    
                     raw_im.cols, 
                     raw_im.rows,
                     raw_im.channels()
                 );
+
                 if(*bit_depth < 0)
                     throw std::runtime_error(" Bit depth detection of 'white1' failed." );
+
+                CalibrationResults* r = images->get_results_obj(btrgb::ResultType::GENERAL);
+                r->store_string(GI_MAKE, tags.make);
+                r->store_string(GI_MODEL, tags.model);
             }
 
             /* Convert to floating point. */
             cv::Mat float_im;
             raw_im.convertTo(float_im, CV_32F, 1.0/0xFFFF);
 
+            /* If there are four channels, assume the 2nd & 4th channels
+             * are both greens and average them. */
+            cv::Mat result_im;
+            if( float_im.channels() == 4 )
+                this->_average_greens(float_im, result_im);
+            else 
+                result_im = float_im;
+
             /* Init btrgb::Image object. */
-            im->initImage(float_im);
+            im->initImage(result_im);
             im->_raw_bit_depth = bit_depth;
+            im->setExifTags(tags);
             
             count++;
             comms->send_progress(count/total, this->get_name());
@@ -102,3 +118,17 @@ void ImageReader::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
     comms->send_progress(1, this->get_name());
 
 }
+
+
+void ImageReader::_average_greens(cv::Mat& input, cv::Mat& output) {
+
+    input.forEach<cv::Vec4f>([](cv::Vec4f& pixel, const int* pos) -> void {
+        pixel[1] = ( pixel[1] + pixel[3] ) / 2 ;
+    });
+    
+    int from_to[] = { 0,0, 1,1, 2,2 };
+    output.create(input.rows, input.cols, CV_MAKETYPE(input.depth(), 3));
+    cv::mixChannels( &input, 1, &output, 1, from_to, 3);
+}
+
+

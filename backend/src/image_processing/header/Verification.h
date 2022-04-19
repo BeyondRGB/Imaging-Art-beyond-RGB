@@ -9,7 +9,7 @@
 class Verification : public LeafComponent{
 
     public:
-        Verification() : LeafComponent("Verification"){};
+        Verification() : LeafComponent("Verifying"){};
         ~Verification(){};
         void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
 

@@ -165,6 +165,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     btrgb::Image* cm_im = new btrgb::Image(name);
     cm_im->initImage(result_im);
     cm_im->setColorProfile(this->color_space);
+    cm_im->setExifTags(art1->getExifTags());
     cm_im->setConversionMatrix(BTRGB_M_OPT, this->M);
     cm_im->setConversionMatrix(BTRGB_OFFSET_OPT, this->offest);
 

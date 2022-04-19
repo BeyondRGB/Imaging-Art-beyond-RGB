@@ -1,10 +1,26 @@
 <script>
-  import { currentPage, processState, modal, sendMessage } from "@util/stores";
+  import {
+    customRefData,
+    processState,
+    modal,
+    sendMessage,
+  } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
-  import { flip } from "svelte/animate";
-  import Page from "@root/components/Page.svelte";
-  import { PlusCircleIcon, XCircleIcon } from "svelte-feather-icons";
+  import {
+    PlusCircleIcon,
+    XCircleIcon,
+    AlertTriangleIcon,
+  } from "svelte-feather-icons";
   import Dropdown from "@root/components/Dropdown.svelte";
+
+  let colorTarget;
+  let colorPos;
+  let verifyTarget;
+  let verifyPos;
+
+  let targetArray;
+
+  let loading = false;
 
   let refData = [
     "NGT_Reflectance_Data.csv",
@@ -32,10 +48,13 @@
       $processState.artStacks[0].colorTarget.size = colorTarget.size;
       $processState.artStacks[0].colorTarget.whitePatch =
         colorTarget.whitePatch;
+      $processState.artStacks[0].colorTarget.refData = colorTarget.refData;
       if (colorTarget.refData.name !== "CUSTOM DATA") {
-        $processState.artStacks[0].colorTarget.refData = {
-          name: colorTarget.refData.name,
-        };
+        $processState.artStacks[0].colorTarget.refData.name =
+          colorTarget.refData.name;
+      } else {
+        $processState.artStacks[0].colorTarget.refData.name =
+          $customRefData.calibration.name;
       }
     }
 
@@ -49,14 +68,24 @@
       $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
       $processState.artStacks[0].verificationTarget.whitePatch =
         verifyTarget.whitePatch;
+      $processState.artStacks[0].verificationTarget.refData =
+        verifyTarget.refData;
       if (verifyTarget.refData.name !== "CUSTOM DATA") {
-        $processState.artStacks[0].verificationTarget.refData = {
-          name: verifyTarget.refData.name,
-        };
+        $processState.artStacks[0].verificationTarget.refData.name =
+          verifyTarget.refData.name;
       }
     } else {
       $processState.artStacks[0].verificationTarget = null;
     }
+
+    colorTarget = null;
+    colorPos = null;
+    verifyTarget = null;
+    verifyPos = null;
+
+    targetArray = null;
+
+    loading = false;
   }
 
   function colorTargetPrev() {
@@ -106,28 +135,20 @@
 
   $: console.log($processState);
 
-  let colorTarget;
-  let colorPos;
-  let verifyTarget;
-  let verifyPos;
-
-  let loading = false;
-
   function addTarget() {
     if (!colorTarget) {
       colorTarget = {
         name: "Calibration Target",
         rows: 10,
         cols: 10,
-        refData: null,
         color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
         size: 0.5,
         whitePatch: {
-          row: 1,
-          col: 1,
+          row: null,
+          col: null,
         },
         refData: {
-          name: "NGT_Reflectance_Data.csv",
+          name: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -138,7 +159,6 @@
         name: "Verification Target",
         rows: 10,
         cols: 10,
-        refData: null,
         color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
         size: 0.5,
         whitePatch: {
@@ -146,7 +166,7 @@
           col: 1,
         },
         refData: {
-          name: "NGT_Reflectance_Data.csv",
+          name: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -178,7 +198,6 @@
     root.style.setProperty("--verfiy_hue", `${verifyTarget}`);
   }
 
-  let targetArray;
   $: {
     targetArray = [];
     if (colorTarget) {
@@ -203,6 +222,7 @@
   }
 
   $: if (refData.includes(colorTarget?.refData?.name)) {
+    console.log("Setting Refdata ROW/COl");
     let index = refData.findIndex((x) => x === colorTarget.refData.name);
 
     colorTarget.rows = refDataMeta[index].rows;
@@ -217,125 +237,168 @@
 
   $: console.log({ LOADING: loading });
 
-  $: if (colorTarget != null && !$processState.completedTabs[4]) {
+  $: if (
+    colorTarget != null &&
+    !$processState.completedTabs[4] &&
+    colorTarget.refData.name !== "---None---.csv" &&
+    (verifyTarget != null
+      ? verifyTarget.refData.name !== "---None---.csv"
+      : true) &&
+    colorTarget.whitePatch.row != null &&
+    colorTarget.whitePatch.col != null
+  ) {
+    console.log("Hi");
     $processState.completedTabs[4] = true;
   }
 </script>
 
 <main>
   <div class="left">
-    <div class="image-container">
-      {#if loading}
-        <div class="loading">
-          <div class="loading-box">Loading<span class="loader" /></div>
-        </div>
-      {/if}
-      <ColorTargetViewer
-        bind:colorTarget
-        bind:verifyTarget
-        bind:colorPos
-        bind:verifyPos
-        bind:loading
-      />
+    <div class="title">Target Patch Selection</div>
+    <div class="left-content">
+      <div class="image-container">
+        {#if loading}
+          <div class="loading">
+            <div class="loading-box">Loading<span class="loader" /></div>
+          </div>
+        {/if}
+        <ColorTargetViewer
+          bind:colorTarget
+          bind:verifyTarget
+          bind:colorPos
+          bind:verifyPos
+          bind:loading
+        />
+      </div>
     </div>
   </div>
   <div class="right">
     <!-- <div class="boxHead">Targets</div> -->
     <div class="cardBox">
-      {#each targetArray as target, i (target)}
-        <div
-          animate:flip={{ duration: 250 }}
-          class={`card ${i === 0 ? "colorTarget" : "verificationTarget"}`}
-        >
-          <h2>{target.name}</h2>
-          <input
-            type="range"
-            class="colorSlider"
-            bind:value={target.color}
-            max="360"
-          />
-
-          <div class="rowcol">
-            <div class="inputGroup">
-              <span>Rows:</span>
-              <input
-                placeholder="1..26 [a-z]"
-                type="number"
-                min="1"
-                bind:value={target.rows}
-              />
-            </div>
-            <div class="inputGroup">
-              <span>Columns:</span>
-              <input
-                placeholder="1..26 [a-z]"
-                type="number"
-                min="1"
-                bind:value={target.cols}
-              />
-            </div>
+      {#each [...targetArray, "Add"] as target, i (target)}
+        {#if target === "Add" && i < 2}
+          <div
+            class="addCard"
+            on:click={() => addTarget()}
+            class:verificationAdd={i === 1}
+          >
+            <div class="clickHere">Click Here</div>
+            {#if i === 0}
+              Add a patch selection grid for calibration
+            {:else}
+              Add a patch selection grid for verification
+            {/if}
+            <PlusCircleIcon size="2x" />
           </div>
-          <div class="refDataDiv">
-            <span>Reference Data</span>
-            <Dropdown
-              values={refData}
-              bind:selected={target.refData.name}
-              spaceLast
-            />
-          </div>
-          <div class="sizeDiv">
-            <span>Selection Area Size:</span>
-            {Math.round(target.size * 100)}%
+        {:else if target !== "Add"}
+          <div
+            class="card"
+            class:colorTarget={i === 0}
+            class:verificationTarget={i !== 0}
+          >
+            <h2>{target.name}</h2>
             <input
               type="range"
-              bind:value={target.size}
-              min=".3"
-              max=".7"
-              step=".01"
+              class="colorSlider"
+              bind:value={target.color}
+              max="360"
             />
-          </div>
-          <div class="break" />
-          <span>White Patch Location</span>
-          <div class="whitePatch">
-            <div class="inputGroup">
-              <span>Row: </span>
-              <input
-                placeholder="1..26"
-                type="number"
-                min="1"
-                max={target.rows}
-                bind:value={target.whitePatch.row}
-              />
-            </div>
-            <span class="and">&</span>
-            <div class="inputGroup">
-              <span>Col: </span>
-              <input
-                placeholder="1..26"
-                type="number"
-                min="1"
-                max={target.cols}
-                bind:value={target.whitePatch.col}
-              />
-            </div>
-          </div>
 
-          <button
-            class="close"
-            disabled={i === 0 &&
-              typeof verifyTarget != "undefined" &&
-              verifyTarget != null}
-            on:click={() => removeTarget(i)}
-            ><XCircleIcon size="1.25x" /></button
-          >
-        </div>
+            <div class="rowcol">
+              <div class="inputGroup">
+                <span>Rows:</span>
+                <input
+                  placeholder="1..26 [a-z]"
+                  type="number"
+                  min="1"
+                  bind:value={target.rows}
+                />
+              </div>
+              <div class="inputGroup">
+                <span>Columns:</span>
+                <input
+                  placeholder="1..26 [a-z]"
+                  type="number"
+                  min="1"
+                  bind:value={target.cols}
+                />
+              </div>
+            </div>
+            <div class="refDataDiv">
+              <span class="validatedTitle">
+                {#if target.refData.name === "---None---.csv"}
+                  <span class="invalid"
+                    ><AlertTriangleIcon size="1.5x" />
+                  </span>
+                {/if}
+                Reference Data:</span
+              >
+              <Dropdown
+                values={refData}
+                bind:selected={target.refData.name}
+                invalid={target.refData.name === "---None---.csv"}
+                spaceLast
+              />
+            </div>
+            <div class="sizeDiv">
+              <span>Selection Area Size:</span>
+              {Math.round(target.size * 100)}%
+              <input
+                type="range"
+                bind:value={target.size}
+                min=".3"
+                max=".7"
+                step=".01"
+              />
+            </div>
+            {#if i !== 1}
+              <div class="break" />
+              <div class="whitePatchBox">
+                {#if target.whitePatch.row === null || target.whitePatch.col === null}
+                  <span class="invalid"
+                    ><AlertTriangleIcon size="1.5x" />
+                  </span>
+                {/if}
+                <div class="whitePatchInfo">
+                  <span> White Patch Location</span>
+                  <div class="whitePatch">
+                    <div class="inputGroup">
+                      <span>Row: </span>
+                      <input
+                        placeholder="Row #"
+                        type="number"
+                        min="1"
+                        max={target.rows}
+                        bind:value={target.whitePatch.row}
+                      />
+                    </div>
+                    <span class="and">&</span>
+                    <div class="inputGroup">
+                      <span>Col: </span>
+                      <input
+                        placeholder="Col #"
+                        type="number"
+                        min="1"
+                        max={target.cols}
+                        bind:value={target.whitePatch.col}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {/if}
+            <button
+              class="close"
+              disabled={i === 0 &&
+                typeof verifyTarget != "undefined" &&
+                verifyTarget != null}
+              on:click={() => removeTarget(i)}
+              ><XCircleIcon size="1.25x" /></button
+            >
+          </div>
+        {/if}
       {/each}
     </div>
-    <button
-      class="addTarget"
-      class:removeButton={targetArray.length === 2}
-      on:click={() => addTarget()}><PlusCircleIcon size="1.75x" /></button
-    >
   </div>
 </main>
 
@@ -350,7 +413,11 @@
   }
 
   .left {
-    @apply w-full h-full flex items-center m-1 bg-gray-600 p-2;
+    @apply w-full h-full flex flex-col justify-start bg-gray-600 p-2 m-1 gap-2;
+  }
+
+  .title {
+    @apply text-3xl p-1;
   }
 
   .right {
@@ -359,17 +426,44 @@
 
   .cardBox {
     @apply bg-gray-800 min-h-[60vh] w-[85%] p-2 gap-2 flex flex-col items-center
-            rounded-2xl overflow-auto;
+            rounded-2xl overflow-y-auto overflow-x-hidden;
   }
 
   .card {
-    @apply rounded-lg w-full h-full p-4 flex flex-col gap-1 relative;
+    @apply rounded-lg w-full h-auto p-[1.5vw] flex flex-col gap-2 relative font-semibold;
+  }
+  .invalid {
+    @apply text-red-600;
+  }
+  .whitePatchBox {
+    @apply w-full flex justify-center items-center gap-2;
+  }
+  .whitePatchInfo {
+    @apply flex flex-col w-full;
+  }
+
+  .addCard {
+    @apply w-full h-full max-h-[50%] bg-green-400/50 rounded-lg p-4 flex flex-col gap-2 relative
+            justify-center items-center hover:bg-green-400/60 active:scale-95 transition-all
+            active:bg-green-400/75;
+  }
+  .verificationAdd {
+    @apply bg-gray-500/50 hover:bg-green-400/40 active:bg-green-400/50;
+  }
+  .clickHere {
+    @apply text-2xl;
+  }
+  .left-content {
+    @apply w-full h-auto flex items-center;
   }
   .image-container {
-    @apply relative w-full h-auto bg-gray-500 overflow-visible;
+    @apply relative w-full h-auto bg-gray-800 overflow-visible;
   }
   .colorTarget {
     background-color: hsl(var(--color_hue), 100%, 30%);
+  }
+  .validatedTitle {
+    @apply flex items-center justify-center gap-2;
   }
 
   .verificationTarget {

@@ -1,12 +1,27 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
-var child = require('child_process').execFile;
+const child_process = require('child_process');
+const getPortSync = require('get-port-sync');
+
+let freePort = 47382;
+
+try {
+  if (process.env.ELEC_ENV === 'dev') {
+    freePort = 9002;
+  } else {
+    freePort = getPortSync();
+  }
+  console.log(freePort);
+} catch (e) {
+  console.log(e);
+}
 var executablePath;
+var loader;
 
 if (process.platform == 'win32')
-  executablePath = path.join(__dirname, '../../lib/app.exe');
+  executablePath = path.join(__dirname, '../../lib/beyond-rgb-backend.exe');
 else {
-  executablePath = path.join(__dirname, '../../lib/app');
+  executablePath = path.join(__dirname, '../../lib/beyond-rgb-backend');
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -19,14 +34,29 @@ process.on('loaded', (event, args) => {
   console.log(app.getAppPath());
 
   // Start Backend Server
-  child(executablePath, [`--app_root=${app.getAppPath()}`], (err, data) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-
-    console.log(data.toString());
+  loader = child_process.spawn(
+    executablePath, [
+    `--app_root=${app.getAppPath()}`,
+    `--port=${freePort}`
+  ], {
+    detached: true
+  }
+  );
+  loader.stdout.on('data', (data) => {
+    console.log(`[Backend stdout]\n${data}`);
   });
+  loader.stderr.on('data', (data) => {
+    console.log(`========[ BACKEND STDERR ]=======\n${data}`);
+  });
+});
+
+app.on('before-quit', function () {
+  console.log("Quiting");
+  process.kill(loader.pid);
+});
+
+ipcMain.handle('ipc-getPort', async (event, arg) => {
+  return freePort;
 });
 
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
@@ -49,7 +79,7 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   if (arg.filter === "raws") {
     filters.push({
       "name": "raw & tiff file",
-      "extensions": ["cr2", "raf", "nef", "arq", "arw", "tiff", "tif"]
+      "extensions": ["cr2", "raf", "nef", "arq", "arw", "tiff", "tif", "dng"]
     });
   }
   if (arg.filter === "project") {
@@ -71,20 +101,25 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   return dia;
 });
 
-process.on('loaded', (event, args) => {
-  console.log('LOADED');
-  console.log(process.resourcesPath);
-  // console.log(process.getCPUUsage());
-  // console.log(process.getProcessMemoryInfo());
-  console.log(app.getAppPath());
-});
+// process.on('loaded', (event, args) => {
+//   console.log('LOADED');
+//   console.log(process.resourcesPath);
+//   // console.log(process.getCPUUsage());
+//   // console.log(process.getProcessMemoryInfo());
+//   console.log(app.getAppPath());
+// });
 
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1100,
-    height: 650,
+    width: 1200,
+    height: 800,
     autoHideMenuBar: true,
+    backgroundColor: "#2c2c2e",
+    minWidth: 600,
+    minHeight: 300,
+    title: "Beyond RGB",
+    icon: path.join(__dirname, '../../assets/icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -106,23 +141,3 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-
-app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

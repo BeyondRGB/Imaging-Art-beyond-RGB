@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { currentPage } from "@util/stores";
+  import { currentPage, viewState } from "@util/stores";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
 
   export let size = 0.01;
+  export let trueSize;
   export let show = true;
 
   export let shadowPos;
   export let trueShadowPos;
-
-  export let dataURL;
 
   export let loading;
 
@@ -86,6 +85,8 @@
           addOverlay();
         }, 150);
       }
+    } else if (viewer?.world) {
+      trueSize = viewer.world.getItemAt(0).getContentSize().x * size;
     }
   } else {
     if (viewer) {
@@ -98,7 +99,7 @@
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image (Spec Viewer)");
     let temp = new Image();
-    temp.src = dataURL;
+    temp.src = $viewState.colorManagedImage.dataURL;
 
     imageUrl = temp.src;
 
@@ -158,8 +159,6 @@
     overTracker = new OpenSeadragon.MouseTracker({
       element: "specView-brush",
       clickHandler: function (e) {
-        console.log("PRESS");
-        console.log(viewer);
         if (viewer !== null) {
           var overlay = viewer.getOverlayById("specView-brush");
           var overlayShadow = viewer.getOverlayById("specView-brush-shadow");
@@ -226,6 +225,7 @@
           )
         );
         overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+        trueSize = viewer.world.getItemAt(0).getContentSize().x * size;
       }
     } catch (e) {
       console.log(e);
