@@ -1,16 +1,35 @@
 <script lang="ts">
   import TextLogo from "@assets/TextLogo.svg";
+  import About from "@root/components/About.svelte";
   import { currentPage, modal } from "@util/stores";
   import { fade } from "svelte/transition";
-  import { CrosshairIcon, ApertureIcon } from "svelte-feather-icons";
+  import {
+    CrosshairIcon,
+    ApertureIcon,
+    InfoIcon,
+    XCircleIcon,
+  } from "svelte-feather-icons";
 
   function handleClick(page) {
     currentPage.set(page);
     modal.set(null);
   }
+
+  let showAbout = false;
 </script>
 
 <main>
+  {#if showAbout}
+    <div class="aboutContent">
+      <div class="aboutBg" on:click={() => (showAbout = false)} />
+      <div class="aboutBox">
+        <button class="closeBtn" on:click={() => (showAbout = false)}
+          ><XCircleIcon size="1.5x" /></button
+        >
+        <About />
+      </div>
+    </div>
+  {/if}
   <div class="content">
     <div id="welcome">
       <h1 in:fade={{ duration: 1000, delay: 1000 }} class="dark:text-gray-400">
@@ -37,6 +56,13 @@
           <h2>View</h2>
         </div>
         <span> View a previously-processed imaged set </span>
+      </button>
+      <button on:click={() => (showAbout = true)} class="homeBtn">
+        <div class="btnTitle">
+          <InfoIcon size="1.25x" />
+          <h2>About</h2>
+        </div>
+        <span> About the program </span>
       </button>
     </div>
   </div>
@@ -65,6 +91,19 @@
     /* transform: scale(0.5); */
     pointer-events: none;
     @apply h-[10vh];
+  }
+  .aboutContent {
+    @apply absolute w-full h-full flex justify-center items-center;
+  }
+  .aboutBg {
+    @apply absolute w-full h-full bg-black/40 flex justify-center items-center;
+  }
+  .aboutBox {
+    @apply absolute w-1/2 h-auto z-[9999];
+  }
+  .closeBtn {
+    @apply absolute right-0 m-2 bg-transparent ring-0 hover:bg-red-400/50
+            p-1;
   }
 
   .btnTitle {

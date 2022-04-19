@@ -2,12 +2,6 @@
   import Switch from "@components/Switch.svelte";
   import { appSettings } from "@util/stores";
   import { modal } from "@util/stores";
-
-  import SelectBtn from "@components/SelectBtn.svelte";
-  function handle() {
-    modal.set(null);
-  }
-  $: console.log($appSettings);
 </script>
 
 <main>

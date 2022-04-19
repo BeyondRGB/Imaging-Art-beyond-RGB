@@ -2,22 +2,29 @@
 	export let routes;
 	export let pages;
 	import { fade, fly } from "svelte/transition";
-	import { currentPage, appSettings, modal } from "@util/stores";
+	import { currentPage, appSettings, modal, serverError } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 	import RefDataModal from "@components/RefDataModal.svelte";
+	import ServerError from "@components/ServerError.svelte";
 
 	let showModal = false;
 	$: if (
 		$modal === "Settings" ||
 		$modal === "Home" ||
 		"CustomRefData" ||
-		"CustomRefDataVer"
+		"CustomRefDataVer" ||
+		"ServerError"
 	) {
 		showModal = true;
 	} else {
 		showModal = false;
 	}
 	$: console.log($currentPage);
+
+	$: if ($serverError != null) {
+		console.log("Encountered Server Error");
+		$modal = "ServerError";
+	}
 </script>
 
 <div
@@ -70,6 +77,15 @@
 	{:else if $modal === "CustomRefDataVer"}
 		<Modal
 			component={RefDataModal}
+			customExit
+			on:close={() => {
+				showModal = false;
+				$modal = null;
+			}}
+		/>
+	{:else if $modal === "ServerError"}
+		<Modal
+			component={ServerError}
 			customExit
 			on:close={() => {
 				showModal = false;

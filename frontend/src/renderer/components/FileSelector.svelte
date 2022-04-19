@@ -9,7 +9,6 @@
   let ipcResponse;
   const temp = async () => {
     ipcResponse = await window.electron.handle({ type, filter });
-    console.log(ipcResponse);
   };
   $: if (ipcResponse) {
     if (!ipcResponse.canceled) {

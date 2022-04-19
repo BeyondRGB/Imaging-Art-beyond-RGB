@@ -13,7 +13,6 @@
   let inputData = [];
 
   $: if (data.length > 1) {
-    console.log("Creating InputData");
     inputData = [];
     wavelengthArray.forEach((element, i) => {
       inputData.push({
@@ -54,7 +53,7 @@
   <LineChart
     data={inputData}
     options={{
-      title: `Estimate Spectrum (${parseFloat(trueShadowPos?.left).toFixed(
+      title: `Estimated Spectrum (${parseFloat(trueShadowPos?.left).toFixed(
         1
       )}, ${parseFloat(trueShadowPos?.top).toFixed(1)})`,
       axes: {
@@ -65,7 +64,7 @@
           limitDomainToBins: true,
         },
         left: {
-          title: "",
+          title: "Reflectance (%)",
           mapsTo: "intensity",
           percentage: true,
         },
@@ -96,7 +95,7 @@
   }
   .line-chart .bx--cc--scatter circle {
     fill-opacity: 1;
-    r: 5;
+    r: 6;
     stroke: none;
   }
 

@@ -8,7 +8,6 @@
     inline,
   } from "@floating-ui/dom";
   import { processState } from "@util/stores";
-  import { onDestroy, onMount } from "svelte";
   import { ImageIcon } from "svelte-feather-icons";
 
   export let filename = "Empty...";
