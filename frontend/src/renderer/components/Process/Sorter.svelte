@@ -76,7 +76,9 @@
               bind:checked={targetToggle}
             />
 
-            <label for="targetToggle">Seperate Target Image</label>
+            <label for="targetToggle"
+              >Target and object are in separate images</label
+            >
           </div>
           <button
             id="removeBtn"
@@ -91,7 +93,11 @@
                 class:hide={field[0].includes("target") && !targetToggle}
               >
                 {#if i % 2 === 0}
-                  <span class="fieldTitle">{field[0].slice(0, -1)}</span>
+                  {#if i === 0}
+                    <span class="fieldTitle">object</span>
+                  {:else}
+                    <span class="fieldTitle">{field[0].slice(0, -1)}</span>
+                  {/if}
                 {/if}
                 <div class="rowBody">
                   {#if i < 2}

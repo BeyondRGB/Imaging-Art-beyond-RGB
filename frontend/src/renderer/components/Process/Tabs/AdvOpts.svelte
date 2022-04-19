@@ -17,7 +17,6 @@
 <main>
   <left>
     <h1>Advanced Options</h1>
-    <p>Warning: Only select Advanced Options if you know what you are doing!</p>
   </left>
   <right>
     <div class="settings">

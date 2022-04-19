@@ -275,7 +275,7 @@
     }
   }
 
-  $: if (viewer) {
+  $: if (viewer && !viewer.isOpen()) {
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image");
     let temp = new Image();
@@ -381,8 +381,26 @@
         <div class="layout">
           <div class="gridBox" id={`gBox-${i}`}>
             {#each [...Array(target.rows * target.cols).keys()].map((i) => i + 1) as boxIndex}
-              <div class="line" class:ver={i === 1}>
-                <div class:target={i === 0} class:verTarget={i === 1} />
+              <div
+                class="line"
+                class:ver={i === 1}
+                class:whitePoint={i !== 1 &&
+                  target.whitePatch.row != null &&
+                  target.whitePatch.col != null &&
+                  target.whitePatch.row +
+                    (target.whitePatch.col - 1) * target.rows ===
+                    boxIndex}
+              >
+                <div
+                  class:target={i === 0}
+                  class:verTarget={i === 1}
+                  class:whitePoint={i !== 1 &&
+                    target.whitePatch.row != null &&
+                    target.whitePatch.col != null &&
+                    target.whitePatch.row +
+                      (target.whitePatch.col - 1) * target.rows ===
+                      boxIndex}
+                />
                 <!-- <span class="targetNum"><svg><text>{boxIndex}</text></svg></span> -->
               </div>
             {/each}
@@ -550,6 +568,19 @@
     border-color: hsla(var(--verfiy_hue), 100%, 50%, 0.5);
     width: var(--verify_size);
     height: var(--verify_size);
+    @apply border-[3px] rounded-none;
+  }
+  .line.whitePoint {
+    background: radial-gradient(
+      circle at center,
+      transparent 80%,
+      hsla(0, 0%, 100%, 1) 80%
+    );
+    border-color: hsla(0, 0%, 100%, 1);
+  }
+  .line > .target.whitePoint {
+    border: dashed;
+    border-color: hsla(0, 0%, 100%, 1);
     @apply border-[3px] rounded-none;
   }
 

@@ -10,6 +10,7 @@
   import { ChevronDownIcon, ChevronUpIcon } from "svelte-feather-icons";
   export let values: string[];
   export let selected;
+  export let invalid = false;
   export let isFile = true;
 
   let show = false;
@@ -49,7 +50,11 @@
   <div class="background" on:click={() => (show = false)} />
 {/if}
 
-<button class="refDataBtn" on:click={toggleDropdown} bind:this={btnRef}
+<button
+  class="refDataBtn"
+  class:invalid
+  on:click={toggleDropdown}
+  bind:this={btnRef}
   ><span class="btnText">{isFile ? selected.slice(0, -4) : selected}</span>
   <div class="iconSqu">
     {#if show}
@@ -81,6 +86,9 @@
     @apply bg-gray-800/75 z-50 text-sm flex justify-between items-center
           gap-1 p-0 pl-1;
   }
+  .invalid {
+    @apply focus:ring-red-600;
+  }
   .body {
     @apply bg-gray-600 z-50 hidden fixed;
   }
@@ -95,6 +103,9 @@
   }
   .iconSqu {
     @apply bg-blue-600/75 h-full w-full rounded-r-lg p-0.5 py-1;
+  }
+  .invalid .iconSqu {
+    @apply bg-red-600;
   }
   .btnText {
     @apply p-0.5 py-1 whitespace-nowrap;
