@@ -6,6 +6,7 @@
     connect,
     currentPage,
     messageStore,
+    resetProcess,
   } from "@util/stores";
   import ImageViewer from "@components/ImageViewer.svelte";
 
@@ -15,42 +16,9 @@
   let pipelineProgress = {};
 
   function reset() {
-    $processState.currentTab = 0;
     pipelineComponents = {};
     pipelineProgress = {};
-    processState.set({
-      currentTab: 0,
-      completedTabs: [false, false, false, false],
-      pipelineComplete: false,
-      destDir: "",
-      imageFilePaths: [],
-      thumbnailID: null,
-      colorTargetID: null,
-      CMID: null,
-      imageThumbnails: {},
-      outputImage: { dataURL: "", name: "Waiting..." },
-      artStacks: [
-        {
-          id: 1,
-          name: "Art 1",
-          colorTargetImage: { dataURL: "", filename: "" },
-          verificationTargetImage: { dataURL: "", filename: "" },
-          colorTarget: {},
-          verificationTarget: {},
-          sharpenString: "N",
-          fields: {
-            imageA: [],
-            imageB: [],
-            targetA: [],
-            targetB: [],
-            flatfieldA: [],
-            flatfieldB: [],
-            darkfieldA: [],
-            darkfieldB: [],
-          },
-        },
-      ],
-    });
+    resetProcess();
   }
 
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {

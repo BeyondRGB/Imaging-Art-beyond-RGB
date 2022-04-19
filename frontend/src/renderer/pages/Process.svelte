@@ -4,6 +4,7 @@
     processState,
     sendMessage,
     viewState,
+    serverError,
   } from "@util/stores";
 
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
@@ -105,6 +106,15 @@
         // base64 output handler
         console.log("Base64 From Server");
         $processState.outputImage = temp["ResponseData"];
+      } else if (temp["ResponseType"] === "Error") {
+        // Error handler
+        if (temp["ResponseData"]["critical"]) {
+          $serverError = {
+            sender: temp["ResponseData"]["sender"],
+            message: temp["ResponseData"]["message"],
+          };
+          console.log({ SERVERERROR: $serverError });
+        }
       }
     } catch (e) {
       console.log(e);
