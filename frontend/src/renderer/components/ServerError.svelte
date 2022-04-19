@@ -37,16 +37,18 @@
     </div>
     <div class="btns">
       <button
+        class="retry"
         on:click={() => {
           resendMessage();
           handleClose();
         }}>Retry</button
       >
       <button
+        class="reset"
         on:click={() => {
           resetProcess();
           handleClose();
-        }}>Reset</button
+        }}>Reset Process</button
       >
     </div>
   </div>
@@ -81,9 +83,12 @@
     @apply flex flex-col p-2 bg-gray-600;
   }
   .btns {
-    @apply bg-red-400 flex justify-end gap-2 p-1;
+    @apply flex justify-end gap-2 p-1;
   }
   .btns button {
-    @apply p-2;
+    @apply p-2 text-lg;
+  }
+  .reset {
+    @apply bg-blue-600;
   }
 </style>
