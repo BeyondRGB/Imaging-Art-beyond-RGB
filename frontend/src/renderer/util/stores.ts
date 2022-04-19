@@ -15,6 +15,8 @@ export const viewState = writable({
   }
 });
 
+export const serverError = writable(null);
+
 // Page Stores
 export const customRefData = writable({
   calibration: null,
@@ -52,6 +54,44 @@ export const processState = writable({
       },
     },]
 });
+
+export function resetProcess() {
+  processState.set({
+    currentTab: 0,
+    completedTabs: [false, false, false, false],
+    pipelineComplete: false,
+    destDir: "",
+    imageFilePaths: [],
+    thumbnailID: null,
+    colorTargetID: null,
+    CMID: null,
+    imageThumbnails: {},
+    outputImage: { dataURL: "", name: "Waiting..." },
+    artStacks: [
+      {
+        id: 1,
+        name: "Art 1",
+        colorTargetImage: { dataURL: "", filename: "" },
+        verificationTargetImage: { dataURL: "", filename: "" },
+        colorTarget: {},
+        verificationTarget: {},
+        sharpenString: "N",
+        fields: {
+          imageA: [],
+          imageB: [],
+          targetA: [],
+          targetB: [],
+          flatfieldA: [],
+          flatfieldB: [],
+          darkfieldA: [],
+          darkfieldB: [],
+        },
+      },
+    ],
+  });
+}
+
+
 // Webstocket Stores
 export const messageStore = writable([]);
 export const messageLog = writable([]);
@@ -99,9 +139,18 @@ export function close() {
   socket.close();
 }
 
+let prevMessage;
 export const sendMessage = (message) => {
   if (socket.readyState === 1) {
     console.log({ SendMessage: message });
+    prevMessage = message;
     socket.send(message);
+  }
+};
+
+export const resendMessage = () => {
+  if (socket.readyState === 1) {
+    console.log({ ReSendMessage: prevMessage });
+    socket.send(prevMessage);
   }
 };

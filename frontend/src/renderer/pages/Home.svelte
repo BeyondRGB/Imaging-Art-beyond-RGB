@@ -1,8 +1,14 @@
 <script lang="ts">
   import TextLogo from "@assets/TextLogo.svg";
+  import About from "@root/components/About.svelte";
   import { currentPage, modal } from "@util/stores";
   import { fade } from "svelte/transition";
-  import { CrosshairIcon, ApertureIcon, InfoIcon } from "svelte-feather-icons";
+  import {
+    CrosshairIcon,
+    ApertureIcon,
+    InfoIcon,
+    XCircleIcon,
+  } from "svelte-feather-icons";
 
   function handleClick(page) {
     currentPage.set(page);
@@ -14,7 +20,15 @@
 
 <main>
   {#if showAbout}
-    <div class="aboutBox">Hi</div>
+    <div class="aboutContent">
+      <div class="aboutBg" on:click={() => (showAbout = false)} />
+      <div class="aboutBox">
+        <button class="closeBtn" on:click={() => (showAbout = false)}
+          ><XCircleIcon size="1.5x" /></button
+        >
+        <About />
+      </div>
+    </div>
   {/if}
   <div class="content">
     <div id="welcome">
@@ -78,8 +92,18 @@
     pointer-events: none;
     @apply h-[10vh];
   }
+  .aboutContent {
+    @apply absolute w-full h-full flex justify-center items-center;
+  }
+  .aboutBg {
+    @apply absolute w-full h-full bg-black/40 flex justify-center items-center;
+  }
   .aboutBox {
-    @apply absolute w-1/2 h-auto bg-red-500;
+    @apply absolute w-1/2 h-auto z-[9999];
+  }
+  .closeBtn {
+    @apply absolute right-0 m-2 bg-transparent ring-0 hover:bg-red-400/50
+            p-1;
   }
 
   .btnTitle {
