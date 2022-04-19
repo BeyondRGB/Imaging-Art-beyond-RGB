@@ -54,7 +54,7 @@ At the end of every image processing pipeline our application generates a number
 At the end of the image processing pipeline all of the data collected throughout the process is written out to results files. User readable .csv files are generated  using the strategy pattern. For each .csv output file the ResultsProcess Component selects a formatting strategy, then provides it the CalibrationResults and a file output stream. 
 
 * **BTRGB Output**<br>
-Finally, our application outputs a project.btrgb file that contains all information collected throughout the process in a JSON format. Included in this file is a list of all output file names, and all CalibrationResults instances in a serialized format. This file is required to view any information about the ImageProcessing process. Every request that the frontend makes regarding viewing results, specifies a specific project.btrgb. Using this file, the application can identify what ColorManaged image to open, or extract any results information and reconstruct the CalibrationResults instance. To aid in working with these .btrgb files we have included a static Jsonafiable::json_from_file(<file_path>) that will read in a project file and return the contents of the file as a JSON object.
+Finally, our application outputs a project.btrgb file that contains all information collected throughout the process in a JSON format. Included in this file is a list of all **output** `file names`, and all `CalibrationResults` instances in a serialized format. This file is required to view any information about the ImageProcessing process. Every request that the frontend makes regarding viewing results, specifies a specific project.btrgb. Using this file, the application can identify what ColorManaged image to open, or extract any results information and reconstruct the CalibrationResults instance. To aid in working with these .btrgb files we have included a static `Jsonafiable::json_from_file(<file_path>)` that will **read** in a project file and **return** the contents of the file as a **JSON object**.
 
 ## CommunicationsObj
 The `CommunicationsObj` is the key to the backend being able to send updates/data back to the front end and is the interface to our communications API for the backend. It maintains everything needed to send messages related to specific requests. Every request that comes in contains an id that is given to the commsObj created to represent the request. The `CommunicationObj` class includes a specific method for each response type as specified by our communications API and formates these responses accordingly.
@@ -66,3 +66,10 @@ The `ArtObject` class is essentially a storage facility for all data used/collec
 Diagram 9. 
 
 ![Diagram_10](./resources/pipeline.png)
+
+
+## btrgb::Image
+
+## Image Reading
+
+## Image Writing
