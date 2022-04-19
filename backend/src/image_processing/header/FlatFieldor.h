@@ -9,7 +9,8 @@ class FlatFieldor : public LeafComponent{
 private:
     float w;
     void wCalc(float pAvg, float wAvg, double yRef);
-    void pixelOperation(int h, int wid, int c, btrgb::Image* a1, btrgb::Image* a2, btrgb::Image* wh1, btrgb::Image* wh2, btrgb::Image* d1, btrgb::Image* d2);
+    void pixelOperation(int h, int wid, int c, btrgb::Image* a, btrgb::Image* wh, btrgb::Image* d, btrgb::Image* ac);
+
 public:
     FlatFieldor() : LeafComponent("Flat Fielding"){}
     void execute(CommunicationObj* comms, btrgb::ArtObject* images) override;
