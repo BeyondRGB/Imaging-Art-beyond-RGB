@@ -192,18 +192,9 @@
   />
 </div>
 
-<!-- <div class="heatmap-number-grid">
-  {#each valueGrid.reverse() as row, i}
-    {#each row as col, i}
-      <p class="heatmap-value">
-        {col.value}
-      </p>
-    {/each}
-  {/each}
-</div> -->
 <style lang="postcss" global>
   .scatter-charts {
-    @apply w-full flex justify-center;
+    @apply w-full flex justify-center gap-10;
   }
   .bx--chart-holder {
     @apply aspect-square w-auto;
@@ -211,5 +202,9 @@
   .bx--cc--scatter circle {
     fill-opacity: 1;
     r: 7;
+  }
+
+  .scatter-charts .bx--cc--scatter circle {
+    stroke: black !important;
   }
 </style>

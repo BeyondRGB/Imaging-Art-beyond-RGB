@@ -195,7 +195,7 @@ public:
 			std::string error = "Number('" + key + "') not found";
 			throw std::exception();
 		}
-		return this->json_obj.get(key).as<T>();
+		return this->json_obj[key].as<T>();
 	}
 
 	template <typename T>

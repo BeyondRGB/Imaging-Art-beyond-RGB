@@ -93,7 +93,14 @@ namespace btrgb {
 		}
 
 		/* Set software field. */
-		TIFFSetField(img_out, TIFFTAG_SOFTWARE, "BTRGB v0.0.5");
+		TIFFSetField(img_out, TIFFTAG_SOFTWARE, "BTRGB v1.0.0");
+
+		/* Set make and model if available. */
+		btrgb::exif tags = im->getExifTags();
+		if(tags.make != btrgb::UNSPECIFIED)
+			TIFFSetField(img_out, TIFFTAG_MAKE, tags.make.c_str());
+		if(tags.model != btrgb::UNSPECIFIED)
+			TIFFSetField(img_out, TIFFTAG_MODEL, tags.model.c_str());
 
 		/* The written data needs to be broken up into "Strips" to make buffering easier 
 		* for TIFF readers. Rows-per-strip needs to be tagged, this is the number of 

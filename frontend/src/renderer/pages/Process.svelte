@@ -1,13 +1,12 @@
 <script lang="ts">
   import {
-    currentPage,
     messageStore,
     processState,
     sendMessage,
     viewState,
+    serverError,
   } from "@util/stores";
 
-  import Settings from "@components/Process/Settings.svelte";
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
   import ImportImages from "@components/Process/Tabs/ImportImages.svelte";
   import SelectDest from "@components/Process/Tabs/SelectDest.svelte";
@@ -15,7 +14,6 @@
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
   import Layout from "@components/Process/Layout.svelte";
-  import { time_ranges_to_array } from "svelte/internal";
   let tabList;
 
   let showDialog = false;
@@ -108,6 +106,15 @@
         // base64 output handler
         console.log("Base64 From Server");
         $processState.outputImage = temp["ResponseData"];
+      } else if (temp["ResponseType"] === "Error") {
+        // Error handler
+        if (temp["ResponseData"]["critical"]) {
+          $serverError = {
+            sender: temp["ResponseData"]["sender"],
+            message: temp["ResponseData"]["message"],
+          };
+          console.log({ SERVERERROR: $serverError });
+        }
       }
     } catch (e) {
       console.log(e);
@@ -132,12 +139,7 @@
         name: binaryName,
       };
     } else if (binaryFor === "ColorManaged") {
-      //$viewState.colorManagedImages[binaryName] = temp.src;
-      console.log($viewState.colorManagedImages);
-      // $viewState.colorManagedImages[binaryID]["dataURL"] = temp.src;
-      // $viewState.colorManagedImages[binaryID]["filename"] = binaryName;
-      console.log(binaryID);
-      $viewState.colorManagedImages[binaryID] = {
+      $viewState.colorManagedImage = {
         dataURL: temp.src,
         name: binaryName,
       };
@@ -172,7 +174,7 @@
   $: console.log($processState.artStacks[0].colorTarget);
   $: console.log({ processRequest });
 
-  $: {
+  $: if (processRequest != null) {
     if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
       processRequest.RequestData.targetLocation["refData"][
         "standardObserver"
@@ -244,18 +246,23 @@
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
     {#if tabs[$processState.currentTab + 1]?.name === "Advanced Options"}
-      <button on:click={nextTab}>Go to Advanced Options</button>
+      <button on:click={nextTab}>Optional Filtering</button>
       <button
         on:click={() => {
           if ($processState.completedTabs[$processState.currentTab]) {
             $processState.currentTab += 2;
           }
         }}
-        class="nextBtn">Next: Skip Advanced Options</button
+        class="nextBtn">Next: Skip Optional Filtering</button
       >
     {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
-      <button on:click={() => (showDialog = true)} class="nextBtn"
-        >Begin Processing</button
+      <button
+        on:click={() => {
+          if ($processState.completedTabs[$processState.currentTab]) {
+            showDialog = true;
+          }
+        }}
+        class="nextBtn">Begin Processing</button
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
@@ -266,7 +273,7 @@
 
   <div class={`confirmModal ${showDialog ? "show" : ""}`}>
     <div class="confirmDialog">
-      <p>Ensure all information is correct before confirming</p>
+      <p>Are you sure you're ready to proceed?</p>
       <div class="btnGroup">
         <button class="cancel" on:click={() => (showDialog = false)}
           >Cancel</button

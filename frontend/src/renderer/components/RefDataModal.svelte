@@ -1,9 +1,8 @@
 <script lang="ts">
   import Switch from "@components/Switch.svelte";
-  import { appSettings, processState } from "@util/stores";
+  import { appSettings, processState, customRefData } from "@util/stores";
   import { modal } from "@util/stores";
   import { DownloadCloudIcon } from "svelte-feather-icons";
-  import SelectBtn from "@components/SelectBtn.svelte";
   import RefDataTemplate from "@assets/RefDataTemplate.csv?url";
   import FileSelector from "@components/FileSelector.svelte";
 
@@ -20,11 +19,11 @@
     if (filePaths) {
       if ($modal === "CustomRefData") {
         console.log("Saving to color target");
-        $processState.artStacks[0].colorTarget.refData = {
+        $customRefData.calibration = {
           name: filePaths[0],
         };
       } else if ($modal === "CustomRefDataVer") {
-        $processState.artStacks[0].verificationTarget.refData = {
+        $customRefData.verification = {
           name: filePaths[0],
         };
       }
@@ -46,7 +45,7 @@
         href={RefDataTemplate}
         download="RefDataTemplate.csv"
         ><button class="downloadBtn">
-          Download Template
+          Open Template
           <div class="iconBox"><DownloadCloudIcon size="1.25x" /></div>
         </button></a
       >
@@ -55,7 +54,7 @@
     <div class="inputDiv">
       <FileSelector
         bind:filePaths
-        label={"Select Refernce Data"}
+        label={"Select Reference Data"}
         type="Single"
         filter="csv"
       />

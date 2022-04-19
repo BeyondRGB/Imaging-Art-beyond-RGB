@@ -16,6 +16,8 @@ class ImageReader: public LeafComponent {
         reader_strategy _current_strategy = reader_strategy::none;
         btrgb::ImageReaderStrategy* _reader = nullptr;
         void _set_strategy(reader_strategy strategy);
+        void _average_greens(cv::Mat& input, cv::Mat& output);
+
 
 };
 

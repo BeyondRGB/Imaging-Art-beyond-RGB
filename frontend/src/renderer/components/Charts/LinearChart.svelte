@@ -140,4 +140,7 @@
     fill-opacity: 1;
     r: 7;
   }
+  .liner-chart .bx--cc--scatter circle {
+    stroke: black !important;
+  }
 </style>
