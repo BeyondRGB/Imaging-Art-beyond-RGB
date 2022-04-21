@@ -11,10 +11,12 @@ Olivia Kuzio
 ### Senior Project Team
 Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 
-# Documentaiont
-* [Architecture](./docs/Architecture.md)
-* [CommunicationsAPI](./docs/CommunicationsAPI.md)
-* [BackednDesign](./docs/BackendDesign.md)
+# Documentaion
+* [Architecture]([./docs/Architecture.md](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki))
+* [CommunicationsAPI]([./docs/CommunicationsAPI.md](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API))
+* [BackednDesign]([./docs/BackendDesign.md](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API))
+* [TIFF Output](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/TIFF-Output-Images)
+* [BeyondRGB Under The Hood](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/BeyondRGB-Under-The-Hood)
 
 # Development and release environment set-up
 ## Windows 10/11
