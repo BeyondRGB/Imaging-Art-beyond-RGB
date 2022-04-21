@@ -12,9 +12,9 @@ Olivia Kuzio
 Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 
 # Documentaion
-* [Architecture]([./docs/Architecture.md](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki))
-* [CommunicationsAPI]([./docs/CommunicationsAPI.md](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API))
-* [BackednDesign]([./docs/BackendDesign.md](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API))
+* [Architecture](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki)
+* [CommunicationsAPI](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API)
+* [BackednDesign](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API)
 * [TIFF Output](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/TIFF-Output-Images)
 * [BeyondRGB Under The Hood](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/BeyondRGB-Under-The-Hood)
 
