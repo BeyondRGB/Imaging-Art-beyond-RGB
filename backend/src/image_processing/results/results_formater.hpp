@@ -13,6 +13,7 @@ class ResultsFormater{
         GENERAL, CALIBRATION, VERIFICATION
     };
 
+    virtual ~ResultsFormater() {}
     virtual void write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type) = 0;
 
 };
