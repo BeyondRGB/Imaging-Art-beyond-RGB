@@ -149,9 +149,10 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     // cv::imwrite("matches.tiff", imMatches);
     cv::Mat matchfloat;
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
-    btrgb::Image *btrgb_matches(new btrgb::Image("matches"));
+    std::unique_ptr<btrgb::Image> btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
-    comms->send_binary(btrgb_matches, btrgb::FULL);
+    comms->send_binary(btrgb_matches.get(), btrgb::FULL);
+    btrgb_matches.reset(nullptr);
 
     // Find homography
     prog = this->calc_progress(0.75, (float)cycle, (float)cycle_count);

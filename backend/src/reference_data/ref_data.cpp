@@ -34,11 +34,11 @@ RefData::~RefData() {
 	}
 	for (int row = 0; row < this->row_count; row++) {
 		for (int col = 0; col < this->col_count; col++) {
-			delete this->color_patches[row][col];
+			delete this->color_patches[row][col]; /* ColorPatch pointer */
 		}
-		delete this->color_patches[row];
+		delete[] this->color_patches[row]; /* array of pointers */
 	}
-	delete this->color_patches;
+	delete[] this->color_patches; /* array of double pointers */
 }
 
 IlluminantType RefData::get_illuminant(std::string illum_str){
