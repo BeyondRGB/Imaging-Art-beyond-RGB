@@ -7,7 +7,7 @@ RefDataArray::RefDataArray(int size) {
 
 RefDataArray::~RefDataArray() {
 	if (nullptr != this->data)
-		delete data;
+		delete[] data; /* array of double */
 }
 
 double RefDataArray::get_by_index(int index) {

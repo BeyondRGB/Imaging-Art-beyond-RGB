@@ -73,25 +73,25 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
 
 
     //Image set 1-----------------------------------------------------------
-    btrgb::Image* art1copy = new btrgb::Image("art1copy");
+    std::unique_ptr<btrgb::Image> art1copy(new btrgb::Image("art1copy"));
     cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
     art1copy->initImage(copy);
 
-    pixelOperation(height, width, channels, art1, white1, dark1, art1copy);
+    pixelOperation(height, width, channels, art1, white1, dark1, art1copy.get());
     comms->send_progress(0.5, this->get_name());
 
-    delete art1copy;
+    art1copy.reset(nullptr);
 
 
     //Image set 2-----------------------------------------------------------
-    btrgb::Image* art2copy = new btrgb::Image("art2copy");
+    std::unique_ptr<btrgb::Image> art2copy(new btrgb::Image("art2copy"));
     cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
     art2copy->initImage(copy2);
 
-    pixelOperation(height, width, channels, art2, white2, dark2, art2copy);
+    pixelOperation(height, width, channels, art2, white2, dark2, art2copy.get());
     comms->send_progress(1, this->get_name());
 
-    delete art2copy;
+    art2copy.reset(nullptr);
 
 
     //If there are seperate targets needs to copy to do dead pixel detection
@@ -104,23 +104,23 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
 
 
         //Copy and delete instantly after operation
-        btrgb::Image* target1copy = new btrgb::Image("target1copy");
+        std::unique_ptr<btrgb::Image> target1copy(new btrgb::Image("target1copy"));
         cv::Mat tcopy = btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
         target1copy->initImage(tcopy);
 
-        pixelOperation(height, width, channels, target1, white1, dark1, target1copy);
+        pixelOperation(height, width, channels, target1, white1, dark1, target1copy.get());
 
-        delete target1copy;
+        target1copy.reset(nullptr);
 
 
         //Copy and delete instantly after operation
-        btrgb::Image* target2copy = new btrgb::Image("target2copy");
+         std::unique_ptr<btrgb::Image> target2copy(new btrgb::Image("target2copy"));
         cv::Mat tcopy2 = btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
         target2copy->initImage(tcopy2);
 
-        pixelOperation(height, width, channels, target2, white2, dark2, target2copy);
+        pixelOperation(height, width, channels, target2, white2, dark2, target2copy.get());
 
-        delete target2copy;
+        target2copy.reset(nullptr);
 
     }
 
