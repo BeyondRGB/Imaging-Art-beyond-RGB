@@ -62,6 +62,7 @@ void ProcessManager::start_process(std::shared_ptr<BackendProcess> process, std:
 	std::cout << "Finalizing Process Initialization" << std::endl;
 	if (nullptr == process) {
 		this->report_error("ProcessManager", "Unknown RequestType");
+		return;
 	}
 	process->set_coms_obj(coms_obj);
 	process->set_process_data(request_data);
