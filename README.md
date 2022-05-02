@@ -138,7 +138,7 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 ### Backend build
 - `cd backend` from project root.
 - If an additional dependency is ever added to "dependencies.txt", first run:
-  - `sh _config_environment.sh`
+  - `sh linux_config_environment.sh`
 - To build:
   - `sh linux_debug.sh` or `sh linux_release.sh`
   - Build automatically copied to fronted for testing.
