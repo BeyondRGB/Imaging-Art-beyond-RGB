@@ -131,6 +131,8 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 - `cd Imaging-Art-beyond-RGB`
 - `cd backend`
 - `sh linux_config_environment.sh`
+  - Vcpkg may fail and require you to install another command line tool.
+  - Once you install it, run the script again. It may fail again and require more command line tools to be installed.
   - Locally install Vcpkg and our dependencies (\~10 GB and \~30 minutes)
 - `cd ../frontend`
 - `npm ci`
