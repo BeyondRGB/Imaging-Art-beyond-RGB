@@ -24,7 +24,7 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 ## Windows 10/11
 - This set-up process was tested on a clean install of Windows with no prior Visual Studio installations.
 ### Install tools
-- https://gitforwindows.org/ 
+- https://gitforwindows.org/
   - Command line git is still needed for our scripts (even if you use GitHub desktop).
 - https://cmake.org/download/
 - https://visualstudio.microsoft.com/downloads/?q=build+tools
@@ -53,7 +53,7 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 - `cd .\backend\` from project root.
 - If an additional dependency is ever added to "dependencies.txt", first run:
   - `.\config_depends.bat`
-- To build: 
+- To build:
   - `.\win10_debug.bat` or `.\win10_release.bat`
   - Build automatically copied to fronted for testing.
 
@@ -74,3 +74,86 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
   - The release output can be found in "Imaging-Art-beyond-RGB\frontend\out\".
   - The release is a folder called "Beyond RGB-win32-x64" with an executable "Beyond RGB.exe".
 
+## Mac
+### Install tools
+- Xcode command line developer tools
+- Homebrew: https://brew.sh/
+- Git: `brew install git`
+- CMake: `brew install cmake`
+- pkgconfig: `brew install pkg-config`
+- Node.js: `brew install node`
+- Make sure your editor is configured for `C++20` syntax
+
+### Clone our github repository
+- `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
+- `cd Imaging-Art-beyond-RGB`
+
+### Set-up development & release environment:
+- `cd backend`
+- `sh osx_config_environment.sh`
+  - Locally install Vcpkg and our dependencies (\~10 GB and \~30 minutes)
+- `cd ../frontend`
+- `npm ci`
+
+### Backend build
+- `cd backend` from project root.
+- If an additional dependency is ever added to "dependencies.txt", first run:
+  - `sh osx_config_environment.sh`
+- To build:
+  - `sh osx_debug.sh` or `sh osx_release.sh`
+  - Build automatically copied to fronted for testing.
+
+### Fronted build
+- `cd frontend` from project root.
+- If frontend configuration is ever changed, first run:
+  - `npm ci`
+
+### Run:
+- `cd frontend` from project root.
+- `npm run preview` or `npm run dev`
+
+### Release
+- `cd backend` from project root.
+- `sh osx_release.sh`
+- `cd ../frontend`
+- `sh release_frontend.sh`
+  - The release output can be found in "Imaging-Art-beyond-RGB\frontend\out\".
+
+## Ubuntu
+
+### Install tools
+- `sudo apt install build-essential git cmake`
+- Node.js: https://nodejs.org/en/download/
+- Make sure your editor is configured for `C++20` syntax
+
+### Set-up
+- `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
+- `cd Imaging-Art-beyond-RGB`
+- `cd backend`
+- `sh linux_config_environment.sh`
+  - Locally install Vcpkg and our dependencies (\~10 GB and \~30 minutes)
+- `cd ../frontend`
+- `npm ci`
+
+### Backend build
+- `cd backend` from project root.
+- If an additional dependency is ever added to "dependencies.txt", first run:
+  - `sh _config_environment.sh`
+- To build:
+  - `sh linux_debug.sh` or `sh linux_release.sh`
+  - Build automatically copied to fronted for testing.
+
+### Fronted build
+- `cd frontend` from project root.
+- If frontend configuration is ever changed, first run:
+  - `npm ci`
+
+### Run:
+- `cd frontend` from project root.
+- `npm run preview` or `npm run dev`
+
+### Release
+- `cd backend` from project root.
+- `sh linux_release.sh`
+- `cd ../frontend`
+- `sh release_frontend.sh`
