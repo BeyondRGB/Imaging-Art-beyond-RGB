@@ -12,7 +12,7 @@ RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_ty
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	if(this->is_custom(file)){
-		std::cout << "Custom RefData: " << file << std::endl; 
+		std::cout << "Custom RefData: " << file << std::endl;
 		this->read_in_data(file);
 	}
 	else{
@@ -130,18 +130,22 @@ WhitePoints* RefData::get_white_pts(){
 }
 
 void RefData::read_in_data(std::string file_path) {
-	if( !this->open_file(file_path) ) 
+	if( !this->open_file(file_path) )
 		throw RefData_FailedToRead(file_path);
 	try{
 		std::string header = this->get_next_line();
 		this->identify_data_size(header);
 		this->init_data_storage();
 		this->pars_header(header);
-		
+
 		while (this->has_next_line()) {
 			std::string line = this->get_next_line();
 			this->pars_line(line);
 		}
+	}
+	catch(const RefData_ParssingError& e){
+		this->close_file();
+		throw;
 	}catch(std::exception e){
 		this->close_file();
 		throw RefData_ParssingError();
@@ -157,7 +161,11 @@ void RefData::pars_line(std::string line) {
 			try{
 				double item = this->get_next<double>(line);
 				this->color_patches[row][col]->append(item);
-			}catch(std::exception e){
+			} catch (const std::runtime_error& e) {
+				throw RefData_ParssingError("@("
+						+ std::to_string(row + 1) + ","
+						+ std::to_string(col + 1) + ")" + e.what());
+			} catch(std::exception e){
 				std::string msg = "Row: " + std::to_string(row+1) + " Col: " + std::to_string(col+1);
 				throw RefData_ParssingError(msg);
 			}
@@ -193,7 +201,7 @@ void RefData::identify_data_size(std::string header) {
 		}
 	}
 	int row_count = item_count / col_count;
-	this->row_count = row_count; 
+	this->row_count = row_count;
 	this->col_count = col_count;
 	if( row_count <= 0 || col_count <= 0){
 		throw RefData_ParssingError("Invalid File Format");
@@ -268,7 +276,7 @@ cv::Mat RefData::as_matrix(){
 	cv::Mat ref_data = cv::Mat_<double>(REFLECTANCE_SIZE, col_count, CV_32FC1);
 	for(int mat_row = 0; mat_row < ref_data.rows; mat_row++){
 		int wave_len = INDEX_TO_WAVELEN(mat_row);
-		// The Color patches are stored in 
+		// The Color patches are stored in
 			// A1, B1, C1, ..., K1
 			// A2, B2, C2, ..., K2
 			// ..., ..., ..., ..., ...
