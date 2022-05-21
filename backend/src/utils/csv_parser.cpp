@@ -54,6 +54,8 @@ bool CSVParser::has_one_item(std::string line, std::string delimiter) {
 std::string CSVParser::get_next_line() {
 	std::string line;
 	std::getline(this->file_m, line);
+	if(line.back() == '\r')
+		line.pop_back();
 	return line;
 }
 
