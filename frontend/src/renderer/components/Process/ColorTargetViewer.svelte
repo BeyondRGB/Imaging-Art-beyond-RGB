@@ -405,23 +405,6 @@
               </div>
             {/each}
           </div>
-
-          <div class="exp top group">
-            <button class="dec">
-              <MinusIcon size="1.5x" />
-            </button>
-            <button class="inc">
-              <PlusIcon size="1.5x" />
-            </button>
-          </div>
-          <div class="exp right group">
-            <button class="dec">
-              <MinusIcon size="1.5x" />
-            </button>
-            <button class="inc">
-              <PlusIcon size="1.5x" />
-            </button>
-          </div>
         </div>
         <div class="corner tl" />
         <div class="corner tr" />
