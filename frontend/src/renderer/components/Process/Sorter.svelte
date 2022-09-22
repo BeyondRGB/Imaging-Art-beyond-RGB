@@ -15,13 +15,11 @@
 
   function handleDndConsider(cid: number, field: string, e: CustomEvent) {
     const colIdx = $processState.artStacks.findIndex((c) => c.id === cid);
-    //const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
     $processState.artStacks[colIdx].fields[field] = e.detail.items;
     $processState.artStacks = [...$processState.artStacks];
   }
   function handleDndFinalize(cid: number, field: string, e: CustomEvent) {
     const colIdx = $processState.artStacks.findIndex((c) => c.id === cid);
-    //const fieldIdx = columns[colIdx].fields.findIndex((f) => f.name === field);
     $processState.artStacks[colIdx].fields[field] = e.detail.items;
     $processState.artStacks = [...$processState.artStacks];
   }
@@ -32,23 +30,6 @@
 
     $processState.artStacks = [...$processState.artStacks];
   }
-
-  function handleAddCol() {
-    console.log("ADD COL");
-    // $processState.artStacks = [
-    //   ...$processState.artStacks,
-    //   {
-    //     id: Date.now(),
-    //     name: `Art ${$processState.artStacks.length + 1}`,
-    //     fields: {
-    //       images: [],
-    //       whitefield: [],
-    //       darkfield: [],
-    //     },
-    //   },
-    // ];
-  }
-  let targetToggle = false;
 </script>
 
 <main>
@@ -69,17 +50,6 @@
       {#each $processState.artStacks as column (column.id)}
         <div class="column" animate:flip={{ duration: flipDurationMs * 2 }}>
           <h1>Image Stack</h1>
-          <div class="targetToggle">
-            <input
-              type="checkbox"
-              id="targetToggle"
-              bind:checked={targetToggle}
-            />
-
-            <label for="targetToggle"
-              >Target and object are in separate images</label
-            >
-          </div>
           <button
             id="removeBtn"
             on:click={() => handleCloseCol(column.id)}
@@ -90,7 +60,7 @@
               <!-- {#if field[0] != } -->
               <div
                 class="row"
-                class:hide={field[0].includes("target") && !targetToggle}
+                class:hide={field[0].includes("target") && Object.keys($processState.imageFilePaths).length <= 6}
               >
                 {#if i % 2 === 0}
                   {#if i === 0}
@@ -139,11 +109,6 @@
         </div>
       {/each}
     </section>
-    <!-- <button
-      id="addBtn"
-      on:click={handleAddCol}
-      class="dark:hover:bg-green-400/50">+</button
-    > -->
   </div>
 </main>
 
