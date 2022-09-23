@@ -64,7 +64,7 @@
     <div class="completedBox">
       <div class="completedOptions">
         <button on:click={() => handleComplete(0)}>View Image</button>
-        button disabled on:click={() => handleComplete(1)}
+        <button disabled on:click={() => handleComplete(1)}
           >Open File Location</button
         >
         <button on:click={() => handleComplete(2)}>Process Another Image</button
