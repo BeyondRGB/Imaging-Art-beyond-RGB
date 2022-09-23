@@ -52,8 +52,7 @@
       currentPage.set("SpecPicker");
       console.log({ RESETING: $currentPage });
     } else if (id === 1) {
-      console.log("trying to open filesystem")
-      window.open('file:///C:/Users/Keenan/Desktop/cheese/BeyondRGB_2022-09-22_16-14-25');
+      // open in election
     } else if (id === 2) {
       reset();
     }
@@ -65,7 +64,7 @@
     <div class="completedBox">
       <div class="completedOptions">
         <button on:click={() => handleComplete(0)}>View Image</button>
-        <button on:click={() => handleComplete(1)}
+        button disabled on:click={() => handleComplete(1)}
           >Open File Location</button
         >
         <button on:click={() => handleComplete(2)}>Process Another Image</button
