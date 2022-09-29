@@ -15,7 +15,7 @@
 
   let show = false;
   let btnRef;
-  let popRef;
+  // let popRef;
 
   // async function update() {
   //   const { x, y } = await computePosition(btnRef, popRef);

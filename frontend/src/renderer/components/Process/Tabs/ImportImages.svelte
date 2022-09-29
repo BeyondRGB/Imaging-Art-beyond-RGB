@@ -2,10 +2,11 @@
   import { processState, sendMessage, messageStore } from "@util/stores";
   import FileSelector from "@components/FileSelector.svelte";
   import ImageBubble from "@components/Process/ImageBubble.svelte";
+  import Dropzone from "svelte-file-dropzone";
 
   let filePaths = [];
   $: console.log(filePaths);
-  $: if (filePaths) {
+  /*$: if (filePaths) {
     $processState.imageFilePaths = filePaths.map((path) => {
       return {
         id: (
@@ -18,6 +19,12 @@
       };
     });
   }
+  */
+
+  let files = {
+    accepted: [],
+    rejected: []
+  };
 
   function getThumbnails() {
     console.log("Getting Thumbnails");
@@ -50,7 +57,6 @@
 <main>
   <left>
     <h1>Import Images</h1>
-    <p>Select the image set you would like to process</p>
   </left>
   <right>
     <div class="fileSelector">

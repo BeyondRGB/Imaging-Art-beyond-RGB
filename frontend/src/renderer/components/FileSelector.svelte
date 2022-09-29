@@ -1,5 +1,7 @@
 <script lang="ts">
   import { FilePlusIcon } from "svelte-feather-icons";
+  import { forEach } from "lodash";
+  import Dropzone from "svelte-file-dropzone";
   export let type = "File";
   export let filter = "None";
   export let label = "Select Files";
@@ -7,18 +9,63 @@
   export let icon = FilePlusIcon;
   export let largeText = false;
   let ipcResponse;
-  const temp = async () => {
-    ipcResponse = await window.electron.handle({ type, filter });
+  let files = {
+    accepted: [],
+    rejected: []
   };
+  // const temp (e) => {
+  //   console.log("drag");
+  //   ipcResponse = await window.electron.handle({ type, filter });
+  // }; 
   $: if (ipcResponse) {
     if (!ipcResponse.canceled) {
       filePaths = ipcResponse?.filePaths;
     }
   }
+
+  function handleFilesSelect(e) {
+    const { acceptedFiles, fileRejections } = e.detail;
+    files.accepted = [...files.accepted, ...acceptedFiles];
+    files.rejected = [...files.rejected, ...fileRejections];
+  
+    forEach(files.accepted, (f) =>{
+      filePaths.push({
+        id: f.path,
+        name: f.name
+      });
+    });
+    console.log(filePaths); 
+  }
+
 </script>
 
 <main>
-  <button
+  <Dropzone
+      on:drop={handleFilesSelect}
+      noClick
+      containerClasses="custom-dropzone">
+      <!-- <button
+        class="group"
+        class:largeText
+        on:click={async () => {
+          await temp();
+        }}
+        >{label}
+        <div class="icon">
+          <svelte:component this={icon} size="1.5x" />
+        </div>
+      </button> -->
+
+      <p>or</p>
+      <p>Drag and drop them here</p>
+  </Dropzone>
+  <ol>
+    {#each filePaths as item}
+      <li>{item}</li>
+    {/each}
+  </ol>
+
+  <!-- <button
     class="group"
     class:largeText
     on:click={async () => {
@@ -28,7 +75,7 @@
     <div class="icon">
       <svelte:component this={icon} size="1.5x" />
     </div></button
-  >
+  > -->
 </main>
 
 <style lang="postcss">
