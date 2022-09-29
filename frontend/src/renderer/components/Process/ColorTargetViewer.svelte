@@ -38,9 +38,10 @@
       showFullPageControl: false,
       preserveImageSizeOnResize: false,
       maxZoomPixelRatio: 30,
-      zoomPerScroll: 1.4,
+      zoomPerScroll: 1.15,
       // zoomPerScroll: 1.5,
       visibilityRatio: 1,
+      animationTime: 0.4,
     });
     mouseTracker = new OpenSeadragon.MouseTracker({
       element: viewer.canvas,
