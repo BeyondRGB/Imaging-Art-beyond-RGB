@@ -35,8 +35,9 @@
       showFullPageControl: false,
       preserveImageSizeOnResize: true,
       maxZoomPixelRatio: 30,
-      zoomPerScroll: 1.4,
+      zoomPerScroll: 1.15,
       visibilityRatio: 0.7,
+      animationTime: 0.4,
     });
 
     viewer.addHandler("zoom", handleZoom);
