@@ -1,5 +1,16 @@
+
+
+<script>
+  import HeapBox from "@components/Process/Dropbox.svelte";
+  let items = [];
+
+</script>
+<hr>
+<HeapBox items={items}/>
+
+<!--
 <script lang="ts">
-  import HeapBox from "@components/Process/HeapBox.svelte";
+  import HeapBox from "@components/Process/Dropbox.svelte";
   import { processState, sendMessage } from "@util/stores";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
@@ -70,7 +81,7 @@
           >
           <div class="colBody">
             {#each Object.entries(column.fields) as field, i (field[0])}
-              <!-- {#if field[0] != } -->
+
               <div
                 class="row"
                 class:hide={field[0].includes("target") && hideTargetDropZones()}
@@ -124,7 +135,7 @@
     </section>
   </div>
 </main>
-
+-->
 <style lang="postcss">
   main {
     @apply flex flex-col justify-center items-center;
@@ -198,3 +209,4 @@
               text-center text-3xl p-0 pb-1;
   }
 </style>
+

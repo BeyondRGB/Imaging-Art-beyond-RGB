@@ -33,6 +33,7 @@ export const processState = writable({
   CMID: null,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
+  testDragDropZone: [],
   artStacks: [
     {
       id: 1,
