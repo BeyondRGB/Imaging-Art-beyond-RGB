@@ -64,7 +64,7 @@
     <Dropzone
             on:drop={handleFilesSelect}
             noClick
-            containerStyles="background-color: #1D1C1E; border-radius: 10px;"
+            containerStyles="background-color: #1D1C1E; border-radius: 10px; height: 100px; align-text: center"
             disableDefaultStyles
             containerClasses="custom-dropzone">
       Drag and Drop Files Here
