@@ -25,7 +25,7 @@
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
-    { name: "Specify File Roles", component: SpecFileRoles },
+    { name: "Specifiy File Roles", component: SpecFileRoles },
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },

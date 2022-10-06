@@ -15,7 +15,6 @@
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import ImageBubble from "./ImageBubble.svelte";
-  import { isEmpty, countBy } from 'lodash';
 
   const flipDurationMs = 150;
   function handleDndConsiderCol(e: CustomEvent) {
@@ -42,18 +41,6 @@
 
     $processState.artStacks = [...$processState.artStacks];
   }
-
-  /**
-   * This page needs refactoring, this shouldn't be the necessary check to make this work.
-   */
-  const hideTargetDropZones = function () {
-    let filledDropZones = countBy($processState.artStacks[0].fields, function (f) {
-      return !isEmpty(f);
-    }).true;
-
-    return Object.keys($processState.imageFilePaths).length + (filledDropZones || 0) <= 6;
-  };
-
 </script>
 
 <main>
@@ -84,7 +71,7 @@
 
               <div
                 class="row"
-                class:hide={field[0].includes("target") && hideTargetDropZones()}
+                class:hide={field[0].includes("target") && Object.keys($processState.imageFilePaths).length <= 6}
               >
                 {#if i % 2 === 0}
                   {#if i === 0}
