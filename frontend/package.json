@@ -53,6 +53,8 @@
     }
   },
   "dependencies": {
+    "bootbox-svelte": "^1.0.9",
+    "electron-alert": "^0.1.20",
     "electron-squirrel-startup": "^1.0.0",
     "get-port-sync": "^1.0.1",
     "html2canvas": "^1.4.1",
