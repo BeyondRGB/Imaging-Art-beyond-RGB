@@ -3,9 +3,6 @@
   let outputDir: string;
   export let nextTab: any;
 
-  import Sorter from "@components/Process/Sorter.svelte";
-  // import FileSelector from "@components/Preprocess/FileSelector.svelte";
-
   $: console.log(files);
 </script>
 
@@ -15,7 +12,6 @@
     <FileSelector title="Export Destination:" directory /> -->
     <div>
       Specify File Roles:
-      <Sorter />
     </div>
     <br />
     <div>Advanced: [WIP]</div>
