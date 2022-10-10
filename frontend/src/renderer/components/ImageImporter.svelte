@@ -4,6 +4,7 @@
     import { forEach, find } from "lodash";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
     import Dropzone from "svelte-file-dropzone";
+    export let label = "Select Files";
     export let icon = FilePlusIcon;
     export let largeText = false;
     let filePaths = [];
@@ -60,7 +61,7 @@
     <br>
     <Dropzone
             on:drop={handleFilesSelect}
-            noClick
+
             containerStyles="flex: 1;
                             display: flex;
                             flex-direction: column;
@@ -80,6 +81,16 @@
                             text-align: center;"
             disableDefaultStyles
             containerClasses="custom-dropzone">
+        <button
+                class="group"
+                class:largeText
+                on:click={handleFilesSelect}
+        >{label}
+            <div class="icon">
+                <svelte:component this={icon} size="1.5x" />
+            </div></button
+        >
+        <br>
         Drag and Drop Files Here
     </Dropzone>
     <br>
@@ -113,5 +124,11 @@
     }
     article {
         @apply bg-gray-800 w-full min-h-[12rem] overflow-auto rounded-[32px] py-2 px-6;
+    }
+    button {
+        @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
+    }
+    .icon {
+        @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
     }
 </style>
