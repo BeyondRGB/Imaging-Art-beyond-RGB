@@ -17,46 +17,11 @@
   let btnRef;
   let popRef;
 
-  // async function update() {
-  //   const { x, y } = await computePosition(btnRef, popRef);
-  // }
-
-  // function cleanup() {
-  //   autoUpdate(btnRef, popRef, update);
-  // }
-
-  // onDestroy(() => {
-  //   console.log("Cleaing Up Autoupdate");
-  //   cleanup();
-  // });
-
-  // onMount(() => {
-  //   update();
-  // });
-
   const toggleDropdown = () => {
     if (show) {
       show = false;
     } else {
       show = true;
-      // computePosition(btnRef, popRef, {
-      //   strategy: "fixed",
-      //   placement: "bottom",
-      //   middleware: [
-      //     offset({
-      //       mainAxis: 4,
-      //       // crossAxis: -50,
-      //     }),
-      //     inline(),
-      //     autoPlacement(),
-      //   ],
-      // }).then(({ x, y }) => {
-      //   Object.assign(popRef.style, {
-      //     left: "0",
-      //     top: "0",
-      //     transform: `translate(${Math.round(x)}px,${Math.round(y)}px)`,
-      //   });
-      // });
     }
   };
 </script>

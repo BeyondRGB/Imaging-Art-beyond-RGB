@@ -19,12 +19,12 @@
 
 <main>
   <button
-    class="group"
-    class:largeText
-    on:click={async () => {
+          class="group"
+          class:largeText
+          on:click={async () => {
       await temp();
     }}
-    >{label}
+  >{label}
     <div class="icon">
       <svelte:component this={icon} size="1.5x" />
     </div></button
