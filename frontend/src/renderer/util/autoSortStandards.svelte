@@ -1,28 +1,33 @@
 <script context="module">
     import { maxBy, each, includes, size, filter, countBy, minBy } from "lodash";
 
-    const artObjectStandards = [
-        "image",
-        "print",
-        "object",
-        "art"
-    ];
-    const targetStandards = [
-        "target",
-        "color",
-        "colors",
-        "grid"
-    ];
-    const flatFieldStandards = [
-        "flat",
-        "field",
-        "white",
-        "blank"
-    ];
-    const darkFieldStandards = [
-        "dark",
-        "field",
-        "black"
+    const matchingStandards = [
+        [
+            // art
+            "image",
+            "print",
+            "object",
+            "art"
+        ], [
+            // color target
+            "target",
+            "color",
+            "colors",
+            "grid"
+        ], [
+            // flatfield
+            "flat",
+            "field",
+            "white",
+            "blank",
+            "flatfield"
+        ], [
+            // darkfield
+            "dark",
+            "field",
+            "black",
+            "darkfield"
+        ]
     ];
 
     const probabilityScoreProperties = [
@@ -32,6 +37,18 @@
         'darkFieldProbability'
     ];
 
+    /**
+     * Sorts images to the externalStack
+     *  - externalStack requires the following fields:
+     *      - imageA, imageB
+     *      - targetA, targetB
+     *      - flatfieldA, flatfieldB
+     *      - darkfieldA, darkfieldB
+     *  (targets are ignored if there are fewer than 8 images)
+     * @param images
+     * @param externalStack
+     * @returns any remaining unsorted images
+     */
     export function autoSortImages(images, externalStack) {
 
         let includeTarget = false;
@@ -47,28 +64,14 @@
                 image[property] = 0;
             });
             image.imageA = false;
-            each(artObjectStandards, function (string) {
-                if(includes(image.name, string)) {
-                    image[probabilityScoreProperties[0]]++;
-                }
-            });
-            if(includeTarget) {
-                each(targetStandards, function (string) {
-                    if (includes(image.name, string)) {
-                        image[probabilityScoreProperties[1]]++;
+
+            for(let i = 0; i < matchingStandards.length; i++) {
+                each(matchingStandards[i], function (string) {
+                    if(includes(image.name.toLowerCase(), string.toLowerCase())) {
+                        image[probabilityScoreProperties[i]]++;
                     }
                 });
             }
-            each(flatFieldStandards, function (string) {
-                if(includes(image.name, string)) {
-                    image[probabilityScoreProperties[2]]++;
-                }
-            });
-            each(darkFieldStandards, function (string) {
-                if(includes(image.name, string)) {
-                    image[probabilityScoreProperties[3]]++;
-                }
-            });
         });
 
         let imageStack = {

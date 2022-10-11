@@ -2,14 +2,16 @@
     import { processState } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
-    import autoSortStandards, { autoSortImages } from "@util/autoSortStandards.svelte";
+    import { autoSortImages } from "@util/autoSortStandards.svelte";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let rerenderToggle = false;
+    let validationError = null;
 
     // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 2) {
         imageStack = get($processState, 'artStacks[0].fields');
+        validationError = null;
     }
 
     const getAllImages = function () {
@@ -48,7 +50,6 @@
         return validationError;
     };
 
-    let validationError = null;
     const submitSpecFileRoles = function (skipOptionalFiltering) {
         if(validationError = validate()) {
             return;
@@ -77,7 +78,7 @@
         </div>
         </panel>
         <right>
-            <div style="display: flex; flex-direction: column; width: 80%">
+            <div class="centerFlexBox">
                 <div id="imageStack">
                     <div class="inputGroup">
                         <div class="imageLetter">A</div>
@@ -106,7 +107,7 @@
                         <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true} showError={!!validationError}/></div>
                     </div>
                     {#if validationError && imageStack && validate()}
-                        <div style="text-align: center; color: red">
+                        <div class="errorText">
                             {validationError}
                         </div>
                     {/if}
@@ -126,7 +127,7 @@
         @apply flex justify-between h-full w-full overflow-hidden;
     }
     panel {
-        width: 80%;
+        width: 100%;
         background-color: #3a3a3c;
     }
     right {
@@ -151,6 +152,11 @@
         flex-direction: column;
         gap:20px;
     }
+    .centerFlexBox {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+    }
     .inputGroup {
         display: flex;
         flex-direction: row;
@@ -173,6 +179,10 @@
     }
     .autoSortButton {
         margin: 50px 65px 0 0;
+    }
+    .errorText {
+        text-align: center;
+        color: red;
     }
     .btnGroup {
         @apply flex justify-end gap-2;
