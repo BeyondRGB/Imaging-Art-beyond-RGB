@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "electron-alert": "^0.1.20",
-    "lodash": "^4.17.21",
-    "svelte-file-dropzone": "^1.0.0"
-  }
-}
