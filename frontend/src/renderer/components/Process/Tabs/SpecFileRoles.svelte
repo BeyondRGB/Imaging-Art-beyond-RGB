@@ -11,7 +11,6 @@
     // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 2) {
         imageStack = get($processState, 'artStacks[0].fields');
-        validationError = null;
     }
 
     const getAllImages = function () {
