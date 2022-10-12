@@ -12,6 +12,7 @@
         accepted: [],
         rejected: []
     };
+    let MAX_FILES = 8
 
     function getThumbnails() {
         console.log("Getting Thumbnails");
@@ -41,19 +42,23 @@
     }
 
     function handleFilesSelect(e) {
-        const { acceptedFiles, fileRejections } = e.detail;
-        files.accepted = [...files.accepted, ...acceptedFiles];
-        files.rejected = [...files.rejected, ...fileRejections];
+        console.log("files")
+        if (files.accepted.length < MAX_FILES){
+            console.log("accepted")
+            const {acceptedFiles, fileRejections} = e.detail;
+            files.accepted = [...files.accepted, ...acceptedFiles];
+            files.rejected = [...files.rejected, ...fileRejections];
 
-        forEach(files.accepted, (f) =>{
-            if(!find(filePaths, {id: f.path, name: f.name})) {
-                filePaths.push({
-                    id: f.path,
-                    name: f.path
-                });
-            }
-        });
-        $processState.imageFilePaths = [...filePaths];
+            forEach(files.accepted, (f) => {
+                if (!find(filePaths, {id: f.path, name: f.name})) {
+                    filePaths.push({
+                        id: f.path,
+                        name: f.path
+                    });
+                }
+            });
+            $processState.imageFilePaths = [...filePaths];
+        }
     }
 </script>
 
