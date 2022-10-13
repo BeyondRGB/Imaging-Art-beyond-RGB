@@ -55,7 +55,8 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "get-port-sync": "^1.0.1",
-    "html2canvas": "^1.4.1"
+    "html2canvas": "^1.4.1",
+    "svelte-file-dropzone": "^1.0.0"
   },
   "devDependencies": {
     "@carbon/charts-svelte": "^0.56.0",
