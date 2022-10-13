@@ -44,6 +44,7 @@
     function handleFilesSelect(e) {
         console.log("files")
         if (files.accepted.length < MAX_FILES){
+            files.accepted = [];
             console.log("accepted")
             const {acceptedFiles, fileRejections} = e.detail;
             files.accepted = [...files.accepted, ...acceptedFiles];
