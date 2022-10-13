@@ -105,16 +105,16 @@
         images = filter(images, (e) => e !== maxBy(images, probabilityScoreProperties[3]))
 
         // fill in the image stack
-        externalStack.imageA = [maxBy(imageStack?.bestArtImages, (image) => countBy(image?.name)?.A)];
-        externalStack.imageB = [minBy(imageStack?.bestArtImages, (image) => countBy(image?.name)?.A)];
+        externalStack.imageA = [maxBy(imageStack?.bestArtImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+        externalStack.imageB = [minBy(imageStack?.bestArtImages, (image) => countBy(image?.name.toLowerCase())?.a)];
         if(includeTarget) {
-            externalStack.targetA = [maxBy(imageStack?.bestTargetImages, (image) => countBy(image?.name)?.A)];
-            externalStack.targetB = [minBy(imageStack?.bestTargetImages, (image) => countBy(image?.name)?.A)];
+            externalStack.targetA = [maxBy(imageStack?.bestTargetImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+            externalStack.targetB = [minBy(imageStack?.bestTargetImages, (image) => countBy(image?.name.toLowerCase())?.a)];
         }
-        externalStack.flatfieldA = [maxBy(imageStack?.bestFlatFieldImages, (image) => countBy(image?.name)?.A)];
-        externalStack.flatfieldB = [minBy(imageStack?.bestFlatFieldImages, (image) => countBy(image?.name)?.A)];
-        externalStack.darkfieldA = [maxBy(imageStack?.bestDarkFieldImages, (image) => countBy(image?.name)?.A)];
-        externalStack.darkfieldB = [minBy(imageStack?.bestDarkFieldImages, (image) => countBy(image?.name)?.A)];
+        externalStack.flatfieldA = [maxBy(imageStack?.bestFlatFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+        externalStack.flatfieldB = [minBy(imageStack?.bestFlatFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+        externalStack.darkfieldA = [maxBy(imageStack?.bestDarkFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+        externalStack.darkfieldB = [minBy(imageStack?.bestDarkFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
 
         // return any images that weren't assigned
         return images;
