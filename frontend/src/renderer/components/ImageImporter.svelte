@@ -87,28 +87,36 @@
                             text-align: center;"
             disableDefaultStyles
             containerClasses="custom-dropzone">
-        <button
-                class="group"
-                class:largeText
-                on:click={handleFilesSelect}
-        >{label}
-            <div class="icon">
-                <svelte:component this={icon} size="1.5x" />
-            </div></button
-        >
+<!--        <button>-->
+<!--            {label}-->
+<!--            <div class="icon">-->
+<!--                <svelte:component this={icon} size="1.5x" />-->
+<!--            </div>-->
+<!--        </button>-->
         <br>
-        Drag and Drop Files Here
+        Click or Drag and Drop Files Here
+        <br>
+        <br>
+        <article>
+            <ul>
+                {#if $processState.imageFilePaths?.length > 0}
+                    {#each $processState.imageFilePaths as filePath}
+                        <ImageBubble filename={filePath.name} />
+                    {/each}
+                {/if}
+            </ul>
+        </article>
     </Dropzone>
     <br>
-    <article>
-        <ul>
-            {#if $processState.imageFilePaths?.length > 0}
-                {#each $processState.imageFilePaths as filePath}
-                    <ImageBubble filename={filePath.name} />
-                {/each}
-            {/if}
-        </ul>
-    </article>
+<!--    <article>-->
+<!--        <ul>-->
+<!--            {#if $processState.imageFilePaths?.length > 0}-->
+<!--                {#each $processState.imageFilePaths as filePath}-->
+<!--                    <ImageBubble filename={filePath.name} />-->
+<!--                {/each}-->
+<!--            {/if}-->
+<!--        </ul>-->
+<!--    </article>-->
 
 </main>
 
@@ -129,7 +137,7 @@
         @apply flex flex-col gap-2 w-full justify-center items-center;
     }
     article {
-        @apply bg-gray-800 w-full min-h-[12rem] overflow-auto rounded-[32px] py-2 px-6;
+        @apply bg-gray-800 w-full min-h-[12rem] max-h-[30rem] overflow-auto rounded-[32px] py-2 px-6;
     }
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
