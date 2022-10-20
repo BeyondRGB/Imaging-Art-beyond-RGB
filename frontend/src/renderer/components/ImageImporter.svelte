@@ -1,6 +1,6 @@
 <script lang="ts">
     import { FilePlusIcon } from "svelte-feather-icons";
-    import { processState, sendMessage, messageStore } from "@util/stores";
+    import { processState, sendMessage} from "@util/stores";
     import { forEach, find } from "lodash";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
     import Dropzone from "svelte-file-dropzone";
@@ -15,7 +15,6 @@
     let MAX_FILES = 8
 
     function getThumbnails() {
-        console.log("Getting Thumbnails");
         $processState.thumbnailID = Math.floor(Math.random() * 999999999);
         let msg = {
             RequestID: $processState.thumbnailID,
@@ -30,7 +29,6 @@
     }
 
     $: if (filePaths?.length > 0) {
-        console.log("Fetching Thumbnails");
         getThumbnails();
     }
 
@@ -42,10 +40,8 @@
     }
 
     function handleFilesSelect(e) {
-        console.log("files")
         if (files.accepted.length < MAX_FILES){
             files.accepted = [];
-            console.log("accepted")
             const {acceptedFiles, fileRejections} = e.detail;
             files.accepted = [...files.accepted, ...acceptedFiles];
             files.rejected = [...files.rejected, ...fileRejections];
@@ -87,12 +83,6 @@
                             text-align: center;"
             disableDefaultStyles
             containerClasses="custom-dropzone">
-<!--        <button>-->
-<!--            {label}-->
-<!--            <div class="icon">-->
-<!--                <svelte:component this={icon} size="1.5x" />-->
-<!--            </div>-->
-<!--        </button>-->
         <br>
         Click or Drag and Drop Files Here
         <br>
@@ -108,15 +98,6 @@
         </article>
     </Dropzone>
     <br>
-<!--    <article>-->
-<!--        <ul>-->
-<!--            {#if $processState.imageFilePaths?.length > 0}-->
-<!--                {#each $processState.imageFilePaths as filePath}-->
-<!--                    <ImageBubble filename={filePath.name} />-->
-<!--                {/each}-->
-<!--            {/if}-->
-<!--        </ul>-->
-<!--    </article>-->
 
 </main>
 

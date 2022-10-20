@@ -28,7 +28,7 @@ export const processState = writable({
   pipelineComplete: false,
   destDir: "",
   imageFilePaths: [],
-  thumbnailID: null,
+  thumbnailID: null as number,
   colorTargetID: null,
   CMID: null,
   imageThumbnails: {},
