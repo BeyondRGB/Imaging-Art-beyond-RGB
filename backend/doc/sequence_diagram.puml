@@ -16,6 +16,7 @@ box "Flat Fielding"
 participant "flat_field_w_gen()" as wgen
 participant "flat_fielding()" as ff
 end box
+participant "registration()" as re
 end box
 box "Colorimetric Calibration" #LightGreen
 participant "color_calibrator()" as cc
@@ -66,6 +67,7 @@ note over wgen : must be called as the w values \nhave not yet been generated
 pp -> wgen
 wgen -> pp : return w values
 pp -> ff
+pp -> re
 pp -> pl : return w values
 
 hnote over pl : save and unload unneeded arrays
@@ -86,15 +88,22 @@ loop unprocessed art
 hnote over pl : load unprocessed art image
     pl -> li : (art)
     li -> pl : return art as array
+    pl -> la : (dark field file)
+    la -> pl : return dark field array
+    pl -> la : (flat field file)
+    la -> pl : return flat field array
 hnote over pl : preprocess
     pl -> pp
     pp -> bs
     pp -> dcc
     pp -> ff
+    pp -> re
     pp -> pl
 hnote over pl : render
     pl -> rend : (outfile)
     rend -> si : (outfile)
+hnote over pl : clean up
+    pl -> pl : (delete art)
 end
 pl -> api : done processing (output file locations)
 @enduml
