@@ -2,6 +2,8 @@
 ## Back End ##
 ##############
 
+*.ccls-cache
+
 # Prerequisites
 *.d
 
