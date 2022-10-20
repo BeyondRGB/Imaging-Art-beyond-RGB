@@ -24,6 +24,10 @@
       show = true;
     }
   };
+  const remove = () => {
+    console.log("removed " + filename)
+    // $processState.imageFilePaths = $processState.imageFilePaths .filter((filename) => value.id !== item.id);
+  };
 </script>
 
 <main class="group">
@@ -45,7 +49,9 @@
   <!-- class:shown={show} -->
   <!-- bind:this={popRef} -->
   <div class="body">
-    <img src={$processState.imageThumbnails[filename]} alt={filename} />
+
+    <img src={$processState.imageThumbnails[filename]} alt={filename}/>
+
   </div>
 </main>
 
@@ -64,5 +70,11 @@
   }
   img {
     @apply w-full h-full;
+  }
+  button {
+    @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
+  }
+  .active{
+    background: red;
   }
 </style>

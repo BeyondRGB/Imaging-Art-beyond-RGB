@@ -28,9 +28,9 @@
         filePaths = [];
     }
 
-    $: if (filePaths?.length > 0) {
-        getThumbnails();
-    }
+    // $: if (filePaths?.length > 0) {
+    //     getThumbnails();
+    // }
 
     $: if (
         $processState.imageFilePaths.length >= 6 &&
@@ -47,16 +47,25 @@
             files.rejected = [...files.rejected, ...fileRejections];
 
             forEach(files.accepted, (f) => {
-                if (!find(filePaths, {id: f.path, name: f.name})) {
-                    filePaths.push({
+                if (!find($processState.imageFilePaths, {id: f.path, name: f.name})) {
+                    $processState.imageFilePaths.push({
                         id: f.path,
                         name: f.path
                     });
                 }
             });
-            $processState.imageFilePaths = [...filePaths];
+            forEach($processState.imageFilePaths, function (f){
+               filePaths.push(f.name);
+            });
+            getThumbnails();
+            console.log($processState.imageFilePaths)
         }
     }
+    const remove = (item) => {
+        filePaths = filePaths.filter((value) => value.id !== item.id);
+        $processState.imageFilePaths = [...filePaths];
+    };
+
 </script>
 
 <main>
@@ -83,20 +92,30 @@
                             text-align: center;"
             disableDefaultStyles
             containerClasses="custom-dropzone">
+            <button
+                    class="group"
+                    class:largeText
+                    on:click={handleFilesSelect}
+            >{label}
+                <div class="icon">
+                    <svelte:component this={icon} size="1.5x" />
+                </div>
+            </button>
         <br>
-        Click or Drag and Drop Files Here
+        Drag and Drop Files Here
         <br>
         <br>
-        <article>
-            <ul>
-                {#if $processState.imageFilePaths?.length > 0}
-                    {#each $processState.imageFilePaths as filePath}
-                        <ImageBubble filename={filePath.name} />
-                    {/each}
-                {/if}
-            </ul>
-        </article>
     </Dropzone>
+    <article>
+        <ul>
+            {#if $processState.imageFilePaths?.length > 0}
+                {#each $processState.imageFilePaths as filePath}
+                    <ImageBubble filename={filePath.name}/>
+                {/each}
+            {/if}
+        </ul>
+    </article>
+
     <br>
 
 </main>
@@ -126,4 +145,5 @@
     .icon {
         @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
     }
+
 </style>
