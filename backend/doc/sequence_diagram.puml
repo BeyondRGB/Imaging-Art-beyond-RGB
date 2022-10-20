@@ -1,0 +1,101 @@
+@startuml
+!pragma teoz true 
+
+participant api
+participant "processing_pipeline()" as pl
+box "I/O"
+participant "load_image" as li
+participant "save_array()" as sa
+participant "load_array()" as la
+end box
+box Preprocessing #Pink
+participant "preprocess()" as pp
+participant "bit_scale()" as bs
+participant "dark_current_correction()" as dcc
+box "Flat Fielding"
+participant "flat_field_w_gen()" as wgen
+participant "flat_fielding()" as ff
+end box
+end box
+box "Colorimetric Calibration" #LightGreen
+participant "color_calibrator()" as cc
+end box
+box "Rendering" #LightBlue
+participant "render()" as rend
+participant "save_image()" as si
+end box
+ 
+note left of api 
+    All participants are functions
+    with the possible exception of 
+    the API.
+
+    Unless explicitly shown all 
+    arrays are modified in place. 
+
+    Arguments shown in parenthesis
+    are non exhaustive and are 
+    only given to indicate the 
+    main target of the operation.
+end note 
+api -> pl : invoke pipeline (image locations)
+
+== Generate Calibration ==
+hnote over pl, li : load target, dark field, and flat field images
+pl -> li : (target a)
+li -> pl : return image as array
+pl -> li : (target b)
+li -> pl : return image as array
+pl -> li : (dark field a)
+li -> pl : return image as array
+pl -> li : (dark field b)
+li -> pl : return image as array
+pl -> li : (flat field a)
+li -> pl : return image as array
+pl -> li : (flat field b)
+li -> pl : return image as array
+
+hnote over pl : preprocess loaded arrays
+pl -> bs : (flat field a/b)
+pl -> bs : (dark field a/b)
+pl -> dcc : (flat field a/b)
+pl -> pp : (target a/b)
+pp -> bs
+pp -> dcc
+note over wgen : must be called as the w values \nhave not yet been generated
+pp -> wgen
+wgen -> pp : return w values
+pp -> ff
+pp -> pl : return w values
+
+hnote over pl : save and unload unneeded arrays
+pl -> sa : (dark field a/b)
+pl -> sa : (flat field a/b)
+pl -> pl : delete flat field a/b
+pl -> pl : delete dark field a/b 
+
+hnote over pl : colorimetric calibration
+pl -> cc : (target a/b)
+cc -> cc : load images into single array
+cc -> cc : delete target arrays
+cc -> cc : calibration
+cc -> pl : return calibration array
+
+== Render Images ==
+loop unprocessed art
+hnote over pl : load unprocessed art image
+    pl -> li : (art)
+    li -> pl : return art as array
+hnote over pl : preprocess
+    pl -> pp
+    pp -> bs
+    pp -> dcc
+    pp -> ff
+    pp -> pl
+hnote over pl : render
+    pl -> rend : (outfile)
+    rend -> si : (outfile)
+end
+pl -> api : done processing (output file locations)
+@enduml
+
