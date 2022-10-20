@@ -15,7 +15,7 @@
 
   let show = false;
   let btnRef;
-  let popRef;
+  // let popRef;
 
   const toggleDropdown = () => {
     if (show) {
