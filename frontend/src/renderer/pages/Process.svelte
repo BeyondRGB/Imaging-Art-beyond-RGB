@@ -25,7 +25,7 @@
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
-    { name: "Specifiy File Roles", component: SpecFileRoles },
+    { name: "Specify File Roles", component: SpecFileRoles },
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
@@ -245,17 +245,7 @@
   {/if}
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
-    {#if tabs[$processState.currentTab + 1]?.name === "Advanced Options"}
-      <button on:click={nextTab}>Optional Filtering</button>
-      <button
-        on:click={() => {
-          if ($processState.completedTabs[$processState.currentTab]) {
-            $processState.currentTab += 2;
-          }
-        }}
-        class="nextBtn">Next: Skip Optional Filtering</button
-      >
-    {:else if tabs[$processState.currentTab + 1]?.name === "Processing"}
+    {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
       <button
         on:click={() => {
           if ($processState.completedTabs[$processState.currentTab]) {
@@ -266,7 +256,7 @@
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
-    {:else}
+    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options"}
       <button on:click={nextTab} class="nextBtn">Next</button>
     {/if}
   </botnav>
