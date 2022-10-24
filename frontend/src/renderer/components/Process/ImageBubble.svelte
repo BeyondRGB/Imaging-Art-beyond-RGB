@@ -1,14 +1,8 @@
 <script lang="ts">
-  import {
-    computePosition,
-    autoPlacement,
-    shift,
-    offset,
-    flip,
-    inline,
-  } from "@floating-ui/dom";
+
   import { processState } from "@util/stores";
-  import { ImageIcon } from "svelte-feather-icons";
+  import { ImageIcon, TrashIcon } from "svelte-feather-icons";
+  import { createEventDispatcher} from "svelte";
 
   export let filename = "Empty...";
   export let minimal = false;
@@ -16,6 +10,8 @@
   let show = false;
   let btnRef;
   // let popRef;
+
+  const dispatch = createEventDispatcher()
 
   const toggleDropdown = () => {
     if (show) {
@@ -25,8 +21,8 @@
     }
   };
   const remove = () => {
-    console.log("removed " + filename)
-    // $processState.imageFilePaths = $processState.imageFilePaths .filter((filename) => value.id !== item.id);
+      dispatch('remove')
+
   };
 </script>
 
@@ -44,6 +40,8 @@
     {:else}
       <ImageIcon size="1.5x" />
       {filename}
+      <button on:click={remove}><TrashIcon size="1.5x" /></button>
+
     {/if}
   </div>
   <!-- class:shown={show} -->

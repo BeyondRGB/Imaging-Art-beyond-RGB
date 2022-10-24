@@ -40,31 +40,46 @@
     }
 
     function handleFilesSelect(e) {
-        if (files.accepted.length < MAX_FILES){
-            files.accepted = [];
+        files.accepted = [];
+        if (e instanceof Event){
+            files.accepted = [...files.accepted, ...e.target.files];
+            // e = e.target.files;
+        }
+        else {
             const {acceptedFiles, fileRejections} = e.detail;
+
             files.accepted = [...files.accepted, ...acceptedFiles];
             files.rejected = [...files.rejected, ...fileRejections];
-
-            forEach(files.accepted, (f) => {
-                if (!find($processState.imageFilePaths, {id: f.path, name: f.name})) {
-                    $processState.imageFilePaths.push({
-                        id: f.path,
-                        name: f.path
-                    });
-                }
-            });
-            forEach($processState.imageFilePaths, function (f){
-               filePaths.push(f.name);
-            });
-            getThumbnails();
-            console.log($processState.imageFilePaths)
         }
+
+        forEach(files.accepted, (f) => {
+            if (!find($processState.imageFilePaths, {id: f.path, name: f.name})) {
+                $processState.imageFilePaths.push({
+                    id: f.path,
+                    name: f.path
+                });
+            }
+        });
+        forEach($processState.imageFilePaths, function (f){
+           filePaths.push(f.name);
+        });
+        getThumbnails();
+        console.log($processState.imageFilePaths)
     }
+
     const remove = (item) => {
-        filePaths = filePaths.filter((value) => value.id !== item.id);
-        $processState.imageFilePaths = [...filePaths];
+        $processState.imageFilePaths = $processState.imageFilePaths.filter((value) => value.id !== item.id);
     };
+
+    const removeAll = () => {
+        alert("removing thing")
+        $processState.imageFilePaths = [];
+    };
+
+    function openAttachment() {
+        document.getElementById('attachment').click();
+    }
+
 
 </script>
 
@@ -72,7 +87,7 @@
     <br>
     <Dropzone
             on:drop={handleFilesSelect}
-
+            noClick
             containerStyles="flex: 1;
                             display: flex;
                             flex-direction: column;
@@ -92,37 +107,40 @@
                             text-align: center;"
             disableDefaultStyles
             containerClasses="custom-dropzone">
-            <button
-                    class="group"
-                    class:largeText
-                    on:click={handleFilesSelect}
-            >{label}
-                <div class="icon">
-                    <svelte:component this={icon} size="1.5x" />
-                </div>
-            </button>
+        <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
+        <button
+                type="button"
+                class="file"
+                class:largeText
+                id="btnAttachment"
+                on:click={openAttachment}
+        >{label}
+            <div class="icon">
+                <svelte:component this={icon} size="1.5x" />
+            </div>
+        </button>
         <br>
         Drag and Drop Files Here
         <br>
         <br>
+        <article>
+<!--            <button onclick={removeAll}> Remove All</button>-->
+            <ul>
+                {#if $processState.imageFilePaths?.length > 0}
+                    {#each $processState.imageFilePaths as filePath}
+                        <ImageBubble filename={filePath.name} on:remove={remove(filePath)}/>
+                    {/each}
+                {/if}
+            </ul>
+        </article>
     </Dropzone>
-    <article>
-        <ul>
-            {#if $processState.imageFilePaths?.length > 0}
-                {#each $processState.imageFilePaths as filePath}
-                    <ImageBubble filename={filePath.name}/>
-                {/each}
-            {/if}
-        </ul>
-    </article>
-
     <br>
 
 </main>
 
 <style lang="postcss">
     main {
-        @apply h-full;
+        @apply h-full ;
     }
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
