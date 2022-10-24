@@ -31,6 +31,7 @@ export const processState = writable({
   thumbnailID: null,
   colorTargetID: null,
   CMID: null,
+  whitePatchFilled: false,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
   artStacks: [
@@ -64,6 +65,7 @@ export function resetProcess() {
     imageFilePaths: [],
     thumbnailID: null,
     colorTargetID: null,
+    whitePatchFilled: false,
     CMID: null,
     imageThumbnails: {},
     outputImage: { dataURL: "", name: "Waiting..." },
