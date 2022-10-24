@@ -2,16 +2,22 @@
   import { processState, sendMessage, messageStore } from "@util/stores";
   import FileSelector from "@components/FileSelector.svelte";
   import ImageBubble from "@components/Process/ImageBubble.svelte";
-  import Dropzone from "svelte-file-dropzone";
-  import { forEach, find } from "lodash";
 
   let filePaths = [];
   $: console.log(filePaths);
-
-  let files = {
-    accepted: [],
-    rejected: []
-  };
+  $: if (filePaths) {
+     $processState.imageFilePaths = filePaths.map((path) => {
+       return {
+         id: (
+           path.split("").reduce((a, b) => {
+             a = (a << 5) - a + b.charCodeAt(0);
+             return a & a;
+           }, 0) + Math.pow(2, 31)
+         ).toString(16),
+         name: path,
+       };
+     });
+   }
 
   function getThumbnails() {
     console.log("Getting Thumbnails");
@@ -39,38 +45,17 @@
   ) {
     $processState.completedTabs[0] = true;
   }
-
-  function handleFilesSelect(e) {
-    const { acceptedFiles, fileRejections } = e.detail;
-    files.accepted = [...files.accepted, ...acceptedFiles];
-    files.rejected = [...files.rejected, ...fileRejections];
-
-    forEach(files.accepted, (f) =>{
-      if(!find(filePaths, {id: f.path, name: f.name})) {
-        filePaths.push({
-          id: f.path,
-          name: f.path
-        });
-      }
-    });
-    $processState.imageFilePaths = [...filePaths];
-  }
 </script>
 
 <main>
   <left>
     <h1>Import Images</h1>
-    <br>
-    <Dropzone
-            on:drop={handleFilesSelect}
-            noClick
-            containerStyles="background-color: #1D1C1E; border-radius: 10px;"
-            disableDefaultStyles
-            containerClasses="custom-dropzone">
-      Drag and Drop Files Here
-    </Dropzone>
+    <p>Select the image set you would like to process</p>
   </left>
   <right>
+    <div class="fileSelector">
+      <FileSelector bind:filePaths filter="raws" largeText />
+    </div>
     <article>
       <ul>
         {#if $processState.imageFilePaths?.length > 0}
