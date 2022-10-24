@@ -254,6 +254,7 @@
 
   $: if (colorTarget != null) {
     $processState.whitePatchFilled = (colorTarget.whitePatch.row != null && colorTarget.whitePatch.col != null)
+  }
 </script>
 
 <main>
