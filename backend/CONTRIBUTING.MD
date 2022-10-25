@@ -36,15 +36,15 @@ description, functions, authors, and license as shown below.
 This is a description of the foo module
 
 Functions:
-foobar(foo, bar)
-foobar2(foo2, bar2)
+    foobar(foo, bar)
+    foobar2(foo2, bar2)
 
 Authors:
-John Smith <john@smith.com>
-Jane Doe   <jane@doe.com>
+    John Smith <john@smith.com>
+    Jane Doe   <jane@doe.com>
 
 License:
-Copywrite 2022
-See license file for more information
+    Copywrite 2022
+    See license file for more information
 """
 ```
