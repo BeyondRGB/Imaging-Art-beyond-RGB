@@ -6,18 +6,18 @@
   let filePaths = [];
   $: console.log(filePaths);
   $: if (filePaths) {
-    $processState.imageFilePaths = filePaths.map((path) => {
-      return {
-        id: (
-          path.split("").reduce((a, b) => {
-            a = (a << 5) - a + b.charCodeAt(0);
-            return a & a;
-          }, 0) + Math.pow(2, 31)
-        ).toString(16),
-        name: path,
-      };
-    });
-  }
+     $processState.imageFilePaths = filePaths.map((path) => {
+       return {
+         id: (
+           path.split("").reduce((a, b) => {
+             a = (a << 5) - a + b.charCodeAt(0);
+             return a & a;
+           }, 0) + Math.pow(2, 31)
+         ).toString(16),
+         name: path,
+       };
+     });
+   }
 
   function getThumbnails() {
     console.log("Getting Thumbnails");

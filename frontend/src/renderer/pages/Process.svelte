@@ -16,6 +16,7 @@
   import Layout from "@components/Process/Layout.svelte";
   let tabList;
 
+  let showWhitePatchWarning = false;
   let showDialog = false;
   let binaryType = null;
   let binaryName = null;
@@ -248,6 +249,9 @@
     {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
       <button
         on:click={() => {
+          if (!$processState.whitePatchFilled) {
+            showWhitePatchWarning = true;
+          }
           if ($processState.completedTabs[$processState.currentTab]) {
             showDialog = true;
           }
@@ -260,6 +264,17 @@
       <button on:click={nextTab} class="nextBtn">Next</button>
     {/if}
   </botnav>
+
+  <div class={`confirmModal ${showWhitePatchWarning ? "show" : ""}`}>
+    <div class="warningDialog">
+      <p>Please select a white patch before continuing</p>
+      <div class="btnGroup">
+        <button class="cancel" on:click={() => (showWhitePatchWarning = false)}
+          >Close</button
+        >
+      </div>
+    </div>
+  </div>
 
   <div class={`confirmModal ${showDialog ? "show" : ""}`}>
     <div class="confirmDialog">
@@ -309,6 +324,10 @@
 
   .confirmDialog p {
     @apply bg-gray-800/25 rounded-md flex justify-center p-2 text-lg mt-10;
+  }
+
+  .warningDialog {
+    @apply bg-gray-700 w-1/3 h-1/6 text-xl rounded-xl p-4 flex flex-col justify-between;
   }
 
   .warning {
