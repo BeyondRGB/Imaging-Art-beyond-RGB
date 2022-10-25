@@ -38,13 +38,12 @@
     function handleFilesSelect(e) {
         files.accepted = [];
         if (e.detail == null){
+            /* handles files being added from the select files button */
             files.accepted = [...files.accepted, ...e.target.files];
         }
         else {
-            const {acceptedFiles, fileRejections} = e.detail;
-
-            files.accepted = [...files.accepted, ...acceptedFiles];
-            files.rejected = [...files.rejected, ...fileRejections];
+            /* handles files being added from dragging and dropping */
+            files.accepted = [...e.detail?.acceptedFiles];
         }
 
         forEach(files.accepted, (f) => {
@@ -113,6 +112,7 @@
                 <svelte:component this={icon} size="1.5x" />
             </div>
         </button>
+
         <br>
         Drag and Drop Files Here
         <br>
