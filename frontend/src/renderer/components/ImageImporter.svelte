@@ -7,12 +7,12 @@
     export let label = "Select Files";
     export let icon = FilePlusIcon;
     export let largeText = false;
+    export let removeButton = false;
     let filePaths = [];
     let files = {
         accepted: [],
         rejected: []
     };
-    let MAX_FILES = 8
 
     function getThumbnails() {
         $processState.thumbnailID = Math.floor(Math.random() * 999999999);
@@ -28,10 +28,6 @@
         filePaths = [];
     }
 
-    // $: if (filePaths?.length > 0) {
-    //     getThumbnails();
-    // }
-
     $: if (
         $processState.imageFilePaths.length >= 6 &&
         !$processState.completedTabs[0]
@@ -41,9 +37,8 @@
 
     function handleFilesSelect(e) {
         files.accepted = [];
-        if (e instanceof Event){
+        if (e.detail == null){
             files.accepted = [...files.accepted, ...e.target.files];
-            // e = e.target.files;
         }
         else {
             const {acceptedFiles, fileRejections} = e.detail;
@@ -72,7 +67,6 @@
     };
 
     const removeAll = () => {
-        alert("removing thing")
         $processState.imageFilePaths = [];
     };
 
@@ -124,9 +118,9 @@
         <br>
         <br>
         <article>
-<!--            <button onclick={removeAll}> Remove All</button>-->
             <ul>
                 {#if $processState.imageFilePaths?.length > 0}
+                    <button on:click={removeAll} class:largeText> Remove All</button>
                     {#each $processState.imageFilePaths as filePath}
                         <ImageBubble filename={filePath.name} on:remove={remove(filePath)}/>
                     {/each}
