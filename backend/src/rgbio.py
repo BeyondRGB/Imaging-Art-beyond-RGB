@@ -44,7 +44,11 @@ def save_array(arrs, fpath, rm=False):
     [in, opt] rm    : whether to delete the arrays from memory
     [post] Arrays deleted from memory if rm is True
     """
-    pass
+    fpath.seek(0)
+    np.savez(fpath, arrs[0], arrs[1])
+    if rm:
+        del arrs[0], arrs[1]
+        gc.collect()
 
 
 def load_array(fpath):
@@ -52,6 +56,6 @@ def load_array(fpath):
     [in] fpath : file path of ndarray pair to be loaded
     [out] tuple containing ndarray pair
     """
-    pass
-
-
+    fpath.seek(0)
+    arrs = np.load(fpath, allow_pickle=True)
+    return (arrs['arr_0'], arrs['arr_1'])
