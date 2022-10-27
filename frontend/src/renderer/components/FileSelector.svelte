@@ -1,5 +1,7 @@
 <script lang="ts">
   import { FilePlusIcon } from "svelte-feather-icons";
+  import { forEach } from "lodash";
+  import Dropzone from "svelte-file-dropzone";
   export let type = "File";
   export let filter = "None";
   export let label = "Select Files";
@@ -7,24 +9,27 @@
   export let icon = FilePlusIcon;
   export let largeText = false;
   let ipcResponse;
+
   const temp = async () => {
     ipcResponse = await window.electron.handle({ type, filter });
   };
+
   $: if (ipcResponse) {
     if (!ipcResponse.canceled) {
       filePaths = ipcResponse?.filePaths;
     }
   }
+
 </script>
 
 <main>
   <button
-    class="group"
-    class:largeText
-    on:click={async () => {
+          class="group"
+          class:largeText
+          on:click={async () => {
       await temp();
     }}
-    >{label}
+  >{label}
     <div class="icon">
       <svelte:component this={icon} size="1.5x" />
     </div></button

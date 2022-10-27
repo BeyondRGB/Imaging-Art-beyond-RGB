@@ -1,71 +1,16 @@
 <script lang="ts">
   import { processState, sendMessage, messageStore } from "@util/stores";
-  import FileSelector from "@components/FileSelector.svelte";
-  import ImageBubble from "@components/Process/ImageBubble.svelte";
+  import ImageImporter from "@components/ImageImporter.svelte";
 
-  let filePaths = [];
-  $: console.log(filePaths);
-  $: if (filePaths) {
-     $processState.imageFilePaths = filePaths.map((path) => {
-       return {
-         id: (
-           path.split("").reduce((a, b) => {
-             a = (a << 5) - a + b.charCodeAt(0);
-             return a & a;
-           }, 0) + Math.pow(2, 31)
-         ).toString(16),
-         name: path,
-       };
-     });
-   }
-
-  function getThumbnails() {
-    console.log("Getting Thumbnails");
-    $processState.thumbnailID = Math.floor(Math.random() * 999999999);
-    let msg = {
-      RequestID: $processState.thumbnailID,
-      RequestType: "Thumbnails",
-      RequestData: {
-        names: filePaths,
-      },
-    };
-    console.log(msg);
-    sendMessage(JSON.stringify(msg));
-    filePaths = [];
-  }
-
-  $: if (filePaths?.length > 0) {
-    console.log("Fetching Thumbnails");
-    getThumbnails();
-  }
-
-  $: if (
-    $processState.imageFilePaths.length >= 6 &&
-    !$processState.completedTabs[0]
-  ) {
-    $processState.completedTabs[0] = true;
-  }
 </script>
 
 <main>
   <left>
     <h1>Import Images</h1>
-    <p>Select the image set you would like to process</p>
   </left>
   <right>
-    <div class="fileSelector">
-      <FileSelector bind:filePaths filter="raws" largeText />
-    </div>
-    <article>
-      <ul>
-        {#if $processState.imageFilePaths?.length > 0}
-          {#each $processState.imageFilePaths as filePath}
-            <ImageBubble filename={filePath.name} />
-          {/each}
-        {/if}
-      </ul>
-    </article></right
-  >
+    <ImageImporter/>
+  </right>
 </main>
 
 <style lang="postcss">
