@@ -40,7 +40,7 @@
     {:else}
       <ImageIcon size="1.5x" />
       {filename}
-      <button on:click={remove}><TrashIcon size="1.25x" /></button>
+      <button on:click={remove}><TrashIcon size="1.25x"/></button>
 
     {/if}
   </div>
@@ -69,6 +69,7 @@
   img {
     @apply w-full h-full;
   }
+
   button {
     @apply flex justify-between items-center gap-2 p-0 pl-0 whitespace-nowrap;
   }

@@ -100,18 +100,40 @@
                             text-align: center;"
             disableDefaultStyles
             containerClasses="custom-dropzone">
-        <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
-        <button
-                type="button"
-                class="file"
-                class:largeText
-                id="btnAttachment"
-                on:click={openAttachment}
-        >{label}
-            <div class="icon">
-                <svelte:component this={icon} size="1.5x" />
+        {#if $processState.imageFilePaths?.length > 0}
+            <div class="two-col">
+                <div class="col1">
+                    <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
+                    <button
+                            type="button"
+                            class="file"
+                            class:largeText
+                            id="btnAttachment"
+                            on:click={openAttachment}
+                    >{label}
+                        <div class="icon">
+                            <svelte:component this={icon} size="1.5x" />
+                        </div>
+                    </button>
+                </div>
+                <div class="col2">
+                    <button on:click={removeAll} class="remove-button" class:largeText> Remove All</button>
+                </div>
             </div>
-        </button>
+        {:else}
+            <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
+            <button
+                    type="button"
+                    class="file"
+                    class:largeText
+                    id="btnAttachment"
+                    on:click={openAttachment}
+            >{label}
+                <div class="icon">
+                    <svelte:component this={icon} size="1.5x" />
+                </div>
+            </button>
+        {/if}
 
         <br>
         Drag and Drop Files Here
@@ -120,7 +142,6 @@
         <article>
             <ul>
                 {#if $processState.imageFilePaths?.length > 0}
-                    <button on:click={removeAll} class:largeText> Remove All</button>
                     {#each $processState.imageFilePaths as filePath}
                         <ImageBubble filename={filePath.name} on:remove={remove(filePath)}/>
                     {/each}
@@ -137,7 +158,7 @@
         @apply h-full ;
     }
     button {
-        @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
+        @apply flex justify-between items-center gap-2 p-0 pl-2;
     }
     .largeText {
         @apply text-lg;
@@ -156,6 +177,35 @@
     }
     .icon {
         @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
+    }
+    .two-col {
+        overflow: hidden;/* Makes this div contain its floats */
+        width: 100%
+    }
+
+    .two-col .col1,
+    .two-col .col2 {
+        /*width: 80%;*/
+    }
+
+    .two-col .col1 {
+        float: left;
+        width: 60%;
+        padding-left: 40%;
+    }
+
+    .two-col .col2 {
+        float: right;
+        align-items: flex-end;
+        vertical-align: center;
+    }
+
+    .two-col label {
+        display: block;
+    }
+
+    .remove-button {
+        background-color: red;
     }
 
 </style>
