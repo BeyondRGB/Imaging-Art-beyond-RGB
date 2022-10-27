@@ -23,7 +23,6 @@
                 names: filePaths,
             },
         };
-        console.log(msg);
         sendMessage(JSON.stringify(msg));
         filePaths = [];
     }
@@ -58,7 +57,6 @@
            filePaths.push(f.name);
         });
         getThumbnails();
-        console.log($processState.imageFilePaths)
     }
 
     const remove = (item) => {
