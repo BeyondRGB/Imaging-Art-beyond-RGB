@@ -179,11 +179,11 @@
     console.log("Remove");
     if (id === 0) {
       if (verifyTarget == null) {
-        console.log("Removeing Color Target");
+        console.log("Removing Color Target");
         colorTarget = null;
       }
     } else if (id === 1) {
-      console.log("Removeing Verify Target");
+      console.log("Removing Verify Target");
       verifyTarget = null;
     }
   }
@@ -247,8 +247,13 @@
     colorTarget.whitePatch.row != null &&
     colorTarget.whitePatch.col != null
   ) {
-    console.log("Hi");
     $processState.completedTabs[4] = true;
+  } else {
+     $processState.completedTabs[4] = false;
+  }
+
+  $: if (colorTarget != null) {
+    $processState.whitePatchFilled = (colorTarget.whitePatch.row != null && colorTarget.whitePatch.col != null)
   }
 </script>
 
