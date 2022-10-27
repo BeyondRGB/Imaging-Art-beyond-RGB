@@ -18,18 +18,23 @@ import rawpy as rp
 import gc
 
 
-def save_image(img, fpath):
+def save_image(img, fpath, rm=False):
     """ Save image to disk
-    [in] img   : image to save
-    [in] fpath : image save location
+    [in] img     : image to save
+    [in] fpath   : image save location
+    [in, opt] rm : whether to delete the image from memory
+    [post] image deleted from memory if rm is True
     """
+    pass
+
 
 def load_image(fpath):
     """ Load an image into memory
     [in] fpath(str) : file path to image (absolute for clarity)
     [out] numpy array containing the image
     """
-    pass
+    raw = rp.imread(fpath)
+    return np.array(raw.postprocess(no_auto_bright=True, output_bps=16), dtype='f4')
 
 
 def save_array(arrs, fpath, rm=False):
