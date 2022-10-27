@@ -1,63 +1,28 @@
 <script lang="ts">
-  import {
-    computePosition,
-    autoPlacement,
-    shift,
-    offset,
-    flip,
-    inline,
-  } from "@floating-ui/dom";
+
   import { processState } from "@util/stores";
-  import { ImageIcon } from "svelte-feather-icons";
+  import { ImageIcon, TrashIcon } from "svelte-feather-icons";
+  import { createEventDispatcher} from "svelte";
 
   export let filename = "Empty...";
   export let minimal = false;
 
   let show = false;
   let btnRef;
-  let popRef;
+  // let popRef;
 
-  // async function update() {
-  //   const { x, y } = await computePosition(btnRef, popRef);
-  // }
-
-  // function cleanup() {
-  //   autoUpdate(btnRef, popRef, update);
-  // }
-
-  // onDestroy(() => {
-  //   console.log("Cleaing Up Autoupdate");
-  //   cleanup();
-  // });
-
-  // onMount(() => {
-  //   update();
-  // });
+  const dispatch = createEventDispatcher()
 
   const toggleDropdown = () => {
     if (show) {
       show = false;
     } else {
       show = true;
-      // computePosition(btnRef, popRef, {
-      //   strategy: "fixed",
-      //   placement: "bottom",
-      //   middleware: [
-      //     offset({
-      //       mainAxis: 4,
-      //       // crossAxis: -50,
-      //     }),
-      //     inline(),
-      //     autoPlacement(),
-      //   ],
-      // }).then(({ x, y }) => {
-      //   Object.assign(popRef.style, {
-      //     left: "0",
-      //     top: "0",
-      //     transform: `translate(${Math.round(x)}px,${Math.round(y)}px)`,
-      //   });
-      // });
     }
+  };
+  const remove = () => {
+      dispatch('remove')
+
   };
 </script>
 
@@ -75,12 +40,16 @@
     {:else}
       <ImageIcon size="1.5x" />
       {filename}
+      <button on:click={remove}><TrashIcon size="1.25x"/></button>
+
     {/if}
   </div>
   <!-- class:shown={show} -->
   <!-- bind:this={popRef} -->
   <div class="body">
-    <img src={$processState.imageThumbnails[filename]} alt={filename} />
+
+    <img src={$processState.imageThumbnails[filename]} alt={filename}/>
+
   </div>
 </main>
 
@@ -99,5 +68,14 @@
   }
   img {
     @apply w-full h-full;
+  }
+
+  button {
+    @apply flex justify-between items-center gap-2 p-0 pl-0 whitespace-nowrap;
+  }
+
+  button:hover {
+    @apply flex justify-between items-center gap-2 p-0 pl-0 whitespace-nowrap;
+    background-color: #FF0000;
   }
 </style>
