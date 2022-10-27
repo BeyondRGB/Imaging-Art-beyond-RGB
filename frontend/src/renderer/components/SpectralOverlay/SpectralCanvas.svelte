@@ -4,7 +4,6 @@
   // import placeholder2 from "@assets/placeholderAlt2.jpg";
   import { afterUpdate, beforeUpdate, onDestroy, onMount } from "svelte";
   import { draggable } from "svelte-drag";
-  import "@util/openseadragon-curtian-sync.js";
 
   export let isSync;
   export let imageKeys;
