@@ -27,7 +27,3 @@ def processing_pipeline(ifiles):
     dark_file_b = load_image(ifiles[5])
 
     print("Done")
-
-    import time
-    while True:
-        time.sleep(10000)
