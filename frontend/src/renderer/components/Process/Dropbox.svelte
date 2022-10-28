@@ -11,17 +11,6 @@
     export let singleItem = true;
     export let showError = false;
 
-    const truncate = function(text) {
-        const start = text.slice(0, 16 - 7);
-        const end = text.slice(-7);
-
-        if (start.length + end.length < text.length) {
-            return start + '…' + end;
-        } else {
-            return text;
-        }
-    };
-
     function handleSort(e) {
         items = e.detail.items;
     }
