@@ -2,9 +2,9 @@
 Collection of I/O functions
 
 Functions:
-    load_array(fpath)
-    save_array(arrs, fpath, rm)
-    load_image(fpath)
+    load_array(path)
+    save_array(arrs, path, rm)
+    load_image(path)
 
 Authors:
     Brendan Grau <bsg8376@rit.edu>
@@ -13,49 +13,64 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+# Python imports
 import numpy as np
 import rawpy as rp
-import gc
+from os.path import exists
+from tempfile import TemporaryFile
 
 
-def save_image(img, fpath, rm=False):
+def save_image(img, path):
     """ Save image to disk
     [in] img     : image to save
-    [in] fpath   : image save location
-    [in, opt] rm : whether to delete the image from memory
-    [post] image deleted from memory if rm is True
+    [in] path   : image save location
     """
     pass
 
 
-def load_image(fpath):
+def load_image(path):
     """ Load an image into memory
-    [in] fpath(str) : file path to image (absolute for clarity)
+    [in] path(str) : file path to image (absolute for clarity)
     [out] numpy array containing the image
+    [raise] FileNotFoundError, IOError
     """
-    raw = rp.imread(fpath)
+    if not exists(path):
+        raise FileNotFoundError
+    try:
+        raw = rp.imread(path)
+    except rp._rawpy.LibRawIOError:
+        raise IOError
+    # TODO investigate possible memmory usage issues
     return np.array(raw.postprocess(no_auto_bright=True, output_bps=16), dtype='f4')
 
 
-def save_array(arrs, fpath, rm=False):
+def save_array(arrs, path):
     """ Save a ndarray pair to disk
     [in]      arrs  : tuple containing ndarray pair
-    [in]      fpath : file path to save location
-    [in, opt] rm    : whether to delete the arrays from memory
-    [post] Arrays deleted from memory if rm is True
+    [in]      path : file path to save location
+    [raise] IOError
     """
-    fpath.seek(0)
-    np.savez(fpath, arrs[0], arrs[1])
-    if rm:
-        del arrs[0], arrs[1]
-        gc.collect()
+    path.seek(0)
+    try:
+        np.savez(path, arrs[0], arrs[1])
+    except rp._rawpy.LibRawIOError:
+        raise IOError
 
 
-def load_array(fpath):
+def load_array(path):
     """ Load a ndarray pair into memory
-    [in] fpath : file path of ndarray pair to be loaded
+    [in] path : file path of ndarray pair to be loaded
     [out] tuple containing ndarray pair
+    [raise] IOError
     """
-    fpath.seek(0)
-    arrs = np.load(fpath, allow_pickle=True)
+    path.seek(0)
+    try:
+        arrs = np.load(path, allow_pickle=True)
+    except rp._rawpy.LibRawIOError:
+        raise IOError
     return (arrs['arr_0'], arrs['arr_1'])
+
+
+def create_temp_file():
+    """ Create a temp file for array saving """
+    return TemporaryFile()
