@@ -13,12 +13,10 @@ License:
 """
 
 
-def render(imgs, M, rm=False):
+def render(imgs, M):
     """ Render image pair as a single color calibrated image
     [in]     imgs   : tuple of images to render
     [in]     M      : calibration ndarray
-    [in,opt] delete : wheter to delete uncalibrated images when done
     [out] rendered image
-    [post] imgs deleted if rm is True
     """
     pass

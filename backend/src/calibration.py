@@ -13,11 +13,9 @@ License:
 """
 
 
-def color_calibrator(timgs, rm=False):
+def color_calibrator(targets):
     """ Process target images to get the calibrated M matrix
-    [in] timgs : tuple of target images
-    [in] delete : wheter to delete target images when done
+    [in] targets : tuple of target images
     [out] calibrated M ndarray
-    [post] timgs deleted if rm is True
     """
     pass

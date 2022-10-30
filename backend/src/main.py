@@ -11,8 +11,10 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+# Python imports
 import sys
 
+# Local imports
 from pipelines import processing_pipeline
 
 
