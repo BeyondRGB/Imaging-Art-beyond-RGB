@@ -1,5 +1,6 @@
 <script context="module">
-    import { maxBy, each, includes, size, filter, countBy, minBy } from "lodash";
+    import { maxBy, each, includes, size, filter } from "lodash";
+    import { findBestMatch } from "./stringCompare";
 
     const matchingStandards = [
         [
@@ -7,26 +8,36 @@
             "image",
             "print",
             "object",
-            "art"
+            "art",
+            "exhibit",
+            "paint"
         ], [
             // color target
             "target",
             "color",
-            "colors",
-            "grid"
+            "grid",
+            "map",
+            "passport"
         ], [
             // flatfield
             "flat",
-            "field",
             "white",
-            "blank",
-            "flatfield"
+            "ff",
+            "flatfield",
+            "vignetting",
+            "vignette",
+            "light",
+            "correction"
         ], [
             // darkfield
             "dark",
-            "field",
             "black",
-            "darkfield"
+            "darkfield",
+            "current",
+            "signal",
+            "internal",
+            "camera",
+            "correction"
         ]
     ];
 
@@ -104,17 +115,32 @@
         imageStack.bestDarkFieldImages = [bestDarkFieldImage, maxBy(images, probabilityScoreProperties[3])];
         images = filter(images, (e) => e !== maxBy(images, probabilityScoreProperties[3]))
 
+        // Uses string similarity to determine which images go into which columns
+        const sortImageByLighting = function (image1, image2, exampleImageA) {
+            if(findBestMatch(exampleImageA.name, [image1.name, image2.name]).bestMatchIndex === 0) {
+                return [image1, image2];
+            }
+            return [image2, image1];
+        };
+
         // fill in the image stack
-        externalStack.imageA = [maxBy(imageStack?.bestArtImages, (image) => countBy(image?.name.toLowerCase())?.a)];
-        externalStack.imageB = [minBy(imageStack?.bestArtImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+        externalStack.imageA = [imageStack?.bestArtImages[0]];
+        externalStack.imageB = [imageStack?.bestArtImages[1]];
+
+        // handle A - B sorting
         if(includeTarget) {
-            externalStack.targetA = [maxBy(imageStack?.bestTargetImages, (image) => countBy(image?.name.toLowerCase())?.a)];
-            externalStack.targetB = [minBy(imageStack?.bestTargetImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+            imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.imageA[0]);
+            externalStack.targetA = [imageStack?.bestTargetImages[0]];
+            externalStack.targetB = [imageStack?.bestTargetImages[1]];
         }
-        externalStack.flatfieldA = [maxBy(imageStack?.bestFlatFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
-        externalStack.flatfieldB = [minBy(imageStack?.bestFlatFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
-        externalStack.darkfieldA = [maxBy(imageStack?.bestDarkFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
-        externalStack.darkfieldB = [minBy(imageStack?.bestDarkFieldImages, (image) => countBy(image?.name.toLowerCase())?.a)];
+
+        imageStack.bestFlatFieldImages = sortImageByLighting(imageStack?.bestFlatFieldImages[0], imageStack?.bestFlatFieldImages[1], externalStack.imageA[0]);
+        externalStack.flatfieldA = [imageStack?.bestFlatFieldImages[0]];
+        externalStack.flatfieldB = [imageStack?.bestFlatFieldImages[1]];
+
+        imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.imageA[0]);
+        externalStack.darkfieldA = [imageStack?.bestDarkFieldImages[0]];
+        externalStack.darkfieldB = [imageStack?.bestDarkFieldImages[1]];
 
         // return any images that weren't assigned
         return images;
