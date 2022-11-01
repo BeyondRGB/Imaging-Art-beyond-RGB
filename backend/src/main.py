@@ -27,10 +27,17 @@ def main():
 
     directory = sys.argv[1]
 
-    flist = []
+    files = []
     for i in range(2, 10):
-        flist.append(directory + "/" + sys.argv[i])
-    processing_pipeline(flist)
+        files.append(directory + "/" + sys.argv[i])
+
+    # TODO error handling
+    processing_pipeline(files)
+
+    import time
+    while True:
+        time.sleep(10000000)
+
 
 if __name__ == "__main__":
     main()

@@ -18,6 +18,7 @@ import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
+from cv2 import cvtColor, COLOR_BayerRG2RGB
 
 
 def save_image(img, path):
@@ -36,12 +37,24 @@ def load_image(path):
     """
     if not exists(path):
         raise FileNotFoundError
+    # Load image
     try:
-        raw = rp.imread(path)
+        raw = rp.imread(path).raw_image.copy()
     except rp._rawpy.LibRawIOError:
         raise IOError
-    # TODO investigate possible memmory usage issues
-    return np.array(raw.postprocess(no_auto_bright=True, output_bps=16), dtype='f4')
+    # Standardize based on image type
+    if len(raw.shape) == 2:
+        # Image is Bayer, convert to RGB, return image
+        return cvtColor(raw, COLOR_BayerRG2RGB)
+    elif len(raw.shape) == 3:
+        # Image is RGB, remove any alpha channel, return image
+        if raw.shape[2] == 4:
+            raw[:, :, :] = raw[:, :, :3]
+            return raw
+        elif raw.shape[2] == 3:
+            return raw
+    # Unexpected image shape
+    raise IOError
 
 
 def save_array(arrs, path):
