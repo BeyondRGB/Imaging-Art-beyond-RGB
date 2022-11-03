@@ -1,5 +1,5 @@
 """ pipelines.py
-llection of all pipelines
+Collection of all pipelines
 
 Functions:
     processing_pipeline(files)
@@ -9,7 +9,7 @@ Authors:
 
 License:
     © 2022 BeyondRGB
-    This code is licensed under the MIT license (see LINSE.txt for details)
+    This code is licensed under the MIT license (see LICENSE.txt for details)
 """
 # Python imports
 import gc
