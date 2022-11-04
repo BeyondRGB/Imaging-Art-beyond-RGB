@@ -93,6 +93,10 @@
         height: "75vh",
         resizable: true,
         color: {
+          scale: {
+            min: 0,
+            max: 100
+          },
           gradient: {
             enabled: true,
             colors: [
