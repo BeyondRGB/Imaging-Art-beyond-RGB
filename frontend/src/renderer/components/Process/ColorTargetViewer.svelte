@@ -77,8 +77,14 @@
   });
 
   function handleZoom(e) {
+      // never talk to me about this
+    // z = (x - mix(x)) / (max(x) - min(x)) * 100
+    var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
+    logZoom = Math.log(logZoom)
+    var linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100
+    console.log(linearZoom)
+    // TODO clamp to 100% and add box to display
     if (e.zoom > 10) {
-      console.log({ "Big Zoom": e });
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(false);
     } else {
