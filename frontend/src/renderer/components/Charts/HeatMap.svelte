@@ -1,12 +1,14 @@
 <script>
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
-  import HeatMap from "@components/Charts/AtomicHeatMap.svelte";
+  import { find } from "lodash";
+  import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
   export let data;
 
   let mapData = [];
   $: if (data?.matrix_values) {
-    mapData = data?.matrix_values[2]?.data;
+    const deltaE = find(data?.matrix_values, {'name': 'CM DeltaE Values'});
+    mapData = deltaE?.data;
   }
 
 </script>
@@ -14,7 +16,7 @@
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
     CM DeltaE Values
-    <HeatMap data={mapData} ></HeatMap>
+    <AtomicHeatMap data={mapData} width="600px" height="600px" ></AtomicHeatMap>
   </div>
 {/if}
 

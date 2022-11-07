@@ -1,12 +1,14 @@
-
 <script>
     import { chart } from "svelte-apexcharts";
 
+    // All the data included from the backend, will be parsed here
     export let data;
+    export let width = '600px';
+    export let height = '600px';
 
+    // Parse the needed data for the heatmap
     function getData() {
         let formattedData = [];
-
         let tempData = [];
         for (let i = 0; i < data.length; i++) {
             tempData[i] = [];
@@ -25,12 +27,56 @@
         return formattedData;
     }
 
+    const colors = [
+        "#0a9400",
+        "#199a00",
+        "#2a9f00",
+        "#3ca500",
+        "#4eab00",
+        "#62b000",
+        "#77b600",
+        "#8dbb00",
+        "#a4c100",
+        "#bdc700",
+        "#ccc300",
+        "#d2b300",
+        "#d8a300",
+        "#dd9200",
+        "#e37f00",
+        "#e86c00",
+        "#ee5700",
+        "#f44100",
+        "#f92a00",
+        "#ff1200"
+    ];
+
+    function ranges() {
+        const result = [];
+        for (let i = 0; i < 20; i++) {
+            result.push({
+                from: i/2,
+                to: i/2 + .5,
+                color: colors[i]
+            });
+        }
+        result[result.length - 1].to = Number.MAX_SAFE_INTEGER;
+        return result;
+    }
+
     const options = {
         series: getData(),
         chart: {
-            height: '600px',
-            width: '600px',
+            height: width,
+            width: height,
             type: 'heatmap',
+            toolbar: {
+                // Hamburger menu which has exports such as CSV etc.
+                // I have had issues displaying this, I believe some unrelated global CSS is causing issues
+                show: false
+            },
+            selection: {
+                enabled: false
+            }
         },
         legend: {
             show: false
@@ -39,38 +85,38 @@
             enabled: true,
             theme: 'dark',
             y: {
-                show: false
+                show: false,
+                title: {
+                    // Displayed before the value on the tooltip, unnecessary
+                    formatter: () => ""
+                }
             }
-            //https://apexcharts.com/docs/options/tooltip/
         },
-        toolbar: {
-            show: true
+        yaxis: {
+            labels: {
+                formatter: function (value, info) {
+                    if(info == data?.length) {
+                        // This gets hit before we even get to the heatmap and displays a random axisLabel
+                        return "";
+                    } else if(isFinite(info)){
+                        // This gets hit for each row on the heatmap (displayed as y-axis)
+                        return data?.length - 1 - info;
+                    } else {
+                        // This gets hit for each individual square on the heatmap (displayed as tooltip value)
+                        return value;
+                    }
+                }
+            },
         },
         plotOptions: {
             heatmap: {
                 shadeIntensity: 0.5,
                 radius: 0,
                 useFillColorAsStroke: true,
+                // EnableShades ends up shading higher-value greens darker shades, which is not what we want
+                enableShades: false,
                 colorScale: {
-                    ranges: [{
-                        from: 0,
-                        to: 5,
-                        color: '#0a8a0a',
-                        name: 'low',
-                    },
-                        {
-                            from: 5,
-                            to: 10,
-                            color: '#d9d612',
-                            name: 'medium',
-                        },
-                        {
-                            from: 10,
-                            to: 100,
-                            color: '#ff1e00',
-                            name: 'high',
-                        }
-                    ]
+                    ranges: ranges()
                 }
             }
         },
@@ -80,11 +126,8 @@
     };
 
 </script>
+
 <main>
-    <div>
-        <div use:chart={options} />
-    </div>
+    <div use:chart={options} />
 </main>
 
-<style>
-</style>
