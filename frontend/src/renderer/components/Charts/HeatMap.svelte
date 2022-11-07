@@ -16,7 +16,7 @@
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
     CM DeltaE Values
-    <AtomicHeatMap data={mapData} width="600px" height="600px" ></AtomicHeatMap>
+    <AtomicHeatMap data={mapData} ></AtomicHeatMap>
   </div>
 {/if}
 

@@ -3,8 +3,6 @@
 
     // All the data included from the backend, will be parsed here
     export let data;
-    export let width = '600px';
-    export let height = '600px';
 
     // Parse the needed data for the heatmap
     function getData() {
@@ -66,8 +64,8 @@
     const options = {
         series: getData(),
         chart: {
-            height: width,
-            width: height,
+            height: '600px',
+            width: '600px',
             type: 'heatmap',
             toolbar: {
                 // Hamburger menu which has exports such as CSV etc.
