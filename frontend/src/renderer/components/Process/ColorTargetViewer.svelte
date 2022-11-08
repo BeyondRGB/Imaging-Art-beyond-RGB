@@ -1,8 +1,9 @@
 <script lang="ts">
   import { currentPage, processState } from "@util/stores";
+  
   import OpenSeadragon from "openseadragon";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { PlusIcon, MinusIcon } from "svelte-feather-icons";
+
   let viewer;
   let mouseTracker;
   let colorOverlay;
@@ -21,6 +22,8 @@
   export let verifyPos;
 
   export let loading;
+
+  export let linearZoom;
 
   let imageUrl;
 
@@ -77,13 +80,6 @@
   });
 
   function handleZoom(e) {
-      // never talk to me about this
-    // z = (x - mix(x)) / (max(x) - min(x)) * 100
-    var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
-    logZoom = Math.log(logZoom)
-    var linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100
-    console.log(linearZoom)
-    // TODO clamp to 100% and add box to display
     if (e.zoom > 10) {
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(false);
@@ -91,6 +87,14 @@
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(true);
     }
+
+    // never talk to me about this
+    // z = (x - mix(x)) / (max(x) - min(x)) * 100
+    var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
+    logZoom = Math.log(logZoom)
+    linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100 
+    console.log(linearZoom)
+
   }
 
   $: if ($processState.currentTab === 4) {
@@ -421,6 +425,10 @@
     {/if}
   {/each}
 </main>
+
+{#if isFinite(linearZoom)}
+  <h1>{Math.floor(linearZoom)}%</h1>
+{/if}
 
 <style lang="postcss">
   :root {
