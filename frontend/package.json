@@ -53,11 +53,13 @@
     }
   },
   "dependencies": {
+    "apexcharts": "^3.36.1",
     "electron-squirrel-startup": "^1.0.0",
     "get-port-sync": "^1.0.1",
     "html2canvas": "^1.4.1",
-    "svelte-file-dropzone": "^1.0.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "svelte-apexcharts": "^1.0.2",
+    "svelte-file-dropzone": "^1.0.0"
   },
   "devDependencies": {
     "@carbon/charts-svelte": "^0.56.0",
