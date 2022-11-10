@@ -4,6 +4,9 @@
     // All the data included from the backend, will be parsed here
     export let data;
 
+    // Colorblind option
+    export let visionDeficiencyMode = false;
+
     // Parse the needed data for the heatmap
     function getData() {
         let formattedData = [];
@@ -48,84 +51,113 @@
         "#ff1200"
     ];
 
+    const colorsOption2 = [
+        "#ffffff",
+        "#efefef",
+        "#d3d3d3",
+        "#c1c1c1",
+        "#b5b5b5",
+        "#9e9e9e",
+        "#898989",
+        "#767676",
+        "#585858",
+        "#4c4c4c",
+        "#4a4a4a",
+        "#4c4c4c",
+        "#383838",
+        "#383838",
+        "#313131",
+        "#2a2a2a",
+        "#1c1c1c",
+        "#191919",
+        "#171717",
+        "#000000"
+    ];
+
     function ranges() {
         const result = [];
         for (let i = 0; i < 20; i++) {
             result.push({
                 from: i/2,
                 to: i/2 + .5,
-                color: colors[i]
+                color: visionDeficiencyMode ? colorsOption2[i] : colors[i]
             });
         }
         result[result.length - 1].to = Number.MAX_SAFE_INTEGER;
         return result;
     }
 
-    const options = {
-        series: getData(),
-        chart: {
-            height: '600px',
-            width: '600px',
-            type: 'heatmap',
-            toolbar: {
-                // Hamburger menu which has exports such as CSV etc.
-                // I have had issues displaying this, I believe some unrelated global CSS is causing issues
+    const getOptions = function() {
+        return {
+            series: getData(),
+            chart: {
+                height: '600px',
+                width: '600px',
+                type: 'heatmap',
+                toolbar: {
+                    // Hamburger menu which has exports such as CSV etc.
+                    // I have had issues displaying this, I believe some unrelated global CSS is causing issues
+                    show: false
+                },
+                selection: {
+                    enabled: false
+                }
+            },
+            legend: {
                 show: false
             },
-            selection: {
-                enabled: false
-            }
-        },
-        legend: {
-            show: false
-        },
-        tooltip: {
-            enabled: true,
-            theme: 'dark',
-            y: {
-                show: false,
-                title: {
-                    // Displayed before the value on the tooltip, unnecessary
-                    formatter: () => ""
-                }
-            }
-        },
-        yaxis: {
-            labels: {
-                formatter: function (value, info) {
-                    if(info == data?.length) {
-                        // This gets hit before we even get to the heatmap and displays a random axisLabel
-                        return "";
-                    } else if(isFinite(info)){
-                        // This gets hit for each row on the heatmap (displayed as y-axis)
-                        return data?.length - 1 - info;
-                    } else {
-                        // This gets hit for each individual square on the heatmap (displayed as tooltip value)
-                        return value;
+            tooltip: {
+                enabled: true,
+                theme: 'dark',
+                y: {
+                    show: false,
+                    title: {
+                        // Displayed before the value on the tooltip, unnecessary
+                        formatter: () => ""
                     }
                 }
             },
-        },
-        plotOptions: {
-            heatmap: {
-                shadeIntensity: 0.5,
-                radius: 0,
-                useFillColorAsStroke: true,
-                // EnableShades ends up shading higher-value greens darker shades, which is not what we want
-                enableShades: false,
-                colorScale: {
-                    ranges: ranges()
+            yaxis: {
+                labels: {
+                    formatter: function (value, info) {
+                        if(info == data?.length) {
+                            // This gets hit before we even get to the heatmap and displays a random axisLabel
+                            return "";
+                        } else if(isFinite(info)){
+                            // This gets hit for each row on the heatmap (displayed as y-axis)
+                            return data?.length - 1 - info;
+                        } else {
+                            // This gets hit for each individual square on the heatmap (displayed as tooltip value)
+                            return value;
+                        }
+                    }
+                },
+            },
+            plotOptions: {
+                heatmap: {
+                    shadeIntensity: 0.5,
+                    radius: 0,
+                    useFillColorAsStroke: true,
+                    // EnableShades ends up shading higher-value greens darker shades, which is not what we want
+                    enableShades: false,
+                    colorScale: {
+                        ranges: ranges()
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true,
+                style: {
+                    colors: visionDeficiencyMode ? ['#e60b0b'] : ['#ffffff']
                 }
             }
-        },
-        dataLabels: {
-            enabled: true
         }
     };
 
 </script>
 
 <main>
-    <div use:chart={options} />
+    {#key visionDeficiencyMode}
+        <div use:chart={getOptions()} />
+    {/key}
 </main>
-
