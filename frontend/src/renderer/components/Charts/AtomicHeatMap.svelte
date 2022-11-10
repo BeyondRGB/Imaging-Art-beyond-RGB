@@ -51,7 +51,7 @@
         "#ff1200"
     ];
 
-    const colorsOption2 = [
+    const grayScale = [
         "#ffffff",
         "#efefef",
         "#d3d3d3",
@@ -80,7 +80,7 @@
             result.push({
                 from: i/2,
                 to: i/2 + .5,
-                color: visionDeficiencyMode ? colorsOption2[i] : colors[i]
+                color: visionDeficiencyMode ? grayScale[i] : colors[i]
             });
         }
         result[result.length - 1].to = Number.MAX_SAFE_INTEGER;
