@@ -23,7 +23,7 @@
 
   export let loading;
 
-  export let linearZoom;
+  export let linearZoom = 0;
 
   let imageUrl;
 
@@ -46,26 +46,13 @@
       visibilityRatio: 1,
       animationTime: 0.4,
     });
-    mouseTracker = new OpenSeadragon.MouseTracker({
-      element: viewer.canvas,
-      moveHandler: function (e) {
-        viewportPoint = viewer.viewport.pointFromPixel(e.position);
-        imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-      },
-      scrollHandler: function (e) {
-        console.log(e);
-        console.log([viewer.viewport.getZoom(), viewer.viewport.getZoom(true)]);
-      },
-    });
-    viewer.addHandler("zoom", handleZoom);
+    viewer.addHandler("zoom", (e) => setTimeout(() => handleZoom(e), 100));
   };
 
   const destoryViewer = () => {
     if (viewer) {
       viewer.destroy();
       viewer = null;
-      mouseTracker.destroy();
-      mouseTracker = null;
       console.log("Color target viewer destroyed");
     }
   };
@@ -386,6 +373,10 @@
 <main>
   <div id="color-seadragon-viewer" />
 
+  {#if linearZoom > 1}
+    <h1 id="zoom">{Math.floor(linearZoom)}%</h1>
+  {/if}
+
   {#each [colorTarget, verifyTarget] as target, i}
     {#if target}
       <div class="selectorBox" class:ver={i === 1} id={`sBox-${i}`}>
@@ -425,10 +416,6 @@
     {/if}
   {/each}
 </main>
-
-{#if isFinite(linearZoom)}
-  <h1>{Math.floor(linearZoom)}%</h1>
-{/if}
 
 <style lang="postcss">
   :root {
