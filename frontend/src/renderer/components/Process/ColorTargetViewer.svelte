@@ -74,14 +74,13 @@
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(true);
     }
-
-    // never talk to me about this
-    // z = (x - mix(x)) / (max(x) - min(x)) * 100
+    // z = (x - mix(x)) / (max(x) - min(x)) * 100     (how to scale between 0 and 100)
+    // the getZoom method returns the ratio of the image's width to the width of the viewport.
+    // that number has a logarithmic behavior when zooming in.
+    // so we can simply take the log of that number and scale it between 0 and 100.
     var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
     logZoom = Math.log(logZoom)
     linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100 
-    console.log(linearZoom)
-
   }
 
   $: if ($processState.currentTab === 4) {
@@ -372,7 +371,7 @@
 
 <main>
   <div id="color-seadragon-viewer" />
-
+  <!-- only show the zoom percentage if it is greater than 1% -->
   {#if linearZoom > 1}
     <h1 id="zoom">{Math.floor(linearZoom)}%</h1>
   {/if}
