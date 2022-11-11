@@ -6,7 +6,7 @@
     messageStore,
     currentPage,
   } from "@util/stores";
-  import Heatmap from "@components/Charts/Heatmap.svelte";
+  import Heatmap from "@components/Charts/HeatMap.svelte";
   import ScatterCharts from "@root/components/Charts/ScatterCharts.svelte";
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import FileSelector from "@components/FileSelector.svelte";
