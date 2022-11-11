@@ -1,9 +1,9 @@
 <script lang="ts">
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
-  import { ScatterChart } from "@carbon/charts-svelte";
-  import { text } from "svelte/internal";
+  import { LineChart, ScatterChart } from "@carbon/charts-svelte";
 
+  // @Drink whiskey
   // https://github.com/antimatter15/rgb-lab/blob/master/color.js
   function lab2rgb(lab) {
     var y = (lab[0] + 16) / 116,
@@ -41,6 +41,7 @@
     dataAB = [];
     colorsAB = {};
     let chartData = [];
+    let refData = [];
     data["matrix_values"]
       .find((ele) => ele.name === `${matrix} L*_camera`)
       ["data"].map((row, i) => {
@@ -64,16 +65,51 @@
         });
       });
 
-    chartData.map((value) => {
-      let rgb = lab2rgb([value.l, value.a, value.b]);
-      dataAB.push({
-        group: `${value.col}:${value.row}`,
-        a: value.a,
-        b: value.b,
+    data["matrix_values"]
+            .find((ele) => ele.name === `${matrix} L*_ref`)
+            ["data"].map((row, i) => {
+      row.map((colData, k) => {
+        refData = [
+          ...refData,
+          {
+            col: String.fromCharCode(k + 65),
+            row: i + 1,
+            l: data["matrix_values"].find(
+                    (ele) => ele.name === `${matrix} L*_ref`
+            )["data"][i][k],
+            a: data["matrix_values"].find(
+                    (ele) => ele.name === `${matrix} a*_ref`
+            )["data"][i][k],
+            b: data["matrix_values"].find(
+                    (ele) => ele.name === `${matrix} b*_ref`
+            )["data"][i][k],
+          },
+        ];
       });
-      colorsAB[
-        `${value.col}:${value.row}`
-      ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+    });
+
+    chartData.map((value) => {
+        let rgb = lab2rgb([value.l, value.a, value.b]);
+        dataAB.push({
+          group: `${value.col}:${value.row}`,
+          a: value.a,
+          b: value.b,
+        });
+        colorsAB[
+                `${value.col}:${value.row}`
+                ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+    });
+
+    refData.map((value) => {
+        let rgb = lab2rgb([value.l, value.a, value.b]);
+        dataAB.push({
+          group: `${value.col}:${value.row}`,
+          a: value.a,
+          b: value.b,
+        });
+        colorsAB[
+                `${value.col}:${value.row}`
+                ] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
     });
 
     chartData.map((value) => {
@@ -96,7 +132,7 @@
 </script>
 
 <div class="scatter-charts">
-  <ScatterChart
+  <LineChart
     data={dataAB}
     options={{
       title: "a* vs b*",
