@@ -5,6 +5,7 @@
   import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
   export let data;
 
+  export let visionDeficiencyMode = false;
   let mapData = [];
   $: if (data?.matrix_values) {
     const deltaE = find(data?.matrix_values, {'name': 'CM DeltaE Values'});
@@ -16,7 +17,11 @@
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
     CM DeltaE Values
-    <AtomicHeatMap data={mapData} ></AtomicHeatMap>
+    <span style="float: right">
+      <label>Grayscale</label>
+      <input type="checkbox" class="peer" bind:checked={visionDeficiencyMode} >
+    </span>
+    <AtomicHeatMap data={mapData} visionDeficiencyMode={visionDeficiencyMode}></AtomicHeatMap>
   </div>
 {/if}
 
