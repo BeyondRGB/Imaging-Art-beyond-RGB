@@ -21,7 +21,7 @@
     }
   }
 
-  $: if ($connectionState === "Closed - Error"){
+  $: if ($connectionState === "Closed" || $connectionState === "Closed - Error"){
     toast.push('An error has occurred, attempting to reconnect.', {
       onpop: () => {
         connect();
@@ -67,9 +67,8 @@
         <svelte:component this={routes["Settings"].icon} size="1.75x" />
       </button>
 
-      <!--The toast here is just for demo purposes. Remove after demo.-->
       <button
-        on:click={() => toast.push('An error has occurred, attempting to reconnect.')}
+        on:click={() => connect()}
         
         class:connected={$connectionState === "Connected"}
         class:disconnected={$connectionState !== "Connected"}
