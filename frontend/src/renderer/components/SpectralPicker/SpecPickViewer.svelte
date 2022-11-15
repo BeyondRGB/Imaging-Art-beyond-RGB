@@ -16,6 +16,7 @@
   let imageUrl;
 
   let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
+  let linearZoom = 0;
   let viewportPoint;
   let imagePoint;
   let mouseTracker;
@@ -244,13 +245,22 @@
     } else {
       viewer.drawer.setImageSmoothingEnabled(true);
     }
+    // z = (x - mix(x)) / (max(x) - min(x)) * 100     (how to scale between 0 and 100)
+    // the getZoom method returns the ratio of the image's width to the width of the viewport.
+    // that number has a logarithmic behavior when zooming in.
+    // so we can simply take the log of that number and scale it between 0 and 100.
+    var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
+    logZoom = Math.log(logZoom)
+    linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100 
   }
 </script>
 
 <main>
   <!-- <div class="load"><Loader /></div> -->
   <div id="specpick-seadragon-viewer" />
-
+  {#if linearZoom > 1}
+    <h1 id="zoom">{Math.floor(linearZoom)}%</h1>
+  {/if}
   <div id="specView-brush" />
   <div id="specView-brush-shadow" />
 </main>
