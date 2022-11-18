@@ -23,7 +23,7 @@
 
   export let loading;
 
-  export let linearZoom = 0;
+  export let linearZoom = 100;
 
   let imageUrl;
 
@@ -80,7 +80,7 @@
     // so we can simply take the log of that number and scale it between 0 and 100.
     var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
     logZoom = Math.log(logZoom)
-    linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100 
+    linearZoom = (((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100) + 100 
   }
 
   $: if ($processState.currentTab === 4) {
