@@ -18,6 +18,7 @@ License:
 """
 # Python imports
 import numpy as np
+import cv2
 
 
 def preprocess(imgs):
@@ -68,4 +69,34 @@ def registration(imgs):
     [in] imgs  : tuple containing image pair
     [post] images registered in place
     """
-    pass
+    # TODO how are these gonna be and what to return
+    reference_color, align_color = imgs
+
+    # grayscale
+    img1 = cv2.cvtColor(reference_color, cv2.COLOR_BGR2GRAY)
+    img2 = cv2.cvtColor(align_color, cv2.COLOR_BGR2GRAY)
+    height, width = img2.shape
+
+    # create ORB detector
+    orb_detector = cv2.ORB_create(5000)
+    key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
+    key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
+
+    # match images
+    matches = cv2.BFMatcher.match(descriptors1, descriptors2)
+    matches = tuple(sorted(matches, key=lambda x: x.distance))
+    matches = matches[:int(len(matches)) * 0.9]
+    num_matches = matches
+
+    p1 = np.zeros((num_matches, 2))
+    p2 = np.zeros((num_matches, 2))
+
+    for i in range(len(matches)):
+        p1[i, :] = key_points1[matches[i].queryIdx].pt
+        p2[i, :] = key_points2[matches[i].trainIdx].pt
+
+    homography, mask = cv2.findHomography(p1, p2, cv2.RANSAC)
+
+    transformed_image = cv2.warpPerspective(reference_color, homography, (width, height))
+
+    return transformed_image
