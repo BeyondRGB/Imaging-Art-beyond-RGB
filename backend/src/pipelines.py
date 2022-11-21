@@ -15,6 +15,7 @@ License:
 import gc
 
 # Local imports
+from backend.src.preprocessing import registration
 from rgbio import load_image, load_array, save_array, create_temp_file
 from exceptions import MissingFilesException
 from constants import IMAGE_A_IDX, IMAGE_B_IDX, WHITE_A_IDX, WHITE_B_IDX, \
@@ -56,7 +57,8 @@ def processing_pipeline(files):
     gc.collect()
 
     # TODO registration
-
+    imgs = ()
+    registration(imgs)
     # TODO calibration
 
     # Delete targets from memory
