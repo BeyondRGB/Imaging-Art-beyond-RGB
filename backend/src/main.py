@@ -29,6 +29,7 @@ def main():
 
     files = []
     for i in range(2, 10):
+        print(directory + "\\" + sys.argv[i])
         files.append(directory + "/" + sys.argv[i])
 
     # TODO error handling
