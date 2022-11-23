@@ -51,12 +51,12 @@ def preprocess(imgs, ws=(-1, -1), target=None):
     if ws[0] == -1 or ws[1] == -1:
         # We need to generate w values
         ws = flat_field_w_gen(img_pair, white_pair, target)
-    # flat_fielding(img_pair, white_pair, ws)
+    flat_fielding(img_pair, white_pair, ws)
     return ws
 
 
-def dead_pixel_correction(imgs, dead_set=()):
-    """ Correct for dark pixels
+def dead_pixel_correction(imgs):
+    """ Correct for dark pixels by applying a median blur to the images
     [in] imgs         : tuple containing all image pairs
     [in,opt] dead_set : tuple of arrays of the location of dead pixels
     [out] tuple of arrays of the location of dead pixels
