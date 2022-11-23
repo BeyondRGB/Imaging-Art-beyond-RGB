@@ -45,14 +45,14 @@ def load_image(path):
     # Standardize based on image type
     if len(raw.shape) == 2:
         # Image is Bayer, convert to RGB, return image
-        return cvtColor(raw, COLOR_BayerRG2RGB)
+        return cvtColor(raw, COLOR_BayerRG2RGB).astype('f4')
     elif len(raw.shape) == 3:
         # Image is RGB, remove any alpha channel, return image
         if raw.shape[2] == 4:
-            raw[:, :, :] = raw[:, :, :3]
-            return raw
+            raw[...] = raw[:, :, :3]
+            return raw.astype('f4')
         elif raw.shape[2] == 3:
-            return raw
+            return raw.astype('f4')
     # Unexpected image shape
     raise IOError
 
