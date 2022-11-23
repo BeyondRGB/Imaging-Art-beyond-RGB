@@ -17,7 +17,7 @@ import gc
 # Local imports
 from rgbio import load_image, load_array, save_array, create_temp_file
 from exceptions import MissingFilesException
-from preprocessing import bit_scale, dark_current_correction, preprocess
+from preprocessing import preprocess
 from constants import IMAGE_A_IDX, IMAGE_B_IDX, WHITE_A_IDX, WHITE_B_IDX, \
     DARK_A_IDX, DARK_B_IDX, RENDERABLES_START, WHITE_SWAP_IDX, DARK_SWAP_IDX
 
@@ -37,7 +37,7 @@ def processing_pipeline(files):
         10. repeat 6-9 until all images processed
     [in] files : list of image file location touples ([(imgA, imgB)])
     [out] TODO
-    [raise] IOError, FileNotFoundError, MissingFilesException
+    [raise] IOError, FileNotFoundError, MissingFilesException, ZeroDivisionError
     """
     imgs = []
     swap = []
@@ -55,24 +55,19 @@ def processing_pipeline(files):
     for i in range(0, RENDERABLES_START):
         imgs.append(load_image(files[i]))
 
-    exit(0)
-    # Flat and dark field preprocessing
-    bit_scale(imgs[WHITE_A_IDX:WHITE_B_IDX+1])
-    bit_scale(imgs[DARK_A_IDX:DARK_B_IDX+1])
-    dark_current_correction(imgs[WHITE_A_IDX:WHITE_B_IDX+1],
-                            imgs[DARK_A_IDX:DARK_B_IDX+1])
+    # Target preprocessing
+    preprocess(imgs)
 
     # Save flat and dark field arrays to disk
     save_array((imgs[WHITE_A_IDX], imgs[WHITE_B_IDX]), swap[WHITE_SWAP_IDX])
     save_array((imgs[DARK_A_IDX], imgs[DARK_B_IDX]), swap[DARK_SWAP_IDX])
 
-    # Target preprocessing
-    preprocess(imgs)
-
     import tifffile
     import numpy as np
-    img = np.multiply(imgs[0], 255)
-    img = np.clip(img, 0, 255).astype('uint8')
+    s = ((2**8 - 1)/(2**16 - 1))  # TODO determine actual scale
+    imgs[0][:, :, :] = imgs[IMAGE_B_IDX] * s
+    # img = np.multiply(imgs[0], 255)
+    img = np.clip(imgs[0], 0, 255).astype('uint8')
     tifffile.imwrite('out.tif', img, photometric='rgb')
     exit(0)
     import time
