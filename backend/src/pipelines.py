@@ -37,7 +37,8 @@ def processing_pipeline(files):
         10. repeat 6-9 until all images processed
     [in] files : list of image file location touples ([(imgA, imgB)])
     [out] TODO
-    [raise] IOError, FileNotFoundError, MissingFilesException, ZeroDivisionError
+    [raise] IOError, FileNotFoundError, MissingFilesException
+    [raise] ZeroDivisionError
     """
     imgs = []
     swap = []
@@ -64,10 +65,9 @@ def processing_pipeline(files):
 
     import tifffile
     import numpy as np
-    s = ((2**8 - 1)/(2**16 - 1))  # TODO determine actual scale
-    imgs[0][:, :, :] = imgs[IMAGE_B_IDX] * s
-    # img = np.multiply(imgs[0], 255)
-    img = np.clip(imgs[0], 0, 255).astype('uint8')
+    img = imgs[0] * 255
+    img = np.clip(img, 0, 255).astype('uint8')
+    print(img)
     tifffile.imwrite('out.tif', img, photometric='rgb')
     exit(0)
     import time
