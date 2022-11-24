@@ -5,7 +5,7 @@ Functions:
     main()
 
 Authors:
-    Brendan Grau <bsg8376@rit.edu>
+    Brendan Grau <https://github.com/Victoriam7>
 
 License:
     © 2022 BeyondRGB
@@ -16,6 +16,7 @@ import sys
 
 # Local imports
 from pipelines import processing_pipeline
+from packet import Packet
 
 
 def main():
@@ -27,13 +28,13 @@ def main():
 
     directory = sys.argv[1]
 
-    files = []
+    packet = Packet()
+
     for i in range(2, 10):
-        print(directory + "\\" + sys.argv[i])
-        files.append(directory + "/" + sys.argv[i])
+        packet.files.append(directory + "/" + sys.argv[i])
 
     # TODO error handling
-    processing_pipeline(files)
+    processing_pipeline(packet)
 
 
 if __name__ == "__main__":
