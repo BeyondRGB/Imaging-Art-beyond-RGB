@@ -7,7 +7,7 @@ Functions:
     load_image(path)
 
 Authors:
-    Brendan Grau <bsg8376@rit.edu>
+    Brendan Grau <https://github.com/Victoriam7>
 
 License:
     © 2022 BeyondRGB

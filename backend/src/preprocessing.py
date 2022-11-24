@@ -2,15 +2,16 @@
 Collection of functions used for preprocessing
 
 Functions:
-    preprocess(imgs)
-    bit_scale(imgs)
-    dark_current_correction(imgs, dimgs)
-    flat_field_w_gen(timgs, wimgs)
-    flat_fielding(imgs, wimgs, ws)
-    registration(imgs)
+    preprocess(packet)
+    bit_scale(packet)
+    dark_current_correction(packet, dimgs)
+    flat_field_w_gen(packet)
+    flat_fielding(packet)
+    registration(packet)
 
 Authors:
-    Brendan Grau <bsg8376@rit.edu>
+    Brendan Grau <https://github.com/Victoriam7>
+    Elija Cooper
 
 License:
     © 2022 BeyondRGB
@@ -18,131 +19,148 @@ License:
 """
 # Python imports
 import numpy as np
-from cv2 import medianBlur
+from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
+        findHomography, warpPerspective, RANSAC, ORB_create
 
 # Local imports
-from constants import IMAGE_A_IDX, IMAGE_B_IDX, WHITE_A_IDX, WHITE_B_IDX, \
-    DARK_A_IDX, DARK_B_IDX
+from constants import BLUR_FACTOR
 
 
-def preprocess(imgs, ws=(-1, -1), target=None):
+def preprocess(packet):
     """ Run preprocessing on pair of images in place
-    [in] imgs       : tuple containing all image pairs
-    [in,opt] ws     : tuple containing w values pair
-    [in,opt] target : target information, needed to generate w values
-    [out] tuple containing w value pair (w1, w2) for use later
-    [out] touple containing location of dead pixels
+    [in] packet : pipeline packet
     [post] images preprocessed in place
     [raise] ZeroDivisionError
     """
-    img_pair = imgs[IMAGE_A_IDX:IMAGE_B_IDX+1]
-    dark_pair = imgs[DARK_A_IDX:DARK_B_IDX+1]
-    white_pair = imgs[WHITE_A_IDX:WHITE_B_IDX+1]
-
-    bit_scale(white_pair)
-    bit_scale(dark_pair)
-
-    dead_pixel_correction(imgs)
-
-    dark_current_correction(white_pair, dark_pair)
-
-    bit_scale(img_pair)
-    dark_current_correction(img_pair, dark_pair)
-    if ws[0] == -1 or ws[1] == -1:
-        # We need to generate w values
-        ws = flat_field_w_gen(img_pair, white_pair, target)
-    flat_fielding(img_pair, white_pair, ws)
-    return ws
+    bit_scale(packet)
+    dead_pixel_correction(packet)
+    dark_current_correction(packet)
+    packet.unload_dark()  # Dark no longer needed
+    flat_fielding(packet)
+    packet.unload_white()  # Flat no longer needed
+    registration(packet)
 
 
-def dead_pixel_correction(imgs):
+def dead_pixel_correction(packet):
     """ Correct for dark pixels by applying a median blur to the images
-    [in] imgs         : tuple containing all image pairs
-    [in,opt] dead_set : tuple of arrays of the location of dead pixels
-    [out] tuple of arrays of the location of dead pixels
+    [in] packet : pipeline packet
     [post] images corrected for dead pixels
     """
-    img_pair = imgs[IMAGE_A_IDX:IMAGE_B_IDX+1]
-    dark_pair = imgs[DARK_A_IDX:DARK_B_IDX+1]
-    white_pair = imgs[WHITE_A_IDX:WHITE_B_IDX+1]
-    img_pair[0][...] = medianBlur(img_pair[0], 3)
-    img_pair[1][...] = medianBlur(img_pair[1], 3)
-    dark_pair[0][...] = medianBlur(dark_pair[0], 3)
-    dark_pair[1][...] = medianBlur(dark_pair[1], 3)
-    white_pair[0][...] = medianBlur(white_pair[0], 3)
-    white_pair[1][...] = medianBlur(white_pair[1], 3)
+    subject = packet.get_subject()
+
+    # If the Ws have not yet been generated, we need to correct the flats
+    if packet.flat_field_ws == ():
+        dark = packet.get_dark()
+        white = packet.get_white()
+        dark[0][...] = medianBlur(dark[0], BLUR_FACTOR)
+        dark[1][...] = medianBlur(dark[1], BLUR_FACTOR)
+        white[0][...] = medianBlur(white[0], BLUR_FACTOR)
+        white[1][...] = medianBlur(white[1], BLUR_FACTOR)
+
+    subject[0][...] = medianBlur(subject[0], BLUR_FACTOR)
+    subject[1][...] = medianBlur(subject[1], BLUR_FACTOR)
 
 
-def bit_scale(imgs):
+def bit_scale(packet):
     """ Bit scale pair of images in place
-    [in] imgs : tuple containing image pair
+    [in] packet : pipeline packet
     [post] images bit scaled in place
     """
-    s = ((2**16 - 1)/(2**14 - 1))  # TODO determine actual scale
-    imgs[0] *= s
-    imgs[1] *= s
+    subject = packet.get_subject()
+
+    s = ((2**16 - 1)/(2**14 - 1))  # TODO determine actual scale for each image
+
+    # If the Ws have not yet been generated, we need to scale the flats
+    if packet.flat_field_ws == ():
+        dark = packet.get_dark()
+        white = packet.get_white()
+        dark[0][...] *= s
+        dark[1][...] *= s
+        white[0][...] *= s
+        white[1][...] *= s
+
+    subject[0][...] *= s
+    subject[1][...] *= s
 
 
-def dark_current_correction(imgs, dimgs):
+def dark_current_correction(packet):
     """ Dark current correct pair of images in place
-    [in] imgs  : tuple containing image pair
-    [in] dimgs : tuple containing dark image pair
+    [in] packet : pipeline packet
     [post] images dark current corrected in place
     """
-    imgs[0] -= dimgs[0]
-    imgs[1] -= dimgs[1]
+    subject = packet.get_subject()
+    dark = packet.get_dark()
+
+    # If the Ws have not yet been generated, we need to correct the flat fields
+    if packet.flat_field_ws == ():
+        white = packet.get_white()
+        white[0][...] -= dark[0]
+        white[1][...] -= dark[1]
+
+    subject[0][...] -= dark[0]
+    subject[1][...] -= dark[1]
 
 
-def flat_field_w_gen(timgs, wimgs, target):
+def flat_field_w_gen(packet):
     """ Generate flat fielding w value
-    [in] timgs  : tuple containing target image pair
-    [in] wimgs  : tuple containing white image pair
-    [in] target : target information
-    [out] tuple containing w value pair (w1, w2)
+    [in] packet : pipeline packet
     """
+    target = packet.get_target()
+    white = packet.get_white()
+
+    # Get mean values
     y = 0.86122  # TODO remove hardcoding
-    t1mean = np.mean(timgs[0][1960:2040, 3040:3100], axis=(0, 1))
-    t2mean = np.mean(timgs[1][1960:2040, 3040:3100], axis=(0, 1))
-    w1mean = np.mean(wimgs[0][1960:2040, 3040:3100], axis=(0, 1))
-    w2mean = np.mean(wimgs[1][1960:2040, 3040:3100], axis=(0, 1))
+    t1mean = np.mean(target[0][1960:2040, 3040:3100], axis=(0, 1))
+    t2mean = np.mean(target[1][1960:2040, 3040:3100], axis=(0, 1))
+    w1mean = np.mean(white[0][1960:2040, 3040:3100], axis=(0, 1))
+    w2mean = np.mean(white[1][1960:2040, 3040:3100], axis=(0, 1))
+
+    # Generate Ws
     w1 = y * (t1mean / w1mean)
     w2 = y * (t2mean / w2mean)
-    return w1, w2
+    packet.flat_field_ws = (w1, w2)
 
 
-def flat_fielding(imgs, wimgs, ws):
+def flat_fielding(packet):
     """ Flat field image pair in place
-    [in] imgs  : tuple containing image pair
-    [in] wimgs : tuple containing white image pair
-    [in] ws    : tuple containing w value pair
+    [in] packet : pipeline packet
     [raise] ZeroDivisionError
     """
-    imgs[0] /= wimgs[0]
-    imgs[0] *= ws[0]
-    imgs[1] /= wimgs[1]
-    imgs[1] *= ws[1]
+    subject = packet.get_subject()
+    white = packet.get_white()
+
+    # Generate Ws if we haven't already
+    if packet.flat_field_ws == ():
+        flat_field_w_gen(packet)
+
+    # Flat fielding
+    subject[0][...] /= white[0]
+    subject[0][...] *= packet.flat_field_ws[0]
+    subject[1][...] /= white[1]
+    subject[1][...] *= packet.flat_field_ws[1]
 
 
-def registration(imgs):
+def registration(packet):
     """ Register image pair in place
-    [in] imgs  : tuple containing image pair
+    [in] packet : pipeline packet
     [post] images registered in place
     """
+    return  # TODO remove
     # TODO how are these gonna be and what to return
-    reference_color, align_color = imgs
+    reference_color, align_color = packet
 
     # grayscale
-    img1 = cv2.cvtColor(reference_color, cv2.COLOR_BGR2GRAY)
-    img2 = cv2.cvtColor(align_color, cv2.COLOR_BGR2GRAY)
+    img1 = cvtColor(reference_color, COLOR_BGR2GRAY)
+    img2 = cvtColor(align_color, COLOR_BGR2GRAY)
     height, width = img2.shape
 
     # create ORB detector
-    orb_detector = cv2.ORB_create(5000)
+    orb_detector = ORB_create(5000)
     key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
     key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
 
     # match images
-    matches = cv2.BFMatcher.match(descriptors1, descriptors2)
+    matches = BFMatcher.match(descriptors1, descriptors2)
     matches = tuple(sorted(matches, key=lambda x: x.distance))
     matches = matches[:int(len(matches)) * 0.9]
     num_matches = matches
@@ -154,8 +172,6 @@ def registration(imgs):
         p1[i, :] = key_points1[matches[i].queryIdx].pt
         p2[i, :] = key_points2[matches[i].trainIdx].pt
 
-    homography, mask = cv2.findHomography(p1, p2, cv2.RANSAC)
+    homography, mask = findHomography(p1, p2, RANSAC)
 
-    transformed_image = cv2.warpPerspective(reference_color, homography, (width, height))
-
-    return transformed_image
+    return warpPerspective(reference_color, homography, (width, height))
