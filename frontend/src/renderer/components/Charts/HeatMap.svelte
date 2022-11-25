@@ -9,7 +9,7 @@
   let mapData = [];
   $: if (data?.matrix_values) {
     const deltaE = find(data?.matrix_values, {'name': 'CM DeltaE Values'});
-    mapData = deltaE?.data;
+    mapData = deltaE?.data.slice().reverse();
   }
 
 </script>
