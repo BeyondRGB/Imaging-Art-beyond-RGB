@@ -3,6 +3,7 @@
   
   import OpenSeadragon from "openseadragon";
   import { afterUpdate, onDestroy, onMount } from "svelte";
+  import {getZoomPercentage} from "@util/photoViewerHelper";
 
   let viewer;
   let mouseTracker;
@@ -74,13 +75,8 @@
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(true);
     }
-    // z = (x - mix(x)) / (max(x) - min(x)) * 100     (how to scale between 0 and 100)
-    // the getZoom method returns the ratio of the image's width to the width of the viewport.
-    // that number has a logarithmic behavior when zooming in.
-    // so we can simply take the log of that number and scale it between 0 and 100.
-    var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
-    logZoom = Math.log(logZoom)
-    linearZoom = (((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100) + 100 
+
+    linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
   }
 
   $: if ($processState.currentTab === 4) {
