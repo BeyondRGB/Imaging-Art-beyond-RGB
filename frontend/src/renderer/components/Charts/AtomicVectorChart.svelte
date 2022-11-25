@@ -21,8 +21,8 @@
                 colors.push(item.color);
             }
             entry.data.push({
-                y: item.a || item.l,
-                x: item.b || item.c,
+                y: item.b || item.l,
+                x: item.a || item.c,
             });
         });
         return data;
@@ -85,7 +85,7 @@
                     }
                 },
                 title: {
-                    text: dataAB ? 'b*' : 'C*',
+                    text: dataAB ? 'a*' : 'C*',
                     offsetY: 75,
                     style: {
                         color: '#fff'
@@ -108,7 +108,7 @@
                     }
                 },
                 title: {
-                    text: dataAB ? 'a*' : 'L*',
+                    text: dataAB ? 'b*' : 'L*',
                     style: {
                         color: '#fff'
                     }
