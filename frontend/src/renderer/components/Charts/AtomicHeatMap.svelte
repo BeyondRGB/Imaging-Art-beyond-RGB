@@ -10,6 +10,9 @@
     function getData() {
         let formattedData = [];
         let tempData = [];
+
+        // data is upside-down (this reverses the vertical axis on the heatmap)
+        data.reverse();
         for (let i = 0; i < data.length; i++) {
             tempData[i] = [];
             for (let j = 0; j < data[i].length; j++) {
