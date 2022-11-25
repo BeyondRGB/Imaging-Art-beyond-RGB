@@ -1,9 +1,8 @@
 <script lang="ts">
   import { currentPage, processState } from "@util/stores";
-  
   import OpenSeadragon from "openseadragon";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-
+  import { PlusIcon, MinusIcon } from "svelte-feather-icons";
   let viewer;
   let mouseTracker;
   let colorOverlay;
@@ -22,8 +21,6 @@
   export let verifyPos;
 
   export let loading;
-
-  export let linearZoom = 0;
 
   let imageUrl;
 
@@ -46,13 +43,26 @@
       visibilityRatio: 1,
       animationTime: 0.4,
     });
-    viewer.addHandler("zoom", (e) => setTimeout(() => handleZoom(e), 100));
+    mouseTracker = new OpenSeadragon.MouseTracker({
+      element: viewer.canvas,
+      moveHandler: function (e) {
+        viewportPoint = viewer.viewport.pointFromPixel(e.position);
+        imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
+      },
+      scrollHandler: function (e) {
+        console.log(e);
+        console.log([viewer.viewport.getZoom(), viewer.viewport.getZoom(true)]);
+      },
+    });
+    viewer.addHandler("zoom", handleZoom);
   };
 
   const destoryViewer = () => {
     if (viewer) {
       viewer.destroy();
       viewer = null;
+      mouseTracker.destroy();
+      mouseTracker = null;
       console.log("Color target viewer destroyed");
     }
   };
@@ -67,6 +77,13 @@
   });
 
   function handleZoom(e) {
+      // never talk to me about this
+    // z = (x - mix(x)) / (max(x) - min(x)) * 100
+    var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
+    logZoom = Math.log(logZoom)
+    var linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100
+    console.log(linearZoom)
+    // TODO clamp to 100% and add box to display
     if (e.zoom > 10) {
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(false);
@@ -74,14 +91,6 @@
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(true);
     }
-
-    // never talk to me about this
-    // z = (x - mix(x)) / (max(x) - min(x)) * 100
-    var logZoom = ((viewer.viewport.getZoom(true) - 0) / (59 - 0)) * 100
-    logZoom = Math.log(logZoom)
-    linearZoom = ((logZoom - 0.52763274) / (4.07168653 - 0.52763274)) * 100 
-    console.log(linearZoom)
-
   }
 
   $: if ($processState.currentTab === 4) {
@@ -372,10 +381,6 @@
 
 <main>
   <div id="color-seadragon-viewer" />
-
-  {#if linearZoom > 1}
-    <h1 id="zoom">{Math.floor(linearZoom)}%</h1>
-  {/if}
 
   {#each [colorTarget, verifyTarget] as target, i}
     {#if target}
