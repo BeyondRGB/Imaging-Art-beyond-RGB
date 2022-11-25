@@ -88,7 +88,7 @@
                     text: dataAB ? 'b*' : 'C*',
                     offsetY: 75,
                     style: {
-                        color: '#ffffff'
+                        color: '#fff'
                     }
                 }
             },
@@ -110,7 +110,7 @@
                 title: {
                     text: dataAB ? 'a*' : 'L*',
                     style: {
-                        color: '#ffffff'
+                        color: '#fff'
                     }
                 },
                 decimalsInFloat: 0
