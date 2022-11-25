@@ -16,7 +16,7 @@
 
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
-    CM DeltaE Values
+    ΔE Heatmap
     <span style="float: right">
       <label>Grayscale</label>
       <input type="checkbox" class="peer" bind:checked={visionDeficiencyMode} >
