@@ -1,12 +1,5 @@
 <script lang="ts">
-  import {
-    computePosition,
-    autoPlacement,
-    shift,
-    offset,
-    flip,
-    inline,
-  } from "@floating-ui/dom";
+  import { computePosition, offset, inline } from "@floating-ui/dom";
   import { ChevronDownIcon, ChevronUpIcon } from "svelte-feather-icons";
   export let values: string[];
   export let selected;

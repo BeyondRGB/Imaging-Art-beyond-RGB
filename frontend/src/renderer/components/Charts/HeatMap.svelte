@@ -8,7 +8,7 @@
   export let visionDeficiencyMode = false;
   let mapData = [];
   $: if (data?.matrix_values) {
-    const deltaE = find(data?.matrix_values, {'name': 'CM DeltaE Values'});
+    const deltaE = find(data?.matrix_values, {'name': 'CM DeltaE Values'}, 0);
     mapData = deltaE?.data;
   }
 

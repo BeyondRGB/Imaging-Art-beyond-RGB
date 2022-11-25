@@ -1,9 +1,9 @@
-import { writable, derived } from 'svelte/store';
+import {writable} from 'svelte/store';
 
 // Stores
-export const currentPage = writable(null);
+export const currentPage = writable(null as string);
 export const appSettings = writable({ theme: false, sideNav: true });
-export const modal = writable(null);
+export const modal = writable(null as string);
 
 export const viewState = writable({
   projectKey: null,
@@ -15,22 +15,22 @@ export const viewState = writable({
   }
 });
 
-export const serverError = writable(null);
+export const serverError = writable(null as any);
 
 // Page Stores
 export const customRefData = writable({
-  calibration: null,
-  verification: null
+  calibration: null as any,
+  verification: null as any
 });
 export const processState = writable({
   currentTab: 0,
   completedTabs: [false, false, false, false],
   pipelineComplete: false,
-  destDir: "",
+  destDir: "" as string,
   imageFilePaths: [],
   thumbnailID: null as number,
-  colorTargetID: null,
-  CMID: null,
+  colorTargetID: null as number,
+  CMID: null as any,
   whitePatchFilled: false,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
@@ -96,7 +96,6 @@ export function resetProcess() {
 
 // Webstocket Stores
 export const messageStore = writable([]);
-export const messageLog = writable([]);
 export const connectionState = writable('Not Connected');
 
 
@@ -109,12 +108,12 @@ export async function connect() {
   let ipcResponse = await window.electron.getPort();
   console.log(ipcResponse);
   socket = new WebSocket(`ws://localhost:${ipcResponse}`);
-  socket.addEventListener('open', function (event) {
+  socket.addEventListener('open', function () {
     console.log("Connected!");
     connectionState.set("Connected");
   });
 
-  socket.addEventListener('close', function (event) {
+  socket.addEventListener('close', function () {
     console.log("Closed - Trying again in 15 seconds.");
     connectionState.set("Closed");
     close();
@@ -123,7 +122,7 @@ export async function connect() {
     // }, 15000);
   });
 
-  socket.addEventListener('error', function (event) {
+  socket.addEventListener('error', function () {
     console.log("Error");
     connectionState.set("Closed - Error");
     socket.close();
@@ -134,7 +133,7 @@ export async function connect() {
     messageStore.set([event.data, new Date()]);
   });
 }
-connect();
+await connect();
 
 export function close() {
   console.log("Closing all websocket listeners");

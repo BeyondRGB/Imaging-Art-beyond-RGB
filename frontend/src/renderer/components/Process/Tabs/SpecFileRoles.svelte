@@ -1,8 +1,8 @@
-<script lang="ts">
+<script>
     import { processState } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
-    import { autoSortImages } from "@util/autoSortStandards.svelte";
+    import { autoSortImages } from "@util/autoSortStandards.js";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let rerenderToggle = false;
@@ -46,11 +46,11 @@
         } else {
             return null;
         }
-        return validationError;
     };
 
     const submitSpecFileRoles = function (skipOptionalFiltering) {
-        if(validationError = validate()) {
+        validationError = validate();
+        if(validationError) {
             return;
         }
         $processState.imageFilePaths = [];

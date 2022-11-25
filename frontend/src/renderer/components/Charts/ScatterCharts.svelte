@@ -2,7 +2,6 @@
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
   import { ScatterChart } from "@carbon/charts-svelte";
-  import { text } from "svelte/internal";
 
   // https://github.com/antimatter15/rgb-lab/blob/master/color.js
   function lab2rgb(lab) {
@@ -35,13 +34,13 @@
   export let data;
   export let matrix = "CM";
 
-  $: if (data?.["matrix_values"]) {
+  $: if (data?.matrix_values) {
     dataLC = [];
     colorsLC = {};
     dataAB = [];
     colorsAB = {};
     let chartData = [];
-    data["matrix_values"]
+    data?.matrix_values
       .find((ele) => ele.name === `${matrix} L*_camera`)
       ["data"].map((row, i) => {
         row.map((colData, k) => {
@@ -50,13 +49,13 @@
             {
               col: String.fromCharCode(k + 65),
               row: i + 1,
-              l: data["matrix_values"].find(
+              l: data.matrix_values.find(
                 (ele) => ele.name === `${matrix} L*_camera`
               )["data"][i][k],
-              a: data["matrix_values"].find(
+              a: data.matrix_values.find(
                 (ele) => ele.name === `${matrix} a*_camera`
               )["data"][i][k],
-              b: data["matrix_values"].find(
+              b: data.matrix_values.find(
                 (ele) => ele.name === `${matrix} b*_camera`
               )["data"][i][k],
             },

@@ -141,7 +141,7 @@
         name: "Calibration Target",
         rows: 10,
         cols: 10,
-        color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
+        color: Math.floor(Math.random() * 361),
         size: 0.5,
         whitePatch: {
           row: null,
@@ -159,7 +159,7 @@
         name: "Verification Target",
         rows: 10,
         cols: 10,
-        color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
+        color: Math.floor(Math.random() * 361),
         size: 0.5,
         whitePatch: {
           row: 1,
@@ -237,20 +237,12 @@
 
   $: console.log({ LOADING: loading });
 
-  $: if (
-    colorTarget != null &&
-    !$processState.completedTabs[4] &&
-    colorTarget.refData.name !== "---None---.csv" &&
-    (verifyTarget != null
-      ? verifyTarget.refData.name !== "---None---.csv"
-      : true) &&
-    colorTarget.whitePatch.row != null &&
-    colorTarget.whitePatch.col != null
-  ) {
-    $processState.completedTabs[4] = true;
-  } else {
-     $processState.completedTabs[4] = false;
-  }
+  $: $processState.completedTabs[4] = colorTarget != null &&
+          !$processState.completedTabs[4] &&
+          colorTarget.refData.name !== "---None---.csv" &&
+          verifyTarget?.refData.name !== "---None---.csv" &&
+          colorTarget.whitePatch.row != null &&
+          colorTarget.whitePatch.col != null;
 
   $: if (colorTarget != null) {
     $processState.whitePatchFilled = (colorTarget.whitePatch.row != null && colorTarget.whitePatch.col != null)

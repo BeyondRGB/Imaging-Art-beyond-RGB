@@ -48,11 +48,24 @@
       </li>
     </ol>
     <br />
+    <b>Authored by</b>
     <p>
-      Beyond RGB was developed by Patrick Dalesio, Andrew Hammerstone, Tristan
-      Knox, Jake O’Neil, and Jared Ponzetti. Thank you for the time and talent
-      you devoted to creating this tool. It really is better than Really Good
-      Bread.
+      John Akey,
+      Elijah Cooper,
+      Patrick Dalesio,
+      Brendan Grau,
+      Andrew Hammerstone,
+      SungMin Kim,
+      Tristan Knox,
+      Keenan Miller,
+      Jake O'Neil,
+      and Jared Ponzetti.
+    </p>
+    <b>Sponsored by</b>
+    <p>
+      Susan Farnand,
+      Leah Humenuck,
+      and Olivia Kuzio.
     </p>
   </div>
 </main>

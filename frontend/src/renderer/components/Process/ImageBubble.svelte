@@ -13,12 +13,8 @@
 
   const dispatch = createEventDispatcher()
 
-  const toggleDropdown = () => {
-    if (show) {
-      show = false;
-    } else {
-      show = true;
-    }
+  const toggleImageBubble = () => {
+    show = !show;
   };
   const remove = () => {
       dispatch('remove')
@@ -29,8 +25,8 @@
 <main class="group">
   <div
     class:bubble={!minimal}
-    on:mouseenter={toggleDropdown}
-    on:mouseleave={toggleDropdown}
+    on:mouseenter={toggleImageBubble}
+    on:mouseleave={toggleImageBubble}
     bind:this={btnRef}
   >
     {#if minimal}

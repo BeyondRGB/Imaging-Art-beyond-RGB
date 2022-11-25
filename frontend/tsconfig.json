@@ -1,6 +1,7 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
+    "module": "esnext",
     "isolatedModules": true,
     "baseUrl": "./",
     "allowJs": true,
@@ -20,8 +21,8 @@
       ],
       "@assets/*": [
         "src/renderer/assets/*"
-      ],
-    },
+      ]
+    }
   },
   "include": [
     "./src/renderer/**/*",

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { processState, sendMessage, messageStore } from "@util/stores";
   import ImageImporter from "@components/ImageImporter.svelte";
 
 </script>

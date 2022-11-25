@@ -1,6 +1,6 @@
 <script lang="ts">
   import { currentPage, viewState } from "@util/stores";
-  import OpenSeadragon from "openseadragon";
+  import OpenSeadragon, {Placement} from "openseadragon";
   import { onDestroy, onMount } from "svelte";
 
   export let size = 0.01;
@@ -15,7 +15,6 @@
   let viewer;
   let imageUrl;
 
-  let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
   let viewportPoint;
   let imagePoint;
   let mouseTracker;
@@ -71,7 +70,7 @@
   $: if ($currentPage === "SpecPicker") {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
-      if (!imageUrl.includes("undefined")) {
+      if (!imageUrl?.includes("undefined")) {
         loading = false;
       }
       setTimeout(() => {
@@ -159,10 +158,10 @@
 
     overTracker = new OpenSeadragon.MouseTracker({
       element: "specView-brush",
-      clickHandler: function (e) {
+      clickHandler: function () {
         if (viewer !== null) {
-          var overlay = viewer.getOverlayById("specView-brush");
-          var overlayShadow = viewer.getOverlayById("specView-brush-shadow");
+          const overlay = viewer.getOverlayById("specView-brush");
+          const overlayShadow = viewer.getOverlayById("specView-brush-shadow");
 
           overlayShadow.update(
             new OpenSeadragon.Rect(
@@ -170,7 +169,7 @@
               viewportPoint.y - overlay.height / 2,
               overlay.width,
               overlay.height
-            )
+            ), null as Placement
           );
           overlayShadow.drawHTML(viewer.overlaysContainer, viewer.viewport);
           shadowPos = {
@@ -195,7 +194,7 @@
       moveHandler: function (e) {
         viewportPoint = viewer.viewport.pointFromPixel(e.position);
         imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-        var overlay = viewer.getOverlayById("specView-brush");
+        const overlay = viewer.getOverlayById("specView-brush");
         if (overlay !== null) {
           overlay.update(
             new OpenSeadragon.Rect(
@@ -203,7 +202,7 @@
               viewportPoint.y - size / 2,
               size,
               size
-            )
+            ), null as Placement
           );
           overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
         }
@@ -213,8 +212,7 @@
 
   function updateSize() {
     try {
-      var overlay = viewer.getOverlayById("specView-brush");
-      var overlayShadow = viewer.getOverlayById("specView-brush-shadow");
+      const overlay = viewer.getOverlayById("specView-brush");
 
       if (overlay !== null) {
         overlay.update(
@@ -223,7 +221,7 @@
             viewportPoint.y - size / 2,
             size,
             size
-          )
+          ), null as Placement
         );
         overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
         trueSize = viewer.world.getItemAt(0).getContentSize().x * size;

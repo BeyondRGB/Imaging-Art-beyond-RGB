@@ -120,7 +120,7 @@
             yaxis: {
                 labels: {
                     formatter: function (value, info) {
-                        if(info == data?.length) {
+                        if(info === data?.length) {
                             // This gets hit before we even get to the heatmap and displays a random axisLabel
                             return "";
                         } else if(isFinite(info)){

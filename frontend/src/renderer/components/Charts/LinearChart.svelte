@@ -2,7 +2,6 @@
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
   import { ScatterChart } from "@carbon/charts-svelte";
-  import { text } from "svelte/internal";
 
   // https://github.com/antimatter15/rgb-lab/blob/master/color.js
   function lab2rgb(lab) {
@@ -32,14 +31,14 @@
     ];
   }
 
-  export let data;
+  export let data : {matrix_values};
   export let matrix = "CM";
 
-  $: if (data?.["matrix_values"]) {
+  $: if (data?.matrix_values) {
     dataLL = [];
     colors = {};
     let chartData = [];
-    data["matrix_values"]
+    data?.matrix_values
       .find((ele) => ele.name === `${matrix} L*_camera`)
       ["data"].map((row, i) => {
         row.map((colData, k) => {
@@ -48,10 +47,10 @@
             {
               col: String.fromCharCode(k + 65),
               row: i + 1,
-              lcam: data["matrix_values"].find(
+              lcam: data.matrix_values.find(
                 (ele) => ele.name === `${matrix} L*_camera`
               )["data"][i][k],
-              lref: data["matrix_values"].find(
+              lref: data.matrix_values.find(
                 (ele) => ele.name === `${matrix} L*_ref`
               )["data"][i][k],
             },
@@ -86,21 +85,21 @@
           title: "L*ref",
           mapsTo: "lref",
           ticks: {
-            values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
           },
-          domain: [0, 100],
+          domain: [0, 100]
         },
         left: {
           title: "L*cam",
           mapsTo: "lcam",
           ticks: {
-            values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+            values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
           },
-          domain: [0, 100],
-        },
+          domain: [0, 100]
+        }
       },
       legend: {
-        enabled: false,
+        enabled: false
       },
       toolbar: {
         enabled: true,
@@ -109,13 +108,13 @@
         //   { type: "Make Fullscrean" },
         //   { type: "Zoom out" },
         // ],
-        numberOfIcons: 1,
+        numberOfIcons: 1
       },
       height: "70vh",
       resizable: true,
       color: {
-        scale: colors,
-      },
+        scale: colors
+      }
     }}
   />
 </div>

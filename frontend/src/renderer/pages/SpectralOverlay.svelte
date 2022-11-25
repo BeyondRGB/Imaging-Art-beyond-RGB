@@ -1,6 +1,5 @@
 <script lang="ts">
   import Switch from "@components/Switch.svelte";
-  import Canvas from "@components/SpectralOverlay/SpectralCanvas.svelte";
 
   let isSync: boolean = false;
   let channels: boolean[] = [true, false, false];

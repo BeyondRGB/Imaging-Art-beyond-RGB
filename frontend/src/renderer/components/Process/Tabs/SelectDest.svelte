@@ -1,7 +1,7 @@
 <script lang="ts">
   import FileSelector from "@components/FileSelector.svelte";
   import { FolderPlusIcon, FolderIcon } from "svelte-feather-icons";
-  import { currentPage, processState } from "@util/stores";
+  import { processState } from "@util/stores";
   let filePaths = [];
   $: console.log(filePaths);
 

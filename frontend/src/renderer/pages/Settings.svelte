@@ -1,7 +1,6 @@
 <script lang="ts">
   import Switch from "@components/Switch.svelte";
   import { appSettings } from "@util/stores";
-  import { modal } from "@util/stores";
 </script>
 
 <main>

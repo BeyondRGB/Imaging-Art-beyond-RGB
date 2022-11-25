@@ -1,6 +1,5 @@
 <script>
   import {
-    processState,
     viewState,
     sendMessage,
     messageStore,
@@ -11,7 +10,6 @@
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import FileSelector from "@components/FileSelector.svelte";
   import Switch from "@root/components/Switch.svelte";
-  import { ChevronsDownIcon, ChevronsUpIcon } from "svelte-feather-icons";
   let open = false;
 
   function getReports() {

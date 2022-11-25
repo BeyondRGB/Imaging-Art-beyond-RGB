@@ -49,7 +49,7 @@
         {/if}
       {/each}
     </div>
-    <div class="ctlBtns">
+    <div class="ctlBtn">
       <button on:click={() => modal.set("Home")}>
         <svelte:component this={routes["Home"].icon} size="1.75x" />
       </button>
@@ -130,16 +130,16 @@
     @apply flex-col h-[60%] w-full whitespace-normal;
   }
 
-  .ctlBtns {
+  .ctlBtn {
     @apply flex dark:bg-gray-600/30 bg-gray-200/30 rounded-l-2xl px-4 gap-2;
   }
 
-  .ctlBtns button {
+  .ctlBtn button {
     @apply rounded-full hover:text-blue-500 dark:hover:text-blue-500 
             hover:bg-transparent dark:text-gray-50;
   }
 
-  .sideMain .ctlBtns {
+  .sideMain .ctlBtn {
     @apply flex-col py-4 px-0;
   }
 

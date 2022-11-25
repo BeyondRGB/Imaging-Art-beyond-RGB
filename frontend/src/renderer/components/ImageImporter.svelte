@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
     import { FilePlusIcon } from "svelte-feather-icons";
     import { processState, sendMessage} from "@util/stores";
     import { forEach, find } from "lodash";
@@ -8,7 +8,6 @@
     export let label = "Select Files";
     export let icon = FilePlusIcon;
     export let largeText = false;
-    export let removeButton = false;
     let filePaths = [];
     let files = {
         accepted: [],
@@ -35,9 +34,12 @@
         $processState.completedTabs[0] = true;
     }
 
+    /**
+     * @param {{detail:{acceptedFiles},target}} e
+     */
     function handleFilesSelect(e) {
         files.accepted = [];
-        if (e.detail == null){
+        if (!e.detail){
             /* handles files being added from the select files button */
             files.accepted = [...files.accepted, ...e.target.files];
         }
@@ -126,7 +128,7 @@
             <ul>
                 {#if $processState.imageFilePaths?.length > 0}
                     {#each $processState.imageFilePaths as filePath}
-                        <ImageBubble filename={filePath.name} on:remove={remove(filePath)}/>
+                        <ImageBubble filename={filePath.name} on:remove={() => remove(filePath)}/>
                     {/each}
                 {/if}
             </ul>

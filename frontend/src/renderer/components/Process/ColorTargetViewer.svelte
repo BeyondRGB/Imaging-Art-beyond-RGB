@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { currentPage, processState } from "@util/stores";
+  import { processState } from "@util/stores";
   import OpenSeadragon from "openseadragon";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { PlusIcon, MinusIcon } from "svelte-feather-icons";
+  import { onDestroy, onMount } from "svelte";
   let viewer;
   let mouseTracker;
   let colorOverlay;
@@ -22,7 +21,7 @@
 
   export let loading;
 
-  let imageUrl;
+  let imageUrl = '';
 
   const createViewer = () => {
     viewer = OpenSeadragon({
@@ -90,9 +89,7 @@
   $: if ($processState.currentTab === 4) {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
-      console.log({ IMAGEURL: imageUrl });
-      console.log({ INCLUDES: imageUrl.includes("blob") });
-      if (imageUrl.includes("blob")) {
+      if (imageUrl?.includes("blob")) {
         loading = false;
       }
       viewer.open({
@@ -113,7 +110,6 @@
   function removeOverlay(id) {
     console.log("Entering removeOverlay");
     const selBox = document.getElementById(`sBox-${id}`);
-    const gridBox = document.getElementById(`gBox-${id}`);
 
     viewer.removeOverlay(selBox);
     if (id === 0) {
@@ -148,7 +144,7 @@
       trackers[id] = new OpenSeadragon.MouseTracker({
         element: `sBox-${id}`,
         pressHandler: function (e) {
-          var overlay = viewer.getOverlayById(`sBox-${id}`);
+          const overlay = viewer.getOverlayById(`sBox-${id}`);
 
           // Overlay box coords
           let topPos = overlay.bounds.y;
@@ -218,7 +214,7 @@
           });
         },
         dragHandler: function (e) {
-          var overlay = viewer.getOverlayById(`sBox-${id}`);
+          const overlay = viewer.getOverlayById(`sBox-${id}`);
 
           let viewDeltaPoint = viewer.viewport.deltaPointsFromPixels(e.delta);
 
@@ -310,24 +306,24 @@
   }
 
   $: if (colorTarget?.color) {
-    root.style.setProperty("--color_hue", `${colorTarget.color}`);
+    root.style.setProperty("--color_hue", `${colorTarget?.color}`);
   }
 
   $: if (colorTarget?.rows) {
     const gridBox = document.getElementById("gBox-0");
     if (gridBox) {
-      gridBox.style.gridTemplateRows = `repeat(${colorTarget.rows}, auto)`;
+      gridBox.style.gridTemplateRows = `repeat(${colorTarget?.rows}, auto)`;
     }
   }
   $: if (colorTarget?.cols) {
     const gridBox = document.getElementById("gBox-0");
     if (gridBox) {
-      gridBox.style.gridTemplateColumns = `repeat(${colorTarget.cols}, auto)`;
+      gridBox.style.gridTemplateColumns = `repeat(${colorTarget?.cols}, auto)`;
     }
   }
 
   $: if (colorTarget?.size) {
-    root.style.setProperty("--color_size", `${colorTarget.size * 100}%`);
+    root.style.setProperty("--color_size", `${colorTarget?.size * 100}%`);
   }
 
   // --------------------------------------
@@ -349,26 +345,26 @@
 
   $: if (verifyTarget?.color) {
     console.log("verify hue");
-    root.style.setProperty("--verfiy_hue", `${verifyTarget.color}`);
+    root.style.setProperty("--verfiy_hue", `${verifyTarget?.color}`);
   }
 
   $: if (verifyTarget?.size) {
     console.log("verify size");
 
-    root.style.setProperty("--verify_size", `${verifyTarget.size * 100}%`);
+    root.style.setProperty("--verify_size", `${verifyTarget?.size * 100}%`);
   }
 
   $: if (verifyTarget?.rows) {
     const gridBox = document.getElementById("gBox-1");
     if (gridBox) {
-      gridBox.style.gridTemplateRows = `repeat(${verifyTarget.rows}, auto)`;
+      gridBox.style.gridTemplateRows = `repeat(${verifyTarget?.rows}, auto)`;
     }
   }
 
   $: if (verifyTarget?.cols) {
     const gridBox = document.getElementById("gBox-1");
     if (gridBox) {
-      gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
+      gridBox.style.gridTemplateColumns = `repeat(${verifyTarget?.cols}, auto)`;
     }
   }
 </script>

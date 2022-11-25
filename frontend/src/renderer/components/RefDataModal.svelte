@@ -1,5 +1,4 @@
 <script lang="ts">
-  import Switch from "@components/Switch.svelte";
   import { appSettings, processState, customRefData } from "@util/stores";
   import { modal } from "@util/stores";
   import { DownloadCloudIcon } from "svelte-feather-icons";
@@ -13,7 +12,6 @@
     modal.set(null);
   }
   $: console.log($appSettings);
-  $: console.log(closeModal);
   function confirm() {
     console.log("Confirm");
     if (filePaths) {

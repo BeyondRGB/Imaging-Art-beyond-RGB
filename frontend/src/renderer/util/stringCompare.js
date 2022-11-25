@@ -16,7 +16,7 @@ export function compareTwoStrings(first, second) {
             : 1;
 
         firstBigrams.set(bigram, count);
-    };
+    }
 
     let intersectionSize = 0;
     for (let i = 0; i < second.length - 1; i++) {

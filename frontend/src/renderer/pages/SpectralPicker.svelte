@@ -12,11 +12,9 @@
     Maximize2Icon,
     Minimize2Icon,
   } from "svelte-feather-icons";
-  import { fly } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import Switch from "@components/Switch.svelte";
   import FileSelector from "@components/FileSelector.svelte";
-  import { fullScreenApi } from "openseadragon";
 
   let brushShow = false;
   let size;
@@ -97,7 +95,7 @@
 
   $: if (mainfilePath?.length > 0) {
     console.log("New Project Key");
-    $viewState.projectKey = mainfilePath[0];
+    $viewState.projectKey = mainfilePath?.[0];
   }
 
   let isFullScreen = window.innerHeight == screen.height;

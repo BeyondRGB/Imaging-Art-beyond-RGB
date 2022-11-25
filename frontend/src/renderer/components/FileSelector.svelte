@@ -1,7 +1,5 @@
 <script lang="ts">
   import { FilePlusIcon } from "svelte-feather-icons";
-  import { forEach } from "lodash";
-  import Dropzone from "svelte-file-dropzone";
   export let type = "File";
   export let filter = "None";
   export let label = "Select Files";
@@ -14,10 +12,8 @@
     ipcResponse = await window.electron.handle({ type, filter });
   };
 
-  $: if (ipcResponse) {
-    if (!ipcResponse.canceled) {
+  $: if (!ipcResponse?.canceled) {
       filePaths = ipcResponse?.filePaths;
-    }
   }
 
 </script>

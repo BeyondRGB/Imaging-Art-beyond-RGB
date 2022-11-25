@@ -4,7 +4,6 @@
   import { LineChart } from "@carbon/charts-svelte";
   import { ImageIcon } from "svelte-feather-icons";
   import html2canvas from "html2canvas";
-  import { element } from "svelte/internal";
 
   export let data = [];
   export let wavelengthArray;
@@ -14,7 +13,7 @@
 
   $: if (data.length > 1) {
     inputData = [];
-    wavelengthArray.forEach((element, i) => {
+    wavelengthArray?.forEach((element, i) => {
       inputData.push({
         intensity: data[i] * 100,
         wavelength: element,
@@ -35,7 +34,7 @@
       console.log("Created Canvas");
       imageDataURL = canvas.toDataURL("image/png");
 
-      var anchor = document.createElement("a");
+      const anchor = document.createElement("a");
       anchor.href = imageDataURL;
       anchor.target = "_blank";
       anchor.download = `Estimate_Spectrum_(${parseFloat(

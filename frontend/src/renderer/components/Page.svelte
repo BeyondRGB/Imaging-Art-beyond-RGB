@@ -1,24 +1,17 @@
 <script lang="ts">
 	export let routes;
 	export let pages;
-	import { fade, fly } from "svelte/transition";
+	import { fade } from "svelte/transition";
 	import { currentPage, appSettings, modal, serverError } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 	import RefDataModal from "@components/RefDataModal.svelte";
 	import ServerError from "@components/ServerError.svelte";
 
-	let showModal = false;
-	$: if (
-		$modal === "Settings" ||
-		$modal === "Home" ||
-		"CustomRefData" ||
-		"CustomRefDataVer" ||
-		"ServerError"
-	) {
-		showModal = true;
-	} else {
-		showModal = false;
-	}
+	let showModal = !!($modal === "Settings" ||
+			$modal === "Home" ||
+			"CustomRefData" ||
+			"CustomRefDataVer" ||
+			"ServerError");
 	$: console.log($currentPage);
 
 	$: if ($serverError != null) {

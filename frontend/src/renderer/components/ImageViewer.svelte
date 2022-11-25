@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { currentPage, processState } from "@util/stores";
+  import { processState } from "@util/stores";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
   let viewer;
-  let imageUrl;
+  let imageUrl = '';
 
   const createViewer = () => {
     viewer = OpenSeadragon({

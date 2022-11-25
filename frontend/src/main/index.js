@@ -15,10 +15,10 @@ try {
 } catch (e) {
   console.log(e);
 }
-var executablePath;
-var loader;
+let executablePath;
+let loader;
 
-if (process.platform == 'win32')
+if (process.platform === 'win32')
   executablePath = path.join(__dirname, '../../lib/beyond-rgb-backend.exe');
 else {
   executablePath = path.join(__dirname, '../../lib/beyond-rgb-backend');
@@ -29,7 +29,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
   app.quit();
 }
 
-process.on('loaded', (event, args) => {
+process.on('loaded', () => {
   console.log('LOADED');
   console.log(app.getAppPath());
 
@@ -55,7 +55,7 @@ app.on('before-quit', function () {
   process.kill(loader.pid);
 });
 
-ipcMain.handle('ipc-getPort', async (event, arg) => {
+ipcMain.handle('ipc-getPort', async () => {
   return freePort;
 });
 
@@ -90,7 +90,7 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   }
 
 
-  const dia = await dialog.showOpenDialog({
+  return await dialog.showOpenDialog({
     properties,
     filters
   }).then(result => {
@@ -98,7 +98,6 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   }).catch(err => {
     console.log(err);
   });
-  return dia;
 });
 
 // process.on('loaded', (event, args) => {
@@ -109,7 +108,7 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
 //   console.log(app.getAppPath());
 // });
 
-const createWindow = () => {
+const createWindow = async () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
@@ -127,11 +126,11 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   if (process.env.ELEC_ENV === 'dev') {
-    mainWindow.loadURL('http://localhost:3000');
+    await mainWindow.loadURL('http://localhost:3000');
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../../public/index.html'));
+    await mainWindow.loadFile(path.join(__dirname, '../../public/index.html'));
     // mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
   }
 
