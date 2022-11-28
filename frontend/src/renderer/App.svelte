@@ -5,7 +5,6 @@
 	import Page from "@components/Page.svelte";
 	// Pages
 	import Home from "@pages/Home.svelte";
-	import SpectralOverlay from "@pages/SpectralOverlay.svelte";
 	import Process from "@pages/Process.svelte";
 	import Reports from "@pages/Reports.svelte";
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
@@ -14,7 +13,6 @@
 	import {
 		HomeIcon,
 		SettingsIcon,
-		LayersIcon,
 		FileTextIcon,
 		CrosshairIcon,
 		ApertureIcon,
@@ -49,14 +47,6 @@
 			icon: FileTextIcon,
 			isShown: true,
 			page: true,
-		},
-		SpecOverlay: {
-			text: "Spectral Overlay",
-			component: SpectralOverlay,
-			icon: LayersIcon,
-			isShown: true,
-			page: true,
-			disabled: true,
 		},
 		Settings: {
 			text: "Settings",
