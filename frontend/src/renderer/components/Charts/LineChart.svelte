@@ -10,20 +10,18 @@
   export let data = [];
   export let wavelengthArray = Array.from({ length: 35 }, (x, i) => i * 10 + 380);;
   export let trueShadowPos;
-  let seriesColors = ['#610061', '#79008d', '#8300b5', '#7e00db', '#6a00ff', '#3d00ff', '#0000ff', '#0046ff', '#007bff', '#00a9ff', '#00d5ff', '#00ffff', '#00ff92', '#00ff00', '#36ff00', '#5eff00', '#81ff00', '#a3ff00', '#c3ff00', '#ffff00', '#ffdf00', '#ffbe00', '#ff9b00', '#ff7700', '#ff4f00', '#ff2100', '#ff0000', '#ff0000', '#ff0000', '#ff0000', '#ff0000', '#ff0000', '#ff0000', '#ff0000', '#ff0000'];
+  let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
 
 
   let inputData = [];
-  let lineNumber = 1;
-  let seriesData = [];
 
   $: if (data.length > 1) {
-      let dataDict = [];
+      const dataDict = [];
       wavelengthArray.forEach((element, i) => {
           dataDict.push({
               x: element,
               y: data[i] * 100,
-              fillColor: seriesColors[i]
+              fillColor: pointColors[i]
           })
       });
       inputData.push({
@@ -46,7 +44,7 @@
           curve: 'smooth',
           width: 2,
       },
-      colors: ["#fff"],
+      colors: ["#FFFFFF"],
       chart: {
           background: '#38383B',
           animations: {
@@ -101,7 +99,7 @@
           tickAmount: 9,
           labels: {
               style: {
-                  colors: '#fff',
+                  colors: '#FFFFFF',
               }
           },
           title: {
@@ -125,7 +123,7 @@
           },
           labels: {
               style: {
-                  colors: "#fff"
+                  colors: "#FFFFFF"
               }
           },
           title: {
@@ -141,14 +139,14 @@
               useSeriesColors: true
           },
           markers: {
-              fillColors: seriesColors,
+              fillColors: pointColors,
           }
       },
       title: {
           text: "Estimated Spectrum",
           align: 'left',
           style: {
-              color:  '#fff'
+              color:  '#FFFFFF'
           },
       }
   };
