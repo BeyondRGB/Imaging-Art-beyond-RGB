@@ -19,6 +19,7 @@
   import { fullScreenApi } from "openseadragon";
 
   let brushShow = false;
+  let stackCurves = false;
   let size;
   let trueSize;
   let shadowPos = { left: 0, top: 0 };
@@ -155,6 +156,7 @@
             </div>
             <div class="box" id="brush">
               <Switch label="Enable Spectral Picker" bind:checked={brushShow} />
+              <Switch label="Stack Spectral Curves" bind:checked={stackCurves} />
               <div class="sizeSettings">
                 Set Brush Size:
                 <div class="flex justify-center items-center gap-1">
@@ -178,6 +180,7 @@
                 bind:data={spectrumData}
                 bind:wavelengthArray
                 bind:trueShadowPos
+                stack={stackCurves}
               />
             </div>
           </div>

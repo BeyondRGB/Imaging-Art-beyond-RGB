@@ -10,6 +10,7 @@
   export let data = [];
   export let wavelengthArray = Array.from({ length: 35 }, (x, i) => i * 10 + 380);;
   export let trueShadowPos;
+  export let stack = false;
   let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
 
 
@@ -17,6 +18,12 @@
 
   $: if (data.length > 1) {
       const dataDict = [];
+
+      // Clear the graph if we aren't stacking curves
+      if(!stack) {
+        inputData = [];
+      }
+
       wavelengthArray.forEach((element, i) => {
           dataDict.push({
               x: element,
