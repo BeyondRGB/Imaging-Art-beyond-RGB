@@ -154,7 +154,7 @@
 </script>
 
 <div class="line-chart" id="EstSpecChart">
-  <div id="spectral chart" use:chart={options}></div>
+  <div id="spectral-chart" use:chart={options}></div>
 
 </div>
 
@@ -194,4 +194,10 @@
     height: 0;
     padding: 0;
   }
+
+  .apexcharts-menu {
+    color: #27293d!important;
+    border: 0px;
+  }
+
 </style>
