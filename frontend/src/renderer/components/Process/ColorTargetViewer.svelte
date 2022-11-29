@@ -1,8 +1,10 @@
 <script lang="ts">
   import { currentPage, processState } from "@util/stores";
+  
   import OpenSeadragon from "openseadragon";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { PlusIcon, MinusIcon } from "svelte-feather-icons";
+  import {getZoomPercentage} from "@util/photoViewerHelper";
+
   let viewer;
   let mouseTracker;
   let colorOverlay;
@@ -21,6 +23,8 @@
   export let verifyPos;
 
   export let loading;
+
+  export let linearZoom = 100;
 
   let imageUrl;
 
@@ -43,26 +47,13 @@
       visibilityRatio: 1,
       animationTime: 0.4,
     });
-    mouseTracker = new OpenSeadragon.MouseTracker({
-      element: viewer.canvas,
-      moveHandler: function (e) {
-        viewportPoint = viewer.viewport.pointFromPixel(e.position);
-        imagePoint = viewer.viewport.viewportToImageCoordinates(viewportPoint);
-      },
-      scrollHandler: function (e) {
-        console.log(e);
-        console.log([viewer.viewport.getZoom(), viewer.viewport.getZoom(true)]);
-      },
-    });
-    viewer.addHandler("zoom", handleZoom);
+    viewer.addHandler("zoom", (e) => setTimeout(() => handleZoom(e), 100));
   };
 
   const destoryViewer = () => {
     if (viewer) {
       viewer.destroy();
       viewer = null;
-      mouseTracker.destroy();
-      mouseTracker = null;
       console.log("Color target viewer destroyed");
     }
   };
@@ -78,13 +69,14 @@
 
   function handleZoom(e) {
     if (e.zoom > 10) {
-      console.log({ "Big Zoom": e });
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(false);
     } else {
       let drawer = viewer.drawer;
       drawer.setImageSmoothingEnabled(true);
     }
+
+    linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
   }
 
   $: if ($processState.currentTab === 4) {
@@ -375,6 +367,10 @@
 
 <main>
   <div id="color-seadragon-viewer" />
+  <!-- only show the zoom percentage if it is greater than 1% -->
+  {#if linearZoom > 1}
+    <h1 id="zoom">{Math.floor(linearZoom)}%</h1>
+  {/if}
 
   {#each [colorTarget, verifyTarget] as target, i}
     {#if target}
