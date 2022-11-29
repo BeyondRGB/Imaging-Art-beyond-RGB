@@ -9,14 +9,14 @@
   let mapData = [];
   $: if (data?.matrix_values) {
     const deltaE = find(data?.matrix_values, {'name': 'CM DeltaE Values'});
-    mapData = deltaE?.data;
+    mapData = deltaE?.data.slice().reverse();
   }
 
 </script>
 
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
-    CM DeltaE Values
+    ΔE Heatmap
     <span style="float: right">
       <label>Grayscale</label>
       <input type="checkbox" class="peer" bind:checked={visionDeficiencyMode} >
