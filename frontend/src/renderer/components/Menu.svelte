@@ -2,6 +2,7 @@
   export let routes: any;
   import TextLogo from "@assets/TextLogo.svg";
   import TextLogoAlt from "@assets/TextLogoAlt.svg";
+  import { SvelteToast, toast } from '@zerodevx/svelte-toast';
 
   import {
     currentPage,
@@ -18,6 +19,14 @@
     } else {
       currentPage.set(newPage[0]);
     }
+  }
+
+  $: if ($connectionState === "Closed" || $connectionState === "Closed - Error"){
+    toast.push('An error has occurred, attempting to reconnect.', {
+      onpop: () => {
+        connect();
+      }
+    })
   }
 </script>
 
@@ -60,11 +69,13 @@
 
       <button
         on:click={() => connect()}
+        
         class:connected={$connectionState === "Connected"}
         class:disconnected={$connectionState !== "Connected"}
       />
     </div>
   </ul>
+  <SvelteToast/>
 </main>
 
 <style lang="postcss">
@@ -110,6 +121,14 @@
     @apply rounded-none h-full w-full flex flex-col justify-center items-center
             ring-0 bg-transparent dark:hover:bg-gray-800 hover:bg-gray-200 
             dark:text-gray-300 dark:hover:text-gray-50 shadow-none;
+  }
+
+  :root {
+    --toastBarHeight: 0;
+    --toastContainerTop: auto;
+    --toastContainerRight: auto;
+    --toastContainerBottom: 2vh;
+    --toastContainerLeft: 10vw;
   }
 
   .selected {

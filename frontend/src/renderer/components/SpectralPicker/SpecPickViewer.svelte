@@ -2,6 +2,7 @@
   import { currentPage, viewState } from "@util/stores";
   import OpenSeadragon, {Placement} from "openseadragon";
   import { onDestroy, onMount } from "svelte";
+  import {getZoomPercentage} from "@util/photoViewerHelper";
 
   export let size = 0.01;
   export let trueSize;
@@ -15,6 +16,7 @@
   let viewer;
   let imageUrl;
 
+  let linearZoom = 0;
   let viewportPoint;
   let imagePoint;
   let mouseTracker;
@@ -242,13 +244,17 @@
     } else {
       viewer.drawer.setImageSmoothingEnabled(true);
     }
+
+    linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
   }
 </script>
 
 <main>
   <!-- <div class="load"><Loader /></div> -->
   <div id="specpick-seadragon-viewer" />
-
+  {#if linearZoom > 1}
+    <h1 id="zoom">{Math.floor(linearZoom)}%</h1>
+  {/if}
   <div id="specView-brush" />
   <div id="specView-brush-shadow" />
 </main>
