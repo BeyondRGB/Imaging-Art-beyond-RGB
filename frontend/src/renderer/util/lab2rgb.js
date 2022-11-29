@@ -1,4 +1,5 @@
 // @Drink whiskey (will make this more understandable)
+// Author: Patrick Dalesio
 // https://github.com/antimatter15/rgb-lab/blob/master/color.js
 export function lab2rgb(lab) {
     let y = (lab[0] + 16) / 116;
