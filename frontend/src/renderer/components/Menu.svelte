@@ -21,8 +21,8 @@
     }
   }
 
-  $: if ($connectionState === "Closed - Error"){
-    toast.push('An error has occurred. Click the red icon to reconnect, or restart the program.')
+  $: if ($connectionState === "Closed" || $connectionState === "Closed - Error"){
+    toast.push('An error has occurred. Click the red icon to attempt to reconnect, or restart the program.')
   }
 </script>
 
