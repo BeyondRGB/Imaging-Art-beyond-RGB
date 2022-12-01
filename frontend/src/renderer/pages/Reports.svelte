@@ -1,17 +1,14 @@
 <script>
   import {
-    processState,
     viewState,
     sendMessage,
     messageStore,
     currentPage,
   } from "@util/stores";
   import Heatmap from "@components/Charts/HeatMap.svelte";
-  import ScatterCharts from "@root/components/Charts/ScatterCharts.svelte";
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import FileSelector from "@components/FileSelector.svelte";
-  import Switch from "@root/components/Switch.svelte";
-  import { ChevronsDownIcon, ChevronsUpIcon } from "svelte-feather-icons";
+  import VectorChart from "@components/Charts/VectorChart.svelte";
   let open = false;
 
   function getReports() {
@@ -113,42 +110,27 @@
             </div>
           {/if}
         </div>
-        <div class="report-right">
-          {#if isVerification}
-            <Switch
-              bind:checked={showVerification}
-              label={"Show Verification"}
-              large
-            />
-          {/if}
-        </div>
       </div>
       <div class="reports">
         <div class="reportBody">
           <div class="report-item">
             <Heatmap
-              data={showVerification
-                ? $viewState.reports.verification
-                : $viewState.reports.calibration}
-              matrixName={showVerification
-                ? "Verification DeltaE Values"
-                : "CM DeltaE Values"}
+              data={$viewState.reports.calibration}
+              matrixName={"CM DeltaE Values"}
             />
           </div>
           <div class="report-item">
-            <ScatterCharts
-              data={showVerification
-                ? $viewState.reports.verification
-                : $viewState.reports.calibration}
-              matrix={showVerification ? "Verification" : "CM"}
-            />
+            <!-- AB vector chart -->
+            <VectorChart data={$viewState.reports.calibration} matrix={"CM"} ab={true}></VectorChart>
+          </div>
+          <div class="report-item">
+            <!-- LC vector chart -->
+            <VectorChart data={$viewState.reports.calibration} matrix={"CM"} ab={false}></VectorChart>
           </div>
           <div class="report-item">
             <LinearChart
-              data={showVerification
-                ? $viewState.reports.verification
-                : $viewState.reports.calibration}
-              matrix={showVerification ? "Verification" : "CM"}
+              data={$viewState.reports.calibration}
+              matrix={"CM"}
             />
           </div>
         </div>
