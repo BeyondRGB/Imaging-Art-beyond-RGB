@@ -1,86 +1,168 @@
-<script lang="ts">
+<script>
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
   import { LineChart } from "@carbon/charts-svelte";
   import { ImageIcon } from "svelte-feather-icons";
   import html2canvas from "html2canvas";
   import { element } from "svelte/internal";
+  import { chart } from "svelte-apexcharts";
 
   export let data = [];
-  export let wavelengthArray;
+  export let wavelengthArray = Array.from({ length: 35 }, (x, i) => i * 10 + 380);;
   export let trueShadowPos;
+  export let stack = false;
+  let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
+
 
   let inputData = [];
 
   $: if (data.length > 1) {
-    inputData = [];
-    wavelengthArray.forEach((element, i) => {
-      inputData.push({
-        intensity: data[i] * 100,
-        wavelength: element,
+      const dataDict = [];
+
+      // Clear the graph if we aren't stacking curves
+      if(!stack) {
+        inputData = [];
+      }
+
+      wavelengthArray.forEach((element, i) => {
+          dataDict.push({
+              x: element,
+              y: data[i] * 100,
+              fillColor: pointColors[i]
+          })
       });
-    });
-    inputData = inputData;
+      inputData.push({
+          type: 'line',
+          name: 'Spectrum: (' + trueShadowPos.left.toFixed(1)  + "," + trueShadowPos.top.toFixed(1) + ")",
+          data: dataDict
+      })
+      options.series = inputData;
+      data = [];
   }
 
-  let imageDataURL;
+  const options = {
+      series: [],
+      markers: {
+          size: 5,
 
-  function savePNG() {
-    html2canvas(document.querySelector("div.line-chart .bx--chart-holder"), {
-      backgroundColor: "#3a3a3c",
-      scale: window.devicePixelRatio * 2,
-      windowWidth: window.innerWidth,
-      windowHeight: window.innerHeight,
-    }).then(function (canvas) {
-      console.log("Created Canvas");
-      imageDataURL = canvas.toDataURL("image/png");
+      },
+      stroke: {
+          show: true,
+          curve: 'smooth',
+          width: 2,
+      },
+      colors: ["#FFFFFF"],
+      chart: {
+          background: '#38383B',
+          animations: {
+              enabled: false
+          },
+          zoom: false,
+          height: '400px',
+          width: '100%',
+          type: 'line',
+          stroke: {
+              curve: 'smooth',
+          },
+          toolbar: {
+              // Hamburger menu which has exports such as CSV etc.
+              // I have had issues displaying this, I believe some unrelated global CSS is causing issues
+              show: true,
+              tools: {
+                  download: true,
+              },
+              export: {
+                  csv: {
+                      filename: undefined,
+                      columnDelimiter: ',',
+                      headerCategory: 'wavelength',
+                      headerValue: 'value',
+                  }
+              }
+          },
+          selection: {
+              enabled: false
+          }
+      },
+      tooltip: {
+          shared: false,
+          intersect: true,
+          theme: 'dark',
+          x: {
+              show: false
+          },
+          y: {
+              formatter: undefined,
+              title: {
+                  formatter: (seriesName, info) => seriesName,
+              }
+          },
+          z: {
+              show: false
+          }
+      },
+      xaxis: {
+          categories: [350, 400, 450, 500, 550, 600, 650, 700],
+          tickAmount: 9,
+          labels: {
+              style: {
+                  colors: '#FFFFFF',
+              }
+          },
+          title: {
+              text: "Wavelength (nm)",
+              offsetX: 0,
+              offsetY: 110,
+              style: {
+                  color: '#FFFFFF',
+              }
+          },
+      },
+      yaxis: {
+          showAlways: false,
+          decimalsInFloat: false,
+          forceNiceScale: true,
+          tickAmount: 6,
+          min: 0,
+          max: 100,
+          axisTicks: {
+              show: true
+          },
+          labels: {
+              style: {
+                  colors: "#FFFFFF"
+              }
+          },
+          title: {
+              text: "Reflectance (%)",
+              style: {
+                  color: '#FFFFFF',
+              },
+          },
+      },
+      legend: {
+          show: true,
+          labels: {
+              useSeriesColors: true
+          },
+          markers: {
+              fillColors: pointColors,
+          }
+      },
+      title: {
+          text: "Estimated Spectrum",
+          align: 'left',
+          style: {
+              color:  '#FFFFFF'
+          },
+      }
+  };
 
-      var anchor = document.createElement("a");
-      anchor.href = imageDataURL;
-      anchor.target = "_blank";
-      anchor.download = `Estimate_Spectrum_(${parseFloat(
-        trueShadowPos?.left
-      ).toFixed(1)}, ${parseFloat(trueShadowPos?.top).toFixed(1)}).png`;
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-    });
-  }
 </script>
 
 <div class="line-chart" id="EstSpecChart">
-  <button class="saveBtn" on:click={savePNG}><ImageIcon size="1.5x" /></button>
-  <LineChart
-    data={inputData}
-    options={{
-      title: `Estimated Spectrum (${parseFloat(trueShadowPos?.left).toFixed(
-        1
-      )}, ${parseFloat(trueShadowPos?.top).toFixed(1)})`,
-      axes: {
-        bottom: {
-          title: "Wavelength (nm)",
-          mapsTo: "wavelength",
+  <div id="spectral-chart" use:chart={options}></div>
 
-          limitDomainToBins: true,
-        },
-        left: {
-          title: "Reflectance (%)",
-          mapsTo: "intensity",
-          percentage: true,
-        },
-      },
-      legend: {
-        enabled: false,
-      },
-      toolbar: {
-        enabled: true,
-        controls: [{ type: "Export as CSV" }],
-        // numberOfIcons: 1,
-      },
-      // width: "30vw",
-      resizable: true,
-    }}
-  />
 </div>
 
 <style lang="postcss" global>
@@ -120,162 +202,9 @@
     padding: 0;
   }
 
-  /* .line-chart .bx--cc--chart-wrapper .layout-child {
-    @apply bg-indigo-600 overflow-hidden w-[50%];
-  } */
-  /* .line-chart .bx--cc--spacer {
-    @apply bg-red-600;
-  }
-  .line-chart .bx--cc--layout-column {
-    @apply bg-green-400 my-6;
-  } */
-
-  /* .line-chart .bx--cc--scatter circle:first-child {
-    fill-opacity: 1;
-    fill: #8300b5;
-    r: 6;
-  } */
-
-  .line-chart .bx--cc--chart-wrapper .bx--cc--line > .stroke-1-1-1 {
-    stroke: white;
+  .apexcharts-menu {
+    color: #27293d!important;
+    border: 0px;
   }
 
-  .line-chart .bx--cc--scatter circle:nth-child(1) {
-    fill: #610061;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(2) {
-    fill: #79008d;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(3) {
-    fill: #8300b5;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(4) {
-    fill: #7e00db;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(5) {
-    fill: #6a00ff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(6) {
-    fill: #3d00ff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(7) {
-    fill: #0000ff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(8) {
-    fill: #0046ff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(9) {
-    fill: #007bff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(10) {
-    fill: #00a9ff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(11) {
-    fill: #00d5ff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(12) {
-    fill: #00ffff;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(13) {
-    fill: #00ff92;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(14) {
-    fill: #00ff00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(15) {
-    fill: #36ff00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(16) {
-    fill: #5eff00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(17) {
-    fill: #81ff00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(18) {
-    fill: #a3ff00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(19) {
-    fill: #c3ff00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(20) {
-    fill: #ffff00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(21) {
-    fill: #ffdf00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(22) {
-    fill: #ffbe00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(23) {
-    fill: #ff9b00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(24) {
-    fill: #ff7700;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(25) {
-    fill: #ff4f00;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(26) {
-    fill: #ff2100;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(27) {
-    fill: #ff0000;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(28) {
-    fill: #ff0000;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(29) {
-    fill: #ff0000;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(30) {
-    fill: #ff0000;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(31) {
-    fill: #ff0000;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(32) {
-    fill: #ff0000;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(33) {
-    fill: #ff0000;
-  }
-
-  .line-chart .bx--cc--scatter circle:nth-child(34) {
-    fill: #ff0000;
-  }
-  .line-chart .bx--cc--scatter circle:nth-child(35) {
-    fill: #ff0000;
-  }
 </style>
