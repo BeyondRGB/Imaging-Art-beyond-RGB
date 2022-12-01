@@ -22,11 +22,7 @@
   }
 
   $: if ($connectionState === "Closed" || $connectionState === "Closed - Error"){
-    toast.push('An error has occurred, attempting to reconnect.', {
-      onpop: () => {
-        connect();
-      }
-    })
+    toast.push('An error has occurred. Click the red icon to attempt to reconnect, or restart the program.')
   }
 </script>
 
