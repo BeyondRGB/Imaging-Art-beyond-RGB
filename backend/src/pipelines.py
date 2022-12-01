@@ -54,6 +54,7 @@ def processing_pipeline(packet):
     tifffile.imwrite('out.tif', img, photometric='rgb')
     import time
     print("Done")
+    return
     while True:
         time.sleep(10000000)
 
