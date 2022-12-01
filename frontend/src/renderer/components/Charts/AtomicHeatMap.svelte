@@ -1,7 +1,6 @@
 <script>
     import { chart } from "svelte-apexcharts";
 
-    // All the data included from the backend, will be parsed here
     export let data;
 
     // Colorblind option
@@ -91,8 +90,8 @@
         return {
             series: getData(),
             chart: {
-                height: '600px',
-                width: '600px',
+                height: '700px',
+                width: '700px',
                 type: 'heatmap',
                 toolbar: {
                     // Hamburger menu which has exports such as CSV etc.
@@ -120,12 +119,12 @@
             yaxis: {
                 labels: {
                     formatter: function (value, info) {
-                        if(info == data?.length) {
+                        if(info === data?.length) {
                             // This gets hit before we even get to the heatmap and displays a random axisLabel
                             return "";
                         } else if(isFinite(info)){
                             // This gets hit for each row on the heatmap (displayed as y-axis)
-                            return data?.length - 1 - info;
+                            return data?.length - info;
                         } else {
                             // This gets hit for each individual square on the heatmap (displayed as tooltip value)
                             return value;
@@ -158,6 +157,6 @@
 
 <main>
     {#key visionDeficiencyMode}
-        <div use:chart={getOptions()} />
+        <div use:chart={getOptions()}></div>
     {/key}
 </main>
