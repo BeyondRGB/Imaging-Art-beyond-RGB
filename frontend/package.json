@@ -1,8 +1,8 @@
 {
   "name": "beyond-rgb",
   "productName": "Beyond RGB",
-  "version": "1.0.0",
-  "description": "Spectral image calibration on a dime",
+  "version": "1.5.0",
+  "description": "Open source spectral image calibration tool",
   "main": "src/main/index.js",
   "scripts": {
     "dev": "concurrently -k \"npm:svelte-dev\" \"npm:electron-dev\"",
@@ -19,8 +19,8 @@
   },
   "keywords": [],
   "author": {
-    "name": "pxd5295",
-    "email": "pxd5295@rit.edu"
+    "name": "BeyondRGB",
+    "email": ""
   },
   "license": "MIT",
   "config": {
