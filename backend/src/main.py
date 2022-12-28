@@ -26,12 +26,13 @@ def main():
         print("Missing File Paths")
         exit()
 
-    directory = sys.argv[1]
+    # directory = sys.argv[1]
 
     packet = Packet()
 
-    for i in range(2, 10):
-        packet.files.append(directory + "/" + sys.argv[i])
+    for i in range(1, 9):
+        # packet.files.append(directory + "/" + sys.argv[i])
+        packet.files.append(sys.argv[i])
 
     # TODO error handling
     processing_pipeline(packet)
