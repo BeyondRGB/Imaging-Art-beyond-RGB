@@ -1,3 +1,21 @@
+""" target_selector.py
+Routine for generating the target coordinates from a target image. This routine
+prompts the user to select the target using an cv2 window in which a selector
+can be dragged over the image creating a selection area.
+
+Functions:
+    __scale_img()
+    __mouse_select()
+    __draw_target()
+    select_target()
+
+Authors:
+    Brendan Grau <https://github.com/Victoriam7>
+
+License:
+    © 2022 BeyondRGB
+    This code is licensed under the MIT license (see LICENSE.txt for details)
+"""
 # Python imports
 import cv2
 from numpy import clip
@@ -12,7 +30,7 @@ selecting = False
 x_start, y_start, x_end, y_end = 0, 0, 0, 0
 
 
-def scale_img(img):
+def __scale_img(img):
     """ Bit scale the image to 8 bit
     Copied from preprocessing.py since this is only one image and not a pair
     [in] img : image to scale
@@ -22,7 +40,7 @@ def scale_img(img):
     img *= s  # Scale to 8 bit
 
 
-def mouse_select(event, x, y, flags, param):
+def __mouse_select(event, x, y, flags, param):
     """ Callback for mouse control
     [in] event : the event triggering the callback
     [in] x     : mouse x position
@@ -48,7 +66,7 @@ def mouse_select(event, x, y, flags, param):
         selecting = False  # cropping is finished
 
 
-def draw_target(img):
+def __draw_target(img):
     """ Draw target on the image
     [in] img : the image to draw on
     [post] The image has the target drawn on it
@@ -77,12 +95,12 @@ def select_target(target_path):
 
     # Generate image
     img = load_image(target_path)
-    scale_img(img)
+    __scale_img(img)
     img = clip(img, 0, 255).astype('uint8')  # Clip any non int values
 
     # Setup window
     cv2.namedWindow("Target Selector", cv2.WINDOW_NORMAL)
-    cv2.setMouseCallback("Target Selector", mouse_select)
+    cv2.setMouseCallback("Target Selector", __mouse_select)
     cv2.imshow("Target Selector", img)
 
     # Loop until target selection confirmed
@@ -90,7 +108,7 @@ def select_target(target_path):
         i = img.copy()
 
         if selecting:
-            draw_target(i)
+            __draw_target(i)
             cv2.imshow("Target Selector", i)
 
         time.sleep(0.25)

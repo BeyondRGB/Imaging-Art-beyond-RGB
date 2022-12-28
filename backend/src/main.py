@@ -21,7 +21,7 @@ from packet import Packet
 
 def main():
     """ App entry point """
-    if len(sys.argv) != 10:
+    if len(sys.argv) < 10:
         print(len(sys.argv))
         print("Missing File Paths")
         exit()
@@ -30,7 +30,7 @@ def main():
 
     packet = Packet()
 
-    for i in range(1, 9):
+    for i in range(7, 15):
         # packet.files.append(directory + "/" + sys.argv[i])
         packet.files.append(sys.argv[i])
 
