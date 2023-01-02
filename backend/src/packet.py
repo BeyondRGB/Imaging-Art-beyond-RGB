@@ -29,15 +29,15 @@ class Packet:
         files         : List of files to be read in
         imgs          : Array of all images
         flat_field_ws : Tuple of w values from flat fielding
-        target        : Array of tuples (top right, bottom left) for targets
+        target        : The calibration target
         swap          : List of files for loading and unloading arrays
         subj_idx      : indices of the currently referenced image
 
     Methods:
         load_calibration_imgs : Load images needed for calibration
-        get_white             : Get tuple of flat field images
-        get_dark              : Get tuple of dark field images
-        get_target            : Get tuple of target images
+        get_white_img             : Get tuple of flat field images
+        get_dark_img              : Get tuple of dark field images
+        get_target_img            : Get tuple of target images
         generate_swap         : Generate swap space
         unload_white          : Unload flat field images
         unload_dark           : Unload dark field images
@@ -46,7 +46,7 @@ class Packet:
     files = []
     imgs = []
     flat_field_ws = ()
-    target = []
+    target = None
     swap = []
     subject_idx = (TARGET_A_IDX, TARGET_B_IDX)
 
@@ -55,15 +55,15 @@ class Packet:
         for i in range(0, RENDERABLES_START):
             self.imgs.append(load_image(self.files[i]))
 
-    def get_white(self):
+    def get_white_img(self):
         """ Get tuple of flat field images """
         return self.imgs[WHITE_A_IDX], self.imgs[WHITE_B_IDX]
 
-    def get_dark(self):
+    def get_dark_img(self):
         """ Get tuple of dark field images """
         return self.imgs[DARK_A_IDX], self.imgs[DARK_B_IDX]
 
-    def get_target(self):
+    def get_target_img(self):
         """ Get tuple of target images """
         return self.imgs[TARGET_A_IDX], self.imgs[TARGET_B_IDX]
 
@@ -113,8 +113,8 @@ class Packet:
 
     def __save_flat_dark(self):
         """ Save flat and dark field arrays to disk """
-        save_array(self.get_white(), self.swap[WHITE_SWAP_IDX])
-        save_array(self.get_dark(), self.swap[DARK_SWAP_IDX])
+        save_array(self.get_white_img(), self.swap[WHITE_SWAP_IDX])
+        save_array(self.get_dark_img(), self.swap[DARK_SWAP_IDX])
 
     def __load_imgs(self, a, b, s):
         """ Load image pair
