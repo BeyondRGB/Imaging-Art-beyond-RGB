@@ -23,7 +23,7 @@ from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
         findHomography, warpPerspective, RANSAC, ORB_create
 
 # Local imports
-from constants import BLUR_FACTOR
+from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
 
 
 def preprocess(packet):
@@ -110,19 +110,17 @@ def flat_field_w_gen(packet):
     t_img = packet.get_target_img()
 
     # Get mean values
-    y = 0.86122  # TODO remove hardcoding
-    row, col = target.white_square
+    tr = TARGET_RADIUS
+    row, col = target.get_white()
     xpos, ypos = target.get_center_coord(row, col)
-    print(xpos)
-    print(ypos)
-    t1mean = np.mean(t_img[0][xpos-10:xpos+10, ypos-10:ypos+10], axis=(0, 1))
-    t2mean = np.mean(t_img[1][xpos-10:xpos+10, ypos-10:ypos+10], axis=(0, 1))
-    w1mean = np.mean(white[0][xpos-10:xpos+10, ypos-10:ypos+10], axis=(0, 1))
-    w2mean = np.mean(white[1][xpos-10:xpos+10, ypos-10:ypos+10], axis=(0, 1))
+    t1mean = np.mean(t_img[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    t2mean = np.mean(t_img[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    w1mean = np.mean(white[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    w2mean = np.mean(white[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
 
     # Generate Ws
-    w1 = y * (t1mean / w1mean)
-    w2 = y * (t2mean / w2mean)
+    w1 = Y_VAL * (t1mean / w1mean)
+    w2 = Y_VAL * (t2mean / w2mean)
     packet.flat_field_ws = (w1, w2)
 
 

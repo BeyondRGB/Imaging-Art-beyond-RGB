@@ -34,11 +34,11 @@ def main():
     packet = Packet()
 
     # Gather target coords and white square
-    target = Target()
     tl = (int(sys.argv[1]), int(sys.argv[3]))
     br = (int(sys.argv[2]), int(sys.argv[4]))
-    target.coords = [tl, br]
-    target.white_square = (int(sys.argv[5]), int(sys.argv[6]))
+    col = int(sys.argv[5])
+    row = int(sys.argv[6])
+    target = Target(tl, br, row, col)
     packet.target = target
 
     # Gather file locations
