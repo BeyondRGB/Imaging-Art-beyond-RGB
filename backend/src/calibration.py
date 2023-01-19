@@ -2,7 +2,7 @@
 Collection of functions for color calibration
 
 Functions:
-    color_calibrate(timgs)
+    color_calibrate(packet)
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
