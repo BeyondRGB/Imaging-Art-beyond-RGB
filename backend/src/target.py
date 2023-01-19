@@ -60,3 +60,9 @@ class Target:
         [out] row, col
         """
         return self._wrow, self._wcol
+
+    def get_dims(self):
+        """ Get dimentions of target
+        [out] target dimentions
+        """
+        return self._num_cols, self._num_rows

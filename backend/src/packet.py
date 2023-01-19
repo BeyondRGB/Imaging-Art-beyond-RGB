@@ -31,13 +31,14 @@ class Packet:
         flat_field_ws : Tuple of w values from flat fielding
         target        : The calibration target
         swap          : List of files for loading and unloading arrays
-        subj_idx      : indices of the currently referenced image
+        subj_idx      : Indices of the currently referenced image
+        x             : Calibration solution
 
     Methods:
         load_calibration_imgs : Load images needed for calibration
-        get_white_img             : Get tuple of flat field images
-        get_dark_img              : Get tuple of dark field images
-        get_target_img            : Get tuple of target images
+        get_white_img         : Get tuple of flat field images
+        get_dark_img          : Get tuple of dark field images
+        get_target_img        : Get tuple of target images
         generate_swap         : Generate swap space
         unload_white          : Unload flat field images
         unload_dark           : Unload dark field images
@@ -49,6 +50,7 @@ class Packet:
     target = None
     swap = []
     subject_idx = (TARGET_A_IDX, TARGET_B_IDX)
+    x = []
 
     def load_calibration_imgs(self):
         """ Load images needed for calibration """
@@ -80,24 +82,19 @@ class Packet:
 
     def unload_white(self):
         """ Unload flat field images """
-        self.__unload_imgs(WHITE_A_IDX, WHITE_B_IDX)
+        self.__unload_imgs(WHITE_A_IDX, WHITE_B_IDX, WHITE_SWAP_IDX)
 
     def unload_dark(self):
         """ Unload flat field images """
-        self.__unload_imgs(DARK_A_IDX, DARK_B_IDX)
+        self.__unload_imgs(DARK_A_IDX, DARK_B_IDX, DARK_SWAP_IDX)
 
     def unload_target(self):
         """ Unload flat field images """
-        self.__unload_imgs(TARGET_A_IDX, TARGET_B_IDX)
+        self.__unload_imgs(TARGET_A_IDX, TARGET_B_IDX, TARGET_SWAP_IDX)
 
     def unload_subject(self):
         """ Unload currently referenced image """
-        # No saving, just delete
-        del self.imgs[self.subj_idx[0]], self.imgs[self.subj_idx[1]]
-        gc.collect()
-
-        self.imgs.insert(self.subj_idx[0], None)
-        self.imgs.insert(self.subj_idx[1], None)
+        self.__unload_imgs(self.subject_idx[0], self.subject_idx[1])
 
     def load_white(self):
         """ Unload flat field images """
@@ -111,33 +108,37 @@ class Packet:
         """ Unload flat field images """
         self.__load_imgs(TARGET_A_IDX, TARGET_B_IDX, TARGET_SWAP_IDX)
 
-    def __save_flat_dark(self):
-        """ Save flat and dark field arrays to disk """
-        save_array(self.get_white_img(), self.swap[WHITE_SWAP_IDX])
-        save_array(self.get_dark_img(), self.swap[DARK_SWAP_IDX])
+    def load_subject(self):
+        self.__
 
-    def __load_imgs(self, a, b, s):
+    def __load_imgs(self, a, b, s=None):
         """ Load image pair
-        [in] a : A file index
-        [in] b : B file index
-        [in] s : swap file location index
+        [in] a      : A file index
+        [in] b      : B file index
+        [in, opt] s : swap file location index
         [post] image pair loaded into indices
         """
-        self.imgs[a], self.imgs[b] = load_array(self.swap[s])
+        if s:
+            self.imgs[a], self.imgs[b] = load_array(self.swap[s])
+        else:
+            self.imgs[a] = load_image(self.files(self.subject_idx[0]))
+            self.imgs[b] = load_image(self.files(self.subject_idx[1]))
 
-    def __unload_imgs(self, a, b):
+    def __unload_imgs(self, a, b, s=None):
         """ Unload image pair
-        [in] a : A file index
-        [in] b : B file index
+        [in] a      : A file index
+        [in] b      : B file index
+        [in, opt] s : swap file idx
         [post] image pair deleted and replaced with None
         """
         # Save images
-        self.__save_flat_dark()
+        if s:
+            save_array((self.imgs[a], self.imgs[b]), self.swap[s])
 
         # Delete from memory
-        del self.imgs[DARK_B_IDX], self.imgs[DARK_A_IDX]
+        del self.imgs[b], self.imgs[a]
         gc.collect()
 
         # Replace with None
-        self.imgs.insert(DARK_A_IDX, None)
-        self.imgs.insert(DARK_B_IDX, None)
+        self.imgs.insert(a, None)
+        self.imgs.insert(b, None)

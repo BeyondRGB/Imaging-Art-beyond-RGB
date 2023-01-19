@@ -13,10 +13,15 @@ License:
 """
 
 
-def render(imgs, M):
+def render(packet):
     """ Render image pair as a single color calibrated image
     [in]     imgs   : tuple of images to render
     [in]     M      : calibration ndarray
     [out] rendered image
+    [post] rendered image is loaded in memory
     """
+    # Load in the image
+    packet.get_subjects()
+
+    # Render
     pass
