@@ -27,3 +27,9 @@ NUM_SWAP_FILES = NUM_SWAP_PAIRS * 2
 
 # Dead pixel correction
 BLUR_FACTOR = 3  # Must be odd and greater than 2
+
+# Target
+TARGET_RADIUS = 10
+
+# Flat fielding
+Y_VAL = 0.86122 # TODO CHECK IF CORRECT VALUE

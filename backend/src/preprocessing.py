@@ -23,7 +23,7 @@ from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
         findHomography, warpPerspective, RANSAC, ORB_create
 
 # Local imports
-from constants import BLUR_FACTOR
+from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
 
 
 def preprocess(packet):
@@ -50,8 +50,8 @@ def dead_pixel_correction(packet):
 
     # If the Ws have not yet been generated, we need to correct the flats
     if packet.flat_field_ws == ():
-        dark = packet.get_dark()
-        white = packet.get_white()
+        dark = packet.get_dark_img()
+        white = packet.get_white_img()
         dark[0][...] = medianBlur(dark[0], BLUR_FACTOR)
         dark[1][...] = medianBlur(dark[1], BLUR_FACTOR)
         white[0][...] = medianBlur(white[0], BLUR_FACTOR)
@@ -72,8 +72,8 @@ def bit_scale(packet):
 
     # If the Ws have not yet been generated, we need to scale the flats
     if packet.flat_field_ws == ():
-        dark = packet.get_dark()
-        white = packet.get_white()
+        dark = packet.get_dark_img()
+        white = packet.get_white_img()
         dark[0][...] *= s
         dark[1][...] *= s
         white[0][...] *= s
@@ -89,11 +89,11 @@ def dark_current_correction(packet):
     [post] images dark current corrected in place
     """
     subject = packet.get_subject()
-    dark = packet.get_dark()
+    dark = packet.get_dark_img()
 
     # If the Ws have not yet been generated, we need to correct the flat fields
     if packet.flat_field_ws == ():
-        white = packet.get_white()
+        white = packet.get_white_img()
         white[0][...] -= dark[0]
         white[1][...] -= dark[1]
 
@@ -105,19 +105,22 @@ def flat_field_w_gen(packet):
     """ Generate flat fielding w value
     [in] packet : pipeline packet
     """
-    target = packet.get_target()
-    white = packet.get_white()
+    target = packet.target
+    white = packet.get_white_img()
+    t_img = packet.get_target_img()
 
     # Get mean values
-    y = 0.86122  # TODO remove hardcoding
-    t1mean = np.mean(target[0][1960:2040, 3040:3100], axis=(0, 1))
-    t2mean = np.mean(target[1][1960:2040, 3040:3100], axis=(0, 1))
-    w1mean = np.mean(white[0][1960:2040, 3040:3100], axis=(0, 1))
-    w2mean = np.mean(white[1][1960:2040, 3040:3100], axis=(0, 1))
+    tr = TARGET_RADIUS
+    row, col = target.get_white()
+    xpos, ypos = target.get_center_coord(row, col)
+    t1mean = np.mean(t_img[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    t2mean = np.mean(t_img[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    w1mean = np.mean(white[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    w2mean = np.mean(white[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
 
     # Generate Ws
-    w1 = y * (t1mean / w1mean)
-    w2 = y * (t2mean / w2mean)
+    w1 = Y_VAL * (t1mean / w1mean)
+    w2 = Y_VAL * (t2mean / w2mean)
     packet.flat_field_ws = (w1, w2)
 
 
@@ -127,7 +130,7 @@ def flat_fielding(packet):
     [raise] ZeroDivisionError
     """
     subject = packet.get_subject()
-    white = packet.get_white()
+    white = packet.get_white_img()
 
     # Generate Ws if we haven't already
     if packet.flat_field_ws == ():

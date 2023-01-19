@@ -17,25 +17,38 @@ import sys
 # Local imports
 from pipelines import processing_pipeline
 from packet import Packet
+from target import Target
 
 
 def main():
     """ App entry point """
+    # Error checking
     if len(sys.argv) < 10:
         print(len(sys.argv))
         print("Missing File Paths")
         exit()
 
-    # directory = sys.argv[1]
+    # TODO: stadardize parsing of arguments
 
+    """ Setup packet """
     packet = Packet()
 
-    for i in range(7, 15):
-        # packet.files.append(directory + "/" + sys.argv[i])
+    # Gather target coords and white square
+    tl = (int(sys.argv[1]), int(sys.argv[3]))
+    br = (int(sys.argv[2]), int(sys.argv[4]))
+    col = int(sys.argv[5])
+    row = int(sys.argv[6])
+    target = Target(tl, br, row, col)
+    packet.target = target
+
+    # Gather file locations
+    for i in range(7, len(sys.argv)):
         packet.files.append(sys.argv[i])
 
-    # TODO error handling
+    """ Begin pipeline """
     processing_pipeline(packet)
+
+    # TODO error handling
 
 
 if __name__ == "__main__":

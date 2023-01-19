@@ -69,9 +69,9 @@ if __name__ == '__main__':
     coords, col, row, files = npyscreen.wrapper_basic(settings)
 
     xs = int(coords[0][0])
-    xe = int(coords[0][1])
-    ys = int(coords[1][0])
-    ye = int(coords[0][1])
+    xe = int(coords[1][0])
+    ys = int(coords[0][1])
+    ye = int(coords[1][1])
 
     paths = ""
     for f in files:
