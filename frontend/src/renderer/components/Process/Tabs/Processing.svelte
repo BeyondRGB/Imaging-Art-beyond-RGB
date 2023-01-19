@@ -64,9 +64,9 @@
     <div class="completedBox">
       <div class="completedOptions">
         <button on:click={() => handleComplete(0)}>View Image</button>
-        <button disabled on:click={() => handleComplete(1)}
-          >Open File Location</button
-        >
+      <!--        Chrome will not allow for this functionality for security reasons.
+                  A potential work around is having the backend handle this -->
+<!--        <button disabled on:click={() => handleComplete(1)}>Open File Location</button>-->
         <button on:click={() => handleComplete(2)}>Process Another Image</button
         >
       </div>
