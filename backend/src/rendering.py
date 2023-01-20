@@ -35,20 +35,20 @@ def render(packet):
     # Render
     m = np.resize(packet.x[0:17], (3, 6))
     o = np.resize(packet.x[18:], (6, 1))
-    print("God channels")
+    # Subtract offsets
     schanells[...] -= o
-    print("1")
-    schanells[...] = np.matmul(m, schanells)
-    print("2")
-    schanells[...] = np.matmul(M, schanells)
-    print("3")
-    schanells[...] = schanells.transpose()
-    print("4")
-    packet.rendered_subj = np.resize(schanells, (h, w, d))
-    print("got finial")
+    # Apply transformation matrix
+    res = np.matmul(m, schanells)
+    # Clear unneeded memory
+    del schanells
+    gc.collect()
+    # Apply ProPhoto conversion
+    res[...] = np.matmul(M, res)
+    # TODO Apply Gamma
+    packet.rendered_subj = np.resize(res.transpose(), (h, w, d))
 
     # Cleanup
-    del schanells
+    del res
     gc.collect()
 
 

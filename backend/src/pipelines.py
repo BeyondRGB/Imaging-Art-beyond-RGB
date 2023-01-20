@@ -65,7 +65,8 @@ def processing_pipeline(packet):
     print("Done")
     import tifffile
     import numpy as np
-    img = np.clip(packet.rendered_subj, 0, 255).astype('uint8')
+    img = np.multiply(packet.rendered_subj, 3)
+    img = np.clip(img, 0, 255).astype('uint8')
     tifffile.imwrite('out.tif', img, photometric='rgb')
     print("Done")
     return
