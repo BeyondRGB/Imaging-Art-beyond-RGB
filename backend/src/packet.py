@@ -75,6 +75,9 @@ class Packet:
         """ Get the currently referenced image """
         return self.imgs[self.subj_idx[0]], self.imgs[self.subj_idx[1]]
 
+    def get_first(self):
+        return self.imgs[0]
+
     def generate_swap(self):
         """ Generate swap space
         [post] self.swap contains swap space file paths
@@ -117,6 +120,9 @@ class Packet:
         else:
             self.__load_imgs(idx0, idx1)
 
+    def load_first(self):
+        self.__load_imgs(0, -1)
+
     def __load_imgs(self, a, b, s=None):
         """ Load image pair
         [in] a      : A file index
@@ -127,8 +133,10 @@ class Packet:
         if s:
             self.imgs[a], self.imgs[b] = load_array(self.swap[s])
         else:
-            self.imgs[a] = load_image(a)
-            self.imgs[b] = load_image(b)
+            if a != -1:
+                self.imgs[a] = load_image(a)
+            if b != -1:
+                self.imgs[b] = load_image(b)
 
     def __unload_imgs(self, a, b, s=None):
         """ Unload image pair

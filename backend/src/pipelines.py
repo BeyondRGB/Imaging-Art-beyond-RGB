@@ -73,3 +73,11 @@ def processing_pipeline(packet):
     import time
     while True:
         time.sleep(10000000)
+
+
+def raw_to_png(packet):
+    packet.load_first()
+
+    img = packet.get_first()
+
+
