@@ -94,4 +94,5 @@ if __name__ == '__main__':
             print("\t\t%s" % f.value)
         input("Press ENTER to run Beyond RGB with the above settings")
         print("Running...")
+        print("python3 main.py " + args)
         subprocess.run(["python3", "main.py"] + args.split())

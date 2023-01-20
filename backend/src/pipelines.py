@@ -14,6 +14,7 @@ License:
 # Local imports
 from exceptions import MissingFilesException
 from preprocessing import preprocess
+from calibration import color_calibrate
 
 
 def processing_pipeline(packet):
@@ -38,30 +39,37 @@ def processing_pipeline(packet):
     if num_files < 8 or num_files % 2 != 0:
         raise MissingFilesException(8, num_files)
 
-    # Generate array swap space
+    # Generate array swap space and load files
     packet.generate_swap()
-
-    # Load files for calibration
     packet.load_calibration_imgs()
 
-    # Target preprocessing
+    # Calibration pass
     preprocess(packet)
+    color_calibrate(packet)
+    # TODO validate solution
+    # TODO render target
+    # TODO output target to file
 
+    # TODO remove the fillowing once target output to file is done
+    """
     import tifffile
     import numpy as np
     img = packet.imgs[0] * 255
     img = np.clip(img, 0, 255).astype('uint8')
     tifffile.imwrite('out.tif', img, photometric='rgb')
-    import time
     print("Done")
+    """
+
+    # TODO Batch Processing
+    #   do
+    #       itterate to next subject
+    #       load flat and dark fields
+    #       preprocess (flat and dark will be unloaded)
+    #       render
+    #       output
+    #   while there are more subjects
+
     return
+    import time
     while True:
         time.sleep(10000000)
-
-    # TODO calibration
-
-    # Load flat and dark field arrays into memory
-
-    # TODO rendering
-
-    # TODO output
