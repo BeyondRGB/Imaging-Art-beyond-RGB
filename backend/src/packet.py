@@ -32,6 +32,7 @@ class Packet:
         target        : The calibration target
         swap          : List of files for loading and unloading arrays
         subj_idx      : Indices of the currently referenced image
+        rendered_subj  : Rendered version of the subject
         x             : Calibration solution
 
     Methods:
@@ -49,7 +50,8 @@ class Packet:
     flat_field_ws = ()
     target = None
     swap = []
-    subject_idx = (TARGET_A_IDX, TARGET_B_IDX)
+    subj_idx = (TARGET_A_IDX, TARGET_B_IDX)
+    rendered_subj = None
     x = []
 
     def load_calibration_imgs(self):
@@ -71,7 +73,7 @@ class Packet:
 
     def get_subject(self):
         """ Get the currently referenced image """
-        return self.imgs[self.subject_idx[0]], self.imgs[self.subject_idx[1]]
+        return self.imgs[self.subj_idx[0]], self.imgs[self.subj_idx[1]]
 
     def generate_swap(self):
         """ Generate swap space
@@ -94,7 +96,7 @@ class Packet:
 
     def unload_subject(self):
         """ Unload currently referenced image """
-        self.__unload_imgs(self.subject_idx[0], self.subject_idx[1])
+        self.__unload_imgs(self.subj_idx[0], self.subj_idx[1])
 
     def load_white(self):
         """ Unload flat field images """
@@ -109,7 +111,11 @@ class Packet:
         self.__load_imgs(TARGET_A_IDX, TARGET_B_IDX, TARGET_SWAP_IDX)
 
     def load_subject(self):
-        self.__
+        idx0, idx1 = self.subj_idx[0], self.subj_idx[1]
+        if self.subj_idx[0] == TARGET_A_IDX:
+            self.__load_imgs(idx0, idx1, TARGET_SWAP_IDX)
+        else:
+            self.__load_imgs(idx0, idx1)
 
     def __load_imgs(self, a, b, s=None):
         """ Load image pair
@@ -121,8 +127,8 @@ class Packet:
         if s:
             self.imgs[a], self.imgs[b] = load_array(self.swap[s])
         else:
-            self.imgs[a] = load_image(self.files(self.subject_idx[0]))
-            self.imgs[b] = load_image(self.files(self.subject_idx[1]))
+            self.imgs[a] = load_image(a)
+            self.imgs[b] = load_image(b)
 
     def __unload_imgs(self, a, b, s=None):
         """ Unload image pair

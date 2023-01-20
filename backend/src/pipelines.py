@@ -15,6 +15,7 @@ License:
 from exceptions import MissingFilesException
 from preprocessing import preprocess
 from calibration import color_calibrate
+from rendering import render
 
 
 def processing_pipeline(packet):
@@ -47,28 +48,26 @@ def processing_pipeline(packet):
     preprocess(packet)
     color_calibrate(packet)
     # TODO validate solution
-    # TODO render target
+    render(packet)
     # TODO output target to file
+    # TODO itterate to next subject index
 
-    # TODO remove the fillowing once target output to file is done
-    """
-    import tifffile
-    import numpy as np
-    img = packet.imgs[0] * 255
-    img = np.clip(img, 0, 255).astype('uint8')
-    tifffile.imwrite('out.tif', img, photometric='rgb')
-    print("Done")
-    """
-
+    # Render and save remaining images
     # TODO Batch Processing
-    #   do
-    #       itterate to next subject
+    #   while current subject index is valid
     #       load flat and dark fields
     #       preprocess (flat and dark will be unloaded)
     #       render
     #       output
-    #   while there are more subjects
+    #       itterate next subject index
 
+    # TODO remove the fillowing once target output to file is done
+    print("Done")
+    import tifffile
+    import numpy as np
+    img = np.clip(packet.rendered_subj, 0, 255).astype('uint8')
+    tifffile.imwrite('out.tif', img, photometric='rgb')
+    print("Done")
     return
     import time
     while True:

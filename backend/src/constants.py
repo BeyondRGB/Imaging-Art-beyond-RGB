@@ -8,6 +8,7 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+import numpy as np
 
 # File/array index constants
 TARGET_A_IDX = 0
@@ -40,3 +41,8 @@ INIT_M = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
           0.10, 0.10, 0.25, 0.10, 0.10, 0.50]
 INIT_O = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 INIT_MOARR = INIT_M + INIT_O
+
+# Rendering
+M = np.array([[1.3459433, -0.2556075, -0.0511118],
+              [-0.5445989, 1.508167, 0.0205351],
+              [0.0, 0.0, 1.2118128]])
