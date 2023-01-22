@@ -28,7 +28,7 @@ def main():
         print("Missing File Paths")
         exit()
 
-    # TODO: stadardize parsing of arguments
+    # TODO: standardize parsing of arguments
 
     """ Setup packet """
     packet = Packet()
