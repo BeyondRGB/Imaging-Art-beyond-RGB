@@ -23,6 +23,8 @@
   let binaryFor = null;
   let binaryID = null;
 
+  let notEnoughImages = false;
+
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
@@ -33,9 +35,13 @@
   ];
 
   function nextTab() {
-    if ($processState.currentTab !== tabs.length - 1) {
-      if ($processState.completedTabs[$processState.currentTab]) {
+    if ($processState.currentTab != tabs.length - 1) {
+      if ($processState.currentTab == 0 && $processState.imageFilePaths.length < 6){
+        notEnoughImages = true;
+      }
+      else {
         $processState.currentTab += 1;
+        $processState.completedTabs[$processState.currentTab] = true;
       }
     } else {
       console.log("Error overflow");
@@ -276,6 +282,18 @@
     </div>
   </div>
 
+  {#if notEnoughImages}
+    <div class="notEnoughImages">
+      <card>
+        <div>
+        In order to proceed, you need to upload 2 Darkfield, 2 Flatfield, and at least 2 Targets with Artwork.
+        </div>
+        <button on:click={() => (notEnoughImages = false)} class="cont"
+        >Close</button>
+      </card>
+    </div>
+  {/if}
+
   <div class={`confirmModal ${showDialog ? "show" : ""}`}>
     <div class="confirmDialog">
       <p>Are you sure you're ready to proceed?</p>
@@ -370,5 +388,10 @@
   }
   .component:last-of-type {
     @apply z-0;
+  }
+
+  .notEnoughImages {
+    @apply w-full h-full absolute bg-black/75 z-50 flex justify-center items-center;
+    text-align: center;
   }
 </style>
