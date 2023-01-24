@@ -286,7 +286,12 @@
     <div class="notEnoughImages">
       <card>
         <div>
-        In order to proceed, you need to upload 2 Darkfield, 2 Flatfield, and at least 2 Targets with Artwork.
+        In order to proceed, you must upload the following images:
+          2 Flatfields,
+          2 Darkfields,
+          2 Artworks, and
+          2 Target images.
+          Alternatively, you may include the targets in your Artwork images.
         </div>
         <button on:click={() => (notEnoughImages = false)} class="cont"
         >Close</button>
