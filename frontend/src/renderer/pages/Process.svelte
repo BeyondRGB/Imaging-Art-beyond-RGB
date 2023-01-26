@@ -24,6 +24,7 @@
   let binaryID = null;
 
   let notEnoughImages = false;
+  let selectOutput = false;
 
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
@@ -38,6 +39,9 @@
     if ($processState.currentTab != tabs.length - 1) {
       if ($processState.currentTab == 0 && $processState.imageFilePaths.length < 6){
         notEnoughImages = true;
+      }
+      else if ($processState.currentTab == 1 && $processState.destDir == undefined){
+        selectOutput = true;
       }
       else {
         $processState.currentTab += 1;
@@ -282,22 +286,28 @@
     </div>
   </div>
 
-  {#if notEnoughImages}
-    <div class="notEnoughImages">
-      <card>
-        <div>
-        In order to proceed, you must upload the following images:
+  <div class={`confirmModal ${notEnoughImages ? "show" : ""}`}>
+    <div class="confirmDialog">
+        <p>In order to proceed, you must upload the following images:
           2 Flatfields,
           2 Darkfields,
           2 Artworks, and
           2 Target images.
-          Alternatively, you may include the targets in your Artwork images.
+          Alternatively, you may include the targets in your Artwork images.</p>
+        <div class="btnGroup">
+          <button clas="cancel" on:click={() => (notEnoughImages = false)}>Close</button>
         </div>
-        <button on:click={() => (notEnoughImages = false)} class="cont"
-        >Close</button>
-      </card>
     </div>
-  {/if}
+  </div>
+
+  <div class={`confirmModal ${selectOutput ? "show" : ""}`}>
+    <div class="confirmDialog">
+      <p>Please select an output destination folder</p>
+      <div class="btnGroup">
+        <button clas="cancel" on:click={() => (selectOutput = false)}>Close</button>
+      </div>
+    </div>
+  </div>
 
   <div class={`confirmModal ${showDialog ? "show" : ""}`}>
     <div class="confirmDialog">

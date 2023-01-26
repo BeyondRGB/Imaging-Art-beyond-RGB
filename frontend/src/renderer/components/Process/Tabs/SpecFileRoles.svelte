@@ -53,7 +53,7 @@
         if(validationError = validate()) {
             return;
         }
-        $processState.imageFilePaths = [];
+        // $processState.imageFilePaths = [];
         $processState.completedTabs[2] = true;
         if(skipOptionalFiltering) {
             $processState.currentTab += 2;
