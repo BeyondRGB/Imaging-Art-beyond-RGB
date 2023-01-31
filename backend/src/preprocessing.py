@@ -19,7 +19,7 @@ License:
 """
 # Python imports
 import numpy as np
-from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
+from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher,\
         findHomography, warpPerspective, RANSAC, ORB_create, NORM_HAMMING, imshow, waitKey, COLOR_GRAY2RGB, SIFT_create, normalize, NORM_MINMAX
 
 # Local imports
@@ -153,18 +153,18 @@ def registration(packet):
     align_color = subject[1]
 
     # grayscale
-    img1 = cvtColor(reference_color, COLOR_BGR2GRAY)
-    img2 = cvtColor(align_color, COLOR_BGR2GRAY)
+    img1 = cvtColor(reference_color, COLOR_RGB2GRAY)
+    img2 = cvtColor(align_color, COLOR_RGB2GRAY)
     height, width = img2.shape
 
-    img1 = cvtColor(img1, COLOR_GRAY2RGB)
-    img2 = cvtColor(img2, COLOR_GRAY2RGB)
+    # img1 = cvtColor(img1, COLOR_GRAY2RGB)
+    # img2 = cvtColor(img2, COLOR_GRAY2RGB)
     # imshow("img1 rgb", img1)
     # imshow("img2 rgb", img2)
     # waitKey(0)
 
-    detector = SIFT_create(5000)
-    descriptor = SIFT_create(5000)
+    detector = SIFT_create(50)
+    descriptor = SIFT_create(50)
     print(img1)
     print("CONVERTED")
     img1 = normalize(img1, None, 0, 255, NORM_MINMAX).astype('uint8')
@@ -172,6 +172,8 @@ def registration(packet):
 
     print(img1)
     key_points1 = detector.detect(img1, None)
+    print(key_points1)
+    exit()
     key_points2 = detector.detect(img2, None)
     key_points1, descriptors1 = descriptor.compute(img1, key_points1)
     key_points2, descriptors2 = descriptor.compute(img2, key_points2)
