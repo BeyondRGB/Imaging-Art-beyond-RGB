@@ -20,7 +20,7 @@ License:
 # Python imports
 import numpy as np
 from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
-        findHomography, warpPerspective, RANSAC, ORB_create
+        findHomography, warpPerspective, RANSAC, ORB_create, NORM_HAMMING, imshow, waitKey, COLOR_GRAY2RGB
 
 # Local imports
 from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
@@ -148,25 +148,34 @@ def registration(packet):
     [in] packet : pipeline packet
     [post] images registered in place
     """
-    return  # TODO remove
-    # TODO how are these gonna be and what to return
-    reference_color, align_color = packet
+    subject = packet.get_subject()
+    reference_color = subject[0]
+    align_color = subject[1]
 
     # grayscale
     img1 = cvtColor(reference_color, COLOR_BGR2GRAY)
     img2 = cvtColor(align_color, COLOR_BGR2GRAY)
     height, width = img2.shape
 
+    img1 = cvtColor(img1, COLOR_GRAY2RGB)
+    img2 = cvtColor(img2, COLOR_GRAY2RGB)
+    # imshow("img1 rgb", img1)
+    # imshow("img2 rgb", img2)
+    # waitKey(0)
+
     # create ORB detector
-    orb_detector = ORB_create(5000)
+    orb_detector = ORB_create(nfeatures = 500, edgeThreshold = 0, fastThreshold = 0)
     key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
     key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
+    print(key_points1)
+    print(descriptors1)
 
     # match images
-    matches = BFMatcher.match(descriptors1, descriptors2)
+    matcher = BFMatcher(NORM_HAMMING, crossCheck = True)
+    matches = matcher.match(descriptors1, descriptors2)
     matches = tuple(sorted(matches, key=lambda x: x.distance))
-    matches = matches[:int(len(matches)) * 0.9]
-    num_matches = matches
+    matches = matches[:int(len(matches) * 0.9)]
+    num_matches = len(matches)
 
     p1 = np.zeros((num_matches, 2))
     p2 = np.zeros((num_matches, 2))
@@ -175,6 +184,10 @@ def registration(packet):
         p1[i, :] = key_points1[matches[i].queryIdx].pt
         p2[i, :] = key_points2[matches[i].trainIdx].pt
 
+    print(p1)
+    print(p2)
+
     homography, mask = findHomography(p1, p2, RANSAC)
 
-    return warpPerspective(reference_color, homography, (width, height))
+    subject[1][...] = warpPerspective(reference_color, homography, (width, height))
+4
