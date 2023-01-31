@@ -14,6 +14,7 @@
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
   import Layout from "@components/Process/Layout.svelte";
+  import NewProcessSetUp from "@components/Process/Tabs/NewProcessSetUp.svelte";
   let tabList;
 
   let showWhitePatchWarning = false;
@@ -24,8 +25,7 @@
   let binaryID = null;
 
   let tabs: any = [
-    { name: "Import Images", component: ImportImages },
-    { name: "Select Destination", component: SelectDest },
+    { name: "New Main", component: NewProcessSetUp },
     { name: "Specify File Roles", component: SpecFileRoles },
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },

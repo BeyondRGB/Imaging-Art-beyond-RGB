@@ -76,6 +76,7 @@
 </script>
 
 <main>
+    <div>
     <br>
     <Dropzone
             on:drop={handleFilesSelect}
@@ -133,12 +134,12 @@
         </article>
     </Dropzone>
     <br>
-
+    </div>
 </main>
 
 <style lang="postcss">
     main {
-        @apply h-full ;
+        max-height: 50% ;
     }
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2;
@@ -153,7 +154,7 @@
         @apply flex flex-col gap-2 w-full justify-center items-center;
     }
     article {
-        @apply bg-gray-800 w-full min-h-[12rem] max-h-[30rem] overflow-auto rounded-[32px] py-2 px-6;
+        @apply bg-gray-800 w-full min-h-[30vh] max-h-[30vh] overflow-auto rounded-[32px] py-2 px-6;
     }
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
