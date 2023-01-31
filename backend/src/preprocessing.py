@@ -11,7 +11,7 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
-    Elija Cooper
+    Elijah Cooper
 
 License:
     © 2022 BeyondRGB
@@ -20,7 +20,7 @@ License:
 # Python imports
 import numpy as np
 from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
-        findHomography, warpPerspective, RANSAC, ORB_create, NORM_HAMMING, imshow, waitKey, COLOR_GRAY2RGB
+        findHomography, warpPerspective, RANSAC, ORB_create, NORM_HAMMING, imshow, waitKey, COLOR_GRAY2RGB, SIFT_create, normalize, NORM_MINMAX
 
 # Local imports
 from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
@@ -163,10 +163,23 @@ def registration(packet):
     # imshow("img2 rgb", img2)
     # waitKey(0)
 
+    detector = SIFT_create(5000)
+    descriptor = SIFT_create(5000)
+    print(img1)
+    print("CONVERTED")
+    img1 = normalize(img1, None, 0, 255, NORM_MINMAX).astype('uint8')
+    img2 = normalize(img2, None, 0, 255, NORM_MINMAX).astype('uint8')
+
+    print(img1)
+    key_points1 = detector.detect(img1, None)
+    key_points2 = detector.detect(img2, None)
+    key_points1, descriptors1 = descriptor.compute(img1, key_points1)
+    key_points2, descriptors2 = descriptor.compute(img2, key_points2)
+
     # create ORB detector
-    orb_detector = ORB_create(nfeatures = 500, edgeThreshold = 0, fastThreshold = 0)
-    key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
-    key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
+    # orb_detector = ORB_create(nfeatures = 500, edgeThreshold = 0, fastThreshold = 0)
+    # key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
+    # key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
     print(key_points1)
     print(descriptors1)
 
@@ -190,4 +203,3 @@ def registration(packet):
     homography, mask = findHomography(p1, p2, RANSAC)
 
     subject[1][...] = warpPerspective(reference_color, homography, (width, height))
-4
