@@ -19,8 +19,8 @@ License:
 """
 # Python imports
 import numpy as np
-from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
-        findHomography, warpPerspective, RANSAC, ORB_create
+from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher,\
+        findHomography, warpPerspective, RANSAC, ORB_create, NORM_L1, imshow, waitKey, COLOR_GRAY2RGB, SIFT_create, normalize, NORM_MINMAX
 
 # Local imports
 from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
@@ -32,13 +32,13 @@ def preprocess(packet):
     [post] images preprocessed in place
     [raise] ZeroDivisionError
     """
-#    bit_scale(packet)
+    bit_scale(packet)
     dead_pixel_correction(packet)
     dark_current_correction(packet)
     packet.unload_dark()  # Dark no longer needed
     flat_fielding(packet)
     packet.unload_white()  # Flat no longer needed
-#    registration(packet)
+    registration(packet)
 
 
 def dead_pixel_correction(packet):
@@ -148,25 +148,48 @@ def registration(packet):
     [in] packet : pipeline packet
     [post] images registered in place
     """
-    return  # TODO remove
-    # TODO how are these gonna be and what to return
-    reference_color, align_color = packet
+    subject = packet.get_subject()
+    reference_color = subject[0]
+    align_color = subject[1]
 
     # grayscale
-    img1 = cvtColor(reference_color, COLOR_BGR2GRAY)
-    img2 = cvtColor(align_color, COLOR_BGR2GRAY)
+    img1 = cvtColor(reference_color, COLOR_RGB2GRAY)
+    img2 = cvtColor(align_color, COLOR_RGB2GRAY)
     height, width = img2.shape
 
+    # img1 = cvtColor(img1, COLOR_GRAY2RGB)
+    # img2 = cvtColor(img2, COLOR_GRAY2RGB)
+    # imshow("img1 rgb", img1)
+    # imshow("img2 rgb", img2)
+    # waitKey(0)
+
+    detector = SIFT_create(50)
+    descriptor = SIFT_create(50)
+    print(img1)
+    print("CONVERTED")
+    img1 = normalize(img1, None, 0, 255, NORM_MINMAX).astype('uint8')
+    img2 = normalize(img2, None, 0, 255, NORM_MINMAX).astype('uint8')
+
+    print(img1)
+    key_points1 = detector.detect(img1, None)
+    print(key_points1)
+    key_points2 = detector.detect(img2, None)
+    key_points1, descriptors1 = descriptor.compute(img1, key_points1)
+    key_points2, descriptors2 = descriptor.compute(img2, key_points2)
+
     # create ORB detector
-    orb_detector = ORB_create(5000)
-    key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
-    key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
+    # orb_detector = ORB_create(nfeatures = 500, edgeThreshold = 0, fastThreshold = 0)
+    # key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
+    # key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
+    print(key_points1)
+    print(descriptors1)
 
     # match images
-    matches = BFMatcher.match(descriptors1, descriptors2)
+    matcher = BFMatcher(NORM_L1, crossCheck = False)
+    matches = matcher.match(descriptors1, descriptors2)
     matches = tuple(sorted(matches, key=lambda x: x.distance))
-    matches = matches[:int(len(matches)) * 0.9]
-    num_matches = matches
+    matches = matches[:int(len(matches) * 0.9)]
+    num_matches = len(matches)
 
     p1 = np.zeros((num_matches, 2))
     p2 = np.zeros((num_matches, 2))
@@ -175,6 +198,9 @@ def registration(packet):
         p1[i, :] = key_points1[matches[i].queryIdx].pt
         p2[i, :] = key_points2[matches[i].trainIdx].pt
 
+    print(p1)
+    print(p2)
+
     homography, mask = findHomography(p1, p2, RANSAC)
 
-    return warpPerspective(reference_color, homography, (width, height))
+    subject[1][...] = warpPerspective(reference_color, homography, (width, height))
