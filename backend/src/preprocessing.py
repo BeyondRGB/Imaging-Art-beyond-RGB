@@ -173,7 +173,6 @@ def registration(packet):
     print(img1)
     key_points1 = detector.detect(img1, None)
     print(key_points1)
-    exit()
     key_points2 = detector.detect(img2, None)
     key_points1, descriptors1 = descriptor.compute(img1, key_points1)
     key_points2, descriptors2 = descriptor.compute(img2, key_points2)
