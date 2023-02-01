@@ -20,7 +20,7 @@ License:
 # Python imports
 import numpy as np
 from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher,\
-        findHomography, warpPerspective, RANSAC, ORB_create, NORM_HAMMING, imshow, waitKey, COLOR_GRAY2RGB, SIFT_create, normalize, NORM_MINMAX
+        findHomography, warpPerspective, RANSAC, ORB_create, NORM_L1, imshow, waitKey, COLOR_GRAY2RGB, SIFT_create, normalize, NORM_MINMAX
 
 # Local imports
 from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
@@ -186,7 +186,7 @@ def registration(packet):
     print(descriptors1)
 
     # match images
-    matcher = BFMatcher(NORM_HAMMING, crossCheck = True)
+    matcher = BFMatcher(NORM_L1, crossCheck = False)
     matches = matcher.match(descriptors1, descriptors2)
     matches = tuple(sorted(matches, key=lambda x: x.distance))
     matches = matches[:int(len(matches) * 0.9)]
