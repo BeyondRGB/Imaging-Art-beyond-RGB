@@ -16,6 +16,8 @@ from exceptions import MissingFilesException
 from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
+from PIL import Image
+import rgbio
 
 
 def processing_pipeline(packet):
@@ -75,9 +77,11 @@ def processing_pipeline(packet):
         time.sleep(10000000)
 
 
-def raw_to_png(packet):
-    packet.load_first()
+def raw_to_png(path):
+    import tifffile
+    # Load image
+    raw = rgbio.load_image(path)
+    raw *= ((2**8 - 1)/(2**22 - 1))
+    tifffile.imwrite('test.png', raw, photometric='rgb')
 
-    img = packet.get_first()
-
-
+raw_to_png('../SampleImages/art_A_1.ARW')

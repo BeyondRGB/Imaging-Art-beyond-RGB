@@ -18,7 +18,7 @@ import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
-from cv2 import cvtColor, COLOR_BayerRG2RGB
+from cv2 import cvtColor, COLOR_BayerRGGB2RGB
 
 
 def save_image(img, path):
@@ -45,7 +45,7 @@ def load_image(path):
     # Standardize based on image type
     if len(raw.shape) == 2:
         # Image is Bayer, convert to RGB, return image
-        return cvtColor(raw, COLOR_BayerRG2RGB).astype('f4')
+        return cvtColor(raw, COLOR_BayerRGGB2RGB).astype('f4')
     elif len(raw.shape) == 3:
         # Image is RGB, remove any alpha channel, return image
         if raw.shape[2] == 4:
