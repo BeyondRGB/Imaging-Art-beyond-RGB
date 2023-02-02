@@ -19,8 +19,11 @@ License:
 """
 # Python imports
 import numpy as np
-from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher,\
-        findHomography, warpPerspective, RANSAC, ORB_create, NORM_L1, imshow, waitKey, COLOR_GRAY2RGB, SIFT_create, normalize, NORM_MINMAX
+import gc
+from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher, \
+    findHomography, warpPerspective, RANSAC, NORM_L1, imshow, waitKey, SIFT_create, \
+    normalize, NORM_MINMAX, imread
+from tifffile import imwrite
 
 # Local imports
 from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
@@ -68,7 +71,7 @@ def bit_scale(packet):
     """
     subject = packet.get_subject()
 
-    s = ((2**16 - 1)/(2**14 - 1))  # TODO determine actual scale for each image
+    s = ((2 ** 16 - 1) / (2 ** 14 - 1))  # TODO determine actual scale for each image
 
     # If the Ws have not yet been generated, we need to scale the flats
     if packet.flat_field_ws == ():
@@ -113,10 +116,10 @@ def flat_field_w_gen(packet):
     tr = TARGET_RADIUS
     row, col = target.get_white()
     xpos, ypos = target.get_center_coord(row, col)
-    t1mean = np.mean(t_img[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
-    t2mean = np.mean(t_img[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
-    w1mean = np.mean(white[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
-    w2mean = np.mean(white[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    t1mean = np.mean(t_img[0][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
+    t2mean = np.mean(t_img[1][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
+    w1mean = np.mean(white[0][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
+    w2mean = np.mean(white[1][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
 
     # Generate Ws
     w1 = Y_VAL * (t1mean / w1mean)
@@ -149,43 +152,41 @@ def registration(packet):
     [post] images registered in place
     """
     subject = packet.get_subject()
-    reference_color = subject[0]
     align_color = subject[1]
+    reference_color = subject[0]
+    # align_color = imread("/home/eli/Downloads/align.jpg")
+    # reference_color = imread("/home/eli/Downloads/ref.jpg")
 
-    # grayscale
-    img1 = cvtColor(reference_color, COLOR_RGB2GRAY)
-    img2 = cvtColor(align_color, COLOR_RGB2GRAY)
-    height, width = img2.shape
-
-    # img1 = cvtColor(img1, COLOR_GRAY2RGB)
-    # img2 = cvtColor(img2, COLOR_GRAY2RGB)
-    # imshow("img1 rgb", img1)
-    # imshow("img2 rgb", img2)
+    # imshow("reference color", reference_color)
     # waitKey(0)
 
-    detector = SIFT_create(50)
-    descriptor = SIFT_create(50)
-    print(img1)
-    print("CONVERTED")
-    img1 = normalize(img1, None, 0, 255, NORM_MINMAX).astype('uint8')
-    img2 = normalize(img2, None, 0, 255, NORM_MINMAX).astype('uint8')
+    # grayscale
+    img1_gray = cvtColor(align_color, COLOR_RGB2GRAY)
+    img2_gray = cvtColor(reference_color, COLOR_RGB2GRAY)
+    height, width = img2_gray.shape
 
-    print(img1)
-    key_points1 = detector.detect(img1, None)
-    print(key_points1)
-    key_points2 = detector.detect(img2, None)
-    key_points1, descriptors1 = descriptor.compute(img1, key_points1)
-    key_points2, descriptors2 = descriptor.compute(img2, key_points2)
+    # imshow("img1 gray", img1)
+    # waitKey(0)
 
-    # create ORB detector
-    # orb_detector = ORB_create(nfeatures = 500, edgeThreshold = 0, fastThreshold = 0)
-    # key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
-    # key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
-    print(key_points1)
-    print(descriptors1)
+    detector = SIFT_create(500)
+    descriptor = SIFT_create(500)
+
+    img1_gray_norm = normalize(img1_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
+    img2_gray_norm = normalize(img2_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
+    del img1_gray, img2_gray
+    gc.collect()
+    # imshow("img1 normalized", img1)
+    # waitKey()
+
+    key_points1 = detector.detect(img1_gray_norm, None)
+    key_points2 = detector.detect(img2_gray_norm, None)
+    key_points1, descriptors1 = descriptor.compute(img1_gray_norm, key_points1)
+    key_points2, descriptors2 = descriptor.compute(img2_gray_norm, key_points2)
+    del img1_gray_norm, img2_gray_norm
+    gc.collect()
 
     # match images
-    matcher = BFMatcher(NORM_L1, crossCheck = False)
+    matcher = BFMatcher(NORM_L1, crossCheck=False)
     matches = matcher.match(descriptors1, descriptors2)
     matches = tuple(sorted(matches, key=lambda x: x.distance))
     matches = matches[:int(len(matches) * 0.9)]
@@ -198,9 +199,10 @@ def registration(packet):
         p1[i, :] = key_points1[matches[i].queryIdx].pt
         p2[i, :] = key_points2[matches[i].trainIdx].pt
 
-    print(p1)
-    print(p2)
-
     homography, mask = findHomography(p1, p2, RANSAC)
 
     subject[1][...] = warpPerspective(reference_color, homography, (width, height))
+    imwrite("out.tif", subject[1], photometric='rgb')
+    # imshow("subject warped", subject[1])
+    # warped = warpPerspective(align_color, homography, (width, height))
+    exit()
