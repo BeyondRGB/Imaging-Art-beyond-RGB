@@ -115,10 +115,10 @@ export async function connect() {
   socket.addEventListener('close', function (event) {
     console.log("Closed - Trying again in 15 seconds.");
     connectionState.set("Closed");
-    close();
-    // setTimeout(function () {
-    //   connect();
-    // }, 15000);
+    //close();
+    setTimeout(function () {
+      connect();
+    }, 2000);
   });
 
   socket.addEventListener('error', function (event) {

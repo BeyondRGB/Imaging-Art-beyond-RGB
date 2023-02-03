@@ -28,7 +28,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     # Mode can be 'api' or 'test'
-    parser.add_argument('mode')
+    parser.add_argument('--api', action='store_true')
     parser.add_argument('top_left_x', nargs='?')
     parser.add_argument('bottom_right_x', nargs='?')
     parser.add_argument('top_left_y', nargs='?')
@@ -47,12 +47,12 @@ def main():
         Subject 1A:
         Subject 1B:  
     """
-    parser.add_argument('images', nargs=argparse.REMAINDER)
+    parser.add_argument('images', nargs='?')
     args = parser.parse_args()
 
-    if args.mode == 'api':
+    if args.api:
         _api_accept()
-    elif args.mode == 'test':
+    else:
         _pipeline_start(args)
 
 
@@ -85,11 +85,19 @@ def _pipeline_start(args):
 
 def _api_accept():
     t = time.time()
+    print('attempt setup')
     api.setup(True)
+    print('setup complete')
     while True:
-        if t + 500 < time.time():
-            api.receive_message()
-            # handle message - probably should be done in api.py
+        if t + .5 < time.time():
+            print("check")
+            message = api.receive_message()
+            if message:
+                print("message received: START: \n" + message)
+                print("END")
+                # handle message - probably should be done in api.py
+            t = time.time()
+
 
 
 if __name__ == "__main__":

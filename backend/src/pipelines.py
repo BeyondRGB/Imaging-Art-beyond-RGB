@@ -18,6 +18,7 @@ from calibration import color_calibrate
 from rendering import render
 from PIL import Image
 import rgbio
+from cv2 import imread
 
 
 def processing_pipeline(packet):
@@ -83,5 +84,3 @@ def raw_to_png(path):
     raw = rgbio.load_image(path)
     raw *= ((2**8 - 1)/(2**22 - 1))
     tifffile.imwrite('test.png', raw, photometric='rgb')
-
-raw_to_png('../SampleImages/art_A_1.ARW')
