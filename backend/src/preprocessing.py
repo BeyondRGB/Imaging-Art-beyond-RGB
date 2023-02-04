@@ -154,32 +154,25 @@ def registration(packet):
     subject = packet.get_subject()
     align_color = subject[1]
     reference_color = subject[0]
-    # align_color = imread("/home/eli/Downloads/align.jpg")
-    # reference_color = imread("/home/eli/Downloads/ref.jpg")
-
-    # imshow("reference color", reference_color)
-    # waitKey(0)
 
     # grayscale
     img1_gray = cvtColor(align_color, COLOR_RGB2GRAY)
     img2_gray = cvtColor(reference_color, COLOR_RGB2GRAY)
     height, width = img2_gray.shape
 
-    # imshow("img1 gray", img1)
-    # waitKey(0)
-
-    detector = SIFT_create(500)
-    descriptor = SIFT_create(500)
+    detector = SIFT_create(2000)
+    descriptor = SIFT_create(2000)
 
     img1_gray_norm = normalize(img1_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
     img2_gray_norm = normalize(img2_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
     del img1_gray, img2_gray
     gc.collect()
-    # imshow("img1 normalized", img1)
-    # waitKey()
 
     key_points1 = detector.detect(img1_gray_norm, None)
     key_points2 = detector.detect(img2_gray_norm, None)
+    if key_points1 is None or key_points2 is None:
+        print("No key points created")
+        exit()
     key_points1, descriptors1 = descriptor.compute(img1_gray_norm, key_points1)
     key_points2, descriptors2 = descriptor.compute(img2_gray_norm, key_points2)
     del img1_gray_norm, img2_gray_norm
@@ -202,7 +195,6 @@ def registration(packet):
     homography, mask = findHomography(p1, p2, RANSAC)
 
     subject[1][...] = warpPerspective(reference_color, homography, (width, height))
-    imwrite("out.tif", subject[1], photometric='rgb')
-    # imshow("subject warped", subject[1])
-    # warped = warpPerspective(align_color, homography, (width, height))
-    exit()
+    imwrite("out1.tif", subject[1], photometric='rgb')
+    subject[0][...] = warpPerspective(align_color, homography, (width, height))
+    imwrite("out2.tif", subject[0], photometric='rgb')
