@@ -151,50 +151,57 @@ def registration(packet):
     [in] packet : pipeline packet
     [post] images registered in place
     """
+    ALIGN = 1
+    REFERENCE = 0
     subject = packet.get_subject()
-    align_color = subject[1]
-    reference_color = subject[0]
 
     # grayscale
-    img1_gray = cvtColor(align_color, COLOR_RGB2GRAY)
-    img2_gray = cvtColor(reference_color, COLOR_RGB2GRAY)
+    img1_gray = cvtColor(subject[ALIGN], COLOR_RGB2GRAY)
+    img2_gray = cvtColor(subject[REFERENCE], COLOR_RGB2GRAY)
     height, width = img2_gray.shape
 
+    # create SIFT detector with 2000 features
     detector = SIFT_create(2000)
     descriptor = SIFT_create(2000)
 
+    # convert to uint8 for detection
     img1_gray_norm = normalize(img1_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
     img2_gray_norm = normalize(img2_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
     del img1_gray, img2_gray
     gc.collect()
 
+    # generate keypoints
     key_points1 = detector.detect(img1_gray_norm, None)
     key_points2 = detector.detect(img2_gray_norm, None)
+
     if key_points1 is None or key_points2 is None:
         print("No key points created")
         exit()
+
+    # generate descriptors
     key_points1, descriptors1 = descriptor.compute(img1_gray_norm, key_points1)
     key_points2, descriptors2 = descriptor.compute(img2_gray_norm, key_points2)
     del img1_gray_norm, img2_gray_norm
     gc.collect()
 
-    # match images
+    # create matcher and match images, dropping bottom 10% of matches
     matcher = BFMatcher(NORM_L1, crossCheck=False)
     matches = matcher.match(descriptors1, descriptors2)
     matches = tuple(sorted(matches, key=lambda x: x.distance))
     matches = matches[:int(len(matches) * 0.9)]
     num_matches = len(matches)
 
+    # set up arrays for calculating homography
     p1 = np.zeros((num_matches, 2))
     p2 = np.zeros((num_matches, 2))
-
     for i in range(len(matches)):
         p1[i, :] = key_points1[matches[i].queryIdx].pt
         p2[i, :] = key_points2[matches[i].trainIdx].pt
 
     homography, mask = findHomography(p1, p2, RANSAC)
 
-    subject[1][...] = warpPerspective(reference_color, homography, (width, height))
+    # warp the subject images based on the calculate homography
+    subject[1][...] = warpPerspective(subject[REFERENCE], homography, (width, height))
     imwrite("out1.tif", subject[1], photometric='rgb')
-    subject[0][...] = warpPerspective(align_color, homography, (width, height))
+    subject[0][...] = warpPerspective(subject[ALIGN], homography, (width, height))
     imwrite("out2.tif", subject[0], photometric='rgb')
