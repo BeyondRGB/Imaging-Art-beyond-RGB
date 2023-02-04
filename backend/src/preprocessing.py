@@ -21,12 +21,12 @@ License:
 import numpy as np
 import gc
 from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher, \
-    findHomography, warpPerspective, RANSAC, NORM_L1, imshow, waitKey, SIFT_create, \
-    normalize, NORM_MINMAX, imread
+    findHomography, warpPerspective, RANSAC, NORM_L1, SIFT_create, \
+    normalize, NORM_MINMAX
 from tifffile import imwrite
 
 # Local imports
-from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
+from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL, ALIGN, REFERENCE
 
 
 def preprocess(packet):
@@ -151,8 +151,6 @@ def registration(packet):
     [in] packet : pipeline packet
     [post] images registered in place
     """
-    ALIGN = 1
-    REFERENCE = 0
     subject = packet.get_subject()
 
     # grayscale
