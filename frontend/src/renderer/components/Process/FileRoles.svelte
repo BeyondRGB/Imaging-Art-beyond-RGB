@@ -37,30 +37,6 @@
         rerenderToggle = !rerenderToggle;
     };
 
-    const validate = function () {
-        if(showTargetDropZones() && (isEmpty(imageStack?.targetA) || isEmpty(imageStack?.targetB)) ||
-            isEmpty(imageStack?.imageA) || isEmpty(imageStack?.imageB) ||
-            isEmpty(imageStack?.flatfieldA) || isEmpty(imageStack?.flatfieldB) ||
-            isEmpty(imageStack?.darkfieldA) || isEmpty(imageStack?.darkfieldB)) {
-            return  "Please ensure each dropzone is assigned an image.";
-        } else {
-            return null;
-        }
-        return validationError;
-    };
-
-    const submitSpecFileRoles = function (skipOptionalFiltering) {
-        if(validationError = validate()) {
-            return;
-        }
-        $processState.completedTabs[2] = true;
-        if(skipOptionalFiltering) {
-            $processState.currentTab += 2;
-        } else {
-            $processState.currentTab++;
-        }
-    };
-
 </script>
 
 {#key rerenderToggle}
@@ -105,11 +81,10 @@
                 {/if}
                 <br>
             </div>
-            <div class="btnGroup">
-                <button on:click={() => submitSpecFileRoles(false)}>Optional filtering</button>
-                <button on:click={() => submitSpecFileRoles(true)} class="nextBtn">Next: Skip optional filtering</button>
-            </div>
         </div>
+    <br>
+    <br>
+    <br>
 
 {/key}
 
@@ -171,11 +146,5 @@
     .errorText {
         text-align: center;
         color: red;
-    }
-    .btnGroup {
-        @apply flex justify-end gap-2;
-    }
-    .nextBtn {
-        @apply m-4 bg-green-700 hover:bg-green-600 focus:ring-green-600 transition-all;
     }
 </style>

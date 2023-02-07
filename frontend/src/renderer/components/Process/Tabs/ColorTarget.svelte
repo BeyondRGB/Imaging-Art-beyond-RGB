@@ -12,6 +12,7 @@
     AlertTriangleIcon,
   } from "svelte-feather-icons";
   import Dropdown from "@root/components/Dropdown.svelte";
+  import {get} from "lodash";
 
   let colorTarget;
   let colorPos;
@@ -89,13 +90,14 @@
   }
 
   function colorTargetPrev() {
+    let imageStack = get($processState, 'artStacks[0].fields');
     $processState.colorTargetID = Math.floor(Math.random() * 999999999);
     console.log($processState);
 
     let targetImage = $processState.artStacks[0].fields.imageA[0].name;
-    if ($processState.artStacks[0].fields.targetA.length !== 0) {
+    if (imageStack.targetA.length !== 0) {
       console.log("Found Target");
-      targetImage = $processState.artStacks[0].fields.targetA[0].name;
+      targetImage = imageStack.targetA[0].name;
     }
 
     let msg = {
@@ -116,7 +118,7 @@
     }
   }
 
-  $: if ($processState.currentTab === 5) {
+  $: if ($processState.currentTab === 3) {
     console.log("Update");
     console.log($processState);
     update();
@@ -124,7 +126,7 @@
   }
 
   $: if (
-    $processState.currentTab === 4 &&
+    $processState.currentTab === 2 &&
     $processState.artStacks[0].colorTargetImage?.filename?.length === 0 &&
     $processState.artStacks[0].fields.imageA[0] != null
   ) {
@@ -239,7 +241,7 @@
 
   $: if (
     colorTarget != null &&
-    !$processState.completedTabs[4] &&
+    !$processState.completedTabs[2] &&
     colorTarget.refData.name !== "---None---.csv" &&
     (verifyTarget != null
       ? verifyTarget.refData.name !== "---None---.csv"
@@ -247,9 +249,9 @@
     colorTarget.whitePatch.row != null &&
     colorTarget.whitePatch.col != null
   ) {
-    $processState.completedTabs[4] = true;
+    $processState.completedTabs[2] = true;
   } else {
-     $processState.completedTabs[4] = false;
+     $processState.completedTabs[2] = false;
   }
 
   $: if (colorTarget != null) {
