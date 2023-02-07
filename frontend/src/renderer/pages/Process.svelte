@@ -6,11 +6,9 @@
     viewState,
     serverError,
   } from "@util/stores";
+  import {get, isEmpty, each, includes} from "lodash";
 
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
-  import ImportImages from "@components/Process/Tabs/ImportImages.svelte";
-  import SelectDest from "@components/Process/Tabs/SelectDest.svelte";
-  import SpecFileRoles from "@components/Process/Tabs/SpecFileRoles.svelte";
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
   import Layout from "@components/Process/Layout.svelte";
@@ -23,23 +21,52 @@
   let binaryName = null;
   let binaryFor = null;
   let binaryID = null;
+  let validationError = null;
+
+  let showSelectDestError = false;
+  let showFileRolesError = false;
+  let imageStack;
 
   let tabs: any = [
-    { name: "New Main", component: NewProcessSetUp },
-    { name: "Specify File Roles", component: SpecFileRoles },
+    { name: "Image Selection", component: NewProcessSetUp },
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
   ];
 
-  function nextTab() {
-    if ($processState.currentTab !== tabs.length - 1) {
-      if ($processState.completedTabs[$processState.currentTab]) {
+  export const validate = function () {
+    imageStack = get($processState, 'artStacks[0].fields');
+    if((isEmpty(imageStack?.targetA) || isEmpty(imageStack?.targetB)) ||
+            isEmpty(imageStack?.imageA) || isEmpty(imageStack?.imageB) ||
+            isEmpty(imageStack?.flatfieldA) || isEmpty(imageStack?.flatfieldB) ||
+            isEmpty(imageStack?.darkfieldA) || isEmpty(imageStack?.darkfieldB)) {
+      return  "Please ensure each dropzone is assigned an image.";
+    } else {
+      return null;
+    }
+    return validationError;
+  };
+
+
+  function nextTab(skipOptionalFiltering) {
+    if ($processState.destDir == undefined){
+      showSelectDestError = true;
+    }
+    else if (validationError = validate()){
+      showFileRolesError = true;
+    }
+
+    else {
+      if (skipOptionalFiltering) {
+        $processState.currentTab += 2;
+      }
+      else{
         $processState.currentTab += 1;
       }
-    } else {
-      console.log("Error overflow");
     }
+    // else {
+    //   console.log("Error overflow");
+    // }
   }
 
   function prevTab() {
@@ -246,7 +273,7 @@
   {/if}
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
-    {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
+    {#if $processState.currentTab === 2}
       <button
         on:click={() => {
           if (!$processState.whitePatchFilled) {
@@ -258,12 +285,37 @@
         }}
         class="nextBtn">Begin Processing</button
       >
-    {:else if tabs[$processState.currentTab].hidden}
-      <br />
-    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options"}
-      <button on:click={nextTab} class="nextBtn">Next</button>
-    {/if}
+      {:else if $processState.currentTab === 1}
+        <div class="btnGroup">
+          <button class="nextBtn" on:click={() => nextTab(false)}>Next</button>
+        </div>
+      {:else if $processState.currentTab === 0}
+        <div class="btnGroup">
+          <button on:click={() => nextTab(false)}>Optional filtering</button>
+          <button class="nextBtn" on:click={() => nextTab(true)}>Next: Skip optional filtering</button>
+        </div>
+      {:else }
+        <br/>
+      {/if}
   </botnav>
+
+  <div class={`confirmModal ${showSelectDestError ? "show" : ""}`}>
+    <div class="warningDialog">
+      <p>Please select a destination folder</p>
+      <div class="btnGroup">
+        <button class="cancel" on:click={() => (showSelectDestError = false)}>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class={`confirmModal ${showFileRolesError ? "show" : ""}`}>
+    <div class="warningDialog">
+      <p>Make sure all files have a role or make sure you uploaded an image for every role</p>
+      <div class="btnGroup">
+        <button class="cancel" on:click={() => (showFileRolesError = false)}>Close</button>
+      </div>
+    </div>
+  </div>
 
   <div class={`confirmModal ${showWhitePatchWarning ? "show" : ""}`}>
     <div class="warningDialog">

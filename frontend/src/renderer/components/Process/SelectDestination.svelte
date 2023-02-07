@@ -8,26 +8,12 @@
     $: if (filePaths) {
         $processState.destDir = filePaths[0];
     }
-    $: if (
-        $processState.destDir &&
-        $processState.destDir?.length > 1 &&
-        !$processState.completedTabs[1]
-    ) {
-        $processState.completedTabs[1] = true;
-    }
+
 </script>
 
 
 <div class="selectBox">
-    <div class="fileSelector">
-        <FileSelector
-                bind:filePaths
-                type="Dir"
-                label="Select Folder"
-                icon={FolderPlusIcon}
-                largeText
-        />
-    </div>
+    <h1>Select Destination Foler</h1>
     {#if filePaths?.length > 0}
         <div class="folderDisp">
             <div class="destLabel">
@@ -38,12 +24,26 @@
                 {$processState.destDir}
             </div>
         </div>
+    {:else}
+        <div class="fileSelector">
+            <FileSelector
+                    bind:filePaths
+                    type="Dir"
+                    label="Select Folder"
+                    icon={FolderPlusIcon}
+                    largeText
+            />
+        </div>
     {/if}
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
 </div>
 
 
 <style lang="postcss">
-
     h1 {
         @apply text-3xl;
     }

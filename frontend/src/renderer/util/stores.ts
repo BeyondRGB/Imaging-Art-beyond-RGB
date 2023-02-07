@@ -24,7 +24,7 @@ export const customRefData = writable({
 });
 export const processState = writable({
   currentTab: 0,
-  completedTabs: [false, false, false, false],
+  completedTabs: [false, false, false],
   pipelineComplete: false,
   destDir: "",
   imageFilePaths: [],
@@ -59,7 +59,7 @@ export const processState = writable({
 export function resetProcess() {
   processState.set({
     currentTab: 0,
-    completedTabs: [false, false, false, false],
+    completedTabs: [false, false, false],
     pipelineComplete: false,
     destDir: "",
     imageFilePaths: [],

@@ -79,7 +79,7 @@
     linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
   }
 
-  $: if ($processState.currentTab === 4) {
+  $: if ($processState.currentTab === 2) {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
       console.log({ IMAGEURL: imageUrl });
