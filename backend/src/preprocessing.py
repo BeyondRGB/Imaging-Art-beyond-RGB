@@ -32,7 +32,7 @@ def preprocess(packet):
     [post] images preprocessed in place
     [raise] ZeroDivisionError
     """
-    bit_scale(packet)
+#    bit_scale(packet)
     dead_pixel_correction(packet)
     dark_current_correction(packet)
     packet.unload_dark()  # Dark no longer needed

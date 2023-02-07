@@ -39,7 +39,8 @@ def load_image(path):
         raise FileNotFoundError
     # Load image
     try:
-        raw = rp.imread(path).raw_image.copy()
+        raw = rp.imread(path)
+        return raw.postprocess(use_camera_wb=False, output_bps=16).astype('f4')
     except rp._rawpy.LibRawIOError:
         raise IOError
     # Standardize based on image type
