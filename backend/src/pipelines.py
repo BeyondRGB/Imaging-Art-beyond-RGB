@@ -44,7 +44,7 @@ def processing_pipeline(packet):
     packet.load_calibration_imgs()
 
     # Calibration pass
-#    preprocess(packet)
+    preprocess(packet)
 #    color_calibrate(packet)
     # TODO validate solution
     # TODO render target
@@ -52,11 +52,9 @@ def processing_pipeline(packet):
 
     # TODO remove the fillowing once target output to file is done
     import cv2
-    #target = packet.get_target_img()
-    #packet.load_dark()
-    target = packet.get_dark_img()
-    print(target[1])
-    t1 = cv2.cvtColor(target[1],  cv2.COLOR_RGB2BGR)
+    target = packet.get_target_img()
+    t1 = cv2.cvtColor(target[0],  cv2.COLOR_RGB2BGR)
+    print(t1)
     cv2.imwrite("out.tiff", t1)
 
     # TODO Batch Processing

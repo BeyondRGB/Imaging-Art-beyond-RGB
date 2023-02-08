@@ -18,7 +18,7 @@ import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
-from cv2 import cvtColor, COLOR_BayerRG2RGB
+from cv2 import cvtColor, COLOR_BayerRG2RGB, fastNlMeansDenoisingColored, COLOR_GRAY2BGR
 
 
 def save_image(img, path):
@@ -40,13 +40,13 @@ def load_image(path):
     # Load image
     try:
         raw = rp.imread(path)
-        return raw.postprocess(use_camera_wb=False, output_bps=16).astype('f4')
+        return raw.postprocess(use_camera_wb=True, output_bps=16).astype('f4')
     except rp._rawpy.LibRawIOError:
         raise IOError
     # Standardize based on image type
     if len(raw.shape) == 2:
         # Image is Bayer, convert to RGB, return image
-        return cvtColor(raw, COLOR_BayerRG2RGB).astype('f4')
+        return cvtColor(raw, COLOR_BayerRG2RGB)
     elif len(raw.shape) == 3:
         # Image is RGB, remove any alpha channel, return image
         if raw.shape[2] == 4:

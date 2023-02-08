@@ -34,11 +34,11 @@ def preprocess(packet):
     """
 #    bit_scale(packet)
     dead_pixel_correction(packet)
-    dark_current_correction(packet)
-    packet.unload_dark()  # Dark no longer needed
+#    dark_current_correction(packet)
+#    packet.unload_dark()  # Dark no longer needed
     flat_fielding(packet)
     packet.unload_white()  # Flat no longer needed
-    registration(packet)
+#    registration(packet)
 
 
 def dead_pixel_correction(packet):
@@ -97,7 +97,7 @@ def dark_current_correction(packet):
         white[0][...] -= dark[0]
         white[1][...] -= dark[1]
 
-    subject[0][...] -= dark[0]
+    subject[0][...] = np.clip(subject[0] - dark[0], 0, 1000000)
     subject[1][...] -= dark[1]
 
 
