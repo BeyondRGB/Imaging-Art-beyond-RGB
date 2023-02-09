@@ -34,8 +34,8 @@ def preprocess(packet):
     """
 #    bit_scale(packet)
     dead_pixel_correction(packet)
-#    dark_current_correction(packet)
-#    packet.unload_dark()  # Dark no longer needed
+    dark_current_correction(packet)
+    packet.unload_dark()  # Dark no longer needed
     flat_fielding(packet)
     packet.unload_white()  # Flat no longer needed
 #    registration(packet)
