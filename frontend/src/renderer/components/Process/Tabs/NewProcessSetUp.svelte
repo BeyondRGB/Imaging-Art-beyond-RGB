@@ -1,15 +1,7 @@
 <script lang="ts">
-    import {
-        messageStore,
-        processState,
-        sendMessage,
-        viewState,
-        serverError,
-    } from "@util/stores";
     import ImageImporter from "@components/ImageImporter.svelte";
     import SelectDestination from "@components/Process/SelectDestination.svelte";
     import FileRoles from "@components/Process/FileRoles.svelte";
-
 
 </script>
 
@@ -40,7 +32,7 @@
         @apply bg-gray-600 w-full h-full p-6 flex-col overflow-hidden;
     }
     right {
-        @apply bg-gray-700 w-full h-full p-6 flex flex-col justify-center items-center gap-4 overflow-hidden;
+        @apply bg-gray-700 w-full p-6 flex flex-col justify-center items-center gap-4 overflow-auto;
     }
     h1 {
         font-size: 35px;

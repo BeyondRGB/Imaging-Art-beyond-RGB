@@ -8,7 +8,7 @@
     let rerenderToggle = false;
 
     // this helps force a rerender once the imageStack has been reset
-    $:if ($processState.currentTab === 2) {
+    $:if ($processState.currentTab === 0) {
         imageStack = get($processState, 'artStacks[0].fields');
     }
 
@@ -59,50 +59,49 @@
 </script>
 
 {#key rerenderToggle}
-        <Dropbox min bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
-        <div class="btnGroup">
-            {#if $processState.imageFilePaths.length !== 0}
-                <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
-            {:else}
-                <button class="autoSortButton" on:click={resetImages}>Reset images</button>
-            {/if}
+    <Dropbox min bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+    <div class="btnGroup">
+        {#if $processState.imageFilePaths.length !== 0}
+            <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+        {:else}
+            <button class="autoSortButton" on:click={resetImages}>Reset images</button>
+        {/if}
 
-        </div>
-        <div class="centerFlexBox">
-            <div id="imageStack">
-                <div class="inputGroup">
-                    <div class="imageLetter">A</div>
-                    <div class="imageLetter">B</div>
-                </div>
-                <div class="text">Object</div>
-                <div class="inputGroup">
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true}/></div>
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true}/></div>
-                </div>
-                {#if $processState.imageFilePaths && showTargetDropZones()}
-                    <div class="text">Target</div>
-                    <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.targetA} singleItem={true}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.targetB} singleItem={true}/></div>
-                    </div>
-                {/if}
-                <div class="text">FlatField</div>
-                <div class="inputGroup">
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldA} singleItem={true}/></div>
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldB} singleItem={true}/></div>
-                </div>
-                <div class="text">DarkField</div>
-                <div class="inputGroup">
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldA} singleItem={true}/></div>
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true}/></div>
-                </div>
-                <br>
+    </div>
+    <div class="centerFlexBox">
+        <div id="imageStack">
+            <div class="inputGroup">
+                <div class="imageLetter">A</div>
+                <div class="imageLetter">B</div>
             </div>
+            <div class="text">Object</div>
+            <div class="inputGroup">
+                <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true}/></div>
+                <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true}/></div>
+            </div>
+            {#if $processState.imageFilePaths && showTargetDropZones()}
+                <div class="text">Target</div>
+                <div class="inputGroup">
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.targetA} singleItem={true}/></div>
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.targetB} singleItem={true}/></div>
+                </div>
+            {/if}
+            <div class="text">FlatField</div>
+            <div class="inputGroup">
+                <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldA} singleItem={true}/></div>
+                <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldB} singleItem={true}/></div>
+            </div>
+            <div class="text">DarkField</div>
+            <div class="inputGroup">
+                <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldA} singleItem={true}/></div>
+                <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true}/></div>
+            </div>
+            <br>
         </div>
+    </div>
     <br>
     <br>
     <br>
-
 {/key}
 
 <style lang="postcss">
@@ -127,6 +126,7 @@
         display: flex;
         flex-direction: column;
         width: 80%;
+        overflow: scroll;
     }
     .inputGroup {
         display: flex;
