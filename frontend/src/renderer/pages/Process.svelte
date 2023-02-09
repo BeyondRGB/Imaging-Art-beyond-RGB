@@ -21,7 +21,6 @@
   let binaryName = null;
   let binaryFor = null;
   let binaryID = null;
-  let validationError = null;
 
   let showSelectDestError = false;
   let showFileRolesError = false;
@@ -40,11 +39,10 @@
             isEmpty(imageStack?.imageA) || isEmpty(imageStack?.imageB) ||
             isEmpty(imageStack?.flatfieldA) || isEmpty(imageStack?.flatfieldB) ||
             isEmpty(imageStack?.darkfieldA) || isEmpty(imageStack?.darkfieldB)) {
-      return  "Please ensure each dropzone is assigned an image.";
+      return  false;
     } else {
-      return null;
+      return true;
     }
-    return validationError;
   };
 
 
@@ -52,7 +50,7 @@
     if ($processState.destDir == undefined){
       showSelectDestError = true;
     }
-    else if (validationError = validate()){
+    else if (!validate()){
       showFileRolesError = true;
     }
 

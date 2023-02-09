@@ -6,7 +6,6 @@
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let rerenderToggle = false;
-    let validationError = null;
 
     // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 2) {
@@ -37,14 +36,37 @@
         rerenderToggle = !rerenderToggle;
     };
 
+    const resetImages = function () {
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.imageB[0].name, id: $processState.artStacks[0].fields.imageB[0].id});
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.imageA[0].name, id: $processState.artStacks[0].fields.imageA[0].id});
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.targetA[0].name, id: $processState.artStacks[0].fields.targetA[0].id});
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.targetB[0].name, id: $processState.artStacks[0].fields.targetB[0].id});
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.flatfieldB[0].name, id: $processState.artStacks[0].fields.flatfieldA[0].id});
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.flatfieldA[0].name, id: $processState.artStacks[0].fields.flatfieldB[0].id});
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.darkfieldA[0].name, id: $processState.artStacks[0].fields.darkfieldA[0].id});
+        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.darkfieldB[0].name, id: $processState.artStacks[0].fields.darkfieldB[0].id});
+        $processState.artStacks[0].fields.darkfieldB = [];
+        $processState.artStacks[0].fields.darkfieldA = [];
+        $processState.artStacks[0].fields.targetB = [];
+        $processState.artStacks[0].fields.targetA = [];
+        $processState.artStacks[0].fields.flatfieldA = [];
+        $processState.artStacks[0].fields.flatfieldB = [];
+        $processState.artStacks[0].fields.imageB = [];
+        $processState.artStacks[0].fields.imageA = [];
+        rerenderToggle = !rerenderToggle;
+    };
+
 </script>
 
 {#key rerenderToggle}
-        <h1>Specify Image Roles</h1>
-<!--        <p>Drag and drop each image into its appropriate role</p>-->
-        <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+        <Dropbox min bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
         <div class="btnGroup">
-            <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+            {#if $processState.imageFilePaths.length !== 0}
+                <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+            {:else}
+                <button class="autoSortButton" on:click={resetImages}>Reset images</button>
+            {/if}
+
         </div>
         <div class="centerFlexBox">
             <div id="imageStack">
@@ -54,31 +76,26 @@
                 </div>
                 <div class="text">Object</div>
                 <div class="inputGroup">
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true} showError={!!validationError}/></div>
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true} showError={!!validationError}/></div>
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true}/></div>
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true}/></div>
                 </div>
                 {#if $processState.imageFilePaths && showTargetDropZones()}
                     <div class="text">Target</div>
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.targetA} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.targetA} singleItem={true}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.targetB} singleItem={true}/></div>
                     </div>
                 {/if}
                 <div class="text">FlatField</div>
                 <div class="inputGroup">
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldA} singleItem={true} showError={!!validationError}/></div>
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldB} singleItem={true} showError={!!validationError}/></div>
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldA} singleItem={true}/></div>
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldB} singleItem={true}/></div>
                 </div>
                 <div class="text">DarkField</div>
                 <div class="inputGroup">
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldA} singleItem={true} showError={!!validationError}/></div>
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true} showError={!!validationError}/></div>
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldA} singleItem={true}/></div>
+                    <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true}/></div>
                 </div>
-                {#if validationError && imageStack && validate()}
-                    <div class="errorText">
-                        {validationError}
-                    </div>
-                {/if}
                 <br>
             </div>
         </div>
@@ -89,20 +106,11 @@
 {/key}
 
 <style lang="postcss">
-    panel {
-        width: 100%;
-        background-color: #3a3a3c;
-    }
-    right {
-        @apply bg-gray-700 w-full h-full p-6 flex justify-center overflow-auto;
-    }
     h1 {
-        margin: 25px;
         font-size: 35px;
         width: 100%;
     }
     p {
-        margin: 25px;
         font-size: 18px;
         width: 100%;
     }
@@ -141,10 +149,9 @@
         font-size: 30px;
     }
     .autoSortButton {
-        margin: 50px 65px 0 0;
+        align-self: auto;
     }
-    .errorText {
-        text-align: center;
-        color: red;
+    .btnGroup {
+        align-content: center;
     }
 </style>

@@ -13,7 +13,16 @@
 
 
 <div class="selectBox">
-    <h1>Select Destination Foler</h1>
+    <h1>Select Destination</h1>
+    <div class="fileSelector">
+        <FileSelector
+                bind:filePaths
+                type="Dir"
+                label="Select Folder"
+                icon={FolderPlusIcon}
+                largeText
+        />
+    </div>
     {#if filePaths?.length > 0}
         <div class="folderDisp">
             <div class="destLabel">
@@ -24,31 +33,17 @@
                 {$processState.destDir}
             </div>
         </div>
-    {:else}
-        <div class="fileSelector">
-            <FileSelector
-                    bind:filePaths
-                    type="Dir"
-                    label="Select Folder"
-                    icon={FolderPlusIcon}
-                    largeText
-            />
-        </div>
     {/if}
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 </div>
 
 
 <style lang="postcss">
-    h1 {
-        @apply text-3xl;
-    }
     p {
         @apply text-center pt-[30vh] bg-gray-500/25 m-6 h-[90%] rounded-lg;
+    }
+    h1 {
+        font-size: 35px;
+        width: 100%;
     }
     .folderDisp {
         @apply flex justify-between m-1 text-base;
@@ -60,6 +55,6 @@
         @apply bg-gray-800 flex items-center justify-center rounded-r-xl p-1;
     }
     .selectBox {
-        @apply h-[70%] flex flex-col justify-center items-center gap-2;
+        @apply h-[70%] flex flex-col items-center gap-2;
     }
 </style>

@@ -17,9 +17,16 @@
     <left>
         <h1>Import Images</h1>
         <ImageImporter/>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <SelectDestination/>
     </left>
     <right>
+        <h1>Specify Image Roles</h1>
+        <p>Drag and drop each image into its appropriate role</p>
         <FileRoles/>
     </right>
 
@@ -30,21 +37,20 @@
         @apply flex justify-between h-full w-full overflow-hidden;
     }
     left {
-        @apply bg-gray-600 w-full h-full p-6 flex-col overflow-auto;
+        @apply bg-gray-600 w-full h-full p-6 flex-col overflow-hidden;
     }
     right {
-        @apply bg-gray-700 w-full h-full p-6 flex flex-col justify-center items-center gap-4;
+        @apply bg-gray-700 w-full h-full p-6 flex flex-col justify-center items-center gap-4 overflow-hidden;
     }
     h1 {
-        @apply text-3xl;
+        font-size: 35px;
+        width: 100%;
     }
     p {
-        @apply text-center pt-[30vh] bg-gray-500/25 m-4 h-[90%] rounded-lg;
+        font-size: 18px;
+        width: 100%;
     }
     article {
         @apply bg-gray-800 w-full min-h-[12rem] overflow-auto rounded-[32px] py-2 px-6;
-    }
-    ul {
-        @apply flex flex-col gap-2 w-full justify-center items-center;
     }
 </style>
