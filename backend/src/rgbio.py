@@ -18,7 +18,6 @@ import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
-from cv2 import cvtColor, COLOR_BayerRG2RGB, fastNlMeansDenoisingColored, COLOR_GRAY2BGR
 
 
 def save_image(img, path):

@@ -97,7 +97,7 @@ def dark_current_correction(packet):
         white[0][...] -= dark[0]
         white[1][...] -= dark[1]
 
-    subject[0][...] = np.clip(subject[0] - dark[0], 0, 1000000)
+    subject[0][...] -= dark[0]
     subject[1][...] -= dark[1]
 
 

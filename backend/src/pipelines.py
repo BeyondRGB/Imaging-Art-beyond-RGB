@@ -45,7 +45,7 @@ def processing_pipeline(packet):
 
     # Calibration pass
     preprocess(packet)
-    color_calibrate(packet)
+#    color_calibrate(packet)
     # TODO validate solution
     # TODO render target
     # TODO output target to file
