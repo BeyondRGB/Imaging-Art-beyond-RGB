@@ -11,7 +11,7 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
-    Elija Cooper
+    Elijah Cooper
 
 License:
     © 2022 BeyondRGB
