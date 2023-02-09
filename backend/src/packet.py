@@ -121,8 +121,8 @@ class Packet:
         if s:
             self.imgs[a], self.imgs[b] = load_array(self.swap[s])
         else:
-            self.imgs[a] = load_image(self.files(self.subject_idx[0]))
-            self.imgs[b] = load_image(self.files(self.subject_idx[1]))
+            self.imgs[a] = load_image(self.files[self.subject_idx[0]])
+            self.imgs[b] = load_image(self.files[self.subject_idx[1]])
 
     def __unload_imgs(self, a, b, s=None):
         """ Unload image pair
