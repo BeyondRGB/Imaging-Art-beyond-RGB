@@ -22,8 +22,7 @@ import numpy as np
 import gc
 from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher, \
     findHomography, warpPerspective, RANSAC, NORM_L1, SIFT_create, \
-    normalize, NORM_MINMAX
-from tifffile import imwrite
+    normalize, NORM_MINMAX, imwrite
 
 # Local imports
 from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL, ALIGN, REFERENCE
@@ -200,6 +199,6 @@ def registration(packet):
 
     # warp the subject images based on the calculate homography
     subject[1][...] = warpPerspective(subject[REFERENCE], homography, (width, height))
-    imwrite("out1.tif", subject[1], photometric='rgb')
+    imwrite("out1.tif", subject[1])
     subject[0][...] = warpPerspective(subject[ALIGN], homography, (width, height))
-    imwrite("out2.tif", subject[0], photometric='rgb')
+    imwrite("out2.tif", subject[0])
