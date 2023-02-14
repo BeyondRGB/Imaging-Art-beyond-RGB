@@ -37,22 +37,19 @@
     };
 
     const resetImages = function () {
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.imageB[0].name, id: $processState.artStacks[0].fields.imageB[0].id});
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.imageA[0].name, id: $processState.artStacks[0].fields.imageA[0].id});
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.targetA[0].name, id: $processState.artStacks[0].fields.targetA[0].id});
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.targetB[0].name, id: $processState.artStacks[0].fields.targetB[0].id});
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.flatfieldB[0].name, id: $processState.artStacks[0].fields.flatfieldA[0].id});
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.flatfieldA[0].name, id: $processState.artStacks[0].fields.flatfieldB[0].id});
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.darkfieldA[0].name, id: $processState.artStacks[0].fields.darkfieldA[0].id});
-        $processState.imageFilePaths.push({name: $processState.artStacks[0].fields.darkfieldB[0].name, id: $processState.artStacks[0].fields.darkfieldB[0].id});
-        $processState.artStacks[0].fields.darkfieldB = [];
-        $processState.artStacks[0].fields.darkfieldA = [];
-        $processState.artStacks[0].fields.targetB = [];
-        $processState.artStacks[0].fields.targetA = [];
-        $processState.artStacks[0].fields.flatfieldA = [];
-        $processState.artStacks[0].fields.flatfieldB = [];
-        $processState.artStacks[0].fields.imageB = [];
-        $processState.artStacks[0].fields.imageA = [];
+        each($processState.artStacks[0].fields, function (image) {
+            $processState.imageFilePaths.push({name: image[0].name, id: image[0].id});
+        });
+        $processState.artStacks[0].fields = {
+            imageA: [],
+            imageB: [],
+            targetA: [],
+            targetB: [],
+            flatfieldA: [],
+            flatfieldB: [],
+            darkfieldA: [],
+            darkfieldB: [],
+        };
         rerenderToggle = !rerenderToggle;
     };
 
