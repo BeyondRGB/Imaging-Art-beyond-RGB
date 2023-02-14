@@ -33,6 +33,7 @@ class Packet:
         swap          : List of files for loading and unloading arrays
         subj_idx      : Indices of the currently referenced image
         x             : Calibration solution
+        camsigs       : camera signals list
 
     Methods:
         load_calibration_imgs : Load images needed for calibration
@@ -51,6 +52,7 @@ class Packet:
     swap = []
     subject_idx = (TARGET_A_IDX, TARGET_B_IDX)
     x = []
+    camsigs = []
 
     def load_calibration_imgs(self):
         """ Load images needed for calibration """

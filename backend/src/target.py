@@ -66,3 +66,15 @@ class Target:
         [out] target dimentions
         """
         return self._num_cols, self._num_rows
+
+    def gen_siglist(self):
+        """ Generate the list of target points
+        [out] list of target points
+        """
+        cols, rows = self.get_dims()
+
+        siglist = []
+        for c in range(0, cols):
+            for r in range(0, rows):
+                siglist.append(self.get_center_coord(r, c))
+        return siglist
