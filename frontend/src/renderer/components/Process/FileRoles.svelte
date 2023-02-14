@@ -121,6 +121,8 @@
         display: flex;
         flex-direction: column;
         width: 80%;
+        height: 100%;
+        overflow: auto;
     }
     .inputGroup {
         display: flex;
