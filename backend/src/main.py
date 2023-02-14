@@ -25,10 +25,7 @@ def main():
     """ App entry point """
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 
-    """
-    Whether the target is combined with the image to be processed
-    """
-    parser.add_argument('--combined-target-subject', action='store_true', help='Include this flag if the first image contains the color target')
+    parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'], default='NGT', help='The color target reference data')
 
     """
     Top left & bottom right of (NGT at the moment) target (pixels)
@@ -46,20 +43,20 @@ def main():
 
     images_help = '''
     Images should be added in this order:
-        Target A (Required unless --combined-target-subject is True)
-        Target B (Required unless --combined-target-subject is True)
+        Target A
+        Target B
         Flat Field A
         Flat Field B
         Dark Field A
         Dark Field B
-        Subject A
-        Subject B
+        Subject A (Optional)
+        Subject B (OptionaL)
         Additional Images... (A and B)
     '''
     parser.add_argument('images', nargs='+', help=images_help)
     args = parser.parse_args()
 
-    if len(args.images) < 6 or (len(args.images) < 8 and not args.combined_target_subject):
+    if len(args.images) < 6:
         parser.print_help()
         sys.exit(1)
 
@@ -77,9 +74,6 @@ def main():
     packet.target = target
 
     # Gather file locations
-    # TODO: Don't duplicate subject images
-    if args.combined_target_subject:
-        packet.files.extend(args.images[4:6])
     packet.files.extend(args.images)
 
     """ Begin pipeline """
