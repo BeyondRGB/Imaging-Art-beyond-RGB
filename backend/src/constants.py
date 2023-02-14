@@ -32,7 +32,7 @@ BLUR_FACTOR = 3  # Must be odd and greater than 2
 TARGET_RADIUS = 10
 
 # Flat fielding
-Y_VAL = 0.86122  # TODO CHECK IF CORRECT VALUE
+Y_VAL = 0.86122  # TODO UNHARDCODE
 
 # Calibration
 INIT_M = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,

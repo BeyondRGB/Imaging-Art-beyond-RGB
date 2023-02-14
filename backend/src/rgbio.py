@@ -39,8 +39,12 @@ def load_image(path):
     # Load image
     try:
         raw = rp.imread(path)
-        return raw.postprocess(use_camera_wb=True, output_bps=16,
-                               no_auto_bright=True).astype('f4')
+        return raw.postprocess(use_camera_wb=False,
+                               use_auto_wb=False,
+                               no_auto_bright=True,
+                               output_color=rp.ColorSpace(0),
+                               user_black=0,
+                               output_bps=16).astype('f4')
     except rp._rawpy.LibRawIOError:
         raise IOError
 

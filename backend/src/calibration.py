@@ -15,7 +15,7 @@ License:
 import gc
 import time
 import numpy as np
-from scipy.optimize import minimize
+from scipy.optimize import fmin, minimize
 
 # Local Imports
 from lab_refs import LAB_REF
@@ -40,8 +40,10 @@ def color_calibrate(packet):
     packet.unload_target()
 
     t = time.perf_counter()
-    res = minimize(_xyz, INIT_MOARR, (camsigs, LAB_REF), method='Powell')
-    print("Minimize: " + str(time.perf_counter() - t))
+    #res = minimize(_xyz, INIT_MOARR, (camsigs, LAB_REF), method='Powell')
+    res = fmin(_xyz, INIT_MOARR, (camsigs, LAB_REF))
+    print("Minimize: " + str(time.perf_counter() - t) + " seconds")
+    print(res)
 
     # TODO ERROR CHECKING
 
@@ -56,6 +58,7 @@ def _extract_camsigs(packet):
     t_img = packet.get_target_img()
     tr = TARGET_RADIUS
 
+    # TODO fix orientation
     camsigs = np.ndarray((6, 130))
     siglist = _gen_siglist(packet)
     for i, sig in enumerate(siglist):
@@ -82,8 +85,8 @@ def _gen_siglist(packet):
     cols, rows = target.get_dims()
 
     siglist = []
-    for r in range(0, rows):
-        for c in range(0, cols):
+    for c in range(0, cols):
+        for r in range(0, rows):
             siglist.append(target.get_center_coord(r, c))
     return siglist
 
