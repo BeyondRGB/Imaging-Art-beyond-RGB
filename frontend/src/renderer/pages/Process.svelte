@@ -55,8 +55,11 @@
     }
 
     else {
+      $processState.completedTabs[$processState.currentTab] = true;
       if (skipOptionalFiltering) {
         $processState.currentTab += 2;
+        // Since we skip the next step, set it to done
+        $processState.completedTabs[1] = true;
       }
       else{
         $processState.currentTab += 1;
@@ -69,7 +72,9 @@
 
   function prevTab() {
     if ($processState.currentTab !== 0) {
+      $processState.completedTabs[$processState.currentTab] = false;
       $processState.currentTab -= 1;
+      $processState.completedTabs[$processState.currentTab] = false;
     } else {
       console.log("Error overflow");
     }
