@@ -10,7 +10,9 @@
     export let type;
     export let singleItem = true;
     export let showError = false;
-
+    if (!Array.isArray(items)){
+        items = [items];
+    }
     function handleSort(e) {
         items = e.detail.items;
     }

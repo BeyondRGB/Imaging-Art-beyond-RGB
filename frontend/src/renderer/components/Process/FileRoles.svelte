@@ -52,11 +52,6 @@
                     <div class="imageLetter">A</div>
                     <div class="imageLetter">B</div>
                 </div>
-                <div class="text">Object</div>
-                <div class="inputGroup">
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true} showError={!!validationError}/></div>
-                    <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true} showError={!!validationError}/></div>
-                </div>
                 {#if $processState.imageFilePaths && showTargetDropZones()}
                     <div class="text">Target</div>
                     <div class="inputGroup">
@@ -74,6 +69,13 @@
                     <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldA} singleItem={true} showError={!!validationError}/></div>
                     <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true} showError={!!validationError}/></div>
                 </div>
+                {#each imageStack.imageA as image, i}
+                    <div class="text">Object {i + 1}</div>
+                    <div class="inputGroup">
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA[i]} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[i]} singleItem={true} showError={!!validationError}/></div>
+                    </div>
+                {/each}
                 {#if validationError && imageStack && validate()}
                     <div class="errorText">
                         {validationError}

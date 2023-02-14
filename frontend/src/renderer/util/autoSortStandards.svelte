@@ -91,13 +91,9 @@
             bestFlatFieldImages: [],
             bestDarkFieldImages: []
         }
-
         // select best images for each category
         let bestArtImage = maxBy(images, probabilityScoreProperties[0]);
-        images = filter(images, (e) => e !== bestArtImage)
-        imageStack.bestArtImages = [bestArtImage, maxBy(images, probabilityScoreProperties[0])];
-        images = filter(images, (e) => e !== maxBy(images, probabilityScoreProperties[0]))
-
+        imageStack.bestArtImages.push(bestArtImage);
         if(includeTarget) {
             let bestTargetImage = maxBy(images, probabilityScoreProperties[1]);
             images = filter(images, (e) => e !== bestTargetImage)
@@ -124,9 +120,32 @@
         };
 
         // fill in the image stack
-        externalStack.imageA = [imageStack?.bestArtImages[0]];
-        externalStack.imageB = [imageStack?.bestArtImages[1]];
+        externalStack.imageA = [];
+        externalStack.imageB = [];
 
+        images.sort(function (a, b) {
+            if (a.name < b.name) {
+                return -1;
+            }
+            if (a.name > b.name) {
+                return 1;
+            }
+            return 0;
+        });
+        let length = images.length;
+        console.log(externalStack);
+        for (let i = 0; i < length/2; i++) {
+            let newImageA = images[0];
+            images = images.filter(image => image.name !== newImageA.name);
+            let imageNames = images.map(image => image.name);
+            let newImageBIndex = findBestMatch(newImageA.name, imageNames).bestMatchIndex;
+            let newImageB = images.find(image => image.name == imageNames[newImageBIndex]);
+            images = images.filter(image => image.name !== newImageB.name);
+            externalStack.imageA.push(newImageA);
+            externalStack.imageB.push(newImageB);
+
+            
+        }
         // handle A - B sorting
         if(includeTarget) {
             imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.imageA[0]);
@@ -141,7 +160,7 @@
         imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.imageA[0]);
         externalStack.darkfieldA = [imageStack?.bestDarkFieldImages[0]];
         externalStack.darkfieldB = [imageStack?.bestDarkFieldImages[1]];
-
+            
         // return any images that weren't assigned
         return images;
     }
