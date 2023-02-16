@@ -40,7 +40,7 @@ def preprocess(packet):
     packet.unload_dark()  # Dark no longer needed
     flat_fielding(packet)
     packet.unload_white()  # Flat no longer needed
-    registration(packet)
+    # registration(packet)
 
 
 def dead_pixel_correction(packet):
@@ -173,6 +173,7 @@ def registration(packet):
     key_points1 = detector.detect(img1_gray_norm, None)
     key_points2 = detector.detect(img2_gray_norm, None)
 
+    # TODO real errors
     if key_points1 is None or key_points2 is None:
         print("No key points created")
         exit()
