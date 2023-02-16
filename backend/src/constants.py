@@ -34,12 +34,6 @@ TARGET_RADIUS = 10
 # Flat fielding
 Y_VAL = 0.86122  # TODO UNHARDCODE
 
-# Calibration
-INIT_M = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
-          0.10, 0.10, 0.25, 0.10, 1.00, 0.10,
-          0.10, 0.10, 0.25, 0.10, 0.10, 0.50]
-INIT_O = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-INIT_MOARR = INIT_M + INIT_O
 
 # Registration Constants
 ALIGN = 1
@@ -64,3 +58,12 @@ IMAGES_HELP = '''Images should be added in this order:
         Subject B (OptionaL)
         Additional Images... (A and B)
     '''
+INIT_MOARR = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
+              0.10, 0.10, 0.25, 0.10, 1.00, 0.10,
+              0.10, 0.10, 0.25, 0.10, 0.10, 0.50,
+              0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+
+# Rendering
+PROPHOTO_TRANS_MATRIX = [[1.34594330, -0.2556075, -0.0511118],
+                         [-0.5445989, 1.50816730, 0.02053510],
+                         [0.00000000, 0.00000000, 1.21181280]]

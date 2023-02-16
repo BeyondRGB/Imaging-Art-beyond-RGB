@@ -38,14 +38,20 @@ def xyztolab(xyzs):
 
 def ciede2000(Lab_1, Lab_2):
     """ get ciede2000 color differences for two lists of lab values
-
-    There is a lot of work to do here. Nothing should be saved. This is garbage
-    copy paste code that might not even be correct. Ether way, this needs to be
-    implemented in a sane way and on numpy arrays instead of single values. When
-    this is fixed do not forget to update the xyz equation in calibration.py to
-    use lists.
-
-    INUPTS AND OUTPUTS GO HERE
+     _   _                 _   _                     _
+    | | | |               | | | |                   | |
+    | |_| | ___ _ __ ___  | |_| |__   ___ _ __ ___  | |__   ___ 
+    |  _  |/ _ \ '__/ _ \ | __| '_ \ / _ \ '__/ _ \ | '_ \ / _ \
+    | | | |  __/ | |  __/ | |_| | | |  __/ | |  __/ | |_) |  __/
+    \_| |_/\___|_|  \___|  \__|_| |_|\___|_|  \___| |_.__/ \___|
+    ______
+    |  _  \
+    | | | |_ __ __ _  __ _  ___  _ __  ___
+    | | | | '__/ _` |/ _` |/ _ \| '_ \/ __|
+    | |/ /| | | (_| | (_| | (_) | | | \__ \
+    |___/ |_|  \__,_|\__, |\___/|_| |_|___/
+                      __/ |
+                     |___/
     """
     C_25_7 = 6103515625 # 25**7
     

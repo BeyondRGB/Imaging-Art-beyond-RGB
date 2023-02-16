@@ -15,21 +15,12 @@ License:
 from exceptions import MissingFilesException
 from preprocessing import preprocess
 from calibration import color_calibrate
+from rendering import render
 from util import extract_camsigs
 
 
 def processing_pipeline(packet):
     """ main color calibration pipeline
-    Order of opperations:
-        1. vaidate request
-        2. load flat, dark, and target
-        3. preprocess
-        4. calibration
-        5. load subject pair
-        6. preprocessing image
-        7. render subject
-        8. save subject
-        9. repeat 5-8 until all images processed
     [in] packet : packet to send through the pipeline
     [raise] IOError, FileNotFoundError, MissingFilesException
     [raise] ZeroDivisionError
@@ -40,37 +31,36 @@ def processing_pipeline(packet):
     if num_files < 6 or num_files % 2 != 0:
         raise MissingFilesException(6, num_files)
 
-    # Generate array swap space and load files
+    # Setup
     packet.generate_swap()
-    packet.load_calibration_imgs()
 
-    # Calibration pass
-    preprocess(packet)
-    packet.camsigs = extract_camsigs(packet)
-    packet.unload_target()  # Save memory (we'll reload later)
+    """ Calibration
+    We need to get the calibration matrices for both color transformation and
+    spectral imaging before we render all of the subjects including the target.
+    See block comments for memory information
+    """
+    packet.load_calibration_imgs()  # flat, dark, and targets loaded
+    preprocess(packet)  # flat and dark unloaded here
+    packet.camsigs = extract_camsigs(packet)  # needed for both calibrations
+    packet.unload_target()  # Targets no longer needed until rendering
     color_calibrate(packet)
-    # TODO validate solution
-    # TODO render target
-    # TODO output target to file
+    packet.delcamsigs()  # Cleanup
+
+    """ Render and Save (Batch Processing)
+    At this point we have the color transformation matrix and need to apply it to
+    all images including the target.
+    """
+    # TODO finish description
+    render(packet)  # Loading is internal; we don't need the images after this
+    # TODO image saving
+
+
+
 
     # TODO remove the fillowing once target output to file is done
     import cv2
-    import numpy as np
-    #packet.load_dark()
-    dark = packet.get_dark_img()
-    white = packet.get_white_img()
-    target = packet.get_target_img()
-    t1 = cv2.cvtColor(target[0],  cv2.COLOR_RGB2BGR)
+    t1 = cv2.cvtColor(packet.render,  cv2.COLOR_RGB2BGR)
     cv2.imwrite("out.tiff", t1)
-
-    # TODO Batch Processing
-    #   do
-    #       itterate to next subject
-    #       load flat and dark fields
-    #       preprocess (flat and dark will be unloaded)
-    #       render
-    #       output
-    #   while there are more subjects
 
     return
     import time
