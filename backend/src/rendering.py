@@ -16,7 +16,7 @@ import numpy as np
 import gc
 
 # Local imports
-from constants import PROPHOTO_TRANS_MATRIX
+from constants import PROPHOTO_TRANS
 
 
 def render(packet):
@@ -36,20 +36,19 @@ def render(packet):
     gc.collect()
 
     # Convert to ProPhoto color space
-    rgb_pp = np.matmul(PROPHOTO_TRANS_MATRIX, xyz)
-    print(packet.dims)
-    exit()
+    rgb_pp = np.matmul(PROPHOTO_TRANS, xyz)
     del xyz
     gc.collect()
 
     # Clip Values
-    np.clip(rgb_pp, 0, 1, out=rgb_pp)
+    np.clip(rgb_pp/100, 0, 1, out=rgb_pp)
 
-    # TODO convert to sRGB
+    # Reshape into image
+    render = np.dstack((rgb_pp[0], rgb_pp[1], rgb_pp[2])).reshape(packet.dims)
+    del rgb_pp
+    gc.collect()
 
-
-    packet.render = rgb_pp
-
+    packet.render = np.float32(render)
 
 
 def __gensubjcamsigs(packet):
@@ -57,7 +56,6 @@ def __gensubjcamsigs(packet):
     [in] packet : pipeline packet
     [out] camsigs array
     """
-    packet.load_subject()
     subj = packet.get_subject()
 
     # We'll need this later

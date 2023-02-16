@@ -47,18 +47,23 @@ def processing_pipeline(packet):
     packet.delcamsigs()  # Cleanup
 
     """ Render and Save (Batch Processing)
-    At this point we have the color transformation matrix and need to apply it to
-    all images including the target.
+    At this point we have the color transformation matrix and need to apply it
+    to all images including the target. First we render the target in a special
+    pass and then loop over all remaining subjects rendering and saving them
+    one by one.
     """
     # TODO finish description
-    render(packet)  # Loading is internal; we don't need the images after this
+    packet.load_target()
+    render(packet)  # Subject array is deleted; we now have the final render
     # TODO image saving
+    # TODO add batch
 
 
 
 
     # TODO remove the fillowing once target output to file is done
     import cv2
+    print(packet.render.shape)
     t1 = cv2.cvtColor(packet.render,  cv2.COLOR_RGB2BGR)
     cv2.imwrite("out.tiff", t1)
 
