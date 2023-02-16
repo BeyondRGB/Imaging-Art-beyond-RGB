@@ -56,6 +56,7 @@ def processing_pipeline(packet):
     dark = packet.get_dark_img()
     target = packet.get_target_img()
     t1 = cv2.cvtColor(target[0],  cv2.COLOR_RGB2BGR)
+    print(t1)
     cv2.imwrite("out.tiff", t1)
 
     # TODO Batch Processing
