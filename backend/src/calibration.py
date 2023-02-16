@@ -34,61 +34,13 @@ def color_calibrate(packet):
     [post] target image is unloaded
     [post] packet x variable is populated
     """
-    camsigs = _extract_camsigs(packet)
-
-    # Save memory (we'll reload later)
-    packet.unload_target()
-
-    t = time.perf_counter()
-    #res = minimize(_xyz, INIT_MOARR, (camsigs, LAB_REF), method='Powell')
-    res = fmin(_xyz, INIT_MOARR, (camsigs, LAB_REF))
-    print("Minimize: " + str(time.perf_counter() - t) + " seconds")
+    #res = minimize(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
+    res = fmin(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF))
     print(res)
 
     # TODO ERROR CHECKING
 
     packet.x = res.x
-
-
-def _extract_camsigs(packet):
-    """ Generate camsigs array
-    [in] packet : pipeline packet
-    [out] camsigs array
-    """
-    t_img = packet.get_target_img()
-    tr = TARGET_RADIUS
-
-    # TODO fix orientation
-    camsigs = np.ndarray((6, 130))
-    siglist = _gen_siglist(packet)
-    for i, sig in enumerate(siglist):
-        cell = t_img[0][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
-        avg = np.average(cell, axis=(0, 1))
-        camsigs[0, i] = avg[0]
-        camsigs[1, i] = avg[1]
-        camsigs[2, i] = avg[2]
-        cell = t_img[1][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
-        avg = np.average(cell, axis=(0, 1))
-        camsigs[3, i] = avg[0]
-        camsigs[4, i] = avg[1]
-        camsigs[5, i] = avg[2]
-
-    return camsigs
-
-
-def _gen_siglist(packet):
-    """ Generate the list of target points
-    [in] packet : pipeline packet
-    [out] list of target points
-    """
-    target = packet.target
-    cols, rows = target.get_dims()
-
-    siglist = []
-    for c in range(0, cols):
-        for r in range(0, rows):
-            siglist.append(target.get_center_coord(r, c))
-    return siglist
 
 
 def _xyz(x, camsigs, labref):

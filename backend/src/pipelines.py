@@ -15,6 +15,7 @@ License:
 from exceptions import MissingFilesException
 from preprocessing import preprocess
 from calibration import color_calibrate
+from util import extract_camsigs
 
 
 def processing_pipeline(packet):
@@ -45,6 +46,8 @@ def processing_pipeline(packet):
 
     # Calibration pass
     preprocess(packet)
+    packet.camsigs = extract_camsigs(packet)
+    packet.unload_target()  # Save memory (we'll reload later)
     color_calibrate(packet)
     # TODO validate solution
     # TODO render target
