@@ -33,7 +33,8 @@ class Packet:
         swap          : List of files for loading and unloading arrays
         subj_idx      : Indices of the currently referenced image
         x             : Calibration solution
-        camsigs       : camera signals list
+        camsigs       : Camera signals list of image being processed
+        render        : Render of current subject
 
     Methods:
         load_calibration_imgs : Load images needed for calibration
@@ -53,6 +54,17 @@ class Packet:
     subject_idx = (TARGET_A_IDX, TARGET_B_IDX)
     x = []
     camsigs = []
+    render = []
+
+    def delcamsigs(self):
+        """ Delete camsigs; values not needed """
+        del self.camsigs
+        gc.collect()
+
+    def delrender(self):
+        """ Delete subject_res; values not needed """
+        del self.render
+        gc.collect()
 
     def load_calibration_imgs(self):
         """ Load images needed for calibration """
@@ -111,7 +123,7 @@ class Packet:
         self.__load_imgs(TARGET_A_IDX, TARGET_B_IDX, TARGET_SWAP_IDX)
 
     def load_subject(self):
-        self.__
+        self.__load_imgs(self.subject_idx[0], self.subject_idx[1])
 
     def __load_imgs(self, a, b, s=None):
         """ Load image pair

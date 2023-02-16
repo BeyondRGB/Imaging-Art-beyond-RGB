@@ -34,18 +34,20 @@ def color_calibrate(packet):
     [post] target image is unloaded
     [post] packet x variable is populated
     """
-    #res = minimize(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
-    res = fmin(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF))
+    res = minimize(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
+    # res = fmin(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF))
     print(res)
-
-    # TODO ERROR CHECKING
-
     packet.x = res.x
 
 
-def _xyz(x, camsigs, labref):
-    """ Equation for color calibrator to minimize """
-    m = np.resize(x[0:17], (3, 6))
+def __de_equ(x, camsigs, labref):
+    """ ∆E equation for color tranformation matrix optimization
+    [in] x : current input parameters guess
+    [in] camsigs : target camera signals we are modifying
+    [in] labref  : target reference data
+    [out] average error
+    """
+    m = np.resize(x[0:18], (3, 6))
     o = np.resize(x[18:], (6, 1))
     xyz = np.matmul(m, np.subtract(camsigs, o))
     lab = xyztolab(xyz)
