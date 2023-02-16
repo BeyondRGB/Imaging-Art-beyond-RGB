@@ -17,13 +17,15 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+from time import sleep
+
 # Python imports
 import numpy as np
-from cv2 import medianBlur, cvtColor, COLOR_BGR2GRAY, BFMatcher,\
-        findHomography, warpPerspective, RANSAC, ORB_create
+import gc
+import cv2
 
 # Local imports
-from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL
+from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL, ALIGN, REFERENCE
 
 
 def preprocess(packet):
@@ -32,13 +34,13 @@ def preprocess(packet):
     [post] images preprocessed in place
     [raise] ZeroDivisionError
     """
-#    bit_scale(packet)
+    # bit_scale(packet)
     dead_pixel_correction(packet)
     dark_current_correction(packet)
     packet.unload_dark()  # Dark no longer needed
     flat_fielding(packet)
     packet.unload_white()  # Flat no longer needed
-#    registration(packet)
+    # registration(packet)
 
 
 def dead_pixel_correction(packet):
@@ -52,13 +54,13 @@ def dead_pixel_correction(packet):
     if packet.flat_field_ws == ():
         dark = packet.get_dark_img()
         white = packet.get_white_img()
-        dark[0][...] = medianBlur(dark[0], BLUR_FACTOR)
-        dark[1][...] = medianBlur(dark[1], BLUR_FACTOR)
-        white[0][...] = medianBlur(white[0], BLUR_FACTOR)
-        white[1][...] = medianBlur(white[1], BLUR_FACTOR)
+        dark[0][...] = cv2.medianBlur(dark[0], BLUR_FACTOR)
+        dark[1][...] = cv2.medianBlur(dark[1], BLUR_FACTOR)
+        white[0][...] = cv2.medianBlur(white[0], BLUR_FACTOR)
+        white[1][...] = cv2.medianBlur(white[1], BLUR_FACTOR)
 
-    subject[0][...] = medianBlur(subject[0], BLUR_FACTOR)
-    subject[1][...] = medianBlur(subject[1], BLUR_FACTOR)
+    subject[0][...] = cv2.medianBlur(subject[0], BLUR_FACTOR)
+    subject[1][...] = cv2.medianBlur(subject[1], BLUR_FACTOR)
 
 
 def bit_scale(packet):
@@ -68,7 +70,7 @@ def bit_scale(packet):
     """
     subject = packet.get_subject()
 
-    s = ((2**16 - 1)/(2**14 - 1))  # TODO determine actual scale for each image
+    s = ((2 ** 16 - 1) / (2 ** 14 - 1))  # TODO determine actual scale for each image
 
     # If the Ws have not yet been generated, we need to scale the flats
     if packet.flat_field_ws == ():
@@ -113,10 +115,10 @@ def flat_field_w_gen(packet):
     tr = TARGET_RADIUS
     row, col = target.get_white()
     xpos, ypos = target.get_center_coord(row, col)
-    t1mean = np.mean(t_img[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
-    t2mean = np.mean(t_img[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
-    w1mean = np.mean(white[0][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
-    w2mean = np.mean(white[1][ypos-tr:ypos+tr, xpos-tr:xpos+tr], axis=(0, 1))
+    t1mean = np.mean(t_img[0][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
+    t2mean = np.mean(t_img[1][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
+    w1mean = np.mean(white[0][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
+    w2mean = np.mean(white[1][ypos - tr:ypos + tr, xpos - tr:xpos + tr], axis=(0, 1))
 
     # Generate Ws
     w1 = Y_VAL * (t1mean / w1mean)
@@ -148,33 +150,64 @@ def registration(packet):
     [in] packet : pipeline packet
     [post] images registered in place
     """
-    return  # TODO remove
-    # TODO how are these gonna be and what to return
-    reference_color, align_color = packet
+    import time
+    t = time.perf_counter()
+    subject = packet.get_subject()
 
     # grayscale
-    img1 = cvtColor(reference_color, COLOR_BGR2GRAY)
-    img2 = cvtColor(align_color, COLOR_BGR2GRAY)
-    height, width = img2.shape
+    img1_gray = cv2.cvtColor(subject[ALIGN], cv2.COLOR_RGB2GRAY)
+    img2_gray = cv2.cvtColor(subject[REFERENCE], cv2.COLOR_RGB2GRAY)
+    height, width = img2_gray.shape
 
-    # create ORB detector
-    orb_detector = ORB_create(5000)
-    key_points1, descriptors1 = orb_detector.detectAndCompute(img1, None)
-    key_points2, descriptors2 = orb_detector.detectAndCompute(img2, None)
+    # convert to uint8 for detection
+    img1_gray_norm = cv2.normalize(img1_gray, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
+    img2_gray_norm = cv2.normalize(img2_gray, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
+    del img1_gray, img2_gray
+    gc.collect()
 
-    # match images
-    matches = BFMatcher.match(descriptors1, descriptors2)
+    # create SIFT detector with 2000 features
+    detector = cv2.SIFT_create(2000)
+    descriptor = cv2.SIFT_create(2000)
+
+    # generate keypoints
+    key_points1 = detector.detect(img1_gray_norm, None)
+    key_points2 = detector.detect(img2_gray_norm, None)
+
+    # TODO real errors
+    if key_points1 is None or key_points2 is None:
+        print("No key points created")
+        exit()
+
+    # generate descriptors
+    key_points1, descriptors1 = descriptor.compute(img1_gray_norm, key_points1)
+    key_points2, descriptors2 = descriptor.compute(img2_gray_norm, key_points2)
+    del img1_gray_norm, img2_gray_norm
+    gc.collect()
+
+    # create matcher and match images, dropping bottom 10% of matches
+    matcher = cv2.BFMatcher(cv2.NORM_L1, crossCheck=False)
+    matches = matcher.match(descriptors1, descriptors2)
+    del descriptors1, descriptors2
+    gc.collect()
     matches = tuple(sorted(matches, key=lambda x: x.distance))
-    matches = matches[:int(len(matches)) * 0.9]
-    num_matches = matches
+    matches = matches[:int(len(matches) * 0.9)]
+    num_matches = len(matches)
 
+    # set up arrays for calculating homography
     p1 = np.zeros((num_matches, 2))
     p2 = np.zeros((num_matches, 2))
-
     for i in range(len(matches)):
         p1[i, :] = key_points1[matches[i].queryIdx].pt
         p2[i, :] = key_points2[matches[i].trainIdx].pt
+    del key_points1, key_points2, matches
+    gc.collect()
 
-    homography, mask = findHomography(p1, p2, RANSAC)
+    homography, mask = cv2.findHomography(p1, p2, cv2.RANSAC)
 
-    return warpPerspective(reference_color, homography, (width, height))
+    # warp the subject images based on the calculated homography
+    subject[1][...] = cv2.warpPerspective(subject[REFERENCE], homography, (width, height))
+
+    print("register time: " + str(time.perf_counter() - t))
+    del homography
+    gc.collect()
+    # sleep(10000000)
