@@ -34,10 +34,10 @@ def color_calibrate(packet):
     [post] target image is unloaded
     [post] packet x variable is populated
     """
-    res = minimize(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
-    # res = fmin(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF))
+    # res = minimize(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
+    res = fmin(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF))
     print(res)
-    packet.x = res.x
+    packet.x = res
 
 
 def __de_equ(x, camsigs, labref):
