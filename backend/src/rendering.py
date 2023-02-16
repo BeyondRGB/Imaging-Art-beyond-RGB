@@ -37,7 +37,7 @@ def render(packet):
 
     # Convert to ProPhoto color space
     rgb_pp = np.matmul(PROPHOTO_TRANS_MATRIX, xyz)
-    print(rgb_pp)
+    print(packet.dims)
     exit()
     del xyz
     gc.collect()
@@ -45,11 +45,11 @@ def render(packet):
     # Clip Values
     np.clip(rgb_pp, 0, 1, out=rgb_pp)
 
-    # TODO Apply Gamma
-
     # TODO convert to sRGB
 
+
     packet.render = rgb_pp
+
 
 
 def __gensubjcamsigs(packet):
@@ -59,6 +59,9 @@ def __gensubjcamsigs(packet):
     """
     packet.load_subject()
     subj = packet.get_subject()
+
+    # We'll need this later
+    packet.dims = subj[0].shape
 
     # Python is like candy; it tastes good but I hate that I like it
     camsigs = [subj[0][:, :, 0].flatten(),
