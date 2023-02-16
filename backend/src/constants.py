@@ -40,3 +40,23 @@ INIT_M = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
           0.10, 0.10, 0.25, 0.10, 0.10, 0.50]
 INIT_O = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 INIT_MOARR = INIT_M + INIT_O
+
+# Usage help messages
+TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
+TOP_LEFT_X_HELP = 'Pixel value of the top-left of the upright color target from the left end of the color-target image'
+BOTTOM_RIGHT_X_HELP = 'Pixel value of the bottom-right of the upright color target from the left end of the color-target image'
+TOP_LEFT_Y_HELP = 'Pixel value of the top-left of the upright color target from the top end of the color-target image'
+BOTTOM_RIGHT_Y_HELP = 'Pixel value of the bottom-right of the upright color target from the top end of the color-target image'
+WHITE_COL_HELP = 'Column of selected white patch from left of target'
+WHITE_ROW_HELP = 'Row of selected white patch from top of target'
+IMAGES_HELP = '''Images should be added in this order:
+        Target A
+        Target B
+        Flat Field A
+        Flat Field B
+        Dark Field A
+        Dark Field B
+        Subject A (Optional)
+        Subject B (OptionaL)
+        Additional Images... (A and B)
+    '''
