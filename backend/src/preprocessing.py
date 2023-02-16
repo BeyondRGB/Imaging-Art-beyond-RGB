@@ -17,12 +17,12 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+from time import sleep
+
 # Python imports
 import numpy as np
 import gc
-from cv2 import medianBlur, cvtColor, COLOR_RGB2GRAY, BFMatcher, \
-    findHomography, warpPerspective, RANSAC, NORM_L1, SIFT_create, \
-    normalize, NORM_MINMAX, imwrite
+import cv2
 
 # Local imports
 from constants import BLUR_FACTOR, TARGET_RADIUS, Y_VAL, ALIGN, REFERENCE
@@ -34,7 +34,7 @@ def preprocess(packet):
     [post] images preprocessed in place
     [raise] ZeroDivisionError
     """
-    bit_scale(packet)
+    # bit_scale(packet)
     dead_pixel_correction(packet)
     dark_current_correction(packet)
     packet.unload_dark()  # Dark no longer needed
@@ -54,13 +54,13 @@ def dead_pixel_correction(packet):
     if packet.flat_field_ws == ():
         dark = packet.get_dark_img()
         white = packet.get_white_img()
-        dark[0][...] = medianBlur(dark[0], BLUR_FACTOR)
-        dark[1][...] = medianBlur(dark[1], BLUR_FACTOR)
-        white[0][...] = medianBlur(white[0], BLUR_FACTOR)
-        white[1][...] = medianBlur(white[1], BLUR_FACTOR)
+        dark[0][...] = cv2.medianBlur(dark[0], BLUR_FACTOR)
+        dark[1][...] = cv2.medianBlur(dark[1], BLUR_FACTOR)
+        white[0][...] = cv2.medianBlur(white[0], BLUR_FACTOR)
+        white[1][...] = cv2.medianBlur(white[1], BLUR_FACTOR)
 
-    subject[0][...] = medianBlur(subject[0], BLUR_FACTOR)
-    subject[1][...] = medianBlur(subject[1], BLUR_FACTOR)
+    subject[0][...] = cv2.medianBlur(subject[0], BLUR_FACTOR)
+    subject[1][...] = cv2.medianBlur(subject[1], BLUR_FACTOR)
 
 
 def bit_scale(packet):
@@ -150,22 +150,24 @@ def registration(packet):
     [in] packet : pipeline packet
     [post] images registered in place
     """
+    import time
+    t = time.perf_counter()
     subject = packet.get_subject()
 
     # grayscale
-    img1_gray = cvtColor(subject[ALIGN], COLOR_RGB2GRAY)
-    img2_gray = cvtColor(subject[REFERENCE], COLOR_RGB2GRAY)
+    img1_gray = cv2.cvtColor(subject[ALIGN], cv2.COLOR_RGB2GRAY)
+    img2_gray = cv2.cvtColor(subject[REFERENCE], cv2.COLOR_RGB2GRAY)
     height, width = img2_gray.shape
 
-    # create SIFT detector with 2000 features
-    detector = SIFT_create(2000)
-    descriptor = SIFT_create(2000)
-
     # convert to uint8 for detection
-    img1_gray_norm = normalize(img1_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
-    img2_gray_norm = normalize(img2_gray, None, 0, 255, NORM_MINMAX).astype('uint8')
+    img1_gray_norm = cv2.normalize(img1_gray, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
+    img2_gray_norm = cv2.normalize(img2_gray, None, 0, 255, cv2.NORM_MINMAX).astype('uint8')
     del img1_gray, img2_gray
     gc.collect()
+
+    # create SIFT detector with 2000 features
+    detector = cv2.SIFT_create(2000)
+    descriptor = cv2.SIFT_create(2000)
 
     # generate keypoints
     key_points1 = detector.detect(img1_gray_norm, None)
@@ -182,8 +184,10 @@ def registration(packet):
     gc.collect()
 
     # create matcher and match images, dropping bottom 10% of matches
-    matcher = BFMatcher(NORM_L1, crossCheck=False)
+    matcher = cv2.BFMatcher(cv2.NORM_L1, crossCheck=False)
     matches = matcher.match(descriptors1, descriptors2)
+    del descriptors1, descriptors2
+    gc.collect()
     matches = tuple(sorted(matches, key=lambda x: x.distance))
     matches = matches[:int(len(matches) * 0.9)]
     num_matches = len(matches)
@@ -194,8 +198,15 @@ def registration(packet):
     for i in range(len(matches)):
         p1[i, :] = key_points1[matches[i].queryIdx].pt
         p2[i, :] = key_points2[matches[i].trainIdx].pt
+    del key_points1, key_points2, matches
+    gc.collect()
 
-    homography, mask = findHomography(p1, p2, RANSAC)
+    homography, mask = cv2.findHomography(p1, p2, cv2.RANSAC)
 
-    # warp the subject images based on the calculate homography
-    subject[1][...] = warpPerspective(subject[REFERENCE], homography, (width, height))
+    # warp the subject images based on the calculated homography
+    subject[1][...] = cv2.warpPerspective(subject[REFERENCE], homography, (width, height))
+
+    print("register time: " + str(time.perf_counter() - t))
+    del homography
+    gc.collect()
+    # sleep(10000000)
