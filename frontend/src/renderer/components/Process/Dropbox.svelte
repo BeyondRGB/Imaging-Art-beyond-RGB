@@ -10,26 +10,26 @@
     export let type;
     export let singleItem = true;
     export let showError = false;
-
+    if (!Array.isArray(items)){
+        items = [items];
+    }
     function handleSort(e) {
         items = e.detail.items;
     }
 
 </script>
-<main>
-    <div class="sectionStyle {showError && singleItem && isEmpty(items) ? 'errorStyle' : ''}">
-        <section use:dndzone={{items, flipDurationMs, type, dropFromOthersDisabled: singleItem && items.length > 0}}
-            on:consider={handleSort}
-            on:finalize={handleSort}
-        >
-            {#each items as item (item?.id)}
-                <card animate:flip={{ duration: flipDurationMs }} class="{singleItem ? 'verified' : ''}">
-                    <ImageBubble filename={item.name} minimal />
-                </card>
-            {/each}
-        </section>
-    </div>
-</main>
+<div class="sectionStyle {showError && singleItem && isEmpty(items) ? 'errorStyle' : ''}">
+    <section use:dndzone={{items, flipDurationMs, type, dropFromOthersDisabled: singleItem && items.length > 0}}
+        on:consider={handleSort}
+        on:finalize={handleSort}
+    >
+        {#each items as item (item?.id)}
+            <card animate:flip={{ duration: flipDurationMs }} class="{singleItem ? 'verified' : ''}">
+                <ImageBubble filename={item.name} minimal />
+            </card>
+        {/each}
+    </section>
+</div>
 
 <style>
     section {
@@ -45,10 +45,10 @@
     }
     .sectionStyle {
         background-color: #2c2c2f;
-        height: auto;
         width: 80%;
         border-radius: 10px;
         margin: auto;
+        overflow: auto;
     }
     .errorStyle {
         background-color: red;
