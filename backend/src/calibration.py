@@ -35,8 +35,9 @@ def color_calibrate(packet):
     [post] packet x variable is populated
     """
     # res = minimize(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
-    res = fmin(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF))
-    print(res)
+    res = fmin(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF), maxiter=20000,
+               maxfun=20000)
+    print(__de_equ(res, packet.camsigs, LAB_REF))
     packet.x = res
 
 
