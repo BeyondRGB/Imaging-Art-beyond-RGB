@@ -199,6 +199,3 @@ def registration(packet):
 
     # warp the subject images based on the calculate homography
     subject[1][...] = warpPerspective(subject[REFERENCE], homography, (width, height))
-    imwrite("out1.tif", subject[1])
-    subject[0][...] = warpPerspective(subject[ALIGN], homography, (width, height))
-    imwrite("out2.tif", subject[0])
