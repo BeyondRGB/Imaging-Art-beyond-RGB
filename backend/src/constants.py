@@ -32,7 +32,7 @@ BLUR_FACTOR = 3  # Must be odd and greater than 2
 TARGET_RADIUS = 10
 
 # Flat fielding
-Y_VAL = 0.86122  # TODO CHECK IF CORRECT VALUE
+Y_VAL = 0.86122  # TODO UNHARDCODE
 
 # Calibration
 INIT_M = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
@@ -40,6 +40,10 @@ INIT_M = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
           0.10, 0.10, 0.25, 0.10, 0.10, 0.50]
 INIT_O = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 INIT_MOARR = INIT_M + INIT_O
+
+# Registration Constants
+ALIGN = 1
+REFERENCE = 0
 
 # Usage help messages
 TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
