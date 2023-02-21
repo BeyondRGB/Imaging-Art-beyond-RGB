@@ -16,7 +16,7 @@ import numpy as np
 import gc
 
 # Local imports
-from constants import PROPHOTO_TRANS
+from constants import PROPHOTO_TRANS, COLORSPACE
 
 
 def render(packet):
@@ -36,9 +36,13 @@ def render(packet):
     gc.collect()
 
     # Convert to ProPhoto color space
-    rgb_pp = np.matmul(PROPHOTO_TRANS, xyz)
-    del xyz
-    gc.collect()
+    if COLORSPACE ==:
+        rgb_pp = np.matmul(PROPHOTO_TRANS, xyz)
+        del xyz
+        gc.collect()
+
+    # Convert to sRGB color space
+    if True:
 
     # Clip Values
     np.clip(rgb_pp/100, 0, 1, out=rgb_pp)
