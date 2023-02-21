@@ -26,7 +26,7 @@ def render(packet):
     [post] rendered image is loaded in memory
     [post] camsigs deleted from packet
     """
-    camsigs = __gensubjcamsigs(packet)
+    camsigs = __genimgsigs(packet)
 
     # Compute color calibrated image
     m = np.resize(packet.x[0:18], (3, 6))
@@ -36,26 +36,34 @@ def render(packet):
     gc.collect()
 
     # Convert to ProPhoto color space
-    if COLORSPACE ==:
-        rgb_pp = np.matmul(PROPHOTO_TRANS, xyz)
+    if COLORSPACE == 'ProPhoto':
+        rgb = np.matmul(PROPHOTO_TRANS, xyz)
         del xyz
         gc.collect()
+        np.clip(rgb, 0, 1, out=rgb)
+        np.piecewise(rgb, [rgb > 0.001953125, rgb <= 0.001953125],
+                     [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])
 
     # Convert to sRGB color space
-    if True:
-
-    # Clip Values
-    np.clip(rgb_pp/100, 0, 1, out=rgb_pp)
+    if COLORSPACE == 'sRGB':
+        rgb = np.matmul(PROPHOTO_TRANS, xyz)
+        del xyz
+        gc.collect()
+        np.clip(rgb/100, 0, 1, out=rgb)  # TODO remove divide by 100
+        np.piecewise(rgb, [rgb > 0.0031308, rgb <= 0.0031308],
+                     [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,
+                      lambda rgb: 12.92 * rgb])
 
     # Reshape into image
-    render = np.dstack((rgb_pp[0], rgb_pp[1], rgb_pp[2])).reshape(packet.dims)
-    del rgb_pp
+    render = np.dstack((rgb[0], rgb[1], rgb[2])).reshape(packet.dims)
+    print(render)
+    del rgb
     gc.collect()
 
     packet.render = np.float32(render)
 
 
-def __gensubjcamsigs(packet):
+def __genimgsigs(packet):
     """ Generate camsigs array for whole image
     [in] packet : pipeline packet
     [out] camsigs array
