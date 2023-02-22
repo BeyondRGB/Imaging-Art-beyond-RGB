@@ -1,10 +1,16 @@
 <script lang="ts">
     import { FilePlusIcon } from "svelte-feather-icons";
     import { processState, sendMessage} from "@util/stores";
-    import { forEach, find } from "lodash";
+    import { forEach, find, each } from "lodash";
     import { testStyle } from "@util/styles";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
     import Dropzone from "svelte-file-dropzone";
+    import Dropbox from "@components/Process/Dropbox.svelte";
+
+
+    import {dndzone} from 'svelte-dnd-action';
+    import {is_empty} from "svelte/internal";
+
     export let label = "Select Files";
     export let icon = FilePlusIcon;
     export let largeText = false;
@@ -118,20 +124,8 @@
                 </div>
             </button>
         {/if}
-
-        <br>
-        Drag and Drop Files Here
-        <br>
-        <br>
-        <article>
-            <ul>
-                {#if $processState.imageFilePaths?.length > 0}
-                    {#each $processState.imageFilePaths as filePath}
-                        <ImageBubble filename={filePath.name} on:remove={remove(filePath)}/>
-                    {/each}
-                {/if}
-            </ul>
-        </article>
+        <h1>Drag and Drop Files Here </h1>
+        <Dropbox min bind:items={$processState.imageFilePaths} type="image" singleItem={false} minimum={false} ></Dropbox>
     </Dropzone>
     <br>
     </div>
@@ -139,7 +133,11 @@
 
 <style lang="postcss">
     main {
-        max-height: 50% ;
+        max-height: 50vh;
+    }
+    h1 {
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2;
@@ -153,9 +151,6 @@
     ul {
         @apply flex flex-col gap-2 w-full justify-center items-center;
     }
-    article {
-        @apply bg-gray-800 w-full min-h-[30vh] max-h-[30vh] overflow-auto rounded-[32px] py-2 px-6;
-    }
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
     }
@@ -164,7 +159,8 @@
     }
     .two-col {
         overflow: hidden;/* Makes this div contain its floats */
-        width: 100%
+        width: 100%;
+        min-height: 4.5vh;
     }
 
     .two-col .col1,

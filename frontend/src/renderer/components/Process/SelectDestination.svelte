@@ -55,6 +55,7 @@
         @apply bg-gray-800 flex items-center justify-center rounded-r-xl p-1;
     }
     .selectBox {
-        @apply h-[70%] flex flex-col items-center gap-2;
+        @apply h-[80%] flex flex-col items-center gap-2;
+        padding-top: 5vh;
     }
 </style>

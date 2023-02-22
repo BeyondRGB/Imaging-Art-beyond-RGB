@@ -3,6 +3,7 @@
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
+    import {is_empty} from "svelte/internal";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let rerenderToggle = false;
@@ -28,7 +29,7 @@
     };
 
     const showTargetDropZones = function () {
-        return getAllImages().length > 6;
+        return getAllImages().length > 6 || !is_empty($processState.artStacks[0].fields.targetA) || !is_empty($processState.artStacks[0].fields.targetB);
     };
 
     const autoSort = function () {
@@ -38,7 +39,9 @@
 
     const resetImages = function () {
         each($processState.artStacks[0].fields, function (image) {
-            $processState.imageFilePaths.push({name: image[0].name, id: image[0].id});
+            if (image.length > 0) {
+                $processState.imageFilePaths.push({name: image[0].name, id: image[0].id});
+            }
         });
         $processState.artStacks[0].fields = {
             imageA: [],
@@ -56,9 +59,8 @@
 </script>
 
 {#key rerenderToggle}
-    <Dropbox min bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
     <div class="btnGroup">
-        {#if $processState.imageFilePaths.length !== 0}
+        {#if $processState.imageFilePaths.length !== 0 && !is_empty($processState.artStacks[0].fields)}
             <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
         {:else}
             <button class="autoSortButton" on:click={resetImages}>Reset images</button>
@@ -118,6 +120,7 @@
         display: flex;
         flex-direction: column;
         gap:20px;
+        min-height: 70vh;
     }
     .centerFlexBox {
         display: flex;

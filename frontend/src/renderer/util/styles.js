@@ -7,11 +7,13 @@ export const testStyle = "flex: 1;\n" +
     "border-radius: 2px;\n" +
     "border-color: #eeeeee;\n" +
     "border-style: dashed;\n" +
-    "background-color: #1D1C1E;\n" +
+    "background-color: #2c2c2f;\n" +
     "color: #bdbdbd;\n" +
     "outline: none;\n" +
     "transition: border 0.24s ease-in-out;\n" +
-    "background-color: #1D1C1E;\n" +
     "border-radius: 10px;\n" +
     "font-size: 30px;\n" +
+    "min-height: 45vh;" +
+    "max-height: 45vh;" +
+    "overflow: auto;" +
     "text-align: center;";

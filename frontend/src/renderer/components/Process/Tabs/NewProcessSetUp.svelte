@@ -8,12 +8,8 @@
 <main>
     <left>
         <h1>Import Images</h1>
+        <br>
         <ImageImporter/>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
         <SelectDestination/>
     </left>
     <right>
@@ -29,10 +25,10 @@
         @apply flex justify-between h-full w-full overflow-hidden;
     }
     left {
-        @apply bg-gray-600 w-full h-full p-6 flex-col overflow-hidden;
+        @apply bg-gray-600 w-full h-full p-6 flex-col overflow-auto;
     }
     right {
-        @apply bg-gray-700 w-full p-6 flex flex-col justify-center items-center gap-4 overflow-auto;
+        @apply bg-gray-700 w-full p-6 flex flex-col  items-center gap-4 overflow-auto;
     }
     h1 {
         font-size: 35px;
@@ -41,8 +37,5 @@
     p {
         font-size: 18px;
         width: 100%;
-    }
-    article {
-        @apply bg-gray-800 w-full min-h-[12rem] overflow-auto rounded-[32px] py-2 px-6;
     }
 </style>

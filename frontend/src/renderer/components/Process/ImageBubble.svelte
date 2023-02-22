@@ -39,7 +39,9 @@
         : filename.split("/").at(-1)}
     {:else}
       <ImageIcon size="1.5x" />
-      {filename}
+      {filename.split("\\").length > 2
+              ? filename.split("\\").at(-1)
+              : filename.split("/").at(-1)}
       <button on:click={remove}><TrashIcon size="1.25x"/></button>
 
     {/if}

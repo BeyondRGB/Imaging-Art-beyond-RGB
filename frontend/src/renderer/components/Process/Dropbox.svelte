@@ -9,11 +9,11 @@
     export let items = [];
     export let type;
     export let singleItem = true;
+    export let minimum = true;
 
     function handleSort(e) {
         items = e.detail.items;
     }
-
 </script>
 
 <div class="sectionStyle {singleItem && isEmpty(items) ? 'errorStyle' : ''}">
@@ -23,7 +23,11 @@
     >
         {#each items as item (item?.id)}
             <card animate:flip={{ duration: flipDurationMs }} class="{singleItem ? 'verified' : ''}">
-                <ImageBubble filename={item.name} minimal />
+                {#if minimum}
+                    <ImageBubble filename={item.name} minimal />
+                {:else}
+                    <ImageBubble filename={item.name} />
+                {/if}
             </card>
         {/each}
     </section>
@@ -38,9 +42,9 @@
         justify-content: center;
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        /*gap: 10px;*/
         align-items: center;
-        padding: 10px;
+        /*padding: 10px;*/
     }
     .sectionStyle {
         background-color: #2c2c2f;
@@ -50,7 +54,7 @@
         overflow: auto;
     }
     card {
-        background-color: gray;
+        background-color: #2c2c2f;
         width: auto;
         padding-right: 10px;
         padding-left: 10px;
