@@ -11,16 +11,19 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python imports
 import numpy as np
 import gc
 
-# Local imports
-from constants import PROPHOTO_TRANS, COLORSPACE
-
-# Constants
-PROPHOTO_Y_LINE = 0.001953125
-SRGB_Y_LINE = 0.0031308
+# CONSTANTS
+__PROPHOTO_TRANS = [[1.34594330, -0.2556075, -0.0511118],
+                    [-0.5445989, 1.50816730, 0.02053510],
+                    [0.00000000, 0.00000000, 1.21181280]]
+__SRGB_TRANS = [[3.13385610, -1.6168667, -0.4906146],
+                [-0.9787684, 1.91614150, 0.03345400],
+                [0.07194530, -0.2289914, 1.40524270]]
+__COLORSPACE = 'sRGB'  # 'sRGB' or 'ProPhoto'
+__PROPHOTO_Y_LINE = 0.001953125
+__SRGB_Y_LINE = 0.0031308
 
 
 
@@ -41,23 +44,23 @@ def render(packet):
     gc.collect()
 
     # Convert to ProPhoto color space
-    if COLORSPACE == 'ProPhoto':
-        rgb = np.matmul(PROPHOTO_TRANS, xyz)
+    if __COLORSPACE == 'ProPhoto':
+        rgb = np.matmul(__PROPHOTO_TRANS, xyz)
         del xyz
         gc.collect()
         np.clip(rgb, 0, 1, out=rgb)
         # Apply Gamma
-        np.piecewise(rgb, [rgb > PROPHOTO_Y_LINE, rgb <= PROPHOTO_Y_LINE],
+        np.piecewise(rgb, [rgb > __PROPHOTO_Y_LINE, rgb <= __PROPHOTO_Y_LINE],
                      [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])
 
     # Convert to sRGB color space
-    if COLORSPACE == 'sRGB':
-        rgb = np.matmul(PROPHOTO_TRANS, xyz)
+    if __COLORSPACE == 'sRGB':
+        rgb = np.matmul(__PROPHOTO_TRANS, xyz)
         del xyz
         gc.collect()
         np.clip(rgb/100, 0, 1, out=rgb)  # TODO remove divide by 100
         # Apply Gamma
-        np.piecewise(rgb, [rgb > SRGB_Y_LINE, rgb <= SRGB_Y_LINE],
+        np.piecewise(rgb, [rgb > __SRGB_Y_LINE, rgb <= __SRGB_Y_LINE],
                      [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,
                       lambda rgb: 12.92 * rgb])
 
