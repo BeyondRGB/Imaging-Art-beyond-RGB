@@ -18,6 +18,11 @@ import gc
 # Local imports
 from constants import PROPHOTO_TRANS, COLORSPACE
 
+# Constants
+PROPHOTO_Y_LINE = 0.001953125
+SRGB_Y_LINE = 0.0031308
+
+
 
 def render(packet):
     """ Render image pair as a single color calibrated image
@@ -41,7 +46,8 @@ def render(packet):
         del xyz
         gc.collect()
         np.clip(rgb, 0, 1, out=rgb)
-        np.piecewise(rgb, [rgb > 0.001953125, rgb <= 0.001953125],
+        # Apply Gamma
+        np.piecewise(rgb, [rgb > PROPHOTO_Y_LINE, rgb <= PROPHOTO_Y_LINE],
                      [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])
 
     # Convert to sRGB color space
@@ -50,7 +56,8 @@ def render(packet):
         del xyz
         gc.collect()
         np.clip(rgb/100, 0, 1, out=rgb)  # TODO remove divide by 100
-        np.piecewise(rgb, [rgb > 0.0031308, rgb <= 0.0031308],
+        # Apply Gamma
+        np.piecewise(rgb, [rgb > SRGB_Y_LINE, rgb <= SRGB_Y_LINE],
                      [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,
                       lambda rgb: 12.92 * rgb])
 
