@@ -6,6 +6,7 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
+    Keenan Miller <https://github.com/keenanm500>
 
 License:
     © 2022 BeyondRGB
@@ -13,42 +14,57 @@ License:
 """
 # Python imports
 import sys
+import argparse
 
 # Local imports
 from pipelines import processing_pipeline
 from packet import Packet
 from target import Target
+from parser import Parser
+import constants
 
 
 def main():
-    """ App entry point """
-    # Error checking
-    if len(sys.argv) < 10:
-        print(len(sys.argv))
-        print("Missing File Paths")
-        exit()
+    # App entry point
+    parser = Parser(formatter_class=argparse.RawTextHelpFormatter)
 
-    # TODO: stadardize parsing of arguments
+    parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'], default='NGT', help=constants.TARGET_TYPE_HELP)
 
-    """ Setup packet """
-    packet = Packet()
+    # Top left & bottom right of (NGT at the moment) target (pixels)
+    parser.add_argument('top_left_x', help=constants.TOP_LEFT_X_HELP)
+    parser.add_argument('bottom_right_x', help=constants.BOTTOM_RIGHT_X_HELP)
+    parser.add_argument('top_left_y', help=constants.TOP_LEFT_Y_HELP)
+    parser.add_argument('bottom_right_y', help=constants.BOTTOM_RIGHT_Y_HELP)
+
+    # Location of white square on target image
+    parser.add_argument('white_col', help=constants.WHITE_COL_HELP)
+    parser.add_argument('white_row', help=constants.WHITE_ROW_HELP)
+
+    parser.add_argument('images', nargs='+', help=constants.IMAGES_HELP)
+    args = parser.parse_args()
+
+    if len(args.images) < 6:
+        parser.print_help()
+        sys.exit(1)
 
     # Gather target coords and white square
-    tl = (int(sys.argv[1]), int(sys.argv[3]))
-    br = (int(sys.argv[2]), int(sys.argv[4]))
-    col = int(sys.argv[5])
-    row = int(sys.argv[6])
-    target = Target(tl, br, row, col)
-    packet.target = target
+    top_left = (int(args.top_left_x), int(args.top_left_y))
+    bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
 
-    # Gather file locations
-    for i in range(7, len(sys.argv)):
-        packet.files.append(sys.argv[i])
+    target = Target(top_left, bottom_right, int(args.white_row), int(args.white_col))
 
-    """ Begin pipeline """
+    # Setup packet
+    packet = build_packet(args.images, target)
+
+    # Begin pipeline
     processing_pipeline(packet)
 
-    # TODO error handling
+
+def build_packet(images, target):
+    packet = Packet()
+    packet.files.extend(images)
+    packet.target = target
+    return packet
 
 
 if __name__ == "__main__":

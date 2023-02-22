@@ -28,8 +28,8 @@ def processing_pipeline(packet):
     num_files = len(packet.files)
 
     # Validate request
-    if num_files < 8 or num_files % 2 != 0:
-        raise MissingFilesException(8, num_files)
+    if num_files < 6 or num_files % 2 != 0:
+        raise MissingFilesException(6, num_files)
 
     # Setup
     packet.generate_swap()
