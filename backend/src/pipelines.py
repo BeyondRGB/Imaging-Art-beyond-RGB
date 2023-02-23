@@ -16,7 +16,7 @@ from exceptions import MissingFilesException
 from preprocessing import preprocess
 from calibration import color_calibrate
 from util import extract_camsigs
-
+from spectral_reflectance import spectrally_transform
 
 def processing_pipeline(packet):
     """ main color calibration pipeline
@@ -48,7 +48,8 @@ def processing_pipeline(packet):
     preprocess(packet)
     packet.camsigs = extract_camsigs(packet)
     packet.unload_target()  # Save memory (we'll reload later)
-    color_calibrate(packet)
+    spectrally_transform(packet)
+    # color_calibrate(packet)
     # TODO validate solution
     # TODO render target
     # TODO output target to file
@@ -60,8 +61,8 @@ def processing_pipeline(packet):
     dark = packet.get_dark_img()
     white = packet.get_white_img()
     target = packet.get_target_img()
-    t1 = cv2.cvtColor(target[0],  cv2.COLOR_RGB2BGR)
-    cv2.imwrite("out.tiff", t1)
+    # t1 = cv2.cvtColor(target[0],  cv2.COLOR_RGB2BGR)
+    # cv2.imwrite("out.tiff", t1)
 
     # TODO Batch Processing
     #   do
