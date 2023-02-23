@@ -19,10 +19,9 @@ from os.path import exists
 from tempfile import TemporaryFile
 
 
-def save_image(img, path):
+def save_image(packet):
     """ Save image to disk
-    [in] img     : image to save
-    [in] path   : image save location
+    [in] packet :
     """
     pass
 
