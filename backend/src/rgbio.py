@@ -18,12 +18,18 @@ import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
 
+from packet import getimg, IMGTYPE_SUBJECT
+
 
 def save_image(packet):
     """ Save image to disk
     [in] packet :
     """
-    pass
+
+    subject = getimg(packet, IMGTYPE_SUBJECT)
+    print(len(subject))
+    exit()
+
 
 
 def load_image(path):

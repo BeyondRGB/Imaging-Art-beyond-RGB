@@ -15,6 +15,7 @@ License:
 import sys
 import argparse
 
+from rgbio import save_image
 from pipeline import processing_pipeline
 from packet import genpacket, gentarget
 from parser import Parser
@@ -78,6 +79,8 @@ def main():
 
     # Setup packet
     packet = build_packet(args.images, target)
+
+    save_image(packet)
 
     # Begin pipeline
     processing_pipeline(packet)
