@@ -12,35 +12,52 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python imports
 import sys
 import argparse
 
-# Local imports
-from pipelines import processing_pipeline
-from packet import Packet
-from target import Target
+from pipeline import processing_pipeline
+from packet import genpacket, gentarget
 from parser import Parser
-import constants
+
+
+# Usage help messages
+TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
+TOP_LEFT_X_HELP = 'Pixel value of the top-left of the upright color target from the left end of the color-target image'
+BOTTOM_RIGHT_X_HELP = 'Pixel value of the bottom-right of the upright color target from the left end of the color-target image'
+TOP_LEFT_Y_HELP = 'Pixel value of the top-left of the upright color target from the top end of the color-target image'
+BOTTOM_RIGHT_Y_HELP = 'Pixel value of the bottom-right of the upright color target from the top end of the color-target image'
+WHITE_COL_HELP = 'Column of selected white patch from left of target'
+WHITE_ROW_HELP = 'Row of selected white patch from top of target'
+IMAGES_HELP = '''Images should be added in this order:
+        Target A
+        Target B
+        Flat Field A
+        Flat Field B
+        Dark Field A
+        Dark Field B
+        Subject A (Optional)
+        Subject B (OptionaL)
+        Additional Images... (A and B) '''
 
 
 def main():
-    # App entry point
+    """ App entry point """
     parser = Parser(formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'], default='NGT', help=constants.TARGET_TYPE_HELP)
+    parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'],
+                        default='NGT', help=TARGET_TYPE_HELP)
 
     # Top left & bottom right of (NGT at the moment) target (pixels)
-    parser.add_argument('top_left_x', help=constants.TOP_LEFT_X_HELP)
-    parser.add_argument('bottom_right_x', help=constants.BOTTOM_RIGHT_X_HELP)
-    parser.add_argument('top_left_y', help=constants.TOP_LEFT_Y_HELP)
-    parser.add_argument('bottom_right_y', help=constants.BOTTOM_RIGHT_Y_HELP)
+    parser.add_argument('top_left_x', help=TOP_LEFT_X_HELP)
+    parser.add_argument('bottom_right_x', help=BOTTOM_RIGHT_X_HELP)
+    parser.add_argument('top_left_y', help=TOP_LEFT_Y_HELP)
+    parser.add_argument('bottom_right_y', help=BOTTOM_RIGHT_Y_HELP)
 
     # Location of white square on target image
-    parser.add_argument('white_col', help=constants.WHITE_COL_HELP)
-    parser.add_argument('white_row', help=constants.WHITE_ROW_HELP)
+    parser.add_argument('white_col', help=WHITE_COL_HELP)
+    parser.add_argument('white_row', help=WHITE_ROW_HELP)
 
-    parser.add_argument('images', nargs='+', help=constants.IMAGES_HELP)
+    parser.add_argument('images', nargs='+', help=IMAGES_HELP)
     args = parser.parse_args()
 
     if len(args.images) < 6:
@@ -51,7 +68,8 @@ def main():
     top_left = (int(args.top_left_x), int(args.top_left_y))
     bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
 
-    target = Target(top_left, bottom_right, int(args.white_row), int(args.white_col))
+    target = gentarget(top_left, bottom_right, (int(args.white_row),
+                                                int(args.white_col)))
 
     # Setup packet
     packet = build_packet(args.images, target)
@@ -61,9 +79,12 @@ def main():
 
 
 def build_packet(images, target):
-    packet = Packet()
-    packet.files.extend(images)
-    packet.target = target
+    """ Create packet
+    [in] image  : image files
+    [in] target : target grid
+    [out] packet
+    """
+    packet = genpacket(images, target)
     return packet
 
 

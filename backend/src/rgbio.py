@@ -13,7 +13,6 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python imports
 import numpy as np
 import rawpy as rp
 from os.path import exists
@@ -73,7 +72,7 @@ def load_array(path):
         arrs = np.load(path, allow_pickle=True)
     except rp._rawpy.LibRawIOError:
         raise IOError
-    return (arrs['arr_0'], arrs['arr_1'])
+    return (arrs['arr_0'].astype('f4'), arrs['arr_1'].astype('f4'))
 
 
 def create_temp_file():

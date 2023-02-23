@@ -11,16 +11,18 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python Imports
 import gc
-import time
 import numpy as np
-from scipy.optimize import fmin, minimize
+from scipy.optimize import fmin
 
-# Local Imports
 from lab_refs import LAB_REF
-from constants import INIT_MOARR, TARGET_RADIUS
 from spectral_equation import xyztolab, ciede2000
+
+
+__INIT_MOARR = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
+                0.10, 0.10, 0.25, 0.10, 1.00, 0.10,
+                0.10, 0.10, 0.25, 0.10, 0.10, 0.50,
+                0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 
 
 def color_calibrate(packet):
@@ -34,9 +36,7 @@ def color_calibrate(packet):
     [post] target image is unloaded
     [post] packet x variable is populated
     """
-    # res = minimize(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
-    res = fmin(__de_equ, INIT_MOARR, (packet.camsigs, LAB_REF), maxiter=20000,
-               maxfun=20000)
+    res = fmin(__de_equ, __INIT_MOARR, (packet.camsigs, LAB_REF))
     print(__de_equ(res, packet.camsigs, LAB_REF))
     packet.x = res
 

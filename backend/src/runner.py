@@ -13,7 +13,6 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-
 import npyscreen
 import subprocess
 from target_selector import select_target
