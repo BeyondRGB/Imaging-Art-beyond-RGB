@@ -38,6 +38,7 @@ IMAGES_HELP = '''Images should be added in this order:
         Subject A (Optional)
         Subject B (OptionaL)
         Additional Images... (A and B) '''
+OUTPUT_HELP = 'Directory to use for image output instead of current working directory'
 
 
 def main():
@@ -58,6 +59,10 @@ def main():
     parser.add_argument('white_row', help=WHITE_ROW_HELP)
 
     parser.add_argument('images', nargs='+', help=IMAGES_HELP)
+
+    # Optional arg to override default output directory (current working)
+    parser.add_argument('output', required=False, help=OUTPUT_HELP)
+
     args = parser.parse_args()
 
     if len(args.images) < 6:
