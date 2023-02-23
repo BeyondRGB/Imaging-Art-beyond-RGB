@@ -73,7 +73,7 @@ def load_array(path):
         arrs = np.load(path, allow_pickle=True)
     except rp._rawpy.LibRawIOError:
         raise IOError
-    return (arrs['arr_0'], arrs['arr_1'])
+    return (arrs['arr_0'].astype('f4'), arrs['arr_1'].astype('f4'))
 
 
 def create_temp_file():

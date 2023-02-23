@@ -21,18 +21,19 @@ import gc
 import numpy as np
 from dataclasses import dataclass
 
+from target import Target
 from rgbio import load_image, load_array, save_array, create_temp_file
 from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
         IMGTYPE_DARK, IMGTYPE_SUBJECT
 
 """ Constants """
 # File/array index constants
-__WHITE_A_IDX = 0
-__WHITE_B_IDX = 1
-__DARK_A_IDX = 2
-__DARK_B_IDX = 3
-__TARGET_A_IDX = 4
-__TARGET_B_IDX = 5
+__TARGET_A_IDX = 0
+__TARGET_B_IDX = 1
+__WHITE_A_IDX = 2
+__WHITE_B_IDX = 3
+__DARK_A_IDX = 4
+__DARK_B_IDX = 5
 __RENDERABLES_START = 6
 
 
@@ -62,16 +63,17 @@ class Packet:
     render: np.ndarray
 
 
-def packetgen(files: list) -> Packet:
-    """ Initialize packet with default values
-    [in] files: list of files we are working with
+def packetgen(files: list, target: Target) -> Packet:
+    """ Initialize packet with default values and loaded images
+    images will be in swap after this
+    [in] files  : list of files we are working with
+    [in] target : target grid
     [out] packet
     """
-    pkt = Packet()
-    pkt.files = files
-    pkt.swap = __swapgen(len(files) // 2)
-    pkt.subject_idx = (__TARGET_A_IDX, __TARGET_B_IDX)
-
+    swap = __swapgen(len(files) // 2)
+    subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
+    pkt = Packet(files, swap, subjptr, target, (None, None), None, None, None)
+    __swapload(pkt)
     return pkt
 
 
@@ -93,7 +95,7 @@ def imgget(packet: Packet, imgtype: int) -> tuple:
     else:
         return None, None
 
-    swapidx = __swapgen(a)
+    swapidx = __swapidxget(a)
     return __imgload(packet, a, b, swapidx)
 
 
@@ -115,9 +117,9 @@ def imgput(packet: Packet, imgtype: int, imgpair: tuple):
     else:
         return
 
-    save_array((imgpair[0], imgpair[1]), packet.swap[s])
+    save_array(imgpair, packet.swap[s])
 
-    del imgpair[0], imgpair[1]
+    del imgpair
     gc.collect()
 
 
@@ -132,9 +134,11 @@ def __swapload(packet: Packet):
         b = a + 1
         # Load files
         aimg, bimg = __imgload(packet, a, b)
+        # Save in swap
+        save_array((aimg, bimg), s)
 
 
-def __swapidxgen(idx: int) -> int:
+def __swapidxget(idx: int) -> int:
     """ Get index of corresponding swap file
     [in] idx : index of image in file list
     [out] index of image is swap list
@@ -161,7 +165,7 @@ def __imgload(packet: Packet, a: int, b: int, s: int = None) -> tuple:
     [in, opt] s : swap file location index
     [out] image pair in (A, B) tuple
     """
-    if s:
+    if s is not None:
         return load_array(packet.swap[s])
     else:
         aimg = load_image(packet.files[a])

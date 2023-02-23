@@ -15,11 +15,11 @@ License:
 import numpy as np
 
 # Local imports
-from exceptions import MissingFilesException
+from packet import imgget
 from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
-from constants import TARGET_RADIUS
+from constants import TARGET_RADIUS, IMGTYPE_TARGET
 
 
 def processing_pipeline(packet):
@@ -31,8 +31,8 @@ def processing_pipeline(packet):
     spectral imaging before we render all of the subjects including the target.
     See block comments for memory information
     """
-    preprocess(packet, True)
-    packet.camsigs = packet.extract_camsigs()
+    preprocess(packet)
+    packet.camsigs = extract_camsigs(packet)
     color_calibrate(packet)
 
     """ Render and Save (Batch Processing)
@@ -42,14 +42,15 @@ def processing_pipeline(packet):
     one by one.
     """
     # TODO finish description
-    render(packet)  # Subject array is deleted; we now have the final render
+#    render(packet)  # Subject array is deleted; we now have the final render
     # TODO image saving
     # TODO add batch
 
     # TODO remove the fillowing once target output to file is done
     import cv2
-    print(packet.render.shape)
-    t1 = cv2.cvtColor(packet.render,  cv2.COLOR_RGB2BGR)
+#    print(packet.render.shape)
+    t1 = imgget(packet, IMGTYPE_TARGET)[0]
+    t1 = cv2.cvtColor(t1,  cv2.COLOR_RGB2BGR)
     cv2.imwrite("out.tiff", t1)
 
     return
@@ -63,7 +64,7 @@ def extract_camsigs(packet):
     [in] packet : pipeline packet
     [out] camsigs array
     """
-    t_img = packet.get_target_img()
+    t_img = imgget(packet, IMGTYPE_TARGET)
     tr = TARGET_RADIUS
 
     # TODO fix orientation

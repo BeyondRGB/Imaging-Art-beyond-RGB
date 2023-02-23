@@ -18,6 +18,7 @@ License:
 import gc
 import numpy as np
 from cv2 import medianBlur
+import time
 
 from packet import imgget, imgput, Packet
 from constants import TARGET_RADIUS, IMGTYPE_WHITE,\
@@ -32,18 +33,18 @@ def preprocess(packet: Packet):
     [in] packet : pipeline packet
     [post] images preprocessed in place
     """
-    # Load images
+    t = time.perf_counter()
     subj = imgget(packet, IMGTYPE_SUBJECT)
     white = imgget(packet, IMGTYPE_WHITE)
     dark = imgget(packet, IMGTYPE_DARK)
+    print(time.perf_counter() - t)
 
-    # Preprocess
     if packet.wscale[0] is None:
         # This is out first time through
         __deadpixels(subj, dark, white)
         __darkcurrent(subj, dark, white)
         __wscalegen(packet, subj, white)
-        __flatfield(subj, white)
+        __flatfield(packet, subj, white)
         imgput(packet, IMGTYPE_DARK, dark)  # save once
         imgput(packet, IMGTYPE_WHITE, white)  # save once
     else:
@@ -51,7 +52,7 @@ def preprocess(packet: Packet):
         __deadpixels(subj)
         __darkcurrent(subj, dark)
         imgput(packet, IMGTYPE_DARK, dark)
-        __flatfield(subj, white)
+        __flatfield(packet, subj, white)
         del dark, white
         gc.collect()
 
@@ -82,7 +83,6 @@ def __darkcurrent(subj: tuple, dark: tuple, white: tuple = None):
     [in,opt] white : white images (only used for the first pass)
     [post] images corrected for camera dark current
     """
-    # If the Ws have not yet been generated, we need to correct the flat fields
     if white:
         white[0][...] -= dark[0]
         white[1][...] -= dark[1]
@@ -109,21 +109,20 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
     # TODO dynamic YVAL generation
     w0 = __YVAL * (t0mean / w0mean)
     w1 = __YVAL * (t1mean / w1mean)
-    packet.flat_field_ws = (w0, w1)
+    packet.wscale = (w0, w1)
 
 
-def __flatfield(packet: Packet, subject: tuple, white: tuple):
+def __flatfield(packet: Packet, subj: tuple, white: tuple):
     """ Flat field image pair
     [in] packet  : pipeline packet
     [in] subj    : subject images
     [in] white   : white images
     [post] subject flat fielded
     """
-    # Flat fielding
-    subject[0][...] /= white[0]
-    subject[0][...] *= packet.wscale[0]
-    subject[1][...] /= white[1]
-    subject[1][...] *= packet.wscale[1]
+    subj[0][...] /= white[0]
+    subj[0][...] *= packet.wscale[0]
+    subj[1][...] /= white[1]
+    subj[1][...] *= packet.wscale[1]
 
 
 """
