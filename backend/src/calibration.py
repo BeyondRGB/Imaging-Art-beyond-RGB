@@ -18,7 +18,7 @@ from scipy.optimize import fmin
 from lab_refs import LAB_REF
 from spectral_equation import xyztolab, ciede2000
 
-# CONSTANTS
+
 __INIT_MOARR = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
                 0.10, 0.10, 0.25, 0.10, 1.00, 0.10,
                 0.10, 0.10, 0.25, 0.10, 0.10, 0.50,

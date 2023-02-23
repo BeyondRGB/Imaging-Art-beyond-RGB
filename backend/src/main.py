@@ -12,14 +12,13 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python imports
 import sys
 import argparse
 
-# Local imports
 from pipeline import processing_pipeline
-from packet import packetgen, targetgen
+from packet import genpacket, gentarget
 from parser import Parser
+
 
 # Usage help messages
 TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
@@ -69,7 +68,7 @@ def main():
     top_left = (int(args.top_left_x), int(args.top_left_y))
     bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
 
-    target = targetgen(top_left, bottom_right, (int(args.white_row),
+    target = gentarget(top_left, bottom_right, (int(args.white_row),
                                                 int(args.white_col)))
 
     # Setup packet
@@ -85,7 +84,7 @@ def build_packet(images, target):
     [in] target : target grid
     [out] packet
     """
-    packet = packetgen(images, target)
+    packet = genpacket(images, target)
     return packet
 
 

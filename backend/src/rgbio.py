@@ -13,7 +13,6 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python imports
 import numpy as np
 import rawpy as rp
 from os.path import exists

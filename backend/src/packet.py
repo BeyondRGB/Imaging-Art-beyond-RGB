@@ -6,9 +6,12 @@ Structs:
     Target
 
 Functions:
-packetgen() : Initialize packet with default values
-imgget()    : Get specified image
-imgput()    : Put image back in swap
+    genpacket       : Initialize packet with default values
+    getimg          : Get specified image
+    putimg          : Put image back in swap
+    gentarget       : Initialize target
+    genpatchlist    : Generate the list of target patches
+    genwhitepatchxy : Generate a coordinate for the white patch
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
@@ -25,7 +28,7 @@ from rgbio import load_image, load_array, save_array, create_temp_file
 from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
         IMGTYPE_DARK, IMGTYPE_SUBJECT
 
-""" Constants """
+
 # File/array index constants
 __TARGET_A_IDX = 0
 __TARGET_B_IDX = 1
@@ -79,7 +82,7 @@ class Target:
     shape: tuple
 
 
-def packetgen(files: list, target: Target) -> Packet:
+def genpacket(files: list, target: Target) -> Packet:
     """ Initialize packet with default values and loaded images
     images will be in swap after this
     [in] files  : list of files we are working with
@@ -93,7 +96,7 @@ def packetgen(files: list, target: Target) -> Packet:
     return pkt
 
 
-def imgget(packet: Packet, imgtype: int) -> tuple:
+def getimg(packet: Packet, imgtype: int) -> tuple:
     """ Get specified image
     Loads image from swap space and returns it
     [in] packet  : packet we are operating on
@@ -115,7 +118,7 @@ def imgget(packet: Packet, imgtype: int) -> tuple:
     return __imgload(packet, a, b, swapidx)
 
 
-def imgput(packet: Packet, imgtype: int, imgpair: tuple):
+def putimg(packet: Packet, imgtype: int, imgpair: tuple):
     """ Put image back in swap
     only call if image contents need to be saved otherwise just delete
     [in] packet  : packet we are operating on
@@ -139,7 +142,7 @@ def imgput(packet: Packet, imgtype: int, imgpair: tuple):
     gc.collect()
 
 
-def targetgen(tlcorner: tuple, brcorner: tuple, whitepatch: tuple) -> Target:
+def gentarget(tlcorner: tuple, brcorner: tuple, whitepatch: tuple) -> Target:
     """ Initialize target
     [in] tlcorner   : the top left coordinate of the target (x, y)
     [in] brcorner   : the bottom right coordinate of the target (x, y)
@@ -149,7 +152,7 @@ def targetgen(tlcorner: tuple, brcorner: tuple, whitepatch: tuple) -> Target:
     return target
 
 
-def patchlistgen(target: Target) -> list:
+def genpatchlist(target: Target) -> list:
     """ Generate the list of target patches
     [in] target : the target we are operating on
     [out] list of patch center points
@@ -162,7 +165,7 @@ def patchlistgen(target: Target) -> list:
     return siglist
 
 
-def whitepatchxygen(target: Target) -> tuple:
+def genwhitepatchxy(target: Target) -> tuple:
     """ Generate a coordinate for the white patch
     [in] target : the target we are operating on
     [out] white patch center coordinate (x,y)

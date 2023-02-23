@@ -14,9 +14,9 @@ License:
 import numpy as np
 import gc
 
-from packet import imgget, IMGTYPE_SUBJECT
+from packet import getimg, IMGTYPE_SUBJECT
 
-# CONSTANTS
+
 __PROPHOTO_TRANS = [[1.34594330, -0.2556075, -0.0511118],
                     [-0.5445989, 1.50816730, 0.02053510],
                     [0.00000000, 0.00000000, 1.21181280]]
@@ -26,7 +26,6 @@ __SRGB_TRANS = [[3.13385610, -1.6168667, -0.4906146],
 __COLORSPACE = 'sRGB'  # 'sRGB' or 'ProPhoto'
 __PROPHOTO_Y_LINE = 0.001953125
 __SRGB_Y_LINE = 0.0031308
-
 
 
 def render(packet):
@@ -80,7 +79,7 @@ def __genimgsigs(packet):
     [out] camsigs array
     [out] image dimentions
     """
-    subj = imgget(packet, IMGTYPE_SUBJECT)
+    subj = getimg(packet, IMGTYPE_SUBJECT)
 
     shape = subj[0].shape
     camsigs = [subj[0][:, :, 0].flatten(),

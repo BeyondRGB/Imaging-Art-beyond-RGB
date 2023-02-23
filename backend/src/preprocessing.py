@@ -18,11 +18,11 @@ License:
 import gc
 import numpy as np
 from cv2 import medianBlur
-import time
 
-from packet import Packet, imgget, imgput, whitepatchxygen
+from packet import Packet, getimg, putimg, genwhitepatchxy
 from constants import TARGET_RADIUS, IMGTYPE_WHITE,\
         IMGTYPE_DARK, IMGTYPE_SUBJECT
+
 
 __BLUR_FACTOR = 3  # Dead pixel correction
 __YVAL = 0.86122  # Flat fielding
@@ -33,9 +33,9 @@ def preprocess(packet: Packet):
     [in] packet : pipeline packet
     [post] images preprocessed in place
     """
-    subj = imgget(packet, IMGTYPE_SUBJECT)
-    white = imgget(packet, IMGTYPE_WHITE)
-    dark = imgget(packet, IMGTYPE_DARK)
+    subj = getimg(packet, IMGTYPE_SUBJECT)
+    white = getimg(packet, IMGTYPE_WHITE)
+    dark = getimg(packet, IMGTYPE_DARK)
 
     if packet.wscale[0] is None:
         # This is out first time through
@@ -43,18 +43,18 @@ def preprocess(packet: Packet):
         __darkcurrent(subj, dark, white)
         __wscalegen(packet, subj, white)
         __flatfield(packet, subj, white)
-        imgput(packet, IMGTYPE_DARK, dark)  # save once
-        imgput(packet, IMGTYPE_WHITE, white)  # save once
+        putimg(packet, IMGTYPE_DARK, dark)  # save once
+        putimg(packet, IMGTYPE_WHITE, white)  # save once
     else:
         # Preprocessing on non target images
         __deadpixels(subj)
         __darkcurrent(subj, dark)
-        imgput(packet, IMGTYPE_DARK, dark)
+        putimg(packet, IMGTYPE_DARK, dark)
         __flatfield(packet, subj, white)
         del dark, white
         gc.collect()
 
-    imgput(packet, IMGTYPE_SUBJECT, subj)  # Always save subject
+    putimg(packet, IMGTYPE_SUBJECT, subj)  # Always save subject
 
 
 def __deadpixels(subj: tuple, dark: tuple = None, white: tuple = None):
@@ -96,7 +96,7 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
     [post] packet.wscale populated
     """
     tr = TARGET_RADIUS
-    x, y = whitepatchxygen(packet.target)
+    x, y = genwhitepatchxy(packet.target)
 
     t0mean = np.mean(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))
     t1mean = np.mean(target[1][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))

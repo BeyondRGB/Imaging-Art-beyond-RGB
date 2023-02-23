@@ -11,11 +11,9 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python imports
 import numpy as np
 
-# Local imports
-from packet import imgget, patchlistgen
+from packet import getimg, genpatchlist
 from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
@@ -62,8 +60,8 @@ def extract_camsigs(packet):
     [in] packet : pipeline packet
     [out] camsigs array
     """
-    t_img = imgget(packet, IMGTYPE_TARGET)
-    siglist = patchlistgen(packet.target)
+    t_img = getimg(packet, IMGTYPE_TARGET)
+    siglist = genpatchlist(packet.target)
     tr = TARGET_RADIUS
     camsigs = np.ndarray((6, 130))
     for i, sig in enumerate(siglist):
