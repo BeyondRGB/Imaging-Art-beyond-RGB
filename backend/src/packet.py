@@ -89,10 +89,10 @@ def genpacket(files: list, target: Target) -> Packet:
     [in] target : target grid
     [out] packet
     """
-    swap = __swapgen(len(files) // 2)
+    swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
     pkt = Packet(files, swap, subjptr, target, (None, None), None, None, None)
-    __swapload(pkt)
+    __loadswap(pkt)
     return pkt
 
 
@@ -114,8 +114,8 @@ def getimg(packet: Packet, imgtype: int) -> tuple:
     else:
         return None, None
 
-    swapidx = __swapidxget(a)
-    return __imgload(packet, a, b, swapidx)
+    swapidx = __getswapidx(a)
+    return __loadimg(packet, a, b, swapidx)
 
 
 def putimg(packet: Packet, imgtype: int, imgpair: tuple):
@@ -161,7 +161,7 @@ def genpatchlist(target: Target) -> list:
     rows, cols = target.shape
     for c in range(0, cols):
         for r in range(0, rows):
-            siglist.append(__patchlocgen(target, r, c))
+            siglist.append(__getpatchloc(target, r, c))
     return siglist
 
 
@@ -170,10 +170,10 @@ def genwhitepatchxy(target: Target) -> tuple:
     [in] target : the target we are operating on
     [out] white patch center coordinate (x,y)
     """
-    return __patchlocgen(target, target.whitepatch[0], target.whitepatch[1])
+    return __getpatchloc(target, target.whitepatch[0], target.whitepatch[1])
 
 
-def __swapload(packet: Packet):
+def __loadswap(packet: Packet):
     """ Populate swap files with their corresponding images
     [in] packet : packet we are operating on
     [post] temp files have been loaded with the images
@@ -183,12 +183,12 @@ def __swapload(packet: Packet):
         a = i * 2
         b = a + 1
         # Load files
-        aimg, bimg = __imgload(packet, a, b)
+        aimg, bimg = __loadimg(packet, a, b)
         # Save in swap
         save_array((aimg, bimg), s)
 
 
-def __swapidxget(idx: int) -> int:
+def __getswapidx(idx: int) -> int:
     """ Get index of corresponding swap file
     [in] idx : index of image in file list
     [out] index of image is swap list
@@ -196,7 +196,7 @@ def __swapidxget(idx: int) -> int:
     return idx // 2
 
 
-def __swapgen(n: int) -> list:
+def __genswap(n: int) -> list:
     """ Generate swapfiles
     [in] n : number of files to generate
     [out] swap list
@@ -207,7 +207,7 @@ def __swapgen(n: int) -> list:
     return swap
 
 
-def __imgload(packet: Packet, a: int, b: int, s: int = None) -> tuple:
+def __loadimg(packet: Packet, a: int, b: int, s: int = None) -> tuple:
     """ Load image pair
     [in] packet : packet we are operating on
     [in] a      : A file index
@@ -223,7 +223,7 @@ def __imgload(packet: Packet, a: int, b: int, s: int = None) -> tuple:
         return aimg, bimg
 
 
-def __patchlocgen(target: Target, row: int, col: int) -> tuple:
+def __getpatchloc(target: Target, row: int, col: int) -> tuple:
     """ Get the center of a target square
     [in] row : target square row
     [in] col : target square column
