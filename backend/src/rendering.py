@@ -68,7 +68,6 @@ def render(packet):
 
     # Reshape into image
     render = np.dstack((rgb[0], rgb[1], rgb[2])).reshape(imgshape)
-    print(render)
     del rgb
     gc.collect()
 
@@ -83,7 +82,7 @@ def __genimgsigs(packet):
     """
     subj = imgget(packet, IMGTYPE_SUBJECT)
 
-    # Python is like candy; it tastes good but I hate that I like it
+    shape = subj[0].shape
     camsigs = [subj[0][:, :, 0].flatten(),
                subj[0][:, :, 1].flatten(),
                subj[0][:, :, 2].flatten(),
@@ -91,6 +90,7 @@ def __genimgsigs(packet):
                subj[1][:, :, 1].flatten(),
                subj[1][:, :, 2].flatten()]
 
-    packet.unload_subject()  # Cleanup
+    del subj
+    gc.collect()
 
-    return camsigs, subj[0].shape
+    return camsigs, shape

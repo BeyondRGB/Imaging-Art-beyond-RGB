@@ -33,11 +33,9 @@ def preprocess(packet: Packet):
     [in] packet : pipeline packet
     [post] images preprocessed in place
     """
-    t = time.perf_counter()
     subj = imgget(packet, IMGTYPE_SUBJECT)
     white = imgget(packet, IMGTYPE_WHITE)
     dark = imgget(packet, IMGTYPE_DARK)
-    print(time.perf_counter() - t)
 
     if packet.wscale[0] is None:
         # This is out first time through
