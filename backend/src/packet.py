@@ -6,14 +6,9 @@ Structs:
     Target
 
 Functions:
-    load_calibration_imgs : Load images needed for calibration
-    get_white_img         : Get tuple of flat field images
-    get_dark_img          : Get tuple of dark field images
-    get_target_img        : Get tuple of target images
-    generate_swap         : Generate swap space
-    unload_white          : Unload flat field images
-    unload_dark           : Unload dark field images
-    unload_target         : Unload target images
+packetgen() : Initialize packet with default values
+imgget()    : Get specified image
+imgput()    : Put image back in swap
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
@@ -102,7 +97,7 @@ def imgget(packet: Packet, imgtype: int) -> tuple:
     return __imgload(packet, a, b, swapidx)
 
 
-def imgput(packet: Packet, imgtype: int, imgpair: tuple) -> None:
+def imgput(packet: Packet, imgtype: int, imgpair: tuple):
     """ Put image back in swap
     only call if image contents need to be saved otherwise just delete
     [in] packet  : packet we are operating on
@@ -126,7 +121,7 @@ def imgput(packet: Packet, imgtype: int, imgpair: tuple) -> None:
     gc.collect()
 
 
-def __swapload(packet: Packet) -> None:
+def __swapload(packet: Packet):
     """ Populate swap files with their corresponding images
     [in] packet : packet we are operating on
     [post] temp files have been loaded with the images

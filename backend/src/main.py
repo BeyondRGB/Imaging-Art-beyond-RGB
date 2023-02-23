@@ -18,17 +18,18 @@ import argparse
 
 # Local imports
 from pipeline import processing_pipeline
-from packet import Packet
+from packet import packetgen
 from target import Target
 from parser import Parser
 import constants
 
 
 def main():
-    # App entry point
+    """ App entry point """
     parser = Parser(formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'], default='NGT', help=constants.TARGET_TYPE_HELP)
+    parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'],
+                        default='NGT', help=constants.TARGET_TYPE_HELP)
 
     # Top left & bottom right of (NGT at the moment) target (pixels)
     parser.add_argument('top_left_x', help=constants.TOP_LEFT_X_HELP)
@@ -51,7 +52,8 @@ def main():
     top_left = (int(args.top_left_x), int(args.top_left_y))
     bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
 
-    target = Target(top_left, bottom_right, int(args.white_row), int(args.white_col))
+    target = Target(top_left, bottom_right, int(args.white_row),
+                    int(args.white_col))
 
     # Setup packet
     packet = build_packet(args.images, target)
@@ -61,7 +63,12 @@ def main():
 
 
 def build_packet(images, target):
-    packet = Packet()
+    """ Create packet
+    [in] image  : image files
+    [in] target : target grid
+    [out] packet
+    """
+    packet = packetgen(images)
     packet.files.extend(images)
     packet.target = target
     return packet

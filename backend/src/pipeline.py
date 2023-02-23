@@ -20,35 +20,20 @@ from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
 from constants import TARGET_RADIUS
-from packet import *
 
 
 def processing_pipeline(packet):
-    """ main color calibration pipeline
+    """ Color calibration pipeline
     [in] packet : packet to send through the pipeline
-    [raise] IOError, FileNotFoundError, MissingFilesException
-    [raise] ZeroDivisionError
     """
-    num_files = len(packet.files)
-
-    # Validate request
-    if num_files < 6 or num_files % 2 != 0:
-        raise MissingFilesException(6, num_files)
-
-    # Setup
-    generate_swap()
-
     """ Calibration
     We need to get the calibration matrices for both color transformation and
     spectral imaging before we render all of the subjects including the target.
     See block comments for memory information
     """
-    packet.load_calibration_imgs()  # flat, dark, and targets loaded
-    preprocess(packet)  # flat and dark unloaded here
-    packet.camsigs = packet.extract_camsigs()  # needed for both calibrations
-    packet.unload_target()  # Targets no longer needed until rendering
+    preprocess(packet, True)
+    packet.camsigs = packet.extract_camsigs()
     color_calibrate(packet)
-    pkt_camsigs_del(packet)  # Cleanup
 
     """ Render and Save (Batch Processing)
     At this point we have the color transformation matrix and need to apply it
@@ -57,7 +42,6 @@ def processing_pipeline(packet):
     one by one.
     """
     # TODO finish description
-    load_target(packet)
     render(packet)  # Subject array is deleted; we now have the final render
     # TODO image saving
     # TODO add batch
