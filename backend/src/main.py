@@ -18,10 +18,8 @@ import argparse
 
 # Local imports
 from pipeline import processing_pipeline
-from packet import packetgen
-from target import Target
+from packet import packetgen, targetgen
 from parser import Parser
-import constants
 
 # Usage help messages
 TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
@@ -40,8 +38,8 @@ IMAGES_HELP = '''Images should be added in this order:
         Dark Field B
         Subject A (Optional)
         Subject B (OptionaL)
-        Additional Images... (A and B)
-    '''
+        Additional Images... (A and B) '''
+
 
 def main():
     """ App entry point """
@@ -71,8 +69,8 @@ def main():
     top_left = (int(args.top_left_x), int(args.top_left_y))
     bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
 
-    target = Target(top_left, bottom_right, int(args.white_row),
-                    int(args.white_col))
+    target = targetgen(top_left, bottom_right, (int(args.white_row),
+                                                int(args.white_col)))
 
     # Setup packet
     packet = build_packet(args.images, target)

@@ -21,7 +21,6 @@ import gc
 import numpy as np
 from dataclasses import dataclass
 
-from target import Target
 from rgbio import load_image, load_array, save_array, create_temp_file
 from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
         IMGTYPE_DARK, IMGTYPE_SUBJECT
@@ -40,7 +39,7 @@ __RENDERABLES_START = 6
 @dataclass
 class Packet:
     """ Packet
-    struct to hold pipeline data
+    Struct to hold pipeline data
 
     Members:
         files   : list of image files
@@ -61,6 +60,23 @@ class Packet:
     mcalib: np.ndarray
     camsigs: np.ndarray
     render: np.ndarray
+
+
+@dataclass
+class Target:
+    """ Target
+    Struct representing the target grid
+
+    Members:
+        tlcorner   : top left corner of the grid in image space (x,y)
+        blcorner   : bottom right corner of the grid in image space (x,y)
+        whitepatch : location of white patch in target space (row, col)
+        shape      : dimension of target (row, col)
+    """
+    tlcorner: tuple
+    blcorner: tuple
+    whitepatch: tuple
+    shape: tuple
 
 
 def packetgen(files: list, target: Target) -> Packet:
@@ -123,6 +139,37 @@ def imgput(packet: Packet, imgtype: int, imgpair: tuple):
     gc.collect()
 
 
+def targetgen(tlcorner: tuple, brcorner: tuple, whitepatch: tuple) -> Target:
+    """ Initialize target
+    [in] tlcorner   : the top left coordinate of the target (x, y)
+    [in] brcorner   : the bottom right coordinate of the target (x, y)
+    [in] whitepatch : white patch location (row, col)
+    """
+    target = Target(tlcorner, brcorner, whitepatch, (10, 13))
+    return target
+
+
+def patchlistgen(target: Target) -> list:
+    """ Generate the list of target patches
+    [in] target : the target we are operating on
+    [out] list of patch center points
+    """
+    siglist = []
+    rows, cols = target.shape
+    for c in range(0, cols):
+        for r in range(0, rows):
+            siglist.append(__patchlocgen(target, r, c))
+    return siglist
+
+
+def whitepatchxygen(target: Target) -> tuple:
+    """ Generate a coordinate for the white patch
+    [in] target : the target we are operating on
+    [out] white patch center coordinate (x,y)
+    """
+    return __patchlocgen(target, target.whitepatch[0], target.whitepatch[1])
+
+
 def __swapload(packet: Packet):
     """ Populate swap files with their corresponding images
     [in] packet : packet we are operating on
@@ -146,7 +193,7 @@ def __swapidxget(idx: int) -> int:
     return idx // 2
 
 
-def __swapgen(n: int):
+def __swapgen(n: int) -> list:
     """ Generate swapfiles
     [in] n : number of files to generate
     [out] swap list
@@ -171,3 +218,23 @@ def __imgload(packet: Packet, a: int, b: int, s: int = None) -> tuple:
         aimg = load_image(packet.files[a])
         bimg = load_image(packet.files[b])
         return aimg, bimg
+
+
+def __patchlocgen(target: Target, row: int, col: int) -> tuple:
+    """ Get the center of a target square
+    [in] row : target square row
+    [in] col : target square column
+    [out] center coordinate of target square
+    """
+    tl = target.tlcorner
+    br = target.blcorner
+    rows, cols = target.shape
+    # Calculate offset
+    x = (col*2+1)*((br[0]-tl[0])/(cols*2))
+    y = (row*2+1)*((br[1]-tl[1])/(rows*2))
+
+    # Calculate true center
+    x += tl[0]
+    y += tl[1]
+
+    return int(x), int(y)

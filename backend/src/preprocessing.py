@@ -20,7 +20,7 @@ import numpy as np
 from cv2 import medianBlur
 import time
 
-from packet import imgget, imgput, Packet
+from packet import Packet, imgget, imgput, whitepatchxygen
 from constants import TARGET_RADIUS, IMGTYPE_WHITE,\
         IMGTYPE_DARK, IMGTYPE_SUBJECT
 
@@ -96,8 +96,7 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
     [post] packet.wscale populated
     """
     tr = TARGET_RADIUS
-    row, col = packet.target.get_white()
-    x, y = packet.target.get_center_coord(row, col)
+    x, y = whitepatchxygen(packet.target)
 
     t0mean = np.mean(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))
     t1mean = np.mean(target[1][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))

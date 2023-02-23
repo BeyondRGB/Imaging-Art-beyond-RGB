@@ -15,7 +15,7 @@ License:
 import numpy as np
 
 # Local imports
-from packet import imgget
+from packet import imgget, patchlistgen
 from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
@@ -63,11 +63,9 @@ def extract_camsigs(packet):
     [out] camsigs array
     """
     t_img = imgget(packet, IMGTYPE_TARGET)
+    siglist = patchlistgen(packet.target)
     tr = TARGET_RADIUS
-
-    # TODO fix orientation
     camsigs = np.ndarray((6, 130))
-    siglist = packet.target.gen_siglist()
     for i, sig in enumerate(siglist):
         cell = t_img[0][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
         avg = np.average(cell, axis=(0, 1))
