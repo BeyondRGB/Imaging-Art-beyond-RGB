@@ -120,13 +120,16 @@
         display: flex;
         flex-direction: column;
         gap:20px;
-        min-height: 70vh;
+        min-height: 65vh;
     }
     .centerFlexBox {
         display: flex;
         flex-direction: column;
         width: 80%;
-        overflow: scroll;
+        overflow: auto;
+    }
+    .centerFlexBox::-webkit-scrollbar {
+        display: none;
     }
     .inputGroup {
         display: flex;
