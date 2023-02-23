@@ -1,8 +1,19 @@
 """ target.py
-Packet struct and related functions
+dataclasses and functions related to the packet
 
-Classes:
+Structs:
     Packet
+    Target
+
+Functions:
+    load_calibration_imgs : Load images needed for calibration
+    get_white_img         : Get tuple of flat field images
+    get_dark_img          : Get tuple of dark field images
+    get_target_img        : Get tuple of target images
+    generate_swap         : Generate swap space
+    unload_white          : Unload flat field images
+    unload_dark           : Unload dark field images
+    unload_target         : Unload target images
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
@@ -12,163 +23,152 @@ License:
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
 import gc
+import numpy as np
+from dataclasses import dataclass
 
 from rgbio import load_image, load_array, save_array, create_temp_file
+from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
+        IMGTYPE_DARK, IMGTYPE_SUBJECT
 
 """ Constants """
 # File/array index constants
-__TARGET_A_IDX = 0
-__TARGET_B_IDX = 1
-__WHITE_A_IDX = 2
-__WHITE_B_IDX = 3
-__DARK_A_IDX = 4
-__DARK_B_IDX = 5
+__WHITE_A_IDX = 0
+__WHITE_B_IDX = 1
+__DARK_A_IDX = 2
+__DARK_B_IDX = 3
+__TARGET_A_IDX = 4
+__TARGET_B_IDX = 5
 __RENDERABLES_START = 6
-# Swap space index constants
-__WHITE_SWAP_IDX = 0
-__DARK_SWAP_IDX = 1
-__TARGET_SWAP_IDX = 2
-__NUM_SWAP_PAIRS = 3
-__NUM_SWAP_FILES = __NUM_SWAP_PAIRS * 2
 
 
+@dataclass
+class Packet:
     """ Packet
-    Class representing a single packet going through a pipeline
+    struct to hold pipeline data
 
     Members:
-        files         : List of files to be read in
-        imgs          : Array of all images
-        flat_field_ws : Tuple of w values from flat fielding
-        target        : The calibration target
-        swap          : List of files for loading and unloading arrays
-        subj_idx      : Indices of the currently referenced image
-        x             : Calibration solution
-        dims          : Dimentions the final image should have
-        camsigs       : Camera signals list of image being processed
-        render        : Render of current subject
-
-    Methods:
-        load_calibration_imgs : Load images needed for calibration
-        get_white_img         : Get tuple of flat field images
-        get_dark_img          : Get tuple of dark field images
-        get_target_img        : Get tuple of target images
-        generate_swap         : Generate swap space
-        unload_white          : Unload flat field images
-        unload_dark           : Unload dark field images
-        unload_target         : Unload target images
+        files   : list of image files
+        swap    : list of temp files for storing image arrays
+        subjptr : tuple containing indices of current subject for batch
+        target  : dataclass for the target
+        wscale  : white patch scale value
+        mcalib  : calibrated matrix
+        dims    : TODO delete
+        camsigs : TODO delete
+        render  : TODO delete
     """
-    files = []
-    imgs = []
-    flat_field_ws = ()
-    target = None
+    files: list
+    swap: list
+    subjptr: tuple
+    target: np.ndarray
+    wscale: tuple
+    mcalib: np.ndarray
+    camsigs: np.ndarray
+    render: np.ndarray
+
+
+def packetgen(files: list) -> Packet:
+    """ Initialize packet with default values
+    [in] files: list of files we are working with
+    [out] packet
+    """
+    pkt = Packet()
+    pkt.files = files
+    pkt.swap = __swapgen(len(files) // 2)
+    pkt.subject_idx = (__TARGET_A_IDX, __TARGET_B_IDX)
+
+    return pkt
+
+
+def imgget(packet: Packet, imgtype: int) -> tuple:
+    """ Get specified image
+    Loads image from swap space and returns it
+    [in] packet  : packet we are operating on
+    [in] imgtype : image type as specified in constants
+    [out] tuple containing specified (A, B) image pair
+    """
+    if imgtype == IMGTYPE_TARGET:
+        a, b = __TARGET_A_IDX, __TARGET_B_IDX
+    elif imgtype == IMGTYPE_WHITE:
+        a, b = __WHITE_A_IDX, __WHITE_B_IDX
+    elif imgtype == IMGTYPE_DARK:
+        a, b = __DARK_A_IDX, __DARK_B_IDX
+    elif imgtype == IMGTYPE_SUBJECT:
+        a, b = packet.subjptr[0], packet.subjptr[1]
+    else:
+        return None, None
+
+    swapidx = __swapgen(a)
+    return __imgload(packet, a, b, swapidx)
+
+
+def imgput(packet: Packet, imgtype: int, imgpair: tuple) -> None:
+    """ Put image back in swap
+    only call if image contents need to be saved otherwise just delete
+    [in] packet  : packet we are operating on
+    [in] imgtype : image type as specified in constants
+    [in] imgpair : image pair to be saved
+    """
+    if imgtype == IMGTYPE_TARGET:
+        s = __TARGET_A_IDX // 2
+    elif imgtype == IMGTYPE_WHITE:
+        s = __WHITE_A_IDX // 2
+    elif imgtype == IMGTYPE_DARK:
+        s = __DARK_A_IDX // 2
+    elif imgtype == IMGTYPE_SUBJECT:
+        s = packet.subjptr[0] // 2
+    else:
+        return
+
+    save_array((imgpair[0], imgpair[1]), packet.swap[s])
+
+    del imgpair[0], imgpair[1]
+    gc.collect()
+
+
+def __swapload(packet: Packet) -> None:
+    """ Populate swap files with their corresponding images
+    [in] packet : packet we are operating on
+    [post] temp files have been loaded with the images
+    """
+    for i, s in enumerate(packet.swap):
+        # Gen a,b indices into file list
+        a = i * 2
+        b = a + 1
+        # Load files
+        aimg, bimg = __imgload(packet, a, b)
+
+
+def __swapidxgen(idx: int) -> int:
+    """ Get index of corresponding swap file
+    [in] idx : index of image in file list
+    [out] index of image is swap list
+    """
+    return idx // 2
+
+
+def __swapgen(n: int):
+    """ Generate swapfiles
+    [in] n : number of files to generate
+    [out] swap list
+    """
     swap = []
-    subject_idx = ()
-    x = []
-    dims = ()
-    camsigs = []
-    render = []
+    for i in range(0, n):
+        swap.append(create_temp_file())
+    return swap
 
-    def __init__(self):
-        self.subject_idx = (__TARGET_A_IDX, __TARGET_B_IDX)
 
-    def delcamsigs(self):
-        """ Delete camsigs; values not needed """
-        del self.camsigs
-        gc.collect()
-
-    def delrendervars(self):
-        """ Delete variables used in rendering for next render """
-        del self.render
-        del self.dims
-        gc.collect()
-
-    def load_calibration_imgs(self):
-        """ Load images needed for calibration """
-        for i in range(0, __RENDERABLES_START):
-            self.imgs.append(load_image(self.files[i]))
-
-    def get_white_img(self):
-        """ Get tuple of flat field images """
-        return self.imgs[__WHITE_A_IDX], self.imgs[__WHITE_B_IDX]
-
-    def get_dark_img(self):
-        """ Get tuple of dark field images """
-        return self.imgs[__DARK_A_IDX], self.imgs[__DARK_B_IDX]
-
-    def get_target_img(self):
-        """ Get tuple of target images """
-        return self.imgs[__TARGET_A_IDX], self.imgs[__TARGET_B_IDX]
-
-    def get_subject(self):
-        """ Get the currently referenced image """
-        return self.imgs[self.subject_idx[0]], self.imgs[self.subject_idx[1]]
-
-    def generate_swap(self):
-        """ Generate swap space
-        [post] self.swap contains swap space file paths
-        """
-        for i in range(0, __NUM_SWAP_FILES):
-            self.swap.append(create_temp_file())
-
-    def unload_white(self):
-        """ Unload flat field images """
-        self.__unload_imgs(__WHITE_A_IDX, __WHITE_B_IDX, __WHITE_SWAP_IDX)
-
-    def unload_dark(self):
-        """ Unload flat field images """
-        self.__unload_imgs(__DARK_A_IDX, __DARK_B_IDX, __DARK_SWAP_IDX)
-
-    def unload_target(self):
-        """ Unload flat field images """
-        self.__unload_imgs(__TARGET_A_IDX, __TARGET_B_IDX, __TARGET_SWAP_IDX)
-
-    def unload_subject(self):
-        """ Unload currently referenced image """
-        self.__unload_imgs(self.subject_idx[0], self.subject_idx[1])
-
-    def load_white(self):
-        """ Unload flat field images """
-        self.__load_imgs(__WHITE_A_IDX, __WHITE_B_IDX, __WHITE_SWAP_IDX)
-
-    def load_dark(self):
-        """ Unload flat field images """
-        self.__load_imgs(__DARK_A_IDX, __DARK_B_IDX, __DARK_SWAP_IDX)
-
-    def load_target(self):
-        """ Unload flat field images """
-        self.__load_imgs(__TARGET_A_IDX, __TARGET_B_IDX, __TARGET_SWAP_IDX)
-
-    def load_subject(self):
-        self.__load_imgs(self.subject_idx[0], self.subject_idx[1])
-
-    def __load_imgs(self, a, b, s=None):
-        """ Load image pair
-        [in] a      : A file index
-        [in] b      : B file index
-        [in, opt] s : swap file location index
-        [post] image pair loaded into indices
-        """
-        if s:
-            self.imgs[a], self.imgs[b] = load_array(self.swap[s])
-        else:
-            self.imgs[a] = load_image(self.files[self.subject_idx[0]])
-            self.imgs[b] = load_image(self.files[self.subject_idx[1]])
-
-    def __unload_imgs(self, a, b, s=None):
-        """ Unload image pair
-        [in] a      : A file index
-        [in] b      : B file index
-        [in, opt] s : swap file idx
-        [post] image pair deleted and replaced with None
-        """
-        # Save images
-        if s:
-            save_array((self.imgs[a], self.imgs[b]), self.swap[s])
-
-        # Delete from memory
-        del self.imgs[b], self.imgs[a]
-        gc.collect()
-
-        # Replace with None
-        self.imgs.insert(a, None)
-        self.imgs.insert(b, None)
+def __imgload(packet: Packet, a: int, b: int, s: int = None) -> tuple:
+    """ Load image pair
+    [in] packet : packet we are operating on
+    [in] a      : A file index
+    [in] b      : B file index
+    [in, opt] s : swap file location index
+    [out] image pair in (A, B) tuple
+    """
+    if s:
+        return load_array(packet.swap[s])
+    else:
+        aimg = load_image(packet.files[a])
+        bimg = load_image(packet.files[b])
+        return aimg, bimg

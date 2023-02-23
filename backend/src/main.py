@@ -17,7 +17,7 @@ import sys
 import argparse
 
 # Local imports
-from processing_pipeline import processing_pipeline
+from pipeline import processing_pipeline
 from packet import Packet
 from target import Target
 from parser import Parser
