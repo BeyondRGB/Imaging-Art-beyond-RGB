@@ -14,6 +14,8 @@ License:
 import numpy as np
 import gc
 
+from packet import imgget, IMGTYPE_SUBJECT
+
 # CONSTANTS
 __PROPHOTO_TRANS = [[1.34594330, -0.2556075, -0.0511118],
                     [-0.5445989, 1.50816730, 0.02053510],
@@ -34,7 +36,7 @@ def render(packet):
     [post] rendered image is loaded in memory
     [post] camsigs deleted from packet
     """
-    camsigs = __genimgsigs(packet)
+    camsigs, imgshape = __genimgsigs(packet)
 
     # Compute color calibrated image
     m = np.resize(packet.x[0:18], (3, 6))
@@ -65,7 +67,7 @@ def render(packet):
                       lambda rgb: 12.92 * rgb])
 
     # Reshape into image
-    render = np.dstack((rgb[0], rgb[1], rgb[2])).reshape(packet.dims)
+    render = np.dstack((rgb[0], rgb[1], rgb[2])).reshape(imgshape)
     print(render)
     del rgb
     gc.collect()
@@ -77,11 +79,9 @@ def __genimgsigs(packet):
     """ Generate camsigs array for whole image
     [in] packet : pipeline packet
     [out] camsigs array
+    [out] image dimentions
     """
-    subj = packet.get_subject()
-
-    # We'll need this later
-    packet.dims = subj[0].shape
+    subj = imgget(packet, IMGTYPE_SUBJECT)
 
     # Python is like candy; it tastes good but I hate that I like it
     camsigs = [subj[0][:, :, 0].flatten(),
@@ -93,4 +93,4 @@ def __genimgsigs(packet):
 
     packet.unload_subject()  # Cleanup
 
-    return camsigs
+    return camsigs, subj[0].shape

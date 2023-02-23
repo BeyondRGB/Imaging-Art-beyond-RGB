@@ -42,15 +42,13 @@ def processing_pipeline(packet):
     one by one.
     """
     # TODO finish description
-#    render(packet)  # Subject array is deleted; we now have the final render
+    render(packet)  # Subject array is deleted; we now have the final render
     # TODO image saving
     # TODO add batch
 
     # TODO remove the fillowing once target output to file is done
     import cv2
-#    print(packet.render.shape)
-    t1 = imgget(packet, IMGTYPE_TARGET)[0]
-    t1 = cv2.cvtColor(t1,  cv2.COLOR_RGB2BGR)
+    t1 = cv2.cvtColor(packet.render,  cv2.COLOR_RGB2BGR)
     cv2.imwrite("out.tiff", t1)
 
     return

@@ -17,8 +17,7 @@ import math
 import numpy as np
 
 
-def _f(x):
-    # TODO verify this is good code
+def __xyztolabf(x):
     if x > 216.0/24389.0:
         return x**(1.0/3.0)
     else:
@@ -26,13 +25,13 @@ def _f(x):
 
 
 def xyztolab(xyzs):
-    # TODO verify this is good code
+    f = __xyztolabf
     labs = np.ndarray(xyzs.shape)
     for i in range(0, xyzs.shape[1]):
         xyz = xyzs[:, i]
-        labs[0, i] = 116*_f(xyz[1]/100)-16
-        labs[1, i] = 500*(_f(xyz[0]/96.7206275)-_f(xyz[1]/100))
-        labs[2, i] = 200*(_f(xyz[1]/100)-_f(xyz[2]/81.4280151))
+        labs[0, i] = 116*f(xyz[1]/100)-16
+        labs[1, i] = 500*(f(xyz[0]/96.7206275)-f(xyz[1]/100))
+        labs[2, i] = 200*(f(xyz[1]/100)-f(xyz[2]/81.4280151))
     return labs
 
 
