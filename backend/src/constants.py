@@ -46,6 +46,27 @@ INIT_MOARR = INIT_M + INIT_O
 ALIGN = 1
 REFERENCE = 0
 
+# Usage help messages
+TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
+TOP_LEFT_X_HELP = 'Pixel value of the top-left of the upright color target from the left end of the color-target image'
+BOTTOM_RIGHT_X_HELP = 'Pixel value of the bottom-right of the upright color target from the left end of the color-target image'
+TOP_LEFT_Y_HELP = 'Pixel value of the top-left of the upright color target from the top end of the color-target image'
+BOTTOM_RIGHT_Y_HELP = 'Pixel value of the bottom-right of the upright color target from the top end of the color-target image'
+WHITE_COL_HELP = 'Column of selected white patch from left of target'
+WHITE_ROW_HELP = 'Row of selected white patch from top of target'
+IMAGES_HELP = '''Images should be added in this order:
+        Target A
+        Target B
+        Flat Field A
+        Flat Field B
+        Dark Field A
+        Dark Field B
+        Subject A (Optional)
+        Subject B (OptionaL)
+        Additional Images... (A and B)
+    '''
+
+
 # Spectral Transformation
 import numpy as np
 my_data = np.genfromtxt('standard_observer_1964_reflectance_data.csv', delimiter=',')
