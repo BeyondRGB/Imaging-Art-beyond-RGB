@@ -11,16 +11,18 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python Imports
 import gc
-import time
 import numpy as np
-from scipy.optimize import fmin, minimize
+from scipy.optimize import fmin
 
-# Local Imports
 from lab_refs import LAB_REF
-from constants import INIT_MOARR, TARGET_RADIUS
 from spectral_equation import xyztolab, ciede2000
+
+
+__INIT_MOARR = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
+                0.10, 0.10, 0.25, 0.10, 1.00, 0.10,
+                0.10, 0.10, 0.25, 0.10, 0.10, 0.50,
+                0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 
 
 def color_calibrate(packet):
@@ -34,18 +36,19 @@ def color_calibrate(packet):
     [post] target image is unloaded
     [post] packet x variable is populated
     """
-    #res = minimize(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF), method='Powell')
-    res = fmin(_xyz, INIT_MOARR, (packet.camsigs, LAB_REF))
-    print(res)
-
-    # TODO ERROR CHECKING
-
-    packet.x = res.x
+    res = fmin(__de_equ, __INIT_MOARR, (packet.camsigs, LAB_REF))
+    print(__de_equ(res, packet.camsigs, LAB_REF))
+    packet.x = res
 
 
-def _xyz(x, camsigs, labref):
-    """ Equation for color calibrator to minimize """
-    m = np.resize(x[0:17], (3, 6))
+def __de_equ(x, camsigs, labref):
+    """ ∆E equation for color tranformation matrix optimization
+    [in] x : current input parameters guess
+    [in] camsigs : target camera signals we are modifying
+    [in] labref  : target reference data
+    [out] average error
+    """
+    m = np.resize(x[0:18], (3, 6))
     o = np.resize(x[18:], (6, 1))
     xyz = np.matmul(m, np.subtract(camsigs, o))
     lab = xyztolab(xyz)

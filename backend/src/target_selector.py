@@ -16,16 +16,13 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
-# Python imports
 import cv2
 from numpy import clip
 import time
 
-# Local imports
 from rgbio import load_image
 
 
-# Globals for window control
 selecting = False
 x_start, y_start, x_end, y_end = 0, 0, 0, 0
 

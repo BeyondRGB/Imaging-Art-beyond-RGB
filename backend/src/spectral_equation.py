@@ -17,8 +17,7 @@ import math
 import numpy as np
 
 
-def _f(x):
-    # TODO verify this is good code
+def __xyztolabf(x):
     if x > 216.0/24389.0:
         return x**(1.0/3.0)
     else:
@@ -26,26 +25,32 @@ def _f(x):
 
 
 def xyztolab(xyzs):
-    # TODO verify this is good code
+    f = __xyztolabf
     labs = np.ndarray(xyzs.shape)
     for i in range(0, xyzs.shape[1]):
         xyz = xyzs[:, i]
-        labs[0, i] = 116*_f(xyz[1]/100)-16
-        labs[1, i] = 500*(_f(xyz[0]/96.7206275)-_f(xyz[1]/100))
-        labs[2, i] = 200*(_f(xyz[1]/100)-_f(xyz[2]/81.4280151))
+        labs[0, i] = 116*f(xyz[1]/100)-16
+        labs[1, i] = 500*(f(xyz[0]/96.7206275)-f(xyz[1]/100))
+        labs[2, i] = 200*(f(xyz[1]/100)-f(xyz[2]/81.4280151))
     return labs
 
 
 def ciede2000(Lab_1, Lab_2):
     """ get ciede2000 color differences for two lists of lab values
-
-    There is a lot of work to do here. Nothing should be saved. This is garbage
-    copy paste code that might not even be correct. Ether way, this needs to be
-    implemented in a sane way and on numpy arrays instead of single values. When
-    this is fixed do not forget to update the xyz equation in calibration.py to
-    use lists.
-
-    INUPTS AND OUTPUTS GO HERE
+     _   _                 _   _                     _
+    | | | |               | | | |                   | |
+    | |_| | ___ _ __ ___  | |_| |__   ___ _ __ ___  | |__   ___ 
+    |  _  |/ _ \ '__/ _ \ | __| '_ \ / _ \ '__/ _ \ | '_ \ / _ \
+    | | | |  __/ | |  __/ | |_| | | |  __/ | |  __/ | |_) |  __/
+    \_| |_/\___|_|  \___|  \__|_| |_|\___|_|  \___| |_.__/ \___|
+    ______
+    |  _  \
+    | | | |_ __ __ _  __ _  ___  _ __  ___
+    | | | | '__/ _` |/ _` |/ _ \| '_ \/ __|
+    | |/ /| | | (_| | (_| | (_) | | | \__ \
+    |___/ |_|  \__,_|\__, |\___/|_| |_|___/
+                      __/ |
+                     |___/
     """
     C_25_7 = 6103515625 # 25**7
     
