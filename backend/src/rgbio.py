@@ -13,22 +13,25 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+import sys
+
 import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
+from cv2 import imwrite
 
-from packet import getimg, IMGTYPE_SUBJECT
 
-
-def save_image(packet):
+def save_image(path, img):
     """ Save image to disk
-    [in] packet :
+    [in] subject :
     """
-
-    subject = getimg(packet, IMGTYPE_SUBJECT)
-    print(len(subject))
-    exit()
+    out = path + "output.tif"
+    try:
+        imwrite(out, img)
+    except PermissionError:
+        print("Failed to create file at: " + out)
+        sys.exit(1)
 
 
 

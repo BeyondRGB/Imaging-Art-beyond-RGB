@@ -17,7 +17,7 @@ import argparse
 
 from rgbio import save_image
 from pipeline import processing_pipeline
-from packet import genpacket, gentarget
+from packet import genpacket, gentarget, getimg
 from parser import Parser
 
 
@@ -62,7 +62,7 @@ def main():
     parser.add_argument('images', nargs='+', help=IMAGES_HELP)
 
     # Optional arg to override default output directory (current working)
-    parser.add_argument('output', required=False, help=OUTPUT_HELP)
+    parser.add_argument('--output', required=False, help=OUTPUT_HELP)
 
     args = parser.parse_args()
 
@@ -80,10 +80,11 @@ def main():
     # Setup packet
     packet = build_packet(args.images, target)
 
-    save_image(packet)
-
     # Begin pipeline
     processing_pipeline(packet)
+
+    # subject = getimg(packet, 3)[0]
+    # save_image(args.output, subject)
 
 
 def build_packet(images, target):
