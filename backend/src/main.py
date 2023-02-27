@@ -39,7 +39,7 @@ IMAGES_HELP = '''Images should be added in this order:
         Subject A (Optional)
         Subject B (OptionaL)
         Additional Images... (A and B) '''
-OUTPATH_HELP = 'Directory to use for image output'
+OUTPATH_HELP = 'Output directory'
 
 
 def main():

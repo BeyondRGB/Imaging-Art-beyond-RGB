@@ -22,7 +22,7 @@ from tempfile import TemporaryFile
 from cv2 import imwrite
 
 
-def save_image(img, path, filename):
+def save_image(img: np.ndarray, path: str, filename: str):
     """ Save image to disk
     [in] img :
     [in] path :
@@ -32,7 +32,7 @@ def save_image(img, path, filename):
     try:
         imwrite(out, img)
     except PermissionError:
-        print("Failed to create file at: " + out)
+        print("Failed to create file at: " + out + " (insufficient permissions)")
         sys.exit(1)
 
 
