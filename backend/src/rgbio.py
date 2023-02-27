@@ -22,11 +22,13 @@ from tempfile import TemporaryFile
 from cv2 import imwrite
 
 
-def save_image(path, img):
+def save_image(img, path, filename):
     """ Save image to disk
-    [in] subject :
+    [in] img :
+    [in] path :
+    [in] filename :
     """
-    out = path + "output.tif"
+    out = path + filename + ".tiff"
     try:
         imwrite(out, img)
     except PermissionError:

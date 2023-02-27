@@ -39,7 +39,7 @@ IMAGES_HELP = '''Images should be added in this order:
         Subject A (Optional)
         Subject B (OptionaL)
         Additional Images... (A and B) '''
-OUTPUT_HELP = 'Directory to use for image output instead of current working directory'
+OUTPATH_HELP = 'Directory to use for image output'
 
 
 def main():
@@ -62,7 +62,7 @@ def main():
     parser.add_argument('images', nargs='+', help=IMAGES_HELP)
 
     # Optional arg to override default output directory (current working)
-    parser.add_argument('--output', required=False, help=OUTPUT_HELP)
+    parser.add_argument('--outpath', required=False, help=OUTPATH_HELP)
 
     args = parser.parse_args()
 
@@ -82,9 +82,6 @@ def main():
 
     # Begin pipeline
     processing_pipeline(packet)
-
-    # subject = getimg(packet, 3)[0]
-    # save_image(args.output, subject)
 
 
 def build_packet(images, target):
