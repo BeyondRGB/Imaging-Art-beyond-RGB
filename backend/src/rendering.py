@@ -70,7 +70,7 @@ def render(packet):
     del rgb
     gc.collect()
 
-    packet.render = np.float32(render)
+    return np.float32(render)
 
 
 def __genimgsigs(packet):

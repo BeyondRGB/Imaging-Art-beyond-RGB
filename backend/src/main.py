@@ -78,19 +78,19 @@ def main():
                                                 int(args.white_col)))
 
     # Setup packet
-    packet = build_packet(args.images, target)
+    packet = build_packet(args.images, target, args.outpath)
 
     # Begin pipeline
     processing_pipeline(packet)
 
 
-def build_packet(images, target):
+def build_packet(images, target, outpath):
     """ Create packet
     [in] image  : image files
     [in] target : target grid
     [out] packet
     """
-    packet = genpacket(images, target)
+    packet = genpacket(images, target, outpath)
     return packet
 
 

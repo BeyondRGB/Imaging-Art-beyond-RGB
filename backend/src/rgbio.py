@@ -19,7 +19,7 @@ import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
-from cv2 import imwrite
+from cv2 import imwrite, cvtColor, COLOR_RGB2BGR
 
 
 def save_image(img: np.ndarray, path: str, filename: str):
@@ -28,13 +28,13 @@ def save_image(img: np.ndarray, path: str, filename: str):
     [in] path :
     [in] filename :
     """
-    out = path + filename + ".tiff"
+    out = path + '/' + filename + ".tiff"
     try:
+        img[...] = cvtColor(img,  COLOR_RGB2BGR)
         imwrite(out, img)
     except PermissionError:
         print("Failed to create file at: " + out + " (insufficient permissions)")
         sys.exit(1)
-
 
 
 def load_image(path):
