@@ -13,6 +13,7 @@ License:
 """
 import numpy as np
 
+from rgbio import save_image
 from packet import getimg, genpatchlist
 from preprocessing import preprocess
 from calibration import color_calibrate
@@ -47,7 +48,8 @@ def processing_pipeline(packet):
     # TODO remove the fillowing once target output to file is done
     import cv2
     t1 = cv2.cvtColor(packet.render,  cv2.COLOR_RGB2BGR)
-    cv2.imwrite("out.tiff", t1)
+
+    save_image(t1, "", "output")
 
     return
     import time
