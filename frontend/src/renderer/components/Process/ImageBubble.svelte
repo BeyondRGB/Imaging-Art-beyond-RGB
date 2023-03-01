@@ -21,8 +21,7 @@
     }
   };
   const remove = () => {
-      dispatch('remove')
-
+    $processState.imageFilePaths = $processState.imageFilePaths.filter((value) => value.id !== filename);
   };
 </script>
 
@@ -31,23 +30,20 @@
     class:bubble={!minimal}
     on:mouseenter={toggleDropdown}
     on:mouseleave={toggleDropdown}
-    bind:this={btnRef}
-  >
-    {#if minimal}
-      {filename.split("\\").length > 2
-        ? filename.split("\\").at(-1)
-        : filename.split("/").at(-1)}
-    {:else}
-      <ImageIcon size="1.5x" />
-      {filename.split("\\").length > 2
-              ? filename.split("\\").at(-1)
-              : filename.split("/").at(-1)}
-      <button on:click={remove}><TrashIcon size="1.25x"/></button>
+    bind:this={btnRef}>
 
+    {#if !minimal}
+      <ImageIcon size="1.5x" />
+    {/if}
+
+    {filename.split("\\").length > 2
+          ? filename.split("\\").at(-1)
+          : filename.split("/").at(-1)}
+
+    {#if !minimal}
+      <button on:click={remove}><TrashIcon size="1.25x"/></button>
     {/if}
   </div>
-  <!-- class:shown={show} -->
-  <!-- bind:this={popRef} -->
   <div class="body">
 
     <img src={$processState.imageThumbnails[filename]} alt={filename}/>

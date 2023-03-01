@@ -32,17 +32,7 @@
         return getAllImages().length > 6 || !is_empty($processState.artStacks[0].fields.targetA) || !is_empty($processState.artStacks[0].fields.targetB);
     };
 
-    const autoSort = function () {
-        $processState.imageFilePaths = autoSortImages(getAllImages(), imageStack);
-        rerenderToggle = !rerenderToggle;
-    };
-
-    const resetImages = function () {
-        each($processState.artStacks[0].fields, function (image) {
-            if (image.length > 0) {
-                $processState.imageFilePaths.push({name: image[0].name, id: image[0].id});
-            }
-        });
+    function clearFileRoles() {
         $processState.artStacks[0].fields = {
             imageA: [],
             imageB: [],
@@ -53,6 +43,22 @@
             darkfieldA: [],
             darkfieldB: [],
         };
+    }
+
+    const autoSort = function () {
+        resetImages();
+        imageStack = get($processState, 'artStacks[0].fields');
+        $processState.imageFilePaths = autoSortImages(getAllImages(), imageStack);
+        rerenderToggle = !rerenderToggle;
+    };
+
+    const resetImages = function () {
+        each($processState.artStacks[0].fields, function (image) {
+            if (image.length > 0) {
+                $processState.imageFilePaths.push({name: image[0].name, id: image[0].id});
+            }
+        });
+        clearFileRoles();
         rerenderToggle = !rerenderToggle;
     };
 

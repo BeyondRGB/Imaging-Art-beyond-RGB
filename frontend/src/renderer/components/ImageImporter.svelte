@@ -3,18 +3,13 @@
     import { processState, sendMessage} from "@util/stores";
     import { forEach, find, each } from "lodash";
     import { testStyle } from "@util/styles";
-    import ImageBubble from "@components/Process/ImageBubble.svelte";
     import Dropzone from "svelte-file-dropzone";
     import Dropbox from "@components/Process/Dropbox.svelte";
-
-
-    import {dndzone} from 'svelte-dnd-action';
-    import {is_empty} from "svelte/internal";
 
     export let label = "Select Files";
     export let icon = FilePlusIcon;
     export let largeText = false;
-    export let removeButton = false;
+
     let filePaths = [];
     let files = {
         accepted: [],
@@ -65,10 +60,6 @@
         });
         getThumbnails();
     }
-
-    const remove = (item) => {
-        $processState.imageFilePaths = $processState.imageFilePaths.filter((value) => value.id !== item.id);
-    };
 
     const removeAll = () => {
         $processState.imageFilePaths = [];
@@ -124,8 +115,8 @@
                 </div>
             </button>
         {/if}
-        <h1>Drag and Drop Files Here </h1>
-        <Dropbox min bind:items={$processState.imageFilePaths} type="image" singleItem={false} minimum={false} ></Dropbox>
+        <h1>Drag and Drop Files Here</h1>
+        <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false} minimum={false}></Dropbox>
     </Dropzone>
     <br>
     </div>
