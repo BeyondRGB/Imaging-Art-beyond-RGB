@@ -31,7 +31,7 @@ def spectrally_transform(packet: Packet):
 def __eq(x: np.ndarray, camsigs: np.ndarray, r_reference: np.ndarray) -> float:
     """ Spectral Reflectance equation to minimize
     [in] x : The current guess array
-    [in] camsigs : The camera signals extracted from the preprocessed color target
+    [in] camsigs : The camera signals extracted from the color target
     [r_reference] : The 'actual' reference data for the given color target
     """
 
