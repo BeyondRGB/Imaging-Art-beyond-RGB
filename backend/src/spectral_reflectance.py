@@ -19,6 +19,9 @@ INIT_M_REFL = np.full((36, 6), .2)
 
 
 def spectrally_transform(packet: Packet):
+    """ Spectral Reflectance minimization runner
+    [in] packet     : The processing packet
+    """
     r_reference = np.genfromtxt('NGT_spectral_reflectance.csv', delimiter=',')
     r_reference[...] = np.reshape(r_reference, (36, 130))
     initial_guess = np.ndarray.flatten(INIT_M_REFL)
@@ -30,9 +33,9 @@ def spectrally_transform(packet: Packet):
 
 def __eq(x: np.ndarray, camsigs: np.ndarray, r_reference: np.ndarray) -> float:
     """ Spectral Reflectance equation to minimize
-    [in] x : The current guess array
-    [in] camsigs : The camera signals extracted from the color target
-    [r_reference] : The 'actual' reference data for the given color target
+    [in] x            : The current guess array
+    [in] camsigs      : The camera signals extracted from the color target
+    [in] r_reference  : The 'actual' reference data for the given color target
     """
 
     x = np.reshape(x, (36, 6))
