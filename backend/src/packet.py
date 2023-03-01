@@ -1,5 +1,5 @@
-""" target.py
-dataclasses and functions related to the packet
+""" packet.py
+Dataclasses and functions related to the packet
 
 Structs:
     Packet
@@ -36,7 +36,7 @@ __WHITE_A_IDX = 2
 __WHITE_B_IDX = 3
 __DARK_A_IDX = 4
 __DARK_B_IDX = 5
-__RENDERABLES_START = 6
+RENDERABLES_START = 6
 
 
 @dataclass
@@ -47,22 +47,21 @@ class Packet:
     Members:
         files   : list of image files
         swap    : list of temp files for storing image arrays
+        outpath : path to output files to
         subjptr : tuple containing indices of current subject for batch
         target  : dataclass for the target
         wscale  : white patch scale value
         mcalib  : calibrated matrix
-        dims    : TODO delete
         camsigs : TODO delete
-        render  : TODO delete
     """
     files: list
     swap: list
+    outpath: str
     subjptr: tuple
     target: np.ndarray
     wscale: tuple
     mcalib: np.ndarray
     camsigs: np.ndarray
-    render: np.ndarray
 
 
 @dataclass
@@ -82,7 +81,7 @@ class Target:
     shape: tuple
 
 
-def genpacket(files: list, target: Target) -> Packet:
+def genpacket(files: list, target: Target, outpath: str) -> Packet:
     """ Initialize packet with default values and loaded images
     images will be in swap after this
     [in] files  : list of files we are working with
@@ -91,7 +90,8 @@ def genpacket(files: list, target: Target) -> Packet:
     """
     swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
-    pkt = Packet(files, swap, subjptr, target, (None, None), None, None, None)
+    pkt = Packet(files, swap, outpath, subjptr,
+                 target, (None, None), None, None)
     __loadswap(pkt)
     return pkt
 
