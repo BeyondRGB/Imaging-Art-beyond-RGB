@@ -20,13 +20,16 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+# Python Imports
 import gc
 import numpy as np
 from dataclasses import dataclass
 
+# Local Imports
 from rgbio import load_image, load_array, save_array, create_temp_file
 from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
-        IMGTYPE_DARK, IMGTYPE_SUBJECT
+        IMGTYPE_DARK, IMGTYPE_SUBJECT, TARGET_RADIUS,\
+        TARGETTYPE_NGT, TARGETTYPE_APT, TARGETTYPE_CCSG, TARGETTYPE_CC
 
 
 # File/array index constants
@@ -37,6 +40,22 @@ __WHITE_B_IDX = 3
 __DARK_A_IDX = 4
 __DARK_B_IDX = 5
 RENDERABLES_START = 6
+
+# Target shapes
+__NGT_SHAPE = (10, 13)
+__APT_SHAPE = (0, 6)
+__CCSG_SHAPE = (0, 0)
+__CC_SHAPE = (0, 0)
+
+# TARGETTYPE2files
+__ngtfiles = ('data/NGT_spectral_reflectance.csv', 'data/NGT_lab.csv')
+__aptfiles = ('data/APT_spectral_reflectance.csv', 'data/APT_lab.csv')
+__ccsgfiles = ('data/CCSG_spectral_reflectance.csv', 'data/CCSG_lab.csv')
+__ccfiles = ('data/CC_spectral_reflectance.csv', 'data/CC_lab.csv')
+__ttype2files = {TARGETTYPE_NGT: __ngtfiles,
+                 TARGETTYPE_APT: __aptfiles,
+                 TARGETTYPE_CCSG: __ccsgfiles,
+                 TARGETTYPE_CC: __ccfiles}
 
 
 @dataclass
@@ -74,11 +93,15 @@ class Target:
         blcorner   : bottom right corner of the grid in image space (x,y)
         whitepatch : location of white patch in target space (row, col)
         shape      : dimension of target (row, col)
+        r_ref      : reflectance reference
+        lab_ref    : LAB reference
     """
     tlcorner: tuple
     blcorner: tuple
     whitepatch: tuple
     shape: tuple
+    r_ref: np.ndarray
+    lab_ref: np.ndarray
 
 
 def genpacket(files: list, target: Target, outpath: str) -> Packet:
@@ -142,13 +165,21 @@ def putimg(packet: Packet, imgtype: int, imgpair: tuple):
     gc.collect()
 
 
-def gentarget(tlcorner: tuple, brcorner: tuple, whitepatch: tuple) -> Target:
+def gentarget(coords: tuple, wpatch: tuple, targettype: int) -> Target:
     """ Initialize target
-    [in] tlcorner   : the top left coordinate of the target (x, y)
-    [in] brcorner   : the bottom right coordinate of the target (x, y)
-    [in] whitepatch : white patch location (row, col)
+    [in] coords     : target coordinates(topleft(x,y), bottomright(x,y))
+    [in] wpatch     : white patch location (row, col)
+    [in] targettype : target type
     """
-    target = Target(tlcorner, brcorner, whitepatch, (10, 13))
+    if targettype == TARGETTYPE_NGT:
+        shape = __NGT_SHAPE
+    else:
+        # TODO error handling
+        print("Invalid target type")
+        exit(-1)
+
+    target = Target(coords[0], coords[1], wpatch, shape, None, None)
+    __loadrefs(target, targettype)
     return target
 
 
@@ -171,6 +202,30 @@ def genwhitepatchxy(target: Target) -> tuple:
     [out] white patch center coordinate (x,y)
     """
     return __getpatchloc(target, target.whitepatch[0], target.whitepatch[1])
+
+
+def extract_camsigs(packet):
+    """ Generate camsigs array
+    [in] packet : pipeline packet
+    [out] camsigs array
+    """
+    t_img = getimg(packet, IMGTYPE_TARGET)
+    siglist = genpatchlist(packet.target)
+    tr = TARGET_RADIUS
+    camsigs = np.ndarray((6, 130))
+    for i, sig in enumerate(siglist):
+        cell = t_img[0][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
+        avg = np.average(cell, axis=(0, 1))
+        camsigs[0, i] = avg[0]
+        camsigs[1, i] = avg[1]
+        camsigs[2, i] = avg[2]
+        cell = t_img[1][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
+        avg = np.average(cell, axis=(0, 1))
+        camsigs[3, i] = avg[0]
+        camsigs[4, i] = avg[1]
+        camsigs[5, i] = avg[2]
+
+    return camsigs
 
 
 def __loadswap(packet: Packet):
@@ -241,3 +296,16 @@ def __getpatchloc(target: Target, row: int, col: int) -> tuple:
     y += tl[1]
 
     return int(x), int(y)
+
+
+def __loadrefs(target: Target, targettype: int):
+    files = __ttype2files[targettype]
+    # Reflectance
+    ref = np.genfromtxt(files[0], delimiter=',')
+    target.r_ref = np.reshape(ref, (36, ref.shape[0]//36))
+    # LAB
+    ref = np.genfromtxt(files[1], delimiter=',')
+    target.lab_ref = np.reshape(ref, (3, ref.shape[0]//3))
+    print(target.lab_ref)
+    import lab_refs
+    print(lab_refs.LAB_REF)

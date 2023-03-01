@@ -18,12 +18,12 @@ from packet import Packet
 INIT_M_REFL = np.full((36, 6), .2)
 
 
-def spectrally_transform(packet: Packet):
+def spectrally_transform(packet: Packet, camsigs: np.ndarray):
     """ Spectral Reflectance minimization runner
     [in] packet     : The processing packet
+    [in] camsigs : target camera signals
     """
-    r_reference = np.genfromtxt('NGT_spectral_reflectance.csv', delimiter=',')
-    r_reference[...] = np.reshape(r_reference, (36, 130))
+    r_reference = packet.target.r_ref
     initial_guess = np.ndarray.flatten(INIT_M_REFL)
     opt = fmin(func=__eq, x0=initial_guess, args=(packet.camsigs, r_reference))
     print('Spectral transformation fopt: ' + str(__eq(opt, packet.camsigs, r_reference)))

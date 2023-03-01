@@ -6,22 +6,22 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
-    Keenan Miller https://github.com/keenanm500>
+    Keenan Miller <https://github.com/keenanm500>
 
 License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+# Python Imports
 import gc
-import numpy as np
 import os.path
 
+# Local Imports
 from rgbio import save_image
-from packet import getimg, genpatchlist, RENDERABLES_START
+from packet import extract_camsigs, RENDERABLES_START
 from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
-from constants import TARGET_RADIUS, IMGTYPE_TARGET
 from spectral_reflectance import spectrally_transform
 
 
@@ -35,9 +35,9 @@ def processing_pipeline(packet):
     See block comments for memory information
     """
     preprocess(packet)
-    packet.camsigs = extract_camsigs(packet)
-    color_calibrate(packet)
-    spectrally_transform(packet)
+    camsigs = extract_camsigs(packet)
+    color_calibrate(packet, camsigs)
+    spectrally_transform(packet, camsigs)
 
     """ Render and Save (Batch Processing)
     At this point we have the color transformation matrix and need to apply it
@@ -68,27 +68,3 @@ def processing_pipeline(packet):
         packet.subjptr = (packet.subjptr[0] + 2, packet.subjptr[1] + 2)
 
     return
-
-
-def extract_camsigs(packet):
-    """ Generate camsigs array
-    [in] packet : pipeline packet
-    [out] camsigs array
-    """
-    t_img = getimg(packet, IMGTYPE_TARGET)
-    siglist = genpatchlist(packet.target)
-    tr = TARGET_RADIUS
-    camsigs = np.ndarray((6, 130))
-    for i, sig in enumerate(siglist):
-        cell = t_img[0][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
-        avg = np.average(cell, axis=(0, 1))
-        camsigs[0, i] = avg[0]
-        camsigs[1, i] = avg[1]
-        camsigs[2, i] = avg[2]
-        cell = t_img[1][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
-        avg = np.average(cell, axis=(0, 1))
-        camsigs[3, i] = avg[0]
-        camsigs[4, i] = avg[1]
-        camsigs[5, i] = avg[2]
-
-    return camsigs
