@@ -9,7 +9,6 @@ License:
 """
 # Python Imports
 from scipy.optimize import fmin
-from scipy.linalg import pinv
 import numpy as np
 
 # Local Imports
