@@ -13,18 +13,28 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+import sys
+
 import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
+from cv2 import imwrite, cvtColor, COLOR_RGB2BGR
 
 
-def save_image(img, path):
+def save_image(img: np.ndarray, path: str, filename: str):
     """ Save image to disk
-    [in] img     : image to save
-    [in] path   : image save location
+    [in] img :
+    [in] path :
+    [in] filename :
     """
-    pass
+    out = path + '/' + filename + ".tiff"
+    try:
+        img[...] = cvtColor(img,  COLOR_RGB2BGR)
+        imwrite(out, img)
+    except PermissionError:
+        print("Failed to create file at: " + out + " (insufficient permissions)")
+        sys.exit(1)
 
 
 def load_image(path):

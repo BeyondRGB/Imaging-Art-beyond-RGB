@@ -12,9 +12,12 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+import gc
 import numpy as np
+import os.path
 
-from packet import getimg, genpatchlist
+from rgbio import save_image
+from packet import getimg, genpatchlist, RENDERABLES_START
 from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
@@ -42,20 +45,29 @@ def processing_pipeline(packet):
     pass and then loop over all remaining subjects rendering and saving them
     one by one.
     """
-    # TODO finish description
-    render(packet)  # Subject array is deleted; we now have the final render
-    # TODO image saving
-    # TODO add batch
+    res = render(packet)
+    basename = os.path.basename(packet.files[packet.subjptr[0]])
+    basename = basename.split('.')[0]  # Trim extension
+    save_image(res, packet.outpath, basename)
+    del res
+    gc.collect()
 
-    # TODO remove the fillowing once target output to file is done
-    import cv2
-    t1 = cv2.cvtColor(packet.render,  cv2.COLOR_RGB2BGR)
-    cv2.imwrite("out.tiff", t1)
+    # Set ptr to start of renderables
+    packet.subjptr = (RENDERABLES_START, RENDERABLES_START + 1)
+    while packet.subjptr[0] < len(packet.files):
+        # generate file name
+        basename = os.path.basename(packet.files[packet.subjptr[0]])
+        basename = basename.split('.')[0]  # Trim extension
+        # process, render, and save
+        preprocess(packet)
+        res = render(packet)
+        save_image(res, packet.outpath, basename)
+        del res
+        gc.collect()
+        # increment pointer
+        packet.subjptr = (packet.subjptr[0] + 2, packet.subjptr[1] + 2)
 
     return
-    import time
-    while True:
-        time.sleep(10000000)
 
 
 def extract_camsigs(packet):

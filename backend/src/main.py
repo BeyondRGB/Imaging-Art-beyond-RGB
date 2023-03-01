@@ -15,8 +15,9 @@ License:
 import sys
 import argparse
 
+from rgbio import save_image
 from pipeline import processing_pipeline
-from packet import genpacket, gentarget
+from packet import genpacket, gentarget, getimg
 from parser import Parser
 
 
@@ -38,6 +39,7 @@ IMAGES_HELP = '''Images should be added in this order:
         Subject A (Optional)
         Subject B (OptionaL)
         Additional Images... (A and B) '''
+OUTPATH_HELP = 'Output directory'
 
 
 def main():
@@ -58,6 +60,10 @@ def main():
     parser.add_argument('white_row', help=WHITE_ROW_HELP)
 
     parser.add_argument('images', nargs='+', help=IMAGES_HELP)
+
+    # Optional arg to override default output directory (current working)
+    parser.add_argument('--outpath', required=False, help=OUTPATH_HELP)
+
     args = parser.parse_args()
 
     if len(args.images) < 6:
@@ -72,19 +78,19 @@ def main():
                                                 int(args.white_col)))
 
     # Setup packet
-    packet = build_packet(args.images, target)
+    packet = build_packet(args.images, target, args.outpath)
 
     # Begin pipeline
     processing_pipeline(packet)
 
 
-def build_packet(images, target):
+def build_packet(images, target, outpath):
     """ Create packet
     [in] image  : image files
     [in] target : target grid
     [out] packet
     """
-    packet = genpacket(images, target)
+    packet = genpacket(images, target, outpath)
     return packet
 
 
