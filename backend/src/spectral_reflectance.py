@@ -22,8 +22,8 @@ def spectrally_transform(packet: Packet):
     r_reference = np.genfromtxt('NGT_spectral_reflectance.csv', delimiter=',')
     r_reference[...] = np.reshape(r_reference, (36, 130))
     initial_guess = np.ndarray.flatten(INIT_M_REFL)
-    xopt = fmin(func=__eq, x0=initial_guess, args=(packet.camsigs, r_reference))
-    print('Spectral transformation fopt: ' + str(__eq(xopt, packet.camsigs, r_reference)))
+    opt = fmin(func=__eq, x0=initial_guess, args=(packet.camsigs, r_reference))
+    print('Spectral transformation fopt: ' + str(__eq(opt, packet.camsigs, r_reference)))
     # TODO use above results
     return
 
