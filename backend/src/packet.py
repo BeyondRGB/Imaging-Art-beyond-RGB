@@ -45,7 +45,7 @@ RENDERABLES_START = 6
 __NGT_SHAPE = (10, 13)
 __APT_SHAPE = (4, 6)
 __CCSG_SHAPE = (10, 14)
-__CC_SHAPE = (0, 0)
+__CC_SHAPE = (4, 6)
 __ttype2shape = {TARGETTYPE_NGT: __NGT_SHAPE,
                  TARGETTYPE_APT: __APT_SHAPE,
                  TARGETTYPE_CCSG: __CCSG_SHAPE,
