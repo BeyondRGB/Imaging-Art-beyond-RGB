@@ -17,7 +17,6 @@ import numpy as np
 from scipy.optimize import fmin
 
 # Local Imports
-from lab_refs import LAB_REF
 from spectral_equation import xyztolab, ciede2000
 from packet import Packet
 
@@ -34,8 +33,9 @@ def color_calibrate(packet: Packet, camsigs: np.ndarray):
     [in] camsigs : target camera signals
     [post] packet x variable is populated
     """
-    res = fmin(__de_equ, __INIT_MOARR, (camsigs, LAB_REF))
-    print(__de_equ(res, camsigs, LAB_REF))
+    ref = packet.target.lab_ref
+    res = fmin(__de_equ, __INIT_MOARR, (camsigs, ref))
+    print(__de_equ(res, camsigs, ref))
     packet.x = res
 
 
