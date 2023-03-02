@@ -26,8 +26,10 @@ def spectrally_transform(packet: Packet, camsigs: np.ndarray):
     """
     r_reference = packet.target.r_ref
     initial_guess = np.ndarray.flatten(INIT_M_REFL)
+
     opt = fmin(func=__eq, x0=initial_guess, args=(camsigs, r_reference))
     print('Spectral transformation fopt: ' + str(__eq(opt, camsigs, r_reference)))
+
     # TODO use above results
     return
 
@@ -37,6 +39,7 @@ def __eq(x: np.ndarray, camsigs: np.ndarray, r_reference: np.ndarray) -> float:
     [in] x            : The current guess array
     [in] camsigs      : The camera signals extracted from the color target
     [in] r_reference  : The 'actual' reference data for the given color target
+    [out]             : The resulting Z value, lower is better
     """
 
     x = np.reshape(x, (36, 6))
