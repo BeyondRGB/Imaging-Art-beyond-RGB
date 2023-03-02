@@ -301,11 +301,6 @@ def __getpatchloc(target: Target, row: int, col: int) -> tuple:
 def __loadrefs(target: Target, targettype: int):
     files = __ttype2files[targettype]
     # Reflectance
-    ref = np.genfromtxt(files[0], delimiter=',')
-    target.r_ref = np.reshape(ref, (36, ref.shape[0]//36))
+    target.r_ref = np.genfromtxt(files[0], delimiter=',')
     # LAB
-    ref = np.genfromtxt(files[1], delimiter=',')
-    target.lab_ref = np.reshape(ref, (3, ref.shape[0]//3))
-    print(target.lab_ref)
-    import lab_refs
-    print(lab_refs.LAB_REF)
+    target.lab_ref = np.genfromtxt(files[1], delimiter=',')

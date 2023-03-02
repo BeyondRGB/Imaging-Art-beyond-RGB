@@ -35,7 +35,7 @@ def color_calibrate(packet: Packet, camsigs: np.ndarray):
     [post] packet x variable is populated
     """
     res = fmin(__de_equ, __INIT_MOARR, (camsigs, LAB_REF))
-    print(__de_equ(res, packet.camsigs, LAB_REF))
+    print(__de_equ(res, camsigs, LAB_REF))
     packet.x = res
 
 
