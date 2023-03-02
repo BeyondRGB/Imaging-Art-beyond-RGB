@@ -15,10 +15,17 @@ License:
 import sys
 import argparse
 
-from rgbio import save_image
 from pipeline import processing_pipeline
-from packet import genpacket, gentarget, getimg
+from packet import genpacket, gentarget
 from parser import Parser
+from constants import TARGETTYPE_NGT, TARGETTYPE_APT,\
+        TARGETTYPE_CCSG, TARGETTYPE_CC
+
+# Target arg to TARGETTYPE translator
+targ2ttype = {'NGT': TARGETTYPE_NGT,
+              'APT': TARGETTYPE_APT,
+              'CCSG': TARGETTYPE_CCSG,
+              'CC': TARGETTYPE_CC}
 
 
 # Usage help messages
@@ -27,8 +34,8 @@ TOP_LEFT_X_HELP = 'Pixel value of the top-left of the upright color target from 
 BOTTOM_RIGHT_X_HELP = 'Pixel value of the bottom-right of the upright color target from the left end of the color-target image'
 TOP_LEFT_Y_HELP = 'Pixel value of the top-left of the upright color target from the top end of the color-target image'
 BOTTOM_RIGHT_Y_HELP = 'Pixel value of the bottom-right of the upright color target from the top end of the color-target image'
-WHITE_COL_HELP = 'Column of selected white patch from left of target'
-WHITE_ROW_HELP = 'Row of selected white patch from top of target'
+WHITE_COL_HELP = 'Column of selected white patch from left of target (0 indexed)'
+WHITE_ROW_HELP = 'Row of selected white patch from top of target (0 indexed)'
 IMAGES_HELP = '''Images should be added in this order:
         Target A
         Target B
@@ -44,6 +51,8 @@ OUTPATH_HELP = 'Output directory'
 
 def main():
     """ App entry point """
+
+    # TODO we should extract this to some function at some point
     parser = Parser(formatter_class=argparse.RawTextHelpFormatter)
 
     parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'],
@@ -70,12 +79,14 @@ def main():
         parser.print_help()
         sys.exit(1)
 
+    # TODO packet generating bit needs to be redone
     # Gather target coords and white square
     top_left = (int(args.top_left_x), int(args.top_left_y))
     bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
 
-    target = gentarget(top_left, bottom_right, (int(args.white_row),
-                                                int(args.white_col)))
+    target = gentarget((top_left, bottom_right),
+                       (int(args.white_row), int(args.white_col)),
+                       targ2ttype[args.target])
 
     # Setup packet
     packet = build_packet(args.images, target, args.outpath)

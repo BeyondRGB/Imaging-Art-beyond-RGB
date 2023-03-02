@@ -11,12 +11,14 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+# Python Imports
 import gc
 import numpy as np
 from scipy.optimize import fmin
 
-from lab_refs import LAB_REF
+# Local Imports
 from spectral_equation import xyztolab, ciede2000
+from packet import Packet
 
 
 __INIT_MOARR = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
@@ -25,23 +27,19 @@ __INIT_MOARR = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,
                 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 
 
-def color_calibrate(packet):
+def color_calibrate(packet: Packet, camsigs: np.ndarray):
     """ Process target images to get the calibrated M matrix
-    Procedure:
-        Generate camsigs array with all channels
-        Generate initial minimization variables
-        Minimize xyz equation
-    [in] packet : pipeline packet
-    [out] calibrated M ndarray
-    [post] target image is unloaded
+    [in] packet  : pipeline packet
+    [in] camsigs : target camera signals
     [post] packet x variable is populated
     """
-    res = fmin(__de_equ, __INIT_MOARR, (packet.camsigs, LAB_REF))
-    print(__de_equ(res, packet.camsigs, LAB_REF))
+    ref = packet.target.lab_ref
+    res = fmin(__de_equ, __INIT_MOARR, (camsigs, ref))
+    print(__de_equ(res, camsigs, ref))
     packet.x = res
 
 
-def __de_equ(x, camsigs, labref):
+def __de_equ(x: np.ndarray, camsigs: np.ndarray, labref: np.ndarray) -> float:
     """ ∆E equation for color tranformation matrix optimization
     [in] x : current input parameters guess
     [in] camsigs : target camera signals we are modifying
