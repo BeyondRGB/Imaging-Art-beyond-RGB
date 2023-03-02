@@ -39,6 +39,7 @@ def preprocess(packet: Packet):
 
     if packet.wscale[0] is None:
         # This is out first time through
+        __bitscale(subj, dark, white)
         __deadpixels(subj, dark, white)
         __darkcurrent(subj, dark, white)
         __wscalegen(packet, subj, white)
@@ -47,6 +48,7 @@ def preprocess(packet: Packet):
         putimg(packet, IMGTYPE_WHITE, white)  # save once
     else:
         # Preprocessing on non target images
+        __bitscale(subj)
         __deadpixels(subj)
         __darkcurrent(subj, dark)
         putimg(packet, IMGTYPE_DARK, dark)
@@ -55,6 +57,24 @@ def preprocess(packet: Packet):
         gc.collect()
 
     putimg(packet, IMGTYPE_SUBJECT, subj)  # Always save subject
+
+
+def __bitscale(subj: tuple, dark: tuple = None, white: tuple = None):
+    """ Scale pixels up to 16 bit
+    [in] subj      : subject images
+    [in,opt] white : white images (only used for the first pass)
+    [in,opt] dark  : dark images (only used for the first pass)
+    [post] images scaled to 16 bit
+    """
+    s = ((2.0**16.0)-1.0)/((2.0**14.0)-1.0)
+    if white:
+        white[0][...] *= s
+        white[1][...] *= s
+    if dark:
+        dark[0][...] *= s
+        dark[1][...] *= s
+    subj[0][...] *= s
+    subj[1][...] *= s
 
 
 def __deadpixels(subj: tuple, dark: tuple = None, white: tuple = None):
