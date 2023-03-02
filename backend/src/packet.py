@@ -41,21 +41,25 @@ __DARK_A_IDX = 4
 __DARK_B_IDX = 5
 RENDERABLES_START = 6
 
-# Target shapes
+# TARGETTYPE to shape
 __NGT_SHAPE = (10, 13)
-__APT_SHAPE = (0, 6)
-__CCSG_SHAPE = (0, 0)
+__APT_SHAPE = (4, 6)
+__CCSG_SHAPE = (10, 14)
 __CC_SHAPE = (0, 0)
+__ttype2shape = {TARGETTYPE_NGT: __NGT_SHAPE,
+                 TARGETTYPE_APT: __APT_SHAPE,
+                 TARGETTYPE_CCSG: __CCSG_SHAPE,
+                 TARGETTYPE_CC: __CC_SHAPE}
 
-# TARGETTYPE2files
-__ngtfiles = ('data/NGT_reflectance.csv', 'data/NGT_lab.csv')
-__aptfiles = ('data/APT_reflectance.csv', 'data/APT_lab.csv')
-__ccsgfiles = ('data/CCSG_reflectance.csv', 'data/CCSG_lab.csv')
-__ccfiles = ('data/CC_reflectance.csv', 'data/CC_lab.csv')
-__ttype2files = {TARGETTYPE_NGT: __ngtfiles,
-                 TARGETTYPE_APT: __aptfiles,
-                 TARGETTYPE_CCSG: __ccsgfiles,
-                 TARGETTYPE_CC: __ccfiles}
+# TARGETTYPE to files
+__NGTFILES = ('data/NGT_reflectance.csv', 'data/NGT_lab.csv')
+__APTFILES = ('data/APT_reflectance.csv', 'data/APT_lab.csv')
+__CCSGFILES = ('data/CCSG_reflectance.csv', 'data/CCSG_lab.csv')
+__CCFILES = ('data/CC_reflectance.csv', 'data/CC_lab.csv')
+__ttype2files = {TARGETTYPE_NGT: __NGTFILES,
+                 TARGETTYPE_APT: __APTFILES,
+                 TARGETTYPE_CCSG: __CCSGFILES,
+                 TARGETTYPE_CC: __CCFILES}
 
 
 @dataclass
@@ -171,12 +175,7 @@ def gentarget(coords: tuple, wpatch: tuple, targettype: int) -> Target:
     [in] wpatch     : white patch location (row, col)
     [in] targettype : target type
     """
-    if targettype == TARGETTYPE_NGT:
-        shape = __NGT_SHAPE
-    else:
-        # TODO error handling
-        print("Invalid target type")
-        exit(-1)
+    shape = __ttype2shape[targettype]
 
     target = Target(coords[0], coords[1], wpatch, shape, None, None)
     __loadrefs(target, targettype)
@@ -210,9 +209,10 @@ def extract_camsigs(packet):
     [out] camsigs array
     """
     t_img = getimg(packet, IMGTYPE_TARGET)
+    numpatches = packet.target.shape[0] * packet.target.shape[1]
     siglist = genpatchlist(packet.target)
     tr = TARGET_RADIUS
-    camsigs = np.ndarray((6, 130))
+    camsigs = np.ndarray((6, numpatches))
     for i, sig in enumerate(siglist):
         cell = t_img[0][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
         avg = np.average(cell, axis=(0, 1))
