@@ -52,13 +52,6 @@ def load_image(path):
     try:
         raw = rp.imread(path).raw_image
         rgb = cvtColor(raw, COLOR_BayerRGGB2RGB).astype('f4')
-        import matplotlib.pyplot as plt
-        print(rgb[1])
-        rgb[1][...] /= 2
-        print(rgb[1])
-        plt.imshow(rgb/15536)
-        plt.show()
-        input()
         return rgb
     except rp._rawpy.LibRawIOError:
         raise IOError
