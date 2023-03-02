@@ -48,10 +48,10 @@ __CCSG_SHAPE = (0, 0)
 __CC_SHAPE = (0, 0)
 
 # TARGETTYPE2files
-__ngtfiles = ('data/NGT_spectral_reflectance.csv', 'data/NGT_lab.csv')
-__aptfiles = ('data/APT_spectral_reflectance.csv', 'data/APT_lab.csv')
-__ccsgfiles = ('data/CCSG_spectral_reflectance.csv', 'data/CCSG_lab.csv')
-__ccfiles = ('data/CC_spectral_reflectance.csv', 'data/CC_lab.csv')
+__ngtfiles = ('data/NGT_reflectance.csv', 'data/NGT_lab.csv')
+__aptfiles = ('data/APT_reflectance.csv', 'data/APT_lab.csv')
+__ccsgfiles = ('data/CCSG_reflectance.csv', 'data/CCSG_lab.csv')
+__ccfiles = ('data/CC_reflectance.csv', 'data/CC_lab.csv')
 __ttype2files = {TARGETTYPE_NGT: __ngtfiles,
                  TARGETTYPE_APT: __aptfiles,
                  TARGETTYPE_CCSG: __ccsgfiles,
