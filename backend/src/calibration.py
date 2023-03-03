@@ -6,6 +6,7 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
+    Keenan Miller <https://github.com/keenanm500>
 
 License:
     © 2022 BeyondRGB
@@ -36,7 +37,7 @@ def color_calibrate(packet: Packet, camsigs: np.ndarray):
     ref = packet.target.lab_ref
     res = fmin(__de_equ, __INIT_MOARR, (camsigs, ref))
     print(__de_equ(res, camsigs, ref))
-    packet.x = res
+    packet.mo_matrix = res
 
 
 def __de_equ(x: np.ndarray, camsigs: np.ndarray, labref: np.ndarray) -> float:
@@ -51,12 +52,8 @@ def __de_equ(x: np.ndarray, camsigs: np.ndarray, labref: np.ndarray) -> float:
     xyz = np.matmul(m, np.subtract(camsigs, o))
     lab = xyztolab(xyz)
     xyzshape = xyz.shape[1]
-    del xyz
-    gc.collect()
     ciede = np.zeros(xyzshape)
     for i in range(0, lab.shape[1]):
         ciede[i] = ciede2000(lab[:, i], labref[:, i])
     err = np.mean(ciede)
-    del ciede
-    gc.collect()
     return err

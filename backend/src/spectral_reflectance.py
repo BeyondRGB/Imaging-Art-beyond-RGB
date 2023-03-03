@@ -2,6 +2,7 @@
 Funtions for getting the spectral transformation array
 
 Authors:
+    Brendan Grau <https://github.com/Victoriam7>
     Keenan Miller <https://github.com/keenanm500>
 
 License:
@@ -28,6 +29,7 @@ def spectrally_transform(packet: Packet, camsigs: np.ndarray):
     initial_guess = np.ndarray.flatten(INIT_M_REFL)
 
     opt = fmin(func=__eq, x0=initial_guess, args=(camsigs, r_reference))
+    packet.m_refl_matrix = opt
     print('Spectral transformation fopt: ' + str(__eq(opt, camsigs, r_reference)))
 
     # TODO use above results

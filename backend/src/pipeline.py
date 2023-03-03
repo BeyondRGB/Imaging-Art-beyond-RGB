@@ -23,7 +23,7 @@ from preprocessing import preprocess
 from calibration import color_calibrate
 from rendering import render
 from spectral_reflectance import spectrally_transform
-
+from verification import verify_color_transformation, verify_spectral_transformation
 
 def processing_pipeline(packet):
     """ Color calibration pipeline
@@ -38,6 +38,10 @@ def processing_pipeline(packet):
     camsigs = extract_camsigs(packet)
     color_calibrate(packet, camsigs)
     spectrally_transform(packet, camsigs)
+
+    # Values for btrgb
+    xyz, lab, ciede = verify_color_transformation(packet, camsigs)
+    r_cam, RMSE = verify_spectral_transformation(packet, camsigs)
 
     """ Render and Save (Batch Processing)
     At this point we have the color transformation matrix and need to apply it
