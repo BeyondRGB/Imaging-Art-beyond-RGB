@@ -38,8 +38,8 @@ def render(packet):
     camsigs, imgshape = __genimgsigs(packet)
 
     # Compute color calibrated image
-    m = np.resize(packet.x[0:18], (3, 6))
-    o = np.resize(packet.x[18:], (6, 1))
+    m = np.resize(packet.mo_matrix[0:18], (3, 6))
+    o = np.resize(packet.mo_matrix[18:], (6, 1))
     xyz = np.matmul(m, np.subtract(camsigs, o))
     del camsigs
     gc.collect()

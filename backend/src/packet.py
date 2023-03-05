@@ -15,6 +15,7 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
+    Keenan Miller <https://github.com/keenanm500>
 
 License:
     © 2022 BeyondRGB
@@ -68,14 +69,14 @@ class Packet:
     Struct to hold pipeline data
 
     Members:
-        files   : list of image files
-        swap    : list of temp files for storing image arrays
-        outpath : path to output files to
-        subjptr : tuple containing indices of current subject for batch
-        target  : dataclass for the target
-        wscale  : white patch scale value
-        mcalib  : calibrated matrix
-        camsigs : TODO delete
+        files             : list of image files
+        swap              : list of temp files for storing image arrays
+        outpath           : path to output files to
+        subjptr           : tuple containing indices of current subject for batch
+        target            : dataclass for the target
+        wscale            : white patch scale value
+        mo_matrix         : MO calibration matrix
+        m_refl_matrix     : spectral transformation M matrix
     """
     files: list
     swap: list
@@ -83,9 +84,8 @@ class Packet:
     subjptr: tuple
     target: np.ndarray
     wscale: tuple
-    mcalib: np.ndarray
-    camsigs: np.ndarray
-
+    mo_matrix: np.ndarray
+    m_refl_matrix: np.ndarray
 
 @dataclass
 class Target:
