@@ -16,7 +16,7 @@
     }
 </script>
 
-<div class="sectionStyle {singleItem && isEmpty(items) ? 'errorStyle' : ''}">
+<div class="sectionStyle">
     <section use:dndzone={{items, flipDurationMs, type, dropFromOthersDisabled: singleItem && items.length > 0}}
         on:consider={handleSort}
         on:finalize={handleSort}
