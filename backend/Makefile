@@ -26,8 +26,10 @@ win:
 	pyinstaller $(BUILD_ARGS_WIN) src/BeyondRGB.py
 
 clean:
-	rm BeyondRGB.spec dist build -rf
+	rm BeyondRGB.spec dist build out -rf
 
 ###### FOR TEST CASES UNZIP GITHUB EXAMPLE IMAGES IN TOP LEVEL DIRECTORY ######
 test_single:
-	dist/BeyondRGB 2993 4951 1925 3435 3 6 --outpath='bin/' SampleImages/targets_1.ARW SampleImages/targets_2.ARW SampleImages/white_1.ARW SampleImages/white_2.ARW SampleImages/dark_1.ARW SampleImages/dark_2.ARW SampleImages/art_A_1.ARW SampleImages/art_A_2.ARW
+	dist/BeyondRGB 2993 4951 1925 3435 3 6 --outpath='out/' SampleImages/targets_1.ARW SampleImages/targets_2.ARW SampleImages/white_1.ARW SampleImages/white_2.ARW SampleImages/dark_1.ARW SampleImages/dark_2.ARW SampleImages/art_A_1.ARW SampleImages/art_A_2.ARW
+test_multi:
+	dist/BeyondRGB --outpath='out/' 2993 4951 1925 3435 3 6 SampleImages/targets_1.ARW SampleImages/targets_2.ARW SampleImages/white_1.ARW SampleImages/white_2.ARW SampleImages/dark_1.ARW SampleImages/dark_2.ARW SampleImages/art_A_1.ARW SampleImages/art_A_2.ARW SampleImages/art_B_2.ARW SampleImages/art_B_2.ARW  SampleImages/art_C_2.ARW SampleImages/art_C_2.ARW
