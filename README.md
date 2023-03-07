@@ -25,7 +25,16 @@ Brendan Grau, Elijah Cooper, John Akey, Keenan Miller, SungMin Kim
 - This set-up process was tested on a clean install of Windows with no prior Visual Studio installations.
 ### Install tools
 - Window
-    - TODO: UPDATE
+    - Install Chocolatey
+        - https://chocolatey.org/install
+    - Install Make
+        - `choco install make`
+    - Install Git
+        - https://git-scm.com/download/win
+    - Install Python
+        - https://www.python.org/downloads/windows/
+    - Install Npm
+        - TODO
 - Mac
     - TODO: UPDATE
 - Linux
@@ -35,7 +44,7 @@ Brendan Grau, Elijah Cooper, John Akey, Keenan Miller, SungMin Kim
         - git
 
 ### Clone the repository
-- `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
+- `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB`
 - `cd .\Imaging-Art-beyond-RGB\`
 
 ### Set-up development & release environment:
