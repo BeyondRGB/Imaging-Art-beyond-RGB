@@ -43,19 +43,15 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 - `cd .\Imaging-Art-beyond-RGB\`
 
 ### Set-up development & release environment:
-- `cd .\backend\`
-- `.\vcpkg_first_time_setup.bat`
-  - Locally install Vcpkg and our dependencies (\~10 GB and \~30 minutes)
-- `cd ..\frontend\`
+- `cd .\frontend\`
 - `npm ci`
 
 ### Backend build
 - `cd .\backend\` from project root.
-- If an additional dependency is ever added to "dependencies.txt", first run:
-  - `.\config_depends.bat`
-- To build:
-  - `.\win10_debug.bat` or `.\win10_release.bat`
-  - Build automatically copied to fronted for testing.
+- If on Linux or Mac:
+  - `make`
+- If on Windows:
+  - `make win`
 
 ### Fronted build
 - `cd .\frontend\` from project root.
