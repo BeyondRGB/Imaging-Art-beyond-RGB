@@ -3,9 +3,97 @@ from tkinter import filedialog
 from packet import genpacket, gentarget
 from target_selector import select_target
 from pipeline import processing_pipeline
+from difflib import SequenceMatcher
+
+
+def max_probability(image_probabilities:list, role:str):
+    current_max = 0
+    current_max_image = []
+    for image in image_probabilities:
+        value = image[role]
+        if value > current_max:
+            current_max = value
+            current_max_image = image
+    return current_max_image
+
+
+def compare_two_strings(first:str, second:str):
+    return SequenceMatcher(None, first, second).ratio()
+
+
+def find_best_match(main_string, target_strings: list):
+    ratings = []
+    best_match_index = 0
+    for string in target_strings:
+        current_rating = compare_two_strings(main_string, string)
+        ratings.append({"target": string, "rating":current_rating})
+        if current_rating > ratings[best_match_index][ratings]:
+            best_match_index = target_strings.index(string)
+
+    return {"ratings":ratings, "best_match":ratings[best_match_index], "best_match_index": best_match_index}
+
+
+def sort_images(images: list):
+    matchingStandards = [
+        ["image", "print", "object", "art", "exhibit","paint"], # art
+        ["target", "color", "grid", "map", "passport" ], # target
+        ["flat", "white", "ff", "flatfield", "vignetting", "vignette", "light", "correction"], # flat field
+        ["dark", "black", "darkfield", "current", "signal", "internal", "camera", "correction" ] # dark field
+    ]
+    probabilityScoreProperties = ['artObjectProbability', 'targetProbability', 'flatFieldProbability', 'darkFieldProbability']
+    image_probability = []
+    for image in images:
+        image_dict = {"name": image}
+        shortened_name = image.split("/")[-1]
+        for property in probabilityScoreProperties:
+            image_dict[property] = 0
+
+        for i in range(len(matchingStandards)):
+            for string in matchingStandards[i]:
+                string.lower()
+                shortened_name.lower()
+                image_dict[probabilityScoreProperties[i]] += compare_two_strings(string, shortened_name)
+        image_probability.append(image_dict)
+
+    sorted_images = []
+    # target
+    best_target_image = max_probability(image_probability, probabilityScoreProperties[1])
+    sorted_images.append(best_target_image["name"])
+    image_probability.remove(best_target_image)
+    best_target_image = max_probability(image_probability, probabilityScoreProperties[1])
+    sorted_images.append(best_target_image["name"])
+    image_probability.remove(best_target_image)
+
+    # flat field
+    best_flatfield_image = max_probability(image_probability, probabilityScoreProperties[2])
+    sorted_images.append(best_flatfield_image["name"])
+    image_probability.remove(best_flatfield_image)
+    best_flatfield_image = max_probability(image_probability, probabilityScoreProperties[2])
+    sorted_images.append(best_flatfield_image["name"])
+    image_probability.remove(best_flatfield_image)
+
+    # dark field
+    best_darkfield_image = max_probability(image_probability, probabilityScoreProperties[3])
+    sorted_images.append(best_darkfield_image["name"])
+    image_probability.remove(best_darkfield_image)
+    best_darkfield_image = max_probability(image_probability, probabilityScoreProperties[3])
+    sorted_images.append(best_darkfield_image["name"])
+    image_probability.remove(best_darkfield_image)
+
+    # art work
+    best_artwork_image = max_probability(image_probability, probabilityScoreProperties[0])
+    sorted_images.append(best_artwork_image["name"])
+    image_probability.remove(best_artwork_image)
+    best_artwork_image = max_probability(image_probability, probabilityScoreProperties[0])
+    sorted_images.append(best_artwork_image["name"])
+    image_probability.remove(best_artwork_image)
+
+    return sorted_images
 
 
 def select_files():
+    print("Please select your 2 target, 2 flatfield, 2 darkfield, and optionally 2 artwork images")
+
     root = tk.Tk()
     root.withdraw()
 
@@ -14,34 +102,34 @@ def select_files():
     for file in file_paths:
         images.append(file)
 
-    return images
+    return sort_images(images)
 
 
 def select_output():
+    print("Please select the folder you want to save the processed image to")
+
     root = tk.Tk()
     root.withdraw()
     return filedialog.askdirectory()
 
 
-def gather_target(target):
+def gather_target(target: str):
     """
     [in] target     : a string containing the path to the target image
     [out] target    : an object of class Target
     """
-    print("Please select your 2 target, 2 flatfield, 2 darkfield, and optionally 2 artwork images")
-    print("Please select the folder you want to save the processed image to")
-
     whitepatch_column = input("Please enter the column location of the white patch: ")
     whitepatch_row = input("Please enter the row location of the white patch: ")
-
-    print("Please click and drag your mouse from the top-left corner to the bottom-right corner of the target")
-    top_left, bottom_right = select_target(target)
 
     choices = ['NGT', 'APT', 'CCSG', 'CC']
     target_type_input = ""
     while target_type_input not in choices:
         target_type_input = input("What is the target type? Options: NGT, APT, CCSG, CC. ").upper()
     target_type = choices.index(target_type_input)
+
+    print("Please click and drag your mouse from the top-left corner to the bottom-right corner of the target")
+    top_left, bottom_right = select_target(target)
+
 
     return gentarget((top_left, bottom_right),
                        (int(whitepatch_column), int(whitepatch_row)),
@@ -59,6 +147,6 @@ def run_processing_image_interface():
 if __name__ == '__main__':
     images = select_files()
     outpath = select_output()
-    target = gather_target(images[4])
+    target = gather_target(images[1])
     packet = genpacket(images, target, outpath)
     processing_pipeline(packet)
