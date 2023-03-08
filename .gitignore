@@ -3,6 +3,10 @@
 ##############
 __pycache__/*
 *.tif*
+build/*
+dist/*
+SampleImages/*
+SampleImages
 
 
 ###############

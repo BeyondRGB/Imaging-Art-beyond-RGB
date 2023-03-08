@@ -23,6 +23,8 @@ License:
 """
 # Python Imports
 import gc
+import os
+import sys
 import numpy as np
 from dataclasses import dataclass
 
@@ -32,6 +34,11 @@ from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
         IMGTYPE_DARK, IMGTYPE_SUBJECT, TARGET_RADIUS,\
         TARGETTYPE_NGT, TARGETTYPE_APT, TARGETTYPE_CCSG, TARGETTYPE_CC
 
+# Get correct path for use with PyInstaller (gives working directory)
+try:
+    wd = sys._MEIPASS
+except AttributeError:
+    wd = os.getcwd()
 
 # File/array index constants
 __TARGET_A_IDX = 0
@@ -299,8 +306,9 @@ def __getpatchloc(target: Target, row: int, col: int) -> tuple:
 
 
 def __loadrefs(target: Target, targettype: int):
-    files = __ttype2files[targettype]
+    r_file = os.path.join(wd, __ttype2files[targettype][0])
+    lab_file = os.path.join(wd, __ttype2files[targettype][1])
     # Reflectance
-    target.r_ref = np.genfromtxt(files[0], delimiter=',')
+    target.r_ref = np.genfromtxt(r_file, delimiter=',')
     # LAB
-    target.lab_ref = np.genfromtxt(files[1], delimiter=',')
+    target.lab_ref = np.genfromtxt(lab_file, delimiter=',')
