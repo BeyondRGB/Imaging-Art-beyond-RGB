@@ -14,6 +14,7 @@ DATA_DIR = data
 
 BUILD_ARGS_BASE = -p src --distpath $(OUT_DIR) -y --clean -F
 
+# UNIX like systems use ':' as the separator while Windows uses ';'
 BUILD_ARGS_UNIX = $(BUILD_ARGS_BASE) --add-data $(DATA_DIR):$(DATA_DIR)
 BUILD_ARGS_WIN = $(BUILD_ARGS_BASE) --add-data $(DATA_DIR);$(DATA_DIR)
 
