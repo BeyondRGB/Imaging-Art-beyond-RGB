@@ -53,7 +53,7 @@
       },
       colors: ["#FFFFFF"],
       chart: {
-          background: '#38383B',
+          background: '#1C1C1E',
           animations: {
               enabled: false
           },
@@ -106,7 +106,7 @@
           tickAmount: 9,
           labels: {
               style: {
-                  colors: '#FFFFFF',
+                  colors: '#1C1C1E',
               }
           },
           title: {
@@ -114,7 +114,7 @@
               offsetX: 0,
               offsetY: 110,
               style: {
-                  color: '#FFFFFF',
+                  color: '#1C1C1E',
               }
           },
       },

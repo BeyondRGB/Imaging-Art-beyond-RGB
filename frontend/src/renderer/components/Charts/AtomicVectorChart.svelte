@@ -38,6 +38,7 @@
                 strokeWidth: 1
             },
             chart: {
+                background: '#1C1C1E',
                 animations: {
                     enabled: false
                 },
@@ -47,10 +48,24 @@
                 stroke: {
                     curve: 'straight',
                 },
+                zoom: {
+                    enabled: false
+                },
                 toolbar: {
                     // Hamburger menu which has exports such as CSV etc.
                     // I have had issues displaying this, I believe some unrelated global CSS is causing issues
-                    show: false
+                    show: true,
+                    tools: {
+                        download: true,
+                    },
+                    export: {
+                        csv: {
+                            filename: undefined,
+                            columnDelimiter: ',',
+                            headerCategory: 'wavelength',
+                            headerValue: 'value',
+                        }
+                    }
                 },
                 selection: {
                     enabled: false

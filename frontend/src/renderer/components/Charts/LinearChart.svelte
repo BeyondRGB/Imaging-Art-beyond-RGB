@@ -115,4 +115,5 @@
   .liner-chart .bx--cc--scatter circle {
     stroke: black !important;
   }
+
 </style>
