@@ -126,7 +126,8 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
     target = packet.target
     row, col = target.whitepatch
     numrows, numcols = target.shape
-    yval = target.xyz_ref[1][col*numrows+row] / 100  # 2d -> 1d column major
+    idx = col * numrows + row  # convert 2d -> 1d in column major
+    yval = target.xyz_ref[1][idx] / 100
 
     w = yval * (wmean / tmean)
     packet.wscale = w
