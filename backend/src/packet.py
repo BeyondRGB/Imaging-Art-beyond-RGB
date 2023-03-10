@@ -90,7 +90,7 @@ class Packet:
     outpath: str
     subjptr: tuple
     target: np.ndarray
-    wscale: tuple
+    wscale: float
     mo_matrix: np.ndarray
     m_refl_matrix: np.ndarray
 
@@ -125,7 +125,7 @@ def genpacket(files: list, target: Target, outpath: str) -> Packet:
     swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
     pkt = Packet(files, swap, outpath, subjptr,
-                 target, (None, None), None, None)
+                 target, 0.0, None, None)
     __loadswap(pkt)
     return pkt
 
