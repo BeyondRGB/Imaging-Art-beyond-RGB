@@ -25,7 +25,6 @@ from constants import TARGET_RADIUS, IMGTYPE_WHITE,\
 
 
 __BLUR_FACTOR = 3  # Dead pixel correction
-__YVAL = 0.86122  # Flat fielding
 
 
 def preprocess(packet: Packet):
@@ -121,8 +120,13 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
     tmean = np.mean(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
     wmean = np.mean(white[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
 
-    # TODO dynamic YVAL generation
-    w = __YVAL * (wmean / tmean)
+    # Get Y value
+    target = packet.target
+    row, col = target.whitepatch
+    numrows, numcols = target.shape
+    yval = target.xyz_ref[1][col*numrows+row] / 100  # 2d -> 1d column major
+
+    w = yval * (wmean / tmean)
     packet.wscale = w
 
 
