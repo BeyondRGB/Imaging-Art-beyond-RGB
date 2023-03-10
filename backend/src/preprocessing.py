@@ -117,6 +117,8 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
     tr = TARGET_RADIUS
     x, y = genwhitepatchxy(packet.target)
 
+    # Gather average of white patch area defined by +- TARGET_RADIUS
+    # We only need the green channel
     tmean = np.mean(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
     wmean = np.mean(white[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
 
