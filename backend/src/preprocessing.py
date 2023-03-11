@@ -50,7 +50,6 @@ def preprocess(packet: Packet):
         __bitscale(subj)
         __deadpixels(packet, subj)
         __darkcurrent(subj, dark)
-        putimg(packet, IMGTYPE_DARK, dark)
         __flatfield(packet, subj, white)
         del dark, white
         gc.collect()
@@ -140,8 +139,8 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
 
     # Gather average of white patch area defined by +- TARGET_RADIUS
     # We only need the green channel
-    tmean = np.mean(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
-    wmean = np.mean(white[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
+    tmean = np.average(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
+    wmean = np.average(white[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
 
     # Get Y value
     target = packet.target
