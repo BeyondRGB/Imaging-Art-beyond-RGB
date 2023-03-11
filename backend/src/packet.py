@@ -76,23 +76,26 @@ class Packet:
     Struct to hold pipeline data
 
     Members:
-        files             : list of image files
-        swap              : list of temp files for storing image arrays
-        outpath           : path to output files to
-        subjptr           : tuple containing indices of current subject for batch
-        target            : dataclass for the target
-        wscale            : white patch scale value
-        mo_matrix         : MO calibration matrix
-        m_refl_matrix     : spectral transformation M matrix
+        files         : list of image files
+        swap          : list of temp files for storing image arrays
+        outpath       : path to output files to
+        subjptr       : tuple containing indices of subject being processed
+        target        : dataclass for the target
+        deadpixels    : list of dead pixel locations in images 0 and 1
+        wscale        : white patch scale value
+        mo_matrix     : MO calibration matrix
+        m_refl_matrix : spectral transformation M matrix
     """
     files: list
     swap: list
     outpath: str
     subjptr: tuple
     target: np.ndarray
+    deadpixels: tuple
     wscale: float
     mo_matrix: np.ndarray
     m_refl_matrix: np.ndarray
+
 
 @dataclass
 class Target:
@@ -126,7 +129,7 @@ def genpacket(files: list, target: Target, outpath: str) -> Packet:
     swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
     pkt = Packet(files, swap, outpath, subjptr,
-                 target, 0.0, None, None)
+                 target, None, 0.0, None, None)
     __loadswap(pkt)
     return pkt
 

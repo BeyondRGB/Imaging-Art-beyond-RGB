@@ -39,7 +39,7 @@ def preprocess(packet: Packet):
     if packet.wscale == 0.0:
         # This is out first time through
         __bitscale(subj, dark, white)
-        __deadpixels(subj, dark, white)
+        __deadpixels(packet, subj, dark, white)
         __darkcurrent(subj, dark, white)
         __wscalegen(packet, subj, white)
         __flatfield(packet, subj, white)
@@ -48,7 +48,7 @@ def preprocess(packet: Packet):
     else:
         # Preprocessing on non target images
         __bitscale(subj)
-        __deadpixels(subj)
+        __deadpixels(packet, subj)
         __darkcurrent(subj, dark)
         putimg(packet, IMGTYPE_DARK, dark)
         __flatfield(packet, subj, white)
@@ -76,21 +76,36 @@ def __bitscale(subj: tuple, dark: tuple = None, white: tuple = None):
     subj[1][...] *= s
 
 
-def __deadpixels(subj: tuple, dark: tuple = None, white: tuple = None):
+def __deadpixels(packet: Packet, subj: tuple, white: tuple = None, dark: tuple = None):
     """ Correct for dark pixels by applying a median blur to the images
-    [in] subj      : subject images
+    [in] packet   : pipeline packet
+    [in] subj     : subject images
     [in,opt] white : white images (only used for the first pass)
     [in,opt] dark  : dark images (only used for the first pass)
     [post] images corrected for dead pixels
     """
+    if packet.deadpixels:
+        idxs0, idxs1 = packet.deadpixels
+    else:
+        idxs0 = np.where(white[0] - dark[0] == 0)
+        idxs1 = np.where(white[1] - dark[1] == 0)
     if white:
-        white[0][...] = medianBlur(white[0], __BLUR_FACTOR)
-        white[1][...] = medianBlur(white[1], __BLUR_FACTOR)
+        blur = medianBlur(white[0], __BLUR_FACTOR)
+        white[0][idxs0] = blur[idxs0]
+        blur = medianBlur(white[1], __BLUR_FACTOR)
+        white[1][idxs1] = blur[idxs1]
     if dark:
-        dark[0][...] = medianBlur(dark[0], __BLUR_FACTOR)
-        dark[1][...] = medianBlur(dark[1], __BLUR_FACTOR)
-    subj[0][...] = medianBlur(subj[0], __BLUR_FACTOR)
-    subj[1][...] = medianBlur(subj[1], __BLUR_FACTOR)
+        blur = medianBlur(dark[0], __BLUR_FACTOR)
+        dark[0][idxs0] = blur[idxs0]
+        blur = medianBlur(dark[1], __BLUR_FACTOR)
+        dark[1][idxs1] = blur[idxs1]
+    blur = medianBlur(subj[0], __BLUR_FACTOR)
+    subj[0][idxs0] = blur[idxs0]
+    blur = medianBlur(subj[1], __BLUR_FACTOR)
+    subj[1][idxs1] = blur[idxs1]
+
+    # Store in packet for later images
+    packet.deadpixels = (idxs0, idxs1)
 
 
 def __darkcurrent(subj: tuple, dark: tuple, white: tuple = None):
