@@ -84,11 +84,14 @@ def __deadpixels(packet: Packet, subj: tuple, white: tuple = None, dark: tuple =
     [in,opt] dark  : dark images (only used for the first pass)
     [post] images corrected for dead pixels
     """
+    # Get/generate indicies of dead pixels
     if packet.deadpixels:
         idxs0, idxs1 = packet.deadpixels
     else:
         idxs0 = np.where(white[0] - dark[0] == 0)
         idxs1 = np.where(white[1] - dark[1] == 0)
+
+    # Blur image and then only save values for dead pixels
     if white:
         blur = medianBlur(white[0], __BLUR_FACTOR)
         white[0][idxs0] = blur[idxs0]
@@ -103,6 +106,9 @@ def __deadpixels(packet: Packet, subj: tuple, white: tuple = None, dark: tuple =
     subj[0][idxs0] = blur[idxs0]
     blur = medianBlur(subj[1], __BLUR_FACTOR)
     subj[1][idxs1] = blur[idxs1]
+
+    del blur
+    gc.collect()
 
     # Store in packet for later images
     packet.deadpixels = (idxs0, idxs1)
