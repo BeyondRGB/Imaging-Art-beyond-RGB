@@ -23,6 +23,7 @@ License:
 import gc
 import numpy as np
 from dataclasses import dataclass
+from btrgb import Btrgb
 
 from rgbio import load_image, load_array, save_array, create_temp_file
 from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
@@ -53,6 +54,7 @@ class Packet:
         wscale  : white patch scale value
         mcalib  : calibrated matrix
         camsigs : TODO delete
+        btrgb   : btrgb object for storing output data
     """
     files: list
     swap: list
@@ -62,6 +64,7 @@ class Packet:
     wscale: tuple
     mcalib: np.ndarray
     camsigs: np.ndarray
+    btrgb: Btrgb
 
 
 @dataclass
@@ -81,7 +84,7 @@ class Target:
     shape: tuple
 
 
-def genpacket(files: list, target: Target, outpath: str) -> Packet:
+def genpacket(files: list, target: Target, outpath: str, btrgb) -> Packet:
     """ Initialize packet with default values and loaded images
     images will be in swap after this
     [in] files  : list of files we are working with
@@ -91,7 +94,7 @@ def genpacket(files: list, target: Target, outpath: str) -> Packet:
     swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
     pkt = Packet(files, swap, outpath, subjptr,
-                 target, (None, None), None, None)
+                 target, (None, None), None, None, btrgb)
     __loadswap(pkt)
     return pkt
 

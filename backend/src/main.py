@@ -18,7 +18,7 @@ import argparse
 from rgbio import save_image
 from pipeline import processing_pipeline
 from packet import genpacket, gentarget, getimg
-from btrgb import btrgb_file
+from btrgb import Btrgb
 from parser import Parser
 
 
@@ -78,23 +78,27 @@ def main():
     target = gentarget(top_left, bottom_right, (int(args.white_row),
                                                 int(args.white_col)))
     
+    # Initialize btrgb file
+    btrgb_file = Btrgb()
+
     # Setup packet
-    packet = build_packet(args.images, target, args.outpath)
+    packet = build_packet(args.images, target, args.outpath, btrgb_file)
 
 
     # Begin pipeline
     processing_pipeline(packet)
-    print(packet)
-    btrgb_file.write_to_file("123")
+
+    # Write btrgb file
+    btrgb_file.write_to_file("123", args.outpath)
 
 
-def build_packet(images, target, outpath):
+def build_packet(images, target, outpath, btrgb):
     """ Create packet
     [in] image  : image files
     [in] target : target grid
     [out] packet
     """
-    packet = genpacket(images, target, outpath)
+    packet = genpacket(images, target, outpath, btrgb)
     return packet
 
 

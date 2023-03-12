@@ -12,6 +12,7 @@ License:
 """
 import json
 from lab_refs import LAB_REF
+import numpy
 
 class Btrgb:
     """
@@ -30,44 +31,48 @@ class Btrgb:
         write_to_file            : Write btrgb class to a file in json format
     """
 
-    output_files = {}
-    calibration_results = {}
-    verification_results = {}
-    general_info = {}
+    OutputFiles = {}
+    CalibrationResults = {}
+    VerificationResults = {}
 
     def __init__(self):
-        self.calibration_results = {
-            "double_values": [],
-            "matrix_values": []
+        self.CalibrationResults = {
+            "double_values": [None],
+            "matrix_values": [None for _ in range(7)]
         }
-        self.create_matrix_value(LAB_REF[0], "CM L*_ref")
-        self.create_matrix_value(LAB_REF[1], "CM a*_ref")
-        self.create_matrix_value(LAB_REF[2], "CM b*_ref")
+        self.VerificationResults = dict()
+        self.OutputFiles = {
+            "CM": None,
+            "SP": None
+        }
+
+        self.CalibrationResults["matrix_values"][1] = self.create_matrix_value(LAB_REF[0], "CM L*_ref")
+        self.CalibrationResults["matrix_values"][2] = self.create_matrix_value(LAB_REF[1], "CM a*_ref")
+        self.CalibrationResults["matrix_values"][3] = self.create_matrix_value(LAB_REF[2], "CM b*_ref")
 
     def create_matrix_value(self, matrix, name):
         matrix_value = {
             "rows": 10,
             "cols": 13,
-            "data": list(matrix),
+            "data": matrix.tolist(),
             "name": name
         }
-        self.calibration_results["matrix_values"].append(matrix_value)
+        return matrix_value
+        #self.calibration_results["matrix_values"].append(matrix_value)
 
     def create_double_value(self, double, name):
         double_value = {
             "data": double,
             "name": name
         }
-        self.calibration_results["double_values"].append(double_value)
+        return double_value
+        #self.calibration_results["double_values"].append(double_value)
         
     def create_output_file(self, file, name):
-        self.output_files[name]= file
+        self.OutputFiles[name]= file
 
-    def write_to_file(self, id):
+    def write_to_file(self, id, outpath):
         contents = json.dumps(self, default=lambda obj: obj.__dict__,
                         sort_keys=True, indent=4)
-        with open(f"BeyondRGB_{id}.btrgb", "w", encoding='utf-8') as f:
+        with open(outpath + '/' + f"BeyondRGB_{id}.btrgb", "w", encoding='utf-8') as f:
             f.write(contents)
-
-
-btrgb_file = Btrgb()
