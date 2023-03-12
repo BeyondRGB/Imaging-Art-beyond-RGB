@@ -251,10 +251,14 @@
         on:click={() => {
           if (!$processState.whitePatchFilled) {
             showWhitePatchWarning = true;
+            return;
           }
           if ($processState.completedTabs[$processState.currentTab]) {
             showDialog = true;
+            return;
           }
+          showWhitePatchWarning = false;
+          showDialog = false;
         }}
         class="nextBtn">Begin Processing</button
       >
