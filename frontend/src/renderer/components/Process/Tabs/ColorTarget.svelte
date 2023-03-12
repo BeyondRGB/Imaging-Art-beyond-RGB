@@ -240,7 +240,7 @@
   $: if (
     colorTarget &&
     colorTarget.refData.name !== "---None---.csv" &&
-    (verifyTarget ? verifyTarget.refData?.name !== "---None---.csv" : true) &&
+    (!verifyTarget || verifyTarget.refData?.name !== "---None---.csv") &&
     colorTarget?.whitePatch?.row && colorTarget?.whitePatch?.col
   ) {
     $processState.completedTabs[4] = true;
