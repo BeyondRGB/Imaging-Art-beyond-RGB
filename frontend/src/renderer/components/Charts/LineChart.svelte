@@ -66,14 +66,13 @@
           },
           toolbar: {
               // Hamburger menu which has exports such as CSV etc.
-              // I have had issues displaying this, I believe some unrelated global CSS is causing issues
               show: true,
               tools: {
                   download: true,
               },
               export: {
                   csv: {
-                      filename: undefined,
+                      filename: 'SpectralLineChart.csv',
                       columnDelimiter: ',',
                       headerCategory: 'wavelength',
                       headerValue: 'value',
