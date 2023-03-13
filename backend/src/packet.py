@@ -60,10 +60,10 @@ __ttype2shape = {TARGETTYPE_NGT: __NGT_SHAPE,
                  TARGETTYPE_CC: __CC_SHAPE}
 
 # TARGETTYPE to files
-__NGTFILES = ('data/NGT_reflectance.csv', 'data/NGT_lab.csv')
-__APTFILES = ('data/APT_reflectance.csv', 'data/APT_lab.csv')
-__CCSGFILES = ('data/CCSG_reflectance.csv', 'data/CCSG_lab.csv')
-__CCFILES = ('data/CC_reflectance.csv', 'data/CC_lab.csv')
+__NGTFILES = ('data/NGT_reflectance.csv', 'data/NGT_lab.csv', 'data/NGT_xyz.csv')
+__APTFILES = ('data/APT_reflectance.csv', 'data/APT_lab.csv', 'data/APT_xyz.csv')
+__CCSGFILES = ('data/CCSG_reflectance.csv', 'data/CCSG_lab.csv', 'data/CCSG_xyz.csv')
+__CCFILES = ('data/CC_reflectance.csv', 'data/CC_lab.csv', 'data/CC_xyz.csv')
 __ttype2files = {TARGETTYPE_NGT: __NGTFILES,
                  TARGETTYPE_APT: __APTFILES,
                  TARGETTYPE_CCSG: __CCSGFILES,
@@ -90,7 +90,7 @@ class Packet:
     outpath: str
     subjptr: tuple
     target: np.ndarray
-    wscale: tuple
+    wscale: float
     mo_matrix: np.ndarray
     m_refl_matrix: np.ndarray
 
@@ -113,6 +113,7 @@ class Target:
     shape: tuple
     r_ref: np.ndarray
     lab_ref: np.ndarray
+    xyz_ref: np.ndarray
 
 
 def genpacket(files: list, target: Target, outpath: str) -> Packet:
@@ -125,7 +126,7 @@ def genpacket(files: list, target: Target, outpath: str) -> Packet:
     swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
     pkt = Packet(files, swap, outpath, subjptr,
-                 target, (None, None), None, None)
+                 target, 0.0, None, None)
     __loadswap(pkt)
     return pkt
 
@@ -184,7 +185,7 @@ def gentarget(coords: tuple, wpatch: tuple, targettype: int) -> Target:
     """
     shape = __ttype2shape[targettype]
 
-    target = Target(coords[0], coords[1], wpatch, shape, None, None)
+    target = Target(coords[0], coords[1], wpatch, shape, None, None, None)
     __loadrefs(target, targettype)
     return target
 
@@ -308,7 +309,8 @@ def __getpatchloc(target: Target, row: int, col: int) -> tuple:
 def __loadrefs(target: Target, targettype: int):
     r_file = os.path.join(wd, __ttype2files[targettype][0])
     lab_file = os.path.join(wd, __ttype2files[targettype][1])
-    # Reflectance
+    xyz_file = os.path.join(wd, __ttype2files[targettype][2])
+
     target.r_ref = np.genfromtxt(r_file, delimiter=',')
-    # LAB
     target.lab_ref = np.genfromtxt(lab_file, delimiter=',')
+    target.xyz_ref = np.genfromtxt(xyz_file, delimiter=',')

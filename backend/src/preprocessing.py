@@ -25,7 +25,6 @@ from constants import TARGET_RADIUS, IMGTYPE_WHITE,\
 
 
 __BLUR_FACTOR = 3  # Dead pixel correction
-__YVAL = 0.86122  # Flat fielding
 
 
 def preprocess(packet: Packet):
@@ -37,7 +36,7 @@ def preprocess(packet: Packet):
     white = getimg(packet, IMGTYPE_WHITE)
     dark = getimg(packet, IMGTYPE_DARK)
 
-    if packet.wscale[0] is None:
+    if packet.wscale == 0.0:
         # This is out first time through
         __bitscale(subj, dark, white)
         __deadpixels(subj, dark, white)
@@ -118,15 +117,20 @@ def __wscalegen(packet: Packet, target: tuple, white: tuple):
     tr = TARGET_RADIUS
     x, y = genwhitepatchxy(packet.target)
 
-    t0mean = np.mean(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))
-    t1mean = np.mean(target[1][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))
-    w0mean = np.mean(white[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))
-    w1mean = np.mean(white[1][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))
+    # Gather average of white patch area defined by +- TARGET_RADIUS
+    # We only need the green channel
+    tmean = np.mean(target[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
+    wmean = np.mean(white[0][(y - tr):(y + tr), (x - tr):(x + tr)], (0, 1))[1]
 
-    # TODO dynamic YVAL generation
-    w0 = __YVAL * (t0mean / w0mean)
-    w1 = __YVAL * (t1mean / w1mean)
-    packet.wscale = (w0, w1)
+    # Get Y value
+    target = packet.target
+    row, col = target.whitepatch
+    numrows, numcols = target.shape
+    idx = col * numrows + row  # convert 2d -> 1d in column major
+    yval = target.xyz_ref[1][idx] / 100
+
+    w = yval * (wmean / tmean)
+    packet.wscale = w
 
 
 def __flatfield(packet: Packet, subj: tuple, white: tuple):
@@ -137,9 +141,9 @@ def __flatfield(packet: Packet, subj: tuple, white: tuple):
     [post] subject flat fielded
     """
     subj[0][...] /= white[0]
-    subj[0][...] *= packet.wscale[0]
+    subj[0][...] *= packet.wscale
     subj[1][...] /= white[1]
-    subj[1][...] *= packet.wscale[1]
+    subj[1][...] *= packet.wscale
 
 
 """

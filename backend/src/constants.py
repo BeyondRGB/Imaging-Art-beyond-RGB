@@ -10,7 +10,7 @@ License:
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
 
-TARGET_RADIUS = 10
+TARGET_RADIUS = 5
 
 # Image Types
 IMGTYPE_TARGET = 0
