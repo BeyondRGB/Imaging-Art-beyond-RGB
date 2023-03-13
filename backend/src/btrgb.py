@@ -12,26 +12,26 @@ License:
 """
 import json
 from lab_refs import LAB_REF
-import numpy
+import numpy as np
 
 class Btrgb:
     """
     Class representing values to be output to btrgb file.
 
     Members:
-        output_files             : List of files to be outputted
-        calibration_results      : Dict of calibration values such as DeltaE values
-        verification_results     : Dict of verification values
+        OutPutFiles              : List of files to be outputted
+        CalibrationResults       : Dict of calibration values such as DeltaE values
+        VerificationResults      : Dict of verification values
 
     Methods: 
-        set_output_files         : Set output files
-        set_calibration_results  : Set calibration results
-        set_verification_results : Set verification results
+        create_output_files         : Set output files
+        create_calibration_results  : Set calibration results
+        create_verification_results : Set verification results
         to_json                  : Helper function returning a json object representing a btrgb class
         write_to_file            : Write btrgb class to a file in json format
     """
 
-    OutputFiles = {}
+    OutPutFiles = {}
     CalibrationResults = {}
     VerificationResults = {}
 
@@ -41,7 +41,7 @@ class Btrgb:
             "matrix_values": [None for _ in range(7)]
         }
         self.VerificationResults = dict()
-        self.OutputFiles = {
+        self.OutPutFiles = {
             "CM": None,
             "SP": None
         }
@@ -54,7 +54,7 @@ class Btrgb:
         matrix_value = {
             "rows": 10,
             "cols": 13,
-            "data": matrix.tolist(),
+            "data": np.reshape(matrix, (10,13)).tolist(),
             "name": name
         }
         return matrix_value
@@ -69,7 +69,7 @@ class Btrgb:
         #self.calibration_results["double_values"].append(double_value)
         
     def create_output_file(self, file, name):
-        self.OutputFiles[name]= file
+        self.OutPutFiles[name]= file
 
     def write_to_file(self, id, outpath):
         contents = json.dumps(self, default=lambda obj: obj.__dict__,

@@ -89,7 +89,8 @@ def main():
     processing_pipeline(packet)
 
     # Write btrgb file
-    btrgb_file.write_to_file("123", args.outpath)
+    packet.btrgb.write_to_file("123", args.outpath)
+
 
 
 def build_packet(images, target, outpath, btrgb):
