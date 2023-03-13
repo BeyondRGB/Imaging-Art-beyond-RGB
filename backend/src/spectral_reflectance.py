@@ -1,6 +1,8 @@
 """ spectral_reflectance.py
+Funtions for getting the spectral transformation array
 
 Authors:
+    Brendan Grau <https://github.com/Victoriam7>
     Keenan Miller <https://github.com/keenanm500>
 
 License:
@@ -18,15 +20,18 @@ from packet import Packet
 INIT_M_REFL = np.full((36, 6), .2)
 
 
-def spectrally_transform(packet: Packet):
+def spectrally_transform(packet: Packet, camsigs: np.ndarray):
     """ Spectral Reflectance minimization runner
-    [in] packet     : The processing packet
+    [in] packet  : The processing packet
+    [in] camsigs : The camera signals extracted from the color target
     """
-    r_reference = np.genfromtxt('NGT_spectral_reflectance.csv', delimiter=',')
-    r_reference[...] = np.reshape(r_reference, (36, 130))
+    r_reference = packet.target.r_ref
     initial_guess = np.ndarray.flatten(INIT_M_REFL)
-    res = fmin(func=__eq, x0=initial_guess, args=(packet.camsigs, r_reference))
-    print('Spectral transformation result: ' + str(__eq(res, packet.camsigs, r_reference)))
+
+    opt = fmin(func=__eq, x0=initial_guess, args=(camsigs, r_reference))
+    packet.m_refl_matrix = opt
+    print('Spectral transformation fopt: ' + str(__eq(opt, camsigs, r_reference)))
+
     # TODO use above results
     return
 
@@ -42,18 +47,10 @@ def __eq(x: np.ndarray, camsigs: np.ndarray, r_reference: np.ndarray) -> float:
     x = np.reshape(x, (36, 6))
     r_camera = np.matmul(x, camsigs)
 
-    global_maximums = []
-    global_minimums = []
-    global_maximums_ref = []
-    global_minimums_ref = []
-    for i in range(0, 36):
-        row = r_camera[i]
-        global_maximums.append(np.amax(row))
-        global_minimums.append(np.amin(row))
-
-        row = r_reference[i]
-        global_maximums_ref.append(np.amax(row))
-        global_minimums_ref.append(np.amin(row))
+    global_maximums = np.amax(r_camera, axis=1)
+    global_minimums = np.amin(r_camera, axis=1)
+    global_maximums_ref = np.amax(r_reference, axis=1)
+    global_minimums_ref = np.amin(r_reference, axis=1)
 
     r_diff = np.subtract(r_reference, r_camera)
     r_diff_square = np.square(r_diff)

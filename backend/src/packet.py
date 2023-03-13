@@ -15,20 +15,31 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
+    Keenan Miller <https://github.com/keenanm500>
 
 License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+# Python Imports
 import gc
+import os
+import sys
 import numpy as np
 from dataclasses import dataclass
 from btrgb import Btrgb
 
+# Local Imports
 from rgbio import load_image, load_array, save_array, create_temp_file
 from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
-        IMGTYPE_DARK, IMGTYPE_SUBJECT
+        IMGTYPE_DARK, IMGTYPE_SUBJECT, TARGET_RADIUS,\
+        TARGETTYPE_NGT, TARGETTYPE_APT, TARGETTYPE_CCSG, TARGETTYPE_CC
 
+# Get correct path for use with PyInstaller (gives working directory)
+try:
+    wd = sys._MEIPASS
+except AttributeError:
+    wd = os.getcwd()
 
 # File/array index constants
 __TARGET_A_IDX = 0
@@ -39,6 +50,26 @@ __DARK_A_IDX = 4
 __DARK_B_IDX = 5
 RENDERABLES_START = 6
 
+# TARGETTYPE to shape
+__NGT_SHAPE = (10, 13)
+__APT_SHAPE = (4, 6)
+__CCSG_SHAPE = (10, 14)
+__CC_SHAPE = (4, 6)
+__ttype2shape = {TARGETTYPE_NGT: __NGT_SHAPE,
+                 TARGETTYPE_APT: __APT_SHAPE,
+                 TARGETTYPE_CCSG: __CCSG_SHAPE,
+                 TARGETTYPE_CC: __CC_SHAPE}
+
+# TARGETTYPE to files
+__NGTFILES = ('data/NGT_reflectance.csv', 'data/NGT_lab.csv', 'data/NGT_xyz.csv')
+__APTFILES = ('data/APT_reflectance.csv', 'data/APT_lab.csv', 'data/APT_xyz.csv')
+__CCSGFILES = ('data/CCSG_reflectance.csv', 'data/CCSG_lab.csv', 'data/CCSG_xyz.csv')
+__CCFILES = ('data/CC_reflectance.csv', 'data/CC_lab.csv', 'data/CC_xyz.csv')
+__ttype2files = {TARGETTYPE_NGT: __NGTFILES,
+                 TARGETTYPE_APT: __APTFILES,
+                 TARGETTYPE_CCSG: __CCSGFILES,
+                 TARGETTYPE_CC: __CCFILES}
+
 
 @dataclass
 class Packet:
@@ -46,26 +77,25 @@ class Packet:
     Struct to hold pipeline data
 
     Members:
-        files   : list of image files
-        swap    : list of temp files for storing image arrays
-        outpath : path to output files to
-        subjptr : tuple containing indices of current subject for batch
-        target  : dataclass for the target
-        wscale  : white patch scale value
-        mcalib  : calibrated matrix
-        camsigs : TODO delete
-        btrgb   : btrgb object for storing output data
+        files             : list of image files
+        swap              : list of temp files for storing image arrays
+        outpath           : path to output files to
+        subjptr           : tuple containing indices of current subject for batch
+        target            : dataclass for the target
+        wscale            : white patch scale value
+        mo_matrix         : MO calibration matrix
+        m_refl_matrix     : spectral transformation M matrix
+        btrgb             : btrgb object for storing output data
     """
     files: list
     swap: list
     outpath: str
     subjptr: tuple
     target: np.ndarray
-    wscale: tuple
-    mcalib: np.ndarray
-    camsigs: np.ndarray
+    wscale: float
+    mo_matrix: np.ndarray
+    m_refl_matrix: np.ndarray
     btrgb: Btrgb
-
 
 @dataclass
 class Target:
@@ -77,11 +107,16 @@ class Target:
         blcorner   : bottom right corner of the grid in image space (x,y)
         whitepatch : location of white patch in target space (row, col)
         shape      : dimension of target (row, col)
+        r_ref      : reflectance reference
+        lab_ref    : LAB reference
     """
     tlcorner: tuple
     blcorner: tuple
     whitepatch: tuple
     shape: tuple
+    r_ref: np.ndarray
+    lab_ref: np.ndarray
+    xyz_ref: np.ndarray
 
 
 def genpacket(files: list, target: Target, outpath: str, btrgb) -> Packet:
@@ -94,7 +129,7 @@ def genpacket(files: list, target: Target, outpath: str, btrgb) -> Packet:
     swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
     pkt = Packet(files, swap, outpath, subjptr,
-                 target, (None, None), None, None, btrgb)
+                 target, 0.0, None, None, btrgb)
     __loadswap(pkt)
     return pkt
 
@@ -145,13 +180,16 @@ def putimg(packet: Packet, imgtype: int, imgpair: tuple):
     gc.collect()
 
 
-def gentarget(tlcorner: tuple, brcorner: tuple, whitepatch: tuple) -> Target:
+def gentarget(coords: tuple, wpatch: tuple, targettype: int) -> Target:
     """ Initialize target
-    [in] tlcorner   : the top left coordinate of the target (x, y)
-    [in] brcorner   : the bottom right coordinate of the target (x, y)
-    [in] whitepatch : white patch location (row, col)
+    [in] coords     : target coordinates(topleft(x,y), bottomright(x,y))
+    [in] wpatch     : white patch location (row, col)
+    [in] targettype : target type
     """
-    target = Target(tlcorner, brcorner, whitepatch, (10, 13))
+    shape = __ttype2shape[targettype]
+
+    target = Target(coords[0], coords[1], wpatch, shape, None, None, None)
+    __loadrefs(target, targettype)
     return target
 
 
@@ -174,6 +212,31 @@ def genwhitepatchxy(target: Target) -> tuple:
     [out] white patch center coordinate (x,y)
     """
     return __getpatchloc(target, target.whitepatch[0], target.whitepatch[1])
+
+
+def extract_camsigs(packet):
+    """ Generate camsigs array
+    [in] packet : pipeline packet
+    [out] camsigs array
+    """
+    t_img = getimg(packet, IMGTYPE_TARGET)
+    numpatches = packet.target.shape[0] * packet.target.shape[1]
+    siglist = genpatchlist(packet.target)
+    tr = TARGET_RADIUS
+    camsigs = np.ndarray((6, numpatches))
+    for i, sig in enumerate(siglist):
+        cell = t_img[0][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
+        avg = np.average(cell, axis=(0, 1))
+        camsigs[0, i] = avg[0]
+        camsigs[1, i] = avg[1]
+        camsigs[2, i] = avg[2]
+        cell = t_img[1][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
+        avg = np.average(cell, axis=(0, 1))
+        camsigs[3, i] = avg[0]
+        camsigs[4, i] = avg[1]
+        camsigs[5, i] = avg[2]
+
+    return camsigs
 
 
 def __loadswap(packet: Packet):
@@ -244,3 +307,13 @@ def __getpatchloc(target: Target, row: int, col: int) -> tuple:
     y += tl[1]
 
     return int(x), int(y)
+
+
+def __loadrefs(target: Target, targettype: int):
+    r_file = os.path.join(wd, __ttype2files[targettype][0])
+    lab_file = os.path.join(wd, __ttype2files[targettype][1])
+    xyz_file = os.path.join(wd, __ttype2files[targettype][2])
+
+    target.r_ref = np.genfromtxt(r_file, delimiter=',')
+    target.lab_ref = np.genfromtxt(lab_file, delimiter=',')
+    target.xyz_ref = np.genfromtxt(xyz_file, delimiter=',')

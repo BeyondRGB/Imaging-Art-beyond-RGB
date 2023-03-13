@@ -19,16 +19,19 @@ import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
-from cv2 import imwrite, cvtColor, COLOR_RGB2BGR
+from cv2 import imwrite, cvtColor, COLOR_RGB2BGR, COLOR_BayerRGGB2RGB
 
 
 def save_image(img: np.ndarray, path: str, filename: str):
     """ Save image to disk
-    [in] img :
-    [in] path :
-    [in] filename :
+    [in] img :      image data
+    [in] path :     path to save file to
+    [in] filename : file name to save to
     """
-    out = path + '/' + filename + ".tiff"
+    if path:
+        out = path + '/' + filename + ".tiff"
+    else:
+        out = './' + filename + ".tiff"
     try:
         img[...] = cvtColor(img,  COLOR_RGB2BGR)
         imwrite(out, img)
@@ -47,13 +50,9 @@ def load_image(path):
         raise FileNotFoundError
     # Load image
     try:
-        raw = rp.imread(path)
-        return raw.postprocess(use_camera_wb=False,
-                               use_auto_wb=False,
-                               no_auto_bright=True,
-                               output_color=rp.ColorSpace(0),
-                               user_black=0,
-                               output_bps=16).astype('f4')
+        raw = rp.imread(path).raw_image
+        rgb = cvtColor(raw, COLOR_BayerRGGB2RGB).astype('f4')
+        return rgb
     except rp._rawpy.LibRawIOError:
         raise IOError
 
