@@ -17,8 +17,11 @@ def max_probability(image_probabilities:list, role:str):
     return current_max_image
 
 
-def compare_two_strings(first:str, second:str):
-    return SequenceMatcher(None, first, second).ratio()
+def compare_two_strings(first:str, second:str, example:str=""):
+    if example == "":
+        return SequenceMatcher(None, first, second).ratio()
+    else:
+        return SequenceMatcher(None, first, example).ratio() >= SequenceMatcher(None, example, second).ratio()
 
 
 def find_best_match(main_string, target_strings: list):
@@ -33,7 +36,7 @@ def find_best_match(main_string, target_strings: list):
     return {"ratings":ratings, "best_match":ratings[best_match_index], "best_match_index": best_match_index}
 
 
-def sort_images(images: list):
+def sort_images(images: list, artwork:bool):
     matchingStandards = [
         ["image", "print", "object", "art", "exhibit","paint"], # art
         ["target", "color", "grid", "map", "passport" ], # target
@@ -81,13 +84,20 @@ def sort_images(images: list):
     image_probability.remove(best_darkfield_image)
 
     # art work
-    best_artwork_image = max_probability(image_probability, probabilityScoreProperties[0])
-    sorted_images.append(best_artwork_image["name"])
-    image_probability.remove(best_artwork_image)
-    best_artwork_image = max_probability(image_probability, probabilityScoreProperties[0])
-    sorted_images.append(best_artwork_image["name"])
-    image_probability.remove(best_artwork_image)
+    if artwork:
+        for i in range(len(image_probability)):
+            best_artwork_image = max_probability(image_probability, probabilityScoreProperties[0])
+            sorted_images.append(best_artwork_image["name"])
+            image_probability.remove(best_artwork_image)
 
+    example_image_a = sorted_images[0]
+    for i in range(0,len(sorted_images),2):
+        if not compare_two_strings(sorted_images[i], sorted_images[i+1], example_image_a):
+            hold_image = sorted_images[i]
+            sorted_images[i] = sorted_images[i+1]
+            sorted_images[i+1] = hold_image
+
+    print(sorted_images)
     return sorted_images
 
 
@@ -98,11 +108,12 @@ def select_files():
     root.withdraw()
 
     file_paths = filedialog.askopenfilenames()
+    artwork_image = len(file_paths) > 6
     images = []
     for file in file_paths:
         images.append(file)
 
-    return sort_images(images)
+    return sort_images(images, artwork_image)
 
 
 def select_output():
