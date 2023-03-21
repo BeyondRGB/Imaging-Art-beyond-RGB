@@ -13,7 +13,6 @@ License:
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
 # Python Imports
-import gc
 import numpy as np
 from scipy.optimize import fmin
 
@@ -36,7 +35,7 @@ def color_calibrate(packet: Packet, camsigs: np.ndarray):
     """
     ref = packet.target.lab_ref
     res = fmin(__de_equ, __INIT_MOARR, (camsigs, ref),
-               maxfun=5000, maxiter=5000)
+               maxfun=300000, maxiter=300000)
     print(__de_equ(res, camsigs, ref))
     packet.mo_matrix = res
 
