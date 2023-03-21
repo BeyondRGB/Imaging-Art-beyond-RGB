@@ -1,7 +1,7 @@
 <script>
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
-  import { find } from "lodash";
+  import { find, reverse, cloneDeep } from "lodash";
   import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
   export let data;
 
@@ -12,14 +12,39 @@
     mapData = deltaE?.data.slice().reverse();
   }
 
+  const exportCSV = function () {
+    // Reverse this without mutating because it's upside down
+    const flipped = reverse(cloneDeep(mapData));
+
+    // Construct CSV by hand because there is a bug in Apexcharts relating to 2d data
+    let csv = '"Row","Col","Value"\r\n';
+    for(let i = 0; i < flipped.length; i++) {
+      for(let j = 0; j < flipped[i].length; j++) {
+        csv += [String(i+1), String.fromCharCode(j + 65), flipped[i][j]]
+                .map(v => `"${v}"`)
+                .join(',');
+        csv += '\r\n';
+      }
+    }
+
+    // Kinda jank, but found multiple sources with this strategy for
+    // downloading constructed CSVs
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const downloadLink = document.createElement('a');
+    downloadLink.href = window.URL.createObjectURL(blob);
+    downloadLink.setAttribute('download', 'calibrationReport.csv');
+    downloadLink.click();
+  };
+
 </script>
 
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
     ΔE Heatmap
-    <span style="float: right">
-      <label>Grayscale</label>
+    <button on:click={exportCSV} style="float: right; margin-left: 20px;">Export</button>
+    <span style="float: right; margin-top: 2px;">
       <input type="checkbox" class="peer" bind:checked={visionDeficiencyMode} >
+      <label>Grayscale</label>
     </span>
     <AtomicHeatMap data={mapData} visionDeficiencyMode={visionDeficiencyMode}></AtomicHeatMap>
   </div>
