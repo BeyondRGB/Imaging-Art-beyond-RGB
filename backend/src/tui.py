@@ -1,3 +1,16 @@
+""" tui.py
+Text user interface for the new backend.
+
+Functions:
+    run_processing_image_interface : main function to be called to start up the interface
+
+Authors:
+    John Akey <https://github.com/jpakey99>
+
+License:
+    © 2022 BeyondRGB
+    This code is licensed under the MIT license (see LICENSE.txt for details)
+"""
 import tkinter as tk
 from tkinter import filedialog
 from packet import genpacket, gentarget
@@ -7,6 +20,12 @@ from difflib import SequenceMatcher
 
 
 def max_probability(image_probabilities:list, role:str):
+    """
+
+    [in] image_probabilities:
+    [in] role:
+    :[out]:
+    """
     current_max = 0
     current_max_image = []
     for image in image_probabilities:
@@ -132,19 +151,20 @@ def gather_target(target: str):
     whitepatch_column = input("Please enter the column location of the white patch: ")
     whitepatch_row = input("Please enter the row location of the white patch: ")
 
-    choices = ['NGT', 'APT', 'CCSG', 'CC']
+    choices = {'NGT':{"rows": 10, "cols": 13, "id":0}, 'APT':{"rows": 4, "cols": 6, "id":1}, 'CCSG':{"rows": 10, "cols": 14, "id":2}, 'CC':{"rows": 4, "cols": 6, "id":3}}
     target_type_input = ""
-    while target_type_input not in choices:
+    while target_type_input not in choices.keys():
         target_type_input = input("What is the target type? Options: NGT, APT, CCSG, CC. ").upper()
-    target_type = choices.index(target_type_input)
+    print(target_type_input)
+    target_type = choices[target_type_input]
+    print(target_type, target_type["id"])
 
     print("Please click and drag your mouse from the top-left corner to the bottom-right corner of the target")
-    top_left, bottom_right = select_target(target)
-
+    top_left, bottom_right = select_target(target, target_type["rows"], target_type["cols"])
 
     return gentarget((top_left, bottom_right),
                        (int(whitepatch_column), int(whitepatch_row)),
-                       target_type)
+                       target_type["id"])
 
 
 def run_processing_image_interface():
