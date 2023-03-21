@@ -238,22 +238,18 @@
   $: console.log({ LOADING: loading });
 
   $: if (
-    colorTarget != null &&
-    !$processState.completedTabs[4] &&
+    colorTarget &&
     colorTarget.refData.name !== "---None---.csv" &&
-    (verifyTarget != null
-      ? verifyTarget.refData.name !== "---None---.csv"
-      : true) &&
-    colorTarget.whitePatch.row != null &&
-    colorTarget.whitePatch.col != null
+    (!verifyTarget || verifyTarget.refData?.name !== "---None---.csv") &&
+    colorTarget?.whitePatch?.row && colorTarget?.whitePatch?.col
   ) {
     $processState.completedTabs[4] = true;
   } else {
      $processState.completedTabs[4] = false;
   }
 
-  $: if (colorTarget != null) {
-    $processState.whitePatchFilled = (colorTarget.whitePatch.row != null && colorTarget.whitePatch.col != null)
+  $: if (colorTarget) {
+    $processState.whitePatchFilled = colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
   }
 </script>
 
