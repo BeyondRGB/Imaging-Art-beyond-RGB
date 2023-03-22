@@ -10,6 +10,7 @@ Functions:
     select_target()
 
 Authors:
+    John Akey <https://github.com/jpakey99>
     Brendan Grau <https://github.com/Victoriam7>
 
 License:
@@ -20,15 +21,16 @@ import random
 
 import cv2
 from numpy import clip
-import time
+import time # can clean up as soon as adequate testing has been done
 
 from rgbio import load_image
 
 
-selecting = False
-x_start, y_start, x_end, y_end = 0, 0, 0, 0
+selecting = False # boolean if user is currently drawing the box
+x_start, y_start, x_end, y_end = 0, 0, 0, 0 # box positional coordinates
 corner_moving = "bottom_right"  # Options: top_left, top_right, bottom_left, bottom_right
-BOX_CLICK_ERROR = 50
+BOX_CLICK_ERROR = 50 # the space from a corner coordinate a user can click and move that corner
+color = (0,0,0) # color of the box
 
 
 def __scale_img(img):
@@ -42,6 +44,12 @@ def __scale_img(img):
 
 
 def __new_end_point(x, y, corner_moving):
+    """
+    updates the positional variabled with updated mouse positioning
+    [in] x            : the horizontal coordinate of the mouse
+    [in] y            : the vertical coordinate of the mouse
+    [in] corner_moving: the current corner of the rectangle the user is moving
+    """
     global x_start, y_start, x_end, y_end
 
     if corner_moving == "bottom_right":
@@ -84,6 +92,7 @@ def __mouse_select(event, x, y, flags, param):
             x_end, y_start = x, y
             corner_moving = "top_right"
         else:
+            new_color()
             x_start, y_start, x_end, y_end = x, y, x, y
             corner_moving = "bottom_right"
 
@@ -99,28 +108,46 @@ def __mouse_select(event, x, y, flags, param):
         selecting = False  # cropping is finished
 
 
-def __draw_target(img, color):
+def __draw_target(img, rows, cols):
     """ Draw target on the image
     [in] img : the image to draw on
+    [in] rows        : number of rows of a particular target doubled
+    [in] cols        : number of columns of a particular target doubled
     [post] The image has the target drawn on it
     """
-    global x_start, y_start, x_end, y_end
+    global x_start, y_start, x_end, y_end, color
 
     diff = (x_end - x_start, y_end - y_start)
 
     cv2.rectangle(img, (x_start, y_start), (x_end, y_end), color, 10)
-    for i in range(1, 20, 2):
-        off_row = int(y_start + i * (diff[1] / 20))
+    for i in range(1, rows, 2):
+        off_row = int(y_start + i * (diff[1] / rows))
         cv2.rectangle(img, (x_start, off_row), (x_end, off_row), color, 10)
-    for i in range(1, 28, 2):
-        off_col = int(x_start + i * (diff[0] / 28))
+    for i in range(1, cols, 2):
+        off_col = int(x_start + i * (diff[0] / cols))
         cv2.rectangle(img, (off_col, y_start), (off_col, y_end), color, 10)
+
+
+def new_color():
+    """
+    Generates a random RGB color when called
+    """
+    global color
+
+    rand = random.Random()
+    while True:
+        red, green, blue = rand.randint(0, 255), rand.randint(0, 255), rand.randint(0, 255)
+        if red + green + blue > 255:
+            color = (red, green, blue)
+            return
 
 
 def select_target(target_path, rows=0, cols=0):
     """ Get target coordinates and characteristics
     Spawns a cv2 window with the image
     [in] target_path : path one of the images containing the target
+    [in] rows        : number of rows of a particular target
+    [in] cols        : number of columns of a particular target
     [out] xy coordinate pairs for corners of target selector ((x1,y2),(x2,y2))
     """
     global selecting, x_start, y_start, x_end, y_end
@@ -135,14 +162,13 @@ def select_target(target_path, rows=0, cols=0):
     cv2.setMouseCallback("Target Selector", __mouse_select)
     cv2.imshow("Target Selector", img)
 
-    rand = random.Random()
-    color = (rand.randint(0, 255), rand.randint(0, 255), rand.randint(0, 255))
+    color = new_color()
     # Loop until target selection confirmed
     while True:
         i = img.copy()
 
         if selecting:
-            __draw_target(i, color)
+            __draw_target(i, rows*2, cols*2)
             cv2.imshow("Target Selector", i)
 
         # time.sleep(0.25)

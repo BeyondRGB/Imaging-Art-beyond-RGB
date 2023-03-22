@@ -21,10 +21,10 @@ from difflib import SequenceMatcher
 
 def max_probability(image_probabilities:list, role:str):
     """
-
-    [in] image_probabilities:
-    [in] role:
-    :[out]:
+    Finds the image that has the best similarity for a given role
+    [in] image_probabilities : a list of dictionaries that contain ratios for how simular each image is to a role
+    [in] role                : the role currently looking at
+    :[out] current_max_image : the dictionary that has the highest similarity for the role
     """
     current_max = 0
     current_max_image = []
@@ -37,25 +37,29 @@ def max_probability(image_probabilities:list, role:str):
 
 
 def compare_two_strings(first:str, second:str, example:str=""):
+    """
+    Compares two strings to which more closely matches a certain term (like Target)
+    or compares the two string against an example string for a lighting condition
+    [in] first        : a string representing a file name
+    [in] second       : a string representing a file name or example name for role
+    [in] example      : a string representing an example file name under a lighting condition
+    [out] match_ratio : a ratio of how simular the first string is to the second string ~OR~
+                        a boolean TRUE if the first string is more simular the example lighting condition
+    """
     if example == "":
         return SequenceMatcher(None, first, second).ratio()
     else:
         return SequenceMatcher(None, first, example).ratio() >= SequenceMatcher(None, example, second).ratio()
 
 
-def find_best_match(main_string, target_strings: list):
-    ratings = []
-    best_match_index = 0
-    for string in target_strings:
-        current_rating = compare_two_strings(main_string, string)
-        ratings.append({"target": string, "rating":current_rating})
-        if current_rating > ratings[best_match_index][ratings]:
-            best_match_index = target_strings.index(string)
-
-    return {"ratings":ratings, "best_match":ratings[best_match_index], "best_match_index": best_match_index}
-
-
 def sort_images(images: list, artwork:bool):
+    """
+    Sorts images based on Role (Target, Flatfield, Darkfield, Artwork) and lighting condition.
+    Lighting Condition does not matter as long as each "A" condition is at the same position relative to "B" condition
+    [in] images         : a list of strings that represent the path to the images to be used
+    [in] artwork        : boolean that represents if the target and artwork images are separate or not
+    [out] sorted_images : images sorted based on role and lighting condition
+    """
     matchingStandards = [
         ["image", "print", "object", "art", "exhibit","paint"], # art
         ["target", "color", "grid", "map", "passport" ], # target
@@ -121,6 +125,10 @@ def sort_images(images: list, artwork:bool):
 
 
 def select_files():
+    """
+    Prompts the user to input images
+    [out] sorted_images : inputted images from the user that are sorted by lighting and role
+    """
     print("Please select your 2 target, 2 flatfield, 2 darkfield, and optionally 2 artwork images")
 
     root = tk.Tk()
@@ -136,6 +144,10 @@ def select_files():
 
 
 def select_output():
+    """
+    Prompting the user to select a directory where BryondRGB will store the processed image and output files
+    [out] directory : a string that represents the location the user wants to store the output at
+    """
     print("Please select the folder you want to save the processed image to")
 
     root = tk.Tk()
@@ -168,6 +180,10 @@ def gather_target(target: str):
 
 
 def run_processing_image_interface():
+    """
+    Gathers information from user that is needed to process an image
+    [out] packet : class holding pipeline data
+    """
     images = select_files()
     outpath = select_output()
     target = gather_target(images[4])
