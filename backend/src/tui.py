@@ -13,13 +13,13 @@ License:
 """
 import tkinter as tk
 from tkinter import filedialog
-from packet import genpacket, gentarget
+from packet import genpacket, gentarget, Target, Packet
 from target_selector import select_target
 from pipeline import processing_pipeline
 from difflib import SequenceMatcher
 
 
-def max_probability(image_probabilities:list, role:str):
+def max_probability(image_probabilities:list, role:str) -> dict:
     """
     Finds the image that has the best similarity for a given role
     [in] image_probabilities : a list of dictionaries that contain ratios for how simular each image is to a role
@@ -36,7 +36,7 @@ def max_probability(image_probabilities:list, role:str):
     return current_max_image
 
 
-def compare_two_strings(first:str, second:str, example:str=""):
+def compare_two_strings(first:str, second:str, example:str="") -> float or bool:
     """
     Compares two strings to which more closely matches a certain term (like Target)
     or compares the two string against an example string for a lighting condition
@@ -52,7 +52,7 @@ def compare_two_strings(first:str, second:str, example:str=""):
         return SequenceMatcher(None, first, example).ratio() >= SequenceMatcher(None, example, second).ratio()
 
 
-def sort_images(images: list, artwork:bool):
+def sort_images(images: list, artwork:bool) -> list:
     """
     Sorts images based on Role (Target, Flatfield, Darkfield, Artwork) and lighting condition.
     Lighting Condition does not matter as long as each "A" condition is at the same position relative to "B" condition
@@ -123,7 +123,7 @@ def sort_images(images: list, artwork:bool):
     return sorted_images
 
 
-def select_files():
+def select_files() -> list:
     """
     Prompts the user to input images
     [out] sorted_images : inputted images from the user that are sorted by lighting and role
@@ -142,7 +142,7 @@ def select_files():
     return sort_images(images, artwork_image)
 
 
-def select_output():
+def select_output() -> str:
     """
     Prompting the user to select a directory where BryondRGB will store the processed image and output files
     [out] directory : a string that represents the location the user wants to store the output at
@@ -154,7 +154,7 @@ def select_output():
     return filedialog.askdirectory()
 
 
-def gather_target(target: str):
+def gather_target(target: str) -> Target:
     """
     [in] target     : a string containing the path to the target image
     [out] target    : an object of class Target
@@ -176,14 +176,14 @@ def gather_target(target: str):
                        target_type["id"])
 
 
-def run_processing_image_interface():
+def run_processing_image_interface() -> Packet:
     """
     Gathers information from user that is needed to process an image
     [out] packet : class holding pipeline data
     """
     images = select_files()
     outpath = select_output()
-    target = gather_target(images[4])
+    target = gather_target(images[1])
     packet = genpacket(images, target, outpath)
     return packet
 
