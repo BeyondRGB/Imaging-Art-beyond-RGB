@@ -18,6 +18,8 @@ BUILD_ARGS_BASE = -p src --distpath $(OUT_DIR) -y --clean -F
 BUILD_ARGS_UNIX = $(BUILD_ARGS_BASE) --add-data $(DATA_DIR):$(DATA_DIR)
 BUILD_ARGS_WIN = $(BUILD_ARGS_BASE) --add-data $(DATA_DIR);$(DATA_DIR)
 
+###########################BUILD######################################
+
 make: unix
 
 unix:
@@ -28,6 +30,19 @@ win:
 
 clean:
 	rm BeyondRGB.spec dist build out -rf
+	
+###########################VENV#######################################
+	
+venv-init:
+	( \
+	 	python3 -m venv ./venv; \
+	 	. venv/bin/activate; \
+		pip install -r ../requirements.txt; \
+	)
+
+venv-clean:
+	rm -rf venv
+	find -iname "*.pyc" -delete
 
 ###### FOR TEST CASES UNZIP GITHUB EXAMPLE IMAGES IN TOP LEVEL DIRECTORY ######
 test_single:
