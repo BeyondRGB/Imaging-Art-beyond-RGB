@@ -12,21 +12,18 @@
 OUT_DIR = dist/
 DATA_DIR = data
 
-BUILD_ARGS_BASE = -p src --distpath $(OUT_DIR) -y --clean -F
+################################### Building ###################################
+################## Unix and Windows use different delimiters ###################
+################################################################################ 
+ifeq ($(OS),Windows_NT)  # Windows_NT, XP, 2000, 7, 8, 10, 11...
+	DELIMITER = ;
+else
+	DELIMITER = :
+endif
+BUILD_ARGS = -p src --distpath $(OUT_DIR) -y --clean -F --add-data $(DATA_DIR)$(DELIMITER)$(DATA_DIR)
 
-# UNIX like systems use ':' as the separator while Windows uses ';'
-BUILD_ARGS_UNIX = $(BUILD_ARGS_BASE) --add-data $(DATA_DIR):$(DATA_DIR)
-BUILD_ARGS_WIN = $(BUILD_ARGS_BASE) --add-data $(DATA_DIR);$(DATA_DIR)
-
-###########################BUILD######################################
-
-make: unix
-
-unix:
-	pyinstaller $(BUILD_ARGS_UNIX) src/BeyondRGB.py
-
-win:
-	pyinstaller $(BUILD_ARGS_WIN) src/BeyondRGB.py
+make: 
+	pyinstaller $(BUILD_ARGS) src/BeyondRGB.py
 
 clean:
 	rm BeyondRGB.spec dist build out -rf
@@ -44,7 +41,10 @@ venv-clean:
 	rm -rf venv
 	find -iname "*.pyc" -delete
 
+
+################################### Testing ###################################
 ###### FOR TEST CASES UNZIP GITHUB EXAMPLE IMAGES IN TOP LEVEL DIRECTORY ######
+###############################################################################
 test_single:
 	mkdir -p out
 	dist/BeyondRGB 2993 4951 1925 3435 3 6 --outpath='out/' SampleImages/targets_1.ARW SampleImages/targets_2.ARW SampleImages/white_1.ARW SampleImages/white_2.ARW SampleImages/dark_1.ARW SampleImages/dark_2.ARW SampleImages/art_A_1.ARW SampleImages/art_A_2.ARW
