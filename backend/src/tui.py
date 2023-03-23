@@ -57,11 +57,11 @@ def sort_images(images: list, artwork:bool):
     Sorts images based on Role (Target, Flatfield, Darkfield, Artwork) and lighting condition.
     Lighting Condition does not matter as long as each "A" condition is at the same position relative to "B" condition
     [in] images         : a list of strings that represent the path to the images to be used
-    [in] artwork        : boolean that represents if the target and artwork images are separate or not
+    [in] artwork        : boolean that represents if the target and artwork images are separate or not.  True: artwork and target are separate
     [out] sorted_images : images sorted based on role and lighting condition
     """
     matchingStandards = [
-        ["image", "print", "object", "art", "exhibit","paint"], # art
+            ["image", "print", "object", "art", "exhibit","paint"], # art
         ["target", "color", "grid", "map", "passport" ], # target
         ["flat", "white", "ff", "flatfield", "vignetting", "vignette", "light", "correction"], # flat field
         ["dark", "black", "darkfield", "current", "signal", "internal", "camera", "correction" ] # dark field
@@ -120,7 +120,6 @@ def sort_images(images: list, artwork:bool):
             sorted_images[i] = sorted_images[i+1]
             sorted_images[i+1] = hold_image
 
-    print(sorted_images)
     return sorted_images
 
 
@@ -167,9 +166,7 @@ def gather_target(target: str):
     target_type_input = ""
     while target_type_input not in choices.keys():
         target_type_input = input("What is the target type? Options: NGT, APT, CCSG, CC. ").upper()
-    print(target_type_input)
     target_type = choices[target_type_input]
-    print(target_type, target_type["id"])
 
     print("Please click and drag your mouse from the top-left corner to the bottom-right corner of the target")
     top_left, bottom_right = select_target(target, target_type["rows"], target_type["cols"])
