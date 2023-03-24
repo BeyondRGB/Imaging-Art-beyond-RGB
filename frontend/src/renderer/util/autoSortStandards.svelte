@@ -1,5 +1,5 @@
 <script context="module">
-    import { maxBy, each, includes, size, filter } from "lodash";
+    import { maxBy, split, each, size, filter } from "lodash";
     import { findBestMatch } from "./stringCompare";
 
     const matchingStandards = [
@@ -10,7 +10,8 @@
             "object",
             "art",
             "exhibit",
-            "paint"
+            "paint",
+            "subject"
         ], [
             // color target
             "target",
@@ -78,9 +79,8 @@
 
             for(let i = 0; i < matchingStandards.length; i++) {
                 each(matchingStandards[i], function (string) {
-                    if(includes(image.name.toLowerCase(), string.toLowerCase())) {
-                        image[probabilityScoreProperties[i]]++;
-                    }
+                    const count = split(image.name.toLowerCase(), string.toLowerCase()).length - 1;
+                    image[probabilityScoreProperties[i]] += count;
                 });
             }
         });
