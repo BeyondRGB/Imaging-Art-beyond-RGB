@@ -49,7 +49,7 @@ def render(packet):
         rgb = np.matmul(__PROPHOTO_TRANS, xyz)
         del xyz
         gc.collect()
-        np.clip(rgb, 0, 1, out=rgb)
+        np.clip(rgb/100, 0, 1, out=rgb)  # TODO remove divide by 100
         # Apply Gamma
         np.piecewise(rgb, [rgb > __PROPHOTO_Y_LINE, rgb <= __PROPHOTO_Y_LINE],
                      [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])

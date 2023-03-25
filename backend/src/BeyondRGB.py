@@ -14,10 +14,12 @@ License:
 """
 import sys
 import argparse
+from curses import wrapper
 
 from pipeline import processing_pipeline
 from packet import genpacket, gentarget
-from parser import Parser
+from parser import parse_args
+from tui import tui
 from constants import TARGETTYPE_NGT, TARGETTYPE_APT,\
         TARGETTYPE_CCSG, TARGETTYPE_CC
 
@@ -28,68 +30,30 @@ targ2ttype = {'NGT': TARGETTYPE_NGT,
               'CC': TARGETTYPE_CC}
 
 
-# Usage help messages
-TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
-TOP_LEFT_X_HELP = 'Pixel value of the top-left of the upright color target from the left end of the color-target image'
-BOTTOM_RIGHT_X_HELP = 'Pixel value of the bottom-right of the upright color target from the left end of the color-target image'
-TOP_LEFT_Y_HELP = 'Pixel value of the top-left of the upright color target from the top end of the color-target image'
-BOTTOM_RIGHT_Y_HELP = 'Pixel value of the bottom-right of the upright color target from the top end of the color-target image'
-WHITE_COL_HELP = 'Column of selected white patch from left of target (0 indexed)'
-WHITE_ROW_HELP = 'Row of selected white patch from top of target (0 indexed)'
-IMAGES_HELP = '''Images should be added in this order:
-        Target A
-        Target B
-        Flat Field A
-        Flat Field B
-        Dark Field A
-        Dark Field B
-        Subject A (Optional)
-        Subject B (OptionaL)
-        Additional Images... (A and B) '''
-OUTPATH_HELP = 'Output directory'
-
-
 def main():
     """ App entry point """
 
-    # TODO we should extract this to some function at some point
-    parser = Parser(formatter_class=argparse.RawTextHelpFormatter)
+    args = parse_args()
 
-    parser.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'],
-                        default='NGT', help=TARGET_TYPE_HELP)
-
-    # Top left & bottom right of (NGT at the moment) target (pixels)
-    parser.add_argument('top_left_x', help=TOP_LEFT_X_HELP)
-    parser.add_argument('bottom_right_x', help=BOTTOM_RIGHT_X_HELP)
-    parser.add_argument('top_left_y', help=TOP_LEFT_Y_HELP)
-    parser.add_argument('bottom_right_y', help=BOTTOM_RIGHT_Y_HELP)
-
-    # Location of white square on target image
-    parser.add_argument('white_col', help=WHITE_COL_HELP)
-    parser.add_argument('white_row', help=WHITE_ROW_HELP)
-
-    parser.add_argument('images', nargs='+', help=IMAGES_HELP)
-
-    # Optional arg to override default output directory (current working)
-    parser.add_argument('--outpath', required=False, help=OUTPATH_HELP)
-
-    args = parser.parse_args()
-
-    if len(args.images) < 6:
-        parser.print_help()
+    if args.mode == 'gui':
+        # Not Implemented
+        print('This feature is not yet implemented')
         sys.exit(1)
+    elif args.mode == 'tui':
+        packet = tui(args)
+        exit(0)
+    elif args.mode == 'cli':
+        # TODO packet generating bit needs to be redone
+        # Gather target coords and white square
+        top_left = (int(args.top_left_x), int(args.top_left_y))
+        bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
 
-    # TODO packet generating bit needs to be redone
-    # Gather target coords and white square
-    top_left = (int(args.top_left_x), int(args.top_left_y))
-    bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
+        target = gentarget((top_left, bottom_right),
+                           (int(args.white_row), int(args.white_col)),
+                           targ2ttype[args.target])
 
-    target = gentarget((top_left, bottom_right),
-                       (int(args.white_row), int(args.white_col)),
-                       targ2ttype[args.target])
-
-    # Setup packet
-    packet = build_packet(args.images, target, args.outpath)
+        # Setup packet
+        packet = build_packet(args.images, target, args.outpath)
 
     # Begin pipeline
     processing_pipeline(packet)
