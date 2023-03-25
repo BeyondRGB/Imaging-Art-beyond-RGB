@@ -73,31 +73,48 @@ def __keypress(c: int, tui: __Tui):
         tui.col_idx = (tui.col_idx + 1) % tui.max_col_idx
     elif c == curses.KEY_LEFT:
         tui.col_idx = (tui.col_idx - 1) % tui.max_col_idx
+        tui.idxs[1] = __reset_right_idx(tui)  # move idx to first empty
     elif c == curses.KEY_ENTER or c == 10 or c == 13:  # ENTER pressed
         __keypress_enter(tui)
 
 
 def __keypress_enter(tui: __Tui):
     if tui.col_idx == 0:
-        # Enter pressed in left column
+        """ Enter pressed in left column
+        After ensuring we have data to work with, we remove the entry from the
+        left column and add it to the current index of the right column. We
+        must then update all indices including maximums checking for out of
+        bounds issues.
+        """
         if tui.max_idxs[0] == 0:
             return  # There's nothing to press enter on
         f = tui.col_data[0].pop(tui.idxs[0])
         tui.col_data[1][tui.idxs[1]] = (tui.col_data[1][tui.idxs[1]][0], f)
         # Update indices
-        tui.idxs[1] += 1
+        at_end = tui.idxs[1] == tui.max_idxs[1] - 1
+        if not at_end and tui.col_data[1][tui.idxs[1]+1][1] != '':
+            # Next index is not empty; find first empty
+            tui.idxs[1] = __reset_right_idx(tui)
+        elif not at_end:
+            tui.idxs[1] += 1
         tui.max_idxs[0] -= 1
         # Only decrement left col idx if it would become invalid otherwise
         if tui.idxs[0] >= tui.max_idxs[0]:
             tui.idxs[0] -= 1
     else:
-        # Enter pressed in right column
+        """ Enter pressed in right column
+        Simply delete the value from the right column and append it to the left
+        column list. Indices must also be updated
+        """
         entry = tui.col_data[1][tui.idxs[1]]  # Get value
         if entry[1] == '':
             return  # Nothing to do for ''
         tui.col_data[1][tui.idxs[1]] = (entry[0], '')  # Del from right col
         tui.col_data[0].append(entry[1])  # Append to left col
         tui.max_idxs[0] += 1  # We added a new value
+        if tui.max_idxs[0] == 1:
+            # Added to empty list
+            tui.idxs[0] = 0
 
 
 def __draw_sorter(stdscr, tui: __Tui):
@@ -163,6 +180,13 @@ def __update_scroll_idxs(stdscr, tui: __Tui, col: int):
         tui.scroll_idxs[col] = (scroll+1) % max_idx
     elif cur_idx > 3 and tui.scroll_idxs[col]+3 > cur_idx:
         tui.scroll_idxs[col] = (scroll-1) % max_idx
+
+
+def __reset_right_idx(tui: __Tui):
+    for i, s in enumerate(tui.col_data[1]):
+        if s[1] == '':
+            return i
+    return len(tui.col_data[1]) - 1
 
 
 def __init_curses():
