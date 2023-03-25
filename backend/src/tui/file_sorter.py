@@ -171,7 +171,13 @@ def __update_scroll_idxs(stdscr, tui: __Tui, col: int):
     max_idx = tui.max_idxs[col]
     scroll = tui.scroll_idxs[col]
 
-    # Calculate start_idx
+    """ Calculate start_idx
+    General case is to scroll up or down when within 3 of the edge. For
+    wrapping to work a special case is added for the top and bottom of screen
+    that causes a jump in scrolling.
+
+    Know Bugs: Right index can go out of the screen when returning to left side
+    """
     if cur_idx == 0:  # needed for wrapping
         tui.scroll_idxs[col] = 0
     elif cur_idx == max_idx-1 and max_idx > max_entries:
