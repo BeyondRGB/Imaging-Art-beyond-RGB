@@ -19,7 +19,7 @@ from curses import wrapper
 from pipeline import processing_pipeline
 from packet import genpacket, gentarget
 from parser import parse_args
-from tui import tui
+from tui.file_sorter import tui
 from constants import TARGETTYPE_NGT, TARGETTYPE_APT,\
         TARGETTYPE_CCSG, TARGETTYPE_CC
 
