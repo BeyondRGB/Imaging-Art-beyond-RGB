@@ -32,10 +32,7 @@ def settings(*args):
     num_images = form.add(npyscreen.TitleText, name='Image Count:')
     form.edit()
 
-    # TODO error check num_images
-
     # Form to get list of files
-    # TODO use num_images to dynamically generate form
     form = npyscreen.Form(name='Select Files')
     files = []
     files.append((form.add(npyscreen.TitleFilename, name="Target A:")))

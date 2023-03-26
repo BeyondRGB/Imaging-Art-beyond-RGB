@@ -32,7 +32,6 @@ def spectrally_transform(packet: Packet, camsigs: np.ndarray):
     packet.m_refl_matrix = opt
     print('Spectral transformation fopt: ' + str(__eq(opt, camsigs, r_reference)))
 
-    # TODO use above results
     return
 
 

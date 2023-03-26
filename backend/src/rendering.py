@@ -59,7 +59,8 @@ def render(packet):
         rgb = np.matmul(__PROPHOTO_TRANS, xyz)
         del xyz
         gc.collect()
-        np.clip(rgb/100, 0, 1, out=rgb)  # TODO remove divide by 100
+        # Necessary to divide each value by 100, otherwise the image is completely white
+        np.clip(rgb/100, 0, 1, out=rgb)
         # Apply Gamma
         np.piecewise(rgb, [rgb > __SRGB_Y_LINE, rgb <= __SRGB_Y_LINE],
                      [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,

@@ -33,7 +33,7 @@ def __scale_img(img):
     [in] img : image to scale
     [post] img bit scaled in place
     """
-    s = ((2**8 - 1)/(2**14 - 1))  # TODO determine actual scale for each image
+    s = ((2**8 - 1)/(2**14 - 1))
     img *= s  # Scale to 8 bit
 
 
