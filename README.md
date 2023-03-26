@@ -8,10 +8,14 @@
 # About
 This project is sponsored by The Studio for Scientific Imaging and Archiving of Cultural Heritage -- a facility within the RIT Program of Color Science’s Munsell Color Science Lab.
 The project is being developed by a senior project team from the Software Engineering program at RIT.
-### Sponsor
+### Sponsors
 Olivia Kuzio
-### Senior Project Team
+Susan Farnand
+Leah Humenuck
+### Senior Project Team 1
 Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
+### Senior Project Team 2
+Brendan Grau, Sungmin Kim, Keenan Miller, John Akey, Elijah Cooper
 
 # Documentaion
 * [Architecture](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki)
@@ -101,7 +105,9 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
   - `sh osx_config_environment.sh`
 - To build:
   - `sh osx_debug.sh` or `sh osx_release.sh`
-  - Build automatically copied to fronted for testing.
+  - Build automatically copied to frontend for testing.
+  - If you encounter an error with either of the above, crosscheck the specified architecture of your system with the `VCPKG_TARGET_TRIPLET` flag specified in both `osx_debug.sh` and `osx_release.sh`:
+    - For example, if you are using an M1 mac, replace `x64-osx` with `arm64-osx`
 
 ### Fronted build
 - `cd frontend` from project root.
@@ -118,6 +124,10 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 - `cd ../frontend`
 - `sh release_frontend.sh`
   - The release output can be found in "Imaging-Art-beyond-RGB\frontend\out\".
+
+#### Mac Release issues
+- Because Apple is greedy, apps released using M1 macs will result in users seeing a message saying that the app is "damaged and cannot be opened"
+  - Fix this by either signing the release of this application with your apple developer id or simply compiling and releasing the application with x64 (intel) architecture (note that M1 macs will still be able to run apps released this way).
 
 ## Ubuntu
 
