@@ -14,6 +14,7 @@ License:
 # Python imports
 import curses
 
+
 def welcome(stdscr):
     """ Welcome screen
     [in] stdscr : screen to draw welcome on

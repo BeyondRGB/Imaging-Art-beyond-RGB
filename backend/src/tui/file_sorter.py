@@ -44,18 +44,21 @@ def file_sorter(stdscr, files):
     [in] stdscr : screen to draw sorter on
     [in] files  : list of files to sort
     """
-    selects = [('Target A', ''), ('Target B', ''), ('Flat Field A', ''),
-               ('Flat Field B', ''), ('Dark Field A', ''), ('Dark Field B', ''), 
-               ('Art 1A', ''), ('Art 1B', ''), ('Art 2A', ''), ('Art 2B', ''),
-               ('Art 3A', ''), ('Art 3B', ''), ('Art 4A', ''), ('Art 4B', ''),
-               ('Art 5A', ''), ('Art 5B', ''), ('Art 6A', ''), ('Art 6B', ''),
-               ('Art 7A', ''), ('Art 7B', ''), ('Art 8A', ''), ('Art 8B', '')]
 
     # Init
+    selects = __gen_selects(len(files))
     data = [len(files), len(selects)]
     fs = __FileSorter([0, 0], 0, data, 2, [files, selects], [0, 0])
 
     # Run
+    __draw_intro(stdscr)
+    while True:
+        c = stdscr.getch()
+        if c == ord('q'):
+            return 1
+        elif c == curses.KEY_ENTER or c == 10 or c == 13:  # ENTER pressed
+            break
+
     __draw_sorter(stdscr, fs)
     while True:
         c = stdscr.getch()
@@ -66,6 +69,47 @@ def file_sorter(stdscr, files):
 
         __draw_sorter(stdscr, fs)
     return 0
+
+
+def __draw_intro(stdscr):
+    """ Show page intro screen
+    [in] stdscr : screen for printing
+    [post] intro message on screen
+    """
+    stdscr.clear()
+    stdscr.border()
+
+    txt = ["Order Files",
+           "",
+           "This step informs the calibration process which file is which. The screen will be split into two columns; on the left",
+           "you will see the files you selected and on the right you will see a list of image types to match your files with. You",
+           "will see a file name highlighted in white. This is your currently selected file. To select a different file use the",
+           "\"Up Arrow\" and \"Down Arrow\" keys. Press the \"Enter\" key to confirm your selection. Upon confirming a selection,",
+           "the file you selected will appear on the right column in the topmost available slot. Your goal is to match up all",
+           "the files you wish to calibrate. At a minimum the target, flat field, and dark field image types must be filled. If",
+           "you make a mistake while selecting your images use the \"Right Arrow\" and \"Left Arrow\" keys to move between",
+           "columns and select your mistakes. This will move the selected file back to the left column. This will change which",
+           "image type will be filled next (it is always the first available slot). Both columns can scroll in case the file",
+           "list would be taller than your window allows.",
+           "",
+           "To continue press the ENTER key."]
+
+    for i, t in enumerate(txt):
+        stdscr.addstr(i+1, 2, t)
+
+
+def __gen_selects(num_files: int):
+    """ Generate a list of selection names
+    [in] num_files : number of files to work with
+    [out] list of selection options
+    """
+    s = [('Target A', ''), ('Target B', ''), ('Flat Field A', ''),
+         ('Flat Field B', ''), ('Dark Field A', ''), ('Dark Field B', '')]
+
+    for i in range(0, (num_files - 6) // 2):
+        num = str(i+1)
+        s.extend([("Art " + num + " A", ''), ("Art " + num + " B", '')])
+    return s
 
 
 def __keypress(c: int, fs: __FileSorter):

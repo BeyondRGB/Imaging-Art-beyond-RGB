@@ -13,7 +13,6 @@ License:
 """
 # Python imports
 import curses
-import textwrap
 
 # Local Imports
 from tui.file_sorter import file_sorter
@@ -26,12 +25,8 @@ def tui(args: list):
     """ Run tui
     [in] args : argument list
     """
-    rc = 0
-    files = ['target1', 'target2', 'white1', 'white2', 'dark1', 'dark2', 'art1',
-             'art2', 'art3', 'art4', 'art5', 'art6', 'art7', 'art8', 'art9',
-             'art10', 'art11', 'art12', 'art13', 'art14', 'art15', 'art16']
-
     stdscr = __init_curses()
+    rc = 0
     try:
         rc = welcome(stdscr)
         __handle_rc(rc, stdscr)
