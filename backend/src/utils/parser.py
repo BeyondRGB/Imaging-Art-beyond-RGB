@@ -56,8 +56,8 @@ def parse_args() -> list:
     cli = subparsers.add_parser('cli')
 
     # cli arguments
-    cli.add_argument('-t', '--target', choices=['NGT', 'APT', 'CCSG', 'CC'],
-                     default='NGT', help=TARGET_TYPE_HELP, required=True)
+    ttypes = ['NGT', 'APT', 'CCSG', 'CC']  # Target types
+    cli.add_argument('-t', '--target', choices=ttypes, default='NGT', help=TARGET_TYPE_HELP)
     cli.add_argument('top_left_x', help=TOP_LEFT_X_HELP)
     cli.add_argument('bottom_right_x', help=BOTTOM_RIGHT_X_HELP)
     cli.add_argument('top_left_y', help=TOP_LEFT_Y_HELP)

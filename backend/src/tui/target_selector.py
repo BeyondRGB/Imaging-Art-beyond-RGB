@@ -17,10 +17,11 @@ License:
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
 import cv2
-from numpy import clip
 import time
+import curses
+from numpy import clip
 
-from rgbio import load_image
+from utils.rgbio import load_image
 
 
 selecting = False
@@ -82,10 +83,10 @@ def __draw_target(img):
         cv2.rectangle(img, (off_col, y_start), (off_col, y_end), color, 10)
 
 
-def select_target(target_path):
+def __select_target(target_path):
     """ Get target coordinates and characteristics
     Spawns a cv2 window with the image
-    [in] target_path : path one of the images containing the target
+    [in] target_path : path of one of the images containing the target
     [out] xy coordinate pairs for corners of target selector ((x1,y2),(x2,y2))
     """
     global selecting, x_start, y_start, x_end, y_end
@@ -111,7 +112,75 @@ def select_target(target_path):
         time.sleep(0.25)
 
         if cv2.waitKey(1) == ord('q'):
+            return 1, None
+        elif cv2.waitKey(1) == ord('c'):
             break
 
+
     cv2.destroyAllWindows()
-    return ((x_start, y_start), (x_end, y_end))
+    return 0, ((x_start, y_start), (x_end, y_end))
+
+
+def target_selector(stdscr, target_path: str):
+    """ Runner for target selection
+    [in] stdscr      : screen for printing
+    [in] target_path : path of one of the images containing the target
+    [out] rc, target coordinates
+    """
+    __draw_intro(stdscr)
+    while True:
+        c = stdscr.getch()
+        if c == ord('q'):
+            return 1
+        elif c == curses.KEY_ENTER or c == 10 or c == 13:  # ENTER pressed
+            break
+
+    return __select_target(target_path)
+
+
+def __draw_intro(stdscr):
+    """ Show page intro screen
+    [in] stdscr : screen for printing
+    [post] intro message on screen
+    """
+    stdscr.clear()
+    stdscr.border()
+
+    txt = ["Select Files",
+           "",
+           "This step tells calibration where the target is in the image. You will be shown a target image in one of the lighting",
+           "conditions. Click and hold you left mouse button down on the top left corner of the target. While holding the button",
+           "down. Drag your mouse to the bottom right corner of the target. You will see grid lines withing the area selected.",
+           "The intersection of the grid points should roughly line up with the center of each of the target patches. If they do",
+           "not aligned, you can retry as many times as needed. Only the most recent selection will be saved. Once everything is",
+           "aligned, press \"c\" to proceed to the next step.",
+           "",
+           "",
+           "To continue press the ENTER key."]
+
+    for i, t in enumerate(txt):
+        stdscr.addstr(i+1, 2, t)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -14,7 +14,7 @@ License:
 import numpy as np
 import gc
 
-from packet import getimg, IMGTYPE_SUBJECT
+from calibration.packet import getimg, IMGTYPE_SUBJECT
 
 
 __PROPHOTO_TRANS = [[1.34594330, -0.2556075, -0.0511118],

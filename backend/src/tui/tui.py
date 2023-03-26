@@ -19,6 +19,7 @@ from tui.file_sorter import file_sorter
 from tui.welcome import welcome
 from tui.file_selector import file_selector
 from tui.outpath_selector import outpath_selector
+from tui.target_selector import target_selector
 
 
 def tui(args: list):
@@ -34,16 +35,19 @@ def tui(args: list):
         __handle_rc(rc, stdscr)
         rc, outpath = outpath_selector(stdscr)
         __handle_rc(rc, stdscr)
-        rc = file_sorter(stdscr, files)
+        rc, files = file_sorter(stdscr, files)
         __handle_rc(rc, stdscr)
+        rc, coords = target_selector(stdscr, files[0])
     except Exception:
-        rc += 1
+        rc = 1
     finally:
         __cleanup_curses(stdscr)
+
 
     if rc:
         print("TUI Error")
 
+    print(coords)
 
 def __handle_rc(rc: int, stdscr):
     """ Handle return codes

@@ -19,9 +19,9 @@ import gc
 import numpy as np
 from cv2 import medianBlur
 
-from packet import Packet, getimg, putimg, genwhitepatchxy
-from constants import TARGET_RADIUS, IMGTYPE_WHITE,\
-        IMGTYPE_DARK, IMGTYPE_SUBJECT
+from calibration.packet import Packet, getimg, putimg, genwhitepatchxy
+from calibration.constants import TARGET_RADIUS, IMGTYPE_WHITE,\
+                                  IMGTYPE_DARK, IMGTYPE_SUBJECT
 
 
 __BLUR_FACTOR = 3  # Dead pixel correction

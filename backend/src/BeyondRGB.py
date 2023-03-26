@@ -12,16 +12,16 @@ License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+# Python imports
 import sys
-import argparse
-from curses import wrapper
 
-from pipeline import processing_pipeline
-from packet import genpacket, gentarget
-from parser import parse_args
+# Local imports
 from tui.tui import tui
-from constants import TARGETTYPE_NGT, TARGETTYPE_APT,\
-        TARGETTYPE_CCSG, TARGETTYPE_CC
+from utils.parser import parse_args
+from calibration.packet import genpacket, gentarget
+from calibration.pipeline import processing_pipeline
+from calibration.constants import TARGETTYPE_NGT, TARGETTYPE_APT,\
+                                  TARGETTYPE_CCSG, TARGETTYPE_CC
 
 # Target arg to TARGETTYPE translator
 targ2ttype = {'NGT': TARGETTYPE_NGT,

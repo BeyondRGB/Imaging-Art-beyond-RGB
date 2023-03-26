@@ -43,6 +43,7 @@ def file_sorter(stdscr, files):
     """ Main runner for the sorter
     [in] stdscr : screen to draw sorter on
     [in] files  : list of files to sort
+    [out] ordered list of files
     """
 
     # Init
@@ -63,12 +64,15 @@ def file_sorter(stdscr, files):
     while True:
         c = stdscr.getch()
         if c == ord('q'):
-            return 1
+            return -1
+        elif c == ord('c'):
+            break
         else:
             __keypress(c, fs)
 
         __draw_sorter(stdscr, fs)
-    return 0
+
+    return 0, [s[1] for s in fs.col_data[1]]  # rc and all second elements
 
 
 def __draw_intro(stdscr):
@@ -90,7 +94,7 @@ def __draw_intro(stdscr):
            "you make a mistake while selecting your images use the \"Right Arrow\" and \"Left Arrow\" keys to move between",
            "columns and select your mistakes. This will move the selected file back to the left column. This will change which",
            "image type will be filled next (it is always the first available slot). Both columns can scroll in case the file",
-           "list would be taller than your window allows.",
+           "list would be taller than your window allows. When done sorting, press 'c' to move on to the next step.",
            "",
            "To continue press the ENTER key."]
 
@@ -195,6 +199,7 @@ def __draw_sorter(stdscr, fs: __FileSorter):
     stdscr.vline(1, int((w-2)/2-1), '|', h-2)
     stdscr.addstr(1, 1, 'Selected Images')
     stdscr.addstr(1, int((w-2)/2), 'Ordered Images')
+    stdscr.addstr(h-1, w-20, 'Press \'c\' when done')
 
     __update_scroll_idxs(stdscr, fs, 0)
     __update_scroll_idxs(stdscr, fs, 1)
