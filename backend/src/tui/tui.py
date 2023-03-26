@@ -17,6 +17,9 @@ import textwrap
 
 # Local Imports
 from tui.file_sorter import file_sorter
+from tui.welcome import welcome
+from tui.file_selector import file_selector
+from tui.outpath_selector import outpath_selector
 
 
 def tui(args: list):
@@ -30,8 +33,14 @@ def tui(args: list):
 
     stdscr = __init_curses()
     try:
-        __welcome(stdscr)
-        file_sorter(stdscr, files)
+        rc = welcome(stdscr)
+        __handle_rc(rc, stdscr)
+        rc, files = file_selector(stdscr)
+        __handle_rc(rc, stdscr)
+        rc, outpath = outpath_selector(stdscr)
+        __handle_rc(rc, stdscr)
+        rc = file_sorter(stdscr, files)
+        __handle_rc(rc, stdscr)
     except Exception:
         rc += 1
     finally:
@@ -41,51 +50,16 @@ def tui(args: list):
         print("TUI Error")
 
 
-def __welcome(stdscr):
-    """ Welcome screen
-    [in] stdscr : screen to draw welcome on
+def __handle_rc(rc: int, stdscr):
+    """ Handle return codes
+    [in] rc     : return code
+    [in] stdscr : screen in case we are cleaning up
     """
-    __draw_welcome(stdscr)
-    while True:
-        c = stdscr.getch()
-        if c == ord('q'):
-            __cleanup_curses(stdscr)
-            exit(0)
-        elif c == curses.KEY_ENTER or c == 10 or c == 13:  # ENTER pressed
-            return
-
-
-def __draw_welcome(stdscr):
-    """ Draw welcome message
-    [in] stdscr : screen to draw on
-    [post] screen updated
-    """
-    h, w = stdscr.getmaxyx()
-    stdscr.clear()
-    stdscr.border()
-
-    txt = ["Welcome to BeyondRGB",
-           "",
-           "This is a Textual User Interface(TUI) for running BeyondRGB. In",
-           "this mode, only calibration is supported. This promp will guide",
-           "you through the process of setting up a calibration run. Please",
-           "read each step carefully and follow the prompts. To exit, press",
-           "'q' at any time.",
-           "",
-           "To continue press the ENTER key."]
-
-    warn = ["",
-            "",
-            "Warning:",
-            "It is recomended you use a large window size for this",
-            "application. All future prompts assume a window size > 120.",
-            "Please expand your terminal window."]
-
-    if w < 120:
-        txt.extend(warn)
-
-    for i, t in enumerate(txt):
-        stdscr.addstr(i+1, 2, t)
+    if rc == 0:
+        return
+    elif rc == 1:
+        __cleanup_curses(stdscr)
+        exit(0)
 
 
 def __init_curses():

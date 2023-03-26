@@ -2,7 +2,7 @@
 Module for sorting files graphically
 
 Functions:
-    file_sorter(files) : run the tui
+    file_sorter(files) : run the file sorter pages
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
@@ -13,6 +13,7 @@ License:
 """
 # Python Imports
 import curses
+from os.path import basename
 from dataclasses import dataclass
 
 RESERVED_LINES = 4  # Lines taken up by UI
@@ -59,11 +60,12 @@ def file_sorter(stdscr, files):
     while True:
         c = stdscr.getch()
         if c == ord('q'):
-            break
+            return 1
         else:
             __keypress(c, fs)
 
         __draw_sorter(stdscr, fs)
+    return 0
 
 
 def __keypress(c: int, fs: __FileSorter):
@@ -161,16 +163,16 @@ def __draw_sorter(stdscr, fs: __FileSorter):
         s_x = 3
         s_y = 2*(i-start_idx)+VERT_OFFSET
         if fs.col_idx == 0 and i == fs.idxs[0]:
-            stdscr.addstr(s_y, s_x, f, curses.color_pair(1))
+            stdscr.addstr(s_y, s_x, basename(f), curses.color_pair(1))
         else:
-            stdscr.addstr(s_y, s_x, f)
+            stdscr.addstr(s_y, s_x, basename(f))
 
     # Selected list
     start_idx = fs.scroll_idxs[1]
     for i, s in enumerate(fs.col_data[1]):
         if i < start_idx or i > start_idx + max_entries:
             continue
-        txt = s[0] + ': ' + s[1]
+        txt = s[0] + ': ' + basename(s[1])
         s_x = int((w-2)/2) + 2
         s_y = 2*(i-start_idx)+VERT_OFFSET
         if fs.col_idx == 1 and i == fs.idxs[1]:
