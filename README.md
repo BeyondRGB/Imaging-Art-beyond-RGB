@@ -8,62 +8,9 @@
 # About
 This project is sponsored by The Studio for Scientific Imaging and Archiving of Cultural Heritage -- a facility within the RIT Program of Color Science’s Munsell Color Science Lab.
 The project is being developed by a senior project team from the Software Engineering program at RIT.
-### Sponsor
+### Sponsors
 Olivia Kuzio
+Leah Humenuck
+Susan Farnand
 ### Senior Project Team
 Brendan Grau, Elijah Cooper, John Akey, Keenan Miller, SungMin Kim
-
-# Documentaion
-* [Architecture](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki)
-* [CommunicationsAPI](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API)
-* [BackednDesign](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Backend-Overview)
-* [TIFF Output](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/TIFF-Output-Images)
-* [BeyondRGB Under The Hood](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/BeyondRGB-Under-The-Hood)
-
-# Development and release environment set-up
-## Windows 10/11
-- This set-up process was tested on a clean install of Windows with no prior Visual Studio installations.
-### Install tools
-- Window
-    - Install Chocolatey
-        - https://chocolatey.org/install
-    - Install Make
-        - `choco install make`
-    - Install Git
-        - https://git-scm.com/download/win
-    - Install Python
-        - https://www.python.org/downloads/windows/
-    - Install Npm
-        - TODO
-- Mac
-    - TODO: UPDATE
-- Linux
-    - Use your package manager to install the following
-        - npm
-        - make
-        - git
-
-### Clone the repository
-- `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB`
-- `cd .\Imaging-Art-beyond-RGB\`
-
-### Set-up development & release environment:
-- `cd .\frontend\`
-- `npm ci`
-
-### Backend build
-- `cd .\backend\` from project root
-- If building for Windows
-    - `make win`
-- If building for a UNIX system (Linux, Mac, etc.)
-    - `make`
-
-### Fronted build
-- `cd .\frontend\` from project root.
-
-### Run:
-- `cd .\frontend\` from project root.
-- `npm run preview` or `npm run dev`
-
-### Release
-- TODO
