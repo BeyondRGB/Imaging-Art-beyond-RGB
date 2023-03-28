@@ -2,30 +2,33 @@
 Routine for generating the target coordinates from a target image. This routine
 prompts the user to select the target using an cv2 window in which a selector
 can be dragged over the image creating a selection area.
-
 Functions:
     __scale_img()
     __mouse_select()
     __draw_target()
     select_target()
-
 Authors:
+    John Akey <https://github.com/jpakey99>
     Brendan Grau <https://github.com/Victoriam7>
-
 License:
     © 2022 BeyondRGB
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
+import random
+
 import cv2
-import time
-import curses
 from numpy import clip
+import time # can clean up as soon as adequate testing has been done
 
-from utils.rgbio import load_image
+from backend.src.utils.rgbio import load_image
+import curses
 
 
-selecting = False
-x_start, y_start, x_end, y_end = 0, 0, 0, 0
+selecting = False # boolean if user is currently drawing the box
+x_start, y_start, x_end, y_end = 0, 0, 0, 0 # box positional coordinates
+corner_moving = "bottom_right"  # Options: top_left, top_right, bottom_left, bottom_right
+BOX_CLICK_ERROR = 50 # the space from a corner coordinate a user can click and move that corner
+color = (0,0,0) # color of the box
 
 
 def __scale_img(img):
@@ -38,6 +41,25 @@ def __scale_img(img):
     img *= s  # Scale to 8 bit
 
 
+def __new_end_point(x, y, corner_moving):
+    """
+    updates the positional variabled with updated mouse positioning
+    [in] x            : the horizontal coordinate of the mouse
+    [in] y            : the vertical coordinate of the mouse
+    [in] corner_moving: the current corner of the rectangle the user is moving
+    """
+    global x_start, y_start, x_end, y_end
+
+    if corner_moving == "bottom_right":
+        x_end, y_end = x, y
+    elif corner_moving == "top_left":
+        x_start, y_start = x, y
+    elif corner_moving == "top_right":
+        x_end, y_start = x, y
+    elif corner_moving == "bottom_left":
+        x_start, y_end = x, y
+
+
 def __mouse_select(event, x, y, flags, param):
     """ Callback for mouse control
     [in] event : the event triggering the callback
@@ -46,47 +68,84 @@ def __mouse_select(event, x, y, flags, param):
     [in] flags : event flags (unused)
     [in] param : even params (unused)
     """
-    global selecting, x_start, y_start, x_end, y_end
+    global selecting, x_start, y_start, x_end, y_end, corner_moving, BOX_CLICK_ERROR
+    moving_redraw = 20
 
     if event == cv2.EVENT_LBUTTONDOWN:
-        x_start, y_start, x_end, y_end = x, y, x, y
+        # If click is within 10 pixels of any corner move that corner (Top Left: x, y start Top Right: y start, x end Bottom Left: y end, x start, Bottom Right: x, y end)
         selecting = True
+        if abs(x - x_start) <= BOX_CLICK_ERROR and abs(y - y_start) <= BOX_CLICK_ERROR:
+            x_start, y_start = x, y
+            corner_moving = "top_left"
+        elif abs(x - x_start) <= BOX_CLICK_ERROR and abs(y - y_end) <= BOX_CLICK_ERROR:
+            # bottom left
+            x_start, y_end = x, y
+            corner_moving = "bottom_left"
+        elif abs(x - x_end) <= BOX_CLICK_ERROR and abs(y - y_end) <= BOX_CLICK_ERROR:
+            # bottom right
+            x_end, y_end = x, y
+            corner_moving = "bottom_right"
+        elif abs(x - x_end) <= BOX_CLICK_ERROR and abs(y - y_start) <= BOX_CLICK_ERROR:
+            # Top right
+            x_end, y_start = x, y
+            corner_moving = "top_right"
+        else:
+            new_color()
+            x_start, y_start, x_end, y_end = x, y, x, y
+            corner_moving = "bottom_right"
 
     # Mouse is Moving
     elif event == cv2.EVENT_MOUSEMOVE:
-        if selecting is True:
-            x_end, y_end = x, y
+        if selecting is True and (abs(x_start - x) > moving_redraw or abs(y_start - y) > moving_redraw or abs(y_end - y) > moving_redraw or abs(x_end - x) > moving_redraw):
+            __new_end_point(x,y, corner_moving)
 
     # if the left mouse button was released
     elif event == cv2.EVENT_LBUTTONUP:
         # record the ending (x, y) coordinates
-        x_end, y_end = x, y
+        __new_end_point(x,y, corner_moving)
         selecting = False  # cropping is finished
 
 
-def __draw_target(img):
+def __draw_target(img, rows, cols):
     """ Draw target on the image
     [in] img : the image to draw on
+    [in] rows        : number of rows of a particular target doubled
+    [in] cols        : number of columns of a particular target doubled
     [post] The image has the target drawn on it
     """
-    global x_start, y_start, x_end, y_end
+    global x_start, y_start, x_end, y_end, color
 
-    color = (255, 0, 0)
     diff = (x_end - x_start, y_end - y_start)
 
     cv2.rectangle(img, (x_start, y_start), (x_end, y_end), color, 10)
-    for i in range(1, 20, 2):
-        off_row = int(y_start + i * (diff[1] / 20))
+    for i in range(1, rows, 2):
+        off_row = int(y_start + i * (diff[1] / rows))
         cv2.rectangle(img, (x_start, off_row), (x_end, off_row), color, 10)
-    for i in range(1, 26, 2):
-        off_col = int(x_start + i * (diff[0] / 26))
+    for i in range(1, cols, 2):
+        off_col = int(x_start + i * (diff[0] / cols))
         cv2.rectangle(img, (off_col, y_start), (off_col, y_end), color, 10)
 
 
-def __select_target(target_path):
+def new_color():
+    """
+    Generates a random RGB color when called
+    """
+    global color
+
+    rand = random.Random()
+    while True:
+        red, green, blue = rand.randint(0, 255), rand.randint(0, 255), rand.randint(0, 255)
+        if red + green + blue > 255:
+            color = (red, green, blue)
+            return
+
+
+def __select_target(target_path, rows=0, cols=0):
     """ Get target coordinates and characteristics
     Spawns a cv2 window with the image
-    [in] target_path : path of one of the images containing the target
+    [in] target_path : path one of the images containing the target
+    [in] rows        : number of rows of a particular target
+    [in] cols        : number of columns of a particular target
     [out] xy coordinate pairs for corners of target selector ((x1,y2),(x2,y2))
     """
     global selecting, x_start, y_start, x_end, y_end
@@ -101,28 +160,25 @@ def __select_target(target_path):
     cv2.setMouseCallback("Target Selector", __mouse_select)
     cv2.imshow("Target Selector", img)
 
+    color = new_color()
     # Loop until target selection confirmed
     while True:
         i = img.copy()
 
         if selecting:
-            __draw_target(i)
+            __draw_target(i, rows*2, cols*2)
             cv2.imshow("Target Selector", i)
 
-        time.sleep(0.25)
+        # time.sleep(0.25)
 
-        c = cv2.waitKey(1)
-        if c == ord('q'):
-            return 1, None
-        elif c == ord('c'):
+        if cv2.waitKey(1) == ord('c'):
             break
 
-
     cv2.destroyAllWindows()
-    return 0, ((x_start, y_start), (x_end, y_end))
+    return ((x_start, y_start), (x_end, y_end))
 
 
-def target_selector(stdscr, target_path: str):
+def target_selector(stdscr, target_path: str, rows=26, cols=20):
     """ Runner for target selection
     [in] stdscr      : screen for printing
     [in] target_path : path of one of the images containing the target
@@ -136,7 +192,7 @@ def target_selector(stdscr, target_path: str):
         elif c == curses.KEY_ENTER or c == 10 or c == 13:  # ENTER pressed
             break
 
-    return __select_target(target_path)
+    return __select_target(target_path, rows, cols)
 
 
 def __draw_intro(stdscr):

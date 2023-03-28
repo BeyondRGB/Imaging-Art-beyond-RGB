@@ -15,7 +15,7 @@ License:
 import curses
 from os.path import basename
 from dataclasses import dataclass
-
+from backend.src.tui.auto_sort import sort_images
 RESERVED_LINES = 4  # Lines taken up by UI
 VERT_OFFSET = 3  # Vertical offset for printing column data
 
@@ -50,6 +50,7 @@ def file_sorter(stdscr, files):
     selects = __gen_selects(len(files))
     data = [len(files), len(selects)]
     fs = __FileSorter([0, 0], 0, data, 2, [files, selects], [0, 0])
+    autosorted = False
 
     # Run
     __draw_intro(stdscr)
@@ -60,17 +61,23 @@ def file_sorter(stdscr, files):
         elif c == curses.KEY_ENTER or c == 10 or c == 13:  # ENTER pressed
             break
 
-    __draw_sorter(stdscr, fs)
+    __draw_sorter(stdscr, fs, autosorted)
     while True:
         c = stdscr.getch()
         if c == ord('q'):
             return -1
         elif c == ord('c'):
             break
+        elif c == ord("a"):
+            autosorted = True
+            fs.col_data = [[], sort_images(files, True)]
+        elif c == ord('r'):
+            autosorted = False
+            fs.col_data = [files, selects]
         else:
             __keypress(c, fs)
 
-        __draw_sorter(stdscr, fs)
+        __draw_sorter(stdscr, fs, autosorted)
 
     return 0, [s[1] for s in fs.col_data[1]]  # rc and all second elements
 
@@ -182,7 +189,7 @@ def __keypress_enter(fs: __FileSorter):
             fs.idxs[0] = 0
 
 
-def __draw_sorter(stdscr, fs: __FileSorter):
+def __draw_sorter(stdscr, fs: __FileSorter, autosorted):
     """ Draw the sorter window
     [in] stdscr : screen to draw on
     [in] fs     : file sorter data
@@ -199,6 +206,11 @@ def __draw_sorter(stdscr, fs: __FileSorter):
     stdscr.vline(1, int((w-2)/2-1), '|', h-2)
     stdscr.addstr(1, 1, 'Selected Images')
     stdscr.addstr(1, int((w-2)/2), 'Ordered Images')
+    stdscr.hline(h-3, 1, '-', w-2)
+    if autosorted:
+        stdscr.addstr(h-2, 1, "Press 'r' to reset images")
+    else:
+        stdscr.addstr(h-2, 1, "Press 'a' to autosort")
     stdscr.addstr(h-1, w-20, 'Press \'c\' when done')
 
     __update_scroll_idxs(stdscr, fs, 0)
