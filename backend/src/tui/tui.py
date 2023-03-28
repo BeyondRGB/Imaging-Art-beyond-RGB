@@ -15,18 +15,22 @@ License:
 import curses
 
 # Local Imports
-from tui.file_sorter import file_sorter
 from tui.welcome import welcome
+from tui.file_sorter import file_sorter
+from tui.white_patch import white_patch
 from tui.file_selector import file_selector
-from tui.outpath_selector import outpath_selector
 from tui.target_selector import target_selector
+from tui.outpath_selector import outpath_selector
 
 
 def tui(args: list):
     """ Run tui
     [in] args : argument list
     """
+    # Init
     stdscr = __init_curses()
+
+    # Run
     rc = 0
     try:
         rc = welcome(stdscr)
@@ -38,16 +42,22 @@ def tui(args: list):
         rc, files = file_sorter(stdscr, files)
         __handle_rc(rc, stdscr)
         rc, coords = target_selector(stdscr, files[0])
+        __handle_rc(rc, stdscr)
+        rc, white = white_patch(stdscr)
+        __handle_rc(rc, stdscr)
+        # TODO confirmation page
     except Exception:
         rc = 1
     finally:
         __cleanup_curses(stdscr)
 
-
+    # Handle Errors
     if rc:
         print("TUI Error")
+        exit(1)
 
-    print(coords)
+    # Build Packet
+
 
 def __handle_rc(rc: int, stdscr):
     """ Handle return codes

@@ -111,9 +111,10 @@ def __select_target(target_path):
 
         time.sleep(0.25)
 
-        if cv2.waitKey(1) == ord('q'):
+        c = cv2.waitKey(1)
+        if c == ord('q'):
             return 1, None
-        elif cv2.waitKey(1) == ord('c'):
+        elif c == ord('c'):
             break
 
 
@@ -155,6 +156,8 @@ def __draw_intro(stdscr):
            "not aligned, you can retry as many times as needed. Only the most recent selection will be saved. Once everything is",
            "aligned, press \"c\" to proceed to the next step.",
            "",
+           "In a following step you will be asked to identify the white patch. Make note of its location now. You will provide",
+           "its location by specifying which column and row it is in starting from the top left with row=1, col=1.",
            "",
            "To continue press the ENTER key."]
 
