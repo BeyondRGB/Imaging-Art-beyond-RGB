@@ -46,7 +46,8 @@ def tui(args: list):
         rc, white = white_patch(stdscr)
         __handle_rc(rc, stdscr)
         # TODO confirmation page
-    except Exception:
+    except Exception as e:
+        msg = e
         rc = 1
     finally:
         __cleanup_curses(stdscr)
@@ -54,6 +55,7 @@ def tui(args: list):
     # Handle Errors
     if rc:
         print("TUI Error")
+        print(msg)
         exit(1)
 
     # Build Packet
