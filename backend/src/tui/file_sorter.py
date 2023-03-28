@@ -70,16 +70,30 @@ def file_sorter(stdscr, files):
             break
         elif c == ord("a"):
             autosorted = True
-            fs.col_data = [[], sort_images(files, True)]
+            __reset_images(fs)
+            __autosort_files(sort_images(files, True), fs)
         elif c == ord('r'):
             autosorted = False
-            fs.col_data = [files, selects]
+            __reset_images(fs)
         else:
             __keypress(c, fs)
 
         __draw_sorter(stdscr, fs, autosorted)
 
     return 0, [s[1] for s in fs.col_data[1]]  # rc and all second elements
+
+
+def __reset_images(fs: __FileSorter):
+    for i in range(len(fs.col_data[1])):
+        if fs.col_data[1][i][1] != '':
+            fs.col_data[0][i] = fs.col_data[1][i][1]
+            fs.col_data[1][i][1] = ''
+
+
+def __autosort_files(sorted_files:list, fs: __FileSorter):
+    for i in range(fs.max_col_idx):
+        fs.col_data[1][i][1] = sorted_files[i]
+        fs.col_data[0][i] = ''
 
 
 def __draw_intro(stdscr):
@@ -114,12 +128,12 @@ def __gen_selects(num_files: int):
     [in] num_files : number of files to work with
     [out] list of selection options
     """
-    s = [('Target A', ''), ('Target B', ''), ('Flat Field A', ''),
-         ('Flat Field B', ''), ('Dark Field A', ''), ('Dark Field B', '')]
+    s = [['Target A', ''], ['Target B', ''], ['Flat Field A', ''],
+         ['Flat Field B', ''], ['Dark Field A', ''], ['Dark Field B', '']]
 
     for i in range(0, (num_files - 6) // 2):
         num = str(i+1)
-        s.extend([("Art " + num + " A", ''), ("Art " + num + " B", '')])
+        s.extend([["Art " + num + " A", ''], ["Art " + num + " B", '']])
     return s
 
 

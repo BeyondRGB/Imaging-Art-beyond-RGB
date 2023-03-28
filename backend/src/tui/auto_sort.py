@@ -1,19 +1,6 @@
 from difflib import SequenceMatcher
 
 
-def tuple_images(sorted_images:list):
-    image_roles = [('Target A', sorted_images[0]), ('Target B', sorted_images[1]), ('Flat Field A', sorted_images[2]), ('Flat Field B', sorted_images[3]), ('Dark Field A', sorted_images[4]),
-                   ('Dark Field B', sorted_images[5])]
-
-    lighting_condition = ' A'
-    for i in range(len(sorted_images[6:])):
-        image_roles.append(('Art ' + str(1+i) + lighting_condition, sorted_images[6+i]))
-        if lighting_condition == ' A': lighting_condition = ' B'
-        else: lighting_condition = ' A'
-
-    return image_roles
-
-
 def max_probability(image_probabilities:list, role:str) -> dict:
     """
     Finds the image that has the best similarity for a given role
@@ -115,4 +102,4 @@ def sort_images(images: list, artwork:bool) -> list:
             sorted_images[i] = sorted_images[i+1]
             sorted_images[i+1] = hold_image
 
-    return tuple_images(sorted_images)
+    return sorted_images
