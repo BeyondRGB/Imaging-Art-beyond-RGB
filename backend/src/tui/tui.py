@@ -59,12 +59,12 @@ def tui(args: list):
         # TODO confirmation page
     except Exception as e:
         msg = e
-        rc = 1
+        rc = -1
     finally:
         __cleanup_curses(stdscr)
 
     # Handle Errors
-    if rc:
+    if rc == -1:
         print("TUI Error")
         print(msg)
         exit(1)
@@ -86,6 +86,10 @@ def __handle_rc(rc: int, stdscr):
     elif rc == 1:
         __cleanup_curses(stdscr)
         exit(0)
+    elif rc == 2:
+        __cleanup_curses(stdscr)
+        print("Screen size too small. Please expand your terminal")
+        exit(2)
 
 
 def __init_curses():

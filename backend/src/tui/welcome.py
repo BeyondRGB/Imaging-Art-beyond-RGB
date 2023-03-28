@@ -20,6 +20,10 @@ def welcome(stdscr):
     [in] stdscr : screen to draw welcome on
     [return] 0: normal finish; 1: user requested quit
     """
+    h, w = stdscr.getmaxyx()
+    if w < 120 or h < 50:
+        return 2
+
     __draw_welcome(stdscr)
     while True:
         c = stdscr.getch()
@@ -35,7 +39,6 @@ def __draw_welcome(stdscr):
     [in] stdscr : screen to draw on
     [post] screen updated
     """
-    h, w = stdscr.getmaxyx()
     stdscr.clear()
     stdscr.border()
 
