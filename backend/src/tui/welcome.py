@@ -44,11 +44,10 @@ def __draw_welcome(stdscr):
 
     txt = ["Welcome to BeyondRGB",
            "",
-           "This is a Textual User Interface (TUI) for running BeyondRGB. In",
-           "this mode, only calibration is supported. This promp will guide",
-           "you through the process of setting up a calibration run. Please",
-           "read each step carefully and follow the prompts. To exit, press",
-           "'q' at any time.",
+           "This step selects where you would like the results of calibration to be output. Like before you will get a dialogue.",
+           "This is a Textual User Interface (TUI) for running BeyondRGB. In this mode, only calibration is supported. This",
+           "prompt will guide you through the process of setting up a calibration run. Please read each step carefully and",
+           "follow the prompts. To exit, press 'q' at any time.",
            "",
            "To continue press the ENTER key."]
 
