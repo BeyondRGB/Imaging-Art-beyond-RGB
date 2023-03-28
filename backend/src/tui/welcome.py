@@ -21,7 +21,7 @@ def welcome(stdscr):
     [return] 0: normal finish; 1: user requested quit
     """
     h, w = stdscr.getmaxyx()
-    if w < 120 or h < 50:
+    if w < 120 or h < 20:
         return 2
 
     __draw_welcome(stdscr)
@@ -51,16 +51,6 @@ def __draw_welcome(stdscr):
            "'q' at any time.",
            "",
            "To continue press the ENTER key."]
-
-    warn = ["",
-            "",
-            "Warning:",
-            "It is recomended you use a large window size for this",
-            "application. All future prompts assume a window size > 120.",
-            "Please expand your terminal window."]
-
-    if w < 120:
-        txt.extend(warn)
 
     for i, t in enumerate(txt):
         stdscr.addstr(i+1, 2, t)
