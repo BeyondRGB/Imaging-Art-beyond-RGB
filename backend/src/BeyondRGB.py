@@ -41,18 +41,14 @@ def main():
         sys.exit(1)
     elif args.mode == 'tui':
         packet = tui(args)
-        exit(0)
     elif args.mode == 'cli':
         # TODO packet generating bit needs to be redone
         # Gather target coords and white square
         top_left = (int(args.top_left_x), int(args.top_left_y))
         bottom_right = (int(args.bottom_right_x), int(args.bottom_right_y))
-
         target = gentarget((top_left, bottom_right),
                            (int(args.white_row), int(args.white_col)),
                            targ2ttype[args.target])
-
-        # Setup packet
         packet = build_packet(args.images, target, args.outpath)
 
     # Begin pipeline

@@ -21,11 +21,22 @@ from tui.white_patch import white_patch
 from tui.file_selector import file_selector
 from tui.target_selector import target_selector
 from tui.outpath_selector import outpath_selector
+from calibration.packet import genpacket, gentarget
+from calibration.constants import TARGETTYPE_NGT, TARGETTYPE_APT,\
+                                  TARGETTYPE_CCSG, TARGETTYPE_CC
+
+
+# Target arg to TARGETTYPE translator
+targ2ttype = {'NGT': TARGETTYPE_NGT,
+              'APT': TARGETTYPE_APT,
+              'CCSG': TARGETTYPE_CCSG,
+              'CC': TARGETTYPE_CC}
 
 
 def tui(args: list):
     """ Run tui
     [in] args : argument list
+    [out] generated packet
     """
     # Init
     stdscr = __init_curses()
@@ -59,6 +70,10 @@ def tui(args: list):
         exit(1)
 
     # Build Packet
+    target = gentarget(coords, white, targ2ttype['NGT'])
+    packet = genpacket(files, target, outpath)
+
+    return packet
 
 
 def __handle_rc(rc: int, stdscr):

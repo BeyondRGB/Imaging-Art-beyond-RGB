@@ -36,7 +36,8 @@ def white_patch(stdscr):
         else:
             __handle_input(c)
 
-    return 0, (str(row_str), str(col_str))
+    # Subtract 1 to convert to 0 index
+    return 0, (int(row_str)-1, int(col_str)-1)
 
 
 def __handle_input(c: int):

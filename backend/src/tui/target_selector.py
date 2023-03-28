@@ -147,7 +147,7 @@ def __draw_intro(stdscr):
     stdscr.clear()
     stdscr.border()
 
-    txt = ["Select Files",
+    txt = ["Select Target",
            "",
            "This step tells calibration where the target is in the image. You will be shown a target image in one of the lighting",
            "conditions. Click and hold you left mouse button down on the top left corner of the target. While holding the button",
