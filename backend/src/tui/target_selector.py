@@ -178,7 +178,7 @@ def __select_target(target_path, rows=0, cols=0):
     return ((x_start, y_start), (x_end, y_end))
 
 
-def target_selector(stdscr, target_path: str, rows=26, cols=20):
+def target_selector(stdscr, target_path: str, type:str):
     """ Runner for target selection
     [in] stdscr      : screen for printing
     [in] target_path : path of one of the images containing the target
@@ -192,7 +192,9 @@ def target_selector(stdscr, target_path: str, rows=26, cols=20):
         elif c == curses.KEY_ENTER or c == 10 or c == 13:  # ENTER pressed
             break
 
-    return __select_target(target_path, rows, cols)
+    choices = {'NGT': {"rows": 10, "cols": 13, "id": 0}, 'APT': {"rows": 4, "cols": 6, "id": 1}, 'CCSG': {"rows": 10, "cols": 14, "id": 2}, 'CC': {"rows": 4, "cols": 6, "id": 3}}
+
+    return __select_target(target_path, choices[type]['rows'], choices[type]['cols'])
 
 
 def __draw_intro(stdscr):

@@ -21,6 +21,7 @@ from tui.white_patch import white_patch
 from tui.file_selector import file_selector
 from tui.target_selector import target_selector
 from tui.outpath_selector import outpath_selector
+from tui.target_type_selector import target_type
 from calibration.packet import genpacket, gentarget
 from calibration.constants import TARGETTYPE_NGT, TARGETTYPE_APT,\
                                   TARGETTYPE_CCSG, TARGETTYPE_CC
@@ -52,7 +53,9 @@ def tui(args: list):
         __handle_rc(rc, stdscr)
         rc, files = file_sorter(stdscr, files)
         __handle_rc(rc, stdscr)
-        rc, coords = target_selector(stdscr, files[0])
+        rc, type = target_type(stdscr)
+        __handle_rc(rc, stdscr)
+        rc, coords = target_selector(stdscr, files[0], type)
         __handle_rc(rc, stdscr)
         rc, white = white_patch(stdscr)
         __handle_rc(rc, stdscr)
@@ -70,7 +73,7 @@ def tui(args: list):
         exit(1)
 
     # Build Packet
-    target = gentarget(coords, white, targ2ttype['NGT'])
+    target = gentarget(coords, white, targ2ttype[type])
     packet = genpacket(files, target, outpath)
 
     return packet
