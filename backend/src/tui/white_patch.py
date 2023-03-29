@@ -91,9 +91,8 @@ def __draw_scr(stdscr):
     stdscr.clear()
     stdscr.border()
 
-    txt = ["Welcome to BeyondRGB",
+    txt = ["White Patch",
            "",
-           "This step tells calibration where the target is in the image. You will be shown a target image in one of the lighting",
            "Here you will specify where the white patch is. Starting from the top left corner as row 1 column 1, indicate which",
            "patch you are using as the white patch. Use the arrow keys to navigage.",
            "",

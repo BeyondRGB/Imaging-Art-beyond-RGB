@@ -25,7 +25,7 @@ from utils.rgbio import load_image
 
 
 selecting = False
-x_start, y_start, x_end, y_end = 0, 0, 0, 0
+coords = [0, 0, 0, 0]  # xi, yi, xf, yf
 
 
 def __scale_img(img):
@@ -46,21 +46,22 @@ def __mouse_select(event, x, y, flags, param):
     [in] flags : event flags (unused)
     [in] param : even params (unused)
     """
-    global selecting, x_start, y_start, x_end, y_end
+    global selecting, coords
 
     if event == cv2.EVENT_LBUTTONDOWN:
-        x_start, y_start, x_end, y_end = x, y, x, y
+        coords[0], coords[1] = x, y
+        coords[2], coords[3] = x, y
         selecting = True
 
     # Mouse is Moving
     elif event == cv2.EVENT_MOUSEMOVE:
         if selecting is True:
-            x_end, y_end = x, y
+            coords[2], coords[3] = x, y
 
     # if the left mouse button was released
     elif event == cv2.EVENT_LBUTTONUP:
         # record the ending (x, y) coordinates
-        x_end, y_end = x, y
+        coords[2], coords[3] = x, y
         selecting = False  # cropping is finished
 
 
@@ -69,18 +70,19 @@ def __draw_target(img):
     [in] img : the image to draw on
     [post] The image has the target drawn on it
     """
-    global x_start, y_start, x_end, y_end
+    global coords
+    xi, yi, xf, yf = coords
 
     color = (255, 0, 0)
-    diff = (x_end - x_start, y_end - y_start)
+    diff = (xf - xi, yf - yi)
 
-    cv2.rectangle(img, (x_start, y_start), (x_end, y_end), color, 10)
+    cv2.rectangle(img, (xi, yi), (xf, yf), color, 10)
     for i in range(1, 20, 2):
-        off_row = int(y_start + i * (diff[1] / 20))
-        cv2.rectangle(img, (x_start, off_row), (x_end, off_row), color, 10)
+        off_row = int(yi + i * (diff[1] / 20))
+        cv2.rectangle(img, (xi, off_row), (xf, off_row), color, 10)
     for i in range(1, 26, 2):
-        off_col = int(x_start + i * (diff[0] / 26))
-        cv2.rectangle(img, (off_col, y_start), (off_col, y_end), color, 10)
+        off_col = int(xi + i * (diff[0] / 26))
+        cv2.rectangle(img, (off_col, yi), (off_col, yf), color, 10)
 
 
 def __select_target(target_path):
@@ -89,7 +91,7 @@ def __select_target(target_path):
     [in] target_path : path of one of the images containing the target
     [out] xy coordinate pairs for corners of target selector ((x1,y2),(x2,y2))
     """
-    global selecting, x_start, y_start, x_end, y_end
+    global selecting, coords
 
     # Generate image
     img = load_image(target_path)
@@ -109,17 +111,14 @@ def __select_target(target_path):
             __draw_target(i)
             cv2.imshow("Target Selector", i)
 
-        time.sleep(0.25)
-
         c = cv2.waitKey(1)
         if c == ord('q'):
             return 1, None
         elif c == ord('c'):
             break
 
-
     cv2.destroyAllWindows()
-    return 0, ((x_start, y_start), (x_end, y_end))
+    return 0, ((coords[0], coords[1]), (coords[2], coords[3]))
 
 
 def target_selector(stdscr, target_path: str):
@@ -163,27 +162,3 @@ def __draw_intro(stdscr):
 
     for i, t in enumerate(txt):
         stdscr.addstr(i+1, 2, t)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
