@@ -20,7 +20,7 @@ import cv2
 from numpy import clip
 import time # can clean up as soon as adequate testing has been done
 
-from backend.src.utils.rgbio import load_image
+from utils.rgbio import load_image
 import curses
 
 

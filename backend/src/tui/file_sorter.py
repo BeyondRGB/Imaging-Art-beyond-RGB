@@ -15,7 +15,7 @@ License:
 import curses
 from os.path import basename
 from dataclasses import dataclass
-from backend.src.tui.auto_sort import sort_images
+from tui.auto_sort import sort_images
 RESERVED_LINES = 4  # Lines taken up by UI
 VERT_OFFSET = 3  # Vertical offset for printing column data
 
