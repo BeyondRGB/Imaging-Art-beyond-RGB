@@ -24,8 +24,8 @@ from utils.rgbio import load_image
 import curses
 
 
-selecting = False # boolean if user is currently drawing the box
-x_start, y_start, x_end, y_end = 0, 0, 0, 0 # box positional coordinates
+selecting = False  # Is user drawing selection box
+x_start, y_start, x_end, y_end = 0, 0, 0, 0  # Box position
 corner_moving = "bottom_right"  # Options: top_left, top_right, bottom_left, bottom_right
 BOX_CLICK_ERROR = 50 # the space from a corner coordinate a user can click and move that corner
 color = (0,0,0) # color of the box
@@ -221,27 +221,3 @@ def __draw_intro(stdscr):
 
     for i, t in enumerate(txt):
         stdscr.addstr(i+1, 2, t)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
