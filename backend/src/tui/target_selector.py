@@ -18,7 +18,6 @@ import random
 
 import cv2
 from numpy import clip
-import time # can clean up as soon as adequate testing has been done
 
 from utils.rgbio import load_image
 import curses
@@ -26,9 +25,9 @@ import curses
 
 selecting = False  # Is user drawing selection box
 x_start, y_start, x_end, y_end = 0, 0, 0, 0  # Box position
-corner_moving = "bottom_right"  # Options: top_left, top_right, bottom_left, bottom_right
-BOX_CLICK_ERROR = 50 # the space from a corner coordinate a user can click and move that corner
-color = (0,0,0) # color of the box
+corner_moving = "bottom_right"  # top_left, top_right, bottom_left, bottom_right
+BOX_CLICK_ERROR = 50   # click radius for target corners
+color = (0, 0, 0)  # color of the box
 
 
 def __scale_img(img):
@@ -97,12 +96,12 @@ def __mouse_select(event, x, y, flags, param):
     # Mouse is Moving
     elif event == cv2.EVENT_MOUSEMOVE:
         if selecting is True and (abs(x_start - x) > moving_redraw or abs(y_start - y) > moving_redraw or abs(y_end - y) > moving_redraw or abs(x_end - x) > moving_redraw):
-            __new_end_point(x,y, corner_moving)
+            __new_end_point(x, y, corner_moving)
 
     # if the left mouse button was released
     elif event == cv2.EVENT_LBUTTONUP:
         # record the ending (x, y) coordinates
-        __new_end_point(x,y, corner_moving)
+        __new_end_point(x, y, corner_moving)
         selecting = False  # cropping is finished
 
 
@@ -131,13 +130,13 @@ def new_color():
     Generates a random RGB color when called
     """
     global color
-
     rand = random.Random()
     while True:
-        red, green, blue = rand.randint(0, 255), rand.randint(0, 255), rand.randint(0, 255)
-        if red + green + blue > 255:
-            color = (red, green, blue)
-            return
+        r = rand.randint(0, 255)
+        g = rand.randint(0, 255)
+        b = rand.randint(0, 255)
+        if r + g + b > 255:
+            color = (r, g, b)
 
 
 def __select_target(target_path, rows=0, cols=0):
@@ -160,7 +159,7 @@ def __select_target(target_path, rows=0, cols=0):
     cv2.setMouseCallback("Target Selector", __mouse_select)
     cv2.imshow("Target Selector", img)
 
-    color = new_color()
+    new_color()
     # Loop until target selection confirmed
     while True:
         i = img.copy()
@@ -178,7 +177,7 @@ def __select_target(target_path, rows=0, cols=0):
     return ((x_start, y_start), (x_end, y_end))
 
 
-def target_selector(stdscr, target_path: str, type:str):
+def target_selector(stdscr, target_path: str, type: str):
     """ Runner for target selection
     [in] stdscr      : screen for printing
     [in] target_path : path of one of the images containing the target
