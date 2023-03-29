@@ -72,7 +72,7 @@ def file_sorter(stdscr, files):
             autosorted = True
             __reset_images(fs)
             __autosort_files(sort_images(files, True), fs)
-        elif c == ord('r'):
+        elif c == ord('r') and autosorted:
             autosorted = False
             __reset_images(fs)
         else:
@@ -83,17 +83,40 @@ def file_sorter(stdscr, files):
     return 0, [s[1] for s in fs.col_data[1]]  # rc and all second elements
 
 
+def __move_file_right(fs: __FileSorter, file_index_left: int, sorted_file_index: int):
+    f = fs.col_data[0].pop(sorted_file_index)
+    fs.col_data[1][file_index_left][1] = f
+    if fs.idxs[0] >= fs.max_idxs[0]:
+        fs.idxs[0] -= 1
+    # Update indices
+    at_end = fs.idxs[1] == fs.max_idxs[1] - 1
+    if not at_end and fs.col_data[1][fs.idxs[1] + 1][1] != '':
+        # Next index is not empty; find first empty
+        fs.idxs[1] = __reset_right_idx(fs)
+    elif not at_end:
+        fs.idxs[1] += 1
+    fs.max_idxs[0] -= 1
+
+
+def __move_file_left(fs: __FileSorter, sorted_file_index: int):
+    entry = fs.col_data[1][sorted_file_index]
+    if entry[1] != '':
+        fs.col_data[1][sorted_file_index] = [entry[0], '']  # Del from right col
+        fs.col_data[0].append(entry[1])  # Append to left col
+        fs.max_idxs[0] += 1  # We added a new value
+        if fs.max_idxs[0] == 1:
+            # Added to empty list
+            fs.idxs[0] = 0
+
+
 def __reset_images(fs: __FileSorter):
     for i in range(len(fs.col_data[1])):
-        if fs.col_data[1][i][1] != '':
-            fs.col_data[0][i] = fs.col_data[1][i][1]
-            fs.col_data[1][i][1] = ''
+        __move_file_left(fs, i)
 
 
 def __autosort_files(sorted_files:list, fs: __FileSorter):
-    for i in range(fs.max_col_idx):
-        fs.col_data[1][i][1] = sorted_files[i]
-        fs.col_data[0][i] = ''
+    for i in range(len(sorted_files)):
+        __move_file_right(fs, i, fs.col_data[0].index(sorted_files[i]))
 
 
 def __draw_intro(stdscr):
@@ -174,33 +197,13 @@ def __keypress_enter(fs: __FileSorter):
         """
         if fs.max_idxs[0] == 0:
             return  # There's nothing to press enter on
-        f = fs.col_data[0].pop(fs.idxs[0])
-        fs.col_data[1][fs.idxs[1]] = (fs.col_data[1][fs.idxs[1]][0], f)
-        # Update indices
-        at_end = fs.idxs[1] == fs.max_idxs[1] - 1
-        if not at_end and fs.col_data[1][fs.idxs[1]+1][1] != '':
-            # Next index is not empty; find first empty
-            fs.idxs[1] = __reset_right_idx(fs)
-        elif not at_end:
-            fs.idxs[1] += 1
-        fs.max_idxs[0] -= 1
-        # Only decrement left col idx if it would become invalid otherwise
-        if fs.idxs[0] >= fs.max_idxs[0]:
-            fs.idxs[0] -= 1
+        __move_file_right(fs, fs.idxs[1], fs.idxs[0])
     else:
         """ Enter pressed in right column
         Simply delete the value from the right column and append it to the left
         column list. Indices must also be updated
         """
-        entry = fs.col_data[1][fs.idxs[1]]  # Get value
-        if entry[1] == '':
-            return  # Nothing to do for ''
-        fs.col_data[1][fs.idxs[1]] = (entry[0], '')  # Del from right col
-        fs.col_data[0].append(entry[1])  # Append to left col
-        fs.max_idxs[0] += 1  # We added a new value
-        if fs.max_idxs[0] == 1:
-            # Added to empty list
-            fs.idxs[0] = 0
+        __move_file_left(fs, fs.idxs[1])
 
 
 def __draw_sorter(stdscr, fs: __FileSorter, autosorted):
