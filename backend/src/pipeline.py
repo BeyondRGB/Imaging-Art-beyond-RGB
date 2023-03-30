@@ -27,7 +27,9 @@ from verification import verify_color_transformation, verify_spectral_transforma
 
 def processing_pipeline(packet, outpath, colorspace):
     """ Color calibration pipeline
-    [in] packet : packet to send through the pipeline
+    [in] packet     : packet to send through the pipeline
+    [in] outpath    : path to save the output file to
+    [in] colorspace : rgb colorspace in which to render the image
     """
     """ Calibration
     We need to get the calibration matrices for both color transformation and

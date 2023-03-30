@@ -6,6 +6,7 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
+    Keenan Miller <https://github.com/keenanm500>
 
 License:
     © 2022 BeyondRGB
@@ -31,7 +32,8 @@ __INVALID_COLORSPACE_MESSAGE = 'Rendering was provided an invalid colorspace opt
 
 def render(packet, colorspace):
     """ Render image pair as a single color calibrated image
-    [in] packet : pipeline packet
+    [in] packet     : pipeline packet
+    [in] colorspace : the rgb colorspace in which to transform the image
     [out] rendered image
     [post] rendered image is loaded in memory
     [post] camsigs deleted from packet
