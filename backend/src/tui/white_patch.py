@@ -54,7 +54,7 @@ def __handle_input(c: int):
         current_string = (current_string + 1) % 2
     elif c >= ord('0') and c <= ord('9'):
         __append_string(chr(c))
-    elif c == curses.KEY_BACKSPACE:
+    elif c == curses.KEY_BACKSPACE or c == '\b' or c == '\x7f':
         __backspace_string()
 
 
