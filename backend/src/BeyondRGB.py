@@ -30,6 +30,28 @@ targ2ttype = {'NGT': TARGETTYPE_NGT,
               'CC': TARGETTYPE_CC}
 
 
+# Usage help messages
+TARGET_TYPE_HELP = 'The color target reference data; defaults to NGT'
+TOP_LEFT_X_HELP = 'Pixel value of the top-left of the upright color target from the left end of the color-target image'
+BOTTOM_RIGHT_X_HELP = 'Pixel value of the bottom-right of the upright color target from the left end of the color-target image'
+TOP_LEFT_Y_HELP = 'Pixel value of the top-left of the upright color target from the top end of the color-target image'
+BOTTOM_RIGHT_Y_HELP = 'Pixel value of the bottom-right of the upright color target from the top end of the color-target image'
+WHITE_COL_HELP = 'Column of selected white patch from left of target (0 indexed)'
+WHITE_ROW_HELP = 'Row of selected white patch from top of target (0 indexed)'
+IMAGES_HELP = '''Images should be added in this order:
+        Target A
+        Target B
+        Flat Field A
+        Flat Field B
+        Dark Field A
+        Dark Field B
+        Subject A (Optional)
+        Subject B (OptionaL)
+        Additional Images... (A and B) '''
+OUTPATH_HELP = 'Output directory'
+COLORSPACE_HELP = 'Color space for output images. (ProPhoto or sRGB)'
+
+
 def main():
     """ App entry point """
 
@@ -49,20 +71,10 @@ def main():
         target = gentarget((top_left, bottom_right),
                            (int(args.white_row), int(args.white_col)),
                            targ2ttype[args.target])
-        packet = build_packet(args.images, target, args.outpath)
+        packet = genpacket(args.images, target)
 
     # Begin pipeline
-    processing_pipeline(packet)
-
-
-def build_packet(images, target, outpath):
-    """ Create packet
-    [in] image  : image files
-    [in] target : target grid
-    [out] packet
-    """
-    packet = genpacket(images, target, outpath)
-    return packet
+    processing_pipeline(packet, args.outpath, args.colorspace)
 
 
 if __name__ == "__main__":
