@@ -18,15 +18,15 @@ import random
 
 import cv2
 from numpy import clip
-import time  # can clean up as soon as adequate testing has been done
 
-from backend.src.utils.rgbio import load_image
+from utils.rgbio import load_image
 import curses
 
-selecting = False  # boolean if user is currently drawing the box
-x_start, y_start, x_end, y_end = 0, 0, 0, 0  # box positional coordinates
-corner_moving = "bottom_right"  # Options: top_left, top_right, bottom_left, bottom_right
-BOX_CLICK_ERROR = 50  # the space from a corner coordinate a user can click and move that corner
+
+selecting = False  # Is user drawing selection box
+x_start, y_start, x_end, y_end = 0, 0, 0, 0  # Box position
+corner_moving = "bottom_right"  # top_left, top_right, bottom_left, bottom_right
+BOX_CLICK_ERROR = 50   # click radius for target corners
 color = (0, 0, 0)  # color of the box
 
 
@@ -130,13 +130,13 @@ def new_color():
     Generates a random RGB color when called
     """
     global color
-
     rand = random.Random()
     while True:
-        red, green, blue = rand.randint(0, 255), rand.randint(0, 255), rand.randint(0, 255)
-        if red + green + blue > 255:
-            color = (red, green, blue)
-            return
+        r = rand.randint(0, 255)
+        g = rand.randint(0, 255)
+        b = rand.randint(0, 255)
+        if r + g + b > 255:
+            color = (r, g, b)
 
 
 def __select_target(target_path, rows=0, cols=0):
@@ -159,7 +159,7 @@ def __select_target(target_path, rows=0, cols=0):
     cv2.setMouseCallback("Target Selector", __mouse_select)
     cv2.imshow("Target Selector", img)
 
-    color = new_color()
+    new_color()
     # Loop until target selection confirmed
     while True:
         i = img.copy()
