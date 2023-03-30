@@ -47,6 +47,7 @@ IMAGES_HELP = '''Images should be added in this order:
         Subject B (OptionaL)
         Additional Images... (A and B) '''
 OUTPATH_HELP = 'Output directory'
+COLORSPACE_HELP = 'Color space for output images. (ProPhoto or sRGB)'
 
 
 def main():
@@ -73,6 +74,10 @@ def main():
     # Optional arg to override default output directory (current working)
     parser.add_argument('--outpath', required=False, help=OUTPATH_HELP)
 
+    # Optional arg to choose which color space to output, ProPhoto or sRGB
+    parser.add_argument('--colorspace', required=False, help=COLORSPACE_HELP,
+                        choices=['ProPhoto', 'sRGB'], default='sRGB')
+
     args = parser.parse_args()
 
     if len(args.images) < 6:
@@ -89,20 +94,10 @@ def main():
                        targ2ttype[args.target])
 
     # Setup packet
-    packet = build_packet(args.images, target, args.outpath)
+    packet = genpacket(args.images, target)
 
     # Begin pipeline
-    processing_pipeline(packet)
-
-
-def build_packet(images, target, outpath):
-    """ Create packet
-    [in] image  : image files
-    [in] target : target grid
-    [out] packet
-    """
-    packet = genpacket(images, target, outpath)
-    return packet
+    processing_pipeline(packet, args.outpath, args.colorspace)
 
 
 if __name__ == "__main__":
