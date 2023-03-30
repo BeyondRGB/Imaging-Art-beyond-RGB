@@ -17,7 +17,6 @@ License:
     This code is licensed under the MIT license (see LICENSE.txt for details)
 """
 import cv2
-import time
 import curses
 from numpy import clip
 
@@ -113,10 +112,12 @@ def __select_target(target_path):
 
         c = cv2.waitKey(1)
         if c == ord('q'):
+            cv2.destroyAllWindows()
             return 1, None
         elif c == ord('c'):
             break
 
+    cv2.destroyWindow("Target Selector")
     cv2.destroyAllWindows()
     return 0, ((coords[0], coords[1]), (coords[2], coords[3]))
 
