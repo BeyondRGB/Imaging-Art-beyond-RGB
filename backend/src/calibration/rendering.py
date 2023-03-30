@@ -16,7 +16,7 @@ import numpy as np
 import gc
 import sys
 
-from packet import getimg, IMGTYPE_SUBJECT
+from calibration.packet import getimg, IMGTYPE_SUBJECT
 
 
 __PROPHOTO_TRANS = [[1.34594330, -0.2556075, -0.0511118],
@@ -52,22 +52,23 @@ def render(packet, colorspace):
         rgb = np.matmul(__PROPHOTO_TRANS, xyz)
         rgb = np.clip(rgb/100, 0, 1)
         # Apply Gamma
-        rgb = np.piecewise(rgb, [rgb > __PROPHOTO_Y_LINE, rgb <= __PROPHOTO_Y_LINE],
-                     [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])
+        rgb = np.piecewise(rgb,
+                           [rgb > __PROPHOTO_Y_LINE, rgb <= __PROPHOTO_Y_LINE],
+                           [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])
 
     # Convert to sRGB color space
     elif colorspace == 'sRGB':
         rgb = np.matmul(__SRGB_TRANS, xyz)
         rgb = np.clip(rgb/100, 0, 1)
         # Apply Gamma
-        rgb = np.piecewise(rgb, [rgb > __SRGB_Y_LINE, rgb <= __SRGB_Y_LINE],
-                     [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,
-                      lambda rgb: 12.92 * rgb])
+        rgb = np.piecewise(rgb,
+                           [rgb > __SRGB_Y_LINE, rgb <= __SRGB_Y_LINE],
+                           [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,
+                            lambda rgb: 12.92 * rgb])
 
     else:
         print(__INVALID_COLORSPACE_MESSAGE)
         sys.exit(1)
-
 
     # Reshape into image
     render = np.dstack((rgb[0], rgb[1], rgb[2])).reshape(imgshape)

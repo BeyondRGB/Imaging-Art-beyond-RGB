@@ -14,7 +14,7 @@ from scipy.optimize import fmin
 import numpy as np
 
 # Local Imports
-from packet import Packet
+from calibration.packet import Packet
 
 # Initial guess array
 INIT_M_REFL = np.full((36, 6), .2)

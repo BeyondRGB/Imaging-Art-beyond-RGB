@@ -17,13 +17,15 @@ import gc
 import os.path
 
 # Local Imports
-from rgbio import save_image
-from packet import extract_camsigs, RENDERABLES_START
-from preprocessing import preprocess
-from calibration import color_calibrate
-from rendering import render
-from spectral_reflectance import spectrally_transform
-from verification import verify_color_transformation, verify_spectral_transformation
+from utils.rgbio import save_image
+from calibration.rendering import render
+from calibration.preprocessing import preprocess
+from calibration.calibration import color_calibrate
+from calibration.packet import extract_camsigs, RENDERABLES_START
+from calibration.spectral_reflectance import spectrally_transform
+from calibration.verification import verify_color_transformation,\
+                                     verify_spectral_transformation
+
 
 def processing_pipeline(packet, outpath, colorspace):
     """ Color calibration pipeline

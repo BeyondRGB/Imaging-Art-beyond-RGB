@@ -11,7 +11,7 @@ License:
 import numpy as np
 
 # Local Imports
-from spectral_equation import ciede2000, xyztolab
+from calibration.spectral_equation import ciede2000, xyztolab
 
 
 def verify_color_transformation(packet, camsigs):
