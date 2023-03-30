@@ -14,6 +14,7 @@ License:
 # Python imports
 import curses
 import tkinter as tk
+from tkinter import filedialog
 
 
 def outpath_selector(stdscr):
@@ -58,8 +59,6 @@ def __gather_outpath():
     """ Gather outpath from user
     [out] outpath
     """
-    import tkinter as tk
-    from tkinter import filedialog
 
     root = tk.Tk()
     root.withdraw()

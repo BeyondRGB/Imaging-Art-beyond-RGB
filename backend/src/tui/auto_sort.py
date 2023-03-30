@@ -1,7 +1,7 @@
 from difflib import SequenceMatcher
 
 
-def max_probability(image_probabilities:list, role:str) -> dict:
+def max_probability(image_probabilities: list, role: str) -> dict:
     """
     Finds the image that has the best similarity for a given role
     [in] image_probabilities : a list of dictionaries that contain ratios for how simular each image is to a role
@@ -18,7 +18,7 @@ def max_probability(image_probabilities:list, role:str) -> dict:
     return current_max_image
 
 
-def compare_two_strings(first:str, second:str, example:str="") -> float or bool:
+def compare_two_strings(first: str, second: str, example: str = "") -> float or bool:
     """
     Compares two strings to which more closely matches a certain term (like Target)
     or compares the two string against an example string for a lighting condition
@@ -34,7 +34,7 @@ def compare_two_strings(first:str, second:str, example:str="") -> float or bool:
         return SequenceMatcher(None, first, example).ratio() >= SequenceMatcher(None, example, second).ratio()
 
 
-def sort_images(images: list, artwork:bool) -> list:
+def sort_images(images: list, artwork: bool) -> list:
     """
     Sorts images based on Role (Target, Flatfield, Darkfield, Artwork) and lighting condition.
     Lighting Condition does not matter as long as each "A" condition is at the same position relative to "B" condition
@@ -43,63 +43,63 @@ def sort_images(images: list, artwork:bool) -> list:
     [out] sorted_images : images sorted based on role and lighting condition
     """
     matchingStandards = [
-            ["image", "print", "object", "art", "exhibit","paint"], # art
-        ["target", "color", "grid", "map", "passport" ], # target
-        ["flat", "white", "ff", "flatfield", "vignetting", "vignette", "light", "correction"], # flat field
-        ["dark", "black", "darkfield", "current", "signal", "internal", "camera", "correction" ] # dark field
+        ["image", "print", "object", "art", "exhibit", "paint"],  # art
+        ["target", "color", "grid", "map", "passport"],  # target
+        ["flat", "white", "ff", "flatfield", "vignetting", "vignette", "light", "correction"],  # flat field
+        ["dark", "black", "darkfield", "current", "signal", "internal", "camera", "correction"]  # dark field
     ]
-    probabilityScoreProperties = ['artObjectProbability', 'targetProbability', 'flatFieldProbability', 'darkFieldProbability']
+    probability_score_properties = ['artObjectProbability', 'targetProbability', 'flatFieldProbability', 'darkFieldProbability']
     image_probability = []
     for image in images:
         image_dict = {"name": image}
         shortened_name = image.split("/")[-1]
-        for property in probabilityScoreProperties:
+        for property in probability_score_properties:
             image_dict[property] = 0
 
         for i in range(len(matchingStandards)):
             for string in matchingStandards[i]:
                 string.lower()
                 shortened_name.lower()
-                image_dict[probabilityScoreProperties[i]] += compare_two_strings(string, shortened_name)
+                image_dict[probability_score_properties[i]] += compare_two_strings(string, shortened_name)
         image_probability.append(image_dict)
 
     sorted_images = []
     # target
-    best_target_image = max_probability(image_probability, probabilityScoreProperties[1])
+    best_target_image = max_probability(image_probability, probability_score_properties[1])
     sorted_images.append(best_target_image["name"])
     image_probability.remove(best_target_image)
-    best_target_image = max_probability(image_probability, probabilityScoreProperties[1])
+    best_target_image = max_probability(image_probability, probability_score_properties[1])
     sorted_images.append(best_target_image["name"])
     image_probability.remove(best_target_image)
 
     # flat field
-    best_flatfield_image = max_probability(image_probability, probabilityScoreProperties[2])
+    best_flatfield_image = max_probability(image_probability, probability_score_properties[2])
     sorted_images.append(best_flatfield_image["name"])
     image_probability.remove(best_flatfield_image)
-    best_flatfield_image = max_probability(image_probability, probabilityScoreProperties[2])
+    best_flatfield_image = max_probability(image_probability, probability_score_properties[2])
     sorted_images.append(best_flatfield_image["name"])
     image_probability.remove(best_flatfield_image)
 
     # dark field
-    best_darkfield_image = max_probability(image_probability, probabilityScoreProperties[3])
+    best_darkfield_image = max_probability(image_probability, probability_score_properties[3])
     sorted_images.append(best_darkfield_image["name"])
     image_probability.remove(best_darkfield_image)
-    best_darkfield_image = max_probability(image_probability, probabilityScoreProperties[3])
+    best_darkfield_image = max_probability(image_probability, probability_score_properties[3])
     sorted_images.append(best_darkfield_image["name"])
     image_probability.remove(best_darkfield_image)
 
     # art work
     if artwork:
         for i in range(len(image_probability)):
-            best_artwork_image = max_probability(image_probability, probabilityScoreProperties[0])
+            best_artwork_image = max_probability(image_probability, probability_score_properties[0])
             sorted_images.append(best_artwork_image["name"])
             image_probability.remove(best_artwork_image)
 
     example_image_a = sorted_images[0]
-    for i in range(0,len(sorted_images),2):
-        if not compare_two_strings(sorted_images[i], sorted_images[i+1], example_image_a):
+    for i in range(0, len(sorted_images), 2):
+        if not compare_two_strings(sorted_images[i], sorted_images[i + 1], example_image_a):
             hold_image = sorted_images[i]
-            sorted_images[i] = sorted_images[i+1]
-            sorted_images[i+1] = hold_image
+            sorted_images[i] = sorted_images[i + 1]
+            sorted_images[i + 1] = hold_image
 
     return sorted_images

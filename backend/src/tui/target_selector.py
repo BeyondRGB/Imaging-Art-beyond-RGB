@@ -18,17 +18,16 @@ import random
 
 import cv2
 from numpy import clip
-import time # can clean up as soon as adequate testing has been done
+import time  # can clean up as soon as adequate testing has been done
 
 from backend.src.utils.rgbio import load_image
 import curses
 
-
-selecting = False # boolean if user is currently drawing the box
-x_start, y_start, x_end, y_end = 0, 0, 0, 0 # box positional coordinates
+selecting = False  # boolean if user is currently drawing the box
+x_start, y_start, x_end, y_end = 0, 0, 0, 0  # box positional coordinates
 corner_moving = "bottom_right"  # Options: top_left, top_right, bottom_left, bottom_right
-BOX_CLICK_ERROR = 50 # the space from a corner coordinate a user can click and move that corner
-color = (0,0,0) # color of the box
+BOX_CLICK_ERROR = 50  # the space from a corner coordinate a user can click and move that corner
+color = (0, 0, 0)  # color of the box
 
 
 def __scale_img(img):
@@ -37,7 +36,7 @@ def __scale_img(img):
     [in] img : image to scale
     [post] img bit scaled in place
     """
-    s = ((2**8 - 1)/(2**14 - 1))  # TODO determine actual scale for each image
+    s = ((2 ** 8 - 1) / (2 ** 14 - 1))  # TODO determine actual scale for each image
     img *= s  # Scale to 8 bit
 
 
@@ -97,12 +96,12 @@ def __mouse_select(event, x, y, flags, param):
     # Mouse is Moving
     elif event == cv2.EVENT_MOUSEMOVE:
         if selecting is True and (abs(x_start - x) > moving_redraw or abs(y_start - y) > moving_redraw or abs(y_end - y) > moving_redraw or abs(x_end - x) > moving_redraw):
-            __new_end_point(x,y, corner_moving)
+            __new_end_point(x, y, corner_moving)
 
     # if the left mouse button was released
     elif event == cv2.EVENT_LBUTTONUP:
         # record the ending (x, y) coordinates
-        __new_end_point(x,y, corner_moving)
+        __new_end_point(x, y, corner_moving)
         selecting = False  # cropping is finished
 
 
@@ -166,7 +165,7 @@ def __select_target(target_path, rows=0, cols=0):
         i = img.copy()
 
         if selecting:
-            __draw_target(i, rows*2, cols*2)
+            __draw_target(i, rows * 2, cols * 2)
             cv2.imshow("Target Selector", i)
 
         # time.sleep(0.25)
@@ -178,7 +177,7 @@ def __select_target(target_path, rows=0, cols=0):
     return ((x_start, y_start), (x_end, y_end))
 
 
-def target_selector(stdscr, target_path: str, type:str):
+def target_selector(stdscr, target_path: str, type: str):
     """ Runner for target selection
     [in] stdscr      : screen for printing
     [in] target_path : path of one of the images containing the target
@@ -220,28 +219,4 @@ def __draw_intro(stdscr):
            "To continue press the ENTER key."]
 
     for i, t in enumerate(txt):
-        stdscr.addstr(i+1, 2, t)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        stdscr.addstr(i + 1, 2, t)

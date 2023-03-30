@@ -31,7 +31,7 @@ def target_type(stdscr):
         c = stdscr.getch()
         if c == ord('q'):
             return 1
-        elif c == curses.KEY_DOWN or c == curses.KEY_ENTER or c == 10 or c == 13:
+        elif c == curses.KEY_ENTER or c == 10 or c == 13:
             if __handle_enter():
                 return 0, type_string
             else:
@@ -53,7 +53,8 @@ def __handle_input(c: int):
     [post] row and column strings updated if nessesary
     """
     global type_string
-    __append_string(chr(c).upper())
+    if ord('A') <= c <= ord('z'):
+        __append_string(chr(c).upper())
 
 
 def __append_string(c: int):

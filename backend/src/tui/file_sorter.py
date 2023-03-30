@@ -16,6 +16,7 @@ import curses
 from os.path import basename
 from dataclasses import dataclass
 from backend.src.tui.auto_sort import sort_images
+
 RESERVED_LINES = 4  # Lines taken up by UI
 VERT_OFFSET = 3  # Vertical offset for printing column data
 
@@ -114,7 +115,7 @@ def __reset_images(fs: __FileSorter):
         __move_file_left(fs, i)
 
 
-def __autosort_files(sorted_files:list, fs: __FileSorter):
+def __autosort_files(sorted_files: list, fs: __FileSorter):
     for i in range(len(sorted_files)):
         __move_file_right(fs, i, fs.col_data[0].index(sorted_files[i]))
 
@@ -143,7 +144,7 @@ def __draw_intro(stdscr):
            "To continue press the ENTER key."]
 
     for i, t in enumerate(txt):
-        stdscr.addstr(i+1, 2, t)
+        stdscr.addstr(i + 1, 2, t)
 
 
 def __gen_selects(num_files: int):
@@ -155,7 +156,7 @@ def __gen_selects(num_files: int):
          ['Flat Field B', ''], ['Dark Field A', ''], ['Dark Field B', '']]
 
     for i in range(0, (num_files - 6) // 2):
-        num = str(i+1)
+        num = str(i + 1)
         s.extend([["Art " + num + " A", ''], ["Art " + num + " B", '']])
     return s
 
@@ -219,16 +220,16 @@ def __draw_sorter(stdscr, fs: __FileSorter, autosorted):
 
     # Setup window
     stdscr.border()
-    stdscr.hline(2, 1, '-', w-2)
-    stdscr.vline(1, int((w-2)/2-1), '|', h-2)
+    stdscr.hline(2, 1, '-', w - 2)
+    stdscr.vline(1, int((w - 2) / 2 - 1), '|', h - 2)
     stdscr.addstr(1, 1, 'Selected Images')
-    stdscr.addstr(1, int((w-2)/2), 'Ordered Images')
-    stdscr.hline(h-3, 1, '-', w-2)
+    stdscr.addstr(1, int((w - 2) / 2), 'Ordered Images')
+    stdscr.hline(h - 3, 1, '-', w - 2)
     if autosorted:
-        stdscr.addstr(h-2, 1, "Press 'r' to reset images")
+        stdscr.addstr(h - 2, 1, "Press 'r' to reset images")
     else:
-        stdscr.addstr(h-2, 1, "Press 'a' to autosort")
-    stdscr.addstr(h-1, w-20, 'Press \'c\' when done')
+        stdscr.addstr(h - 2, 1, "Press 'a' to autosort")
+    stdscr.addstr(h - 1, w - 20, 'Press \'c\' when done')
 
     __update_scroll_idxs(stdscr, fs, 0)
     __update_scroll_idxs(stdscr, fs, 1)
@@ -239,7 +240,7 @@ def __draw_sorter(stdscr, fs: __FileSorter, autosorted):
         if i < start_idx or i > start_idx + max_entries:
             continue
         s_x = 3
-        s_y = 2*(i-start_idx)+VERT_OFFSET
+        s_y = 2 * (i - start_idx) + VERT_OFFSET
         if fs.col_idx == 0 and i == fs.idxs[0]:
             stdscr.addstr(s_y, s_x, basename(f), curses.color_pair(1))
         else:
@@ -251,8 +252,8 @@ def __draw_sorter(stdscr, fs: __FileSorter, autosorted):
         if i < start_idx or i > start_idx + max_entries:
             continue
         txt = s[0] + ': ' + basename(s[1])
-        s_x = int((w-2)/2) + 2
-        s_y = 2*(i-start_idx)+VERT_OFFSET
+        s_x = int((w - 2) / 2) + 2
+        s_y = 2 * (i - start_idx) + VERT_OFFSET
         if fs.col_idx == 1 and i == fs.idxs[1]:
             stdscr.addstr(s_y, s_x, txt, curses.color_pair(1))
         else:
@@ -286,12 +287,12 @@ def __update_scroll_idxs(stdscr, fs: __FileSorter, col: int):
     """
     if cur_idx == 0:  # needed for wrapping
         fs.scroll_idxs[col] = 0
-    elif cur_idx == max_idx-1 and max_idx > max_entries:
-        fs.scroll_idxs[col] = int(max_idx-max_entries-1)
-    elif scroll+max_entries-3 < cur_idx and scroll+max_entries < max_idx-1:
-        fs.scroll_idxs[col] = (scroll+1) % max_idx
-    elif cur_idx > 3 and fs.scroll_idxs[col]+3 > cur_idx:
-        fs.scroll_idxs[col] = (scroll-1) % max_idx
+    elif cur_idx == max_idx - 1 and max_idx > max_entries:
+        fs.scroll_idxs[col] = int(max_idx - max_entries - 1)
+    elif scroll + max_entries - 3 < cur_idx and scroll + max_entries < max_idx - 1:
+        fs.scroll_idxs[col] = (scroll + 1) % max_idx
+    elif cur_idx > 3 and fs.scroll_idxs[col] + 3 > cur_idx:
+        fs.scroll_idxs[col] = (scroll - 1) % max_idx
 
 
 def __reset_right_idx(fs: __FileSorter):
