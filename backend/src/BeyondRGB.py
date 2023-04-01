@@ -74,7 +74,7 @@ def main():
         packet = genpacket(args.images, target)
 
     # Begin pipeline
-    processing_pipeline(packet, args.outpath, args.colorspace)
+    processing_pipeline(packet, args.outpath, 'sRGB')
 
 
 if __name__ == "__main__":
