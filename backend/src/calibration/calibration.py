@@ -17,8 +17,8 @@ import numpy as np
 from scipy.optimize import fmin
 
 # Local Imports
-from spectral_equation import xyztolab, ciede2000
-from packet import Packet
+from calibration.packet import Packet
+from calibration.spectral_equation import xyztolab, ciede2000
 
 
 __INIT_MOARR = [0.10, 0.10, 0.25, 0.50, 0.10, 0.10,

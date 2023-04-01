@@ -29,8 +29,8 @@ import numpy as np
 from dataclasses import dataclass
 
 # Local Imports
-from rgbio import load_image, load_array, save_array, create_temp_file
-from constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
+from utils.rgbio import load_image, load_array, save_array, create_temp_file
+from calibration.constants import IMGTYPE_TARGET, IMGTYPE_WHITE,\
         IMGTYPE_DARK, IMGTYPE_SUBJECT, TARGET_RADIUS,\
         TARGETTYPE_NGT, TARGETTYPE_APT, TARGETTYPE_CCSG, TARGETTYPE_CC
 
@@ -78,7 +78,6 @@ class Packet:
     Members:
         files         : list of image files
         swap          : list of temp files for storing image arrays
-        outpath       : path to output files to
         subjptr       : tuple containing indices of subject being processed
         target        : dataclass for the target
         deadpixels    : list of dead pixel locations in images 0 and 1
@@ -88,7 +87,6 @@ class Packet:
     """
     files: list
     swap: list
-    outpath: str
     subjptr: tuple
     target: np.ndarray
     deadpixels: tuple
@@ -119,7 +117,7 @@ class Target:
     xyz_ref: np.ndarray
 
 
-def genpacket(files: list, target: Target, outpath: str) -> Packet:
+def genpacket(files: list, target: Target) -> Packet:
     """ Initialize packet with default values and loaded images
     images will be in swap after this
     [in] files  : list of files we are working with
@@ -128,8 +126,7 @@ def genpacket(files: list, target: Target, outpath: str) -> Packet:
     """
     swap = __genswap(len(files) // 2)
     subjptr = (__TARGET_A_IDX, __TARGET_B_IDX)
-    pkt = Packet(files, swap, outpath, subjptr,
-                 target, None, 0.0, None, None)
+    pkt = Packet(files, swap, subjptr, target, None, 0.0, None, None)
     __loadswap(pkt)
     return pkt
 

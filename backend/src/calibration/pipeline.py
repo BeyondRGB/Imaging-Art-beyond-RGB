@@ -17,17 +17,21 @@ import gc
 import os.path
 
 # Local Imports
-from rgbio import save_image
-from packet import extract_camsigs, RENDERABLES_START
-from preprocessing import preprocess
-from calibration import color_calibrate
-from rendering import render
-from spectral_reflectance import spectrally_transform
-from verification import verify_color_transformation, verify_spectral_transformation
+from utils.rgbio import save_image
+from calibration.rendering import render
+from calibration.preprocessing import preprocess
+from calibration.calibration import color_calibrate
+from calibration.packet import extract_camsigs, RENDERABLES_START
+from calibration.spectral_reflectance import spectrally_transform
+from calibration.verification import verify_color_transformation,\
+                                     verify_spectral_transformation
 
-def processing_pipeline(packet):
+
+def processing_pipeline(packet, outpath, colorspace):
     """ Color calibration pipeline
-    [in] packet : packet to send through the pipeline
+    [in] packet     : packet to send through the pipeline
+    [in] outpath    : path to save the output file to
+    [in] colorspace : rgb colorspace in which to render the image
     """
     """ Calibration
     We need to get the calibration matrices for both color transformation and
@@ -49,10 +53,10 @@ def processing_pipeline(packet):
     pass and then loop over all remaining subjects rendering and saving them
     one by one.
     """
-    res = render(packet)
+    res = render(packet, colorspace)
     basename = os.path.basename(packet.files[packet.subjptr[0]])
     basename = basename.split('.')[0]  # Trim extension
-    save_image(res, packet.outpath, basename)
+    save_image(res, outpath, basename)
     del res
     gc.collect()
 
@@ -64,8 +68,8 @@ def processing_pipeline(packet):
         basename = basename.split('.')[0]  # Trim extension
         # process, render, and save
         preprocess(packet)
-        res = render(packet)
-        save_image(res, packet.outpath, basename)
+        res = render(packet, colorspace)
+        save_image(res, outpath, basename)
         del res
         gc.collect()
         # increment pointer

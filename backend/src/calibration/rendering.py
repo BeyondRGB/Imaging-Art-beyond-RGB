@@ -6,6 +6,7 @@ Functions:
 
 Authors:
     Brendan Grau <https://github.com/Victoriam7>
+    Keenan Miller <https://github.com/keenanm500>
 
 License:
     © 2022 BeyondRGB
@@ -13,8 +14,9 @@ License:
 """
 import numpy as np
 import gc
+import sys
 
-from packet import getimg, IMGTYPE_SUBJECT
+from calibration.packet import getimg, IMGTYPE_SUBJECT
 
 
 __PROPHOTO_TRANS = [[1.34594330, -0.2556075, -0.0511118],
@@ -23,14 +25,15 @@ __PROPHOTO_TRANS = [[1.34594330, -0.2556075, -0.0511118],
 __SRGB_TRANS = [[3.13385610, -1.6168667, -0.4906146],
                 [-0.9787684, 1.91614150, 0.03345400],
                 [0.07194530, -0.2289914, 1.40524270]]
-__COLORSPACE = 'sRGB'  # 'sRGB' or 'ProPhoto'
 __PROPHOTO_Y_LINE = 0.001953125
 __SRGB_Y_LINE = 0.0031308
+__INVALID_COLORSPACE_MESSAGE = 'Rendering was provided an invalid colorspace option, exiting.'
 
 
-def render(packet):
+def render(packet, colorspace):
     """ Render image pair as a single color calibrated image
-    [in] packet : pipeline packet
+    [in] packet     : pipeline packet
+    [in] colorspace : the rgb colorspace in which to transform the image
     [out] rendered image
     [post] rendered image is loaded in memory
     [post] camsigs deleted from packet
@@ -45,29 +48,31 @@ def render(packet):
     gc.collect()
 
     # Convert to ProPhoto color space
-    if __COLORSPACE == 'ProPhoto':
+    if colorspace == 'ProPhoto':
         rgb = np.matmul(__PROPHOTO_TRANS, xyz)
-        del xyz
-        gc.collect()
-        np.clip(rgb, 0, 1, out=rgb)
+        rgb = np.clip(rgb/100, 0, 1)
         # Apply Gamma
-        np.piecewise(rgb, [rgb > __PROPHOTO_Y_LINE, rgb <= __PROPHOTO_Y_LINE],
-                     [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])
+        rgb = np.piecewise(rgb,
+                           [rgb > __PROPHOTO_Y_LINE, rgb <= __PROPHOTO_Y_LINE],
+                           [lambda rgb: rgb ** (1/1.8), lambda rgb: rgb * 16])
 
     # Convert to sRGB color space
-    if __COLORSPACE == 'sRGB':
-        rgb = np.matmul(__PROPHOTO_TRANS, xyz)
-        del xyz
-        gc.collect()
-        np.clip(rgb/100, 0, 1, out=rgb)  # TODO remove divide by 100
+    elif colorspace == 'sRGB':
+        rgb = np.matmul(__SRGB_TRANS, xyz)
+        rgb = np.clip(rgb/100, 0, 1)
         # Apply Gamma
-        np.piecewise(rgb, [rgb > __SRGB_Y_LINE, rgb <= __SRGB_Y_LINE],
-                     [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,
-                      lambda rgb: 12.92 * rgb])
+        rgb = np.piecewise(rgb,
+                           [rgb > __SRGB_Y_LINE, rgb <= __SRGB_Y_LINE],
+                           [lambda rgb: (1.055 * (rgb ** (1/2.4))) - 0.055,
+                            lambda rgb: 12.92 * rgb])
+
+    else:
+        print(__INVALID_COLORSPACE_MESSAGE)
+        sys.exit(1)
 
     # Reshape into image
     render = np.dstack((rgb[0], rgb[1], rgb[2])).reshape(imgshape)
-    del rgb
+    del xyz, rgb
     gc.collect()
 
     return np.float32(render)
