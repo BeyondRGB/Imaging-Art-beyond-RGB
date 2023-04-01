@@ -22,12 +22,12 @@ else
 endif
 BUILD_ARGS = -p src --distpath $(OUT_DIR) -y --clean -F --add-data $(DATA_DIR)$(DELIMITER)$(DATA_DIR)
 
-make: 
-ifeq ($(OS),Windows_NT)  # Windows_NT, XP, 2000, 7, 8, 10, 11...
-	python.exe -m PyInstaller $(BUILD_ARGS) src/BeyondRGB.py
-else
+make:
+#ifeq ($(OS),Windows_NT)  # Windows_NT, XP, 2000, 7, 8, 10, 11...
+#	python.exe -m PyInstaller $(BUILD_ARGS) src/BeyondRGB.py
+#else
 	pyinstaller $(BUILD_ARGS) src/BeyondRGB.py
-endif
+#endif
 
 clean:
 ifeq ($(OS),Windows_NT)  # Windows_NT, XP, 2000, 7, 8, 10, 11...
