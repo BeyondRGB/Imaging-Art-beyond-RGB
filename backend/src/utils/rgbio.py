@@ -51,7 +51,12 @@ def load_image(path):
     # Load image
     try:
         from utils.rpwcv2 import rpwcv2
-        return rpwcv2(path)
+        from utils.rponly import rponly
+        flag = 'rpwcv'
+        if flag == 'rpwcv':
+            return rpwcv2(path)
+        elif flag == 'rponly':
+            return rponly(path)
     except rp._rawpy.LibRawIOError:
         raise IOError
 
