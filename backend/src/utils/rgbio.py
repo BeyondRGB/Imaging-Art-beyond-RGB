@@ -57,6 +57,8 @@ def load_image(path):
             return rpwcv2(path)
         elif flag == 'rponly':
             return rponly(path)
+        elif flag == 'cpplr':
+            return cpplr(path)
     except rp._rawpy.LibRawIOError:
         raise IOError
 
