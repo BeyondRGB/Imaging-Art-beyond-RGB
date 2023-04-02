@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <array>
 #include <vector>
 
 void* read_image(std::string path)
@@ -42,12 +43,16 @@ void* read_image(std::string path)
         std::cout << height << std::endl;
         std::cout << channels << std::endl;
         std::cout << depth << std::endl;
-        
+
+        int stride = width * channels * (depth / 8);
+        ushort buf[stride*height];
+        reader.copy_mem_image(&buf, stride, false);
+    
+
         std::ofstream file;
         file.open ("t1.txt");
-        for (int i = 0; i < width * height * channels; i++)
-                file << reader.imgdata.rawdata.raw_image[i] << ' ';
-        std::cout << std::endl;
+        for (int i = 0; i < width * height * channels; i++) {
+        }
         file.close();
 
 
