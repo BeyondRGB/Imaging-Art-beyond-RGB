@@ -112,6 +112,7 @@ def __move_file_left(fs: __FileSorter, sorted_file_index: int):
 def __reset_images(fs: __FileSorter):
     for i in range(len(fs.col_data[1])):
         __move_file_left(fs, i)
+    fs.idxs[1] = 0
 
 
 def __autosort_files(sorted_files: list, fs: __FileSorter):

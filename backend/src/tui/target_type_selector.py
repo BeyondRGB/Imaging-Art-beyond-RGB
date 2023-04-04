@@ -79,11 +79,11 @@ def __draw_scr(stdscr):
     stdscr.clear()
     stdscr.border()
 
-    txt = ["Welcome to BeyondRGB",
+    txt = ["Target Selection",
            "",
-           "This step tells calibration where the target is in the image. You will be shown a target image",
+           "This step tells calibration where the target is in the target image.",
            "First, you will specify what target type you are using.",
-           "The options are NGT, APT, CCSG, CC.  Custom target types are not yet supported",
+           "The options are NGT, APT, CCSG, and CC.  Custom target types are not yet supported",
            "",
            "To continue press the ENTER key."]
 
