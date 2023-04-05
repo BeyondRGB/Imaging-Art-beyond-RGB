@@ -50,8 +50,10 @@ def load_image(path):
         raise FileNotFoundError
     # Load image
     try:
-        raw = rp.imread(path).raw_image
-        rgb = cvtColor(raw, COLOR_BayerRGGB2RGB).astype('f4')
+        #raw = rp.imread(path).raw_image
+        #rgb = cvtColor(raw, COLOR_BayerRGGB2RGB).astype('f4')
+        import cv2
+        rgb = cv2.imread(path).astype('f4')
         return rgb
     except rp._rawpy.LibRawIOError:
         raise IOError

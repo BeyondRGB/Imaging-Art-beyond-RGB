@@ -34,7 +34,7 @@ def __scale_img(img):
     [post] img bit scaled in place
     """
     s = ((2**8 - 1)/(2**14 - 1))  # TODO determine actual scale for each image
-    img *= s  # Scale to 8 bit
+    #img *= s  # Scale to 8 bit
 
 
 def __mouse_select(event, x, y, flags, param):

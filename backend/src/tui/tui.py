@@ -71,9 +71,9 @@ def tui(args: list):
 
     # Build Packet
     target = gentarget(coords, white, targ2ttype['NGT'])
-    packet = genpacket(files, target, outpath)
+    packet = genpacket(files, target)
 
-    return packet
+    return packet, outpath
 
 
 def __handle_rc(rc: int, stdscr):

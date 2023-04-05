@@ -39,8 +39,9 @@ def preprocess(packet: Packet):
     if packet.wscale == 0.0:
         # This is out first time through
         __bitscale(subj, dark, white)
-        __deadpixels(packet, subj, dark, white)
         __darkcurrent(subj, dark, white)
+        print(white[0])
+        __deadpixels(packet, subj, dark, white)
         __wscalegen(packet, subj, white)
         __flatfield(packet, subj, white)
         putimg(packet, IMGTYPE_DARK, dark)  # save once
@@ -73,6 +74,7 @@ def __bitscale(subj: tuple, dark: tuple = None, white: tuple = None):
         dark[1][...] *= s
     subj[0][...] *= s
     subj[1][...] *= s
+    print(white[0])
 
 
 def __deadpixels(packet: Packet, subj: tuple, white: tuple = None, dark: tuple = None):
@@ -87,8 +89,8 @@ def __deadpixels(packet: Packet, subj: tuple, white: tuple = None, dark: tuple =
     if packet.deadpixels:
         idxs0, idxs1 = packet.deadpixels
     else:
-        idxs0 = np.where(white[0] - dark[0] == 0)
-        idxs1 = np.where(white[1] - dark[1] == 0)
+        idxs0 = np.where(white[0] == 0)
+        idxs1 = np.where(white[1] == 0)
 
     # Blur image and then only save values for dead pixels
     if white:
@@ -160,10 +162,10 @@ def __flatfield(packet: Packet, subj: tuple, white: tuple):
     [in] white   : white images
     [post] subject flat fielded
     """
-    subj[0][...] /= white[0]
-    subj[0][...] *= packet.wscale
-    subj[1][...] /= white[1]
-    subj[1][...] *= packet.wscale
+    subj[0][...] = subj[0] / white[0]
+    subj[0][...] = subj[0] * packet.wscale
+    subj[1][...] = subj[1] / white[1]
+    subj[1][...] = subj[1] * packet.wscale
 
 
 """

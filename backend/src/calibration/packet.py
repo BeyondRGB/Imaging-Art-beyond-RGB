@@ -223,6 +223,10 @@ def extract_camsigs(packet):
     camsigs = np.ndarray((6, numpatches))
     for i, sig in enumerate(siglist):
         cell = t_img[0][sig[1]-tr:sig[1]+tr, sig[0]-tr:sig[0]+tr]
+        import matplotlib.pyplot as plt
+        plt.imshow(cell)
+        plt.show()
+        input()
         avg = np.average(cell, axis=(0, 1))
         camsigs[0, i] = avg[0]
         camsigs[1, i] = avg[1]
