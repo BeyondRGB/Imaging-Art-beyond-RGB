@@ -15,11 +15,11 @@ License:
 """
 import sys
 
+import cv2
 import numpy as np
 import rawpy as rp
 from os.path import exists
 from tempfile import TemporaryFile
-from cv2 import imwrite, cvtColor, COLOR_RGB2BGR, COLOR_BayerRGGB2RGB
 
 
 def save_image(img: np.ndarray, path: str, filename: str):
@@ -33,8 +33,8 @@ def save_image(img: np.ndarray, path: str, filename: str):
     else:
         out = './' + filename + ".tiff"
     try:
-        img[...] = cvtColor(img,  COLOR_RGB2BGR)
-        imwrite(out, img)
+        img[...] = cv2.cvtColor(img,  cv2.COLOR_RGB2BGR)
+        cv2.imwrite(out, img)
     except PermissionError:
         print("Failed to create file at: " + out + " (insufficient permissions)")
         sys.exit(1)
@@ -50,8 +50,8 @@ def load_image(path):
         raise FileNotFoundError
     # Load image
     try:
-        raw = rp.imread(path).raw_image
-        rgb = cvtColor(raw, COLOR_BayerRGGB2RGB).astype('f4')
+        raw = rp.imread(path)
+        rgb = cv2.cvtColor(raw.raw_image, cv2.COLOR_BayerRGGB2RGB).astype('f4')
         return rgb
     except rp._rawpy.LibRawIOError:
         raise IOError
