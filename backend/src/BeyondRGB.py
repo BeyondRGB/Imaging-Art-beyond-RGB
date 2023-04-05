@@ -62,7 +62,7 @@ def main():
         print('This feature is not yet implemented')
         sys.exit(1)
     elif args.mode == 'tui':
-        packet = tui(args)
+        packet, outpath = tui(args)
     elif args.mode == 'cli':
         # TODO packet generating bit needs to be redone
         # Gather target coords and white square
@@ -72,9 +72,10 @@ def main():
                            (int(args.white_row), int(args.white_col)),
                            targ2ttype[args.target])
         packet = genpacket(args.images, target)
+        outpath = args.outpath
 
     # Begin pipeline
-    processing_pipeline(packet, args.outpath, args.colorspace)
+    processing_pipeline(packet, outpath, "sRGB")
 
 
 if __name__ == "__main__":
