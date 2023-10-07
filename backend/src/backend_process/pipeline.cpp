@@ -79,6 +79,11 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     // Target Dims
     results_obj->store_int(GI_TARGET_ROWS, target_json.get_number("rows"));
     results_obj->store_int(GI_TARGET_COLS, target_json.get_number("cols"));
+    // Target Coords
+    results_obj->store_double(GI_TARGET_TOP, target_json.get_number("top"));
+    results_obj->store_double(GI_TARGET_BOTTOM, target_json.get_number("bottom"));
+    results_obj->store_double(GI_TARGET_LEFT, target_json.get_number("left"));
+    results_obj->store_double(GI_TARGET_RIGHT, target_json.get_number("right"));
     // Observer
     int observer_num = ref_data_json.get_number(key_map[DataKey::StandardObserver]);
     results_obj->store_int(GI_OBSERVER, observer_num);
