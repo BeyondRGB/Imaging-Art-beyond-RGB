@@ -377,6 +377,20 @@
 	overlay.update(box);
 	overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 	}
+
+	export function updateVerifyCoords() {
+	let overlay = viewer.getOverlayById(`sBox-1`);
+
+	let box = new OpenSeadragon.Rect(
+	verifyPos.left,
+	verifyPos.top,
+	verifyPos.right-verifyPos.left,
+	verifyPos.bottom-verifyPos.top
+	);
+
+	overlay.update(box);
+	overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+	}
 </script>
 
 <main>

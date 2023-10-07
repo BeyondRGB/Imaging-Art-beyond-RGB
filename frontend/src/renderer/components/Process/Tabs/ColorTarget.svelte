@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import {
 	customRefData,
 	processState,
@@ -392,7 +392,7 @@
                   </div>
                 </div>
               </div>
-							  <div class="target-coordinates">
+			  <div class="target-coordinates">
 					  <h3>Color Target Coordinates</h3>
 					<div class="inputGroup">
 						<span>Top:</span>
@@ -431,8 +431,48 @@
                         />
 					  </div>
 				  </div>
-            {/if}
-            <button
+			  {:else if target !== "Add"}
+			  <div class="target-coordinates">
+			  <h3>Color Target Coordinates</h3>
+			  <div class="inputGroup">
+				  <span>Top:</span>
+				  <input
+					  type="number"
+					  step="0.01"
+					  bind:value={verifyPos.top}
+					  on:change={() =>colorTargetViewer.updateVerifyCoords()}
+					  />
+				  </div>
+			  <div class="inputGroup">
+				  <span>Bottom:</span>
+				  <input
+					  type="number"
+					  step="0.01"
+					  bind:value={verifyPos.bottom}
+					  on:change={() =>colorTargetViewer.updateVerifyCoords()}
+					  />
+				  </div>
+			  <div class="inputGroup">
+				  <span>Right:</span>
+				  <input
+					  type="number"
+					  step="0.01"
+					  bind:value={verifyPos.right}
+					  on:change={() =>colorTargetViewer.updateVerifyCoords()}
+					  />
+				  </div>
+			  <div class="inputGroup">
+				  <span>Left:</span>
+				  <input
+						type="number"
+						step="0.01"
+						bind:value={verifyPos.left}
+						on:change={() =>colorTargetViewer.updateVerifyCoords()}
+					  />
+				  </div>
+		  </div>
+			  {/if}
+			  <button
               class="close"
               disabled={i === 0 &&
                 typeof verifyTarget != "undefined" &&
