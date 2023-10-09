@@ -65,18 +65,14 @@
               curve: 'smooth',
           },
           toolbar: {
-              // Hamburger menu which has exports such as CSV etc.
+              // Hamburger menu which has exports such as PNG and SVG, CSV is explicitly hidden via css
               show: true,
               tools: {
                   download: true,
               },
-              export: { //todo remove
-                  csv: {
-                      filename: 'SpectralLineChart.csv',
-                      columnDelimiter: ',',
-                      headerCategory: 'wavelength',
-                      headerValue: 'value',
-                  }
+              export: {
+                png: {},
+                svg: {}
               }
           },
           selection: {
@@ -254,6 +250,10 @@
 
   #spectral-csv-download-button:hover {
     cursor: pointer;
+  }
+
+  .apexcharts-menu-item.exportCSV {
+    display: none;
   }
 
 </style>
