@@ -31,7 +31,7 @@
 
   let expand = false;
 
-  let wavelengthArray = Array.from({ length: 35 }, (x, i) => i * 10 + 380);
+  let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
 
   function getData() {
     console.log("Fetching Spec Data");
