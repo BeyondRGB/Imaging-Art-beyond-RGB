@@ -391,6 +391,16 @@
 	overlay.update(box);
 	overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 	}
+
+	export function getPixelXCoords() {
+	var coordpoint = viewer.viewport.viewportToImageCoordinates(new OpenSeadragon.Point(1,0));
+	return coordpoint.x;
+	}
+
+	export function getPixelYCoords() {
+	var coordpoint = viewer.viewport.viewportToImageCoordinates(new OpenSeadragon.Point(0,1));
+	return coordpoint.y;
+	}
 </script>
 
 <main>

@@ -18,7 +18,7 @@
 	let colorPos;
 	let verifyTarget;
 	let verifyPos;
-	
+
 	let colorTargetViewer;
 
 	let targetArray;
@@ -49,6 +49,8 @@
 	$processState.artStacks[0].colorTarget.rows = colorTarget.rows;
 	$processState.artStacks[0].colorTarget.cols = colorTarget.cols;
 	$processState.artStacks[0].colorTarget.size = colorTarget.size;
+	$processState.artStacks[0].colorTarget.Xresoltuion = colorTargetViewer.getPixelXCoords();
+	$processState.artStacks[0].colorTarget.Yresoltuion = colorTargetViewer.getPixelYCoords();
 	$processState.artStacks[0].colorTarget.whitePatch =
 	colorTarget.whitePatch;
 	$processState.artStacks[0].colorTarget.refData = colorTarget.refData;
@@ -69,6 +71,8 @@
 	$processState.artStacks[0].verificationTarget.rows = verifyTarget.rows;
 	$processState.artStacks[0].verificationTarget.cols = verifyTarget.cols;
 	$processState.artStacks[0].verificationTarget.size = verifyTarget.size;
+	$processState.artStacks[0].verificationTarget.Xresoltuion = colorTargetViewer.getPixelXCoords();
+	$processState.artStacks[0].verificationTarget.Yresoltuion = colorTargetViewer.getPixelYCoords();
 	$processState.artStacks[0].verificationTarget.whitePatch =
 	verifyTarget.whitePatch;
 	$processState.artStacks[0].verificationTarget.refData =
@@ -398,37 +402,45 @@
 						<span>Top:</span>
 						<input
 							type="number"
-							step="0.01"
-							bind:value={colorPos.top}
-							on:change={() => colorTargetViewer.updateCoords()}
+							step="1"
+							value={colorPos.top * colorTargetViewer.getPixelYCoords()}
+							on:change={() => {
+							colorPos.top = event.target.value / colorTargetViewer.getPixelYCoords();
+							colorTargetViewer.updateCoords()}}
 							/>
 						</div>
 						<div class="inputGroup">
 							<span>Bottom:</span>
 							<input
 								type="number"
-								step="0.01"
-								bind:value={colorPos.bottom}
-								on:change={() => colorTargetViewer.updateCoords()}
-								/>
+								step="1"
+								value={colorPos.bottom * colorTargetViewer.getPixelYCoords()}
+							on:change={() => {
+							colorPos.bottom = event.target.value / colorTargetViewer.getPixelYCoords();
+							colorTargetViewer.updateCoords()}}
+							/>
 							</div>
 							<div class="inputGroup">
 								<span>Right:</span>
 								<input
 									type="number"
-									step="0.01"
-									bind:value={colorPos.right}
-									on:change={() => colorTargetViewer.updateCoords()}
-									/>
+									step="1"
+									value={colorPos.right * colorTargetViewer.getPixelXCoords()}
+							on:change={() => {
+							colorPos.right = event.target.value / colorTargetViewer.getPixelXCoords();
+							colorTargetViewer.updateCoords()}}
+							/>
 								</div>
 					  <div class="inputGroup">
 						  <span>Left:</span>
 					  <input
                             type="number"
-                            step="0.01"
-                            bind:value={colorPos.left}
-							on:change={() => colorTargetViewer.updateCoords()}
-                        />
+                            step="1"
+                            value={colorPos.left * colorTargetViewer.getPixelXCoords()}
+							on:change={() => {
+							colorPos.left = event.target.value / colorTargetViewer.getPixelXCoords();
+							colorTargetViewer.updateCoords()}}
+							/>
 					  </div>
 				  </div>
 			  {:else if target !== "Add"}
@@ -438,37 +450,45 @@
 				  <span>Top:</span>
 				  <input
 					  type="number"
-					  step="0.01"
-					  bind:value={verifyPos.top}
-					  on:change={() =>colorTargetViewer.updateVerifyCoords()}
-					  />
+					  step="1"
+					  value={verifyPos.top * colorTargetViewer.getPixelYCoords()}
+							on:change={() => {
+							verifyPos.top = event.target.value / colorTargetViewer.getPixelYCoords();
+							colorTargetViewer.updateVerifyCoords()}}
+							/>
 				  </div>
 			  <div class="inputGroup">
 				  <span>Bottom:</span>
 				  <input
 					  type="number"
-					  step="0.01"
-					  bind:value={verifyPos.bottom}
-					  on:change={() =>colorTargetViewer.updateVerifyCoords()}
-					  />
+					  step="1"
+					  value={verifyPos.bottom * colorTargetViewer.getPixelYCoords()}
+							on:change={() => {
+							verifyPos.bottom = event.target.value / colorTargetViewer.getPixelYCoords();
+							colorTargetViewer.updateVerifyCoords()}}
+							/>
 				  </div>
 			  <div class="inputGroup">
 				  <span>Right:</span>
 				  <input
 					  type="number"
-					  step="0.01"
-					  bind:value={verifyPos.right}
-					  on:change={() =>colorTargetViewer.updateVerifyCoords()}
-					  />
+					  step="1"
+					  value={verifyPos.right * colorTargetViewer.getPixelXCoords()}
+							on:change={() => {
+							verifyPos.right = event.target.value / colorTargetViewer.getPixelXCoords();
+							colorTargetViewer.updateVerifyCoords()}}
+							/>
 				  </div>
 			  <div class="inputGroup">
 				  <span>Left:</span>
 				  <input
 						type="number"
-						step="0.01"
-						bind:value={verifyPos.left}
-						on:change={() =>colorTargetViewer.updateVerifyCoords()}
-					  />
+						step="1"
+					  value={verifyPos.left * colorTargetViewer.getPixelXCoords()}
+							on:change={() => {
+							verifyPos.left = event.target.value / colorTargetViewer.getPixelXCoords();
+							colorTargetViewer.updateVerifyCoords()}}
+							/>
 				  </div>
 		  </div>
 			  {/if}
