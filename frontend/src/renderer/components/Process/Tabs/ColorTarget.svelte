@@ -178,7 +178,7 @@
           illuminants: "D50",
         },
       };
-      verifyPos = { top: 0.5, left: 0.5, bottom: 0.75, right: 0.75 };
+      verifyPos = { top: 0.25, left: 0.25, bottom: 0.5, right: 0.5 };
     }
   }
 
@@ -452,10 +452,11 @@
 					  type="number"
 					  step="1"
 					  value={verifyPos.top * colorTargetViewer.getPixelYCoords()}
-							on:change={() => {
-							verifyPos.top = event.target.value / colorTargetViewer.getPixelYCoords();
-							colorTargetViewer.updateVerifyCoords()}}
-							/>
+							on:change={() =>
+					  {
+					  verifyPos.top = event.target.value / colorTargetViewer.getPixelYCoords();
+					  colorTargetViewer.updateVerifyCoords()}}
+					  />
 				  </div>
 			  <div class="inputGroup">
 				  <span>Bottom:</span>
@@ -463,10 +464,11 @@
 					  type="number"
 					  step="1"
 					  value={verifyPos.bottom * colorTargetViewer.getPixelYCoords()}
-							on:change={() => {
-							verifyPos.bottom = event.target.value / colorTargetViewer.getPixelYCoords();
-							colorTargetViewer.updateVerifyCoords()}}
-							/>
+							on:change={() =>
+					  {
+					  verifyPos.bottom = event.target.value / colorTargetViewer.getPixelYCoords();
+					  colorTargetViewer.updateVerifyCoords()}}
+					  />
 				  </div>
 			  <div class="inputGroup">
 				  <span>Right:</span>
@@ -474,10 +476,11 @@
 					  type="number"
 					  step="1"
 					  value={verifyPos.right * colorTargetViewer.getPixelXCoords()}
-							on:change={() => {
-							verifyPos.right = event.target.value / colorTargetViewer.getPixelXCoords();
-							colorTargetViewer.updateVerifyCoords()}}
-							/>
+							on:change={() =>
+					  {
+					  verifyPos.right = event.target.value / colorTargetViewer.getPixelXCoords();
+					  colorTargetViewer.updateVerifyCoords()}}
+					  />
 				  </div>
 			  <div class="inputGroup">
 				  <span>Left:</span>
@@ -485,10 +488,11 @@
 						type="number"
 						step="1"
 					  value={verifyPos.left * colorTargetViewer.getPixelXCoords()}
-							on:change={() => {
-							verifyPos.left = event.target.value / colorTargetViewer.getPixelXCoords();
-							colorTargetViewer.updateVerifyCoords()}}
-							/>
+							on:change={() =>
+					  {
+					  verifyPos.left = event.target.value / colorTargetViewer.getPixelXCoords();
+					  colorTargetViewer.updateVerifyCoords()}}
+					  />
 				  </div>
 		  </div>
 			  {/if}
@@ -526,7 +530,7 @@
 	}
 
 	.right {
-	@apply w-[40vw] h-full flex flex-col m-1 bg-gray-700 pt-[5vh] items-center;
+	@apply w-[40vw] h-full flex flex-col m-1 bg-gray-700 pt-[2vh] pb-[8vh] items-center;
 	}
 
 	.cardBox {
