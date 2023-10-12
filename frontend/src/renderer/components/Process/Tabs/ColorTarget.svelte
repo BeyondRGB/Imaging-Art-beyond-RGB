@@ -49,8 +49,7 @@
 	$processState.artStacks[0].colorTarget.rows = colorTarget.rows;
 	$processState.artStacks[0].colorTarget.cols = colorTarget.cols;
 	$processState.artStacks[0].colorTarget.size = colorTarget.size;
-	$processState.artStacks[0].colorTarget.Xresoltuion = colorTargetViewer.getPixelXCoords();
-	$processState.artStacks[0].colorTarget.Yresoltuion = colorTargetViewer.getPixelYCoords();
+	$processState.artStacks[0].colorTarget.resolution = colorTargetViewer.getResolution();
 	$processState.artStacks[0].colorTarget.whitePatch =
 	colorTarget.whitePatch;
 	$processState.artStacks[0].colorTarget.refData = colorTarget.refData;
@@ -71,8 +70,7 @@
 	$processState.artStacks[0].verificationTarget.rows = verifyTarget.rows;
 	$processState.artStacks[0].verificationTarget.cols = verifyTarget.cols;
 	$processState.artStacks[0].verificationTarget.size = verifyTarget.size;
-	$processState.artStacks[0].verificationTarget.Xresoltuion = colorTargetViewer.getPixelXCoords();
-	$processState.artStacks[0].verificationTarget.Yresoltuion = colorTargetViewer.getPixelYCoords();
+	$processState.artStacks[0].verificationTarget.resolution = colorTargetViewer.getResolution();
 	$processState.artStacks[0].verificationTarget.whitePatch =
 	verifyTarget.whitePatch;
 	$processState.artStacks[0].verificationTarget.refData =
@@ -403,9 +401,9 @@
 						<input
 							type="number"
 							step="1"
-							value={colorPos.top * colorTargetViewer.getPixelYCoords()}
+							value={colorPos.top * colorTargetViewer.getResolution()}
 							on:change={() => {
-							colorPos.top = event.target.value / colorTargetViewer.getPixelYCoords();
+							colorPos.top = event.target.value / colorTargetViewer.getResolution();
 							colorTargetViewer.updateCoords()}}
 							/>
 						</div>
@@ -414,9 +412,9 @@
 							<input
 								type="number"
 								step="1"
-								value={colorPos.bottom * colorTargetViewer.getPixelYCoords()}
+								value={colorPos.bottom * colorTargetViewer.getResolution()}
 							on:change={() => {
-							colorPos.bottom = event.target.value / colorTargetViewer.getPixelYCoords();
+							colorPos.bottom = event.target.value / colorTargetViewer.getResolution();
 							colorTargetViewer.updateCoords()}}
 							/>
 							</div>
@@ -425,9 +423,9 @@
 								<input
 									type="number"
 									step="1"
-									value={colorPos.right * colorTargetViewer.getPixelXCoords()}
+									value={colorPos.right * colorTargetViewer.getResolution()}
 							on:change={() => {
-							colorPos.right = event.target.value / colorTargetViewer.getPixelXCoords();
+							colorPos.right = event.target.value / colorTargetViewer.getResolution();
 							colorTargetViewer.updateCoords()}}
 							/>
 								</div>
@@ -436,9 +434,9 @@
 					  <input
                             type="number"
                             step="1"
-                            value={colorPos.left * colorTargetViewer.getPixelXCoords()}
+                            value={colorPos.left * colorTargetViewer.getResolution()}
 							on:change={() => {
-							colorPos.left = event.target.value / colorTargetViewer.getPixelXCoords();
+							colorPos.left = event.target.value / colorTargetViewer.getResolution();
 							colorTargetViewer.updateCoords()}}
 							/>
 					  </div>
@@ -451,10 +449,10 @@
 				  <input
 					  type="number"
 					  step="1"
-					  value={verifyPos.top * colorTargetViewer.getPixelYCoords()}
+					  value={verifyPos.top * colorTargetViewer.getResolution()}
 							on:change={() =>
 					  {
-					  verifyPos.top = event.target.value / colorTargetViewer.getPixelYCoords();
+					  verifyPos.top = event.target.value / colorTargetViewer.getResolution();
 					  colorTargetViewer.updateVerifyCoords()}}
 					  />
 				  </div>
@@ -463,10 +461,10 @@
 				  <input
 					  type="number"
 					  step="1"
-					  value={verifyPos.bottom * colorTargetViewer.getPixelYCoords()}
+					  value={verifyPos.bottom * colorTargetViewer.getResolution()}
 							on:change={() =>
 					  {
-					  verifyPos.bottom = event.target.value / colorTargetViewer.getPixelYCoords();
+					  verifyPos.bottom = event.target.value / colorTargetViewer.getResolution();
 					  colorTargetViewer.updateVerifyCoords()}}
 					  />
 				  </div>
@@ -475,10 +473,10 @@
 				  <input
 					  type="number"
 					  step="1"
-					  value={verifyPos.right * colorTargetViewer.getPixelXCoords()}
+					  value={verifyPos.right * colorTargetViewer.getResolution()}
 							on:change={() =>
 					  {
-					  verifyPos.right = event.target.value / colorTargetViewer.getPixelXCoords();
+					  verifyPos.right = event.target.value / colorTargetViewer.getResolution();
 					  colorTargetViewer.updateVerifyCoords()}}
 					  />
 				  </div>
@@ -487,10 +485,10 @@
 				  <input
 						type="number"
 						step="1"
-					  value={verifyPos.left * colorTargetViewer.getPixelXCoords()}
+					  value={verifyPos.left * colorTargetViewer.getResolution()}
 							on:change={() =>
 					  {
-					  verifyPos.left = event.target.value / colorTargetViewer.getPixelXCoords();
+					  verifyPos.left = event.target.value / colorTargetViewer.getResolution();
 					  colorTargetViewer.updateVerifyCoords()}}
 					  />
 				  </div>
