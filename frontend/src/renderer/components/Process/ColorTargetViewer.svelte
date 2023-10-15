@@ -364,6 +364,8 @@
     }
   }
 
+  //Function to be ran after changes are made to the coordinate inputs in ColorTarget.svelte
+  //Checks the new coordinate values and updates to box accordingly
   export function updateCoords() {
     let overlay = viewer.getOverlayById(`sBox-0`);
 
@@ -378,6 +380,7 @@
     overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
   }
 
+  //Same as updateCoords() for the VerifyTarget
   export function updateVerifyCoords() {
     let overlay = viewer.getOverlayById(`sBox-1`);
 
