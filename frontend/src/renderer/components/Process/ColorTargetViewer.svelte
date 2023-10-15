@@ -1,401 +1,403 @@
 <script lang="ts">
-	import { currentPage, processState } from "@util/stores";
+  import { currentPage, processState } from "@util/stores";
 
-	import OpenSeadragon from "openseadragon";
-	import { afterUpdate, onDestroy, onMount } from "svelte";
-	import {getZoomPercentage} from "@util/photoViewerHelper";
+  import OpenSeadragon from "openseadragon";
+  import { afterUpdate, onDestroy, onMount } from "svelte";
+  import { getZoomPercentage } from "@util/photoViewerHelper";
 
-	let viewer;
-	let mouseTracker;
-	let colorOverlay;
-	let verifyOverlay;
+  let viewer;
+  let mouseTracker;
+  let colorOverlay;
+  let verifyOverlay;
 
-	let trackers = [];
+  let trackers = [];
 
-	let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
-	let viewportPoint;
-	let imagePoint;
+  let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
+  let viewportPoint;
+  let imagePoint;
 
-	export let colorTarget;
-	export let verifyTarget;
+  export let colorTarget;
+  export let verifyTarget;
 
-	export let colorPos;
-	export let verifyPos;
+  export let colorPos;
+  export let verifyPos;
 
-	export let loading;
+  export let loading;
 
-	export let linearZoom = 100;
+  export let linearZoom = 100;
 
-	let imageUrl;
+  let imageUrl;
 
-	const createViewer = () => {
-	viewer = OpenSeadragon({
-	id: "color-seadragon-viewer",
-	prefixUrl: "/openseadragon/images/",
-	immediateRender: true,
-	preload: true,
-	showNavigator: false,
-	minZoomLevel: 1,
-	useCanvas: true,
-	showZoomControl: false,
-	showHomeControl: false,
-	showFullPageControl: false,
-	preserveImageSizeOnResize: false,
-	maxZoomPixelRatio: 30,
-	zoomPerScroll: 1.15,
-	// zoomPerScroll: 1.5,
-	visibilityRatio: 1,
-	animationTime: 0.4,
-	});
-	viewer.addHandler("zoom", (e) => setTimeout(() => handleZoom(e), 100));
-	};
+  const createViewer = () => {
+    viewer = OpenSeadragon({
+      id: "color-seadragon-viewer",
+      prefixUrl: "/openseadragon/images/",
+      immediateRender: true,
+      preload: true,
+      showNavigator: false,
+      minZoomLevel: 1,
+      useCanvas: true,
+      showZoomControl: false,
+      showHomeControl: false,
+      showFullPageControl: false,
+      preserveImageSizeOnResize: false,
+      maxZoomPixelRatio: 30,
+      zoomPerScroll: 1.15,
+      // zoomPerScroll: 1.5,
+      visibilityRatio: 1,
+      animationTime: 0.4,
+    });
+    viewer.addHandler("zoom", (e) => setTimeout(() => handleZoom(e), 100));
+  };
 
-	const destoryViewer = () => {
-	if (viewer) {
-	viewer.destroy();
-	viewer = null;
-	console.log("Color target viewer destroyed");
-	}
-	};
+  const destoryViewer = () => {
+    if (viewer) {
+      viewer.destroy();
+      viewer = null;
+      console.log("Color target viewer destroyed");
+    }
+  };
 
-	onMount(() => {
-	console.log("Color target viewer Mount");
-	createViewer();
-	});
-	onDestroy(() => {
-	console.log("Color target viewer Destroy");
-	destoryViewer();
-	});
+  onMount(() => {
+    console.log("Color target viewer Mount");
+    createViewer();
+  });
+  onDestroy(() => {
+    console.log("Color target viewer Destroy");
+    destoryViewer();
+  });
 
-	function handleZoom(e) {
-	if (e.zoom > 10) {
-	let drawer = viewer.drawer;
-	drawer.setImageSmoothingEnabled(false);
-	} else {
-	let drawer = viewer.drawer;
-	drawer.setImageSmoothingEnabled(true);
-	}
+  function handleZoom(e) {
+    if (e.zoom > 10) {
+      let drawer = viewer.drawer;
+      drawer.setImageSmoothingEnabled(false);
+    } else {
+      let drawer = viewer.drawer;
+      drawer.setImageSmoothingEnabled(true);
+    }
 
-	linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
-	}
+    linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
+  }
 
-	$: if ($processState.currentTab === 4) {
-	if (viewer && !viewer.isOpen()) {
-	console.log("Opening Image");
-	console.log({ IMAGEURL: imageUrl });
-	console.log({ INCLUDES: imageUrl.includes("blob") });
-	if (imageUrl.includes("blob")) {
-	loading = false;
-	}
-	viewer.open({
-	type: "image",
-	url: imageUrl,
-	});
-	}
-	} else {
-	if (viewer) {
-	viewer.close();
-	}
-	}
+  $: if ($processState.currentTab === 4) {
+    if (viewer && !viewer.isOpen()) {
+      console.log("Opening Image");
+      console.log({ IMAGEURL: imageUrl });
+      console.log({ INCLUDES: imageUrl.includes("blob") });
+      if (imageUrl.includes("blob")) {
+        loading = false;
+      }
+      viewer.open({
+        type: "image",
+        url: imageUrl,
+      });
+    }
+  } else {
+    if (viewer) {
+      viewer.close();
+    }
+  }
 
-	$: if (viewer) {
-	console.log(viewer.isOpen());
-	}
+  $: if (viewer) {
+    console.log(viewer.isOpen());
+  }
 
-	function removeOverlay(id) {
-	console.log("Entering removeOverlay");
-	const selBox = document.getElementById(`sBox-${id}`);
-	const gridBox = document.getElementById(`gBox-${id}`);
+  function removeOverlay(id) {
+    console.log("Entering removeOverlay");
+    const selBox = document.getElementById(`sBox-${id}`);
+    const gridBox = document.getElementById(`gBox-${id}`);
 
-	viewer.removeOverlay(selBox);
-	if (id === 0) {
-	colorOverlay = false;
-	} else if (id === 1) {
-	verifyOverlay = false;
-	}
-	trackers[id].destroy();
-	}
+    viewer.removeOverlay(selBox);
+    if (id === 0) {
+      colorOverlay = false;
+    } else if (id === 1) {
+      verifyOverlay = false;
+    }
+    trackers[id].destroy();
+  }
 
-	function addOverlay(id) {
-	console.log("Entering addOverlay");
-	const selBox = document.getElementById(`sBox-${id}`);
-	const gridBox = document.getElementById(`gBox-${id}`);
-	if (viewer && selBox && gridBox) {
-	if (id === 0) {
-	gridBox.style.gridTemplateColumns = `repeat(${colorTarget.cols}, auto)`;
-	} else if (id === 1) {
-	gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
-	}
-	console.log(`Adding Overlay ${id}`);
-	viewer.addOverlay({
-	element: selBox,
-	location: new OpenSeadragon.Rect(0.25, 0.25, 0.25, 0.25),
-	});
+  function addOverlay(id) {
+    console.log("Entering addOverlay");
+    const selBox = document.getElementById(`sBox-${id}`);
+    const gridBox = document.getElementById(`gBox-${id}`);
+    if (viewer && selBox && gridBox) {
+      if (id === 0) {
+        gridBox.style.gridTemplateColumns = `repeat(${colorTarget.cols}, auto)`;
+      } else if (id === 1) {
+        gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
+      }
+      console.log(`Adding Overlay ${id}`);
+      viewer.addOverlay({
+        element: selBox,
+        location: new OpenSeadragon.Rect(0.25, 0.25, 0.25, 0.25),
+      });
 
-	if (id === 0) {
-	colorOverlay = true;
-	} else if (id === 1) {
-	verifyOverlay = true;
-	}
-	trackers[id] = new OpenSeadragon.MouseTracker({
-	element: `sBox-${id}`,
-	pressHandler: function (e) {
-	var overlay = viewer.getOverlayById(`sBox-${id}`);
+      if (id === 0) {
+        colorOverlay = true;
+      } else if (id === 1) {
+        verifyOverlay = true;
+      }
+      trackers[id] = new OpenSeadragon.MouseTracker({
+        element: `sBox-${id}`,
+        pressHandler: function (e) {
+          var overlay = viewer.getOverlayById(`sBox-${id}`);
 
-	// Overlay box coords
-	let topPos = overlay.bounds.y;
-	let botPos = overlay.bounds.y + overlay.bounds.height;
-	let leftPos = overlay.bounds.x;
-	let rightPos = overlay.bounds.x + overlay.bounds.width;
+          // Overlay box coords
+          let topPos = overlay.bounds.y;
+          let botPos = overlay.bounds.y + overlay.bounds.height;
+          let leftPos = overlay.bounds.x;
+          let rightPos = overlay.bounds.x + overlay.bounds.width;
 
-	// Event Relative coords
-	let offset = viewer.viewport.deltaPointsFromPixels(e.position);
-	let eViewX = leftPos + offset.x;
-	let eViewY = topPos + offset.y;
+          // Event Relative coords
+          let offset = viewer.viewport.deltaPointsFromPixels(e.position);
+          let eViewX = leftPos + offset.x;
+          let eViewY = topPos + offset.y;
 
-	// Event Distance to Edge
-	pressPos = {
-	ele: e.originalEvent.target,
-	top: Math.abs(eViewY - topPos),
-	left: Math.abs(eViewX - leftPos),
-	right: Math.abs(eViewX - rightPos),
-	bottom: Math.abs(eViewY - botPos),
-	};
-	e.originalEvent.path.forEach((element) => {
-	if (element.classList?.length > 0) {
-	if (element.classList[0] === "inc") {
-	console.log("increase");
-	if (
-	element.parentElement.classList[1] === "top" ||
-	element.parentElement.classList[1] === "bottom"
-	) {
-	if (id === 0) {
-	colorTarget.rows = colorTarget.rows + 1;
-	} else if (id === 1) {
-	verifyTarget.rows = verifyTarget.rows + 1;
-	}
-	} else if (
-	element.parentElement.classList[1] === "left" ||
-	element.parentElement.classList[1] === "right"
-	) {
-	if (id === 0) {
-	colorTarget.cols = colorTarget.cols + 1;
-	} else if (id === 1) {
-	verifyTarget.cols = verifyTarget.cols + 1;
-	}
-	}
-	} else if (element.classList[0] === "dec") {
-	console.log("decrease");
-	if (
-	element.parentElement.classList[1] === "top" ||
-	element.parentElement.classList[1] === "bottom"
-	) {
-	if (id === 0) {
-	colorTarget.rows = colorTarget.rows - 1;
-	} else if (id === 1) {
-	verifyTarget.rows = verifyTarget.rows - 1;
-	}
-	} else if (
-	element.parentElement.classList[1] === "left" ||
-	element.parentElement.classList[1] === "right"
-	) {
-	if (id === 0) {
-	colorTarget.cols = colorTarget.cols - 1;
-	} else if (id === 1) {
-	verifyTarget.cols = verifyTarget.cols - 1;
-	}
-	}
-	}
-	}
-	});
-	},
-	dragHandler: function (e) {
-	var overlay = viewer.getOverlayById(`sBox-${id}`);
+          // Event Distance to Edge
+          pressPos = {
+            ele: e.originalEvent.target,
+            top: Math.abs(eViewY - topPos),
+            left: Math.abs(eViewX - leftPos),
+            right: Math.abs(eViewX - rightPos),
+            bottom: Math.abs(eViewY - botPos),
+          };
+          e.originalEvent.path.forEach((element) => {
+            if (element.classList?.length > 0) {
+              if (element.classList[0] === "inc") {
+                console.log("increase");
+                if (
+                  element.parentElement.classList[1] === "top" ||
+                  element.parentElement.classList[1] === "bottom"
+                ) {
+                  if (id === 0) {
+                    colorTarget.rows = colorTarget.rows + 1;
+                  } else if (id === 1) {
+                    verifyTarget.rows = verifyTarget.rows + 1;
+                  }
+                } else if (
+                  element.parentElement.classList[1] === "left" ||
+                  element.parentElement.classList[1] === "right"
+                ) {
+                  if (id === 0) {
+                    colorTarget.cols = colorTarget.cols + 1;
+                  } else if (id === 1) {
+                    verifyTarget.cols = verifyTarget.cols + 1;
+                  }
+                }
+              } else if (element.classList[0] === "dec") {
+                console.log("decrease");
+                if (
+                  element.parentElement.classList[1] === "top" ||
+                  element.parentElement.classList[1] === "bottom"
+                ) {
+                  if (id === 0) {
+                    colorTarget.rows = colorTarget.rows - 1;
+                  } else if (id === 1) {
+                    verifyTarget.rows = verifyTarget.rows - 1;
+                  }
+                } else if (
+                  element.parentElement.classList[1] === "left" ||
+                  element.parentElement.classList[1] === "right"
+                ) {
+                  if (id === 0) {
+                    colorTarget.cols = colorTarget.cols - 1;
+                  } else if (id === 1) {
+                    verifyTarget.cols = verifyTarget.cols - 1;
+                  }
+                }
+              }
+            }
+          });
+        },
+        dragHandler: function (e) {
+          var overlay = viewer.getOverlayById(`sBox-${id}`);
 
-	let viewDeltaPoint = viewer.viewport.deltaPointsFromPixels(e.delta);
+          let viewDeltaPoint = viewer.viewport.deltaPointsFromPixels(e.delta);
 
-	let box = new OpenSeadragon.Rect(
-	overlay.bounds.x,
-	overlay.bounds.y,
-	overlay.width,
-	overlay.height
-	);
+          let box = new OpenSeadragon.Rect(
+            overlay.bounds.x,
+            overlay.bounds.y,
+            overlay.width,
+            overlay.height
+          );
 
-	if (pressPos.ele.classList[1] === "tl") {
-	box.y += viewDeltaPoint.y;
-	box.height -= viewDeltaPoint.y;
-	box.x += viewDeltaPoint.x;
-	box.width -= viewDeltaPoint.x;
-	} else if (pressPos.ele.classList[1] === "tr") {
-	box.y += viewDeltaPoint.y;
-	box.height -= viewDeltaPoint.y;
-	box.width += viewDeltaPoint.x;
-	} else if (pressPos.ele.classList[1] === "bl") {
-	box.height += viewDeltaPoint.y;
-	box.x += viewDeltaPoint.x;
-	box.width -= viewDeltaPoint.x;
-	} else if (pressPos.ele.classList[1] === "br") {
-	box.height += viewDeltaPoint.y;
-	box.width += viewDeltaPoint.x;
-	} else if (
-	pressPos.ele.classList[0] === "line" ||
-	pressPos.ele.classList[0] === "target" ||
-	pressPos.ele.classList[0] === "verTarget"
-	) {
-	box.x += viewDeltaPoint.x;
-	box.y += viewDeltaPoint.y;
-	}
-	overlay.update(box);
-	overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+          if (pressPos.ele.classList[1] === "tl") {
+            box.y += viewDeltaPoint.y;
+            box.height -= viewDeltaPoint.y;
+            box.x += viewDeltaPoint.x;
+            box.width -= viewDeltaPoint.x;
+          } else if (pressPos.ele.classList[1] === "tr") {
+            box.y += viewDeltaPoint.y;
+            box.height -= viewDeltaPoint.y;
+            box.width += viewDeltaPoint.x;
+          } else if (pressPos.ele.classList[1] === "bl") {
+            box.height += viewDeltaPoint.y;
+            box.x += viewDeltaPoint.x;
+            box.width -= viewDeltaPoint.x;
+          } else if (pressPos.ele.classList[1] === "br") {
+            box.height += viewDeltaPoint.y;
+            box.width += viewDeltaPoint.x;
+          } else if (
+            pressPos.ele.classList[0] === "line" ||
+            pressPos.ele.classList[0] === "target" ||
+            pressPos.ele.classList[0] === "verTarget"
+          ) {
+            box.x += viewDeltaPoint.x;
+            box.y += viewDeltaPoint.y;
+          }
+          overlay.update(box);
+          overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 
-	if (id === 0) {
-	colorPos = {
-	top: overlay.bounds.y,
-	left: overlay.bounds.x,
-	bottom: overlay.bounds.y + overlay.bounds.height,
-	right: overlay.bounds.x + overlay.bounds.width,
-	};
-	} else if (id === 1) {
-	verifyPos = {
-	top: overlay.bounds.y,
-	left: overlay.bounds.x,
-	bottom: overlay.bounds.y + overlay.bounds.height,
-	right: overlay.bounds.x + overlay.bounds.width,
-	};
-	}
-	},
-	});
-	}
-	}
+          if (id === 0) {
+            colorPos = {
+              top: overlay.bounds.y,
+              left: overlay.bounds.x,
+              bottom: overlay.bounds.y + overlay.bounds.height,
+              right: overlay.bounds.x + overlay.bounds.width,
+            };
+          } else if (id === 1) {
+            verifyPos = {
+              top: overlay.bounds.y,
+              left: overlay.bounds.x,
+              bottom: overlay.bounds.y + overlay.bounds.height,
+              right: overlay.bounds.x + overlay.bounds.width,
+            };
+          }
+        },
+      });
+    }
+  }
 
-	$: if (viewer && !viewer.isOpen()) {
-	// console.log($processState.artStacks[0].colorTargetImage);
-	console.log("New Image");
-	let temp = new Image();
+  $: if (viewer && !viewer.isOpen()) {
+    // console.log($processState.artStacks[0].colorTargetImage);
+    console.log("New Image");
+    let temp = new Image();
 
-	temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
-	imageUrl = temp.src;
+    temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
+    imageUrl = temp.src;
 
-	viewer.open({
-	type: "image",
-	url: imageUrl,
-	});
-	}
+    viewer.open({
+      type: "image",
+      url: imageUrl,
+    });
+  }
 
-	let root = document.documentElement;
+  let root = document.documentElement;
 
-	// ----------------------------------------
-	$: if (colorTarget && !colorOverlay) {
-	console.log("Color Target");
-	setTimeout(() => {
-	addOverlay(0);
-	setTimeout(() => {
-	colorTarget.color = colorTarget.color + 1;
-	}, 0);
-	}, 0);
-	}
+  // ----------------------------------------
+  $: if (colorTarget && !colorOverlay) {
+    console.log("Color Target");
+    setTimeout(() => {
+      addOverlay(0);
+      setTimeout(() => {
+        colorTarget.color = colorTarget.color + 1;
+      }, 0);
+    }, 0);
+  }
 
-	$: if (!colorTarget && colorOverlay) {
-	console.log("Color Target REMOVE");
+  $: if (!colorTarget && colorOverlay) {
+    console.log("Color Target REMOVE");
 
-	removeOverlay(0);
-	}
+    removeOverlay(0);
+  }
 
-	$: if (colorTarget?.color) {
-	root.style.setProperty("--color_hue", `${colorTarget.color}`);
-	}
+  $: if (colorTarget?.color) {
+    root.style.setProperty("--color_hue", `${colorTarget.color}`);
+  }
 
-	$: if (colorTarget?.rows) {
-	const gridBox = document.getElementById("gBox-0");
-	if (gridBox) {
-	gridBox.style.gridTemplateRows = `repeat(${colorTarget.rows}, auto)`;
-	}
-	}
-	$: if (colorTarget?.cols) {
-	const gridBox = document.getElementById("gBox-0");
-	if (gridBox) {
-	gridBox.style.gridTemplateColumns = `repeat(${colorTarget.cols}, auto)`;
-	}
-	}
+  $: if (colorTarget?.rows) {
+    const gridBox = document.getElementById("gBox-0");
+    if (gridBox) {
+      gridBox.style.gridTemplateRows = `repeat(${colorTarget.rows}, auto)`;
+    }
+  }
+  $: if (colorTarget?.cols) {
+    const gridBox = document.getElementById("gBox-0");
+    if (gridBox) {
+      gridBox.style.gridTemplateColumns = `repeat(${colorTarget.cols}, auto)`;
+    }
+  }
 
-	$: if (colorTarget?.size) {
-	root.style.setProperty("--color_size", `${colorTarget.size * 100}%`);
-	}
+  $: if (colorTarget?.size) {
+    root.style.setProperty("--color_size", `${colorTarget.size * 100}%`);
+  }
 
-	// --------------------------------------
-	$: if (verifyTarget && !verifyOverlay) {
-	console.log("Verify Target");
-	setTimeout(() => {
-	addOverlay(1);
-	setTimeout(() => {
-	verifyTarget.color = verifyTarget.color + 1;
-	}, 0);
-	}, 0);
-	}
+  // --------------------------------------
+  $: if (verifyTarget && !verifyOverlay) {
+    console.log("Verify Target");
+    setTimeout(() => {
+      addOverlay(1);
+      setTimeout(() => {
+        verifyTarget.color = verifyTarget.color + 1;
+      }, 0);
+    }, 0);
+  }
 
-	$: if (!verifyTarget && verifyOverlay) {
-	console.log("Verify Target REMOVE");
+  $: if (!verifyTarget && verifyOverlay) {
+    console.log("Verify Target REMOVE");
 
-	removeOverlay(1);
-	}
+    removeOverlay(1);
+  }
 
-	$: if (verifyTarget?.color) {
-	console.log("verify hue");
-	root.style.setProperty("--verfiy_hue", `${verifyTarget.color}`);
-	}
+  $: if (verifyTarget?.color) {
+    console.log("verify hue");
+    root.style.setProperty("--verfiy_hue", `${verifyTarget.color}`);
+  }
 
-	$: if (verifyTarget?.size) {
-	console.log("verify size");
+  $: if (verifyTarget?.size) {
+    console.log("verify size");
 
-	root.style.setProperty("--verify_size", `${verifyTarget.size * 100}%`);
-	}
+    root.style.setProperty("--verify_size", `${verifyTarget.size * 100}%`);
+  }
 
-	$: if (verifyTarget?.rows) {
-	const gridBox = document.getElementById("gBox-1");
-	if (gridBox) {
-	gridBox.style.gridTemplateRows = `repeat(${verifyTarget.rows}, auto)`;
-	}
-	}
+  $: if (verifyTarget?.rows) {
+    const gridBox = document.getElementById("gBox-1");
+    if (gridBox) {
+      gridBox.style.gridTemplateRows = `repeat(${verifyTarget.rows}, auto)`;
+    }
+  }
 
-	$: if (verifyTarget?.cols) {
-	const gridBox = document.getElementById("gBox-1");
-	if (gridBox) {
-	gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
-	}
-	}
+  $: if (verifyTarget?.cols) {
+    const gridBox = document.getElementById("gBox-1");
+    if (gridBox) {
+      gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
+    }
+  }
 
-	export function updateCoords() {
-	let overlay = viewer.getOverlayById(`sBox-0`);
+  export function updateCoords() {
+    let overlay = viewer.getOverlayById(`sBox-0`);
 
-	let box = new OpenSeadragon.Rect(
-	colorPos.left,
-	colorPos.top,
-	colorPos.right-colorPos.left,
-	colorPos.bottom-colorPos.top
-	);
+    let box = new OpenSeadragon.Rect(
+      colorPos.left,
+      colorPos.top,
+      colorPos.right - colorPos.left,
+      colorPos.bottom - colorPos.top
+    );
 
-	overlay.update(box);
-	overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
-	}
+    overlay.update(box);
+    overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+  }
 
-	export function updateVerifyCoords() {
-	let overlay = viewer.getOverlayById(`sBox-1`);
+  export function updateVerifyCoords() {
+    let overlay = viewer.getOverlayById(`sBox-1`);
 
-	let box = new OpenSeadragon.Rect(
-	verifyPos.left,
-	verifyPos.top,
-	verifyPos.right-verifyPos.left,
-	verifyPos.bottom-verifyPos.top
-	);
+    let box = new OpenSeadragon.Rect(
+      verifyPos.left,
+      verifyPos.top,
+      verifyPos.right - verifyPos.left,
+      verifyPos.bottom - verifyPos.top
+    );
 
-	overlay.update(box);
-	overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
-	}
+    overlay.update(box);
+    overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+  }
 
-	export function getResolution() {
-	var coordpoint = viewer.viewport.viewportToImageCoordinates(new OpenSeadragon.Point(1,0));
-	return coordpoint.x;
-	}
+  export function getResolution() {
+    var coordpoint = viewer.viewport.viewportToImageCoordinates(
+      new OpenSeadragon.Point(1, 0)
+    );
+    return coordpoint.x;
+  }
 </script>
 
 <main>
