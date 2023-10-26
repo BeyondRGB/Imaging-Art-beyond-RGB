@@ -6,6 +6,7 @@
     sendMessage,
   } from "@util/stores";
   import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
+
   import {
     PlusCircleIcon,
     XCircleIcon,
@@ -17,6 +18,8 @@
   let colorPos;
   let verifyTarget;
   let verifyPos;
+
+  let colorTargetViewer;
 
   let targetArray;
 
@@ -46,6 +49,8 @@
       $processState.artStacks[0].colorTarget.rows = colorTarget.rows;
       $processState.artStacks[0].colorTarget.cols = colorTarget.cols;
       $processState.artStacks[0].colorTarget.size = colorTarget.size;
+      $processState.artStacks[0].colorTarget.resolution =
+        colorTargetViewer.getResolution();
       $processState.artStacks[0].colorTarget.whitePatch =
         colorTarget.whitePatch;
       $processState.artStacks[0].colorTarget.refData = colorTarget.refData;
@@ -66,6 +71,8 @@
       $processState.artStacks[0].verificationTarget.rows = verifyTarget.rows;
       $processState.artStacks[0].verificationTarget.cols = verifyTarget.cols;
       $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
+      $processState.artStacks[0].verificationTarget.resolution =
+        colorTargetViewer.getResolution();
       $processState.artStacks[0].verificationTarget.whitePatch =
         verifyTarget.whitePatch;
       $processState.artStacks[0].verificationTarget.refData =
@@ -171,7 +178,7 @@
           illuminants: "D50",
         },
       };
-      verifyPos = { top: 0.5, left: 0.5, bottom: 0.75, right: 0.75 };
+      verifyPos = { top: 0.25, left: 0.25, bottom: 0.5, right: 0.5 };
     }
   }
 
@@ -241,15 +248,17 @@
     colorTarget &&
     colorTarget.refData.name !== "---None---.csv" &&
     (!verifyTarget || verifyTarget.refData?.name !== "---None---.csv") &&
-    colorTarget?.whitePatch?.row && colorTarget?.whitePatch?.col
+    colorTarget?.whitePatch?.row &&
+    colorTarget?.whitePatch?.col
   ) {
     $processState.completedTabs[4] = true;
   } else {
-     $processState.completedTabs[4] = false;
+    $processState.completedTabs[4] = false;
   }
 
   $: if (colorTarget) {
-    $processState.whitePatchFilled = colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
+    $processState.whitePatchFilled =
+      colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
   }
 </script>
 
@@ -269,6 +278,7 @@
           bind:colorPos
           bind:verifyPos
           bind:loading
+          bind:this={colorTargetViewer}
         />
       </div>
     </div>
@@ -387,6 +397,117 @@
                   </div>
                 </div>
               </div>
+              <div class="target-coordinates">
+                <h3>Color Target Coordinates</h3>
+                <div class="inputGroup">
+                  <span>Top:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={colorPos.top * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      colorPos.top =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateCoords();
+                    }}
+                  />
+                </div>
+                <div class="inputGroup">
+                  <span>Bottom:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={colorPos.bottom * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      colorPos.bottom =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateCoords();
+                    }}
+                  />
+                </div>
+                <div class="inputGroup">
+                  <span>Right:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={colorPos.right * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      colorPos.right =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateCoords();
+                    }}
+                  />
+                </div>
+                <div class="inputGroup">
+                  <span>Left:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={colorPos.left * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      colorPos.left =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateCoords();
+                    }}
+                  />
+                </div>
+              </div>
+            {:else if target !== "Add"}
+              <div class="target-coordinates">
+                <h3>Color Target Coordinates</h3>
+                <div class="inputGroup">
+                  <span>Top:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={verifyPos.top * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      verifyPos.top =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateVerifyCoords();
+                    }}
+                  />
+                </div>
+                <div class="inputGroup">
+                  <span>Bottom:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={verifyPos.bottom * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      verifyPos.bottom =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateVerifyCoords();
+                    }}
+                  />
+                </div>
+                <div class="inputGroup">
+                  <span>Right:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={verifyPos.right * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      verifyPos.right =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateVerifyCoords();
+                    }}
+                  />
+                </div>
+                <div class="inputGroup">
+                  <span>Left:</span>
+                  <input
+                    type="number"
+                    step="1"
+                    value={verifyPos.left * colorTargetViewer.getResolution()}
+                    on:change={() => {
+                      verifyPos.left =
+                        event.target.value / colorTargetViewer.getResolution();
+                      colorTargetViewer.updateVerifyCoords();
+                    }}
+                  />
+                </div>
+              </div>
             {/if}
             <button
               class="close"
@@ -422,12 +543,12 @@
   }
 
   .right {
-    @apply w-[40vw] h-full flex flex-col m-1 bg-gray-700 pt-[5vh] items-center;
+    @apply w-[40vw] h-full flex flex-col m-1 bg-gray-700 pt-[2vh] pb-[8vh] items-center;
   }
 
   .cardBox {
     @apply bg-gray-800 min-h-[60vh] w-[85%] p-2 gap-2 flex flex-col items-center
-            rounded-2xl overflow-y-auto overflow-x-hidden;
+	rounded-2xl overflow-y-auto overflow-x-hidden;
   }
 
   .card {
@@ -445,8 +566,8 @@
 
   .addCard {
     @apply w-full h-full max-h-[50%] bg-green-400/50 rounded-lg p-4 flex flex-col gap-2 relative
-            justify-center items-center hover:bg-green-400/60 active:scale-95 transition-all
-            active:bg-green-400/75;
+	justify-center items-center hover:bg-green-400/60 active:scale-95 transition-all
+	active:bg-green-400/75;
   }
   .verificationAdd {
     @apply bg-gray-500/50 hover:bg-green-400/40 active:bg-green-400/50;
@@ -485,7 +606,7 @@
 
   .addTarget {
     @apply bg-green-500 w-16 h-16 transition-all rounded-full flex items-center justify-center
-            text-gray-100;
+	text-gray-100;
   }
 
   .removeButton {
@@ -495,14 +616,14 @@
   .rowcol input {
     text-align: center;
     @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
-          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
-            h-full w-12 min-w-[1rem];
+	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
+	h-full w-12 min-w-[1rem];
   }
 
   .whitePatch input {
     @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
-          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
-            h-full w-full;
+	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
+	h-full w-full;
   }
 
   .extra {
@@ -526,7 +647,7 @@
 
   .close {
     @apply absolute top-0 right-0 bg-transparent text-gray-100
-            hover:bg-red-600/50 hover:text-white ring-0 p-1;
+	hover:bg-red-600/50 hover:text-white ring-0 p-1;
   }
   .refDataDiv {
     @apply flex justify-between items-center;
@@ -565,7 +686,7 @@
     -webkit-appearance: none; /* Override default look */
     appearance: none;
     @apply w-4 h-4 bg-gray-600 cursor-pointer rounded-full outline outline-1
-          outline-gray-200;
+	outline-gray-200;
   }
   .sizeDiv {
     @apply flex justify-between items-center;
@@ -579,7 +700,7 @@
   }
   .loading-box {
     @apply h-full flex flex-col gap-2 justify-center items-center
-            text-2xl;
+	text-2xl;
   }
   .loader {
     /* position: absolute; */
@@ -617,5 +738,18 @@
     100% {
       transform: translate(-25px, -25px) scale(1);
     }
+  }
+
+  .rowcol input {
+    text-align: center;
+    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
+	h-full w-12 min-w-[1rem];
+  }
+
+  .target-coordinates input {
+    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
+	h-full w-full;
   }
 </style>
