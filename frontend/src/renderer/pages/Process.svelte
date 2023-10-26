@@ -5,6 +5,8 @@
     sendMessage,
     viewState,
     serverError,
+    batchImagesA,
+    batchImagesB
   } from "@util/stores";
 
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
@@ -22,6 +24,7 @@
   let binaryName = null;
   let binaryFor = null;
   let binaryID = null;
+  let batchCount = 0;
 
   let tabs: any = [
     { name: "Import Images", component: ImportImages },
@@ -40,6 +43,22 @@
     } else {
       console.log("Error overflow");
     }
+  }
+
+    $: if($processState.pipelineComplete && batchCount < $batchImagesA.length) {
+    $processState.completedTabs =[
+        true,
+        true,
+        true,
+        false,
+        true
+    ];
+    $processState.currentTab-=1;
+    $processState.pipelineComplete = false;
+    $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
+    $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
+    batchCount+=1;
+    handleConfirm();
   }
 
   function prevTab() {

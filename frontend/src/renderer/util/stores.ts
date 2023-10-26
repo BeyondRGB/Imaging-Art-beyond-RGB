@@ -5,6 +5,11 @@ export const currentPage = writable(null);
 export const appSettings = writable({ theme: false, sideNav: true });
 export const modal = writable(null);
 
+export const batchImagesA = writable([]);
+export const batchImagesB = writable([]);
+
+
+
 export const viewState = writable({
   projectKey: null,
 
