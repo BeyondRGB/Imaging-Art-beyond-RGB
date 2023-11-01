@@ -28,6 +28,7 @@ export const customRefData = writable({
   verification: null
 });
 export const processState = writable({
+  processType: "Single",
   currentTab: 0,
   completedTabs: [false, false, false, false],
   pipelineComplete: false,
@@ -63,6 +64,7 @@ export const processState = writable({
 
 export function resetProcess() {
   processState.set({
+    processType: "Single",
     currentTab: 0,
     completedTabs: [false, false, false, false],
     pipelineComplete: false,

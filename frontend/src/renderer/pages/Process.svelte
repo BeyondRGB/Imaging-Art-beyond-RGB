@@ -15,6 +15,8 @@
   import SpecFileRoles from "@components/Process/Tabs/SpecFileRoles.svelte";
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
+  import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
+  import SelectProcessingType from "@root/components/Process/Tabs/SelectProcessingType.svelte";
   import Layout from "@components/Process/Layout.svelte";
   let tabList;
 
@@ -27,9 +29,11 @@
   let batchCount = 0;
 
   let tabs: any = [
+    { name: "Select Processing Type", component: SelectProcessingType },
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
     { name: "Specify File Roles", component: SpecFileRoles },
+    //{ name: "Batch Processing Roles", component:BatchProcessingRoles},
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
