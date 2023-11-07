@@ -9,6 +9,10 @@
 #include "illuminants.hpp"
 #include "standard_observer.hpp"
 #include "white_points.hpp"
+#include <vector>
+#include <string>
+#include <fstream>
+#include <iostream>
 
 #define REF_COUNT 4
 
@@ -22,16 +26,71 @@ typedef StandardObserver::ObserverType ObserverType;
 * and provide Tristimulus/CIELAB values
 */
 class RefData: public CSVParser {
-	const std::string ref_files[REF_COUNT] = {
-		"APT_Reflectance_Data.csv",
-		"CC_Classic_Reflectance_Data.csv",
-		"CCSG_Reflectance_Data.csv",
-		"NGT_Reflectance_Data.csv"
-	};
+	std::vector<std::string> ref_files; // Use a vector instead of a fixed-size array
+	std::string dataFilePath;           // Path to the file where the reference list is saved
 
 public:
-	RefData(std::string file_path, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
+	RefData(const std::string& file_path, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
 	~RefData();
+
+	bool addCustomRefData(const std::string& new_ref_data);
+	bool saveRefDataList() const;
+	bool loadRefDataList();
+
+	static IlluminantType get_illuminant(const std::string& illuminant_string);
+	static ObserverType get_observer(int observer_num);
+};
+RefData::RefData(const std::string& file_path, IlluminantType illum_type, ObserverType so_type) {
+	dataFilePath = file_path;
+	loadRefDataList(); // Load existing reference data files list
+}
+
+RefData::~RefData() {
+	saveRefDataList(); // Save the current list of reference data files on destruction
+}
+
+bool RefData::addCustomRefData(const std::string& new_ref_data) {
+	// Add the new reference data file to the list
+	ref_files.push_back(new_ref_data);
+	return saveRefDataList(); // Save the updated list to file
+}
+
+bool RefData::saveRefDataList() const {
+	// Save the current list of reference data files to the specified data file
+	std::ofstream file_out(dataFilePath);
+	if (!file_out) {
+		std::cerr << "Error: Unable to open file for writing: " << dataFilePath << std::endl;
+		return false;
+	}
+
+	for (const auto& ref_file : ref_files) {
+		file_out << ref_file << std::endl;
+	}
+
+	file_out.close();
+	return true;
+}
+
+bool RefData::loadRefDataList() {
+	// Load the list of reference data files from the specified data file
+	std::ifstream file_in(dataFilePath);
+	if (!file_in) {
+		std::cerr << "Error: Unable to open file for reading: " << dataFilePath << std::endl;
+		return false;
+	}
+
+	ref_files.clear(); // Clear any existing entries
+	std::string line;
+	while (getline(file_in, line)) {
+		if (!line.empty()) {
+			ref_files.push_back(line);
+		}
+	}
+
+	file_in.close();
+	return true;
+}
+
 
 	static IlluminantType get_illuminant(std::string illuminant_string);
 	static ObserverType get_observer(int observer_num);

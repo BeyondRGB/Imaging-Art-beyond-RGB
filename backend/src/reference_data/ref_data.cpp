@@ -319,3 +319,13 @@ bool RefData::is_custom(std::string file){
 	}
 	return true;
 }
+
+RefData refData("C:\Users\Josh Greco\Documents");
+
+// To add a new reference file
+if (refData.addCustomRefData("ref_data.txt")) {
+	std::cout << "New reference data added successfully." << std::endl;
+}
+else {
+	std::cout << "Failed to add new reference data." << std::endl;
+}
