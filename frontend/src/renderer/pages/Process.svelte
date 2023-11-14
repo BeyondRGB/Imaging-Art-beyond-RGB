@@ -32,8 +32,7 @@
     { name: "Select Processing Type", component: SelectProcessingType },
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
-    //{ name: "Specify File Roles", component: SpecFileRoles },
-    { name: "Specify File Roles", component: BatchProcessingRoles},
+    { name: "Specify File Roles", component: SpecFileRoles },
     //{ name: "Batch Processing Roles", component:BatchProcessingRoles},
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
@@ -74,6 +73,12 @@
     } else {
       console.log("Error overflow");
     }
+  }
+
+  $: if($processState.processType === "Batch"){
+    tabs[3] =  { name: "Specify File Roles - Batch", component: BatchProcessingRoles }
+  } else{
+    tabs[3] = { name: "Specify File Roles", component: SpecFileRoles }
   }
 
   $: if (tabList) {

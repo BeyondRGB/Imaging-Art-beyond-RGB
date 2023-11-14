@@ -5,9 +5,9 @@
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
 
-    let imageStack = get($batchProcessState, 'proccessingImages');
-    let artImageStackA = get($batchProcessState, 'artImagesA');
-    let artImageStackB = get($batchProcessState, 'artImagesB');
+    let imageStack = get($processState, 'artStacks[0].fields');
+    let artImageStackA = get($processState, 'artStacks[0].fields.imageA');
+    let artImageStackB = get($processState, 'artStacks[0].fields.imageB');
     let artImageCount = 1;
 
     let rerenderToggle = false;
@@ -15,8 +15,16 @@
 
     // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 2) {
-        imageStack = get($batchProcessState, 'proccessingImages');
-        artImageCount = (getAllImages().length - 6) /2
+        imageStack = get($processState, 'artStacks[0].fields');
+       
+        if( artImageStackA.length !== 0){
+            artImageCount = artImageStackA.length
+        }
+        if(getAllImages().length !== 0){
+            artImageCount = (getAllImages().length - 6) / 2
+        }else {
+            artImageCount= 1;
+        }
 
     }
 
@@ -60,16 +68,16 @@
 
     const submitSpecFileRoles = function (skipOptionalFiltering) {
         validate()
-        // if(validationError = validate()) {
-        //     return;
-        // }
-        // $processState.imageFilePaths = [];
-        // $processState.completedTabs[3] = true;
-        // if(skipOptionalFiltering) {
-        //     $processState.currentTab += 2;
-        // } else {
-        //     $processState.currentTab++;
-        // }
+        if(validationError = validate()) {
+            return;
+        }
+        $processState.imageFilePaths = [];
+        $processState.completedTabs[3] = true;
+        if(skipOptionalFiltering) {
+            $processState.currentTab += 2;
+        } else {
+            $processState.currentTab++;
+        }
     };
 
 </script>
