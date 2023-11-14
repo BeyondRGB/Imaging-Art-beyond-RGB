@@ -32,12 +32,14 @@
     { name: "Select Processing Type", component: SelectProcessingType },
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
-    { name: "Specify File Roles", component: SpecFileRoles },
+    //{ name: "Specify File Roles", component: SpecFileRoles },
+    { name: "Specify File Roles", component: BatchProcessingRoles},
     //{ name: "Batch Processing Roles", component:BatchProcessingRoles},
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
   ];
+
 
   function nextTab() {
     if ($processState.currentTab !== tabs.length - 1) {
@@ -51,6 +53,7 @@
 
     $: if($processState.pipelineComplete && batchCount < $batchImagesA.length) {
     $processState.completedTabs =[
+        true,
         true,
         true,
         true,
@@ -287,7 +290,7 @@
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
-    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options"}
+    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options" &&  $processState.currentTab !== 0 }
       <button on:click={nextTab} class="nextBtn">Next</button>
     {/if}
   </botnav>

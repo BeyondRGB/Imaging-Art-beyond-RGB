@@ -8,6 +8,8 @@
   function handleClick(page) {
     $processState.processType = page;
     modal.set(null);
+    $processState.completedTabs[0] = true;
+    $processState.currentTab++;
   }
 
   let showAbout = false;
@@ -28,7 +30,7 @@
           <FolderIcon size="1.25x" />
           <h2>Batch Processing</h2>
         </div>
-        <span> Process multiple iimage sets with the same Target, Flatfield and Darkfield </span>
+        <span> Process multiple image sets with the same Target, Flatfield and Darkfield </span>
       </button>
     </div>
   </div>

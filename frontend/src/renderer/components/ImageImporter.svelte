@@ -30,9 +30,9 @@
 
     $: if (
         $processState.imageFilePaths.length >= 6 &&
-        !$processState.completedTabs[0]
+        !$processState.completedTabs[1]
     ) {
-        $processState.completedTabs[0] = true;
+        $processState.completedTabs[1] = true;
     }
 
     function handleFilesSelect(e) {

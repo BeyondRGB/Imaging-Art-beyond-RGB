@@ -54,7 +54,7 @@
             return;
         }
         $processState.imageFilePaths = [];
-        $processState.completedTabs[2] = true;
+        $processState.completedTabs[3] = true;
         if(skipOptionalFiltering) {
             $processState.currentTab += 2;
         } else {

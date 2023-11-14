@@ -243,9 +243,9 @@
     (!verifyTarget || verifyTarget.refData?.name !== "---None---.csv") &&
     colorTarget?.whitePatch?.row && colorTarget?.whitePatch?.col
   ) {
-    $processState.completedTabs[4] = true;
+    $processState.completedTabs[5] = true;
   } else {
-     $processState.completedTabs[4] = false;
+     $processState.completedTabs[5] = false;
   }
 
   $: if (colorTarget) {
