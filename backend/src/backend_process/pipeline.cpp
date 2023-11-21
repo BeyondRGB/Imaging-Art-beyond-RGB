@@ -113,9 +113,25 @@ void Pipeline::run() {
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
 
     std::string out_dir;
-    try{
-        out_dir = this->get_output_directory();}
-    catch(...) {return;}
+
+    bool batch = this->process_data_m->get_bool("batch");
+
+    if (batch) {
+        try {
+            out_dir = this->process_data_m->get_string("outputDirectory");
+        }
+        catch (const ParsingError&) {
+
+        }
+    }
+    else {
+        try {
+            out_dir = this->get_output_directory();
+        }
+        catch (...) {
+            return;
+        }
+    }
 
 
     /* Create ArtObject */
@@ -125,7 +141,7 @@ void Pipeline::run() {
         std::string ref_file = this->get_ref_file(target_data);
         IlluminantType illuminant = this->get_illuminant_type(target_data);
         ObserverType observer = this->get_observer_type(target_data);
-        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); 
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir,batch)); 
     }catch(RefData_FailedToRead e){
         this->report_error(this->get_process_name(), e.what());
         return;

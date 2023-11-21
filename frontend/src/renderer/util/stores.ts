@@ -5,8 +5,8 @@ export const currentPage = writable(null);
 export const appSettings = writable({ theme: false, sideNav: true });
 export const modal = writable(null);
 
-export const batchImagesA = writable([]);
-export const batchImagesB = writable([]);
+export const batchImagesA = writable(['E:\\BeyondRGBPics\\picasso_1_A.ARW']);
+export const batchImagesB = writable(['E:\\BeyondRGBPics\\picasso_1_B.ARW']);
 
 
 
@@ -28,6 +28,7 @@ export const customRefData = writable({
   verification: null
 });
 export const processState = writable({
+  batch : false,
   currentTab: 0,
   completedTabs: [false, false, false, false],
   pipelineComplete: false,

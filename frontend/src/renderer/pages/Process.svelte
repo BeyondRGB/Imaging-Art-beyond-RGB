@@ -53,13 +53,23 @@
         false,
         true
     ];
+	$processState.batch=true;
     $processState.currentTab-=1;
     $processState.pipelineComplete = false;
     $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
     $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
+	$processState.artStacks[0].fields.targetA = []
+    $processState.artStacks[0].fields.targetB = []
+
     batchCount+=1;
     handleConfirm();
   }
+  
+	$: if($viewState.projectKey != null) {
+    console.log($viewState.projectKey.substring(0,$viewState.projectKey.lastIndexOf('\\')))
+	processRequest.RequestData.outputDirectory=$viewState.projectKey.substring(0,$viewState.projectKey.lastIndexOf('\\'))
+	}
+		
 
   function prevTab() {
     if ($processState.currentTab !== 0) {
@@ -195,6 +205,10 @@
   $: console.log({ processRequest });
 
   $: if (processRequest != null) {
+  	if($viewState.projectKey != null) {
+	    processRequest.RequestData.outputDirectory=$viewState.projectKey.substring(0,$viewState.projectKey.lastIndexOf('\\'))
+	}
+	processRequest.RequestData.batch = $processState.batch;
     if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
       processRequest.RequestData.targetLocation["refData"][
         "standardObserver"

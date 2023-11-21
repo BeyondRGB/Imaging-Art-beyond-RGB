@@ -93,6 +93,8 @@ private:
      */
     void output_report_data(btrgb::ArtObject* images);
 
+    bool loadMatricesFromText(const std::string& file_content);
+
 
 };
 
