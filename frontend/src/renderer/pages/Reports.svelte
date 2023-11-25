@@ -99,6 +99,7 @@
               $viewState.reports.calibration?.["double_values"]?.[0]?.["data"]
             ).toFixed(4)}
           </div>
+          <button class="report-info" on:click={() => {window.open("index.html", "_blank", "left=100,height=800,width=1200");}}>Open New Window</button>
 
           {#if isVerification}
             <div class="report-info">
