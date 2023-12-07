@@ -55,8 +55,10 @@
     ];
     $processState.currentTab-=1;
     $processState.pipelineComplete = false;
-    $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
-    $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
+    $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount];
+    $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount];
+    $processState.artStacks[0].fields.targetA = [];
+    $processState.artStacks[0].fields.targetB = [];
     batchCount+=1;
     handleConfirm();
   }
