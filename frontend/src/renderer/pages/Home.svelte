@@ -22,14 +22,8 @@
   
 	
   
-  const openComponentWindow = () => {
-    window.electron.openNewWindow()
-    //let temp = window.open("indexChild.html", "_blank", "left=100,height=800,width=1200");
-    // console.log(temp.toolbar)
-    // console.log(temp.menubar)
-    // console.log(temp.locationbar)
-    // console.log(temp.statusbar)
-    
+  const openNewWindow = () => {
+    window.electron.openNewWindow();
   }
 
  
@@ -75,7 +69,7 @@
         </div>
         <span> View a previously-processed imaged set </span>
       </button>
-      <button on:click={() => openComponentWindow()} class="homeBtn">
+      <button on:click={() => openNewWindow()} class="homeBtn">
         <div class="btnTitle">
           <CopyIcon size="1.25x" />
           <h2>Create Another Window</h2>

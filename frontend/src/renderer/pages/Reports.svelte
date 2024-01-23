@@ -99,7 +99,7 @@
               $viewState.reports.calibration?.["double_values"]?.[0]?.["data"]
             ).toFixed(4)}
           </div>
-          <button class="report-info" on:click={() => {window.open("index.html", "_blank", "left=100,height=800,width=1200");}}>Open New Window</button>
+          <button class="report-info new-window-button" on:click={() => { window.electron.openNewWindow() }}>View Another Report</button>
 
           {#if isVerification}
             <div class="report-info">
@@ -202,5 +202,9 @@
   }
   .verificationBar {
     @apply w-full h-full bg-gray-500 flex flex-col p-2 rounded-xl;
+  }
+
+  .new-window-button{
+    align-self: baseline;margin-top: 5px;
   }
 </style>
