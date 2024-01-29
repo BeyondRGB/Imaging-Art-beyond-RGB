@@ -116,7 +116,7 @@
     }
   }
 
-  $: if ($processState.currentTab === 5) {
+  $: if ($processState.currentTab === 6) {
     console.log("Update");
     console.log($processState);
     update();
@@ -124,7 +124,7 @@
   }
 
   $: if (
-    $processState.currentTab === 4 &&
+    $processState.currentTab === 5 &&
     $processState.artStacks[0].colorTargetImage?.filename?.length === 0 &&
     $processState.artStacks[0].fields.imageA[0] != null
   ) {
