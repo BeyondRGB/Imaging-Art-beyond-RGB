@@ -1,9 +1,9 @@
 <script lang="ts">
   import {
     serverError,
-    resetProcess,
     resendMessage,
     messageStore,
+    processState,
   } from "@util/stores";
   import { AlertCircleIcon } from "svelte-feather-icons";
 
@@ -14,6 +14,20 @@
     $serverError = null;
     $messageStore = [];
     closeModal();
+  }
+
+  /**
+   * When a server error occurs, go back to the most recent tab and 
+   * reset fields in the processState
+   */
+  function returnToSetup() {
+    $processState.currentTab = 4;
+    $processState.completedTabs[$processState.currentTab] = false;
+    $processState.whitePatchFilled = false;
+    $processState.returnedFromProcessing = true;
+    if ($processState.artStacks[0].verificationTarget === null) {
+      $processState.artStacks[0].verificationTarget = {};
+    }
   }
 </script>
 
@@ -46,9 +60,9 @@
       <button
         class="reset"
         on:click={() => {
-          resetProcess();
+          returnToSetup();
           handleClose();
-        }}>Reset Process</button
+        }}>Return to Setup</button
       >
     </div>
   </div>

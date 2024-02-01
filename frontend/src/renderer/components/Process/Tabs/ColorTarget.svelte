@@ -18,6 +18,7 @@
   let colorPos;
   let verifyTarget;
   let verifyPos;
+  let viewerOpen;
 
   let colorTargetViewer;
 
@@ -188,10 +189,12 @@
       if (verifyTarget == null) {
         console.log("Removing Color Target");
         colorTarget = null;
+        colorPos = null;
       }
     } else if (id === 1) {
       console.log("Removing Verify Target");
       verifyTarget = null;
+      verifyPos = null;
     }
   }
 
@@ -215,7 +218,63 @@
     }
   }
 
-  // $: console.log(targetArray);
+  // If processing is terminated by a server error or something else, then re-enter the previous data
+  $: if ($processState.returnedFromProcessing) {
+    resetTargets();
+  }
+
+  function resetTargets() {
+    if ($processState.artStacks[0].colorTarget && Object.keys($processState.artStacks[0].colorTarget).length !== 0) {
+      addDataToTarget()
+    }
+    if ($processState.artStacks[0].verificationTarget && Object.keys($processState.artStacks[0].verificationTarget).length !== 0) {
+      addDataToTarget();
+    }
+    $processState.returnedFromProcessing = false;
+  }
+
+  // Add data to targets from $processState
+  function addDataToTarget() {
+    if (!colorTarget) {
+      colorTarget = {
+        name: "Calibration Target",
+        rows: $processState.artStacks[0].colorTarget.rows,
+        cols: $processState.artStacks[0].colorTarget.cols,
+        color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
+        size: $processState.artStacks[0].colorTarget.size,
+        whitePatch: {
+          row: $processState.artStacks[0].colorTarget.whitePatch.row,
+          col: $processState.artStacks[0].colorTarget.whitePatch.col,
+        },
+        refData: {
+          name: $processState.artStacks[0].colorTarget.refData.name,
+          standardObserver: $processState.artStacks[0].colorTarget.refData.standardObserver,
+          illuminants: $processState.artStacks[0].colorTarget.refData.illuminants,
+        },
+      };
+      colorPos = { top: $processState.artStacks[0].colorTarget.top, left: $processState.artStacks[0].colorTarget.left,
+         bottom: $processState.artStacks[0].colorTarget.bottom, right: $processState.artStacks[0].colorTarget.right };
+    } else if (!verifyTarget) {
+      verifyTarget = {
+        name: "Verification Target",
+        rows: $processState.artStacks[0].verificationTarget.rows,
+        cols: $processState.artStacks[0].verificationTarget.cols,
+        color: Math.floor(Math.random() * (360 - 0 + 1) + 0),
+        size: $processState.artStacks[0].verificationTarget.size,
+        whitePatch: {
+          row: $processState.artStacks[0].verificationTarget.whitePatch.row,
+          col: $processState.artStacks[0].verificationTarget.whitePatch.col,
+        },
+        refData: {
+          name: $processState.artStacks[0].verificationTarget.refData.name,
+          standardObserver: $processState.artStacks[0].verificationTarget.refData.standardObserver,
+          illuminants: $processState.artStacks[0].verificationTarget.refData.illuminants,
+        },
+      };
+      verifyPos = { top: $processState.artStacks[0].verificationTarget.top, left: $processState.artStacks[0].verificationTarget.left, 
+        bottom: $processState.artStacks[0].verificationTarget.bottom, right: $processState.artStacks[0].verificationTarget.right };
+    }
+  }
 
   $: if (colorTarget?.refData?.name === "Choose a custom file....csv") {
     console.log("OPENING CUSTOM REF MODAL");
@@ -278,6 +337,7 @@
           bind:colorPos
           bind:verifyPos
           bind:loading
+          bind:viewerOpen
           bind:this={colorTargetViewer}
         />
       </div>
@@ -286,6 +346,7 @@
   <div class="right">
     <!-- <div class="boxHead">Targets</div> -->
     <div class="cardBox">
+      {#if viewerOpen}
       {#each [...targetArray, "Add"] as target, i (target)}
         {#if target === "Add" && i < 2}
           <div
@@ -520,6 +581,7 @@
           </div>
         {/if}
       {/each}
+      {/if}
     </div>
   </div>
 </main>
