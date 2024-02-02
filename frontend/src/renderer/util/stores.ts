@@ -34,6 +34,7 @@ export const processState = writable({
   whitePatchFilled: false,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
+  returnedFromProcessing: false,
   artStacks: [
     {
       id: 1,
@@ -69,6 +70,7 @@ export function resetProcess() {
     CMID: null,
     imageThumbnails: {},
     outputImage: { dataURL: "", name: "Waiting..." },
+    returnedFromProcessing: false,
     artStacks: [
       {
         id: 1,
