@@ -19,14 +19,9 @@
   
   let showAbout = false;
   
-  
-	
-  
   const openNewWindow = () => {
     window.electron.openNewWindow();
   }
-
- 
 
 </script>
 
