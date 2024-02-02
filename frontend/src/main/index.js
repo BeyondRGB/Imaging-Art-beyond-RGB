@@ -2,6 +2,7 @@ const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const child_process = require('child_process');
 const getPortSync = require('get-port-sync');
+const { shell } = require('electron')
 
 let freePort = 47382;
 
@@ -62,6 +63,7 @@ ipcMain.handle('ipc-getPort', async (event, arg) => {
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
   let properties = ['openFile', 'multiSelections'];
   let filters = [];
+  let defaultPath;
   console.log(arg);
   if (arg.type === "Dir") {
     properties = ["openDirectory"];
@@ -89,9 +91,12 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
     });
   }
 
-  
+  if(arg.defaultPath !== undefined) {
+    defaultPath = arg.defaultPath;
+  }
 
   const dia = await dialog.showOpenDialog({
+    defaultPath,
     properties,
     filters
   }).then(result => {

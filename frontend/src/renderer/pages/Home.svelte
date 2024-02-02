@@ -19,6 +19,7 @@
   
   let showAbout = false;
   
+  //Open a new electron window of the BeyondRGB application using IPC
   const openNewWindow = () => {
     window.electron.openNewWindow();
   }
