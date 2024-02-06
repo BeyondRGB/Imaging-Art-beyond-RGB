@@ -22,6 +22,23 @@ RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_ty
 	this->init_color_patches();
 }
 
+RefData::RefDataFolder(std::string folder) {
+	std::string path = REF_DATA_PATH;
+	this->f_name = file;
+	//create a list of files in the folder that end in *Refectance_Data.csv
+	//for each file in the list, create a new RefData object
+
+	for (int i = 0; i < REF_COUNT; i++) {
+		std::string file = ref_files[i];
+		if (file.find("Reflectance_Data.csv") != std::string::npos) {
+			std::string file_path = path + file;
+			this->read_in_data(file_path);
+			RefData* ref = new RefData(file_path);
+			this->init_color_patches();
+		}	
+	}
+}
+
 RefData::~RefData() {
 	if (nullptr != this->observer) {
 		delete this->observer;
@@ -320,7 +337,7 @@ bool RefData::is_custom(std::string file){
 	return true;
 }
 
-RefData refData("C:\Users\Josh Greco\Documents");
+RefData refData("C:\\Users\\Josh Greco\\Documents\\BeyondRGB\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\ref_data.txt");
 
 // To add a new reference file
 if (refData.addCustomRefData("ref_data.txt")) {
