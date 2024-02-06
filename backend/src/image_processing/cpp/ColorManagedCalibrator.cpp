@@ -35,6 +35,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     bool targetsFound = (target1_ptr != nullptr && target2_ptr != nullptr);
 
     if (targetsFound) {
+        //If targets are found, this is an initial request, so full optimization process is done
         target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
         target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
         ColorTarget targets[] = { target1, target2 };
@@ -54,26 +55,27 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     }
     else {
         try {
+            //If targets aren't found, this is a batch request and the information must be retrieved
             std::string directory = images->get_output_dir();
-            // Replace all forward slashes with double backslashes
-            for (char& c : directory) {
-                if (c == '/') {
-                    c = '\\';
-                }
-            }
+            std::cout << "Output directory: " << directory << std::endl;
 
-            // Ensure there's no trailing backslash
-            if (!directory.empty() && directory.back() == '\\') {
-                directory.pop_back();
-            }
-            std::cout << directory << std::endl;
+
+            // Normalize directory separators to be platform independent
+            std::filesystem::path normalizedDir = std::filesystem::path(directory).make_preferred();
+
+            // Move up one directory level to get to the base directory (BeyondRGB_2024)
+            std::filesystem::path baseDirectory = normalizedDir.parent_path().parent_path();
+
+            std::cout << "Base directory: " << baseDirectory << std::endl;
+
             std::string prefix = "BeyondRGB_M_color_";
             std::string path;
 
-            for (const auto& entry : std::filesystem::directory_iterator(directory)) {
+            // Iterate over the base directory and its subdirectories
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(baseDirectory)) {
                 if (entry.is_regular_file()) {
                     std::string filename = entry.path().filename().string();
-                    std::cout << filename << std::endl;
+                    std::cout << "Checking file: " << filename << std::endl;
                     if (filename.find(prefix) != std::string::npos) {
                         path = entry.path().string();
                         break; // Found the file, exit the loop
@@ -97,6 +99,8 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
                 // Handle error: pre-calculated data could not be loaded
                 throw std::runtime_error("Precalculated M and offset matrices could not be loaded.");
             }
+            this->deltaE_values = cv::Mat_<double>(this->ref_data->get_row_count(), this->ref_data->get_col_count(), CV_32FC1);
+            recalculateDeltaE(images);
         }
         catch (const std::exception& e) {
             // Handle any exceptions thrown by readFileIntoString or loadMatricesFromText
@@ -551,4 +555,20 @@ double DeltaEFunction::calc(const double* x)const{
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
     return deltaE_avg;
+}
+
+//Used for calculating deltaE_sum and resulting_avg_deltaE in batch requests
+void ColorManagedCalibrator::recalculateDeltaE(btrgb::ArtObject* images) {
+    // Recalculate offset averages
+    cv::Mat offset_avg = btrgb::calibration::apply_offsets(this->color_patch_avgs, this->offest);
+
+    // Recalculate camera_xyz using current M and offset_avg
+    cv::Mat_<double> xyz = this->M * offset_avg;
+
+    // Recalculate deltaE values
+    double deltaE_sum = btrgb::calibration::compute_deltaE_sum(this->ref_data, xyz, &this->deltaE_values);
+
+    // Recalculate and update resulting_avg_deltaE
+    int patch_count = this->deltaE_values.total(); // total number of elements in the deltaE matrix
+    this->resulting_avg_deltaE = deltaE_sum / patch_count;
 }

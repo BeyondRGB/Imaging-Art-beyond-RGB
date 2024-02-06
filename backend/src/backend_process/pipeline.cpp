@@ -114,11 +114,34 @@ void Pipeline::run() {
 
     std::string out_dir;
 
+    std::string art_image;
+
     bool batch = this->process_data_m->get_bool("batch");
+
+    //Gets the name of the Art image to name output directories
+    Json image_array = this->process_data_m->get_array(key_map[DataKey::IMAGES]);
+    Json obj = image_array.obj_at(0);
+    std::string art_file = obj.get_string(key_map[DataKey::ART]);
+    std::filesystem::path p(art_file);
+    std::string filenameWithoutExtension = p.stem().string();
+    size_t lastUnderscorePosition = filenameWithoutExtension.rfind('_');
+    if (lastUnderscorePosition != std::string::npos) {
+        filenameWithoutExtension = filenameWithoutExtension.substr(0, lastUnderscorePosition);
+    }
+
+
 
     if (batch) {
         try {
             out_dir = this->process_data_m->get_string("outputDirectory");
+            std::filesystem::path fsPath(out_dir);
+            std::filesystem::path parentPath = fsPath.parent_path();
+            out_dir = parentPath.string();
+            out_dir = out_dir + '/' + filenameWithoutExtension;
+
+            std::filesystem::create_directories(out_dir);
+
+
         }
         catch (const ParsingError&) {
 
@@ -126,7 +149,7 @@ void Pipeline::run() {
     }
     else {
         try {
-            out_dir = this->get_output_directory();
+            out_dir = this->get_output_directory(filenameWithoutExtension);
         }
         catch (...) {
             return;
@@ -202,7 +225,7 @@ void Pipeline::run() {
 }
 
 
-std::string Pipeline::get_output_directory() {
+std::string Pipeline::get_output_directory(std::string artImage) {
     
 	std::time_t now = std::time(0);
 	std::tm *ltm = std::localtime(&now);
@@ -211,6 +234,7 @@ std::string Pipeline::get_output_directory() {
     try {
         std::string base_dir = this->process_data_m->get_string("destinationDirectory");
         std::string dir = base_dir + "/" + OUTPUT_PREFIX + date_string + "_" + time_string + "/";
+        dir = dir + "/" + artImage;
         std::filesystem::create_directories(dir);
         return dir;
     }

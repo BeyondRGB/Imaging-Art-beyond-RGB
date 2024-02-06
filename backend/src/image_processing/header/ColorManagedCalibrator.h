@@ -95,6 +95,7 @@ private:
 
     bool loadMatricesFromText(const std::string& file_content);
 
+    void recalculateDeltaE(btrgb::ArtObject* images);
 
 };
 

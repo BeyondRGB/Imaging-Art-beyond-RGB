@@ -175,6 +175,7 @@ void ResultsProcessor::set_formater(FormatType type){
 
 void ResultsProcessor::write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj, ResultObjType result_type){
     std::ofstream f_stream;
+    f_stream << std::setprecision(16);
     f_stream.open(this->output_dir + file_name);
     this->set_formater(format_type);
     this->formater->write_format(f_stream, results_obj, result_type);
