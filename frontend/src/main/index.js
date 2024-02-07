@@ -60,6 +60,14 @@ ipcMain.handle('ipc-getPort', async (event, arg) => {
   return freePort;
 });
 
+//Use the shell to open the File explorer as a separate process,
+//as oppossed to a child process of the BeyondRGB application.
+ipcMain.handle('ipc-openFileExplorer', async (event, arg) => {
+  const result = await shell.openPath(arg.directory) // Open the given directory/file in the default manner.
+  return result ;
+});
+
+
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
   let properties = ['openFile', 'multiSelections'];
   let filters = [];

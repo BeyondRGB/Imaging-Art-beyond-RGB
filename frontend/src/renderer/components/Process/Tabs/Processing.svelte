@@ -57,6 +57,7 @@
   }
 
 
+  //Open the file explorer using ipc after an image is finished processing. 
   const openFileExplorer = async() =>{
     let defaultPath = $viewState.projectKey;
     //$viewState.projectKey is the filepath of the .btrgb file, but has some odd syntax with forward and backslashes, so it needs cleaning
@@ -68,9 +69,7 @@
     defaultPath = defaultPath.replace("/", "\\")
     let type = "File";
     let filter = "None";
-    await window.electron.handle({ type, filter, defaultPath });
-    
-
+    await window.electron.openFileExplorer({directory:defaultPath})
   }
 </script>
 
