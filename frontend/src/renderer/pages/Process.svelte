@@ -15,7 +15,7 @@
   import SpecFileRoles from "@components/Process/Tabs/SpecFileRoles.svelte";
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
-  import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
+import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
   import SelectProcessingType from "@root/components/Process/Tabs/SelectProcessingType.svelte";
   import Layout from "@components/Process/Layout.svelte";
   let tabList;
@@ -29,11 +29,11 @@
   let batchCount = 0;
 
   let tabs: any = [
-    { name: "Select Processing Type", component: SelectProcessingType },
+{ name: "Select Processing Type", component: SelectProcessingType },
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
     { name: "Specify File Roles", component: SpecFileRoles },
-    //{ name: "Batch Processing Roles", component:BatchProcessingRoles},
+//{ name: "Batch Processing Roles", component:BatchProcessingRoles},
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
@@ -50,7 +50,7 @@
     }
   }
 
-    $: if($processState.pipelineComplete && batchCount < $batchImagesA.length) {
+    $: if($processState.pipelineComplete && $processState.artStacks[0].fields.imageA.length >= 2 && $processState.artStacks[0].fields.imageA[1].length !== 0 ) {
     $processState.completedTabs =[
         true,
         true,
@@ -61,8 +61,12 @@
     ];
     $processState.currentTab-=1;
     $processState.pipelineComplete = false;
-    $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
-    $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
+    $processState.artStacks[0].fields.imageA.shift();
+    $processState.artStacks[0].fields.imageB.shift();
+
+
+    // $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
+    // $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
     batchCount+=1;
     handleConfirm();
   }
@@ -187,12 +191,12 @@
     RequestData: {
       images: [
         {
-          art: $processState.artStacks[0].fields.imageA[0]?.name,
+          art: $processState.artStacks[0].fields.imageA[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldA[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldA[0]?.name,
         },
         {
-          art: $processState.artStacks[0].fields.imageB[0]?.name,
+          art: $processState.artStacks[0].fields.imageB[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldB[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldB[0]?.name,
         },
@@ -245,6 +249,7 @@
 
     if ($processState.currentTab !== tabs.length - 1) {
       $processState.currentTab += 1;
+      console.log($processState)
       console.log("Sening Process Request");
       console.log(processRequest);
       setTimeout(() => {

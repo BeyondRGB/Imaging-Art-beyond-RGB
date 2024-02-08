@@ -58,6 +58,11 @@
            filePaths.push(f.name);
         });
         getThumbnails();
+        if($processState.imageFilePaths.length >= 6 && $processState.imageFilePaths.length <=8  ){
+            $processState.artImagesCount = 1;
+        }else if ( $processState.imageFilePaths.length > 8){
+            $processState.artImagesCount = ($processState.imageFilePaths.length - 6) / 2;
+        }
     }
 
     const remove = (item) => {

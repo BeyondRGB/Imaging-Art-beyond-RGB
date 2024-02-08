@@ -1,13 +1,13 @@
 
 <script lang="ts">
-    import { processState, batchProcessState } from "@util/stores";
+    import { processState, batchProcessState, batchImagesA, batchImagesB } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
 
     let imageStack = get($processState, 'artStacks[0].fields');
-    let artImageStackA = get($processState, 'artStacks[0].fields.imageA');
-    let artImageStackB = get($processState, 'artStacks[0].fields.imageB');
+    let artImageStackA = get($batchImagesA);
+    let artImageStackB = get($batchImagesB, 'artStacks[0].fields.imageB');
     let artImageCount = 1;
 
     let rerenderToggle = false;
@@ -17,9 +17,6 @@
     $:if ($processState.currentTab === 2) {
         imageStack = get($processState, 'artStacks[0].fields');
        
-        if( artImageStackA.length !== 0){
-            artImageCount = artImageStackA.length
-        }
         if(getAllImages().length !== 0){
             artImageCount = (getAllImages().length - 6) / 2
         }else {
@@ -101,8 +98,8 @@
                     <div class="text">Object</div>
                     {#each Array(artImageCount) as _, index (index)}
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={artImageStackA[index]} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={artImageStackB[index]} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA[index]} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[index]} singleItem={true} showError={!!validationError}/></div>
                     </div>
                     {/each}
                     <br>

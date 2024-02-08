@@ -9,7 +9,7 @@
     let validationError = null;
 
     // this helps force a rerender once the imageStack has been reset
-    $:if ($processState.currentTab === 2) {
+    $:if ($processState.currentTab === 3) {
         imageStack = get($processState, 'artStacks[0].fields');
     }
 
@@ -85,8 +85,8 @@
                     </div>
                     <div class="text">Object</div>
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA[0]} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[0]} singleItem={true} showError={!!validationError}/></div>
                     </div>
                     {#if $processState.imageFilePaths && showTargetDropZones()}
                         <div class="text">Target</div>

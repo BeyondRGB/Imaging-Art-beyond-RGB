@@ -1,0 +1,448 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{9CED245D-D897-3E39-A4D8-A20FB9B19202}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <VcpkgEnabled>false</VcpkgEnabled>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>beyond-rgb-backend</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="do_not_import_user.props" Condition="exists('do_not_import_user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">beyond-rgb-backend.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">beyond-rgb-backend</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">beyond-rgb-backend.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">beyond-rgb-backend</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">beyond-rgb-backend.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">beyond-rgb-backend</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">beyond-rgb-backend.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">beyond-rgb-backend</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/include" /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/websocketpp/../../include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/Debug/beyond-rgb-backend.exe -installedDir C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/debug/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_highgui4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_ml4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_objdetect4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_photo4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_stitching4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_video4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_videoio4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\debug\lib\tiffd.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\raw_rd.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\libpng16d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_imgcodecs4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_calib3d4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_dnn4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_features2d4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_flann4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_imgproc4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\opencv_core4d.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\lcms2.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\debug\lib\zlibd.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/Debug/beyond-rgb-backend.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/Debug/beyond-rgb-backend.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/include" /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/websocketpp/../../include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/Release/beyond-rgb-backend.exe -installedDir C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_highgui4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_ml4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_objdetect4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_photo4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_stitching4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_video4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_videoio4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\lib\tiff.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\raw_r.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\libpng16.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_imgcodecs4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_calib3d4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_dnn4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_features2d4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_flann4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_imgproc4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_core4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\lcms2.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\zlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/Release/beyond-rgb-backend.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/Release/beyond-rgb-backend.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/include" /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/websocketpp/../../include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/MinSizeRel/beyond-rgb-backend.exe -installedDir C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_highgui4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_ml4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_objdetect4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_photo4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_stitching4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_video4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_videoio4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\lib\tiff.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\raw_r.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\libpng16.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_imgcodecs4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_calib3d4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_dnn4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_features2d4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_flann4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_imgproc4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_core4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\lcms2.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\zlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/MinSizeRel/beyond-rgb-backend.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/MinSizeRel/beyond-rgb-backend.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/include" /external:I "C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/websocketpp/../../include"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <OpenMPSupport>true</OpenMPSupport>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMS_DLL;CMS_NO_REGISTER_KEYWORD;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include\libraw;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\include;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noprofile -executionpolicy Bypass -file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/scripts/buildsystems/msbuild/applocal.ps1 -targetBinary C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/RelWithDebInfo/beyond-rgb-backend.exe -installedDir C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/bin -OutVariable out
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_highgui4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_ml4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_objdetect4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_photo4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_stitching4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_video4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_videoio4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x86-windows\lib\tiff.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\raw_r.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\libpng16.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_imgcodecs4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_calib3d4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_dnn4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_features2d4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_flann4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_imgproc4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\opencv_core4.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\lcms2.lib;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\lib\zlib.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/RelWithDebInfo/beyond-rgb-backend.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/RelWithDebInfo/beyond-rgb-backend.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend -BC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build --check-stamp-file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindOpenMP.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindTIFF.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\SelectLibraryConfigurations.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCXXCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeRCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeSystem.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfigVersion.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsTargets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\FindLibRaw.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-module.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-options.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\tiff\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\websocketpp-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\zlib\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\scripts\buildsystems\vcpkg.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend -BC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build --check-stamp-file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindOpenMP.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindTIFF.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\SelectLibraryConfigurations.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCXXCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeRCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeSystem.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfigVersion.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsTargets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\FindLibRaw.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-module.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-options.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\tiff\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\websocketpp-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\zlib\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\scripts\buildsystems\vcpkg.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend -BC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build --check-stamp-file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindOpenMP.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindTIFF.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\SelectLibraryConfigurations.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCXXCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeRCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeSystem.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfigVersion.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsTargets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\FindLibRaw.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-module.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-options.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\tiff\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\websocketpp-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\zlib\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\scripts\buildsystems\vcpkg.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend -BC:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build --check-stamp-file C:/Users/sammc/OneDrive/Documents/Classes/2231/srProj/Imaging-Art-beyond-RGB/backend/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeFindDependencyMacro.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeInitializeConfigs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeParseImplicitLinkInfo.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CMakeSystemSpecificInitialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Compiler\MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindOpenMP.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindPkgConfig.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindTIFF.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\FindZLIB.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-Initialize.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.27\Modules\SelectLibraryConfigurations.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeCXXCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeRCCompiler.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.27.4\CMakeSystem.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\asio\asio-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsConfigVersion.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\jsoncons\jsonconsTargets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms\lcms-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\lcms2\lcms2Config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libpng\libpng16.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\FindLibRaw.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\libraw\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVConfig.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\opencv\OpenCVModules.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config-version.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-module.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-options.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\protobuf-targets.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\protobuf\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-debug.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config-release.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\quirc\quirc-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\tiff\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\websocketpp\websocketpp-config.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\installed\x64-windows\share\zlib\vcpkg-cmake-wrapper.cmake;C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\vcpkg\scripts\buildsystems\vcpkg.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ArtObject.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\BitDepthFinder.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ColorProfiles.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ColorTarget.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\Image.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\LibRawReader.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\LibRawThumbnail.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\LibTiffReader.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\TiffReaderOpenCV.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\ImageWriter.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\ImageWriterStrategy.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\LibTiffWriter.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\LibpngWriter.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\backend_process\ColorManagedImage.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\backend_process\HalfSizePreview.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\backend_process\ReportRequest.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\backend_process\SpectralPicker.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\backend_process\ThumnailLoader.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\backend_process\backend_process.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\backend_process\pipeline.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\BitDepthScaler.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ChannelSelector.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ColorManagedCalibrator.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\FlatFieldor.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ImageCalibrator.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ImageProcessor.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ImageReader.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\NoiseReduction.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\PixelRegestor.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\PreProcessor.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ResultsProcessor.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\SpectralCalibrator.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\Verification.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\results\calibration_results.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\results\colorimetry_formater.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\results\general_info_formater.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\results\m_color_formater.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\results\m_spectral_formater.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\image_processing\results\r_camera_formater.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\main.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\reference_data\color_patch.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\reference_data\illuminants.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\reference_data\ref_data.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\reference_data\ref_data_array.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\reference_data\standard_observer.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\reference_data\white_points.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\server\communicator.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\server\comunication_obj.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\server\globals_singlton.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\server\process_manager.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\server\request_server.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\calibration_util.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\cmd_arg_manager.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\color_convertions.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\csv_parser.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\general_utils.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\json.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\jsonafiable.cpp" />
+    <ClCompile Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\src\utils\time_tracker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\sammc\OneDrive\Documents\Classes\2231\srProj\Imaging-Art-beyond-RGB\backend\build\ZERO_CHECK.vcxproj">
+      <Project>{EEBB244E-D22D-357E-B27D-EEB270ED8C83}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

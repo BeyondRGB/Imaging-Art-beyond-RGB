@@ -92,10 +92,14 @@
     $processState.colorTargetID = Math.floor(Math.random() * 999999999);
     console.log($processState);
 
-    let targetImage = $processState.artStacks[0].fields.imageA[0].name;
-    if ($processState.artStacks[0].fields.targetA.length !== 0) {
+    let targetImage = "";
+    
+    if ($processState.artStacks[0].fields.targetA[0].length !== 0) {
       console.log("Found Target");
       targetImage = $processState.artStacks[0].fields.targetA[0].name;
+    }
+    else{
+      targetImage = $processState.artStacks[0].fields.imageA[0].name; 
     }
 
     let msg = {
@@ -106,7 +110,7 @@
       },
     };
     if (
-      $processState.artStacks[0].fields.imageA[0].name.length > 2 &&
+     // $processState.artStacks[0].fields.imageA[0].name.length > 2 &&
       !loading
     ) {
       console.log("Getting Color Target Preview");
