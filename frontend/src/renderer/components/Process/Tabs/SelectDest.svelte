@@ -11,9 +11,9 @@
   $: if (
     $processState.destDir &&
     $processState.destDir?.length > 1 &&
-    !$processState.completedTabs[1]
+    !$processState.completedTabs[2]
   ) {
-    $processState.completedTabs[1] = true;
+    $processState.completedTabs[2] = true;
   }
 </script>
 

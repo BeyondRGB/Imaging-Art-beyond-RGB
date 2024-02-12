@@ -29,8 +29,9 @@ export const customRefData = writable({
 });
 export const processState = writable({
   batch : false,
+  processType: "Single",
   currentTab: 0,
-  completedTabs: [false, false, false, false],
+  completedTabs: [false, false, false, false, false, false],
   pipelineComplete: false,
   destDir: "",
   imageFilePaths: [],
@@ -62,10 +63,25 @@ export const processState = writable({
     },]
 });
 
+export const batchProcessState = writable({
+  artImagesA: [],
+  artImagesB: [],
+  artImageOutputUrls: [],
+  proccessingImages: {
+    targetA: [],
+    targetB: [],
+    flatfieldA: [],
+    flatfieldB: [],
+    darkfieldA: [],
+    darkfieldB: [],
+  },
+})
+
 export function resetProcess() {
   processState.set({
+    processType: "Single",
     currentTab: 0,
-    completedTabs: [false, false, false, false],
+    completedTabs: [false, false, false, false, false, false],
     pipelineComplete: false,
     destDir: "",
     imageFilePaths: [],

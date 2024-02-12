@@ -15,6 +15,7 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
 
     // Generate the file names to be used for output
     this->CM_f_name = this->build_output_name("CM");
+    this->CM_target_f_name = this->build_output_name("CM_target");
     this->SP_f_name = this->build_output_name("SP");
     this->Pro_f_name = this->build_output_name("","btrgb");
 
@@ -48,6 +49,14 @@ void ResultsProcessor::output_images(btrgb::ArtObject* images){
     images->outputImageAs(btrgb::TIFF, CM_IMAGE_KEY, this->CM_f_name);
     }catch(std::exception e){
         std::cerr << "Failed to write CM_Image: " << e.what() << std::endl; 
+    }
+
+    try {
+        // Write CM Calibrated Image
+        images->outputImageAs(btrgb::TIFF, "ColorManagedTarget", this->CM_target_f_name);
+    }
+    catch (std::exception e) {
+        std::cerr << "Failed to write CM_Image: " << e.what() << std::endl;
     }
 
     // Write Spectral Image

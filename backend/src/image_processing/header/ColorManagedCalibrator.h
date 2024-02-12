@@ -86,6 +86,14 @@ private:
      * @param images the art object containing art1 and art2
      */
     void update_image(btrgb::ArtObject* images);
+    /**
+ * @brief Uses the optimized M and offsets to convert the 6 channels
+ * from target1 and target2 into a color managed RGB image
+ *
+ * @param images the art object containing target1 and target2
+ */
+    void update_target(btrgb::ArtObject* images);
+
 
     /**
      * @brief Saves optimized M and offset as well the final deltaE values

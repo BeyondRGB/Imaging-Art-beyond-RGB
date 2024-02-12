@@ -111,10 +111,11 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     }
 
-    // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
+    // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image, for both art and target
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     try {
         this->update_image(images);
+        this->update_target(images);
     }
     catch(const std::exception& e) {
        throw ImgProcessingComponent::error(e.what(), this->get_name());
@@ -245,6 +246,68 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images) {
     results_obj->store_int(GI_IMG_ROWS, cm_im->getMat().rows);
     results_obj->store_int(GI_IMG_COLS, cm_im->getMat().cols);
 
+}
+
+void ColorManagedCalibrator::update_target(btrgb::ArtObject* images) {
+    std::cout << "Updating Target" << std::endl;
+    btrgb::Image* target1 = images->getImage("target1");
+    btrgb::Image* target2 = images->getImage("target2");
+    btrgb::Image* target[2] = { target1, target2 };
+    int height = target1->height();
+    int width = target2->width();
+
+
+    // Initialize 6xN Matrix to represen our 6 channal image
+    // Each row represents a single channel and N is the number total pixles for each channel
+    cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(target, 2, 6, &this->offest);
+
+    /**
+    *   M is a 2d Matrix in the form
+    *       m_1_1, m_1_2, ..., m_1_6
+    *       m_2_1, m_2_2, ..., m_2_6
+    *       m_3_1, m_3_2, ..., m_3_6
+    *
+    *   camra_sigs is a 2d Matrix in the form
+    *       px1_ch1, px2_ch1, ..., pxN_ch1
+    *       px1_ch2, px2_ch2, ..., pxN_ch2
+    *       px1_ch3, px2_ch3, ..., pxN_ch3
+    *       px1_ch4, px2_ch4, ..., pxN_ch4
+    *       px1_ch5, px2_ch5, ..., pxN_ch5
+    *       px1_ch6, px2_ch6, ..., pxN_ch6
+    *
+    *   cm_XYZ is a 2d Matrix resulting in M * six_chan in the form
+    *       X1, X2, ..., XN
+    *       Y1, Y2, ..., YN
+    *       Z1, Z2, ..., ZN
+    *
+    */
+    // Convert camra_sigs ColorManaged XYZ values
+    cv::Mat cm_XYZ = this->M * camra_sigs;
+    camra_sigs.release(); // No longer needed
+
+    /* Convert result matrix to a standard, three-channel bitmap format. */
+    cv::Mat result_im = cm_XYZ.t();
+    result_im = result_im.reshape(3, height);
+    result_im.convertTo(result_im, CV_32F);
+
+    /* Convert from XYZ to target color space and clip. */
+    btrgb::ColorProfiles::convert_to_color(result_im, this->color_space);
+
+    /* Apply nonlinearity of the target color space. */
+    btrgb::ColorProfiles::apply_gamma(result_im, this->color_space);
+
+
+    std::string name = "ColorManagedTarget";
+    /* Wrap in Image object for storing in the ArtObject. */
+    btrgb::Image* cm_im = new btrgb::Image(name);
+    cm_im->initImage(result_im);
+    cm_im->setColorProfile(this->color_space);
+    cm_im->setExifTags(target1->getExifTags());
+    cm_im->setConversionMatrix(BTRGB_M_OPT, this->M);
+    cm_im->setConversionMatrix(BTRGB_OFFSET_OPT, this->offest);
+
+    /* Store in ArtObject and output. */
+    images->setImage(name, cm_im);
 }
 
 void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
