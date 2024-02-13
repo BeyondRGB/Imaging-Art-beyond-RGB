@@ -115,7 +115,9 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     try {
         this->update_image(images);
-        this->update_target(images);
+        if (targetsFound) {
+            this->update_target(images);
+        }
     }
     catch(const std::exception& e) {
        throw ImgProcessingComponent::error(e.what(), this->get_name());
