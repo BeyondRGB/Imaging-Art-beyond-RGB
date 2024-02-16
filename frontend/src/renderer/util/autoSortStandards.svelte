@@ -64,6 +64,8 @@
      */
     export function autoSortImages(images, externalStack) {
 
+        console.log(images)
+        console.log(externalStack)
         let includeTarget = false;
         if(size(images) < 6) {
             return images;
@@ -79,10 +81,12 @@
             image.imageA = false;
 
             for(let i = 0; i < matchingStandards.length; i++) {
+                console.log(image)
                 each(matchingStandards[i], function (string) {
                     const count = split(image.name.toLowerCase(), string.toLowerCase()).length - 1;
                     image[probabilityScoreProperties[i]] += count;
                 });
+                
             }
         });
 
@@ -125,21 +129,21 @@
         };
 
         // fill in the image stack
-        externalStack.imageA = [imageStack?.bestArtImages[0]];
-        externalStack.imageB = [imageStack?.bestArtImages[1]];
+        externalStack.imageA = [[imageStack?.bestArtImages[0]]];
+        externalStack.imageB = [[imageStack?.bestArtImages[1]]];
 
         // handle A - B sorting
         if(includeTarget) {
-            imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.imageA[0]);
+            imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.imageA[0][0]);
             externalStack.targetA = [imageStack?.bestTargetImages[0]];
             externalStack.targetB = [imageStack?.bestTargetImages[1]];
         }
 
-        imageStack.bestFlatFieldImages = sortImageByLighting(imageStack?.bestFlatFieldImages[0], imageStack?.bestFlatFieldImages[1], externalStack.imageA[0]);
+        imageStack.bestFlatFieldImages = sortImageByLighting(imageStack?.bestFlatFieldImages[0], imageStack?.bestFlatFieldImages[1], externalStack.imageA[0][0]);
         externalStack.flatfieldA = [imageStack?.bestFlatFieldImages[0]];
         externalStack.flatfieldB = [imageStack?.bestFlatFieldImages[1]];
 
-        imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.imageA[0]);
+        imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.imageA[0][0]);
         externalStack.darkfieldA = [imageStack?.bestDarkFieldImages[0]];
         externalStack.darkfieldB = [imageStack?.bestDarkFieldImages[1]];
 

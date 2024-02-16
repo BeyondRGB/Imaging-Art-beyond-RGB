@@ -14,17 +14,23 @@
     }
 
     const getAllImages = function () {
+        console.log("GET ALL IMAGES")
         let allImages = [];
         each(imageStack, function (field) {
-            if(!isEmpty(field)) {
+            if(!isEmpty(field) && !isEmpty(field[0])) {
                 allImages.push(field[0]);
             }
+        
+            console.log(field)
         });
         each($processState.imageFilePaths, function (image) {
             if(!includes(allImages, image)) {
                 allImages.push(image);
             }
+            console.log(image)
         });
+        console.log("GOT ALL IMAGES")
+        console.log(allImages)
         return allImages;
     };
 
