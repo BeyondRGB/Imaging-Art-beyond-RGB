@@ -260,8 +260,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
 
     if ($processState.currentTab !== tabs.length - 1) {
       $processState.currentTab += 1;
-      console.log($processState)
-      console.log("Sening Process Request");
+      console.log("Sending Process Request");
       console.log(processRequest);
       setTimeout(() => {
         sendMessage(JSON.stringify(processRequest));
@@ -275,7 +274,9 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
 <main>
   {#if !tabs[$processState.currentTab].hidden}
     <nav class="dark:bg-gray-800/25">
-      <button id="backBtn" on:click={prevTab}>Back</button>
+      {#if $processState.currentTab !== 0}
+        <button id="backBtn" on:click={prevTab}>Back</button>
+      {/if}
 
       <tabs>
         {#each tabs as tab, i}

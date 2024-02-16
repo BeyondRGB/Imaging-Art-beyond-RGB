@@ -8,14 +8,21 @@
     ApertureIcon,
     InfoIcon,
     XCircleIcon,
+    CopyIcon
   } from "svelte-feather-icons";
+    
 
   function handleClick(page) {
     currentPage.set(page);
     modal.set(null);
   }
-
+  
   let showAbout = false;
+  
+  const openNewWindow = () => {
+    window.electron.openNewWindow();
+  }
+
 </script>
 
 <main>
@@ -45,7 +52,7 @@
       <button on:click={() => handleClick("Process")} class="homeBtn">
         <div class="btnTitle">
           <ApertureIcon size="1.25x" />
-          <h2>Proccess</h2>
+          <h2>Process</h2>
         </div>
 
         <span> Process a new RAW image set </span>
@@ -56,6 +63,13 @@
           <h2>View</h2>
         </div>
         <span> View a previously-processed imaged set </span>
+      </button>
+      <button on:click={() => openNewWindow()} class="homeBtn">
+        <div class="btnTitle">
+          <CopyIcon size="1.25x" />
+          <h2>Create Another Window</h2>
+        </div>
+        <span> View two reports at once </span>
       </button>
       <button on:click={() => (showAbout = true)} class="homeBtn">
         <div class="btnTitle">

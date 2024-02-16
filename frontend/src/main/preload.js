@@ -9,5 +9,9 @@ contextBridge.exposeInMainWorld('electron', {
   async getPort() {
     const result = await ipcRenderer.invoke('ipc-getPort');
     return result;
+  },
+  async openNewWindow() {
+    const result = await ipcRenderer.invoke('ipc-createNewWindow');
+    return result;
   }
 });

@@ -89,6 +89,7 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
     });
   }
 
+  
 
   const dia = await dialog.showOpenDialog({
     properties,
@@ -109,7 +110,7 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
 //   console.log(app.getAppPath());
 // });
 
-const createWindow = () => {
+const createMainWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1200,
@@ -137,7 +138,40 @@ const createWindow = () => {
 
 };
 
+const createNewWindow = () => {
+  // Create the browser window.
+  const secondWindow = new BrowserWindow({
+    width: 1200,
+    height: 800,
+    autoHideMenuBar: true,
+    backgroundColor: "#2c2c2e",
+    minWidth: 600,
+    minHeight: 300,
+    title: "Beyond RGB - Secondary View",
+    icon: path.join(__dirname, '../../assets/icon.ico'),
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+    },
+  });
+
+  // and load the index.html of the app.
+
+  if (process.env.ELEC_ENV === 'dev') {
+    secondWindow.loadURL('http://localhost:3000');
+    // Open the DevTools.
+    secondWindow.webContents.openDevTools();
+  } else {
+    secondWindow.loadFile(path.join(__dirname, '../../public/index.html'));
+    // mainWindow.loadURL(`file://${path.join(__dirname, '../../public/index.html')}`);
+  }
+
+};
+
+ipcMain.handle('ipc-createNewWindow', async (event, arg) => {
+  createNewWindow();
+});
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', createMainWindow);

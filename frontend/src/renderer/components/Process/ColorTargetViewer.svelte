@@ -1,9 +1,9 @@
 <script lang="ts">
   import { currentPage, processState } from "@util/stores";
-  
+
   import OpenSeadragon from "openseadragon";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import {getZoomPercentage} from "@util/photoViewerHelper";
+  import { getZoomPercentage } from "@util/photoViewerHelper";
 
   let viewer;
   let mouseTracker;
@@ -16,6 +16,7 @@
   let viewportPoint;
   let imagePoint;
 
+  export let viewerOpen = false;
   export let colorTarget;
   export let verifyTarget;
 
@@ -48,12 +49,14 @@
       animationTime: 0.4,
     });
     viewer.addHandler("zoom", (e) => setTimeout(() => handleZoom(e), 100));
+    viewer.addHandler('open', () => viewerOpen = true);
   };
 
   const destoryViewer = () => {
     if (viewer) {
       viewer.destroy();
       viewer = null;
+      viewerOpen = false;
       console.log("Color target viewer destroyed");
     }
   };
@@ -81,21 +84,29 @@
 
   $: if ($processState.currentTab === 5) {
     if (viewer && !viewer.isOpen()) {
+      let temp = new Image();
+
+      temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
+      imageUrl = temp.src;
+
       console.log("Opening Image");
       console.log({ IMAGEURL: imageUrl });
       console.log({ INCLUDES: imageUrl.includes("blob") });
       if (imageUrl.includes("blob")) {
         loading = false;
       }
+
       viewer.open({
         type: "image",
         url: imageUrl,
       });
     }
-  } else {
-    if (viewer) {
-      viewer.close();
-    }
+  }
+
+  // Close the viewer once processing starts
+  $: if ($processState.currentTab === 5) {
+    viewer.close();
+    viewerOpen = false;
   }
 
   $: if (viewer) {
@@ -127,10 +138,26 @@
         gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
       }
       console.log(`Adding Overlay ${id}`);
-      viewer.addOverlay({
+
+      if (id === 0) {
+        viewer.addOverlay({
         element: selBox,
-        location: new OpenSeadragon.Rect(0.25, 0.25, 0.25, 0.25),
-      });
+        location: new OpenSeadragon.Rect(
+          colorPos.left,
+          colorPos.top,
+          colorPos.right - colorPos.left,
+          colorPos.bottom - colorPos.top),
+        });
+      } else if (id === 1) {
+        viewer.addOverlay({
+        element: selBox,
+        location: new OpenSeadragon.Rect(
+          verifyPos.left,
+          verifyPos.top,
+          verifyPos.right - verifyPos.left,
+          verifyPos.bottom - verifyPos.top),
+        });
+      }
 
       if (id === 0) {
         colorOverlay = true;
@@ -268,24 +295,10 @@
     }
   }
 
-  $: if (viewer && !viewer.isOpen()) {
-    // console.log($processState.artStacks[0].colorTargetImage);
-    console.log("New Image");
-    let temp = new Image();
-
-    temp.src = $processState.artStacks[0].colorTargetImage?.dataURL;
-    imageUrl = temp.src;
-
-    viewer.open({
-      type: "image",
-      url: imageUrl,
-    });
-  }
-
   let root = document.documentElement;
 
   // ----------------------------------------
-  $: if (colorTarget && !colorOverlay) {
+  $: if (colorTarget && !colorOverlay && viewerOpen) {
     console.log("Color Target");
     setTimeout(() => {
       addOverlay(0);
@@ -323,7 +336,7 @@
   }
 
   // --------------------------------------
-  $: if (verifyTarget && !verifyOverlay) {
+  $: if (verifyTarget && !verifyOverlay && viewerOpen) {
     console.log("Verify Target");
     setTimeout(() => {
       addOverlay(1);
@@ -362,6 +375,44 @@
     if (gridBox) {
       gridBox.style.gridTemplateColumns = `repeat(${verifyTarget.cols}, auto)`;
     }
+  }
+
+  //Function to be ran after changes are made to the coordinate inputs in ColorTarget.svelte
+  //Checks the new coordinate values and updates to box accordingly
+  export function updateCoords() {
+    let overlay = viewer.getOverlayById(`sBox-0`);
+
+    let box = new OpenSeadragon.Rect(
+      colorPos.left,
+      colorPos.top,
+      colorPos.right - colorPos.left,
+      colorPos.bottom - colorPos.top
+    );
+
+    overlay.update(box);
+    overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+  }
+
+  //Same as updateCoords() for the VerifyTarget
+  export function updateVerifyCoords() {
+    let overlay = viewer.getOverlayById(`sBox-1`);
+
+    let box = new OpenSeadragon.Rect(
+      verifyPos.left,
+      verifyPos.top,
+      verifyPos.right - verifyPos.left,
+      verifyPos.bottom - verifyPos.top
+    );
+
+    overlay.update(box);
+    overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+  }
+
+  export function getResolution() {
+    var coordpoint = viewer.viewport.viewportToImageCoordinates(
+      new OpenSeadragon.Point(1, 0)
+    );
+    return coordpoint.x;
   }
 </script>
 
