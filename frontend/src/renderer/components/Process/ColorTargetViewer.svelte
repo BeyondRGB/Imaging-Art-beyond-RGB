@@ -104,7 +104,7 @@
   }
 
   // Close the viewer once processing starts
-  $: if ($processState.currentTab === 5) {
+  $: if ($processState.currentTab === 6) {
     viewer.close();
     viewerOpen = false;
   }
