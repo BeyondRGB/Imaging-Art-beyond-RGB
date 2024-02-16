@@ -6,7 +6,7 @@
   let selected = "None";
 
   $: if ($processState.currentTab === 4 && !$processState.completedTabs[4]) {
-    $processState.completedTabs[3] = true;
+    $processState.completedTabs[4] = true;
   }
 
   $: if (selected) {

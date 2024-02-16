@@ -28,7 +28,7 @@
     const getAllImages = function () {
         let allImages = [];
         each(imageStack, function (field) {
-            if(!isEmpty(field)) {
+            if(!isEmpty(field) && !isEmpty(field[0])) {
                 allImages.push(field[0]);
             }
         });
