@@ -30,6 +30,7 @@ export const customRefData = writable({
 export const processState = writable({
   batch : false,
   processType: "Single",
+  artImageCount: 1,
   currentTab: 0,
   completedTabs: [false, false, false, false, false, false],
   pipelineComplete: false,
@@ -80,7 +81,9 @@ export const batchProcessState = writable({
 
 export function resetProcess() {
   processState.set({
+    batch: false,
     processType: "Single",
+    artImageCount: 1,
     currentTab: 0,
     completedTabs: [false, false, false, false, false, false],
     pipelineComplete: false,

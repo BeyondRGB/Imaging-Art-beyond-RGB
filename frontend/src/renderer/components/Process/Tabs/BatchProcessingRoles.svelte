@@ -14,15 +14,17 @@
     let validationError = null;
 
     // this helps force a rerender once the imageStack has been reset
-    $:if ($processState.currentTab === 2) {
+    $:if ($processState.currentTab === 3) {
         imageStack = get($processState, 'artStacks[0].fields');
-       
-        if(getAllImages().length !== 0){
-            artImageCount = (getAllImages().length - 6) / 2
-        }else {
-            artImageCount= 1;
+        
+    }
+    // get art image count after images are updated but before we render this screen.
+    $:if ($processState.currentTab ===2){
+        if($processState.imageFilePaths.length >= 6 && $processState.imageFilePaths.length <=8  ){
+            artImageCount = 1;
+        }else if ( $processState.imageFilePaths.length > 8){
+            artImageCount = Math.ceil(($processState.imageFilePaths.length - 6) / 2);
         }
-
     }
 
     const getAllImages = function () {
