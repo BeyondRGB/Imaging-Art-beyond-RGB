@@ -1,0 +1,26 @@
+{
+	"name": "your-project-name",
+	"version-string": "0.0.1",
+	"builtin-baseline": "9f03078bdcbab3ad8c1e3927c40c3fb48e42501f",
+	"dependencies": [
+		"lcms",
+		"libraw",
+		"tiff",
+		"websocketpp",
+		"asio",
+		"libpng",
+		"cppcodec",
+		"jsoncons",
+		{
+			"name": "opencv4",
+			"default-features": false,
+			"features": []
+		}
+	],
+	"overrides": [
+		{
+			"name": "jsoncons",
+			"version": "0.170.2"
+		}
+	]
+}

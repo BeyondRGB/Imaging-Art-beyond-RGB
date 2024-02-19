@@ -5,6 +5,11 @@ export const currentPage = writable(null);
 export const appSettings = writable({ theme: false, sideNav: true });
 export const modal = writable(null);
 
+export const batchImagesA = writable(['E:\\BeyondRGBPics\\picasso_1_A.ARW']);
+export const batchImagesB = writable(['E:\\BeyondRGBPics\\picasso_1_B.ARW']);
+
+
+
 export const viewState = writable({
   projectKey: null,
 
@@ -23,8 +28,11 @@ export const customRefData = writable({
   verification: null
 });
 export const processState = writable({
+  batch : false,
+  processType: "Single",
+  artImageCount: 1,
   currentTab: 0,
-  completedTabs: [false, false, false, false],
+  completedTabs: [false, false, false, false, false, false],
   pipelineComplete: false,
   destDir: "",
   imageFilePaths: [],
@@ -57,10 +65,27 @@ export const processState = writable({
     },]
 });
 
+export const batchProcessState = writable({
+  artImagesA: [],
+  artImagesB: [],
+  artImageOutputUrls: [],
+  proccessingImages: {
+    targetA: [],
+    targetB: [],
+    flatfieldA: [],
+    flatfieldB: [],
+    darkfieldA: [],
+    darkfieldB: [],
+  },
+})
+
 export function resetProcess() {
   processState.set({
+    batch: false,
+    processType: "Single",
+    artImageCount: 1,
     currentTab: 0,
-    completedTabs: [false, false, false, false],
+    completedTabs: [false, false, false, false, false, false],
     pipelineComplete: false,
     destDir: "",
     imageFilePaths: [],

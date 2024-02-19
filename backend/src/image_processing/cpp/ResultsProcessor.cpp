@@ -15,6 +15,7 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
 
     // Generate the file names to be used for output
     this->CM_f_name = this->build_output_name("CM");
+    this->CM_target_f_name = this->build_output_name("CM_target");
     this->SP_f_name = this->build_output_name("SP");
     this->Pro_f_name = this->build_output_name("","btrgb");
 
@@ -48,6 +49,14 @@ void ResultsProcessor::output_images(btrgb::ArtObject* images){
     images->outputImageAs(btrgb::TIFF, CM_IMAGE_KEY, this->CM_f_name);
     }catch(std::exception e){
         std::cerr << "Failed to write CM_Image: " << e.what() << std::endl; 
+    }
+
+    try {
+        // Write CM Calibrated Image
+        images->outputImageAs(btrgb::TIFF, "ColorManagedTarget", this->CM_target_f_name);
+    }
+    catch (std::exception e) {
+        std::cerr << "Failed to write CM_Image: " << e.what() << std::endl;
     }
 
     // Write Spectral Image
@@ -175,6 +184,7 @@ void ResultsProcessor::set_formater(FormatType type){
 
 void ResultsProcessor::write_formated_results(std::string file_name, FormatType format_type, CalibrationResults *results_obj, ResultObjType result_type){
     std::ofstream f_stream;
+    f_stream << std::setprecision(16);
     f_stream.open(this->output_dir + file_name);
     this->set_formater(format_type);
     this->formater->write_format(f_stream, results_obj, result_type);

@@ -118,9 +118,48 @@ void Pipeline::run() {
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
 
     std::string out_dir;
-    try{
-        out_dir = this->get_output_directory();}
-    catch(...) {return;}
+
+    std::string art_image;
+
+    bool batch = this->process_data_m->get_bool("batch");
+
+    //Gets the name of the Art image to name output directories
+    Json image_array = this->process_data_m->get_array(key_map[DataKey::IMAGES]);
+    Json obj = image_array.obj_at(0);
+    std::string art_file = obj.get_string(key_map[DataKey::ART]);
+    std::filesystem::path p(art_file);
+    std::string filenameWithoutExtension = p.stem().string();
+    size_t lastUnderscorePosition = filenameWithoutExtension.rfind('_');
+    if (lastUnderscorePosition != std::string::npos) {
+        filenameWithoutExtension = filenameWithoutExtension.substr(0, lastUnderscorePosition);
+    }
+
+
+
+    if (batch) {
+        try {
+            out_dir = this->process_data_m->get_string("outputDirectory");
+            std::filesystem::path fsPath(out_dir);
+            std::filesystem::path parentPath = fsPath.parent_path();
+            out_dir = parentPath.string();
+            out_dir = out_dir + '/' + filenameWithoutExtension;
+
+            std::filesystem::create_directories(out_dir);
+
+
+        }
+        catch (const ParsingError&) {
+
+        }
+    }
+    else {
+        try {
+            out_dir = this->get_output_directory(filenameWithoutExtension);
+        }
+        catch (...) {
+            return;
+        }
+    }
 
 
     /* Create ArtObject */
@@ -130,7 +169,7 @@ void Pipeline::run() {
         std::string ref_file = this->get_ref_file(target_data);
         IlluminantType illuminant = this->get_illuminant_type(target_data);
         ObserverType observer = this->get_observer_type(target_data);
-        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); 
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir,batch)); 
     }catch(RefData_FailedToRead e){
         this->report_error(this->get_process_name(), e.what());
         return;
@@ -191,7 +230,7 @@ void Pipeline::run() {
 }
 
 
-std::string Pipeline::get_output_directory() {
+std::string Pipeline::get_output_directory(std::string artImage) {
     
 	std::time_t now = std::time(0);
 	std::tm *ltm = std::localtime(&now);
@@ -200,6 +239,7 @@ std::string Pipeline::get_output_directory() {
     try {
         std::string base_dir = this->process_data_m->get_string("destinationDirectory");
         std::string dir = base_dir + "/" + OUTPUT_PREFIX + date_string + "_" + time_string + "/";
+        dir = dir + "/" + artImage;
         std::filesystem::create_directories(dir);
         return dir;
     }

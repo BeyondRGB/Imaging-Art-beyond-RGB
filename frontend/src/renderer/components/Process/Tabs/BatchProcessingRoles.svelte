@@ -1,17 +1,30 @@
+
 <script lang="ts">
-    import { processState } from "@util/stores";
+    import { processState, batchProcessState, batchImagesA, batchImagesB } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
 
     let imageStack = get($processState, 'artStacks[0].fields');
+    let artImageStackA = get($batchImagesA);
+    let artImageStackB = get($batchImagesB, 'artStacks[0].fields.imageB');
+    let artImageCount = 1;
+
     let rerenderToggle = false;
     let validationError = null;
 
     // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 3) {
         imageStack = get($processState, 'artStacks[0].fields');
-
+        
+    }
+    // get art image count after images are updated but before we render this screen.
+    $:if ($processState.currentTab ===2){
+        if($processState.imageFilePaths.length >= 6 && $processState.imageFilePaths.length <=8  ){
+            artImageCount = 1;
+        }else if ( $processState.imageFilePaths.length > 8){
+            artImageCount = Math.ceil(($processState.imageFilePaths.length - 6) / 2);
+        }
     }
 
     const getAllImages = function () {
@@ -39,6 +52,8 @@
     };
 
     const validate = function () {
+        console.log($batchProcessState)
+        console.log(imageStack)
         if(showTargetDropZones() && (isEmpty(imageStack?.targetA) || isEmpty(imageStack?.targetB)) ||
             isEmpty(imageStack?.imageA) || isEmpty(imageStack?.imageB) ||
             isEmpty(imageStack?.flatfieldA) || isEmpty(imageStack?.flatfieldB) ||
@@ -51,6 +66,7 @@
     };
 
     const submitSpecFileRoles = function (skipOptionalFiltering) {
+        validate()
         if(validationError = validate()) {
             return;
         }
@@ -68,14 +84,31 @@
 <main>
     {#key rerenderToggle}
         <panel>
-            <h1>Specify Image Roles</h1>
+            <h1>Specify Image Roles Batch</h1>
             <p>Drag and drop each image into its appropriate role</p>
             <div>
-            <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
-            <div class="btnGroup">
-                <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+                <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+                <div class="btnGroup">
+                    <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+                </div>
+                <div class="centerFlexBox">
+                <div id="imageStack">
+                    <div class="inputGroup">
+                        <div class="imageLetter">A</div>
+                        <div class="imageLetter">B</div>
+                    </div>
+                    <div class="text">Object</div>
+                    {#each Array(artImageCount) as _, index (index)}
+                    <div class="inputGroup">
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA[index]} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[index]} singleItem={true} showError={!!validationError}/></div>
+                    </div>
+                    {/each}
+                    <br>
+                </div>
+                
             </div>
-        </div>
+            </div>
         </panel>
         <right>
             <div class="centerFlexBox">
@@ -84,18 +117,16 @@
                         <div class="imageLetter">A</div>
                         <div class="imageLetter">B</div>
                     </div>
-                    <div class="text">Object</div>
+                    <!-- <div class="text">Object</div>
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA[0]} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[0]} singleItem={true} showError={!!validationError}/></div>
-                    </div>
-                    {#if $processState.imageFilePaths && showTargetDropZones()}
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true} showError={!!validationError}/></div>
+                    </div> -->
                         <div class="text">Target</div>
                         <div class="inputGroup">
                             <div class="cell"><Dropbox type="image" bind:items={imageStack.targetA} singleItem={true} showError={!!validationError}/></div>
                             <div class="cell"><Dropbox type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError}/></div>
                         </div>
-                    {/if}
                     <div class="text">FlatField</div>
                     <div class="inputGroup">
                         <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldA} singleItem={true} showError={!!validationError}/></div>
