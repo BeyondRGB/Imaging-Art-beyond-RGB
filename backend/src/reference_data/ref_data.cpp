@@ -330,19 +330,36 @@ cv::Mat RefData::xyz_as_matrix(){
 
 bool RefData::is_custom(std::string file){
 	for(int i = 0; i < REF_COUNT; i++){
-		if(file == ref_files[i]){
-			return false;
+		std::string new_Ref_Data = REF_DATA_PATH + file;
+
+		std::string originalFilePath = file;
+		std::string newFilePath = REF_DATA_PATH + file;
+
+		// Copy the file
+		std::ifstream src(originalFilePath, std::ios::binary);
+		std::ofstream dst(newFilePath, std::ios::binary);
+
+		if (!src) {
+			std::cerr << "Error: Unable to open source file for copying: " << originalFilePath << std::endl;
+			return false; // or handle error appropriately
+		}
+
+		if (!dst) {
+			std::cerr << "Error: Unable to open destination file for copying: " << newFilePath << std::endl;
+			
+			return false; // or handle error appropriately
+		}
+
+		dst << src.rdbuf(); // Copy contents
+
+		src.close();
+		dst.close();
+		if (file.find("Reflectance_Data.csv") != std::string::npos) {
+			std::string file_path = path + file;
+			this->read_in_data(file_path);
+			RefData* ref = new RefData(file_path);
+			this->init_color_patches();
 		}
 	}
 	return true;
-}
-
-RefData refData("C:\\Users\\Josh Greco\\Documents\\BeyondRGB\\Imaging-Art-beyond-RGB\\backend\\res\\ref_data\\ref_data.txt");
-
-// To add a new reference file
-if (refData.addCustomRefData("ref_data.txt")) {
-	std::cout << "New reference data added successfully." << std::endl;
-}
-else {
-	std::cout << "Failed to add new reference data." << std::endl;
 }
