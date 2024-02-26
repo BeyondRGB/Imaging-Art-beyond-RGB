@@ -53,7 +53,7 @@
       <button on:click={() => handleClick("Process")} class="homeBtn">
         <div class="btnTitle">
           <ApertureIcon size="1.25x" />
-          <h2>Proccess</h2>
+          <h2>Process</h2>
         </div>
 
         <span> Process a new RAW image set </span>

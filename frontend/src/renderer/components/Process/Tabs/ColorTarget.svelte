@@ -100,10 +100,14 @@
     $processState.colorTargetID = Math.floor(Math.random() * 999999999);
     console.log($processState);
 
-    let targetImage = $processState.artStacks[0].fields.imageA[0].name;
-    if ($processState.artStacks[0].fields.targetA.length !== 0) {
+    let targetImage = "";
+    
+    if ($processState.artStacks[0].fields.targetA[0].length !== 0) {
       console.log("Found Target");
       targetImage = $processState.artStacks[0].fields.targetA[0].name;
+    }
+    else{
+      targetImage = $processState.artStacks[0].fields.imageA[0].name; 
     }
 
     let msg = {
@@ -114,7 +118,7 @@
       },
     };
     if (
-      $processState.artStacks[0].fields.imageA[0].name.length > 2 &&
+     // $processState.artStacks[0].fields.imageA[0].name.length > 2 &&
       !loading
     ) {
       console.log("Getting Color Target Preview");
@@ -124,7 +128,7 @@
     }
   }
 
-  $: if ($processState.currentTab === 5) {
+  $: if ($processState.currentTab === 6) {
     console.log("Update");
     console.log($processState);
     update();
@@ -132,7 +136,7 @@
   }
 
   $: if (
-    $processState.currentTab === 4 &&
+    $processState.currentTab === 5 &&
     $processState.artStacks[0].colorTargetImage?.filename?.length === 0 &&
     $processState.artStacks[0].fields.imageA[0] != null
   ) {
@@ -310,9 +314,9 @@
     colorTarget?.whitePatch?.row &&
     colorTarget?.whitePatch?.col
   ) {
-    $processState.completedTabs[4] = true;
+    $processState.completedTabs[5] = true;
   } else {
-    $processState.completedTabs[4] = false;
+     $processState.completedTabs[5] = false;
   }
 
   $: if (colorTarget) {

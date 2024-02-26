@@ -2,7 +2,7 @@
 
 namespace btrgb {
 
-    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory) {
+    ArtObject::ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory, bool batch) {
         this->ref_data = new RefData(ref_file, ilumination, observer);
 
         bool is_windows = output_directory.front() != '/';
@@ -12,6 +12,7 @@ namespace btrgb {
             this->output_directory = output_directory + "/";
         else
             this->output_directory = output_directory;
+        this->batch = batch;
     }
 
     /*
@@ -74,6 +75,29 @@ namespace btrgb {
         }catch(ArtObj_ImageDoesNotExist){
             throw ArtObj_ImageDoesNotExist();
         }catch(ColorTarget_MissmatchingRefData){
+            throw ColorTarget_MissmatchingRefData();
+        }
+    }
+
+    std::unique_ptr<ColorTarget> ArtObject::get_target_pointer(std::string imageName, TargetType type) {
+        try {
+            Image* im = this->getImage(imageName);
+            if (im == nullptr) { // Assuming getImage returns nullptr when the image doesn't exist
+                return nullptr; // Image not found, return nullptr
+            }
+            if (type == TargetType::VERIFICATION_TARGET) {
+                if (nullptr == this->verification_ref)
+                    throw ArtObj_VerificationDataNull();
+                return std::make_unique<ColorTarget>(im, this->verification_data, this->verification_ref);
+            }
+            else {
+                return std::make_unique<ColorTarget>(im, this->target_data, this->ref_data);
+            }
+        }
+        catch (ArtObj_ImageDoesNotExist) {
+            return nullptr; // Image not found, return nullptr
+        }
+        catch (ColorTarget_MissmatchingRefData) {
             throw ColorTarget_MissmatchingRefData();
         }
     }
@@ -206,6 +230,10 @@ namespace btrgb {
 
     std::string ArtObject::get_output_dir(){
         return this->output_directory;
+    }
+
+    bool ArtObject::get_batch() {
+        return this->batch;
     }
 
     void ArtObject::init_verification_data(TargetData verification_data){
