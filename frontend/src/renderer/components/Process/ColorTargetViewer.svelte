@@ -82,7 +82,7 @@
     linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
   }
 
-  $: if ($processState.currentTab === 4) {
+  $: if ($processState.currentTab === 5) {
     if (viewer && !viewer.isOpen()) {
       let temp = new Image();
 
@@ -104,7 +104,7 @@
   }
 
   // Close the viewer once processing starts
-  $: if ($processState.currentTab === 5) {
+  $: if ($processState.currentTab === 6) {
     viewer.close();
     viewerOpen = false;
   }

@@ -5,6 +5,9 @@
     "baseUrl": "./",
     "allowJs": true,
     "outDir": "public",
+    "target": "es6",
+    "lib": ["es6", "dom"],
+    "types": ["cypress", "node"],
     "paths": {
       "@root/*": [
         "src/renderer/*"
@@ -26,7 +29,8 @@
   "include": [
     "./src/renderer/**/*",
     "vite.config.ts",
-    "global.d.ts"
+    "global.d.ts",
+    "**/*.ts"
   ],
   "exclude": [
     "./node_modules/*",
