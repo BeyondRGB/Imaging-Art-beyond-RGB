@@ -142,7 +142,7 @@
 
 <style lang="postcss" global>
   .reports-main {
-    @apply flex flex-col w-full h-full overflow-y-scroll pt-[20vh];
+    @apply flex flex-col w-full h-full overflow-y-scroll ;
   }
   .art {
     @apply flex flex-col relative;
@@ -176,13 +176,13 @@
     @apply text-xl;
   }
   .report-header {
-    width: calc(100% - 6rem);
+    width: 100%;
     height: 20vh;
-    @apply fixed top-0 bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
+    @apply sticky top-0 bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
             transition-all delay-150 duration-300 ease-in justify-between;
   }
   .close-report {
-    @apply absolute top-0 right-0;
+    @apply absolute top-5 right-0;
   }
   .report-header.show {
     @apply translate-y-0;
