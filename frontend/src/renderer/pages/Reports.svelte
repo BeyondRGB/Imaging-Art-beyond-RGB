@@ -4,6 +4,7 @@
     sendMessage,
     messageStore,
     currentPage,
+    processState,
   } from "@util/stores";
   import Heatmap from "@components/Charts/HeatMap.svelte";
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
@@ -25,6 +26,24 @@
     sendMessage(JSON.stringify(msg));
   }
 
+  function colorManagedTargetImage() {
+    let randID = Math.floor(Math.random() * 999999);
+    $processState.CMTID = randID;
+    let msg = {
+      RequestID: randID,
+      RequestType: "ColorManagedImage",
+      RequestData: {
+        name: $viewState.projectKey,
+        target_requested: true,
+      },
+    };
+
+    console.log("Fetching Color Managed Target Image");
+    console.log(msg);
+    //loading = true;
+    sendMessage(JSON.stringify(msg));
+  }
+
   let toggle = false;
   $: if (
     $currentPage === "Reports" &&
@@ -33,6 +52,7 @@
   ) {
     // CALL FOR REPORTS
     toggle = true;
+    colorManagedTargetImage();
     getReports();
   }
   let mainfilePath;
@@ -73,6 +93,22 @@
     };
     toggle = false;
     mainfilePath = null;
+  }
+
+  let currentZoom=1;let stepSize=0.05;
+  function zoomImage(direction, id) { 
+      let newZoom = currentZoom + direction * stepSize; 
+    
+      // Limit the zoom level to the minimum and maximum values 
+      if (newZoom < 1 || newZoom > 3) { 
+          return; 
+      } 
+    
+      currentZoom = newZoom; 
+    
+      // Update the CSS transform of the image to scale it 
+      let image = document.querySelector('#'+id); 
+      image.style.transform = 'scale(' + currentZoom + ')'; 
   }
 </script>
 
@@ -119,7 +155,23 @@
               data={$viewState.reports.calibration}
               matrixName={"CM DeltaE Values"}
             />
+            <div style="display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding-top:3rem;
+            height: 525px;
+            width:auto;
+            max-width:45vw;
+            overflow:hidden;" on:mousewheel={function (event) { 
+              // Zoom in or out based on the scroll direction 
+              let direction = event.deltaY > 0 ? -1 : 1; 
+              zoomImage(direction, "zoom-test2"); 
+          }}>
+            <img id="zoom-test2"  src={$viewState.colorManagedTargetImage.dataURL} alt="Color Managed Target Image"/>   
           </div>
+          </div>
+          <!-- <div class="report-item">
+          </div> -->
           <div class="report-item">
             <!-- AB vector chart -->
             <VectorChart data={$viewState.reports.calibration} matrix={"CM"} ab={true}></VectorChart>
@@ -203,7 +255,6 @@
   .verificationBar {
     @apply w-full h-full bg-gray-500 flex flex-col p-2 rounded-xl;
   }
-
   .new-window-button{
     align-self: baseline;margin-top: 5px;
   }
