@@ -78,8 +78,6 @@
     //cut off the .btrgb file portion to just get the directory
     defaultPath = defaultPath.replace(pattern, "\\");
     //yields something like $processState.destDir + "/BeyondRGB_2024-02-01_20-36-12\\", so replace this other forward slash
-    let type = "File";
-    let filter = "None";
     await window.electron.openFileExplorer({directory:defaultPath})
   }
 </script>
@@ -89,7 +87,7 @@
     <div class="completedBox">
       <div class="completedOptions">
         <button on:click={() => handleComplete(0)}>View Image</button>
-        <button on:click={async () => {await openFileExplorer();}}
+        <button on:click={() => {openFileExplorer()}}
           >Open File Location</button
         >
         <button on:click={() => handleComplete(1)}>Process Another Image</button

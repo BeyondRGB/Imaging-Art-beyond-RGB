@@ -68,6 +68,8 @@ ipcMain.handle('ipc-openFileExplorer', async (event, arg) => {
 });
 
 
+//Opens a "file selector" as a child process of BeyondRGB application.
+//Intended for user to select files/directories during Processing setup
 ipcMain.handle('ipc-Dialog', async (event, arg) => {
   let properties = ['openFile', 'multiSelections'];
   let filters = [];
