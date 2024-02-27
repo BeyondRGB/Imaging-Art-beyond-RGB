@@ -91,14 +91,20 @@
       calibration: null,
       verification: null,
     };
+    $viewState.colorManagedTargetImage = { dataURL: "", name: "Waiting..." };
     toggle = false;
     mainfilePath = null;
   }
 
+  function detectZoom(event){ 
+   // Zoom in or out based on the scroll direction 
+    let direction = event.deltaY > 0 ? -1 : 1; 
+    zoomImage(direction); 
+  }
+
   let currentZoom=1;let stepSize=0.05;
-  function zoomImage(direction, id) { 
+  function zoomImage(direction) { 
       let newZoom = currentZoom + direction * stepSize; 
-    
       // Limit the zoom level to the minimum and maximum values 
       if (newZoom < 1 || newZoom > 3) { 
           return; 
@@ -107,8 +113,8 @@
       currentZoom = newZoom; 
     
       // Update the CSS transform of the image to scale it 
-      let image = document.querySelector('#'+id); 
-      image.style.transform = 'scale(' + currentZoom + ')'; 
+      let image = document.querySelector("#cm-target-image"); 
+      image.style.transform = "scale(" + currentZoom + ')'; 
   }
 </script>
 
@@ -155,19 +161,8 @@
               data={$viewState.reports.calibration}
               matrixName={"CM DeltaE Values"}
             />
-            <div style="display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            padding-top:3rem;
-            height: 525px;
-            width:auto;
-            max-width:45vw;
-            overflow:hidden;" on:mousewheel={function (event) { 
-              // Zoom in or out based on the scroll direction 
-              let direction = event.deltaY > 0 ? -1 : 1; 
-              zoomImage(direction, "zoom-test2"); 
-          }}>
-            <img id="zoom-test2"  src={$viewState.colorManagedTargetImage.dataURL} alt="Color Managed Target Image"/>   
+            <div class="target-image-container" on:mousewheel={detectZoom}>
+            <img id="cm-target-image" draggable=true src={$viewState.colorManagedTargetImage.dataURL} alt="Color Managed Target Image"/>   
           </div>
           </div>
           <!-- <div class="report-item">
@@ -257,5 +252,15 @@
   }
   .new-window-button{
     align-self: baseline;margin-top: 5px;
+  }
+  .target-image-container{
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    padding-top:3rem;
+    height: auto;
+    width:650px;
+    max-width:45vw;
+    overflow:hidden;
   }
 </style>
