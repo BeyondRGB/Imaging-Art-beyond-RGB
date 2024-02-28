@@ -135,7 +135,6 @@ void Pipeline::run() {
     }
 
 
-
     if (batch) {
         try {
             out_dir = this->process_data_m->get_string("outputDirectory");
@@ -143,11 +142,18 @@ void Pipeline::run() {
             std::filesystem::path parentPath = fsPath.parent_path();
             out_dir = parentPath.string();
             out_dir = out_dir + '/' + filenameWithoutExtension;
+            std::string original_dir = out_dir;
 
+            std::filesystem::path path{ out_dir };
+            int counter = 1;
+            while (std::filesystem::exists(path)) {
+                // Append a number to make the directory unique
+                out_dir = original_dir + "_" + std::to_string(counter++);
+                path = std::filesystem::path{ out_dir };
+            }
             std::filesystem::create_directories(out_dir);
-
-
         }
+   
         catch (const ParsingError&) {
 
         }
@@ -231,9 +237,9 @@ void Pipeline::run() {
 
 
 std::string Pipeline::get_output_directory(std::string artImage) {
-    
-	std::time_t now = std::time(0);
-	std::tm *ltm = std::localtime(&now);
+
+    std::time_t now = std::time(0);
+    std::tm* ltm = std::localtime(&now);
     std::string date_string = btrgb::get_date("-");
     std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
@@ -247,7 +253,7 @@ std::string Pipeline::get_output_directory(std::string artImage) {
         this->report_error("[Pipeline]", "Process request: invalid or missing \"destinationDirectory\" field.");
         throw;
     }
-    catch(const std::filesystem::filesystem_error& err) {
+    catch (const std::filesystem::filesystem_error& err) {
         this->report_error("[Pipeline]", "Failed to create or access output directory.");
         throw;
     }
