@@ -10,7 +10,41 @@
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import FileSelector from "@components/FileSelector.svelte";
   import VectorChart from "@components/Charts/VectorChart.svelte";
+  import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
+  import LineChart from "@components/Charts/LineChart.svelte";
+  import Switch from "@components/Switch.svelte";
+
   let open = false;
+  let spectrumData;
+   let brushShow = false;
+  let stackCurves = false;
+  let size;
+  let trueSize;
+  let shadowPos = { left: 0, top: 0 };
+  let trueShadowPos = { left: "0px", top: "0px" };
+  let expand = false;
+
+  
+  let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
+  
+  function getData() {
+    console.log("Fetching Spec Data");
+    if ($viewState.projectKey !== null) {
+      let msg = {
+        RequestID: Math.floor(Math.random() * 999999999),
+        RequestType: "SpectralPicker",
+        RequestData: {
+          name: $viewState.projectKey,
+          coordinates: {
+            x: shadowPos.left,
+            y: shadowPos.top,
+          },
+          size: size,
+        },
+      };
+      sendMessage(JSON.stringify(msg));
+    }
+  }
 
   function getReports() {
     let rand = Math.floor(Math.random() * 99999999);
@@ -73,6 +107,10 @@
         } else if (temp["ResponseData"]["reportType"] === "Verification") {
           $viewState.reports.verification = temp["ResponseData"]["reports"];
         }
+		  else if (temp["ResponseType"] === "SpectralPicker") {
+            console.log("Spectrum Data From Server");
+            spectrumData = temp["ResponseData"]["spectrum"];
+      }
       }
     } catch (e) {
       console.log(e);
@@ -162,7 +200,49 @@
               matrixName={"CM DeltaE Values"}
             />
             <div class="target-image-container" on:mousewheel={detectZoom}>
-            <img id="cm-target-image" draggable=true src={$viewState.colorManagedTargetImage.dataURL} alt="Color Managed Target Image"/>   
+            <img id="cm-target-image" draggable=true src={$viewState.colorManagedTargetImage.dataURL} alt="Color Managed Target Image"/>
+				<div class="floatBox" class:notExpanded={!"expand"}>
+					<div class="handle" on:click={() =>
+						(expand = !expand)}>
+						{expand ? ">" : "<"}
+					</div>
+					<div class="box" id="brush">
+						<Switch label="Enable Spectral Picker" bind:checked={brushShow} />
+						<Switch label="Stack Spectral Curves" bind:checked={stackCurves} />
+						<div class="sizeSettings">
+							Set Brush Size:
+							<div class="flex justify-center items-center gap-1">
+								<input
+								  class="brushBar"
+								  type="range"
+								  min="0.001"
+								  max="0.03"
+								  step=".0005"
+								  bind:value={size}
+                  />
+								<div class="pixSize">
+									<span>{parseFloat(trueSize).toFixed(1)}</span>
+									<span>px</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="chart">
+						<LineChart
+						  bind:data={spectrumData}
+						  bind:wavelengthArray
+						  bind:trueShadowPos
+						  stack={stackCurves}
+              />
+					</div>
+				</div>
+				<SpecPickViewer
+				  bind:shadowPos
+				  bind:trueShadowPos
+				  bind:trueSize
+				  bind:show={brushShow}
+				  bind:size
+          />
           </div>
           </div>
           <!-- <div class="report-item">
@@ -262,5 +342,44 @@
     width:650px;
     max-width:45vw;
     overflow:hidden;
+  }
+
+  .floatBox {
+    border: 1px solid red;
+    @apply absolute h-auto w-[30vw] bg-gray-500/75 z-[49] right-0 transition-all duration-500
+            translate-x-0 border border-gray-700 rounded-bl-xl;
+  }
+  .brushBar {
+    @apply w-full h-2 rounded-xl;
+  }
+  .brushBar::-webkit-slider-thumb {
+    @apply w-4 h-4 bg-gray-600 cursor-pointer rounded-full outline outline-1
+          outline-gray-200;
+  }
+
+  .pixSize {
+    @apply flex bg-gray-800/50 gap-1 p-1 rounded-lg;
+  }
+
+    .chart {
+    @apply bg-gray-600 m-2 p-2 pb-4 rounded-lg pr-4;
+  }
+
+  .box {
+    @apply m-2 shadow-md px-2 pt-1 bg-gray-600 rounded-lg p-2;
+  }
+
+    .numberInput {
+    @apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
+          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
+  }
+  .handle {
+    border: 1px solid red;
+    @apply bg-gray-500/75 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
+							text-2xl rounded-l-full border border-r-[0px] border-gray-800;
+  }
+
+  .sizeSettings {
+    @apply flex justify-between items-center text-base pl-4;
   }
 </style>
