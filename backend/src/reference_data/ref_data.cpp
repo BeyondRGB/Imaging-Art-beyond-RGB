@@ -5,7 +5,9 @@
 
 
 
-RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_type) {
+RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverType so_type) {
+	dataFilePath = REF_DATA_PATH;
+	loadRefDataList(); // Load existing reference data files list
 	this->observer = new StandardObserver(so_type);
 	this->illuminants = new Illuminants(illum_type);
 	this->white_pts = new WhitePoints(so_type, illum_type);
@@ -22,21 +24,36 @@ RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_ty
 	this->init_color_patches();
 }
 
-RefData::RefDataFolder(std::string folder) {
+void RefData::RefDataFolder(const std::string folder) {
 	std::string path = REF_DATA_PATH;
-	this->f_name = file;
-	//create a list of files in the folder that end in *Refectance_Data.csv
-	//for each file in the list, create a new RefData object
+	// Assuming path is defined as std::string path = REF_DATA_PATH; and is a correct path to the folder
+	// Assuming REF_COUNT is the total number of files to consider
+	// Assuming folder is an actual object that can list or contain files, but this part is unclear in the provided code.
+	// You may need to adjust this part to fit how your application is supposed to access and list files in a directory.
 
 	for (int i = 0; i < REF_COUNT; i++) {
-		std::string file = ref_files[i];
-		if (file.find("Reflectance_Data.csv") != std::string::npos) {
-			std::string file_path = path + file;
+		// This assumes you have a way to access each file's name within REF_DATA_PATH.folder
+		// For demonstration, let's pretend folder[i] gives you each file name. You'll need to replace this logic with actual file listing code.
+		std::string file_name = REF_DATA_PATH + folder[i]; // Placeholder: Adjust with actual method to access file names
+
+		if (file_name.find("Reflectance_Data.csv") != std::string::npos) {
+			// Assuming 'path' is a directory path and 'file_name' is the name of the file
+			std::string file_path = path + file_name; // Correctly concatenate path and file name
+
+			// Append the file name to vector ref_files
+			ref_files.push_back(file_path);
+
+			// Read data from the selected file
 			this->read_in_data(file_path);
-			RefData* ref = new RefData(file_path);
+
+			// Assuming RefData constructor is expecting a file path
+			RefData* ref = new RefData(file_path); // If you're dynamically allocating, make sure to manage the memory properly
+
+			// Initialize color patches - note that this seems to be repeated for each file, which might be intended or might need adjustment
 			this->init_color_patches();
-		}	
+		}
 	}
+
 }
 
 RefData::~RefData() {
@@ -56,6 +73,14 @@ RefData::~RefData() {
 		delete[] this->color_patches[row]; /* array of pointers */
 	}
 	delete[] this->color_patches; /* array of double pointers */
+	
+	saveRefDataList(); // Save the current list of reference data files on destruction
+
+	if () {
+		delete observer;
+		delete illuminants;
+		delete white_pts;
+	}
 }
 
 IlluminantType RefData::get_illuminant(std::string illum_str){

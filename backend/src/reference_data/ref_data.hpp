@@ -30,32 +30,32 @@ class RefData: public CSVParser {
 	std::string dataFilePath;           // Path to the file where the reference list is saved
 
 public:
-	RefData(const std::string& file_path, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
+	RefData(const std::string& file, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
+
+	ColorPatch*** color_patches;
+	StandardObserver* observer = nullptr;
+	Illuminants* illuminants = nullptr;
+	WhitePoints* white_pts = nullptr;
+	std::string f_name;
+	int row_count;
+	int col_count;
+	bool is_custom;
+
 	~RefData();
 
 	bool addCustomRefData(const std::string& new_ref_data);
 	bool saveRefDataList() const;
 	bool loadRefDataList();
 
-	static IlluminantType get_illuminant(const std::string& illuminant_string);
-	static ObserverType get_observer(int observer_num);
-};
-RefData::RefData(const std::string& file_path, IlluminantType illum_type, ObserverType so_type) {
-	dataFilePath = file_path;
-	loadRefDataList(); // Load existing reference data files list
-}
 
-RefData::~RefData() {
-	saveRefDataList(); // Save the current list of reference data files on destruction
-}
 
-bool RefData::addCustomRefData(const std::string& new_ref_data) {
+bool RaddCustomRefData(const std::string& new_ref_data) {
 	// Add the new reference data file to the list
 	ref_files.push_back(new_ref_data);
 	return saveRefDataList(); // Save the updated list to file
 }
 
-bool RefData::saveRefDataList() const {
+bool saveRefDataList() const {
 	// Save the current list of reference data files to the specified data file
 	std::ofstream file_out(dataFilePath);
 	if (!file_out) {
@@ -71,7 +71,7 @@ bool RefData::saveRefDataList() const {
 	return true;
 }
 
-bool RefData::loadRefDataList() {
+bool loadRefDataList() {
 	// Load the list of reference data files from the specified data file
 	std::ifstream file_in(dataFilePath);
 	if (!file_in) {
@@ -229,6 +229,10 @@ bool RefData::loadRefDataList() {
 	 */
 	cv::Mat xyz_as_matrix();
 
+	void RefDataFolder(const std::string folder);
+
+	void read_in_data(std::string file_path);
+
 
 private:
 	/**
@@ -271,13 +275,7 @@ private:
 
 	bool is_custom(std::string file);
 
-	ColorPatch*** color_patches;
-	StandardObserver* observer = nullptr;
-	Illuminants* illuminants = nullptr;
-	WhitePoints* white_pts = nullptr;
-	std::string f_name;
-	int row_count;
-	int col_count;
+
 
 	
 };
