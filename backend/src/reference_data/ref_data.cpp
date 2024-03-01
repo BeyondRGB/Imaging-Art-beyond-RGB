@@ -5,12 +5,14 @@
 
 
 
-RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverType so_type) {
+RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverType so_type, bool batch) {
 	dataFilePath = REF_DATA_PATH;
 	loadRefDataList(); // Load existing reference data files list
 	this->observer = new StandardObserver(so_type);
 	this->illuminants = new Illuminants(illum_type);
 	this->white_pts = new WhitePoints(so_type, illum_type);
+	this->white_pts = new WhitePoints(so_type, illum_type);
+	this->batch = batch;
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	if(this->is_custom(file)){
@@ -76,7 +78,7 @@ RefData::~RefData() {
 	
 	saveRefDataList(); // Save the current list of reference data files on destruction
 
-	if () {
+	if (batch) {
 		delete observer;
 		delete illuminants;
 		delete white_pts;

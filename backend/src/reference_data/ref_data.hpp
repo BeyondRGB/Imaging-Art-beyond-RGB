@@ -30,7 +30,7 @@ class RefData: public CSVParser {
 	std::string dataFilePath;           // Path to the file where the reference list is saved
 
 public:
-	RefData(const std::string& file, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931);
+	RefData(const std::string& file, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931, bool batch);
 
 	ColorPatch*** color_patches;
 	StandardObserver* observer = nullptr;
@@ -40,6 +40,7 @@ public:
 	int row_count;
 	int col_count;
 	bool is_custom;
+	bool batch;
 
 	~RefData();
 
