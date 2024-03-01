@@ -10,6 +10,7 @@
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import FileSelector from "@components/FileSelector.svelte";
   import VectorChart from "@components/Charts/VectorChart.svelte";
+  import ImageViewer from "@root/components/ImageViewer.svelte";
   let open = false;
 
   function getReports() {
@@ -161,12 +162,10 @@
               data={$viewState.reports.calibration}
               matrixName={"CM DeltaE Values"}
             />
-            <div class="target-image-container" on:mousewheel={detectZoom}>
-            <img id="cm-target-image" draggable=true src={$viewState.colorManagedTargetImage.dataURL} alt="Color Managed Target Image"/>   
+            <div class="target-image-container">
+              <ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
+            </div>
           </div>
-          </div>
-          <!-- <div class="report-item">
-          </div> -->
           <div class="report-item">
             <!-- AB vector chart -->
             <VectorChart data={$viewState.reports.calibration} matrix={"CM"} ab={true}></VectorChart>
@@ -253,14 +252,8 @@
   .new-window-button{
     align-self: baseline;margin-top: 5px;
   }
-  .target-image-container{
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    padding-top:3rem;
-    height: auto;
-    width:650px;
-    max-width:45vw;
-    overflow:hidden;
+  .target-image-container {
+    height:450px;
+    @apply w-full bg-blue-600/25 relative items-center flex justify-center;
   }
 </style>

@@ -88,7 +88,7 @@
     <div class="right">
       <div class="image">
         <h4>{$processState.outputImage?.name}</h4>
-        <ImageViewer />
+        <ImageViewer srcUrl={$processState.outputImage?.dataURL} identifier={$processState.outputImage?.name}/>
       </div>
     </div>
   </div>
