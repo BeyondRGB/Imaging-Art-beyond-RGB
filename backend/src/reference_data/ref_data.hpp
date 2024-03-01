@@ -30,27 +30,17 @@ class RefData: public CSVParser {
 	std::string dataFilePath;           // Path to the file where the reference list is saved
 
 public:
-	RefData(const std::string& file, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931, bool batch);
+	RefData(const std::string& file, IlluminantType illum_type = IlluminantType::D50, ObserverType so_type = ObserverType::SO_1931, bool batch = false);
 
-	ColorPatch*** color_patches;
-	StandardObserver* observer = nullptr;
-	Illuminants* illuminants = nullptr;
-	WhitePoints* white_pts = nullptr;
-	std::string f_name;
-	int row_count;
-	int col_count;
-	bool is_custom;
-	bool batch;
+
 
 	~RefData();
 
-	bool addCustomRefData(const std::string& new_ref_data);
-	bool saveRefDataList() const;
-	bool loadRefDataList();
 
 
 
-bool RaddCustomRefData(const std::string& new_ref_data) {
+
+bool addCustomRefData(const std::string& new_ref_data) {
 	// Add the new reference data file to the list
 	ref_files.push_back(new_ref_data);
 	return saveRefDataList(); // Save the updated list to file
@@ -232,8 +222,6 @@ bool loadRefDataList() {
 
 	void RefDataFolder(const std::string folder);
 
-	void read_in_data(std::string file_path);
-
 
 private:
 	/**
@@ -275,6 +263,15 @@ private:
 	void init_color_patches();
 
 	bool is_custom(std::string file);
+
+	ColorPatch*** color_patches;
+	StandardObserver* observer = nullptr;
+	Illuminants* illuminants = nullptr;
+	WhitePoints* white_pts = nullptr;
+	std::string f_name;
+	int row_count;
+	int col_count;
+	bool batch;
 
 
 

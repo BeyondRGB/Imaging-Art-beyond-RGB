@@ -382,7 +382,7 @@ bool RefData::is_custom(std::string file){
 		src.close();
 		dst.close();
 		if (file.find("Reflectance_Data.csv") != std::string::npos) {
-			std::string file_path = path + file;
+			std::string file_path = REF_DATA_PATH + file;
 			this->read_in_data(file_path);
 			RefData* ref = new RefData(file_path);
 			this->init_color_patches();

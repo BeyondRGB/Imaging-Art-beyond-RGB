@@ -283,14 +283,13 @@
   $: if (colorTarget?.refData?.name === "Choose a custom file....csv") {
     console.log("OPENING CUSTOM REF MODAL");
     modal.set("CustomRefData");
-	let customFileName = verifyTarget.refData.name.endsWith('.csv') ? verifyTarget.refData.name : `${verifyTarget.refData.name}.csv`;
+	let customFileName = colorTarget.refData.name.endsWith('.csv') ? colorTarget.refData.name : `${colorTarget.refData.name}.csv`;
     refData.push(customFileName);
     colorTarget.refData.name = "CUSTOM DATA";
   }
   $: if (verifyTarget?.refData?.name === "Choose a custom file....csv") {
     console.log("OPENING CUSTOM REF MODAL VER");
     modal.set("CustomRefDataVer");
-	append the current refData list with the name of the file selected
 	let customFileName = verifyTarget.refData.name.endsWith('.csv') ? verifyTarget.refData.name : `${verifyTarget.refData.name}.csv`;
     refData.push(customFileName);
 	verifyTarget.refData.name = "CUSTOM DATA";
