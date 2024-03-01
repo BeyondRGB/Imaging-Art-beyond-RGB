@@ -7,6 +7,7 @@
     currentPage,
     messageStore,
     resetProcess,
+    batchImagesA
   } from "@util/stores";
   import ImageViewer from "@components/ImageViewer.svelte";
 
@@ -15,10 +16,21 @@
   let pipelineComponents = {};
   let pipelineProgress = {};
 
+  let batchCount = 0;
+
   function reset() {
     pipelineComponents = {};
     pipelineProgress = {};
     resetProcess();
+  }
+
+  function resetPart() {
+    pipelineComponents = {};
+    pipelineProgress = {};
+  }
+
+   $: if($processState.pipelineComplete && batchCount < $batchImagesA.length) {
+    resetPart();
   }
 
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
@@ -52,10 +64,21 @@
       currentPage.set("SpecPicker");
       console.log({ RESETING: $currentPage });
     } else if (id === 1) {
-      // open in election
-    } else if (id === 2) {
       reset();
     }
+  }
+
+
+  //Open the file explorer using ipc after an image is finished processing. 
+  const openFileExplorer = async() =>{
+    let defaultPath = $viewState.projectKey;
+    //$viewState.projectKey is the filepath of the .btrgb file, but has some odd syntax with forward and backslashes, so it needs cleaning
+    //match "/\BeyondRGB_" prefix, followed by 1+digits with ".btrgb" at the end. The 'i' at the end means case insensitive
+    let pattern = /\\BeyondRGB_\d+.btrgb$/i;
+    //cut off the .btrgb file portion to just get the directory
+    defaultPath = defaultPath.replace(pattern, "\\");
+    //yields something like $processState.destDir + "/BeyondRGB_2024-02-01_20-36-12\\", so replace this other forward slash
+    await window.electron.openFileExplorer({directory:defaultPath})
   }
 </script>
 
@@ -64,10 +87,10 @@
     <div class="completedBox">
       <div class="completedOptions">
         <button on:click={() => handleComplete(0)}>View Image</button>
-        <button disabled on:click={() => handleComplete(1)}
+        <button on:click={() => {openFileExplorer()}}
           >Open File Location</button
         >
-        <button on:click={() => handleComplete(2)}>Process Another Image</button
+        <button on:click={() => handleComplete(1)}>Process Another Image</button
         >
       </div>
     </div>

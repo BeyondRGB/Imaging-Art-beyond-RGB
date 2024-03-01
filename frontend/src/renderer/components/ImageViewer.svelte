@@ -65,7 +65,7 @@
   //     url: imageUrl,
   //   });
   // }
-  $: if ($processState.currentTab === 5) {
+  $: if ($processState.currentTab >= 6) {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
       console.log(viewer.isOpen());

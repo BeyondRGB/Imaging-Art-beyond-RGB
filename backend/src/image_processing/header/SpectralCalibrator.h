@@ -80,6 +80,7 @@ private:
      */
     void store_spectral_img(btrgb::ArtObject *images);
 
+    bool loadMatricesFromText(const std::string& file_content);
 };
 
 

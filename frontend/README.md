@@ -72,6 +72,32 @@
 
 >builds svelte and electron for production and packages into an installer
 
+
+
+## Install and Run Cypress
+
+1) First, navigate to the "/frontend" folder
+
+2) Install and run Cypress using the commands below
+
+`npm install`  
+
+>installs Cypress locally from packages in package.json and package-lock.json
+
+`npm run dev`  
+
+>runs the frontend locally (application must be running in order to run Cypress tests)
+
+`npx cypress open`  
+
+>opens Cypress
+
+3) Once the Cypress UI pops up, choose "E2E Testing"
+
+4) Choose Electron for the browser
+
+5) Navigate to "Specs" and choose the test file that you wish to run
+
   
 
 # Troubleshooting

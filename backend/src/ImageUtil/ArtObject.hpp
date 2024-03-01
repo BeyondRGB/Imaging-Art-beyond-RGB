@@ -58,12 +58,13 @@ namespace btrgb {
         RefData* ref_data;
         RefData* verification_ref = nullptr;
         std::string output_directory;
+        bool batch;
         CalibrationResults general_info;
         CalibrationResults calibration_res; 
         CalibrationResults verification_res;
 
     public:
-        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory);
+        ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory, bool batch);
         ~ArtObject();
 
         RefData* get_refrence_data(btrgb::TargetType target_type=btrgb::TargetType::GENERAL_TARGET);
@@ -73,10 +74,14 @@ namespace btrgb {
         double getTargetInfo(std::string type);
         int getTargetSize(std::string edge);
         ColorTarget get_target(std::string imageName, TargetType type);
+        std::unique_ptr<ColorTarget> get_target_pointer(std::string imageName, TargetType type);
+
+
 
 
         CalibrationResults *get_results_obj(btrgb::ResultType type);
         std::string get_output_dir();
+        bool get_batch();
 
         void newImage(std::string name, std::string filename);
         void setImage(std::string name, Image* im);

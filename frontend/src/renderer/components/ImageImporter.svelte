@@ -30,9 +30,9 @@
 
     $: if (
         $processState.imageFilePaths.length >= 6 &&
-        !$processState.completedTabs[0]
+        !$processState.completedTabs[1]
     ) {
-        $processState.completedTabs[0] = true;
+        $processState.completedTabs[1] = true;
     }
 
     function handleFilesSelect(e) {
@@ -58,6 +58,11 @@
            filePaths.push(f.name);
         });
         getThumbnails();
+        if($processState.imageFilePaths.length >= 6 && $processState.imageFilePaths.length <=8  ){
+            $processState.artImageCount = 1;
+        }else if ( $processState.imageFilePaths.length > 8){
+            $processState.artImageCount = Math.ceil($processState.imageFilePaths.length - 6) / 2;
+        }
     }
 
     const remove = (item) => {
