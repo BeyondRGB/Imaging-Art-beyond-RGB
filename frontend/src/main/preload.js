@@ -13,5 +13,9 @@ contextBridge.exposeInMainWorld('electron', {
   async openNewWindow() {
     const result = await ipcRenderer.invoke('ipc-createNewWindow');
     return result;
+  },
+  async openFileExplorer(arg) {
+    const result = ipcRenderer.invoke('ipc-openFileExplorer', arg);
+    return result;
   }
 });
