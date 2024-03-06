@@ -138,9 +138,12 @@ void Pipeline::run() {
     if (batch) {
         try {
             out_dir = this->process_data_m->get_string("outputDirectory");
+            std::cout << out_dir << std::endl;
+
             std::filesystem::path fsPath(out_dir);
-            std::filesystem::path parentPath = fsPath.parent_path();
+            std::filesystem::path parentPath = fsPath.parent_path().parent_path();
             out_dir = parentPath.string();
+            std::cout << out_dir << std::endl;
             out_dir = out_dir + '/' + filenameWithoutExtension;
             std::string original_dir = out_dir;
 
