@@ -15,7 +15,7 @@
 	import Switch from "@components/Switch.svelte";
 
 	let open = false;
-	let spectrumData;
+	let spectrumDataHeatMap;
 	let brushShow = false;
 	let stackCurves = false;
 	let size;
@@ -25,6 +25,13 @@
 	let expand = false;
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
+
+	function handleDataPointSelect(event) {
+		const { yAxisLabel, xValue } = event.detail;
+		shadowPos.left=0.7100651364764268
+		shadowPos.to=0.13098174335057344
+		getData()
+	}
 
 	function getData() {
 		console.log("Fetching Spec Data");
@@ -38,7 +45,7 @@
 						x: shadowPos.left,
 						y: shadowPos.top,
 					},
-					size: size,
+					size: 0.01,
 				},
 			};
 			sendMessage(JSON.stringify(msg));
@@ -109,7 +116,7 @@
 				} 
 				else if (temp["ResponseType"] === "SpectralPicker") {
 					console.log("Spectrum Data From Server");
-					spectrumData = temp["ResponseData"]["spectrum"];
+					spectrumDataHeatMap = temp["ResponseData"]["spectrum"];
 				}
 			}
 		} catch (e) {
@@ -200,6 +207,7 @@
 				<div class="reportBody">
 					<div class="report-item">
 						<Heatmap
+							on:datapointselect={handleDataPointSelect}
 							data={$viewState.reports.calibration}
 							matrixName={"CM DeltaE Values"}
 						/>
@@ -219,20 +227,13 @@
 										</div>
 									<div class="chart">
 										<LineChart
-											bind:data={spectrumData}
+											bind:data={spectrumDataHeatMap}
 											bind:wavelengthArray
 											bind:trueShadowPos
 											stack={stackCurves}
 										/>
 									</div>
 								</div>
-								<SpecPickViewer
-									bind:shadowPos
-									bind:trueShadowPos
-									bind:trueSize
-									bind:show={brushShow}
-									bind:size
-								/>
 							{/if}
 						</div>
 						{#if $currentPage === "Reports"}

@@ -1,5 +1,8 @@
 <script>
     import { chart } from "svelte-apexcharts";
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
 
     export let data;
 
@@ -92,16 +95,12 @@
             chart: {
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
-                        // Assuming 'data' is an array of arrays representing your heatmap data
-                        // and the length of 'data' is the number of rows in your heatmap.
                         let yAxisLabel = data.length - config.seriesIndex;
-
-                        // Now log the yAxisLabel which is the actual 'y' label you're looking for.
-                        console.log(yAxisLabel);
-
-                        // Log the 'x' value as before
                         let xValue = config.w.config.series[config.seriesIndex].data[config.dataPointIndex].x;
-                        console.log(xValue);
+                        console.log(yAxisLabel)
+                        console.log(xValue)
+                        // Dispatch a custom event with the selected data point information
+                        dispatch('datapointselect', { yAxisLabel, xValue });
                     }
                 },
                 height: '650px',

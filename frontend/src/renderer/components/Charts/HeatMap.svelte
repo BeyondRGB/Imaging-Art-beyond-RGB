@@ -3,7 +3,15 @@
   import "carbon-components/css/carbon-components.min.css";
   import { find, reverse, cloneDeep } from "lodash";
   import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
+  import { createEventDispatcher } from 'svelte';
   export let data;
+
+  const dispatch = createEventDispatcher();
+
+  function handleDataPointSelect(event) {
+    // Re-dispatch the event to the parent
+    dispatch('datapointselect', event.detail);
+  }
 
   export let visionDeficiencyMode = false;
   let mapData = [];
@@ -46,7 +54,7 @@
       <input type="checkbox" class="peer" bind:checked={visionDeficiencyMode} >
       <label>Grayscale</label>
     </span>
-    <AtomicHeatMap data={mapData} visionDeficiencyMode={visionDeficiencyMode}></AtomicHeatMap>
+    <AtomicHeatMap on:datapointselect={handleDataPointSelect} data={mapData} visionDeficiencyMode={visionDeficiencyMode}></AtomicHeatMap>
   </div>
 {/if}
 
