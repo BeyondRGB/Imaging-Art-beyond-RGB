@@ -106,8 +106,8 @@ export function resetProcess() {
         verificationTarget: {},
         sharpenString: "N",
         fields: {
-          imageA: [],
-          imageB: [],
+          imageA: [[]],
+          imageB: [[]],
           targetA: [],
           targetB: [],
           flatfieldA: [],

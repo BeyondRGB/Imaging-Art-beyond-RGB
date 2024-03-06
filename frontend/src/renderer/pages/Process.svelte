@@ -73,8 +73,8 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   }
   
 	$: if($viewState.projectKey != null) {
-    console.log($viewState.projectKey.substring(0,$viewState.projectKey.lastIndexOf('\\')))
-	processRequest.RequestData.outputDirectory=$viewState.projectKey.substring(0,$viewState.projectKey.lastIndexOf('\\'))
+    fs::path projectPath($viewState.projectKey);
+	processRequest.RequestData.outputDirectory=projectPath.parent_path().generic_string()
 	}
 		
 
@@ -219,7 +219,8 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
 
   $: if (processRequest != null) {
   	if($viewState.projectKey != null) {
-	    processRequest.RequestData.outputDirectory=$viewState.projectKey.substring(0,$viewState.projectKey.lastIndexOf('\\'))
+	    fs::path projectPath($viewState.projectKey);
+	    processRequest.RequestData.outputDirectory=projectPath.parent_path().generic_string()
 	}
 	processRequest.RequestData.batch = $processState.batch;
     if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
