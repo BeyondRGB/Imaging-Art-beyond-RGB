@@ -141,20 +141,21 @@ void Pipeline::run() {
             std::cout << out_dir << std::endl;
 
             std::filesystem::path fsPath(out_dir);
+            // Navigate two levels up
             std::filesystem::path parentPath = fsPath.parent_path().parent_path();
-            out_dir = parentPath.string();
-            std::cout << out_dir << std::endl;
-            out_dir = out_dir + '/' + filenameWithoutExtension;
-            std::string original_dir = out_dir;
+            // Use filesystem path to append filename, ensuring correct path separators
+            std::filesystem::path finalPath = parentPath / filenameWithoutExtension;
+            std::string original_dir = finalPath.string();
 
-            std::filesystem::path path{ out_dir };
+            std::filesystem::path path{ original_dir };
             int counter = 1;
             while (std::filesystem::exists(path)) {
-                // Append a number to make the directory unique
-                out_dir = original_dir + "_" + std::to_string(counter++);
-                path = std::filesystem::path{ out_dir };
+                // Append a number to make the directory unique, using filesystem to handle path
+                path = parentPath / (filenameWithoutExtension + "_" + std::to_string(counter++));
             }
-            std::filesystem::create_directories(out_dir);
+            std::filesystem::create_directories(path);
+            out_dir = path.string();
+            std::cout << out_dir << std::endl;
         }
    
         catch (const ParsingError&) {
