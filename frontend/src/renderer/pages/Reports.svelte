@@ -4,11 +4,13 @@
     sendMessage,
     messageStore,
     currentPage,
+    processState,
   } from "@util/stores";
   import Heatmap from "@components/Charts/HeatMap.svelte";
   import LinearChart from "@root/components/Charts/LinearChart.svelte";
   import FileSelector from "@components/FileSelector.svelte";
   import VectorChart from "@components/Charts/VectorChart.svelte";
+  import ImageViewer from "@root/components/ImageViewer.svelte";
   let open = false;
 
   function getReports() {
@@ -25,6 +27,24 @@
     sendMessage(JSON.stringify(msg));
   }
 
+  function colorManagedTargetImage() {
+    let randID = Math.floor(Math.random() * 999999);
+    $processState.CMTID = randID;
+    let msg = {
+      RequestID: randID,
+      RequestType: "ColorManagedImage",
+      RequestData: {
+        name: $viewState.projectKey,
+        target_requested: true,
+      },
+    };
+
+    console.log("Fetching Color Managed Target Image");
+    console.log(msg);
+    //loading = true;
+    sendMessage(JSON.stringify(msg));
+  }
+
   let toggle = false;
   $: if (
     $currentPage === "Reports" &&
@@ -33,6 +53,7 @@
   ) {
     // CALL FOR REPORTS
     toggle = true;
+    colorManagedTargetImage();
     getReports();
   }
   let mainfilePath;
@@ -71,8 +92,30 @@
       calibration: null,
       verification: null,
     };
+    $viewState.colorManagedTargetImage = { dataURL: "", name: "Waiting..." };
     toggle = false;
     mainfilePath = null;
+  }
+
+  function detectZoom(event){ 
+   // Zoom in or out based on the scroll direction 
+    let direction = event.deltaY > 0 ? -1 : 1; 
+    zoomImage(direction); 
+  }
+
+  let currentZoom=1;let stepSize=0.05;
+  function zoomImage(direction) { 
+      let newZoom = currentZoom + direction * stepSize; 
+      // Limit the zoom level to the minimum and maximum values 
+      if (newZoom < 1 || newZoom > 3) { 
+          return; 
+      } 
+    
+      currentZoom = newZoom; 
+    
+      // Update the CSS transform of the image to scale it 
+      let image = document.querySelector("#cm-target-image"); 
+      image.style.transform = "scale(" + currentZoom + ')'; 
   }
 </script>
 
@@ -119,6 +162,9 @@
               data={$viewState.reports.calibration}
               matrixName={"CM DeltaE Values"}
             />
+            <div class="target-image-container">
+              <ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
+            </div>
           </div>
           <div class="report-item">
             <!-- AB vector chart -->
@@ -203,8 +249,11 @@
   .verificationBar {
     @apply w-full h-full bg-gray-500 flex flex-col p-2 rounded-xl;
   }
-
   .new-window-button{
     align-self: baseline;margin-top: 5px;
+  }
+  .target-image-container {
+    height:450px;
+    @apply w-full bg-blue-600/25 relative items-center flex justify-center;
   }
 </style>

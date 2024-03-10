@@ -78,8 +78,9 @@ void ResultsProcessor::output_btrgb_results(btrgb::ArtObject* images){
     // Create json object to store all file names this run outputs
     jsoncons::json output_files;
     output_files.insert_or_assign("CM", this->CM_f_name+".tiff");
+    output_files.insert_or_assign("CM_target", this->CM_target_f_name+".tiff");
     output_files.insert_or_assign("SP", this->SP_f_name+".tiff");
-    output_files.insert_or_assign("GineralInfo", this->GI_f_name);
+    output_files.insert_or_assign("GeneralInfo", this->GI_f_name);
     output_files.insert_or_assign("M_color", this->M_color_f_name);
     output_files.insert_or_assign("M_spectral", this->M_spectral_f_name);
     output_files.insert_or_assign("Colorimetry", this->colorimetry_f_name);

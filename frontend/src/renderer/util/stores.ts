@@ -14,6 +14,7 @@ export const viewState = writable({
   projectKey: null,
 
   colorManagedImage: { dataURL: "", name: "Waiting..." },
+  colorManagedTargetImage: { dataURL: "", name: "Waiting..." },
   reports: {
     calibration: null,
     verification: null
@@ -38,7 +39,7 @@ export const processState = writable({
   imageFilePaths: [],
   thumbnailID: null as number,
   colorTargetID: null,
-  CMID: null,
+  CMID: null, CMTID:null,
   whitePatchFilled: false,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
@@ -92,7 +93,7 @@ export function resetProcess() {
     thumbnailID: null,
     colorTargetID: null,
     whitePatchFilled: false,
-    CMID: null,
+    CMID: null, CMTID:null,
     imageThumbnails: {},
     outputImage: { dataURL: "", name: "Waiting..." },
     returnedFromProcessing: false,

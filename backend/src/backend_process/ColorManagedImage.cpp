@@ -9,8 +9,26 @@ void ColorManagedImage::run() {
     
     try {
         std::string prj_filename = this->process_data_m->get_string("name");
+        bool target_requested =  this->process_data_m->get_bool("target_requested");
         std::ifstream prj_file(prj_filename);
-        std::string local_file = jsoncons::json::parse(prj_file)["OutPutFiles"]["CM"].as<std::string>();
+
+        std::string local_file = "";
+
+        if(target_requested){
+            try{
+                local_file = jsoncons::json::parse(prj_file)["OutPutFiles"]["CM_target"].as<std::string>();
+                std::cout << local_file << std::endl;
+            }catch(const std::exception& e){
+                //CM_target may be unavailable since it was added in BeyondRGB 2.0
+                //in which case end early using return
+                std::cout << e.what() << std::endl;
+                this->coms_obj_m->send_error("Color Managed Target image is unavailable", "ColorManagedImage", true);
+                return;
+            }
+        }else{
+            local_file = jsoncons::json::parse(prj_file)["OutPutFiles"]["CM"].as<std::string>();
+        }
+        std::cout << local_file << std::endl;
         std::string filename = prj_filename.substr(0, prj_filename.find_last_of("/\\") + 1) + local_file;
 
         if( ! btrgb::Image::is_tiff(filename) )

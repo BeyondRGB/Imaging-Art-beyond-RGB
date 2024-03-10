@@ -77,6 +77,7 @@
       RequestType: "ColorManagedImage",
       RequestData: {
         name: $viewState.projectKey,
+        target_requested: false,
       },
     };
 
