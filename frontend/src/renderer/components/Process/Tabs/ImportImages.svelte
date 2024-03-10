@@ -3,14 +3,17 @@
   import ImageImporter from "@components/ImageImporter.svelte";
   import {get} from "lodash";
   import Dropbox from "../Dropbox.svelte";
+  import { countFields } from "@root/util/storesUtil";
   let imageStack = get($processState, 'artStacks[0].fields');
-  let artImageCount=0;
+  let sortedImageCount=0;
+  let artImageCount = 0;
 
   // this helps force a rerender once the imageStack has been updated
   $: if ($processState.currentTab === 1) {
         imageStack = get($processState, 'artStacks[0].fields');
         artImageCount = $processState.artImageCount;
         console.log(artImageCount);
+        sortedImageCount = countFields(imageStack);
   }
 
 </script>
@@ -20,7 +23,7 @@
     <h1>Import Images</h1>
     <br><br>
     <div>
-      {#if $processState?.artStacks[0].fields.darkfieldA[0]!==undefined}
+      {#if sortedImageCount>0}
       <h2>Already Sorted Images</h2>
       <div >
         <div class="inputGroup">
