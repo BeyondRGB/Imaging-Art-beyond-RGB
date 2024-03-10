@@ -211,7 +211,7 @@
         font-size: 30px;
     }
     .autoSortButton {
-        margin: 50px 65px 0 0;
+        margin: 50px 65px 2px 0;
     }
     .errorText {
         text-align: center;
