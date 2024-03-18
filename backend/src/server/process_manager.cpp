@@ -53,6 +53,9 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 	
 	else if (key == "Reports")
 		process = std::shared_ptr<ReportRequest>(new ReportRequest(key));
+
+	else if (key == "SpectralPickerMeasured")
+		process = std::shared_ptr<SpectralPickerMeasured>(new SpectralPickerMeasured(key));
 	
 
 	return process;

@@ -4,6 +4,7 @@
   import Dropzone from "svelte-file-dropzone";
   export let type = "File";
   export let filter = "None";
+  export let defaultPath;
   export let label = "Select Files";
   export let filePaths = [];
   export let icon = FilePlusIcon;
@@ -11,7 +12,7 @@
   let ipcResponse;
 
   const temp = async () => {
-    ipcResponse = await window.electron.handle({ type, filter });
+    ipcResponse = await window.electron.handle({ type, filter, defaultPath });
   };
 
   $: if (ipcResponse) {

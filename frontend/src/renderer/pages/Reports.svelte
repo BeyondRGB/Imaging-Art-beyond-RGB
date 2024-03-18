@@ -11,25 +11,28 @@
 	import FileSelector from "@components/FileSelector.svelte";
 	import VectorChart from "@components/Charts/VectorChart.svelte";
 	import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
-	import LineChart from "@components/Charts/LineChart.svelte";
+	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
 	import Switch from "@components/Switch.svelte";
 
 	let open = false;
-	let spectrumDataHeatMap;
+	let spectrumDataHeatMap_est;
+	let spectrumDataHeatMap_ref;
 	let brushShow = false;
 	let stackCurves = false;
 	let size;
 	let trueSize;
 	let shadowPos = { left: 0, top: 0 };
-	let trueShadowPos = { left: "0px", top: "0px" };
 	let expand = false;
+	let combinedData = [];
+	  let trueShadowPos = shadowPos;
+
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
 
 	function handleDataPointSelect(event) {
 		const { yAxisLabel, xValue } = event.detail;
-		shadowPos.left=0.7100651364764268
-		shadowPos.to=0.13098174335057344
+		shadowPos.left=xValue
+		shadowPos.top=yAxisLabel
 		getData()
 	}
 
@@ -38,7 +41,7 @@
 		if ($viewState.projectKey !== null) {
 			let msg = {
 				RequestID: Math.floor(Math.random() * 999999999),
-				RequestType: "SpectralPicker",
+				RequestType: "SpectralPickerMeasured",
 				RequestData: {
 					name: $viewState.projectKey,
 					coordinates: {
@@ -114,9 +117,14 @@
 				else if (temp["ResponseData"]["reportType"] === "Verification") {
 					$viewState.reports.verification = temp["ResponseData"]["reports"];
 				} 
-				else if (temp["ResponseType"] === "SpectralPicker") {
+				else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
 					console.log("Spectrum Data From Server");
-					spectrumDataHeatMap = temp["ResponseData"]["spectrum"];
+					spectrumDataHeatMap_est = temp["ResponseData"]["estimated_spectrum"];
+					spectrumDataHeatMap_ref = temp["ResponseData"]["referenced_spectrum"];
+					combinedData = [
+						spectrumDataHeatMap_est, 
+						spectrumDataHeatMap_ref
+					]
 				}
 			}
 		} catch (e) {
@@ -224,13 +232,14 @@
 											label="Enable Spectral Picker"
 											bind:checked={brushShow}
 										/>
+										<p>Click on a Heatmap box to view the Estimated vs. Reference Spectral Curve</p>
 										</div>
 									<div class="chart">
-										<LineChart
-											bind:data={spectrumDataHeatMap}
+										<LineChartMeasured
+											bind:data={combinedData}
 											bind:wavelengthArray
-											bind:trueShadowPos
 											stack={stackCurves}
+											bind:trueShadowPos
 										/>
 									</div>
 								</div>
@@ -276,20 +285,19 @@
 	{/if}
 </main>
 
-<style lang="postcss">
-	.reports-main {
-		@apply flex flex-col w-full h-full overflow-y-scroll pt-[20vh];
-	}
-	.art {
-		@apply flex flex-col relative;
-	}
-	.reports {
-		@apply w-full h-full flex flex-col gap-2;
-	}
-	.reportBody {
-		overflow-x: hidden;
-		transform-origin: left top;
-		@apply w-full h-full transition-all duration-300
+<style lang="postcss" global>
+  .reports-main {
+    @apply flex flex-col w-full h-full overflow-y-scroll ;
+  }
+  .art {
+    @apply flex flex-col relative;
+  }
+  .reports {
+    @apply w-full h-full flex flex-col gap-2;
+  }
+  .reportBody {
+    transform-origin: left top;
+    @apply w-full h-full transition-all duration-300
           bg-gray-700 rounded-b-2xl p-4 flex flex-col items-center justify-center
           gap-2;
 	}
@@ -308,25 +316,25 @@
 	.inputBox {
 		@apply w-auto h-auto bg-gray-700 flex flex-col gap-2 justify-center items-center
           p-8 rounded-2xl;
-	}
-	.inputBox h2 {
-		@apply text-xl;
-	}
-	.report-header {
-		width: calc(100% - 6rem);
-		height: 20vh;
-		@apply fixed top-0 bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
+  }
+  .inputBox h2 {
+    @apply text-xl;
+  }
+  .report-header {
+    width: 100%;
+    height: 20vh;
+    @apply sticky top-0 bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
             transition-all delay-150 duration-300 ease-in justify-between;
-	}
-	.close-report {
-		@apply absolute top-0 right-0;
-	}
-	.report-header.show {
-		@apply translate-y-0;
-	}
-	.report-left {
-		@apply w-full flex flex-col justify-center;
-	}
+  }
+  .close-report {
+    @apply absolute top-5 right-0;
+  }
+  .report-header.show {
+    @apply translate-y-0;
+  }
+  .report-left {
+    @apply w-full flex flex-col justify-center;
+  }
 
 	.report-right {
 		@apply w-full rounded-xl overflow-auto;
