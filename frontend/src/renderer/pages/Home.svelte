@@ -38,7 +38,7 @@
       </div>
     </div>
   {/if}
-  <div class="content">
+  <div id="homeContent">
     <div id="welcome">
       <h1 in:fade={{ duration: 1000, delay: 1000 }} class="dark:text-gray-400">
         Welcome to
@@ -88,7 +88,7 @@
     @apply w-full h-[97%] bg-gray-800 mt-[3%] relative flex justify-center items-center;
   }
 
-  .content {
+  #homeContent {
     @apply h-[50vh] flex flex-col items-center justify-between mb-[15vh];
   }
 

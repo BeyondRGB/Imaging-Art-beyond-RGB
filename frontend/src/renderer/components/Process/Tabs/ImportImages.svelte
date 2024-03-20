@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { processState, sendMessage, messageStore } from "@util/stores";
+  import { processState } from "@util/stores";
   import ImageImporter from "@components/ImageImporter.svelte";
   import {get} from "lodash";
   import Dropbox from "../Dropbox.svelte";
