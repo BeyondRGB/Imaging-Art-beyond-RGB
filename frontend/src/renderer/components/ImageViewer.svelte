@@ -4,10 +4,13 @@
   import { onDestroy, onMount } from "svelte";
   let viewer;
   let imageUrl;
+  export let srcUrl;
+  export let identifier = "unique-identifier";
+  let imageId = identifier+"-seadragon-viewer";
 
   const createViewer = () => {
     viewer = OpenSeadragon({
-      id: "image-seadragon-viewer",
+      id: imageId,
       prefixUrl: "/openseadragon/images/",
       immediateRender: true,
       preload: true,
@@ -65,7 +68,7 @@
   //     url: imageUrl,
   //   });
   // }
-  $: if ($processState.currentTab >= 6) {
+  $: if ($processState.currentTab >= 6 || $currentPage === "Reports") {
     if (viewer && !viewer.isOpen()) {
       console.log("Opening Image");
       console.log(viewer.isOpen());
@@ -84,7 +87,7 @@
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image (Image Viewer)");
     let temp = new Image();
-    temp.src = $processState.outputImage?.dataURL;
+    temp.src = srcUrl;
 
     imageUrl = temp.src;
 
@@ -104,15 +107,14 @@
 </script>
 
 <main>
-  <!-- <div class="load"><Loader /></div> -->
-  <div id="image-seadragon-viewer" />
+  <div class="image-seadragon-viewer" id={imageId} />
 </main>
 
 <style lang="postcss">
   main {
     @apply w-full h-full ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
   }
-  #image-seadragon-viewer {
+  .image-seadragon-viewer {
     @apply h-full w-full;
   }
   .load {

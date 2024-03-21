@@ -108,7 +108,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     try {
       let temp = JSON.parse($messageStore[0]);
       if (
-        // CM Binary Handler
+        // CM Art Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
         temp["RequestID"] === $processState.CMID
       ) {
@@ -126,7 +126,16 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
         binaryFor = "Thumbnail";
-      } else if (temp["ResponseType"] === "ImageBinary") {
+      } else if(
+        // Color Managed Target image Binary handler
+        temp["ResponseType"] === "ImageBinary" &&
+        temp["RequestID"] === $processState.CMTID
+      ) {
+        console.log("Color Managed Target Binary From Server");
+        binaryType = temp["ResponseData"]["type"];
+        binaryName = temp["ResponseData"]["name"];
+        binaryFor = "ColorManagedTarget";
+      }else if (temp["ResponseType"] === "ImageBinary") {
         // Color target and output binary handler
         console.log("Binary From Server");
         binaryType = temp["ResponseData"]["type"];
@@ -185,6 +194,12 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
       $viewState.colorManagedImage = {
         dataURL: temp.src,
         name: binaryName,
+      };
+    }else if(binaryFor === "ColorManagedTarget"){ 
+      console.log("Got target!");
+      $viewState.colorManagedTargetImage = {
+        dataURL:temp.src,
+        name:binaryName
       };
     }
     binaryType = null;
