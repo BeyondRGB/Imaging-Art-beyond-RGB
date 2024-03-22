@@ -62,7 +62,7 @@ $: if (data.length > 1) {
       },
       colors: ["#FFFFFF"],
       chart: {
-          background: 'rgb(58, 58, 60)',
+          background: '#4A4A4C',
           animations: {
               enabled: false
           },

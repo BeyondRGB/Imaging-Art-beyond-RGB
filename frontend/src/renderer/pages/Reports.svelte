@@ -228,10 +228,6 @@
 							{#if $currentPage === "Reports"}
 								<div class="reports-floatBox" class:expanded={expand}>
 									<div class="box" id="brush">
-										<Switch
-											label="Enable Spectral Picker"
-											bind:checked={brushShow}
-										/>
 										<p>Click on a Heatmap box to view the Estimated vs. Reference Spectral Curve</p>
 										</div>
 									<div class="chart">
@@ -390,7 +386,7 @@
 		@apply w-full h-2 rounded-xl;
 	}
 	.brushBar::-webkit-slider-thumb {
-		@apply w-4 h-4 bg-gray-600 cursor-pointer rounded-full outline outline-1
+		@apply w-4 h-4 bg-gray-500 cursor-pointer rounded-full outline outline-1
           outline-gray-200;
 	}
 
@@ -399,11 +395,11 @@
 	}
 
 	.chart {
-		@apply bg-gray-600 m-2 p-2 pb-4 rounded-lg pr-4;
+		background-color: #4A4A4C; @apply m-2 p-2 pb-4 rounded-lg pr-4;
 	}
 
 	.box {
-		@apply m-2 shadow-md px-2 pt-1 bg-gray-600 rounded-lg p-2;
+		@apply m-2 shadow-md px-2 pt-1 rounded-lg p-2; background-color: #4A4A4C;
 	}
 
 	.numberInput {
