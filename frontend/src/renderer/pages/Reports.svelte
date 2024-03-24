@@ -11,6 +11,7 @@
 	import FileSelector from "@components/FileSelector.svelte";
 	import VectorChart from "@components/Charts/VectorChart.svelte";
 	import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
+	import ImageViewer from "@root/components/ImageViewer.svelte";
 	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
 	import Switch from "@components/Switch.svelte";
 
@@ -219,12 +220,9 @@
 							data={$viewState.reports.calibration}
 							matrixName={"CM DeltaE Values"}
 						/>
-						<div class="target-image-container" on:mousewheel={detectZoom}>
-							<img id="cm-target-image"
-								draggable="true"
-								src={$viewState.colorManagedTargetImage.dataURL}
-								alt="Color Managed Target Image"
-							/>
+						<div class="target-image-container">
+						  <ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
+						</div>
 							{#if $currentPage === "Reports"}
 								<div class="reports-floatBox" class:expanded={expand}>
 									<div class="box" id="brush">
@@ -277,7 +275,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
 	{/if}
 </main>
 
@@ -348,16 +345,10 @@
 		align-self: baseline;
 		margin-top: 5px;
 	}
-	.target-image-container {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding-top: 3rem;
-		height: auto;
-		width: 650px;
-		max-width: 45vw;
-		overflow: hidden;
-	}
+  .target-image-container {
+    height:450px;
+    @apply w-full bg-blue-600/25 relative items-center flex justify-center;
+  }
 
 	.reports-floatBox {
 		position: fixed; 
