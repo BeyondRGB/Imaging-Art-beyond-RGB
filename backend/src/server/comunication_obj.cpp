@@ -159,6 +159,27 @@ void CommunicationObj::send_spectrum(float* data, int size) {
 	send_msg(all_info);
 }
 
+void CommunicationObj::send_spectrum_measured(float* estimated_data, float* reference_data, int size) {
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "Report");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("reportType", "SpectralPickerMeasured");
+	response_data["size"] = size;
+	response_data["estimated_spectrum"] = jsoncons::json::make_array(size);
+	for (int i = 0; i < size; i++)
+		response_data["estimated_spectrum"][i] = estimated_data[i];
+
+	response_data["referenced_spectrum"] = jsoncons::json::make_array(size);
+	for (int i = 0; i < size; i++)
+		response_data["referenced_spectrum"][i] = reference_data[i];
+
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	send_msg(all_info);
+}
+
 void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
