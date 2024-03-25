@@ -360,7 +360,7 @@ bool RefData::is_custom(std::string file){
 		std::string new_Ref_Data = REF_DATA_PATH + file;
 
 		std::string originalFilePath = file;
-		std::string newFilePath = REF_DATA_PATH + file;
+		std::string newFilePath = file;
 
 		// Copy the file
 		std::ifstream src(originalFilePath, std::ios::binary);
