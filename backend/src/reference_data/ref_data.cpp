@@ -15,7 +15,9 @@ RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverTyp
 	this->batch = batch;
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
+	std::cout << "before is_custom" << std::endl;
 	if(this->is_custom(file)){
+		std::cout << "is_custom file" << std::endl;
 		std::cout << file << std::endl;
 		this->read_in_data(file);
 	}
@@ -40,7 +42,7 @@ void RefData::RefDataFolder(const std::string folder) {
 
 		if (file_name.find("Reflectance_Data.csv") != std::string::npos) {
 			// Assuming 'path' is a directory path and 'file_name' is the name of the file
-			std::string file_path = path + file_name; // Correctly concatenate path and file name
+			std::string file_path = file_name; // Correctly concatenate path and file name
 
 			// Append the file name to vector ref_files
 			ref_files.push_back(file_path);
@@ -356,37 +358,47 @@ cv::Mat RefData::xyz_as_matrix(){
 }
 
 bool RefData::is_custom(std::string file){
-	for(int i = 0; i < REF_COUNT; i++){
-		std::string new_Ref_Data = REF_DATA_PATH + file;
 
-		std::string originalFilePath = file;
-		std::string newFilePath = file;
-
-		// Copy the file
-		std::ifstream src(originalFilePath, std::ios::binary);
-		std::ofstream dst(newFilePath, std::ios::binary);
-
-		if (!src) {
-			std::cerr << "Error: Unable to open source file for copying: " << originalFilePath << std::endl;
-			return false; // or handle error appropriately
+	for (int i = 0; i < REF_COUNT; i++) {
+		if (ref_files[i].find(file) != std::string::npos) {
+			return false;
 		}
+	}
+	std::string originalFilePath = file;
 
-		if (!dst) {
-			std::cerr << "Error: Unable to open destination file for copying: " << newFilePath << std::endl;
+	std::filesystem::path p(file);
+	std::string filename = p.filename().string();
+
+	std::string customFileName = REF_DATA_PATH + filename;
+	std::string newFilePath = customFileName;
+
+	// Copy the file
+	std::cout << "Copy file names:" << std::endl;
+	std::cout << originalFilePath << std::endl;
+	std::cout << newFilePath << std::endl;
+
+	std::ifstream src(originalFilePath, std::ios::binary);
+	std::ofstream dst(newFilePath, std::ios::binary);
+
+	if (!src) {
+		std::cerr << "Error: Unable to open source file for copying: " << originalFilePath << std::endl;
+		return false; // or handle error appropriately
+	}
+
+	if (!dst) {
+		std::cerr << "Error: Unable to open destination file for copying: " << newFilePath << std::endl;
 			
-			return false; // or handle error appropriately
-		}
+		return false; // or handle error appropriately
+	}
 
-		dst << src.rdbuf(); // Copy contents
+	dst << src.rdbuf(); // Copy contents
 
-		src.close();
-		dst.close();
-		if (file.find("Reflectance_Data.csv") != std::string::npos) {
-			std::string file_path = REF_DATA_PATH;
-			this->read_in_data(file_path);
-			RefData* ref = new RefData(file_path);
-			this->init_color_patches();
-		}
+	src.close();
+	dst.close();
+	if (file.find("Reflectance_Data.csv") != std::string::npos) {
+		std::string file_path = REF_DATA_PATH+ filename;
+		this->read_in_data(file_path);
+		this->init_color_patches();
 	}
 	return true;
 }

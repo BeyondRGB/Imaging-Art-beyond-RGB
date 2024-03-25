@@ -13,6 +13,8 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <filesystem>
+
 
 #define REF_COUNT 4
 
@@ -62,23 +64,16 @@ bool saveRefDataList() const {
 	return true;
 }
 
-bool loadRefDataList() {
-	// Load the list of reference data files from the specified data file
-	std::ifstream file_in(dataFilePath);
-	if (!file_in) {
-		std::cerr << "Error: Unable to open file for reading: " << dataFilePath << std::endl;
-		return false;
-	}
 
-	ref_files.clear(); // Clear any existing entries
-	std::string line;
-	while (getline(file_in, line)) {
-		if (!line.empty()) {
-			ref_files.push_back(line);
+bool loadRefDataList() {
+	namespace fs = std::filesystem;
+
+	for (const auto& entry : fs::directory_iterator(dataFilePath)) {
+		if (entry.is_regular_file()) { // Check if the entry is a file
+			// Add the full path of the file to the list
+			ref_files.push_back(entry.path().string());
 		}
 	}
-
-	file_in.close();
 	return true;
 }
 
