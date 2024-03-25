@@ -16,7 +16,7 @@ RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverTyp
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
 	if(this->is_custom(file)){
-		std::cout << "Custom RefData: " << file << std::endl;
+		std::cout << file << std::endl;
 		this->read_in_data(file);
 	}
 	else{
