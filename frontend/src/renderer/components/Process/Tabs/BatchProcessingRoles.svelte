@@ -4,6 +4,7 @@
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortBatchImages } from "@util/autoSortStandards.svelte";
+    import { countFields } from "@root/util/storesUtil";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let artImageStackA = get($batchImagesA);
