@@ -163,7 +163,7 @@
      * @param externalStack
      * @returns any remaining unsorted images
      */
-    export function autoSortBatchImages(images, externalStack, artImageStack) {
+    export function autoSortBatchImages(images, externalStack) {
 
         let includeTarget = true;
         // scan each image name (and path) for possible matches
@@ -180,19 +180,13 @@
                 });
             }
         });
-
         let imageStack = {
             bestArtImages: [],
             bestTargetImages: [],
             bestFlatFieldImages: [],
             bestDarkFieldImages: []
         }
-
-        // select best images for each category
-        let bestArtImage = maxBy(images, probabilityScoreProperties[0]);
-        images = filter(images, (e) => e !== bestArtImage)
-        imageStack.bestArtImages = [bestArtImage, maxBy(images, probabilityScoreProperties[0])];
-        images = filter(images, (e) => e !== maxBy(images, probabilityScoreProperties[0]))
+     
 
         if(includeTarget) {
             let bestTargetImage = maxBy(images, probabilityScoreProperties[1]);
@@ -211,6 +205,35 @@
         imageStack.bestDarkFieldImages = [bestDarkFieldImage, maxBy(images, probabilityScoreProperties[3])];
         images = filter(images, (e) => e !== maxBy(images, probabilityScoreProperties[3]))
 
+        //let bestArtImage = maxBy(images, probabilityScoreProperties[0]);
+        // images = filter(images, (e) => e !== bestArtImage)
+        imageStack.bestArtImages = images;
+
+        console.log("best art images")
+        console.log(imageStack.bestArtImages)
+
+        
+        let artImagesByNumber = {}
+        // select best images for each category
+         const extractNumber = function (artObj) {
+            var numb = artObj.id.match(/\d/g);
+            numb = numb.join("");
+            console.log(numb)
+            if(artImagesByNumber[numb] != null){
+                artImagesByNumber[numb].push(artObj)
+            }
+            else{
+                artImagesByNumber[numb] = [artObj]
+            }
+        }
+
+        each(imageStack.bestArtImages, extractNumber)
+
+        console.log("artImagesByNumber")
+        console.log(artImagesByNumber)
+
+        // images = filter(images, (e) => e !== maxBy(images, probabilityScoreProperties[0]))
+
         // Uses string similarity to determine which images go into which columns
         const sortImageByLighting = function (image1, image2, exampleImageA) {
             if(findBestMatch(exampleImageA.name, [image1.name, image2.name]).bestMatchIndex === 0) {
@@ -219,27 +242,41 @@
             return [image2, image1];
         };
 
-        // fill in the image stack
-        externalStack.imageA = [imageStack?.bestArtImages[0]];
-        externalStack.imageB = [imageStack?.bestArtImages[1]];
+        externalStack.flatfieldA = [imageStack?.bestFlatFieldImages[0]];
+        externalStack.flatfieldB = [imageStack?.bestFlatFieldImages[1]];
 
         // handle A - B sorting
         if(includeTarget) {
-            imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.imageA[0]);
+            imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.flatfieldA[0]);
             externalStack.targetA = [imageStack?.bestTargetImages[0]];
             externalStack.targetB = [imageStack?.bestTargetImages[1]];
         }
 
-        imageStack.bestFlatFieldImages = sortImageByLighting(imageStack?.bestFlatFieldImages[0], imageStack?.bestFlatFieldImages[1], externalStack.imageA[0]);
-        externalStack.flatfieldA = [imageStack?.bestFlatFieldImages[0]];
-        externalStack.flatfieldB = [imageStack?.bestFlatFieldImages[1]];
-
-        imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.imageA[0]);
+        imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.flatfieldA[0]);
         externalStack.darkfieldA = [imageStack?.bestDarkFieldImages[0]];
         externalStack.darkfieldB = [imageStack?.bestDarkFieldImages[1]];
 
+        let i = 0;
+
+        let leftovers = []
+
+        each(Object.keys(artImagesByNumber), function(artImageSetKey) {
+            let artImageSet = artImagesByNumber[artImageSetKey]
+            if(artImageSet.length == 2){
+                artImageSet = sortImageByLighting(artImageSet[0], artImageSet[1], externalStack.flatfieldA[0])
+                externalStack.imageA[i] = [artImageSet[0]]
+                externalStack.imageB[i] = [artImageSet[1]]
+                i++
+                console.log(externalStack)
+            }
+            else{
+                leftovers.push(...artImageSet)
+            }
+        });
+        
+
         // return any images that weren't assigned
-        return images;
+        return leftovers;
     }
 
 </script>

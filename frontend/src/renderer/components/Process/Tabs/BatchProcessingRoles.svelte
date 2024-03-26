@@ -3,8 +3,7 @@
     import { processState, batchProcessState, batchImagesA, batchImagesB } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
-    import { autoSortImages } from "@util/autoSortStandards.svelte";
-    import { countFields } from "@root/util/storesUtil";
+    import { autoSortBatchImages } from "@util/autoSortStandards.svelte";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let artImageStackA = get($batchImagesA);
@@ -49,7 +48,7 @@
     };
 
     const autoSort = function () {
-        $processState.imageFilePaths = autoSortImages(getAllImages(), imageStack);
+        $processState.imageFilePaths = autoSortBatchImages(getAllImages(), imageStack);
         rerenderToggle = !rerenderToggle;
     };
 
