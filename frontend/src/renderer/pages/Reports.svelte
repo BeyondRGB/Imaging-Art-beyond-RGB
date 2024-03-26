@@ -153,27 +153,6 @@
 		mainfilePath = null;
 	}
 
-	function detectZoom(event) {
-		// Zoom in or out based on the scroll direction
-		let direction = event.deltaY > 0 ? -1 : 1;
-		zoomImage(direction);
-	}
-
-	let currentZoom = 1;
-	let stepSize = 0.05;
-	function zoomImage(direction) {
-		let newZoom = currentZoom + direction * stepSize;
-		// Limit the zoom level to the minimum and maximum values
-		if (newZoom < 1 || newZoom > 3) {
-			return;
-		}
-
-		currentZoom = newZoom;
-
-		// Update the CSS transform of the image to scale it
-		let image = document.querySelector("#cm-target-image");
-		image.style.transform = "scale(" + currentZoom + ")";
-	}
 </script>
 
 <main class="reports-main">

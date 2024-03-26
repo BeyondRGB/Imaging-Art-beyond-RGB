@@ -16,7 +16,7 @@
 </script>
 
 <main>
-  <div class="content">
+  <div id="selectProcessingTypesContent">
     <div class="btnCol">
       <button on:click={() => handleClick("Single")} class="homeBtn">
         <div class="btnTitle">
@@ -41,7 +41,7 @@
     @apply w-full h-[97%] bg-gray-800 mt-[3%] relative flex justify-center items-center;
   }
 
-  .content {
+  #selectProcessingTypesContent {
     @apply h-[50vh] flex flex-col items-center justify-between mb-[15vh];
   }
 
