@@ -22,6 +22,14 @@ void GeneralInfoFormater::write_format(std::ostream &output_stream, CalibrationR
         this->get_result<int>(GI_TARGET_ROWS, results) << std::endl;
     output_stream << GI_TARGET_COLS << GI_DELIM <<
         this->get_result<int>(GI_TARGET_COLS, results) << std::endl;
+    output_stream << GI_TARGET_TOP << GI_DELIM <<
+        this->get_result<double>(GI_TARGET_TOP, results) << std::endl;
+    output_stream << GI_TARGET_BOTTOM << GI_DELIM <<
+        this->get_result<double>(GI_TARGET_BOTTOM, results) << std::endl;
+    output_stream << GI_TARGET_LEFT << GI_DELIM <<
+        this->get_result<double>(GI_TARGET_LEFT, results) << std::endl;
+    output_stream << GI_TARGET_RIGHT << GI_DELIM <<
+        this->get_result<double>(GI_TARGET_RIGHT, results) << std::endl;
         
 
     output_stream << "\nGeneral Info" << std::endl;

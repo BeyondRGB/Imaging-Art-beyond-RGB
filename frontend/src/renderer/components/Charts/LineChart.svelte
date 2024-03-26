@@ -8,10 +8,10 @@
   import { chart } from "svelte-apexcharts";
 
   export let data = [];
-  export let wavelengthArray = Array.from({ length: 35 }, (x, i) => i * 10 + 380);;
+  export let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);;
   export let trueShadowPos;
   export let stack = false;
-  let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
+  let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
 
 
   let inputData = [];
@@ -29,13 +29,13 @@
               x: element,
               y: data[i] * 100,
               fillColor: pointColors[i]
-          })
+          });
       });
       inputData.push({
           type: 'line',
-          name: 'Spectrum: (' + trueShadowPos.left.toFixed(1)  + "," + trueShadowPos.top.toFixed(1) + ")",
+          name: 'Spectrum: (' + trueShadowPos.left.toFixed(1) + ";" + trueShadowPos.top.toFixed(1) + ")",
           data: dataDict
-      })
+      });
       options.series = inputData;
       data = [];
   }
@@ -53,7 +53,7 @@
       },
       colors: ["#FFFFFF"],
       chart: {
-          background: '#38383B',
+          background: 'rgb(58, 58, 60)',
           animations: {
               enabled: false
           },
@@ -65,18 +65,14 @@
               curve: 'smooth',
           },
           toolbar: {
-              // Hamburger menu which has exports such as CSV etc.
+              // Hamburger menu which has exports such as PNG and SVG, CSV is explicitly hidden via css
               show: true,
               tools: {
                   download: true,
               },
               export: {
-                  csv: {
-                      filename: 'SpectralLineChart.csv',
-                      columnDelimiter: ',',
-                      headerCategory: 'wavelength',
-                      headerValue: 'value',
-                  }
+                png: {},
+                svg: {}
               }
           },
           selection: {
@@ -157,11 +153,57 @@
       }
   };
 
-</script>
+  const createCSVContent = () => {
+    let csvContent = "data:text/csv;charset=utf-8,"; //doesn't actually show up in file
+    const delimiter = ",";
 
+    //Add column headers as first row
+    csvContent += "wavelength,"
+    inputData.forEach((spectralLine) => {
+        csvContent += spectralLine.name + delimiter;
+    });        
+    csvContent += "\r\n";
+
+    //for each row of wavelength values
+    for(let i=0; i<wavelengthArray.length; i++){ 
+        //add the wavelength value first
+        csvContent += wavelengthArray[i].toString() + delimiter;
+
+        //then add each spectral line's percentage value at that wavelength 
+        inputData.forEach((spectralLine) => {
+            //do not want to assume spectralLine.data is in increasing order of wavelength
+            //so filter the array for the current wavelength value 
+            let filteredArray = spectralLine.data.filter((item) => {
+                return item.x==wavelengthArray[i]
+            });
+            //assume filteredArray has one object in it
+            //divide y value by 100, so value will be between 0 and 1
+            csvContent += (filteredArray[0].y / 100) + delimiter;
+        });
+
+        csvContent += "\r\n"; 
+    }
+
+    return csvContent;
+  };
+
+    const downloadCSV = () => {   
+        let csvContent = createCSVContent();
+      
+        //create a hidden <a> element, then click it to download csv
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "SpectralLineChart.csv");
+        link.click();
+    };
+       
+  
+</script>
+  
 <div class="line-chart" id="EstSpecChart">
   <div id="spectral-chart" use:chart={options}></div>
-
+    <div id="spectral-csv-download-button" on:click={downloadCSV}>Download CSV</div>
 </div>
 
 <style lang="postcss" global>
@@ -204,6 +246,14 @@
   .apexcharts-menu {
     color: #27293d!important;
     border: 0px;
+  }
+
+  #spectral-csv-download-button:hover {
+    cursor: pointer;
+  }
+
+  .apexcharts-menu-item.exportCSV {
+    display: none;
   }
 
 </style>

@@ -5,14 +5,20 @@
 
 
 
-RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_type) {
+RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverType so_type, bool batch) {
+	dataFilePath = REF_DATA_PATH;
+	loadRefDataList(); // Load existing reference data files list
 	this->observer = new StandardObserver(so_type);
 	this->illuminants = new Illuminants(illum_type);
 	this->white_pts = new WhitePoints(so_type, illum_type);
+	this->white_pts = new WhitePoints(so_type, illum_type);
+	this->batch = batch;
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
+	std::cout << "before is_custom" << std::endl;
 	if(this->is_custom(file)){
-		std::cout << "Custom RefData: " << file << std::endl;
+		std::cout << "is_custom file" << std::endl;
+		std::cout << file << std::endl;
 		this->read_in_data(file);
 	}
 	else{
@@ -20,6 +26,38 @@ RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_ty
 		this->read_in_data(path + file);
 	}
 	this->init_color_patches();
+}
+
+void RefData::RefDataFolder(const std::string folder) {
+	std::string path = REF_DATA_PATH;
+	// Assuming path is defined as std::string path = REF_DATA_PATH; and is a correct path to the folder
+	// Assuming REF_COUNT is the total number of files to consider
+	// Assuming folder is an actual object that can list or contain files, but this part is unclear in the provided code.
+	// You may need to adjust this part to fit how your application is supposed to access and list files in a directory.
+
+	for (int i = 0; i < REF_COUNT; i++) {
+		// This assumes you have a way to access each file's name within REF_DATA_PATH.folder
+		// For demonstration, let's pretend folder[i] gives you each file name. You'll need to replace this logic with actual file listing code.
+		std::string file_name = REF_DATA_PATH + folder[i]; // Placeholder: Adjust with actual method to access file names
+
+		if (file_name.find("Reflectance_Data.csv") != std::string::npos) {
+			// Assuming 'path' is a directory path and 'file_name' is the name of the file
+			std::string file_path = file_name; // Correctly concatenate path and file name
+
+			// Append the file name to vector ref_files
+			ref_files.push_back(file_path);
+
+			// Read data from the selected file
+			this->read_in_data(file_path);
+
+			// Assuming RefData constructor is expecting a file path
+			RefData* ref = new RefData(file_path); // If you're dynamically allocating, make sure to manage the memory properly
+
+			// Initialize color patches - note that this seems to be repeated for each file, which might be intended or might need adjustment
+			this->init_color_patches();
+		}
+	}
+
 }
 
 RefData::~RefData() {
@@ -39,6 +77,14 @@ RefData::~RefData() {
 		delete[] this->color_patches[row]; /* array of pointers */
 	}
 	delete[] this->color_patches; /* array of double pointers */
+	
+	saveRefDataList(); // Save the current list of reference data files on destruction
+
+	if (batch) {
+		delete observer;
+		delete illuminants;
+		delete white_pts;
+	}
 }
 
 IlluminantType RefData::get_illuminant(std::string illum_str){
@@ -312,10 +358,47 @@ cv::Mat RefData::xyz_as_matrix(){
 }
 
 bool RefData::is_custom(std::string file){
-	for(int i = 0; i < REF_COUNT; i++){
-		if(file == ref_files[i]){
+
+	for (int i = 0; i < REF_COUNT; i++) {
+		if (ref_files[i].find(file) != std::string::npos) {
 			return false;
 		}
+	}
+	std::string originalFilePath = file;
+
+	std::filesystem::path p(file);
+	std::string filename = p.filename().string();
+
+	std::string customFileName = REF_DATA_PATH + filename;
+	std::string newFilePath = customFileName;
+
+	// Copy the file
+	std::cout << "Copy file names:" << std::endl;
+	std::cout << originalFilePath << std::endl;
+	std::cout << newFilePath << std::endl;
+
+	std::ifstream src(originalFilePath, std::ios::binary);
+	std::ofstream dst(newFilePath, std::ios::binary);
+
+	if (!src) {
+		std::cerr << "Error: Unable to open source file for copying: " << originalFilePath << std::endl;
+		return false; // or handle error appropriately
+	}
+
+	if (!dst) {
+		std::cerr << "Error: Unable to open destination file for copying: " << newFilePath << std::endl;
+			
+		return false; // or handle error appropriately
+	}
+
+	dst << src.rdbuf(); // Copy contents
+
+	src.close();
+	dst.close();
+	if (file.find("Reflectance_Data.csv") != std::string::npos) {
+		std::string file_path = REF_DATA_PATH+ filename;
+		this->read_in_data(file_path);
+		this->init_color_patches();
 	}
 	return true;
 }

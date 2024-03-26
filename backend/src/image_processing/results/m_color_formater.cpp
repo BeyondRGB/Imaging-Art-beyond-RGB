@@ -16,6 +16,13 @@ void MColorFormater::write_format(std::ostream &output_stream, CalibrationResult
     }catch(ParsingError e){ 
         output_stream << e.what() << std::endl; 
     }
+    try {
+        offset = results->get_matrix(CM_CAMERA_SIGS);
+        results->write_matrix(output_stream, offset, "color_patch_avgs");
+    }
+    catch (ParsingError e) {
+        output_stream << e.what() << std::endl;
+    }
 
 
 }

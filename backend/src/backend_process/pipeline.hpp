@@ -130,7 +130,7 @@ private:
 	 * 
 	 * @return std::string 
 	 */
-	std::string get_output_directory();
+	std::string get_output_directory(std::string artImage);
 
 	TargetData build_target_data(Json target_json);
 

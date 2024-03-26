@@ -9,5 +9,13 @@ contextBridge.exposeInMainWorld('electron', {
   async getPort() {
     const result = await ipcRenderer.invoke('ipc-getPort');
     return result;
+  },
+  async openNewWindow() {
+    const result = await ipcRenderer.invoke('ipc-createNewWindow');
+    return result;
+  },
+  async openFileExplorer(arg) {
+    const result = ipcRenderer.invoke('ipc-openFileExplorer', arg);
+    return result;
   }
 });

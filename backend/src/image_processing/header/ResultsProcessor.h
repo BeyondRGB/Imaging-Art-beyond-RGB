@@ -67,6 +67,7 @@ class ResultsProcessor : public LeafComponent{
         std::string ts_id;
 
         std::string CM_f_name;
+        std::string CM_target_f_name;
         std::string SP_f_name;
         std::string Pro_f_name;
 

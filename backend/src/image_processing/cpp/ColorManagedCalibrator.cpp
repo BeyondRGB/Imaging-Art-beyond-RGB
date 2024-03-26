@@ -1,4 +1,6 @@
 #include "../header/ColorManagedCalibrator.h"
+#include <filesystem>
+
 
 ColorManagedCalibrator::~ColorManagedCalibrator() {
 }
@@ -27,27 +29,95 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     }
 
     // Init Color Targets
-    target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
-    target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
-    ColorTarget targets[] = { target1, target2 };
-    int channel_count = art1->channels();
-    int target_count = std::size(targets);
+    std::unique_ptr<ColorTarget> target1_ptr = images->get_target_pointer(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
+    std::unique_ptr<ColorTarget> target2_ptr = images->get_target_pointer(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
 
-    // Init Matracies used in calibration
-    this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
-    this->build_input_matrix();
-    comms->send_progress(0.1, this->get_name());
-    this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(),CV_32FC1);
+    bool targetsFound = (target1_ptr != nullptr && target2_ptr != nullptr);
 
-    // Fined M and Offsets to minimize deltaE
-    std::cout << "Optimizing to minimize deltaE" << std::endl;
-    this->find_optimization();
-    comms->send_progress(0.6, this->get_name());
+    if (targetsFound) {
+        //If targets are found, this is an initial request, so full optimization process is done
+        target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
+        target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
+        ColorTarget targets[] = { target1, target2 };
+        int channel_count = art1->channels();
+        int target_count = std::size(targets);
 
-    // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image
+        // Init Matracies used in calibration
+        this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
+        this->build_input_matrix();
+        comms->send_progress(0.1, this->get_name());
+        this->deltaE_values = cv::Mat_<double>(target1.get_row_count(), target1.get_col_count(), CV_32FC1);
+
+        // Fined M and Offsets to minimize deltaE
+        std::cout << "Optimizing to minimize deltaE" << std::endl;
+        this->find_optimization();
+        comms->send_progress(0.6, this->get_name());
+    }
+    else {
+        try {
+            //If targets aren't found, this is a batch request and the information must be retrieved
+            std::string directory = images->get_output_dir();
+            std::cout << "Output directory: " << directory << std::endl;
+
+
+            // Normalize directory separators to be platform independent
+            std::filesystem::path normalizedDir = std::filesystem::path(directory).make_preferred();
+
+            // Move up one directory level to get to the base directory (BeyondRGB_2024)
+            std::filesystem::path baseDirectory = normalizedDir.parent_path().parent_path();
+
+            std::cout << "Base directory: " << baseDirectory << std::endl;
+
+            std::string prefix = "BeyondRGB_M_color_";
+            std::string path;
+
+            // Iterate over the base directory and its subdirectories
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(baseDirectory)) {
+                if (entry.is_regular_file()) {
+                    std::string filename = entry.path().filename().string();
+                    std::cout << "Checking file: " << filename << std::endl;
+                    if (filename.find(prefix) != std::string::npos) {
+                        path = entry.path().string();
+                        break; // Found the file, exit the loop
+                    }
+                }
+            }
+
+            if (path.empty()) {
+                throw std::runtime_error("No file found with prefix: " + prefix);
+            }
+
+            std::ifstream input_file(path);
+            if (!input_file.is_open()) {
+                throw std::runtime_error("Unable to open file: " + path);
+            }
+            this->build_input_matrix();
+            std::stringstream buffer;
+            buffer << input_file.rdbuf();
+            std::string file_content = buffer.str();
+            if (!loadMatricesFromText(file_content)) {
+                // Handle error: pre-calculated data could not be loaded
+                throw std::runtime_error("Precalculated M and offset matrices could not be loaded.");
+            }
+            this->deltaE_values = cv::Mat_<double>(this->ref_data->get_row_count(), this->ref_data->get_col_count(), CV_32FC1);
+            recalculateDeltaE(images);
+        }
+        catch (const std::exception& e) {
+            // Handle any exceptions thrown by readFileIntoString or loadMatricesFromText
+            std::cerr << "Error: " << e.what() << std::endl;
+            // Depending on the severity, either handle the error and continue or re-throw the exception
+            throw;
+        }
+
+    }
+
+    // Use M and Offsets to convert the 6 channel image to a 3 channel ColorManaged image, for both art and target
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     try {
         this->update_image(images);
+        if (targetsFound) {
+            this->update_target(images);
+        }
     }
     catch(const std::exception& e) {
        throw ImgProcessingComponent::error(e.what(), this->get_name());
@@ -112,18 +182,19 @@ void ColorManagedCalibrator::find_optimization() {
  * Convert the sixe channels in art1 and art2 into a ColorManaged RGB image
  * using the optimized M and offsets
  */
-void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
+void ColorManagedCalibrator::update_image(btrgb::ArtObject* images) {
     std::cout << "Updating Image" << std::endl;
     btrgb::Image* art1 = images->getImage("art1");
     btrgb::Image* art2 = images->getImage("art2");
-    btrgb::Image* art[2] = {art1, art2};
+    btrgb::Image* art[2] = { art1, art2 };
     int height = art1->height();
     int width = art1->width();
+
 
     // Initialize 6xN Matrix to represen our 6 channal image
     // Each row represents a single channel and N is the number total pixles for each channel
     cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(art, 2, 6, &this->offest);
-   
+
     /**
     *   M is a 2d Matrix in the form
     *       m_1_1, m_1_2, ..., m_1_6
@@ -159,7 +230,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
     /* Apply nonlinearity of the target color space. */
     btrgb::ColorProfiles::apply_gamma(result_im, this->color_space);
 
-    
+ 
     std::string name = CM_IMAGE_KEY;
     /* Wrap in Image object for storing in the ArtObject. */
     btrgb::Image* cm_im = new btrgb::Image(name);
@@ -171,16 +242,79 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images){
 
     /* Store in ArtObject and output. */
     images->setImage(name, cm_im);
-    
+
     // Store img size in GeneralInfo
-    CalibrationResults *results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
+    CalibrationResults* results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
     results_obj->store_int(GI_IMG_ROWS, cm_im->getMat().rows);
     results_obj->store_int(GI_IMG_COLS, cm_im->getMat().cols);
 
 }
 
+void ColorManagedCalibrator::update_target(btrgb::ArtObject* images) {
+    std::cout << "Updating Target" << std::endl;
+    btrgb::Image* target1 = images->getImage("target1");
+    btrgb::Image* target2 = images->getImage("target2");
+    btrgb::Image* target[2] = { target1, target2 };
+    int height = target1->height();
+    int width = target2->width();
+
+
+    // Initialize 6xN Matrix to represen our 6 channal image
+    // Each row represents a single channel and N is the number total pixles for each channel
+    cv::Mat camra_sigs = btrgb::calibration::build_camra_signals_matrix(target, 2, 6, &this->offest);
+
+    /**
+    *   M is a 2d Matrix in the form
+    *       m_1_1, m_1_2, ..., m_1_6
+    *       m_2_1, m_2_2, ..., m_2_6
+    *       m_3_1, m_3_2, ..., m_3_6
+    *
+    *   camra_sigs is a 2d Matrix in the form
+    *       px1_ch1, px2_ch1, ..., pxN_ch1
+    *       px1_ch2, px2_ch2, ..., pxN_ch2
+    *       px1_ch3, px2_ch3, ..., pxN_ch3
+    *       px1_ch4, px2_ch4, ..., pxN_ch4
+    *       px1_ch5, px2_ch5, ..., pxN_ch5
+    *       px1_ch6, px2_ch6, ..., pxN_ch6
+    *
+    *   cm_XYZ is a 2d Matrix resulting in M * six_chan in the form
+    *       X1, X2, ..., XN
+    *       Y1, Y2, ..., YN
+    *       Z1, Z2, ..., ZN
+    *
+    */
+    // Convert camra_sigs ColorManaged XYZ values
+    cv::Mat cm_XYZ = this->M * camra_sigs;
+    camra_sigs.release(); // No longer needed
+
+    /* Convert result matrix to a standard, three-channel bitmap format. */
+    cv::Mat result_im = cm_XYZ.t();
+    result_im = result_im.reshape(3, height);
+    result_im.convertTo(result_im, CV_32F);
+
+    /* Convert from XYZ to target color space and clip. */
+    btrgb::ColorProfiles::convert_to_color(result_im, this->color_space);
+
+    /* Apply nonlinearity of the target color space. */
+    btrgb::ColorProfiles::apply_gamma(result_im, this->color_space);
+
+
+    std::string name = "ColorManagedTarget";
+    /* Wrap in Image object for storing in the ArtObject. */
+    btrgb::Image* cm_im = new btrgb::Image(name);
+    cm_im->initImage(result_im);
+    cm_im->setColorProfile(this->color_space);
+    cm_im->setExifTags(target1->getExifTags());
+    cm_im->setConversionMatrix(BTRGB_M_OPT, this->M);
+    cm_im->setConversionMatrix(BTRGB_OFFSET_OPT, this->offest);
+
+    /* Store in ArtObject and output. */
+    images->setImage(name, cm_im);
+}
+
 void ColorManagedCalibrator::output_report_data(btrgb::ArtObject* images){
     // Compute Calibrated XYZ values
+
     cv::Mat offset_avg = btrgb::calibration::apply_offsets(this->color_patch_avgs, this->offest);
     cv::Mat cm_xyz = this->M * offset_avg;
     // C
@@ -295,6 +429,135 @@ int DeltaEFunction::getDims()const{
     return dim;
 }
 
+bool ColorManagedCalibrator::loadMatricesFromText(const std::string& file_content) {
+    std::istringstream iss(file_content);
+    std::string line;
+    std::vector<double> m_values;
+    std::vector<double> offset_values;
+
+    // Skip the header line for M_color matrix
+    std::getline(iss, line); // This reads and discards the "M_color" header
+
+    // Read the M_color matrix
+    int read_lines = 0;
+    while (std::getline(iss, line) && read_lines < 3) {
+        std::istringstream line_stream(line);
+        std::string value;
+        while (std::getline(line_stream, value, ',')) {
+            // Trim the value in place
+            value.erase(0, value.find_first_not_of(" \n\r\t\f\v")); // Left trim
+            value.erase(value.find_last_not_of(" \n\r\t\f\v") + 1); // Right trim
+            if (!value.empty()) {
+                try {
+                    m_values.push_back(std::stod(value));
+                }
+                catch (const std::invalid_argument& ia) {
+                    std::cout << "Invalid argument when converting value '" << value << "': " << ia.what() << std::endl;
+                    return false;
+                }
+            }
+        }
+        ++read_lines;
+    }
+
+    // Skip the header line for M_color_offset matrix
+    if (!std::getline(iss, line) || line.find("M_color_offset") == std::string::npos) {
+        return false;
+    }
+
+    // Read the M_color_offset matrix
+    if (std::getline(iss, line)) {
+        std::istringstream line_stream(line);
+        std::string value;
+        while (std::getline(line_stream, value, ',')) {
+            // Trim the value in place
+            value.erase(0, value.find_first_not_of(" \n\r\t\f\v")); // Left trim
+            value.erase(value.find_last_not_of(" \n\r\t\f\v") + 1); // Right trim
+            if (!value.empty()) {
+                try {
+                    offset_values.push_back(std::stod(value));
+                }
+                catch (const std::invalid_argument& ia) {
+                    std::cout << "Invalid argument when converting value '" << value << "': " << ia.what() << std::endl;
+                    return false;
+                }
+            }
+        }
+    }
+    else {
+        std::cout << "Failed to read M_color_offset values." << std::endl; // Debug
+        return false;
+    }
+
+    // Check if we have the right amount of values for each matrix
+    size_t expected_m_size = 3 * 6; // M is expected to be 3x6
+    size_t expected_offset_size = 6; // offset is expected to be 1x6
+
+    if (m_values.size() != expected_m_size || offset_values.size() != expected_offset_size) {
+        std::cout << "Error: The sizes of the matrices are not as expected." << std::endl;
+        std::cout << "Expected M size: " << expected_m_size << ", Actual M size: " << m_values.size() << std::endl;
+        std::cout << "Expected Offset size: " << expected_offset_size << ", Actual Offset size: " << offset_values.size() << std::endl;
+        return false; // Invalid sizes
+    }
+
+    // Create cv::Mat objects from the vectors
+    this->M = cv::Mat(3, 6, CV_64F); // 3x6 matrix
+    memcpy(this->M.data, m_values.data(), m_values.size() * sizeof(double));
+
+    this->offest = cv::Mat(1, 6, CV_64F); // 1x6 matrix
+    memcpy(this->offest.data, offset_values.data(), offset_values.size() * sizeof(double));
+
+
+    if (!std::getline(iss, line)) {
+        std::cout << "Failed to read line after M_color_offset values." << std::endl;
+        return false;
+    }
+
+
+    if (!std::getline(iss, line) || line.find("color_patch_avgs") == std::string::npos) {
+        std::cout << "Failed to read color_patch_avgs header." << std::endl;
+        return false;
+    }
+    std::cout << "Skipped line: " << line << std::endl;
+
+    // Read the color_patch_avgs
+    std::vector<std::vector<double>> color_patch_avgs_rows;
+    int row_count = 0;
+    while (std::getline(iss, line) && row_count < 6) { // Assuming there are 6 rows
+        std::cout << "Reading color_patch_avgs line: " << line << std::endl;
+        std::istringstream line_stream(line);
+        std::string value;
+        std::vector<double> row_values;
+        while (std::getline(line_stream, value, ',')) {
+            // Trim and convert value as before
+            // ... [value trimming and conversion code] ...
+            row_values.push_back(std::stod(value));
+        }
+        color_patch_avgs_rows.push_back(row_values);
+        ++row_count;
+    }
+
+    // Check if the rows have consistent number of columns
+    size_t num_columns = color_patch_avgs_rows.empty() ? 0 : color_patch_avgs_rows[0].size();
+    for (const auto& row : color_patch_avgs_rows) {
+        if (row.size() != num_columns) {
+            std::cout << "Inconsistent number of columns in color_patch_avgs rows." << std::endl;
+            return false;
+        }
+    }
+
+    // Create cv::Mat object for color_patch_avgs
+    this->color_patch_avgs = cv::Mat(row_count, num_columns, CV_64F);
+    for (int i = 0; i < row_count; ++i) {
+        memcpy(this->color_patch_avgs.ptr<double>(i), color_patch_avgs_rows[i].data(), num_columns * sizeof(double));
+    }
+
+
+    return true;
+}
+
+
+
 double DeltaEFunction::calc(const double* x)const{
     this->itteration_count++;
 
@@ -357,4 +620,20 @@ double DeltaEFunction::calc(const double* x)const{
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
     return deltaE_avg;
+}
+
+//Used for calculating deltaE_sum and resulting_avg_deltaE in batch requests
+void ColorManagedCalibrator::recalculateDeltaE(btrgb::ArtObject* images) {
+    // Recalculate offset averages
+    cv::Mat offset_avg = btrgb::calibration::apply_offsets(this->color_patch_avgs, this->offest);
+
+    // Recalculate camera_xyz using current M and offset_avg
+    cv::Mat_<double> xyz = this->M * offset_avg;
+
+    // Recalculate deltaE values
+    double deltaE_sum = btrgb::calibration::compute_deltaE_sum(this->ref_data, xyz, &this->deltaE_values);
+
+    // Recalculate and update resulting_avg_deltaE
+    int patch_count = this->deltaE_values.total(); // total number of elements in the deltaE matrix
+    this->resulting_avg_deltaE = deltaE_sum / patch_count;
 }
