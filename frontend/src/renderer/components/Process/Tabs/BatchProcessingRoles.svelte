@@ -14,7 +14,7 @@
     let rerenderToggle = false;
     let validationError = null;
 
-    // this helps force a rerender once thimport { countFields } from "@root/util/storesUtil";e imageStack has been reset
+    // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 3) {
         imageStack = get($processState, 'artStacks[0].fields');
         
