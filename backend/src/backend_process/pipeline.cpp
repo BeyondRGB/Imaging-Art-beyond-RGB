@@ -135,19 +135,29 @@ void Pipeline::run() {
     }
 
 
-
     if (batch) {
         try {
             out_dir = this->process_data_m->get_string("outputDirectory");
+            std::cout << out_dir << std::endl;
+
             std::filesystem::path fsPath(out_dir);
-            std::filesystem::path parentPath = fsPath.parent_path();
-            out_dir = parentPath.string();
-            out_dir = out_dir + '/' + filenameWithoutExtension;
+            // Navigate two levels up
+            std::filesystem::path parentPath = fsPath.parent_path().parent_path();
+            // Use filesystem path to append filename, ensuring correct path separators
+            std::filesystem::path finalPath = parentPath / filenameWithoutExtension;
+            std::string original_dir = finalPath.string();
 
-            std::filesystem::create_directories(out_dir);
-
-
+            std::filesystem::path path{ original_dir };
+            int counter = 1;
+            while (std::filesystem::exists(path)) {
+                // Append a number to make the directory unique, using filesystem to handle path
+                path = parentPath / (filenameWithoutExtension + "_" + std::to_string(counter++));
+            }
+            std::filesystem::create_directories(path);
+            out_dir = path.string();
+            std::cout << out_dir << std::endl;
         }
+   
         catch (const ParsingError&) {
 
         }
@@ -231,9 +241,9 @@ void Pipeline::run() {
 
 
 std::string Pipeline::get_output_directory(std::string artImage) {
-    
-	std::time_t now = std::time(0);
-	std::tm *ltm = std::localtime(&now);
+
+    std::time_t now = std::time(0);
+    std::tm* ltm = std::localtime(&now);
     std::string date_string = btrgb::get_date("-");
     std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
@@ -247,7 +257,7 @@ std::string Pipeline::get_output_directory(std::string artImage) {
         this->report_error("[Pipeline]", "Process request: invalid or missing \"destinationDirectory\" field.");
         throw;
     }
-    catch(const std::filesystem::filesystem_error& err) {
+    catch (const std::filesystem::filesystem_error& err) {
         this->report_error("[Pipeline]", "Failed to create or access output directory.");
         throw;
     }

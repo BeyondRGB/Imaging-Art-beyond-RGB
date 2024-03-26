@@ -20,10 +20,11 @@
     }
     // get art image count after images are updated but before we render this screen.
     $:if ($processState.currentTab ===2){
-        if($processState.imageFilePaths.length >= 6 && $processState.imageFilePaths.length <=8  ){
+        let totalImageCount = $processState.imageFilePaths.length + countFields($processState.artStacks[0].fields); 
+        if(totalImageCount >= 6 && totalImageCount <=8  ){
             artImageCount = 1;
-        }else if ( $processState.imageFilePaths.length > 8){
-            artImageCount = Math.ceil(($processState.imageFilePaths.length - 6) / 2);
+        }else if ( totalImageCount > 8){
+            artImageCount = Math.ceil((totalImageCount - 6) / 2);
         }
     }
 
@@ -209,7 +210,7 @@
         font-size: 30px;
     }
     .autoSortButton {
-        margin: 50px 65px 0 0;
+        margin: 50px 65px 2px 0;
     }
     .errorText {
         text-align: center;

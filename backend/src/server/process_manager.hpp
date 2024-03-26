@@ -10,6 +10,7 @@
 #include "backend_process/pipeline.hpp"
 #include "backend_process/ColorManagedImage.hpp"
 #include "backend_process/SpectralPicker.hpp"
+#include "backend_process/SpectralPickerMeasured.hpp"
 #include "backend_process/HalfSizePreview.hpp"
 #include "backend_process/ThumbnailLoader.hpp"
 #include "backend_process/ReportRequest.hpp"
