@@ -34,7 +34,7 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
 
     bool targetsFound = (target1_ptr != nullptr && target2_ptr != nullptr);
 
-    if (targetsFound) {
+    if (targetsFound or images->get_batch() == false) {
         //If targets are found, this is an initial request, so full optimization process is done
         target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
         target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
@@ -115,8 +115,8 @@ void ColorManagedCalibrator::execute(CommunicationObj* comms, btrgb::ArtObject* 
     std::cout << "Converting 6 channels to ColorManaged RGB image." << std::endl;
     try {
         this->update_image(images);
-        if (targetsFound) {
-            this->update_target(images);
+        if (targetsFound or images->get_batch() == false) {
+            this->update_target(images,targetsFound);
         }
     }
     catch(const std::exception& e) {
@@ -250,10 +250,18 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images) {
 
 }
 
-void ColorManagedCalibrator::update_target(btrgb::ArtObject* images) {
+void ColorManagedCalibrator::update_target(btrgb::ArtObject* images,boolean targetsFound) {
     std::cout << "Updating Target" << std::endl;
-    btrgb::Image* target1 = images->getImage("target1");
-    btrgb::Image* target2 = images->getImage("target2");
+    btrgb::Image* target1;
+    btrgb::Image* target2;
+    if (targetsFound) {
+        target1 = images->getImage("target1");
+        target2 = images->getImage("target2");
+    }
+    else {
+        target1 = images->getImage("art1");
+        target2 = images->getImage("art2");
+    }
     btrgb::Image* target[2] = { target1, target2 };
     int height = target1->height();
     int width = target2->width();

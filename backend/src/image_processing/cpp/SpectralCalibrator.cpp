@@ -31,7 +31,7 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
 
     bool targetsFound = (target1_ptr != nullptr && target2_ptr != nullptr);
 
-    if (targetsFound) {
+    if (targetsFound or images->get_batch() == false) {
         //If targets are found, this is an initial request, so full optimization process is done
         target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
         target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
