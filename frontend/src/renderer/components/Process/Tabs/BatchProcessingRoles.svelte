@@ -239,6 +239,7 @@
         max-height: calc(100% - 300px);
         overflow-y:auto;
         scrollbar-width: 10px;
+        padding-left: 20px;
     }
     .leftStartBox {
         max-height: 100px;
