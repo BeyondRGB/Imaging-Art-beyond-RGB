@@ -236,6 +236,7 @@
         max-height:300px;
     }
     .leftBoxes {
+        margin-top: 5px;
         max-height: calc(100% - 300px);
         overflow-y:auto;
         scrollbar-width: 10px;
