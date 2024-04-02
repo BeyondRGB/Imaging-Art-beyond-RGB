@@ -86,19 +86,26 @@
 <main>
     {#key rerenderToggle}
         <panel>
-            <h1>Specify Image Roles Batch</h1>
-            <p>Drag and drop each image into its appropriate role</p>
-            <div>
-                <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+            <div class="leftHeader">
+                <h1>Specify Image Roles Batch</h1>
+                <p>Drag and drop each image into its appropriate role</p>
+                <div class="leftStartBox">
+                    <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+                </div>
                 <div class="btnGroup">
                     <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
                 </div>
+                
+            </div>
+            <div class="leftBoxes">
+
                 <div class="centerFlexBox">
                 <div id="imageStack">
                     <div class="inputGroup">
                         <div class="imageLetter">A</div>
                         <div class="imageLetter">B</div>
                     </div>
+                    <div class='objectDropBoxes'>
                     <div class="text">Object</div>
                     {#each Array(artImageCount) as _, index (index)}
                     <div class="inputGroup">
@@ -106,6 +113,7 @@
                         <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[index]} singleItem={true} showError={!!validationError}/></div>
                     </div>
                     {/each}
+                    </div>
                     <br>
                 </div>
                 
@@ -197,6 +205,7 @@
         gap: 20px;
         width: 100%;
         justify-content: center;
+        padding-top: 20px;
     }
     .cell {
         width: 50%;
@@ -222,5 +231,20 @@
     }
     .nextBtn {
         @apply m-4 bg-green-700 hover:bg-green-600 focus:ring-green-600 transition-all;
+    }
+    .leftHeader {
+        max-height:300px;
+    }
+    .leftBoxes {
+        margin-top: 5px;
+        max-height: calc(100% - 300px);
+        overflow-y:auto;
+        scrollbar-width: 10px;
+        padding-left: 20px;
+    }
+    .leftStartBox {
+        max-height: 100px;
+        overflow-y:auto;
+        scrollbar-width: 5px;
     }
 </style>
