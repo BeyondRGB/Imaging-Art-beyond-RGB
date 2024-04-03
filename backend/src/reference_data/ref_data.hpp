@@ -259,6 +259,10 @@ private:
 
 	bool is_custom(std::string file);
 
+	void save_last_used_file(const std::string& path);
+
+	void load_last_used_file();
+
 	ColorPatch*** color_patches;
 	StandardObserver* observer = nullptr;
 	Illuminants* illuminants = nullptr;

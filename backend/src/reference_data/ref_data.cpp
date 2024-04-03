@@ -4,6 +4,9 @@
 #include "server/globals_siglton.hpp"
 
 
+std::string LAST_USED_FILE_NAME = "";
+
+
 
 RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverType so_type, bool batch) {
 	dataFilePath = REF_DATA_PATH;
@@ -15,6 +18,18 @@ RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverTyp
 	this->batch = batch;
 	std::string path = REF_DATA_PATH;
 	this->f_name = file;
+
+	if (LAST_USED_FILE_NAME != "") {
+		this->read_in_data(LAST_USED_FILE_NAME);
+	}
+	else {
+		if (this->is_custom(file)) {
+			this->read_in_data(file);
+		}
+		else {
+			this->read_in_data(path + file);
+		}
+	}
 	std::cout << "before is_custom" << std::endl;
 	if(this->is_custom(file)){
 		std::cout << "is_custom file" << std::endl;
@@ -26,6 +41,8 @@ RefData::RefData(const std::string& file, IlluminantType illum_type, ObserverTyp
 		this->read_in_data(path + file);
 	}
 	this->init_color_patches();
+	std::cout << "---SAVING...---" << std::endl;
+	this->save_last_used_file(file);
 }
 
 void RefData::RefDataFolder(const std::string folder) {
@@ -199,6 +216,8 @@ void RefData::read_in_data(std::string file_path) {
 	this->close_file();
 }
 
+
+
 void RefData::pars_line(std::string line) {
 	// Ignore Wavlen col
 	this->get_next<int>(line);
@@ -370,6 +389,7 @@ bool RefData::is_custom(std::string file){
 	std::string filename = p.filename().string();
 
 	std::string customFileName = REF_DATA_PATH + filename;
+	LAST_USED_FILE_NAME = customFileName;
 	std::string newFilePath = customFileName;
 
 	// Copy the file
@@ -400,5 +420,29 @@ bool RefData::is_custom(std::string file){
 		this->read_in_data(file_path);
 		this->init_color_patches();
 	}
+	save_last_used_file(LAST_USED_FILE_NAME);
 	return true;
+}
+
+
+void RefData :: save_last_used_file(const std::string& path) {
+	
+	std::ofstream out_file(LAST_USED_FILE_NAME, std::ios::trunc);
+	if (out_file) {
+		out_file << LAST_USED_FILE_NAME;
+		out_file.close();
+	}
+	else {
+		std::cerr << "Error: Unable to open file to save last used ref data: " << LAST_USED_FILE_NAME << std::endl;
+	}
+}
+
+void RefData :: load_last_used_file() {
+	std::ifstream in_file(LAST_USED_FILE_NAME);
+	if (in_file) {
+		this -> read_in_data(LAST_USED_FILE_NAME);
+	}
+	else {
+		std::cerr << "Error: Unable to open file to load last used ref data: " << LAST_USED_FILE_NAME << std::endl;
+	}
 }
