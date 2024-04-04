@@ -3,7 +3,8 @@
     import { processState, batchProcessState, batchImagesA, batchImagesB } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
-    import { autoSortImages } from "@util/autoSortStandards.svelte";
+    import { autoSortBatchImages } from "@util/autoSortStandards.svelte";
+    import { countFields } from "@root/util/storesUtil";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let artImageStackA = get($batchImagesA);
@@ -20,10 +21,11 @@
     }
     // get art image count after images are updated but before we render this screen.
     $:if ($processState.currentTab ===2){
-        if($processState.imageFilePaths.length >= 6 && $processState.imageFilePaths.length <=8  ){
+        let totalImageCount = $processState.imageFilePaths.length + countFields($processState.artStacks[0].fields); 
+        if(totalImageCount >= 6 && totalImageCount <=8  ){
             artImageCount = 1;
-        }else if ( $processState.imageFilePaths.length > 8){
-            artImageCount = Math.ceil(($processState.imageFilePaths.length - 6) / 2);
+        }else if ( totalImageCount > 8){
+            artImageCount = Math.ceil((totalImageCount - 6) / 2);
         }
     }
 
@@ -47,7 +49,7 @@
     };
 
     const autoSort = function () {
-        $processState.imageFilePaths = autoSortImages(getAllImages(), imageStack);
+        $processState.imageFilePaths = autoSortBatchImages(getAllImages(), imageStack);
         rerenderToggle = !rerenderToggle;
     };
 
@@ -84,19 +86,26 @@
 <main>
     {#key rerenderToggle}
         <panel>
-            <h1>Specify Image Roles Batch</h1>
-            <p>Drag and drop each image into its appropriate role</p>
-            <div>
-                <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+            <div class="leftHeader">
+                <h1>Specify Image Roles Batch</h1>
+                <p>Drag and drop each image into its appropriate role</p>
+                <div class="leftStartBox">
+                    <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+                </div>
                 <div class="btnGroup">
                     <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
                 </div>
+                
+            </div>
+            <div class="leftBoxes">
+
                 <div class="centerFlexBox">
                 <div id="imageStack">
                     <div class="inputGroup">
                         <div class="imageLetter">A</div>
                         <div class="imageLetter">B</div>
                     </div>
+                    <div class='objectDropBoxes'>
                     <div class="text">Object</div>
                     {#each Array(artImageCount) as _, index (index)}
                     <div class="inputGroup">
@@ -104,6 +113,7 @@
                         <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[index]} singleItem={true} showError={!!validationError}/></div>
                     </div>
                     {/each}
+                    </div>
                     <br>
                 </div>
                 
@@ -195,6 +205,7 @@
         gap: 20px;
         width: 100%;
         justify-content: center;
+        padding-top: 20px;
     }
     .cell {
         width: 50%;
@@ -209,7 +220,7 @@
         font-size: 30px;
     }
     .autoSortButton {
-        margin: 50px 65px 0 0;
+        margin: 50px 65px 2px 0;
     }
     .errorText {
         text-align: center;
@@ -220,5 +231,20 @@
     }
     .nextBtn {
         @apply m-4 bg-green-700 hover:bg-green-600 focus:ring-green-600 transition-all;
+    }
+    .leftHeader {
+        max-height:300px;
+    }
+    .leftBoxes {
+        margin-top: 5px;
+        max-height: calc(100% - 300px);
+        overflow-y:auto;
+        scrollbar-width: 10px;
+        padding-left: 20px;
+    }
+    .leftStartBox {
+        max-height: 100px;
+        overflow-y:auto;
+        scrollbar-width: 5px;
     }
 </style>

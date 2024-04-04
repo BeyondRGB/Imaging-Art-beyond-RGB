@@ -1,5 +1,8 @@
 <script>
     import { chart } from "svelte-apexcharts";
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
 
     export let data;
 
@@ -90,6 +93,16 @@
         return {
             series: getData(),
             chart: {
+                events: {
+                    dataPointSelection: function(event, chartContext, config) {
+                        let yAxisLabel = data.length - config.seriesIndex;
+                        let xValue = config.w.config.series[config.seriesIndex].data[config.dataPointIndex].x;
+                        console.log(yAxisLabel)
+                        console.log(xValue)
+                        // Dispatch a custom event with the selected data point information
+                        dispatch('datapointselect', { yAxisLabel, xValue });
+                    }
+                },
                 height: '650px',
                 width: '650px',
                 type: 'heatmap',
@@ -99,7 +112,7 @@
                     show: false
                 },
                 selection: {
-                    enabled: false
+                    enabled: true
                 }
             },
             legend: {

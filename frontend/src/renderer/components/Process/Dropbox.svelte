@@ -10,6 +10,7 @@
     export let type;
     export let singleItem = true;
     export let showError = false;
+    export let dragDisabled = false;
 
     function handleSort(e) {
         items = e.detail.items;
@@ -18,7 +19,7 @@
 </script>
 <main>
     <div class="sectionStyle {showError && singleItem && isEmpty(items) ? 'errorStyle' : ''}">
-        <section use:dndzone={{items, flipDurationMs, type, dropFromOthersDisabled: singleItem && items.length > 0}}
+        <section use:dndzone={{items, flipDurationMs, type, dragDisabled, dropFromOthersDisabled: singleItem && items.length > 0}}
             on:consider={handleSort}
             on:finalize={handleSort}
         >
