@@ -43,7 +43,7 @@
   const options = {
       series: [],
       markers: {
-          size: 5,
+          size: 4,
 
       },
       stroke: {
