@@ -97,7 +97,7 @@
                 labels:{
                     colors:["#FFF", "#FFF"]
                 },
-                customLegendItems: ["Actual", "Expected"],
+                customLegendItems: ["Reference", "Image"],
                 markers: { 
                     size: 5,
                     strokeWidth: 2, 
