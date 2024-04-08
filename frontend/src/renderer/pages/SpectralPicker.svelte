@@ -107,7 +107,9 @@
   function closeImage() {
     $viewState.projectKey = null;
     $viewState.colorManagedImage.dataURL = "";
+    mainfilePath = "";
   }
+
 </script>
 
 <main>
