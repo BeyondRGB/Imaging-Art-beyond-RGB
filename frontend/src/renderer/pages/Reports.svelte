@@ -166,7 +166,7 @@
 	{:else}
 		<div class="art">
 			<div class="report-header" class:show={$currentPage === "Reports"}>
-        <button class="close-report" on:click={handleCloseReport}>X</button>
+        	<button class="close-report" on:click={handleCloseReport}>X</button>
 				<div class="report-left">
 					<div class="report-name">
 						{$viewState.projectKey?.split("\\").length > 2
@@ -178,7 +178,7 @@
               $viewState.reports.calibration?.["double_values"]?.[0]?.["data"]
 						).toFixed(4)}
 					</div>
-          <button class="report-info new-window-button" on:click={() => { window.electron.openNewWindow() }}>View Another Report</button>
+            <button class="report-info new-window-button" on:click={() => { window.electron.openNewWindow() }}>View Another Report</button>
 
 					{#if isVerification}
 						<div class="report-info">
@@ -217,7 +217,7 @@
 									</div>
 								</div>
 							{/if}
-						</div>
+					</div>
 						{#if $currentPage === "Reports"}
 							<div
 								class="reports-handle"
@@ -227,9 +227,7 @@
 								{expand ? ">" : "<"}
 							</div>
 						{/if}
-					</div>
-					<!-- <div class="report-item">
-          </div> -->
+					
 					<div class="report-item">
 						<!-- AB vector chart -->
 						<VectorChart
@@ -254,6 +252,7 @@
 					</div>
 				</div>
 			</div>
+		</div>
 	{/if}
 </main>
 
@@ -274,7 +273,8 @@
           gap-2;
 	}
 	.report-item {
-		@apply w-auto h-full flex justify-center items-center bg-gray-800 ring-1 ring-gray-500
+		width:fit-content;
+		@apply h-full flex justify-center items-center bg-gray-800 ring-1 ring-gray-500
           p-4 pr-8 rounded-xl;
 	}
 	.dropdown-report-btn {
