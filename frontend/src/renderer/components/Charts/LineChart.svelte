@@ -43,13 +43,13 @@
   const options = {
       series: [],
       markers: {
-          size: 5,
+          size: 2.5,
 
       },
       stroke: {
           show: true,
           curve: 'smooth',
-          width: 2,
+          width: 1,
       },
       colors: ["#FFFFFF"],
       chart: {
