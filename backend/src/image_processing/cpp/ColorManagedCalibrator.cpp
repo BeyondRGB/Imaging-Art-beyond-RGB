@@ -250,7 +250,7 @@ void ColorManagedCalibrator::update_image(btrgb::ArtObject* images) {
 
 }
 
-void ColorManagedCalibrator::update_target(btrgb::ArtObject* images,boolean targetsFound) {
+void ColorManagedCalibrator::update_target(btrgb::ArtObject* images,bool targetsFound) {
     std::cout << "Updating Target" << std::endl;
     btrgb::Image* target1;
     btrgb::Image* target2;

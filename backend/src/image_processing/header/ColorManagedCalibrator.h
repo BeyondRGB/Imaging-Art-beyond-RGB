@@ -92,7 +92,7 @@ private:
  *
  * @param images the art object containing target1 and target2
  */
-    void update_target(btrgb::ArtObject* images,boolean targetsFound);
+    void update_target(btrgb::ArtObject* images,bool targetsFound);
 
 
     /**
