@@ -79,6 +79,11 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     // Target Dims
     results_obj->store_int(GI_TARGET_ROWS, target_json.get_number("rows"));
     results_obj->store_int(GI_TARGET_COLS, target_json.get_number("cols"));
+    // Target Coords
+    results_obj->store_double(GI_TARGET_TOP, target_json.get_number("top")*target_json.get_number("resolution"));
+    results_obj->store_double(GI_TARGET_BOTTOM, target_json.get_number("bottom") * target_json.get_number("resolution"));
+    results_obj->store_double(GI_TARGET_LEFT, target_json.get_number("left") * target_json.get_number("resolution"));
+    results_obj->store_double(GI_TARGET_RIGHT, target_json.get_number("right") * target_json.get_number("resolution"));
     // Observer
     int observer_num = ref_data_json.get_number(key_map[DataKey::StandardObserver]);
     results_obj->store_int(GI_OBSERVER, observer_num);
@@ -113,9 +118,58 @@ void Pipeline::run() {
     this->send_info( this->process_data_m->to_string(), this->get_process_name());
 
     std::string out_dir;
-    try{
-        out_dir = this->get_output_directory();}
-    catch(...) {return;}
+
+    std::string art_image;
+
+    bool batch = this->process_data_m->get_bool("batch");
+
+    //Gets the name of the Art image to name output directories
+    Json image_array = this->process_data_m->get_array(key_map[DataKey::IMAGES]);
+    Json obj = image_array.obj_at(0);
+    std::string art_file = obj.get_string(key_map[DataKey::ART]);
+    std::filesystem::path p(art_file);
+    std::string filenameWithoutExtension = p.stem().string();
+    size_t lastUnderscorePosition = filenameWithoutExtension.rfind('_');
+    if (lastUnderscorePosition != std::string::npos) {
+        filenameWithoutExtension = filenameWithoutExtension.substr(0, lastUnderscorePosition);
+    }
+
+
+    if (batch) {
+        try {
+            out_dir = this->process_data_m->get_string("outputDirectory");
+            std::cout << out_dir << std::endl;
+
+            std::filesystem::path fsPath(out_dir);
+            // Navigate two levels up
+            std::filesystem::path parentPath = fsPath.parent_path().parent_path();
+            // Use filesystem path to append filename, ensuring correct path separators
+            std::filesystem::path finalPath = parentPath / filenameWithoutExtension;
+            std::string original_dir = finalPath.string();
+
+            std::filesystem::path path{ original_dir };
+            int counter = 1;
+            while (std::filesystem::exists(path)) {
+                // Append a number to make the directory unique, using filesystem to handle path
+                path = parentPath / (filenameWithoutExtension + "_" + std::to_string(counter++));
+            }
+            std::filesystem::create_directories(path);
+            out_dir = path.string();
+            std::cout << out_dir << std::endl;
+        }
+   
+        catch (const ParsingError&) {
+
+        }
+    }
+    else {
+        try {
+            out_dir = this->get_output_directory(filenameWithoutExtension);
+        }
+        catch (...) {
+            return;
+        }
+    }
 
 
     /* Create ArtObject */
@@ -125,7 +179,7 @@ void Pipeline::run() {
         std::string ref_file = this->get_ref_file(target_data);
         IlluminantType illuminant = this->get_illuminant_type(target_data);
         ObserverType observer = this->get_observer_type(target_data);
-        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir)); 
+        images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir,batch)); 
     }catch(RefData_FailedToRead e){
         this->report_error(this->get_process_name(), e.what());
         return;
@@ -186,15 +240,16 @@ void Pipeline::run() {
 }
 
 
-std::string Pipeline::get_output_directory() {
-    
-	std::time_t now = std::time(0);
-	std::tm *ltm = std::localtime(&now);
+std::string Pipeline::get_output_directory(std::string artImage) {
+
+    std::time_t now = std::time(0);
+    std::tm* ltm = std::localtime(&now);
     std::string date_string = btrgb::get_date("-");
     std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
         std::string base_dir = this->process_data_m->get_string("destinationDirectory");
         std::string dir = base_dir + "/" + OUTPUT_PREFIX + date_string + "_" + time_string + "/";
+        dir = dir + "/" + artImage;
         std::filesystem::create_directories(dir);
         return dir;
     }
@@ -202,7 +257,7 @@ std::string Pipeline::get_output_directory() {
         this->report_error("[Pipeline]", "Process request: invalid or missing \"destinationDirectory\" field.");
         throw;
     }
-    catch(const std::filesystem::filesystem_error& err) {
+    catch (const std::filesystem::filesystem_error& err) {
         this->report_error("[Pipeline]", "Failed to create or access output directory.");
         throw;
     }

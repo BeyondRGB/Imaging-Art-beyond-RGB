@@ -5,6 +5,8 @@
     sendMessage,
     viewState,
     serverError,
+    batchImagesA,
+    batchImagesB
   } from "@util/stores";
 
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
@@ -13,6 +15,8 @@
   import SpecFileRoles from "@components/Process/Tabs/SpecFileRoles.svelte";
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
+import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
+  import SelectProcessingType from "@root/components/Process/Tabs/SelectProcessingType.svelte";
   import Layout from "@components/Process/Layout.svelte";
   let tabList;
 
@@ -22,15 +26,19 @@
   let binaryName = null;
   let binaryFor = null;
   let binaryID = null;
+  let batchCount = 0;
 
   let tabs: any = [
+{ name: "Select Processing Type", component: SelectProcessingType },
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
     { name: "Specify File Roles", component: SpecFileRoles },
+//{ name: "Batch Processing Roles", component:BatchProcessingRoles},
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
   ];
+
 
   function nextTab() {
     if ($processState.currentTab !== tabs.length - 1) {
@@ -42,12 +50,45 @@
     }
   }
 
+    $: if($processState.pipelineComplete && $processState.artStacks[0].fields.imageA.length >= 2 && $processState.artStacks[0].fields.imageA[1].length !== 0 ) {
+    $processState.completedTabs =[
+        true,
+        true,
+        true,
+        true,
+        false,
+        true
+    ];
+	$processState.batch=true;
+    $processState.currentTab-=1;
+    $processState.pipelineComplete = false;
+    $processState.artStacks[0].fields.imageA.shift();
+    $processState.artStacks[0].fields.imageB.shift();
+
+
+    // $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
+    // $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
+    batchCount+=1;
+    handleConfirm();
+  }
+  
+	$: if($viewState.projectKey != null) {
+	    processRequest.RequestData.outputDirectory=$viewState.projectKey;
+	}
+		
+
   function prevTab() {
     if ($processState.currentTab !== 0) {
       $processState.currentTab -= 1;
     } else {
       console.log("Error overflow");
     }
+  }
+
+  $: if($processState.processType === "Batch"){
+    tabs[3] =  { name: "Specify File Roles - Batch", component: BatchProcessingRoles }
+  } else{
+    tabs[3] = { name: "Specify File Roles", component: SpecFileRoles }
   }
 
   $: if (tabList) {
@@ -66,7 +107,7 @@
     try {
       let temp = JSON.parse($messageStore[0]);
       if (
-        // CM Binary Handler
+        // CM Art Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
         temp["RequestID"] === $processState.CMID
       ) {
@@ -84,7 +125,16 @@
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
         binaryFor = "Thumbnail";
-      } else if (temp["ResponseType"] === "ImageBinary") {
+      } else if(
+        // Color Managed Target image Binary handler
+        temp["ResponseType"] === "ImageBinary" &&
+        temp["RequestID"] === $processState.CMTID
+      ) {
+        console.log("Color Managed Target Binary From Server");
+        binaryType = temp["ResponseData"]["type"];
+        binaryName = temp["ResponseData"]["name"];
+        binaryFor = "ColorManagedTarget";
+      }else if (temp["ResponseType"] === "ImageBinary") {
         // Color target and output binary handler
         console.log("Binary From Server");
         binaryType = temp["ResponseData"]["type"];
@@ -144,6 +194,12 @@
         dataURL: temp.src,
         name: binaryName,
       };
+    }else if(binaryFor === "ColorManagedTarget"){ 
+      console.log("Got target!");
+      $viewState.colorManagedTargetImage = {
+        dataURL:temp.src,
+        name:binaryName
+      };
     }
     binaryType = null;
     binaryName = null;
@@ -156,12 +212,12 @@
     RequestData: {
       images: [
         {
-          art: $processState.artStacks[0].fields.imageA[0]?.name,
+          art: $processState.artStacks[0].fields.imageA[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldA[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldA[0]?.name,
         },
         {
-          art: $processState.artStacks[0].fields.imageB[0]?.name,
+          art: $processState.artStacks[0].fields.imageB[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldB[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldB[0]?.name,
         },
@@ -176,6 +232,10 @@
   $: console.log({ processRequest });
 
   $: if (processRequest != null) {
+  	if($viewState.projectKey != null) {
+	    processRequest.RequestData.outputDirectory=$viewState.projectKey;
+	}
+	processRequest.RequestData.batch = $processState.batch;
     if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
       processRequest.RequestData.targetLocation["refData"][
         "standardObserver"
@@ -214,7 +274,7 @@
 
     if ($processState.currentTab !== tabs.length - 1) {
       $processState.currentTab += 1;
-      console.log("Sening Process Request");
+      console.log("Sending Process Request");
       console.log(processRequest);
       setTimeout(() => {
         sendMessage(JSON.stringify(processRequest));
@@ -228,7 +288,9 @@
 <main>
   {#if !tabs[$processState.currentTab].hidden}
     <nav class="dark:bg-gray-800/25">
-      <button id="backBtn" on:click={prevTab}>Back</button>
+      {#if $processState.currentTab !== 0}
+        <button id="backBtn" on:click={prevTab}>Back</button>
+      {/if}
 
       <tabs>
         {#each tabs as tab, i}
@@ -264,7 +326,7 @@
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
-    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options"}
+    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options" &&  $processState.currentTab !== 0 }
       <button on:click={nextTab} class="nextBtn">Next</button>
     {/if}
   </botnav>

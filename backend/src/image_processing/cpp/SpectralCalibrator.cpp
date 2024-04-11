@@ -3,7 +3,7 @@
 void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* images) {
     comms->send_info("", this->get_name());
     comms->send_progress(0, this->get_name());
-    
+
     btrgb::Image* art1;
     btrgb::Image* art2;
     ColorTarget target1;
@@ -26,65 +26,134 @@ void SpectralCalibrator::execute(CommunicationObj *comms, btrgb::ArtObject* imag
     }
 
     // Init Color Targets
-    target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
-    target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
-    ColorTarget targets[] = { target1, target2 };
-    int channel_count = art1->channels();
-    int target_count = std::size(targets);
+    std::unique_ptr<ColorTarget> target1_ptr = images->get_target_pointer(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
+    std::unique_ptr<ColorTarget> target2_ptr = images->get_target_pointer(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
 
-    comms->send_progress(0.2, this->get_name());
+    bool targetsFound = (target1_ptr != nullptr && target2_ptr != nullptr);
 
-    //Init ColorTarget Averages
-    this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
-    
-    // Convert RefData to matrix
-    cv::Mat ref_data_matrix = this->ref_data->as_matrix();
+    if (targetsFound or images->get_batch() == false) {
+        //If targets are found, this is an initial request, so full optimization process is done
+        target1 = images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
+        target2 = images->get_target(TARGET(2), btrgb::TargetType::GENERAL_TARGET);
+        ColorTarget targets[] = { target1, target2 };
+        int channel_count = art1->channels();
+        int target_count = std::size(targets);
 
-    // Initialize M_relf starting values
-    this->init_M_refl(ref_data_matrix);
+        comms->send_progress(0.2, this->get_name());
 
-    comms->send_progress(0.4, this->get_name());
+        //Init ColorTarget Averages
+        this->color_patch_avgs = btrgb::calibration::build_target_avg_matrix(targets, target_count, channel_count);
 
-    // Create Custom WeightedErrorFunction used to minimize Z
-    cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
+        // Convert RefData to matrix
+        cv::Mat ref_data_matrix = this->ref_data->as_matrix();
+
+        // Initialize M_relf starting values
+        this->init_M_refl(ref_data_matrix);
+
+        comms->send_progress(0.4, this->get_name());
+
+        // Create Custom WeightedErrorFunction used to minimize Z
+        cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
             &ref_data_matrix,
             &this->input_array,
             &this->M_refl,
             &this->color_patch_avgs,
             &this->R_camera
         )
-    );
+        );
 
-    //Init MinProblemSolver
-    cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
-    min_solver->setFunction(ptr_F);
-    
-    double initial_stp_value = 0.75;
-    cv::Mat step;
-    this->init_step(initial_stp_value, step);
-    min_solver->setInitStep(step);
-    min_solver->setTermCriteria(
-        cv::TermCriteria(
-            cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, // Term Type
+        //Init MinProblemSolver
+        cv::Ptr<cv::DownhillSolver> min_solver = cv::DownhillSolver::create();
+        min_solver->setFunction(ptr_F);
+
+        double initial_stp_value = 0.75;
+        cv::Mat step;
+        this->init_step(initial_stp_value, step);
+        min_solver->setInitStep(step);
+        min_solver->setTermCriteria(
+            cv::TermCriteria(
+                cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, // Term Type
                 5000, // max itterations
                 1e-10 // epsilon
-        )
-    );
-    
-    std::cout << "Running Minimization." << std::endl;
-    comms->send_progress(0.5, this->get_name());
+            )
+        );
 
-    TimeTracker time_tracker;
-    time_tracker.start_timeing();
-    // Optimize M_refl to minimized Z
-    double res = min_solver->minimize(this->input_array);
-    time_tracker.end_timeing();
+        std::cout << "Running Minimization." << std::endl;
+        comms->send_progress(0.5, this->get_name());
 
+        TimeTracker time_tracker;
+        time_tracker.start_timeing();
+        // Optimize M_refl to minimized Z
+        double res = min_solver->minimize(this->input_array);
+        time_tracker.end_timeing();
+
+        //Resolves the bug of updating M_refl to optimized value, but not R_camera
+        this->R_camera = (this->M_refl) * (this->color_patch_avgs);
+    }
+    else {
+        try {
+            //If targets aren't found, this is a batch request and the information must be retrieved
+            std::string directory = images->get_output_dir();
+            std::cout << "Output directory: " << directory << std::endl;
+
+
+            // Normalize directory separators to be platform independent
+            std::filesystem::path normalizedDir = std::filesystem::path(directory).make_preferred();
+
+            // Move up one directory level to get to the base directory (BeyondRGB_2024)
+            std::filesystem::path baseDirectory = normalizedDir.parent_path().parent_path();
+
+            std::cout << "Base directory: " << baseDirectory << std::endl;
+
+            std::string prefix = "BeyondRGB_M_spectral_";
+            std::string path;
+
+            // Iterate over the base directory and its subdirectories
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(baseDirectory)) {
+                if (entry.is_regular_file()) {
+                    std::string filename = entry.path().filename().string();
+                    std::cout << "Checking file: " << filename << std::endl;
+                    if (filename.find(prefix) != std::string::npos) {
+                        path = entry.path().string();
+                        break; // Found the file, exit the loop
+                    }
+                }
+            }
+
+            if (path.empty()) {
+                throw std::runtime_error("No file found with prefix: " + prefix);
+            }
+
+            std::ifstream input_file(path);
+            if (!input_file.is_open()) {
+                throw std::runtime_error("Unable to open file: " + path);
+            }
+            std::stringstream buffer;
+            buffer << input_file.rdbuf();
+            std::string file_content = buffer.str();
+
+            cv::Mat ref_data_matrix = this->ref_data->as_matrix();
+
+            if (!loadMatricesFromText(file_content)) {
+                // Handle error: pre-calculated data could not be loaded
+                throw std::runtime_error("Precalculated M and offset matrices could not be loaded.");
+            }
+
+            this->R_camera = (this->M_refl) * (this->color_patch_avgs);
+
+        }
+        catch (const std::exception& e) {
+            // Handle any exceptions thrown by readFileIntoString or loadMatricesFromText
+            std::cerr << "Error: " << e.what() << std::endl;
+            // Depending on the severity, either handle the error and continue or re-throw the exception
+            throw;
+        }
+    }
     comms->send_progress(0.9, this->get_name());
 
-    this->store_results(images);  
+    this->store_results(images);
 
-    this->store_spectral_img(images); 
+    this->store_spectral_img(images);
 
     std::cout << "SpectralCalibration done" << std::endl;
     comms->send_progress(1, this->get_name());
@@ -213,7 +282,7 @@ double WeightedErrorFunction::calc(const double *x) const{
 
     // Calculate R_camera from ColorPatch camera signals and current M_refl
     *this->R_camera = (*this->M_refl) * (*this->cp_carmera_sigs);
-    
+
     // Calculate e values
     double e1 = this->calc_e1();
     double e2 = this->calc_e2();
@@ -266,4 +335,88 @@ double WeightedErrorFunction::calc_e3()const{
 double WeightedErrorFunction::calc_z(double e1, double e2, double e3)const{
     double z = e1 + 10 * e2 + 50 * e3;
     return z;
+}
+
+bool SpectralCalibrator::loadMatricesFromText(const std::string& file_content) {
+    std::istringstream iss(file_content);
+    std::string line;
+    std::vector<double> m_values;
+    std::vector<double> offset_values;
+
+    // Skip the header line for M_spectral matrix
+    std::getline(iss, line); // This reads and discards the "M_spectral" header
+
+    // Read the M_color matrix
+    int read_lines = 0;
+    while (std::getline(iss, line) && read_lines < 36) {
+        std::istringstream line_stream(line);
+        std::string value;
+        while (std::getline(line_stream, value, ',')) {
+            // Trim the value in place
+            value.erase(0, value.find_first_not_of(" \n\r\t\f\v")); // Left trim
+            value.erase(value.find_last_not_of(" \n\r\t\f\v") + 1); // Right trim
+            if (!value.empty()) {
+                try {
+                    m_values.push_back(std::stod(value));
+                }
+                catch (const std::invalid_argument& ia) {
+                    std::cout << "Invalid argument when converting value '" << value << "': " << ia.what() << std::endl;
+                    return false;
+                }
+            }
+        }
+        ++read_lines;
+    }
+
+    // Check if we have the right amount of values for each matrix
+    size_t expected_m_size = 36 * 6; // M is expected to be 3x6
+
+    if (m_values.size() != expected_m_size) {
+        std::cout << "Error: The sizes of the matrices are not as expected." << std::endl;
+        std::cout << "Expected M size: " << expected_m_size << ", Actual M size: " << m_values.size() << std::endl;
+        return false; // Invalid sizes
+    }
+
+    // Create cv::Mat objects from the vectors
+    this->M_refl = cv::Mat(36, 6, CV_64F); // 36x6 matrix
+    memcpy(this->M_refl.data, m_values.data(), m_values.size() * sizeof(double));
+
+    if (!std::getline(iss, line) || line.find("color_patch_avgs") == std::string::npos) {
+        std::cout << "Failed to read color_patch_avgs header." << std::endl;
+        return false;
+    }
+    std::cout << "Skipped line: " << line << std::endl;
+
+    // Read the color_patch_avgs
+    std::vector<std::vector<double>> color_patch_avgs_rows;
+    int row_count = 0;
+    while (std::getline(iss, line) && row_count < 6) { // Assuming there are 6 rows
+        std::istringstream line_stream(line);
+        std::string value;
+        std::vector<double> row_values;
+        while (std::getline(line_stream, value, ',')) {
+            // Trim and convert value as before
+            // ... [value trimming and conversion code] ...
+            row_values.push_back(std::stod(value));
+        }
+        color_patch_avgs_rows.push_back(row_values);
+        ++row_count;
+    }
+
+    // Check if the rows have consistent number of columns
+    size_t num_columns = color_patch_avgs_rows.empty() ? 0 : color_patch_avgs_rows[0].size();
+    for (const auto& row : color_patch_avgs_rows) {
+        if (row.size() != num_columns) {
+            std::cout << "Inconsistent number of columns in color_patch_avgs rows." << std::endl;
+            return false;
+        }
+    }
+
+    // Create cv::Mat object for color_patch_avgs
+    this->color_patch_avgs = cv::Mat(row_count, num_columns, CV_64F);
+    for (int i = 0; i < row_count; ++i) {
+        memcpy(this->color_patch_avgs.ptr<double>(i), color_patch_avgs_rows[i].data(), num_columns * sizeof(double));
+    }
+
+    return true;
 }

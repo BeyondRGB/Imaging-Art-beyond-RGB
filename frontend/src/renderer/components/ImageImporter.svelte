@@ -3,6 +3,7 @@
     import { processState, sendMessage} from "@util/stores";
     import { forEach, find } from "lodash";
     import { testStyle } from "@util/styles";
+    import { countFields } from "@root/util/storesUtil";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
     import Dropzone from "svelte-file-dropzone";
     export let label = "Select Files";
@@ -30,9 +31,9 @@
 
     $: if (
         $processState.imageFilePaths.length >= 6 &&
-        !$processState.completedTabs[0]
+        !$processState.completedTabs[1]
     ) {
-        $processState.completedTabs[0] = true;
+        $processState.completedTabs[1] = true;
     }
 
     function handleFilesSelect(e) {
@@ -58,6 +59,12 @@
            filePaths.push(f.name);
         });
         getThumbnails();
+        let totalImageCount = $processState.imageFilePaths.length + countFields($processState.artStacks[0].fields); 
+        if(totalImageCount >= 6 && totalImageCount <=8  ){
+            $processState.artImageCount = 1;
+        }else if ( totalImageCount > 8){
+            $processState.artImageCount = Math.ceil((totalImageCount - 6) / 2);
+        }
     }
 
     const remove = (item) => {

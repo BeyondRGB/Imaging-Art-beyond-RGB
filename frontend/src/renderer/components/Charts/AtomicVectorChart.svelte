@@ -6,6 +6,7 @@
     export let dataLC;
 
     const colors = [];
+    const annotations = [];
     let data = [];
 
     const getData = function () {
@@ -20,10 +21,24 @@
                 data.push(entry);
                 colors.push(item.color);
             }
+          
             entry.data.push({
                 y: item.b || item.l,
                 x: item.a || item.c,
             });
+            annotations.push({
+                y: item.b || item.l,
+                x: item.a || item.c,
+                marker:{
+                    fillColor: item.color,
+                    strokeWidth:1,
+                    size:3,
+                    strokeColor: entry.data.length %2 == 0 ? "#000" : "#FFF",
+                }
+            })
+            if("B:4" == entry.series){
+                console.log(item)
+            }
         });
         return data;
     };
@@ -31,11 +46,13 @@
     const getOptions = function() {
         return {
             series: getData(),
-            markers: {
+            markers: { 
                 size: 5,
                 colors: colors,
-                strokeColor: '#000',
-                strokeWidth: 1
+                strokeWidth: 0
+            },
+            annotations: {
+                points:annotations
             },
             chart: {
                 animations: {
@@ -76,7 +93,18 @@
                 }
             },
             legend: {
-                show: false
+                show: true,
+                labels:{
+                    colors:["#FFF", "#FFF"]
+                },
+                customLegendItems: ["Reference", "Image"],
+                markers: { 
+                    size: 5,
+                    strokeWidth: 2, 
+                    strokeColor:"#FFF",
+                    fillColors: ["#FFF", "#000"]
+                
+                }
             },
             xaxis: {
                 labels: {

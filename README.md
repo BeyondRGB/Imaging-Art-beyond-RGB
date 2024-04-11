@@ -9,18 +9,19 @@
 This project is sponsored by The Studio for Scientific Imaging and Archiving of Cultural Heritage -- a facility within the RIT Program of Color Science’s Munsell Color Science Lab.
 The project is being developed by a senior project team from the Software Engineering program at RIT.
 ### Sponsors
-Olivia Kuzio
-Susan Farnand
-Leah Humenuck
+Olivia Kuzio, Susan Farnand, Leah Humenuck, Sahara Smith
 ### Senior Project Team 1
 Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 ### Senior Project Team 2
 Brendan Grau, Sungmin Kim, Keenan Miller, John Akey, Elijah Cooper
+### Senior Project Team 3
+Sam McQuate, Jacob Auger, Josh Greco, Robert Loos, Jonathan Pofcher
+
 
 # Documentaion
 * [Architecture](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki)
 * [CommunicationsAPI](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Communications-API)
-* [BackednDesign](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Backend-Overview)
+* [BackendDesign](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Backend-Overview)
 * [TIFF Output](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/TIFF-Output-Images)
 * [BeyondRGB Under The Hood](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/BeyondRGB-Under-The-Hood)
 
@@ -109,7 +110,7 @@ Brendan Grau, Sungmin Kim, Keenan Miller, John Akey, Elijah Cooper
   - If you encounter an error with either of the above, crosscheck the specified architecture of your system with the `VCPKG_TARGET_TRIPLET` flag specified in both `osx_debug.sh` and `osx_release.sh`:
     - For example, if you are using an M1 mac, replace `x64-osx` with `arm64-osx`
 
-### Fronted build
+### Frontend build
 - `cd frontend` from project root.
 - If frontend configuration is ever changed, first run:
   - `npm ci`
@@ -155,7 +156,7 @@ Brendan Grau, Sungmin Kim, Keenan Miller, John Akey, Elijah Cooper
   - `sh linux_debug.sh` or `sh linux_release.sh`
   - Build automatically copied to fronted for testing.
 
-### Fronted build
+### Frontend build
 - `cd frontend` from project root.
 - If frontend configuration is ever changed, first run:
   - `npm ci`

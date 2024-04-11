@@ -41,6 +41,11 @@
 #define GI_TARGET_ID          "Target ID"
 #define GI_TARGET_ROWS        "Target Row Count"
 #define GI_TARGET_COLS        "Target Col Count"
+#define GI_TARGET_TOP         "Target Top Coordinate"
+#define GI_TARGET_BOTTOM      "Target Bottom Coordinate"
+#define GI_TARGET_LEFT        "Target Left Coordinate"
+#define GI_TARGET_RIGHT       "Target Right Coordinate"
+
 #define GI_IMG_ROWS           "Img Row Count"
 #define GI_IMG_COLS           "Img Col Count"
 #define GI_OBSERVER           "Standard Observer"

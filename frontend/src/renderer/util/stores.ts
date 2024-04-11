@@ -5,10 +5,16 @@ export const currentPage = writable(null);
 export const appSettings = writable({ theme: false, sideNav: true });
 export const modal = writable(null);
 
+export const batchImagesA = writable(['E:\\BeyondRGBPics\\picasso_1_A.ARW']);
+export const batchImagesB = writable(['E:\\BeyondRGBPics\\picasso_1_B.ARW']);
+
+
+
 export const viewState = writable({
   projectKey: null,
 
   colorManagedImage: { dataURL: "", name: "Waiting..." },
+  colorManagedTargetImage: { dataURL: "", name: "Waiting..." },
   reports: {
     calibration: null,
     verification: null
@@ -23,17 +29,21 @@ export const customRefData = writable({
   verification: null
 });
 export const processState = writable({
+  batch : false,
+  processType: "Single",
+  artImageCount: 1,
   currentTab: 0,
-  completedTabs: [false, false, false, false],
+  completedTabs: [false, false, false, false, false, false],
   pipelineComplete: false,
   destDir: "",
   imageFilePaths: [],
   thumbnailID: null as number,
   colorTargetID: null,
-  CMID: null,
+  CMID: null, CMTID:null,
   whitePatchFilled: false,
   imageThumbnails: {},
   outputImage: { dataURL: "", name: "Waiting..." },
+  returnedFromProcessing: false,
   artStacks: [
     {
       id: 1,
@@ -56,19 +66,37 @@ export const processState = writable({
     },]
 });
 
+export const batchProcessState = writable({
+  artImagesA: [],
+  artImagesB: [],
+  artImageOutputUrls: [],
+  proccessingImages: {
+    targetA: [],
+    targetB: [],
+    flatfieldA: [],
+    flatfieldB: [],
+    darkfieldA: [],
+    darkfieldB: [],
+  },
+})
+
 export function resetProcess() {
   processState.set({
+    batch: false,
+    processType: "Single",
+    artImageCount: 1,
     currentTab: 0,
-    completedTabs: [false, false, false, false],
+    completedTabs: [false, false, false, false, false, false],
     pipelineComplete: false,
     destDir: "",
     imageFilePaths: [],
     thumbnailID: null,
     colorTargetID: null,
     whitePatchFilled: false,
-    CMID: null,
+    CMID: null, CMTID:null,
     imageThumbnails: {},
     outputImage: { dataURL: "", name: "Waiting..." },
+    returnedFromProcessing: false,
     artStacks: [
       {
         id: 1,
@@ -79,8 +107,8 @@ export function resetProcess() {
         verificationTarget: {},
         sharpenString: "N",
         fields: {
-          imageA: [],
-          imageB: [],
+          imageA: [[]],
+          imageB: [[]],
           targetA: [],
           targetB: [],
           flatfieldA: [],

@@ -1,5 +1,8 @@
 <script>
     import { chart } from "svelte-apexcharts";
+    import { createEventDispatcher } from 'svelte';
+
+    const dispatch = createEventDispatcher();
 
     export let data;
 
@@ -90,8 +93,18 @@
         return {
             series: getData(),
             chart: {
-                height: '700px',
-                width: '700px',
+                events: {
+                    dataPointSelection: function(event, chartContext, config) {
+                        let yAxisLabel = data.length - config.seriesIndex;
+                        let xValue = config.w.config.series[config.seriesIndex].data[config.dataPointIndex].x;
+                        console.log(yAxisLabel)
+                        console.log(xValue)
+                        // Dispatch a custom event with the selected data point information
+                        dispatch('datapointselect', { yAxisLabel, xValue });
+                    }
+                },
+                height: '650px',
+                width: '650px',
                 type: 'heatmap',
                 toolbar: {
                     // Hamburger menu which has exports such as CSV etc.
@@ -99,7 +112,7 @@
                     show: false
                 },
                 selection: {
-                    enabled: false
+                    enabled: true
                 }
             },
             legend: {
@@ -109,12 +122,12 @@
                 enabled: true,
                 theme: 'dark',
                 y: {
-                    show: false,
-                    title: {
+                    title: { //todo keep????? y axis tooltip
                         // Displayed before the value on the tooltip, unnecessary
-                        formatter: () => ""
+                        formatter: (value) => ""//{return data?.length-value}
                     }
-                }
+                },
+                
             },
             yaxis: {
                 labels: {
@@ -129,8 +142,21 @@
                             // This gets hit for each individual square on the heatmap (displayed as tooltip value)
                             return value;
                         }
-                    }
+                    },
+                    style: {
+                        colors: ["#ffffff"]   
+                    },
                 },
+                
+            },
+            xaxis: {
+                labels: {
+                    style: {
+                        //for some reason colors: ["#ffffff", "#ffffff"] would only make the first two labels white??
+                        //so make an array the length of the x-axis of just "#ffffff"
+                        colors:  Array.from({length:data?.[0].length}, ()=> "#ffffff")
+                    }
+                }
             },
             plotOptions: {
                 heatmap: {
