@@ -123,7 +123,7 @@ void btrgb::calibration::display_matrix(cv::Mat* matrix, std::string name) {
     if(contains_negatives)
         std::cout << "Contains Negative Values." << std::endl;
     else
-        std::cout << "All Values are posotive." << std::endl;
+        std::cout << "All Values are positive." << std::endl;
 }
 
 double btrgb::calibration::row_min(cv::Mat &target, int row){
