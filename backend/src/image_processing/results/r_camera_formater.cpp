@@ -32,6 +32,9 @@ void RCameraFormater::write_format(std::ostream &output_stream, CalibrationResul
         throw e;
     }
 
+    // Clip negative reflectance values to zero
+    cv::threshold(R_camera, R_camera, 0, 0, cv::THRESH_TOZERO);
+
     // Write R_camera
     output_stream << "R_camera" << std::endl;
     this->write_header(output_stream, row_count, col_count, DELIM);
