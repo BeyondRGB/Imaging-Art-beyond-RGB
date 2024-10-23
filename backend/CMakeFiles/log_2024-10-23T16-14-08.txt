@@ -1,0 +1,10 @@
+16:14:08.9193331 [Error, Thread 39]	Microsoft.VisualStudio.VC.Workspace.GccToolsetPropertyEvaluator: System.IO.DirectoryNotFoundException: Could not find a part of the path 'C:\Program Files\Microsoft Visual Studio\2022\Community\Linux\gcc_arm\arm-none-eabi\include\c++'.
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileSystemEnumerableIterator`1.CommonInit()
+   at System.IO.FileSystemEnumerableIterator`1..ctor(String path, String originalUserPath, String searchPattern, SearchOption searchOption, SearchResultHandler`1 resultHandler, Boolean checkHost)
+   at System.IO.DirectoryInfo.InternalGetDirectories(String searchPattern, SearchOption searchOption)
+   at Microsoft.VisualStudio.VC.Workspace.GccToolsetPropertyEvaluator.TryGetGccVersion(String sysroot, String& gccVersion)
+16:14:08.9219089 [Error, Thread 39]	Microsoft.VisualStudio.VC.Workspace.GccToolsetPropertyEvaluator: Could not find gcc version under path C:\Program Files\Microsoft Visual Studio\2022\Community\Linux\gcc_arm\arm-none-eabi\include\c++
+16:14:09.0939258 [Warning, Thread 32]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for No Configurations
+16:14:09.8080587 [Info, Thread 42]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: WaitableIndexService changed to Completed from FileScanning
+16:14:10.4678714 [Warning, Thread 42]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for No Configurations
