@@ -8,3 +8,95 @@
 16:14:09.0939258 [Warning, Thread 32]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for No Configurations
 16:14:09.8080587 [Info, Thread 42]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: WaitableIndexService changed to Completed from FileScanning
 16:14:10.4678714 [Warning, Thread 42]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for No Configurations
+16:14:39.2196784 [Info, Thread 48]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService+ConfigurationCache: Firing filter changed event for , new config names: [x64-Debug]
+16:14:39.2811719 [Info, Thread 48]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Imaging-Art-beyond-RGB'
+16:14:39.2811719 [Info, Thread 48]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+16:14:39.3092715 [Warning, Thread 50]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for No Configurations
+16:14:39.3270008 [Info, Thread 48]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService: ConfigSwitched Initial config switch to x64-Debug
+16:14:39.3808994 [Info, Thread 16]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Rehydrating projects for 1 VBP Waiting:x64-Debug, HasData:, HasError:
+16:14:39.3910066 [Info, Thread 16]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Starting scan ...
+16:14:39.4185176 [Debug, Thread 13]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: GetScanToken:    at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.GetScanToken(String root, Guid providerGuid)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.<ScanContentAsync_Impl>d__50`1.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(Task`1 completedTask)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.OperationManager.<WaitOnBuild>d__27.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at Microsoft.VisualStudio.Threading.ThreadingTools.<WithCancellationSlow>d__9.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.TaskFactory.CompleteOnInvokePromise.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessInnerTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessCompletedOuterTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+16:14:39.4185176 [Debug, Thread 13]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Getting Scan Token - scancount 1
+16:14:39.4221221 [Info, Thread 13]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing starting: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug
+16:14:39.4690594 [Debug, Thread 13]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'61211', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Imaging-Art-beyond-RGB, 
+	PrevTask:'' entering...
+16:14:39.5066815 [Debug, Thread 13]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'61211', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Imaging-Art-beyond-RGB, 
+	PrevTask:'' exiting...
+16:14:39.5517837 [Info, Thread 13]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationStarted root: BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+16:14:40.5168459 [Debug, Thread 48]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: ResettingOutputHandlers Resetting parser's output handlers.
+16:14:40.5384010 [Debug, Thread 48]	libcmake.CMakeListsParser: ParseAsync(ICMakeParameters, CancellationToken)
+16:14:40.7540816 [Info, Thread 58]	libcmake.CMakeDaemonDriver: CMake version parsed: True, input string: cmake version 3.29.5-msvc4, matched version: 3.29.5.0
+16:14:40.7560917 [Info, Thread 58]	libcmake.CMakeListsParser: Parsing without cache
+16:14:40.7662176 [Info, Thread 58]	libcmake.CMakeDaemonDriver: CacheNotDeletedAutomatically Cache retained at $C:\Users\npell\Imaging-Art-beyond-RGB\backend\out\build\x64-Debug
+16:14:40.7865103 [Info, Thread 58]	libcmake.CMakeDaemonDriver: CMake version '3.29.5.0' identified
+16:14:40.8890153 [Info, Thread 42]	libcmake.CMakeDaemonDriver: Starting generator CMake
+16:14:41.2070002 [Info, Thread 48]	libcmake.CMakeDaemonDriver: Generator CMake finished
+16:14:41.2272385 [Error, Thread 48]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Imaging-Art-beyond-RGB\backend\out\install\x64-Debug"   -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Imaging-Art-beyond-RGB\backend" 2>&1"' execution failed with error: ''C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Imaging-Art-beyond-RGB\backend\out\install\x64-Debug"   -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Imaging-Art-beyond-RGB\backend" 2>&1"' returned with exit code: 1'. ---> libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Imaging-Art-beyond-RGB\backend\out\install\x64-Debug"   -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Imaging-Art-beyond-RGB\backend" 2>&1"' returned with exit code: 1
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+   --- End of inner exception stack trace ---
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__17.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.FileApiDaemon.<GenerateCacheAsync>d__24.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseImplAsync>d__40.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseAsync>d__36.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider.<ParseProjectAsync>d__46.MoveNext()
+16:14:41.2579396 [Info, Thread 81]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationFinished Cache gen & parsing done: root:BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+16:14:41.2589974 [Debug, Thread 81]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'61211', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Imaging-Art-beyond-RGB, 
+	PrevTask:''
+16:14:41.2898889 [Info, Thread 81]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing done: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug, took 1873ms.
+16:14:41.3524294 [Info, Thread 81]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Compute file data values for backend\CMakeLists.txt Config x64-Debug, wasAutoGenerateCanceled:False
+16:14:41.3524294 [Error, Thread 81]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: FDV Error for backend\CMakeLists.txt Config x64-Debug Canceled False
+16:14:41.4300417 [Info, Thread 81]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for backend\CMakeLists.txt
+16:14:41.4644804 [Info, Thread 81]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Finishing scan.
