@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\CMakeFiles\527d4c477352692cf90de5185365faef\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{FFD54A36-9699-3175-8961-DBD920D9389D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

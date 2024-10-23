@@ -1,0 +1,1158 @@
+02:23:58.4893097 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorFactory: Entering EditorFactory CreateEditorInstance()
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreConfigurationsInvalid
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:23:58.5494385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:23:58.5547685 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:23:58.8589392 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:23:58.8589392 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (2!=0)
+02:23:58.8589392 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:23:58.8589392 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:23:58.8589392 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:23:58.8589392 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:23:58.8589392 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:23:58.8589392 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:23:58.8589392 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:23:58.8732217 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:23:58.8732217 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (2!=58)
+02:23:58.8732217 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:23:58.8732217 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:23:58.8732217 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:23:58.8732217 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:23:58.8732217 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:24:34.4693199 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: BeginEditCommand<<< 
+02:24:34.4693199 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofZ_VCPKG_CL
+02:24:34.4693199 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofZ_VCPKG_CL
+02:25:01.6491638 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of Z_VCPKG_CL
+02:25:01.6491638 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:25:01.6491638 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:25:01.6491638 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:25:01.7813576 [Info, Thread 34]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService+ConfigurationCache: Firing updated event for x64-Debug
+02:25:01.8813767 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: CellEndEditCommand<<< 
+02:25:01.8889810 [Info, Thread 34]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Config update for System.Func`1[System.String]
+02:25:01.8889810 [Info, Thread 34]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta'
+02:25:01.8889810 [Info, Thread 34]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+02:25:01.8889810 [Debug, Thread 34]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1168055', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:25:01.8889810 [Debug, Thread 34]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1155657', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:25:02.0293809 [Info, Thread 180]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Starting scan ...
+02:25:02.0293809 [Debug, Thread 184]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: GetScanToken:    at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.GetScanToken(String root, Guid providerGuid)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.<ScanContentAsync_Impl>d__50`1.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(Task`1 completedTask)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.OperationManager.<WaitOnBuild>d__27.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at Microsoft.VisualStudio.Threading.ThreadingTools.<WithCancellationSlow>d__9.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.TaskFactory.CompleteOnInvokePromise.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessInnerTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessCompletedOuterTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+02:25:02.0293809 [Debug, Thread 184]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Getting Scan Token - scancount 23
+02:25:02.0293809 [Info, Thread 184]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing starting: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug
+02:25:02.0293809 [Debug, Thread 184]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1191862', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' entering...
+02:25:02.0293809 [Debug, Thread 184]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1191862', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' exiting...
+02:25:02.0816473 [Info, Thread 141]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationStarted root: BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:25:02.1592882 [Debug, Thread 108]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: ResettingOutputHandlers Resetting parser's output handlers.
+02:25:02.1592882 [Debug, Thread 108]	libcmake.CMakeListsParser: ParseAsync(ICMakeParameters, CancellationToken)
+02:25:02.2593196 [Info, Thread 167]	libcmake.CMakeDaemonDriver: CMake version parsed: True, input string: cmake version 3.29.5-msvc4, matched version: 3.29.5.0
+02:25:02.2593196 [Info, Thread 167]	libcmake.CMakeListsParser: Parsing without cache
+02:25:02.2690527 [Info, Thread 167]	libcmake.CMakeDaemonDriver: CacheNotDeletedAutomatically Cache retained at $C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:25:02.2690527 [Info, Thread 167]	libcmake.CMakeDaemonDriver: CMake version '3.29.5.0' identified
+02:25:02.2891408 [Info, Thread 171]	libcmake.CMakeDaemonDriver: Starting generator CMake
+02:25:03.9324476 [Info, Thread 117]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: OnCMakeCacheTxtChanged
+02:25:03.9324476 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:25:03.9324476 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (58!=0)
+02:25:03.9592127 [Info, Thread 185]	libcmake.CMakeDaemonDriver: Generator CMake finished
+02:25:03.9592127 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:25:03.9592127 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:25:03.9592127 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:25:03.9592127 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:25:03.9592127 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:25:03.9592127 [Error, Thread 185]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING=""C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe"" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe"   -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' execution failed with error: ''C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING=""C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe"" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe"   -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1'. ---> libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING=""C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe"" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe"   -DCMAKE_MAKE_PROGRAM="C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\Ninja\ninja.exe" -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+   --- End of inner exception stack trace ---
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__17.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.FileApiDaemon.<GenerateCacheAsync>d__24.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseImplAsync>d__40.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseAsync>d__36.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider.<ParseProjectAsync>d__46.MoveNext()
+02:25:03.9592127 [Info, Thread 120]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationFinished Cache gen & parsing done: root:BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:25:03.9592127 [Debug, Thread 120]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1191862', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:25:03.9642493 [Info, Thread 120]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing done: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug, took 1931ms.
+02:25:03.9642493 [Info, Thread 120]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Compute file data values for backend\CMakeLists.txt Config x64-Debug, wasAutoGenerateCanceled:False
+02:25:03.9642493 [Error, Thread 120]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: FDV Error for backend\CMakeLists.txt Config x64-Debug Canceled False
+02:25:03.9687616 [Info, Thread 48]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for backend\CMakeLists.txt
+02:25:03.9687616 [Info, Thread 48]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Finishing scan.
+02:25:04.1558992 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:25:04.1558992 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (3!=58)
+02:25:04.1589350 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:25:04.1589350 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:25:04.1589350 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:25:04.1589350 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:25:04.1589350 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:25:17.9813355 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorFactory: Entering EditorFactory CreateEditorInstance()
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreConfigurationsInvalid
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:25:18.0491101 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:25:18.3290019 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:25:18.3290019 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (3!=0)
+02:25:18.3290019 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:25:18.3290019 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:25:18.3290019 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:25:18.3290019 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:25:18.3290019 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:25:18.3290019 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:25:18.3290019 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:25:18.3393763 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:25:18.3393763 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (3!=58)
+02:25:18.3393763 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:25:18.3393763 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:25:18.3393763 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:25:18.3393763 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:25:18.3393763 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:25:28.1404624 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: BeginEditCommand<<< 
+02:25:28.1404624 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofCMAKE_MAKE_PROGRAM
+02:25:28.1404624 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofCMAKE_MAKE_PROGRAM
+02:27:08.3439346 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: CellEndEditCommand<<< 
+02:27:08.3439346 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:08.3439346 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of CMAKE_MAKE_PROGRAM
+02:27:08.3439346 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:08.3439346 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:08.3459810 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: BeginEditCommand<<< 
+02:27:08.3459810 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofCMAKE_C_COMPILER
+02:27:08.3459810 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofCMAKE_C_COMPILER
+02:27:21.1557325 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: CellEndEditCommand<<< 
+02:27:21.1557325 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:21.1557325 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of CMAKE_C_COMPILER
+02:27:21.1557325 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:21.1557325 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:21.1577315 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: BeginEditCommand<<< 
+02:27:21.1577315 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofVCPKG_APPLOCAL_DEPS
+02:27:21.1577315 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofVCPKG_APPLOCAL_DEPS
+02:27:24.0391073 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: CellEndEditCommand<<< 
+02:27:24.0391073 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: RowEndEditCommand<<< 
+02:27:24.0391073 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of VCPKG_APPLOCAL_DEPS
+02:27:24.0391073 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of VCPKG_APPLOCAL_DEPS
+02:27:26.1794037 [Info, Thread 32]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService+ConfigurationCache: Firing updated event for x64-Debug
+02:27:26.2992982 [Info, Thread 32]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Config update for System.Func`1[System.String]
+02:27:26.2992982 [Info, Thread 32]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta'
+02:27:26.2992982 [Info, Thread 32]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+02:27:26.2992982 [Debug, Thread 32]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1191862', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:27:26.3227081 [Info, Thread 33]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Starting scan ...
+02:27:26.3303075 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: GetScanToken:    at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.GetScanToken(String root, Guid providerGuid)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.<ScanContentAsync_Impl>d__50`1.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(Task`1 completedTask)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.OperationManager.<WaitOnBuild>d__27.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at Microsoft.VisualStudio.Threading.ThreadingTools.<WithCancellationSlow>d__9.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.TaskFactory.CompleteOnInvokePromise.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessInnerTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessCompletedOuterTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+02:27:26.3303075 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Getting Scan Token - scancount 24
+02:27:26.3303075 [Info, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing starting: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug
+02:27:26.3303075 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1219516', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' entering...
+02:27:26.3303075 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1219516', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' exiting...
+02:27:26.4251788 [Info, Thread 180]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationStarted root: BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:27:26.5141607 [Debug, Thread 182]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: ResettingOutputHandlers Resetting parser's output handlers.
+02:27:26.5141607 [Debug, Thread 182]	libcmake.CMakeListsParser: ParseAsync(ICMakeParameters, CancellationToken)
+02:27:26.6007937 [Info, Thread 14]	libcmake.CMakeDaemonDriver: CMake version parsed: True, input string: cmake version 3.29.5-msvc4, matched version: 3.29.5.0
+02:27:26.6007937 [Info, Thread 14]	libcmake.CMakeListsParser: Parsing without cache
+02:27:26.6189323 [Info, Thread 14]	libcmake.CMakeDaemonDriver: CacheNotDeletedAutomatically Cache retained at $C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:27:26.6189323 [Info, Thread 14]	libcmake.CMakeDaemonDriver: CMake version '3.29.5.0' identified
+02:27:26.6489521 [Info, Thread 120]	libcmake.CMakeDaemonDriver: Starting generator CMake
+02:27:26.7689947 [Info, Thread 87]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: OnCMakeCacheTxtChanged
+02:27:26.7689947 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:27:26.7689947 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (58!=0)
+02:27:26.7791323 [Info, Thread 183]	libcmake.CMakeDaemonDriver: Generator CMake finished
+02:27:26.7791323 [Error, Thread 183]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' execution failed with error: ''C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1'. ---> libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+   --- End of inner exception stack trace ---
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__17.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.FileApiDaemon.<GenerateCacheAsync>d__24.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseImplAsync>d__40.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseAsync>d__36.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider.<ParseProjectAsync>d__46.MoveNext()
+02:27:26.7892322 [Info, Thread 14]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationFinished Cache gen & parsing done: root:BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:27:26.7892322 [Debug, Thread 14]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1219516', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:27:26.7902694 [Info, Thread 14]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing done: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug, took 459ms.
+02:27:26.7902694 [Info, Thread 14]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Compute file data values for backend\CMakeLists.txt Config x64-Debug, wasAutoGenerateCanceled:False
+02:27:26.7902694 [Error, Thread 14]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: FDV Error for backend\CMakeLists.txt Config x64-Debug Canceled False
+02:27:26.7992774 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:26.7992774 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for backend\CMakeLists.txt
+02:27:26.7992774 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:26.7992774 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:26.7992774 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:27:26.7992774 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:27:26.8043021 [Info, Thread 118]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Finishing scan.
+02:27:27.1342932 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:27:27.1342932 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (4!=58)
+02:27:27.1420386 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:27.1420386 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:27.1420386 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:27.1420386 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:27:27.1420386 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:27:45.9044901 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorFactory: Entering EditorFactory CreateEditorInstance()
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreConfigurationsInvalid
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:27:45.9693149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:27:46.3662012 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:27:46.3662012 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (4!=0)
+02:27:46.3662012 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:46.3662012 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:46.3662012 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:46.3662012 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:27:46.3662012 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:27:46.3662012 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:27:46.3662012 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:27:46.3793744 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:27:46.3793744 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (4!=58)
+02:27:46.3819204 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:27:46.3819204 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:27:46.3819204 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:27:46.3819204 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:27:46.3819204 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:28:05.4892589 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:28:05.4995023 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:28:05.5991135 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:28:05.5991135 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (1!=0)
+02:28:05.5991135 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:28:05.5991135 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:28:05.5991135 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:28:05.5991135 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:28:05.5991135 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:28:05.5991135 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:28:05.5991135 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:28:05.6109824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:28:05.6109824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (1!=74)
+02:28:05.6109824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:28:05.6109824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:28:05.6109824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:28:05.6109824 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:28:05.6109824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:28:45.3639084 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: BeginEditCommand<<< 
+02:28:45.3664149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofTiff_DIR
+02:28:45.3664149 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofTiff_DIR
+02:28:50.1096384 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: CellEndEditCommand<<< 
+02:28:50.1096384 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:28:50.1096384 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of Tiff_DIR
+02:28:50.1096384 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:28:50.1096384 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:28:50.1194824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: BeginEditCommand<<< 
+02:28:50.1194824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofProtobuf_PROTOC_EXECUTABLE
+02:28:50.1194824 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofProtobuf_PROTOC_EXECUTABLE
+02:28:52.6886362 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: CellEndEditCommand<<< 
+02:28:52.6886362 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:28:52.6886362 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of Protobuf_PROTOC_EXECUTABLE
+02:28:52.6886362 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:28:52.6886362 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:28:52.6901411 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: BeginEditCommand<<< 
+02:28:52.6901411 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable BeginEdit ofTiff_DIR
+02:29:55.5695616 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.CacheVariableViewModel: CMakeCacheVariable EndEdit: of Tiff_DIR
+02:29:55.5695616 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:29:55.5695616 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:29:55.5695616 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:29:55.7096549 [Info, Thread 16]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService+ConfigurationCache: Firing updated event for x64-Debug
+02:29:55.8191107 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: CellEndEditCommand<<< 
+02:29:55.8294748 [Info, Thread 16]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Config update for System.Func`1[System.String]
+02:29:55.8294748 [Info, Thread 16]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta'
+02:29:55.8294748 [Info, Thread 16]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+02:29:55.8294748 [Debug, Thread 16]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1219516', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:29:55.8793192 [Info, Thread 180]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Starting scan ...
+02:29:55.8893282 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: GetScanToken:    at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.GetScanToken(String root, Guid providerGuid)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.<ScanContentAsync_Impl>d__50`1.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(Task`1 completedTask)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.OperationManager.<WaitOnBuild>d__27.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at Microsoft.VisualStudio.Threading.ThreadingTools.<WithCancellationSlow>d__9.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.TaskFactory.CompleteOnInvokePromise.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessInnerTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessCompletedOuterTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+02:29:55.8893282 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Getting Scan Token - scancount 25
+02:29:55.8893282 [Info, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing starting: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug
+02:29:55.8893282 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1240844', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' entering...
+02:29:55.8893282 [Debug, Thread 167]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1240844', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' exiting...
+02:29:55.9894619 [Info, Thread 14]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationStarted root: BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:29:56.0793327 [Debug, Thread 112]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: ResettingOutputHandlers Resetting parser's output handlers.
+02:29:56.0793327 [Debug, Thread 112]	libcmake.CMakeListsParser: ParseAsync(ICMakeParameters, CancellationToken)
+02:29:56.1690328 [Info, Thread 168]	libcmake.CMakeDaemonDriver: CMake version parsed: True, input string: cmake version 3.29.5-msvc4, matched version: 3.29.5.0
+02:29:56.1690328 [Info, Thread 168]	libcmake.CMakeListsParser: Parsing without cache
+02:29:56.1793865 [Info, Thread 168]	libcmake.CMakeDaemonDriver: CacheNotDeletedAutomatically Cache retained at $C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:29:56.1793865 [Info, Thread 168]	libcmake.CMakeDaemonDriver: CMake version '3.29.5.0' identified
+02:29:56.2090785 [Info, Thread 176]	libcmake.CMakeDaemonDriver: Starting generator CMake
+02:29:56.3193666 [Info, Thread 171]	libcmake.CMakeDaemonDriver: Generator CMake finished
+02:29:56.3224036 [Error, Thread 171]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' execution failed with error: ''C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1'. ---> libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+   --- End of inner exception stack trace ---
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__17.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.FileApiDaemon.<GenerateCacheAsync>d__24.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseImplAsync>d__40.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseAsync>d__36.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider.<ParseProjectAsync>d__46.MoveNext()
+02:29:56.3224036 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationFinished Cache gen & parsing done: root:BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:29:56.3224036 [Debug, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1240844', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:29:56.3224036 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing done: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug, took 433ms.
+02:29:56.3224036 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Compute file data values for backend\CMakeLists.txt Config x64-Debug, wasAutoGenerateCanceled:False
+02:29:56.3224036 [Error, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: FDV Error for backend\CMakeLists.txt Config x64-Debug Canceled False
+02:29:56.3340550 [Info, Thread 161]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for backend\CMakeLists.txt
+02:29:56.3382555 [Info, Thread 161]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Finishing scan.
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:37:13.0293316 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:37:13.2495760 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:37:13.2495760 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (58!=0)
+02:37:13.2695988 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:37:13.2695988 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:37:13.2695988 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:37:13.2695988 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:37:13.2695988 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:37:13.2695988 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:37:13.2695988 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:37:13.2794946 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:37:13.2794946 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (4!=58)
+02:37:13.2794946 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:37:13.2794946 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:37:13.2794946 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:37:13.2794946 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:37:13.2794946 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:37:53.8096113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:37:53.9135748 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:37:53.9135748 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=true: both empty
+02:37:53.9135748 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: skipped as identical!
+02:37:53.9135748 [Error, Thread 1]	Microsoft.VisualStudio.CMake.Package.CMakeCacheVariablesWatcher: System.IO.DirectoryNotFoundException: Could not find a part of the path 'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug-2\CMakeCache.txt'.
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path, Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize, Boolean checkHost)
+   at System.IO.File.InternalReadAllText(String path, Encoding encoding, Boolean checkHost)
+   at Microsoft.VisualStudio.CMake.Package.CMakeCacheVariablesWatcher.Local.GetCacheFileContentAsync(CancellationToken cancellationToken)
+   at Microsoft.VisualStudio.CMake.Package.CMakeCacheVariablesWatcher.<ReloadVariablesAsync>d__13.MoveNext()
+02:37:53.9135748 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:37:53.9135748 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=true: both empty
+02:37:53.9135748 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: skipped as identical!
+02:37:57.2194649 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsAdvancedSectionVisible
+02:38:08.8894432 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModeName
+02:38:27.3554771 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:38:46.0845783 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:38:46.0860819 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:38:46.0860819 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:38:46.0860819 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:38:46.0860819 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:38:46.0860819 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:38:46.0860819 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:38:46.0896450 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:38:46.2561315 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:38:46.2561315 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (58!=0)
+02:38:46.2697665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:38:46.2697665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:38:46.2697665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:38:46.2697665 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:38:46.2697665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:38:46.2747706 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:38:46.2747706 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:38:46.2848041 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:38:46.2848041 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (4!=58)
+02:38:46.2848041 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:38:46.2848041 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:38:46.2848041 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:38:46.2848041 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:38:46.2848041 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:38:51.0695162 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:38:51.0745721 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:38:51.3825905 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:38:51.3825905 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (74!=0)
+02:38:51.4094113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:38:51.4094113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:38:51.4094113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:38:51.4094113 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:38:51.4094113 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:38:51.4144410 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:38:51.4144410 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:38:51.4246574 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:38:51.4246574 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (2!=74)
+02:38:51.4246574 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:38:51.4246574 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:38:51.4246574 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:38:51.4246574 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:38:51.4246574 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:39:01.7894393 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:39:01.7944843 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:39:01.9844414 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:01.9844414 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (58!=0)
+02:39:02.0046691 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:02.0046691 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:02.0046691 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:02.0046691 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:02.0046691 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:02.0046691 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:39:02.0046691 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:39:02.0198059 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:02.0198059 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (4!=58)
+02:39:02.0198059 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:02.0198059 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:02.0198059 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:02.0198059 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:02.0198059 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:39:03.2397927 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:39:03.5695515 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:03.5695515 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (74!=0)
+02:39:03.6097180 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:03.6097180 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:03.6097180 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:03.6097180 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:03.6097180 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:03.6097180 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:39:03.6097180 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:39:03.6226810 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:03.6226810 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (2!=74)
+02:39:03.6301385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:03.6301385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:03.6301385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:03.6301385 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:03.6301385 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:39:05.3446591 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:05.3496638 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:39:05.3496638 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:39:05.3497284 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:39:05.5069877 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:05.5069877 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (58!=0)
+02:39:05.5197636 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:05.5197636 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:05.5197636 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:05.5197636 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:05.5197636 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:05.5248162 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:39:05.5248162 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:39:05.5294665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:05.5294665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (4!=58)
+02:39:05.5294665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:05.5294665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:05.5294665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:05.5294665 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:05.5294665 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:39:06.3543645 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:39:06.3594320 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:39:06.5022885 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:06.5022885 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=true: both empty
+02:39:06.5022885 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: skipped as identical!
+02:39:06.5022885 [Error, Thread 1]	Microsoft.VisualStudio.CMake.Package.CMakeCacheVariablesWatcher: System.IO.DirectoryNotFoundException: Could not find a part of the path 'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug-2\CMakeCache.txt'.
+   at System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   at System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   at System.IO.StreamReader..ctor(String path, Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize, Boolean checkHost)
+   at System.IO.File.InternalReadAllText(String path, Encoding encoding, Boolean checkHost)
+   at Microsoft.VisualStudio.CMake.Package.CMakeCacheVariablesWatcher.Local.GetCacheFileContentAsync(CancellationToken cancellationToken)
+   at Microsoft.VisualStudio.CMake.Package.CMakeCacheVariablesWatcher.<ReloadVariablesAsync>d__13.MoveNext()
+02:39:06.5022885 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:06.5022885 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=true: both empty
+02:39:06.5022885 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: skipped as identical!
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationWsl
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemote
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationCacheRoot
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCurrentConfigurationRemoteOrWsl
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ToolsetsEnum
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: GeneratorsEnum
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: NoConfigurations
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IntelliSenseModesEnum
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreDefinedVariablesAvailable
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: AreAdvancedLinkAndSectionVisible
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedWslInstance
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: SelectedRemoteMachineConnection
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: BuildDirectoryEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: InstallDirectoryEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteBuildDirectoryEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteCMakeListsDirectoryEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RemoteInstallDirectoryEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: RsyncArgumentsEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: MakeArgumentsEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: ASANArgumentsEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeExecutablePathEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CTestArgumentsEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CMakeArgumentsEvaluated
+02:39:07.6196430 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: CacheRootEvaluated
+02:39:07.8844949 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:07.8844949 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (74!=0)
+02:39:07.9194224 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:07.9194224 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:07.9194224 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:07.9194224 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:07.9194224 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:07.9194224 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:39:07.9194224 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Package.Editors.CMakeCacheFileWatcher: Started watching: C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Release
+02:39:07.9309977 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables:
+02:39:07.9309977 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: AreCMakeCacheVariablesEqual=false: count differs (2!=74)
+02:39:07.9309977 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables()<<<
+02:39:07.9309977 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables: updated!
+02:39:07.9309977 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: SyncDefinedAndCacheVariables>>>
+02:39:07.9309977 [Info, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Set  CMakeCacheVariables: completed, notifying!
+02:39:07.9309977 [Debug, Thread 1]	Microsoft.VisualStudio.CMake.Client.CMakeSettings.EditorViewModel: Not handled in ViewModel_PropertyChanged: IsCMakeCacheAvailable
+02:39:42.9297868 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService+ConfigurationCache: Firing updated event for x64-Debug
+02:39:43.1896429 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearSingleConfigurationAsync: Clearing cache entry for backend\CMakeLists.txt.
+02:39:43.1896429 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Config update for System.Func`1[System.String]
+02:39:43.1896429 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta'
+02:39:43.1896429 [Info, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+02:39:43.1896429 [Debug, Thread 31]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1240844', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:39:43.5542640 [Info, Thread 92]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Starting scan ...
+02:39:43.5542640 [Debug, Thread 138]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: GetScanToken:    at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.GetScanToken(String root, Guid providerGuid)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.<ScanContentAsync_Impl>d__50`1.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(Task`1 completedTask)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.OperationManager.<WaitOnBuild>d__27.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at Microsoft.VisualStudio.Threading.ThreadingTools.<WithCancellationSlow>d__9.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.TaskFactory.CompleteOnInvokePromise.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessInnerTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessCompletedOuterTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+02:39:43.5542640 [Debug, Thread 138]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Getting Scan Token - scancount 26
+02:39:43.5542640 [Info, Thread 138]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing starting: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug
+02:39:43.5542640 [Debug, Thread 138]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1315223', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' entering...
+02:39:43.5592816 [Debug, Thread 138]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1315223', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' exiting...
+02:39:43.5592816 [Info, Thread 55]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationStarted root: BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:39:43.7912277 [Debug, Thread 14]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: ResettingOutputHandlers Resetting parser's output handlers.
+02:39:43.7912277 [Debug, Thread 14]	libcmake.CMakeListsParser: ParseAsync(ICMakeParameters, CancellationToken)
+02:39:43.8992024 [Info, Thread 54]	libcmake.CMakeDaemonDriver: CMake version parsed: True, input string: cmake version 3.29.5-msvc4, matched version: 3.29.5.0
+02:39:43.8992024 [Info, Thread 54]	libcmake.CMakeListsParser: Parsing without cache
+02:39:43.9093293 [Info, Thread 54]	libcmake.CMakeDaemonDriver: CacheNotDeletedAutomatically Cache retained at $C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\build\x64-Debug
+02:39:43.9093293 [Info, Thread 54]	libcmake.CMakeDaemonDriver: CMake version '3.29.5.0' identified
+02:39:43.9441283 [Info, Thread 55]	libcmake.CMakeDaemonDriver: Starting generator CMake
+02:39:44.1079381 [Info, Thread 114]	libcmake.CMakeDaemonDriver: Generator CMake finished
+02:39:44.1094645 [Error, Thread 114]	Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider: libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' execution failed with error: ''C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1'. ---> libcmake.CMakeDaemonException: 'C:\WINDOWS\system32\cmd.exe' '/c "%SYSTEMROOT%\System32\chcp.com 65001 >NUL && "C:\PROGRAM FILES\MICROSOFT VISUAL STUDIO\2022\COMMUNITY\COMMON7\IDE\COMMONEXTENSIONS\MICROSOFT\CMAKE\CMake\bin\cmake.exe"  -G "Ninja"  -DCMAKE_BUILD_TYPE:STRING="Debug" -DCMAKE_INSTALL_PREFIX:PATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\out\install\x64-Debug" -DCMAKE_C_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdC\CompilerIdC.exe" -DCMAKE_CXX_COMPILER:STRING="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CompilerIdCXX\CompilerIdCXX.exe" -DZ_VCPKG_CL:FILEPATH="C:/Users/npell/Downloads/VC_redist.x64 (1).exe" -DCMAKE_MAKE_PROGRAM:FILEPATH="C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\build\CMakeFiles\3.25.3\CMakeSystem.cmake"   -DCMAKE_TOOLCHAIN_FILE="C:/Users/npell/vcpkg/scripts/buildsystems/vcpkg.cmake" "C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend" 2>&1"' returned with exit code: 1
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+   --- End of inner exception stack trace ---
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__18.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeDaemonDriver.<GenerateCacheAsync>d__17.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.FileApiDaemon.<GenerateCacheAsync>d__24.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseImplAsync>d__40.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at libcmake.CMakeListsParser.<ParseAsync>d__36.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.VisualStudio.CMake.Project.ExternalBuildProject.ProjectProvider.<ParseProjectAsync>d__46.MoveNext()
+02:39:44.1094645 [Info, Thread 94]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CacheGenerationFinished Cache gen & parsing done: root:BACKEND\CMAKELISTS.TXTx64-Debug backend\CMakeLists.txt x64-Debug
+02:39:44.1094645 [Debug, Thread 94]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1315223', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:39:44.1094645 [Info, Thread 94]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing done: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug, took 554ms.
+02:39:44.1094645 [Info, Thread 94]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Compute file data values for backend\CMakeLists.txt Config x64-Debug, wasAutoGenerateCanceled:False
+02:39:44.1094645 [Error, Thread 94]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: FDV Error for backend\CMakeLists.txt Config x64-Debug Canceled False
+02:39:44.1230243 [Info, Thread 123]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for backend\CMakeLists.txt
+02:39:44.1290645 [Info, Thread 137]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Finishing scan.
+02:41:50.5803498 [Info, Thread 15]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService: ConfigSwitched Switching configs from x64-Debug to x64-Release
+02:41:50.6198340 [Info, Thread 15]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Switching config to x64-Release
+02:41:50.6198340 [Info, Thread 15]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta'
+02:41:50.6198340 [Info, Thread 15]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Installing data into the Parse cache backend\CMakeLists.txt
+02:41:50.6198340 [Debug, Thread 15]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1334281', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:41:50.6198340 [Info, Thread 15]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Installing new entry backend\CMakeLists.txt:x64-Release:[ParseResult Project:'', Status:'Error', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\CMakeLists.txt']:WCFalse:AGCFalse
+02:41:50.6296759 [Info, Thread 24]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Starting scan ...
+02:41:50.6296759 [Debug, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: GetScanToken:    at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.GetScanToken(String root, Guid providerGuid)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.<ScanContentAsync_Impl>d__50`1.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(Task`1 completedTask)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.OperationManager.<WaitOnBuild>d__27.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at Microsoft.VisualStudio.Threading.ThreadingTools.<WithCancellationSlow>d__9.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.TaskFactory.CompleteOnInvokePromise.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessInnerTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessCompletedOuterTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+02:41:50.6296759 [Debug, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Getting Scan Token - scancount 27
+02:41:50.6296759 [Info, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing starting: projectfilepath backend\CMakeLists.txt Config Name:x64-Release
+02:41:50.6296759 [Debug, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1334548', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' entering...
+02:41:50.6296759 [Debug, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1334548', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:41:50.6296759 [Info, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Using previous result for task:CacheTask= Id:'1334281', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'', rootFile:backend\CMakeLists.txt
+02:41:50.6296759 [Debug, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1334548', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' exiting...
+02:41:50.6296759 [Info, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing done: projectfilepath backend\CMakeLists.txt Config Name:x64-Release, took 2ms.
+02:41:50.6296759 [Info, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Compute file data values for backend\CMakeLists.txt Config x64-Release, wasAutoGenerateCanceled:False
+02:41:50.6296759 [Error, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: FDV Error for backend\CMakeLists.txt Config x64-Release Canceled False
+02:41:50.6438363 [Info, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for backend\CMakeLists.txt
+02:41:50.6438363 [Info, Thread 114]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Finishing scan.
+02:44:04.7294869 [Info, Thread 79]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService: ConfigSwitched Switching configs from x64-Release to x64-Debug
+02:44:04.7815417 [Info, Thread 79]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Switching config to x64-Debug
+02:44:04.7815417 [Info, Thread 79]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta'
+02:44:04.7815417 [Info, Thread 79]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Installing data into the Parse cache backend\CMakeLists.txt
+02:44:04.7815417 [Debug, Thread 79]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1351006', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:44:04.7815417 [Info, Thread 79]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Installing new entry backend\CMakeLists.txt:x64-Debug:[ParseResult Project:'', Status:'Error', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta\backend\CMakeLists.txt']:WCFalse:AGCFalse
+02:44:04.8293982 [Info, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Starting scan ...
+02:44:04.8396142 [Debug, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: GetScanToken:    at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.GetScanToken(String root, Guid providerGuid)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService.<ScanContentAsync_Impl>d__50`1.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(Task`1 completedTask)
+   at Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.OperationManager.<WaitOnBuild>d__27.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)
+   at Microsoft.VisualStudio.Threading.ThreadingTools.<WithCancellationSlow>d__9.MoveNext()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Threading.ExecutionContext.Run(ExecutionContext executionContext, ContextCallback callback, Object state, Boolean preserveSyncCtx)
+   at System.Runtime.CompilerServices.AsyncMethodBuilderCore.MoveNextRunner.Run()
+   at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(Action action, Boolean allowInlining, Task& currentTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.TaskFactory.CompleteOnInvokePromise.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task`1.TrySetResult(TResult result)
+   at System.Threading.Tasks.UnwrapPromise`1.TrySetFromTask(Task task, Boolean lookForOce)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessInnerTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.ProcessCompletedOuterTask(Task task)
+   at System.Threading.Tasks.UnwrapPromise`1.Invoke(Task completingTask)
+   at System.Threading.Tasks.Task.FinishContinuations()
+   at System.Threading.Tasks.Task.Finish(Boolean bUserDelegateExecuted)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot)
+   at System.Threading.Tasks.Task.ExecuteEntry(Boolean bPreventDoubleExecution)
+   at System.Threading.ThreadPoolWorkQueue.Dispatch()
+
+02:44:04.8396142 [Debug, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Getting Scan Token - scancount 28
+02:44:04.8396142 [Info, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing starting: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug
+02:44:04.8396142 [Debug, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1351287', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' entering...
+02:44:04.8446656 [Debug, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: SetCacheResult Completing task id=CacheTask= Id:'1351287', Conf:'unknown', Complete:'False', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:44:04.8446656 [Info, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Using previous result for task:CacheTask= Id:'1351006', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'', rootFile:backend\CMakeLists.txt
+02:44:04.8446656 [Debug, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Task:CacheTask= Id:'1351287', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:'' exiting...
+02:44:04.8446656 [Info, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Scanner Parsing done: projectfilepath backend\CMakeLists.txt Config Name:x64-Debug, took 4ms.
+02:44:04.8446656 [Info, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Compute file data values for backend\CMakeLists.txt Config x64-Debug, wasAutoGenerateCanceled:False
+02:44:04.8446656 [Error, Thread 84]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: FDV Error for backend\CMakeLists.txt Config x64-Debug Canceled False
+02:44:04.8603975 [Info, Thread 45]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for backend\CMakeLists.txt
+02:44:04.8695682 [Info, Thread 86]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Finishing scan.
+02:47:32.1436154 [Debug, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1167766', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:47:32.1470909 [Debug, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1351006', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:47:32.1470909 [Debug, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1334281', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:47:32.2197252 [Error, Thread 1]	Microsoft.VisualStudio.CMake.Package.ProjectEditor.ProjectEditorFolderViewProvider: EnableProviderAsync Current workspace is null.
+02:47:32.2197252 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+02:47:32.2197252 [Debug, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1351287', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:47:32.2197252 [Debug, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: CancelAsync: canceling task=CacheTask= Id:'1334548', Conf:'unknown', Complete:'True', Canc:'False', Root:'C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta, 
+	PrevTask:''
+02:47:32.2598071 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Disposing scanner service
+02:47:32.2598071 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Downloads\Imaging-Art-beyond-RGB-2.0.0-beta\Imaging-Art-beyond-RGB-2.0.0-beta'
+02:47:32.2633665 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+02:47:32.2807132 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: Disposing waitable service
+02:48:02.5097129 [Info, Thread 99]	Microsoft.VisualStudio.CMake.Package.IntelliSense.CMakeLanguageClient: CMake language services initialized

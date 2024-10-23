@@ -1,0 +1,3 @@
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/beyond-rgb-backend.dir
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/ALL_BUILD.dir
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/ZERO_CHECK.dir

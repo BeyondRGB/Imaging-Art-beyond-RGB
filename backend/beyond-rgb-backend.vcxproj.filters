@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ArtObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\BitDepthFinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ColorProfiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ColorTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\Image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\LibRawReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\LibRawThumbnail.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\LibTiffReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageReader\TiffReaderOpenCV.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\ImageWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\ImageWriterStrategy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\LibTiffWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\ImageUtil\ImageWriter\LibpngWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\ColorManagedImage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\HalfSizePreview.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\ReportRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\SpectralPicker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\SpectralPickerMeasured.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\ThumnailLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\backend_process.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\backend_process\pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\BitDepthScaler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ChannelSelector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ColorManagedCalibrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\FlatFieldor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ImageCalibrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ImageProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ImageReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\NoiseReduction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\PixelRegestor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\PreProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\ResultsProcessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\SpectralCalibrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\cpp\Verification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\results\calibration_results.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\results\colorimetry_formater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\results\general_info_formater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\results\m_color_formater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\results\m_spectral_formater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\image_processing\results\r_camera_formater.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\reference_data\color_patch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\reference_data\illuminants.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\reference_data\ref_data.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\reference_data\ref_data_array.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\reference_data\standard_observer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\reference_data\white_points.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\server\communicator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\server\comunication_obj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\server\globals_singlton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\server\process_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\server\request_server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\calibration_util.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\cmd_arg_manager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\color_convertions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\csv_parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\general_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\json.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\jsonafiable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\src\utils\time_tracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\npell\Imaging-Art-beyond-RGB\backend\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{9BD2D75D-1E02-3B93-889F-B106BDADDC59}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

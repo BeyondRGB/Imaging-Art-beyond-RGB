@@ -1,0 +1,35 @@
+17:56:48.8242674 [Error, Thread 1]	Microsoft.VisualStudio.CMake.Package.ProjectEditor.ProjectEditorFolderViewProvider: EnableProviderAsync Current workspace is null.
+21:12:47.6711654 [Info, Thread 414]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+21:12:47.6848001 [Info, Thread 468]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: WaitableIndexService listening to IndexService at FileScanning
+21:12:47.7004352 [Info, Thread 468]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: WaitableIndexService changed to FileScanning from None
+21:12:47.7319615 [Info, Thread 414]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService: GetSingleSettings('C:\Users\npell\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.25.3') took 30ms.
+21:12:47.8290028 [Info, Thread 486]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.ConfigurationService: GetSingleSettings('C:\Users\npell\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.25.3') took 0ms.
+21:12:49.5795701 [Info, Thread 431]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeRCCompiler.cmake
+21:12:49.5795701 [Info, Thread 427]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeCXXCompiler.cmake
+21:12:49.5795701 [Info, Thread 484]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeSystem.cmake
+21:12:49.5795701 [Info, Thread 486]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeCCompiler.cmake
+21:12:49.5952043 [Info, Thread 464]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerTypeCompleted
+21:12:49.6755679 [Warning, Thread 431]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for 
+21:12:50.4046749 [Warning, Thread 464]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for 
+21:12:50.4122962 [Info, Thread 464]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for VCTargetsPath.vcxproj
+21:12:50.4703195 [Warning, Thread 464]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for 
+21:12:50.4703195 [Info, Thread 464]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CompilerIdCXX\CompilerIdCXX.vcxproj
+21:12:50.4860270 [Warning, Thread 491]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for 
+21:12:50.4860270 [Info, Thread 491]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CompilerIdC\CompilerIdC.vcxproj
+21:12:50.4995414 [Info, Thread 486]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: WaitableIndexService changed to Completed from FileScanning
+21:12:50.5308725 [Warning, Thread 444]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ProjectSettingsProvider: Failed to find configuration for No Configurations
+21:31:33.7125949 [Info, Thread 332]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: WaitableIndexService changed to FileScanning from Completed
+21:36:19.8281187 [Info, Thread 363]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeCCompiler.cmake
+21:36:19.8437559 [Info, Thread 366]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeCXXCompiler.cmake
+21:36:19.9689088 [Info, Thread 363]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeRCCompiler.cmake
+21:36:20.0317941 [Info, Thread 481]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CMakeSystem.cmake
+21:36:20.0317941 [Info, Thread 481]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: WaitableIndexService changed to Completed from FileScanning
+21:36:20.3774679 [Info, Thread 388]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CompilerIdC\CompilerIdC.vcxproj
+21:36:20.5472519 [Info, Thread 387]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for CompilerIdCXX\CompilerIdCXX.vcxproj
+21:36:20.7496720 [Info, Thread 333]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: OnFileScannerCompleted for VCTargetsPath.vcxproj
+21:38:50.5166383 [Error, Thread 1]	Microsoft.VisualStudio.CMake.Package.ProjectEditor.ProjectEditorFolderViewProvider: EnableProviderAsync Current workspace is null.
+21:38:50.5478917 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+21:38:50.5635243 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.WaitableIndexService: Disposing waitable service
+21:38:50.5635243 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: ClearAllAsync: Clearing all cache entries.
+21:38:50.5635243 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.Services.BuildProjectScannerService: Disposing scanner service
+21:38:50.5635243 [Info, Thread 1]	Microsoft.VisualStudio.Workspace.ExternalBuildFramework.Impl.ParseCache: Canceling all ongoing generations for workspaceDirectory='C:\Users\npell\Imaging-Art-beyond-RGB\backend\build\CMakeFiles\3.25.3'

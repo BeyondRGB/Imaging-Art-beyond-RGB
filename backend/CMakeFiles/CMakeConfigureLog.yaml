@@ -1,0 +1,768 @@
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineSystem.cmake:205 (message)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      The system is: Windows - 10.0.22635 - AMD64
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCCompiler.cmake:123 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+      Build started 09/25/2024 12:34:59 AM.
+      
+      Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
+      PrepareForBuild:
+        Creating directory "Debug\\".
+        Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+        Creating directory "Debug\\CompilerIdC.tlog\\".
+      InitializeBuildStatus:
+        Creating "Debug\\CompilerIdC.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        Touching "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
+      VcpkgTripletSelection:
+        Using triplet "x64-windows" from "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\"
+        Using normalized configuration "Release"
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\include" /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
+        CMakeCCompilerId.c
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\lib" /LIBPATH:"C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
+        CompilerIdC.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdC\\CompilerIdC.exe
+      AppLocalFromInstalled:
+        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\npell\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        'pwsh.exe' is not recognized as an internal or external command,
+        operable program or batch file.
+        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\npell\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
+        "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\npell\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_C_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Deleting file "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
+        Touching "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate".
+      Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
+      
+      Build succeeded.
+          0 Warning(s)
+          0 Error(s)
+      
+      Time Elapsed 00:00:04.35
+      
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+      
+      Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+      
+      The C compiler identification is MSVC, found in:
+        C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/3.30.3/CompilerIdC/CompilerIdC.exe
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler:  
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      0
+      MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+      Build started 09/25/2024 12:35:04 AM.
+      
+      Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
+      PrepareForBuild:
+        Creating directory "Debug\\".
+        Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+        Creating directory "Debug\\CompilerIdCXX.tlog\\".
+      InitializeBuildStatus:
+        Creating "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+        Touching "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
+      VcpkgTripletSelection:
+        Using triplet "x64-windows" from "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\"
+        Using normalized configuration "Release"
+      ClCompile:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\include" /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
+        CMakeCXXCompilerId.cpp
+      Link:
+        C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\lib" /LIBPATH:"C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
+        CompilerIdCXX.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdCXX\\CompilerIdCXX.exe
+      AppLocalFromInstalled:
+        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\npell\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        'pwsh.exe' is not recognized as an internal or external command,
+        operable program or batch file.
+        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\npell\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
+        "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\npell\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\npell\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+      PostBuildEvent:
+        for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+        :VCEnd
+        CMAKE_CXX_COMPILER=C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\Hostx64\\x64\\cl.exe
+      FinalizeBuildStatus:
+        Deleting file "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
+        Touching "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
+      Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\3.30.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
+      
+      Build succeeded.
+          0 Warning(s)
+          0 Error(s)
+      
+      Time Elapsed 00:00:03.49
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+      
+      The CXX compiler identification is MSVC, found in:
+        C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/3.30.3/CompilerIdCXX/CompilerIdCXX.exe
+      
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:74 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Detecting C compiler ABI info"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-4w598w"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-4w598w"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "CMAKE_C_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-4w598w'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_fa0c0.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:09 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-4w598w\\cmTC_fa0c0.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_fa0c0.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-4w598w\\Debug\\".
+          Creating directory "cmTC_fa0c0.dir\\Debug\\cmTC_fa0c0.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_fa0c0.dir\\Debug\\cmTC_fa0c0.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_fa0c0.dir\\Debug\\cmTC_fa0c0.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_fa0c0.dir\\Debug\\\\" /Fd"cmTC_fa0c0.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.30\\Modules\\CMakeCCompilerABI.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_fa0c0.dir\\Debug\\\\" /Fd"cmTC_fa0c0.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.30\\Modules\\CMakeCCompilerABI.c"
+          CMakeCCompilerABI.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-4w598w\\Debug\\cmTC_fa0c0.exe" /INCREMENTAL /ILK:"cmTC_fa0c0.dir\\Debug\\cmTC_fa0c0.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-4w598w/Debug/cmTC_fa0c0.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-4w598w/Debug/cmTC_fa0c0.lib" /MACHINE:X64  /machine:x64 cmTC_fa0c0.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_fa0c0.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-4w598w\\Debug\\cmTC_fa0c0.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_fa0c0.dir\\Debug\\cmTC_fa0c0.tlog\\unsuccessfulbuild".
+          Touching "cmTC_fa0c0.dir\\Debug\\cmTC_fa0c0.tlog\\cmTC_fa0c0.lastbuildstate".
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-4w598w\\cmTC_fa0c0.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:01.17
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:218 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Parsed C implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
+        linker tool for 'C': C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.41.34120/bin/HostX64/x64/link.exe
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CMakeDetermineLinkerId.cmake:40 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:255 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Running the C compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.41.34120/bin/HostX64/x64/link.exe" "-v"
+      Microsoft (R) Incremental Linker Version 14.41.34120.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:74 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2449n7"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2449n7"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_CXX_SCAN_FOR_MODULES: "OFF"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2449n7'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_8708e.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:11 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2449n7\\cmTC_8708e.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_8708e.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2449n7\\Debug\\".
+          Creating directory "cmTC_8708e.dir\\Debug\\cmTC_8708e.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_8708e.dir\\Debug\\cmTC_8708e.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_8708e.dir\\Debug\\cmTC_8708e.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_8708e.dir\\Debug\\\\" /Fd"cmTC_8708e.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.30\\Modules\\CMakeCXXCompilerABI.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_8708e.dir\\Debug\\\\" /Fd"cmTC_8708e.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-3.30\\Modules\\CMakeCXXCompilerABI.cpp"
+          CMakeCXXCompilerABI.cpp
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2449n7\\Debug\\cmTC_8708e.exe" /INCREMENTAL /ILK:"cmTC_8708e.dir\\Debug\\cmTC_8708e.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2449n7/Debug/cmTC_8708e.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2449n7/Debug/cmTC_8708e.lib" /MACHINE:X64  /machine:x64 cmTC_8708e.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_8708e.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2449n7\\Debug\\cmTC_8708e.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_8708e.dir\\Debug\\cmTC_8708e.tlog\\unsuccessfulbuild".
+          Touching "cmTC_8708e.dir\\Debug\\cmTC_8708e.tlog\\cmTC_8708e.lastbuildstate".
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2449n7\\cmTC_8708e.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:01.11
+        
+      exitCode: 0
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:218 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Parsed CXX implicit link information:
+        link line regex: [^( *|.*[/\\])(ld[0-9]*(\\.[a-z]+)?|link\\.exe|lld-link(\\.exe)?|CMAKE_LINK_STARTFILE-NOTFOUND|([^/\\]+-)?ld|collect2)[^/\\]*( |$)]
+        linker tool regex: [^[ 	]*(->|")?[ 	]*(([^"]*[/\\])?(ld[0-9]*(\\.[a-z]+)?|link\\.exe|lld-link(\\.exe)?))("|,| |$)]
+        linker tool for 'CXX': C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.41.34120/bin/HostX64/x64/link.exe
+        implicit libs: []
+        implicit objs: []
+        implicit dirs: []
+        implicit fwks: []
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CMakeDetermineLinkerId.cmake:40 (message)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompilerABI.cmake:255 (cmake_determine_linker_id)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Running the CXX compiler's linker: "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.41.34120/bin/HostX64/x64/link.exe" "-v"
+      Microsoft (R) Incremental Linker Version 14.41.34120.0
+      Copyright (C) Microsoft Corporation.  All rights reserved.
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake:101 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckCSourceCompiles.cmake:52 (cmake_check_source_compiles)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindThreads.cmake:97 (CHECK_C_SOURCE_COMPILES)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindThreads.cmake:163 (_threads_check_libc)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "vcpkg/installed/x64-windows/share/absl/abslConfig.cmake:4 (find_dependency)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "vcpkg/installed/x64-windows/share/protobuf/protobuf-config.cmake:7 (find_package)"
+      - "vcpkg/installed/x64-windows/share/protobuf/vcpkg-cmake-wrapper.cmake:3 (_find_package)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:813 (include)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "vcpkg/installed/x64-windows/share/opencv4/OpenCVModules.cmake:19 (find_dependency)"
+      - "vcpkg/installed/x64-windows/share/opencv4/OpenCVConfig.cmake:126 (include)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "CMakeLists.txt:17 (FIND_PACKAGE)"
+    checks:
+      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-wwpqny"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-wwpqny"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "CMAKE_HAVE_LIBC_PTHREAD"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-wwpqny'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_e98d8.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:13 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\cmTC_e98d8.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_e98d8.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\Debug\\".
+          Creating directory "cmTC_e98d8.dir\\Debug\\cmTC_e98d8.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_e98d8.dir\\Debug\\cmTC_e98d8.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_e98d8.dir\\Debug\\cmTC_e98d8.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e98d8.dir\\Debug\\\\" /Fd"cmTC_e98d8.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\src.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e98d8.dir\\Debug\\\\" /Fd"cmTC_e98d8.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\src.c"
+          src.c
+        C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\src.c(1,10): error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\cmTC_e98d8.vcxproj]
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\cmTC_e98d8.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\cmTC_e98d8.vcxproj" (default target) (1) ->
+        (ClCompile target) -> 
+          C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\src.c(1,10): error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-wwpqny\\cmTC_e98d8.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.98
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindThreads.cmake:175 (_threads_check_lib)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "vcpkg/installed/x64-windows/share/absl/abslConfig.cmake:4 (find_dependency)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "vcpkg/installed/x64-windows/share/protobuf/protobuf-config.cmake:7 (find_package)"
+      - "vcpkg/installed/x64-windows/share/protobuf/vcpkg-cmake-wrapper.cmake:3 (_find_package)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:813 (include)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "vcpkg/installed/x64-windows/share/opencv4/OpenCVModules.cmake:19 (find_dependency)"
+      - "vcpkg/installed/x64-windows/share/opencv4/OpenCVConfig.cmake:126 (include)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "CMakeLists.txt:17 (FIND_PACKAGE)"
+    checks:
+      - "Looking for pthread_create in pthreads"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-zyk49n"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-zyk49n"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREADS_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-zyk49n'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_dd1fc.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:15 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\cmTC_dd1fc.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_dd1fc.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\Debug\\".
+          Creating directory "cmTC_dd1fc.dir\\Debug\\cmTC_dd1fc.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_dd1fc.dir\\Debug\\cmTC_dd1fc.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_dd1fc.dir\\Debug\\cmTC_dd1fc.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_dd1fc.dir\\Debug\\\\" /Fd"cmTC_dd1fc.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\CheckFunctionExists.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_dd1fc.dir\\Debug\\\\" /Fd"cmTC_dd1fc.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\CheckFunctionExists.c"
+          CheckFunctionExists.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\Debug\\cmTC_dd1fc.exe" /INCREMENTAL /ILK:"cmTC_dd1fc.dir\\Debug\\cmTC_dd1fc.ilk" /NOLOGO pthreads.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-zyk49n/Debug/cmTC_dd1fc.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-zyk49n/Debug/cmTC_dd1fc.lib" /MACHINE:X64  /machine:x64 cmTC_dd1fc.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\cmTC_dd1fc.vcxproj]
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\cmTC_dd1fc.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\cmTC_dd1fc.vcxproj" (default target) (1) ->
+        (Link target) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-zyk49n\\cmTC_dd1fc.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.95
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CheckLibraryExists.cmake:69 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindThreads.cmake:112 (CHECK_LIBRARY_EXISTS)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindThreads.cmake:176 (_threads_check_lib)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "vcpkg/installed/x64-windows/share/absl/abslConfig.cmake:4 (find_dependency)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "vcpkg/installed/x64-windows/share/protobuf/protobuf-config.cmake:7 (find_package)"
+      - "vcpkg/installed/x64-windows/share/protobuf/vcpkg-cmake-wrapper.cmake:3 (_find_package)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:813 (include)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake:76 (find_package)"
+      - "vcpkg/installed/x64-windows/share/opencv4/OpenCVModules.cmake:19 (find_dependency)"
+      - "vcpkg/installed/x64-windows/share/opencv4/OpenCVConfig.cmake:126 (include)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "CMakeLists.txt:17 (FIND_PACKAGE)"
+    checks:
+      - "Looking for pthread_create in pthread"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-mdo2xa"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-mdo2xa"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "CMAKE_HAVE_PTHREAD_CREATE"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-mdo2xa'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_a7cf1.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:17 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\cmTC_a7cf1.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_a7cf1.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\Debug\\".
+          Creating directory "cmTC_a7cf1.dir\\Debug\\cmTC_a7cf1.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_a7cf1.dir\\Debug\\cmTC_a7cf1.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_a7cf1.dir\\Debug\\cmTC_a7cf1.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a7cf1.dir\\Debug\\\\" /Fd"cmTC_a7cf1.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\CheckFunctionExists.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_a7cf1.dir\\Debug\\\\" /Fd"cmTC_a7cf1.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\CheckFunctionExists.c"
+          CheckFunctionExists.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\Debug\\cmTC_a7cf1.exe" /INCREMENTAL /ILK:"cmTC_a7cf1.dir\\Debug\\cmTC_a7cf1.ilk" /NOLOGO pthread.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-mdo2xa/Debug/cmTC_a7cf1.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-mdo2xa/Debug/cmTC_a7cf1.lib" /MACHINE:X64  /machine:x64 cmTC_a7cf1.dir\\Debug\\CheckFunctionExists.obj
+        LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\cmTC_a7cf1.vcxproj]
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\cmTC_a7cf1.vcxproj" (default targets) -- FAILED.
+        
+        Build FAILED.
+        
+        "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\cmTC_a7cf1.vcxproj" (default target) (1) ->
+        (Link target) -> 
+          LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-mdo2xa\\cmTC_a7cf1.vcxproj]
+        
+            0 Warning(s)
+            1 Error(s)
+        
+        Time Elapsed 00:00:00.98
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:238 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:506 (_OPENMP_GET_FLAGS)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "CMakeLists.txt:29 (find_package)"
+    description: "Detecting C OpenMP compiler info"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2lab28"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2lab28"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "OpenMP_COMPILE_RESULT_C_openmp"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2lab28'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_49450.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:19 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2lab28\\cmTC_49450.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_49450.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2lab28\\Debug\\".
+          Creating directory "cmTC_49450.dir\\Debug\\cmTC_49450.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_49450.dir\\Debug\\cmTC_49450.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_49450.dir\\Debug\\cmTC_49450.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_49450.dir\\Debug\\\\" /Fd"cmTC_49450.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2lab28\\OpenMPTryFlag.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_49450.dir\\Debug\\\\" /Fd"cmTC_49450.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2lab28\\OpenMPTryFlag.c"
+          OpenMPTryFlag.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2lab28\\Debug\\cmTC_49450.exe" /INCREMENTAL /ILK:"cmTC_49450.dir\\Debug\\cmTC_49450.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2lab28/Debug/cmTC_49450.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-2lab28/Debug/cmTC_49450.lib" /MACHINE:X64  /machine:x64 cmTC_49450.dir\\Debug\\OpenMPTryFlag.obj
+          cmTC_49450.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2lab28\\Debug\\cmTC_49450.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_49450.dir\\Debug\\cmTC_49450.tlog\\unsuccessfulbuild".
+          Touching "cmTC_49450.dir\\Debug\\cmTC_49450.tlog\\cmTC_49450.lastbuildstate".
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-2lab28\\cmTC_49450.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:01.15
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:238 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:506 (_OPENMP_GET_FLAGS)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "CMakeLists.txt:29 (find_package)"
+    description: "Detecting CXX OpenMP compiler info"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-ou8g6v"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-ou8g6v"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "OpenMP_COMPILE_RESULT_CXX_openmp"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-ou8g6v'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_b8eb6.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:21 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-ou8g6v\\cmTC_b8eb6.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_b8eb6.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-ou8g6v\\Debug\\".
+          Creating directory "cmTC_b8eb6.dir\\Debug\\cmTC_b8eb6.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_b8eb6.dir\\Debug\\cmTC_b8eb6.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_b8eb6.dir\\Debug\\cmTC_b8eb6.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_b8eb6.dir\\Debug\\\\" /Fd"cmTC_b8eb6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-ou8g6v\\OpenMPTryFlag.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_b8eb6.dir\\Debug\\\\" /Fd"cmTC_b8eb6.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-ou8g6v\\OpenMPTryFlag.cpp"
+          OpenMPTryFlag.cpp
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-ou8g6v\\Debug\\cmTC_b8eb6.exe" /INCREMENTAL /ILK:"cmTC_b8eb6.dir\\Debug\\cmTC_b8eb6.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-ou8g6v/Debug/cmTC_b8eb6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-ou8g6v/Debug/cmTC_b8eb6.lib" /MACHINE:X64  /machine:x64 cmTC_b8eb6.dir\\Debug\\OpenMPTryFlag.obj
+          cmTC_b8eb6.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-ou8g6v\\Debug\\cmTC_b8eb6.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_b8eb6.dir\\Debug\\cmTC_b8eb6.tlog\\unsuccessfulbuild".
+          Touching "cmTC_b8eb6.dir\\Debug\\cmTC_b8eb6.tlog\\cmTC_b8eb6.lastbuildstate".
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-ou8g6v\\cmTC_b8eb6.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:01.19
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:440 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:580 (_OPENMP_GET_SPEC_DATE)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "CMakeLists.txt:29 (find_package)"
+    description: "Detecting C OpenMP version"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-01omie"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-01omie"
+    cmakeVariables:
+      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
+      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "OpenMP_SPECTEST_C_"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-01omie'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_704c5.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:22 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-01omie\\cmTC_704c5.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_704c5.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-01omie\\Debug\\".
+          Creating directory "cmTC_704c5.dir\\Debug\\cmTC_704c5.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_704c5.dir\\Debug\\cmTC_704c5.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_704c5.dir\\Debug\\cmTC_704c5.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_704c5.dir\\Debug\\\\" /Fd"cmTC_704c5.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-01omie\\OpenMPCheckVersion.c"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /openmp /Fo"cmTC_704c5.dir\\Debug\\\\" /Fd"cmTC_704c5.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-01omie\\OpenMPCheckVersion.c"
+          OpenMPCheckVersion.c
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-01omie\\Debug\\cmTC_704c5.exe" /INCREMENTAL /ILK:"cmTC_704c5.dir\\Debug\\cmTC_704c5.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-01omie/Debug/cmTC_704c5.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-01omie/Debug/cmTC_704c5.lib" /MACHINE:X64  /machine:x64 cmTC_704c5.dir\\Debug\\OpenMPCheckVersion.obj
+          cmTC_704c5.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-01omie\\Debug\\cmTC_704c5.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_704c5.dir\\Debug\\cmTC_704c5.tlog\\unsuccessfulbuild".
+          Touching "cmTC_704c5.dir\\Debug\\cmTC_704c5.tlog\\cmTC_704c5.lastbuildstate".
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-01omie\\cmTC_704c5.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:01.21
+        
+      exitCode: 0
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:440 (try_compile)"
+      - "C:/Program Files/CMake/share/cmake-3.30/Modules/FindOpenMP.cmake:580 (_OPENMP_GET_SPEC_DATE)"
+      - "vcpkg/scripts/buildsystems/vcpkg.cmake:859 (_find_package)"
+      - "CMakeLists.txt:29 (find_package)"
+    description: "Detecting CXX OpenMP version"
+    directories:
+      source: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-evtzlt"
+      binary: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-evtzlt"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
+      CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
+      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
+      VCPKG_INSTALLED_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed"
+      VCPKG_PREFER_SYSTEM_LIBS: "OFF"
+      VCPKG_TARGET_TRIPLET: "x64-windows"
+      Z_VCPKG_ROOT_DIR: "C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg"
+    buildResult:
+      variable: "OpenMP_SPECTEST_CXX_"
+      cached: true
+      stdout: |
+        Change Dir: 'C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-evtzlt'
+        
+        Run Build Command(s): "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_a918f.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        MSBuild version 17.11.9+a69bbaaf5 for .NET Framework
+        Build started 09/25/2024 12:35:24 AM.
+        
+        Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-evtzlt\\cmTC_a918f.vcxproj" on node 1 (default targets).
+        PrepareForBuild:
+          Creating directory "cmTC_a918f.dir\\Debug\\".
+          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
+          Creating directory "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-evtzlt\\Debug\\".
+          Creating directory "cmTC_a918f.dir\\Debug\\cmTC_a918f.tlog\\".
+        InitializeBuildStatus:
+          Creating "cmTC_a918f.dir\\Debug\\cmTC_a918f.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_a918f.dir\\Debug\\cmTC_a918f.tlog\\unsuccessfulbuild".
+        ClCompile:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_a918f.dir\\Debug\\\\" /Fd"cmTC_a918f.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-evtzlt\\OpenMPCheckVersion.cpp"
+          Microsoft (R) C/C++ Optimizing Compiler Version 19.41.34120 for x64
+          Copyright (C) Microsoft Corporation.  All rights reserved.
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /openmp /Fo"cmTC_a918f.dir\\Debug\\\\" /Fd"cmTC_a918f.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-evtzlt\\OpenMPCheckVersion.cpp"
+          OpenMPCheckVersion.cpp
+        Link:
+          C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.41.34120\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-evtzlt\\Debug\\cmTC_a918f.exe" /INCREMENTAL /ILK:"cmTC_a918f.dir\\Debug\\cmTC_a918f.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-evtzlt/Debug/cmTC_a918f.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/CMakeScratch/TryCompile-evtzlt/Debug/cmTC_a918f.lib" /MACHINE:X64  /machine:x64 cmTC_a918f.dir\\Debug\\OpenMPCheckVersion.obj
+          cmTC_a918f.vcxproj -> C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-evtzlt\\Debug\\cmTC_a918f.exe
+        FinalizeBuildStatus:
+          Deleting file "cmTC_a918f.dir\\Debug\\cmTC_a918f.tlog\\unsuccessfulbuild".
+          Touching "cmTC_a918f.dir\\Debug\\cmTC_a918f.tlog\\cmTC_a918f.lastbuildstate".
+        Done Building Project "C:\\Users\\npell\\Imaging-Art-beyond-RGB\\backend\\CMakeFiles\\CMakeScratch\\TryCompile-evtzlt\\cmTC_a918f.vcxproj" (default targets).
+        
+        Build succeeded.
+            0 Warning(s)
+            0 Error(s)
+        
+        Time Elapsed 00:00:01.25
+        
+      exitCode: 0
+...

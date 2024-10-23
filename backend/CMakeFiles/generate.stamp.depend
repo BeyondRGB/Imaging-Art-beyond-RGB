@@ -1,0 +1,85 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeCXXInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeDependentOption.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeGenericSystem.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeParseImplicitLinkInfo.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeRCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CheckCSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CheckIncludeFile.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/CheckLibraryExists.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Compiler/MSVC.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/FindOpenMP.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/FindPkgConfig.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/FindTIFF.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/FindThreads.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/FindZLIB.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Internal/CheckSourceCompiles.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows-MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows-MSVC.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/Windows.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/Platform/WindowsPaths.cmake
+C:/Program Files/CMake/share/cmake-3.25/Modules/SelectLibraryConfigurations.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/3.25.3/CMakeCCompiler.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/3.25.3/CMakeCXXCompiler.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/3.25.3/CMakeRCCompiler.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeFiles/3.25.3/CMakeSystem.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/CMakeLists.txt
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/absl/abslConfig.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/absl/abslConfigVersion.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/absl/abslTargets-debug.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/absl/abslTargets-release.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/absl/abslTargets.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/asio/asio-config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/asio/asio-targets.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/jsoncons/jsonconsConfig.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/jsoncons/jsonconsConfigVersion.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/jsoncons/jsonconsTargets.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/lcms/lcms-config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/lcms/lcms-targets.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/lcms2/lcms2Config-debug.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/lcms2/lcms2Config-release.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/lcms2/lcms2Config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/libpng/libpng-config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/libpng/libpng16-debug.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/libpng/libpng16-release.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/libpng/libpng16.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/libraw/FindLibRaw.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/libraw/vcpkg-cmake-wrapper.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/opencv4/OpenCVConfig-version.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/opencv4/OpenCVConfig.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/opencv4/OpenCVModules-debug.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/opencv4/OpenCVModules-release.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/opencv4/OpenCVModules.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-config-version.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-generate.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-module.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-options.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-targets-debug.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-targets-release.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/protobuf-targets.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/protobuf/vcpkg-cmake-wrapper.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/quirc/quirc-config-debug.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/quirc/quirc-config-release.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/quirc/quirc-config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/tiff/vcpkg-cmake-wrapper.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/utf8_range/utf8_range-config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/utf8_range/utf8_range-targets-debug.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/utf8_range/utf8_range-targets-release.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/utf8_range/utf8_range-targets.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/websocketpp/websocketpp-config.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/installed/x64-windows/share/zlib/vcpkg-cmake-wrapper.cmake
+C:/Users/npell/Imaging-Art-beyond-RGB/backend/vcpkg/scripts/buildsystems/vcpkg.cmake
