@@ -16,6 +16,8 @@ Tristan Knox, Jacob O'Neil, Andrew Hammerstonm, Jared Ponzetti, Patrick Dalesio
 Brendan Grau, Sungmin Kim, Keenan Miller, John Akey, Elijah Cooper
 ### Senior Project Team 3
 Sam McQuate, Jacob Auger, Josh Greco, Robert Loos, Jonathan Pofcher
+### Senior Project Team 4
+Ray Axmann, Noah Pelletier, Mitchell Sulkowski, Christopher Cabonilas, Cameron Robinson, Adam Cropp
 
 
 # Documentaion
