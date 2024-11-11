@@ -4,7 +4,7 @@ project(BeyondRGB DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.1.0)
 
 configure_file(
     ${CMAKE_SOURCE_DIR}/src/version.h.in
-    ${CMAKE_BINARY_DIR}/src/version.h
+    ${CMAKE_SOURCE_DIR}/src/version.h
     @ONLY)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
