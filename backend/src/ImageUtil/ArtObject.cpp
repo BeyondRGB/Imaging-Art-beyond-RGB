@@ -216,6 +216,14 @@ namespace btrgb {
         }
     }
 
+    void ArtObject::setOutputFileName(std::string name) {
+        this->output_file_name = name;
+    }
+
+    std::string ArtObject::getOutputFileName() {
+        return this->output_file_name;
+    }
+
 
     RefData* ArtObject::get_refrence_data(btrgb::TargetType target_type) {
         if(target_type == btrgb::TargetType::VERIFICATION_TARGET){
