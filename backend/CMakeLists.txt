@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.16)  
 include(${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
-project(ArchitecutreTest DESCRIPTION "A Test project" VERSION 0.0.1)
+project(BeyondRGB DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.1.0)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/src/version.h.in
+    ${CMAKE_SOURCE_DIR}/src/version.h
+    @ONLY)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
 #------------------------------------------
