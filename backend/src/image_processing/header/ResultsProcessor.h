@@ -64,7 +64,7 @@ class ResultsProcessor : public LeafComponent{
         ResultsFormater *formater = nullptr;
 
         std::string output_dir;
-        std::string ts_id;
+        std::string output_name;
 
         std::string CM_f_name;
         std::string CM_target_f_name;
