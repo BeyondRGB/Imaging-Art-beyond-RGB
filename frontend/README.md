@@ -27,6 +27,7 @@
   
 
 ## Install Dependencies
+**Note:** If using Python 3.12 or greater, `setuptools` needs to be installed independently. Use `pip install setuptools` or `brew install python-setuptools`.
 
   
 
