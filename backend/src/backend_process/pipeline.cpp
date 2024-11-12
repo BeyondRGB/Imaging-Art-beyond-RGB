@@ -59,6 +59,10 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
         TargetData td = this->build_target_data(target_location);
         art_obj->setTargetInfo(td);
         this->send_info("TargetData initialized:", this->get_process_name());
+
+        // set custom output file name
+        art_obj->setOutputFileName(this->process_data_m->get_string(key_map[DataKey::OUT_FILE_NAME]));
+        
         return true;
     }
     catch (ParsingError e) {

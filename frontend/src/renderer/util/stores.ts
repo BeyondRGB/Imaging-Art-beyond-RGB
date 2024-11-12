@@ -36,6 +36,7 @@ export const processState = writable({
   completedTabs: [false, false, false, false, false, false],
   pipelineComplete: false,
   destDir: "",
+  destFileName: "",
   imageFilePaths: [],
   thumbnailID: null as number,
   colorTargetID: null,

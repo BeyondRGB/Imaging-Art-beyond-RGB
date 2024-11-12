@@ -11,7 +11,10 @@ void ResultsProcessor::execute(CommunicationObj* comms, btrgb::ArtObject* images
     comms->send_progress(0,this->get_name());
 
     this->output_dir = images->get_output_dir();
-    this->ts_id = btrgb::get_time_stamp();
+    this->output_name = images->getOutputFileName();
+    if (this->output_name.empty()) {
+        this->output_name = btrgb::get_time_stamp();
+    }
 
     // Generate the file names to be used for output
     this->CM_f_name = this->build_output_name("CM");
@@ -150,9 +153,9 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject* images){
 }
 
 std::string ResultsProcessor::build_output_name(std::string name, std::string extention){
-    std::string f_name = OUTPUT_PREFIX + name + "_" + this->ts_id;
+    std::string f_name = OUTPUT_PREFIX + name + "_" + this->output_name;
     if(name == "")
-        f_name = OUTPUT_PREFIX + this->ts_id;
+        f_name = OUTPUT_PREFIX + this->output_name;
     if(extention != "")
         f_name += "." + extention;
     return f_name;
