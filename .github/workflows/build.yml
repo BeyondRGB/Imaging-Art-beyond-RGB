@@ -1,0 +1,51 @@
+name: Build and Release on macOS
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Homebrew
+      run: |
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+
+    - name: Install dependencies
+      run: |
+        brew install git cmake pkg-config node
+
+    - name: Clone repository and configure backend
+      run: |
+        cd ${{ github.workspace }}/backend
+        sh osx_config_environment.sh
+
+    - name: Set up frontend
+      run: |
+        cd ${{ github.workspace }}/frontend
+        npm ci
+
+    - name: Build backend
+      run: |
+        cd ${{ github.workspace }}/backend
+        sh osx_release.sh
+
+    - name: Release frontend
+      run: |
+        cd ${{ github.workspace }}/frontend
+        sh release_frontend.sh
+
+    - name: Upload macOS application artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Beyond_RGB-darwin-x64
+        path: ${{ github.workspace }}/frontend/out/Beyond_RGB-darwin-x64
