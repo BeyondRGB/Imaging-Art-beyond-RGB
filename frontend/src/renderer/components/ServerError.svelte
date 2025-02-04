@@ -21,8 +21,13 @@
    * reset fields in the processState
    */
   function returnToSetup() {
-    $processState.currentTab = 4;
-    $processState.completedTabs[$processState.currentTab] = false;
+    for (let i = 0; i < $processState.completedTabs.length - 1; i++) {
+      if ($processState.completedTabs[i+1] === false || i === $processState.completedTabs.length - 2) {
+        $processState.currentTab = i;
+        $processState.completedTabs[i] = false;
+        break;
+      }
+    }
     $processState.whitePatchFilled = false;
     $processState.returnedFromProcessing = true;
     if ($processState.artStacks[0].verificationTarget === null) {
