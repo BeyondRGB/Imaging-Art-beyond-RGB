@@ -223,6 +223,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
         },
       ],
       destinationDirectory: $processState.destDir,
+      outputFileName: $processState.destFileName,
       sharpenString: $processState.artStacks[0].sharpenString,
       targetLocation: $processState.artStacks[0].colorTarget,
     },

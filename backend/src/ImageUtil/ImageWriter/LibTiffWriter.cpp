@@ -1,4 +1,5 @@
 #include "LibTiffWriter.hpp"
+#include "version.h"
 
 namespace btrgb {
     
@@ -93,7 +94,8 @@ namespace btrgb {
 		}
 
 		/* Set software field. */
-		TIFFSetField(img_out, TIFFTAG_SOFTWARE, "BTRGB v1.0.0");
+		std::string software_version = std::string("BTRGB v") + PROJECT_VERSION;
+		TIFFSetField(img_out, TIFFTAG_SOFTWARE, software_version.c_str());
 
 		/* Set make and model if available. */
 		btrgb::exif tags = im->getExifTags();

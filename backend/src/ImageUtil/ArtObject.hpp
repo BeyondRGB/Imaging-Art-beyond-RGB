@@ -58,6 +58,7 @@ namespace btrgb {
         RefData* ref_data;
         RefData* verification_ref = nullptr;
         std::string output_directory;
+        std::string output_file_name;
         bool batch;
         CalibrationResults general_info;
         CalibrationResults calibration_res; 
@@ -92,6 +93,9 @@ namespace btrgb {
         int imageCount();
 
         void outputImageAs(enum output_type filetype, std::string name, std::string filename = "");
+        
+        void setOutputFileName(std::string name);
+        std::string getOutputFileName();
 
         /* Iterators over all image entries. */
         std::unordered_map<std::string, Image*>::iterator begin() noexcept {return images.begin();};

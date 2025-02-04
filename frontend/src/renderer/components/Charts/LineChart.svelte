@@ -42,16 +42,11 @@
 
   const options = {
       series: [],
-      markers: {
-          size: 2.5,
-
-      },
       stroke: {
           show: true,
           curve: 'smooth',
           width: 1,
       },
-      colors: ["#FFFFFF"],
       chart: {
           background: 'rgb(58, 58, 60)',
           animations: {
@@ -80,16 +75,18 @@
           }
       },
       tooltip: {
-          shared: false,
-          intersect: true,
+          shared: true,
+          intersect: false,
           theme: 'dark',
           x: {
-              show: false
+            show: false
           },
           y: {
-              formatter: undefined,
-              title: {
-                  formatter: (seriesName, info) => seriesName,
+            formatter: function(value) {
+                return `${value.toFixed(2)}%`;
+            },
+            title: {
+                  formatter: () => '',
               }
           },
           z: {
@@ -137,12 +134,10 @@
       },
       legend: {
           show: true,
+          showForSingleSeries: true,
           labels: {
-              useSeriesColors: true
+            colors: '#FFFFFF',
           },
-          markers: {
-              fillColors: pointColors,
-          }
       },
       title: {
           text: "Estimated Spectrum",

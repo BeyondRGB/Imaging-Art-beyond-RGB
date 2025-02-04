@@ -54,6 +54,9 @@ CMakeSettings.json
 # macOS thumbnails
 .DS_Store
 
+# Versioning
+backend/src/version.h
+
 ###############
 ## Front End ##
 ###############

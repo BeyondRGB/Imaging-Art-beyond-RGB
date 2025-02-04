@@ -46,12 +46,13 @@ class Pipeline: public BackendProcess{
 		Illuminants,
 		TargetLocation,
 		VerificationLocation,
-		TARGET_IMG
+		TARGET_IMG,
+		OUT_FILE_NAME
 	};
 	/**
 	* Maps enum values to a string
 	*/
-	const std::string key_map[10] = {
+	const std::string key_map[11] = {
 		"art",
 		"white",
 		"dark",
@@ -61,7 +62,8 @@ class Pipeline: public BackendProcess{
 		"illuminants",
 		"targetLocation",
 		"verificationLocation",
-		"target"
+		"target",
+		"outputFileName"
 	};
 
 

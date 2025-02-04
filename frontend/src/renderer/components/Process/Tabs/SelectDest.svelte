@@ -45,6 +45,14 @@
         </div>
       {/if}
     </div>
+    <div>
+      <div class="outputNameDisp">
+        <div class="outputLabel">
+          Destination Filename:
+        </div>
+        <input class="outputName" bind:value={$processState.destFileName} />
+      </div>
+    </div>
   </right>
 </main>
 
@@ -75,5 +83,14 @@
   }
   .selectBox {
     @apply h-[70%] flex flex-col justify-center items-center gap-2;
+  }
+  .outputNameDisp {
+    @apply flex justify-between m-1 text-base;
+  }
+  .outputLabel {
+    @apply bg-blue-500/50 flex justify-between items-center p-1 rounded-l-xl;
+  }
+  .outputName {
+    @apply bg-gray-800 flex items-center justify-center rounded-r-xl p-1;
   }
 </style>
