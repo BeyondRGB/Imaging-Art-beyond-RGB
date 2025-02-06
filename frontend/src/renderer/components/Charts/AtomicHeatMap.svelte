@@ -89,6 +89,43 @@
         return result;
     }
 
+    function getMinMax() {
+	   let min = Math.min(...data.flat());
+	   let max = Math.max(...data.flat());
+	   min = Math.ceil(min);
+	   max = Math.ceil(max);
+	   return { min, max };
+	}
+	
+	function generateLegendRanges() {
+	   let { min, max } = getMinMax();
+       let step = (max - min) / 9;
+       const result = [];
+       let usedColors = [];
+
+       for (let i = 0; i < 9; i++) {
+          let from = min + step * i;
+          let to = min + step * (i + 1);
+      
+          if (from > max) break; // Stop if exceeding max
+
+          let color = colors[i];
+          usedColors.push(color);
+
+          result.push({ from, to: Math.min(to, max), color });
+       }
+
+       if (result.length < 10) {
+          result.push({
+             from: result[result.length - 1].to,
+             to: max,
+             color: colors[usedColors.length - 1]
+          });
+       }
+
+   return result;
+   }
+			
     const getOptions = function() {
         return {
             series: getData(),
@@ -116,7 +153,22 @@
                 }
             },
             legend: {
-                show: false
+                show: true,
+				position: 'top',
+				horizontalAlign: 'center', 
+				markers: {
+				    fillColors: generateLegendRanges().map(range => range.color).filter(color => color)
+				},
+				labels: {
+				    colors: "#ffffff",
+                    formatter: function(value, index) {
+                       let legendRanges = generateLegendRanges();
+                       if (index < legendRanges.length) {
+                           return legendRanges[index].from.toFixed(2);
+                       }
+                       return "";
+					}
+				}
             },
             tooltip: {
                 enabled: true,
