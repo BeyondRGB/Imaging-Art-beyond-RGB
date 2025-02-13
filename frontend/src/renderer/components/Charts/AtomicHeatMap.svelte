@@ -88,44 +88,26 @@
         result[result.length - 1].to = Number.MAX_SAFE_INTEGER;
         return result;
     }
-
-    function getMinMax() {
-	   let min = Math.min(...data.flat());
-	   let max = Math.max(...data.flat());
-	   min = Math.ceil(min);
-	   max = Math.ceil(max);
-	   return { min, max };
-	}
 	
-	function generateLegendRanges() {
-	   let { min, max } = getMinMax();
-       let step = (max - min) / 9;
-       const result = [];
-       let usedColors = [];
+function generateLegendRanges() {
+    const rangeData = ranges(); // Get full color ranges
+    const result = [];
 
-       for (let i = 0; i < 9; i++) {
-          let from = min + step * i;
-          let to = min + step * (i + 1);
-      
-          if (from > max) break; // Stop if exceeding max
+    
+    const step = 2; // Merge every 2 ranges to create 10 values
 
-          let color = colors[i];
-          usedColors.push(color);
+    for (let i = 0; i < 10; i++) {
+        let from = rangeData[i * step].from;
+        let to = rangeData[i * step + step - 1]?.to || rangeData[rangeData.length - 1].to; // Ensure last range is covered
 
-          result.push({ from, to: Math.min(to, max), color });
-       }
+        result.push({
+            label: (i + 1).toString(), // Display whole numbers 1-10
+            color: rangeData[i * step].color // Use color from paired ranges
+        });
+    }
 
-       if (result.length < 10) {
-          result.push({
-             from: result[result.length - 1].to,
-             to: max,
-             color: colors[usedColors.length - 1]
-          });
-       }
-
-   return result;
-   }
-			
+    return result;
+}
     const getOptions = function() {
         return {
             series: getData(),
@@ -136,8 +118,9 @@
                         let xValue = config.w.config.series[config.seriesIndex].data[config.dataPointIndex].x;
                         console.log(yAxisLabel)
                         console.log(xValue)
+						dispatch('datapointselect', { yAxisLabel, xValue });
                         // Dispatch a custom event with the selected data point information
-                        dispatch('datapointselect', { yAxisLabel, xValue });
+                        //dispatch('datapointselect', { yAxisLabel, xValue });
                     }
                 },
                 height: '650px',
@@ -156,19 +139,24 @@
                 show: true,
 				position: 'top',
 				horizontalAlign: 'center', 
+				customLegendItems: generateLegendRanges().map(range => range.label),
 				markers: {
-				    fillColors: generateLegendRanges().map(range => range.color).filter(color => color)
+				    fillColors: generateLegendRanges().map(range => range.color)
 				},
 				labels: {
 				    colors: "#ffffff",
                     formatter: function(value, index) {
                        let legendRanges = generateLegendRanges();
-                       if (index < legendRanges.length) {
-                           return legendRanges[index].from.toFixed(2);
-                       }
-                       return "";
+                       return legendRanges[index]?.label || "";
+
 					}
-				}
+				},
+				onItemClick: {
+                toggleDataSeries: false 
+                },
+                 onItemHover: {
+                 highlightDataSeries: true 
+    }
             },
             tooltip: {
                 enabled: true,
