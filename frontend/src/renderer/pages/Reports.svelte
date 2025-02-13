@@ -27,7 +27,6 @@
 	let combinedData = [];
 	  let trueShadowPos = shadowPos;
 
-
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
 
 	function handleDataPointSelect(event) {
@@ -200,7 +199,15 @@
 							matrixName={"CM DeltaE Values"}
 						/>
 						<div class="target-image-container">
-						  <ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
+							<!--{#if loading}
+								<div class="loading">
+									<div class="loading-box">Loading<span class="loader" /></div>
+								</div>
+							{:else}
+								
+							{/if}-->
+
+							<ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
 						</div>
 							{#if $currentPage === "Reports"}
 								<div class="reports-floatBox" class:expanded={expand}>
