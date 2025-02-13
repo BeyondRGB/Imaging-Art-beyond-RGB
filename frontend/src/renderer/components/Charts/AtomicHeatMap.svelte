@@ -98,7 +98,7 @@ function generateLegendRanges() {
 
     for (let i = 0; i < 10; i++) {
         let from = rangeData[i * step].from;
-        let to = rangeData[i * step + step - 1]?.to || rangeData[rangeData.length - 1].to; // Ensure last range is covered
+        let to = rangeData[i * step + step - 1]?.to || rangeData[rangeData.length - 1].to; // Make sure range goes to 10
 
         result.push({
             label: (i + 1).toString(), // Display whole numbers 1-10
