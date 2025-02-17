@@ -32,7 +32,7 @@ void ColorManagedImage::run() {
         std::string filename = prj_filename.substr(0, prj_filename.find_last_of("/\\") + 1) + local_file;
 
         if( ! btrgb::Image::is_tiff(filename) )
-            throw std::runtime_error("Image is not a tiff file");
+            throw std::runtime_error("Missing tiff image files. Ensure that all tiff files produced by BeyondRGB are in the same directory as the btrgb project file.");
 
         cv::Mat im;
         tiff_reader->open(filename);
