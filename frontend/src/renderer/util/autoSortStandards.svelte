@@ -1,7 +1,6 @@
 <script context="module">
     import { maxBy, split, each, size, filter, indexOf, remove } from "lodash";
     import { findBestMatch } from "./stringCompare";
-    // import { indexOf } from "cypress/types/lodash";
 
     const matchingStandards = [
         [
@@ -114,7 +113,7 @@
         console.log(images)
         console.log(externalStack)
         /**
-         * CHECK WHAT THESE DO BEFORE INCLUDING
+         * Are these required..? so long as the code bounces any images that don't belong to a specific category
          * let includeTarget = false;
             if(size(images) < 6) {
                 return images;
@@ -137,9 +136,8 @@
         // for IMAGE in IMAGES, 
         each(images, function (image){
             var img_str = split(image.name.toLowerCase(), '-');
-            // Tear off just the suffix, ignoring all other hyphens in the filename barring the one connected to the suffix
+            // Tear off just the suffix, ignoring all other hyphens in the filename barring the one connected to the suffix (i.e. the last hyphen)
             img_str = img_str[img_str.length - 1];
-            // console.log("Image: " + img_str);
             // Split into the image type and image id
             let img_parts = split(img_str, '_')
 
@@ -148,80 +146,81 @@
             let img_id = img_parts[1];
 
             // if the ids have not yet been captured and the image id isn't already in image ids, add it in there
+            // this could get buggy if there are more than 2 suffixes, either by design or by accident. Only the first 2 suffixes are recorded in this statement
             if(image_id.length < 2){
                 if(indexOf(img_id) == -1){
                     image_id.push(img_id);
                 }
             }
-            // else{
-            //     console.log("Image IDs: " + image_id)
-            // }
+
             
             for(let i = 0; i < suffixStandards.length; i++) {
-            // each(suffixStandards, function (image_type){
                 var ind = indexOf(suffixStandards[i], img_str)
+                // If the given suffix is in the array of suffixes, add it to the image stack,
+                //  where the key for the image stack belongs to the list of suffixes that the matched suffix is from
                 if(ind!= -1){
-                    // console.log(suffixStandards[i][0])
-                    var temp = image_stack.get(suffixStandards[i][0])
-                    // console.log(img_id)
-                    // console.log("indexof img_id:" + image_id.indexOf(img_id))
-                    // console.log(ind)
-                    temp[image_id.indexOf(img_id)] = image
-                    // console.log("temp: " + temp)
-                    // console.log("Image type: " + suffixStandards[i][ind]);
+                    var temp = image_stack.get(suffixStandards[i][0])    
+                    temp[image_id.indexOf(img_id)] = image  
                     image_stack.set(suffixStandards[i][0], temp);
-                    // logic here isn't correct? need some way to access [] from within image_stack
                 }
-            // });
             }
         });
+        
+        console.log("image stack pre splice:")
+        console.table(image_stack)
 
-        // console.log("IMAGE STACK: ");
-        // console.table(image_stack)
-    //     each(image_stack, function(image_s){
-    //         console.log("key", image_s[0]);
-    //         console.log("value", image_s[1]);
-    //     }
-    // );
+        // console.log("null test")
+        // images.splice(null, 1)
+        // console.table(images)
 
-    /**
-     *      ["target", [null, null]],
-            ["image", [null, null]],
-            ["darkfield", [null, null]],
-            [ "flatfield", [null, null]]
-     */
+        externalStack.imageA = [[image_stack.get("image")[0]? image_stack.get("image")[0]: [[]]]]
+        externalStack.imageB = [[image_stack.get("image")[1]? image_stack.get("image")[1]: [[]]]]
+        // images = filter(images, (e) => e !== image_stack.get("image"))
+        // images.splice(images.indexOf(image_stack.get("image")[0]), 1)
+        // images.splice(images.indexOf(image_stack.get("image")[1]), 1)
+        // console.log("minus images:")
+        // console.table(images)
+        // console.log(size(images))
 
-        externalStack.imageA = [[image_stack?.get("image")[0]]]
-        externalStack.imageB = [[image_stack?.get("image")[1]]]
-        images = remove(images, (e) => e == image_stack.get("image"))
-
-        externalStack.targetA = [image_stack?.get("target")[0]]
-        externalStack.targetB = [image_stack?.get("target")[1]]
-        images = remove(images, (e) => e == image_stack.get("target"))
-
-        externalStack.flatfieldA = [image_stack?.get("flatfield")[0]]
-        externalStack.flatfieldB = [image_stack?.get("flatfield")[1]]
-        images = remove(images, (e) => e == image_stack.get("flatfield"))
-
-        externalStack.darkfieldA = [image_stack?.get("darkfield")[0]]
-        externalStack.darkfieldB = [image_stack?.get("darkfield")[1]]
-        images = remove(images, (e) => e == image_stack.get("darkfield"))
+        // tomorrow: try moving [] around just the operator outputs TODO
+        // also try uhhh using keys array and id array to just skip assigning something to externalstack? if its null
+        // idk
+        // see if you can get rejected old autosort
 
 
-        /**
-        ImageImporter.svelte? [sm]:33 Uncaught (in promise) TypeError: Cannot read properties of undefined (reading 'length')
-    at Object.$$self.$$.update (ImageImporter.svelte? [sm]:33)
-    at update (index.mjs:1081)
-    at flush (index.mjs:1052)
-         * 
-        */
+        externalStack.targetA = [image_stack.get("target")[0]? image_stack.get("target")[0]: []]
+        externalStack.targetB = [image_stack.get("target")[1]? image_stack.get("target")[1]: []]
+        // images.splice(images.indexOf(image_stack.get("target")[0]), 1)
+        // images.splice(images.indexOf(image_stack.get("target")[1]), 1)
 
-       console.log("SIZE OF IMAGES: " + size(images))
-       console.log("string string " + JSON.stringify(images, null, 4))
-       console.log("typeof images: " + typeof(images))
-       // For some reason, it appears that the images array disappears into the fucking aether one you remove all the 
-       // images from it, which doesn't appear to be an issue that the old one has
-       // What the fuck
+        // console.log("minus targets:")
+        // console.table(images)
+
+        externalStack.flatfieldA = [image_stack.get("flatfield")[0]? image_stack.get("flatfield")[0]: []]
+        externalStack.flatfieldB = [image_stack.get("flatfield")[1]? image_stack.get("flatfield")[1]: []]
+        // images.splice(images.indexOf(image_stack.get("flatfield")[0]), 1)
+        // images.splice(images.indexOf(image_stack.get("flatfield")[1]), 1)
+
+        // console.log("minus flatfields:")
+        // console.table(images)
+
+        externalStack.darkfieldA = [image_stack.get("darkfield")[0]? image_stack.get("darkfield")[0]: []]
+        externalStack.darkfieldB = [image_stack.get("darkfield")[1]? image_stack.get("darkfield")[1]: []]
+        // images.splice(images.indexOf(image_stack.get("darkfield")[0]), 1)
+        // images.splice(images.indexOf(image_stack.get("darkfield")[1]), 1)
+
+        var img_stck_keys = ["image", "target", "flatfield", "darkfield"]
+        for(let i = 0; i<size(img_stck_keys); i++){
+            for(let c = 0; c<2; c++){
+                var t = image_stack.get(img_stck_keys[i])[c]
+                if(t != null){
+                    images.splice(images.indexOf(t), 1)
+                }
+            }
+        }
+
+        console.log("minus splice loops:")
+        console.table(images)
 
         return  images;
 
@@ -249,21 +248,20 @@
         } else if(size(images) >= 8) {
             includeTarget = true;
         }
+
+        // Keeping track of how many file names have a suffix cordoned from the rest of the file name with a - and has a _ separating only 2 parts
         var suffix_score = 0
         each(images, function(image){
-            // Discuss with team later perhaps, TODO
+            // Discuss with team later how the sort type is determined, TODO
             var img_test_str = split(image.name.toLowerCase(), '-')
-            if(img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], '_').length > 1){
+            if(img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], '_').length ==2 ){
                 suffix_score = suffix_score += 1
             }
         })
-        console.log("SUFFIX SCORE: " + suffix_score)
-
-        console.log(typeof(images))
         
-        // If the number of valid suffixes is more than half the size of the images array, then use the suffix sort;
+        // If the number of valid suffixes is more than half the size of the images array, then it is assumed 
+        // that the user is using suffixes on their images. The code then uses the suffix sort;
         if(suffix_score > size(images)/2){
-             // Does this fix the error
              each(images, function (image){
             each(probabilityScoreProperties, function (property) {
                 image[property] = 0;
@@ -342,6 +340,11 @@
         // fill in the image stack
         externalStack.imageA = [[imageStack?.bestArtImages[0]]];
         externalStack.imageB = [[imageStack?.bestArtImages[1]]];
+
+        console.log("trying something")
+        console.table(JSON.stringify(externalStack, null, 4))
+        console.log("size: " + size(externalStack))
+        console.log(typeof(externalStack))
 
         // handle A - B sorting
         if(includeTarget) {
