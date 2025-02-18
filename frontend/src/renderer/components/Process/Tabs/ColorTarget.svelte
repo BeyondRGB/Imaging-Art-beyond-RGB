@@ -1,6 +1,7 @@
 <script>
   import {
     customRefData,
+    persistentCustomRefData,
     processState,
     modal,
     sendMessage,
@@ -26,13 +27,12 @@
 
   let loading = false;
 
-  let refData = [
+  let staticRefData = [
     "NGT_Reflectance_Data.csv",
     "APT_Reflectance_Data.csv",
     "CCSG_Reflectance_Data.csv",
     "CC_Classic_Reflectance_Data.csv",
-    "Choose a custom file....csv",
-  ];
+    ];
 
   let refDataMeta = [
     { rows: 10, cols: 13 },
@@ -149,6 +149,22 @@
   }
 
   $: console.log($processState);
+
+  function buildCalibrationRefData() {
+    return [
+      ...staticRefData,
+      ...$persistentCustomRefData.calibration,
+      "Choose a custom file....csv",
+    ];
+  }
+
+  function buildVerificationRefData() {
+    return [
+      ...staticRefData,
+      ...$persistentCustomRefData.verification,
+      "Choose a custom file....csv",
+    ];
+  }
 
   function addTarget() {
     if (!colorTarget) {
@@ -294,15 +310,15 @@
     verifyTarget.refData.name = "CUSTOM DATA";
   }
 
-  $: if (refData.includes(colorTarget?.refData?.name)) {
+  $: if (staticRefData.includes(colorTarget?.refData?.name)) {
     console.log("Setting Refdata ROW/COl");
-    let index = refData.findIndex((x) => x === colorTarget.refData.name);
+    let index = staticRefData.findIndex((x) => x === colorTarget.refData.name);
 
     colorTarget.rows = refDataMeta[index].rows;
     colorTarget.cols = refDataMeta[index].cols;
   }
-  $: if (refData.includes(verifyTarget?.refData?.name)) {
-    let index = refData.findIndex((x) => x === verifyTarget.refData.name);
+  $: if (staticRefData.includes(verifyTarget?.refData?.name)) {
+    let index = staticRefData.findIndex((x) => x === verifyTarget.refData.name);
 
     verifyTarget.rows = refDataMeta[index].rows;
     verifyTarget.cols = refDataMeta[index].cols;
@@ -413,7 +429,7 @@
                 Reference Data:</span
               >
               <Dropdown
-                values={refData}
+                values={i === 0 ? buildCalibrationRefData() : buildVerificationRefData() }
                 bind:selected={target.refData.name}
                 invalid={target.refData.name === "---None---.csv"}
                 spaceLast
