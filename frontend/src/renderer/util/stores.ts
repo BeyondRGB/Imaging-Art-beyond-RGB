@@ -8,7 +8,10 @@ export const modal = writable(null);
 export const batchImagesA = writable(['E:\\BeyondRGBPics\\picasso_1_A.ARW']);
 export const batchImagesB = writable(['E:\\BeyondRGBPics\\picasso_1_B.ARW']);
 
-
+export const persistentCustomRefData = writable({
+  calibration: [],
+  verification: []
+});
 
 export const viewState = writable({
   projectKey: null,
