@@ -1,6 +1,6 @@
 <script lang="ts">
   import Switch from "@components/Switch.svelte";
-  import { appSettings, processState, customRefData } from "@util/stores";
+  import { appSettings, processState, customRefData, persistentCustomRefData } from "@util/stores";
   import { modal } from "@util/stores";
   import { DownloadCloudIcon } from "svelte-feather-icons";
   import RefDataTemplate from "@assets/RefDataTemplate.csv?url";
@@ -22,10 +22,12 @@
         $customRefData.calibration = {
           name: filePaths[0],
         };
+        $persistentCustomRefData.calibration.push(filePaths[0]);
       } else if ($modal === "CustomRefDataVer") {
         $customRefData.verification = {
           name: filePaths[0],
         };
+        $persistentCustomRefData.verification.push(filePaths[0]);
       }
     }
     closeModal();
