@@ -173,8 +173,8 @@
         // images.splice(null, 1)
         // console.table(images)
 
-        externalStack.imageA = [[image_stack.get("image")[0]? image_stack.get("image")[0]: [[]]]]
-        externalStack.imageB = [[image_stack.get("image")[1]? image_stack.get("image")[1]: [[]]]]
+        externalStack.imageA = [[image_stack.get("image")[0]? image_stack.get("image")[0]: [{"id": []}]]]
+        externalStack.imageB = [[image_stack.get("image")[1]? image_stack.get("image")[1]: [{"id": []}]]]
         // images = filter(images, (e) => e !== image_stack.get("image"))
         // images.splice(images.indexOf(image_stack.get("image")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("image")[1]), 1)
@@ -188,24 +188,24 @@
         // see if you can get rejected old autosort
 
 
-        externalStack.targetA = [image_stack.get("target")[0]? image_stack.get("target")[0]: []]
-        externalStack.targetB = [image_stack.get("target")[1]? image_stack.get("target")[1]: []]
+        externalStack.targetA = [image_stack.get("target")[0]? image_stack.get("target")[0]: {"id": []}]
+        externalStack.targetB = [image_stack.get("target")[1]? image_stack.get("target")[1]: {"id": []}]
         // images.splice(images.indexOf(image_stack.get("target")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("target")[1]), 1)
 
         // console.log("minus targets:")
         // console.table(images)
 
-        externalStack.flatfieldA = [image_stack.get("flatfield")[0]? image_stack.get("flatfield")[0]: []]
-        externalStack.flatfieldB = [image_stack.get("flatfield")[1]? image_stack.get("flatfield")[1]: []]
+        externalStack.flatfieldA = [image_stack.get("flatfield")[0]? image_stack.get("flatfield")[0]: {"id": []}]
+        externalStack.flatfieldB = [image_stack.get("flatfield")[1]? image_stack.get("flatfield")[1]: {"id": []}]
         // images.splice(images.indexOf(image_stack.get("flatfield")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("flatfield")[1]), 1)
 
         // console.log("minus flatfields:")
         // console.table(images)
 
-        externalStack.darkfieldA = [image_stack.get("darkfield")[0]? image_stack.get("darkfield")[0]: []]
-        externalStack.darkfieldB = [image_stack.get("darkfield")[1]? image_stack.get("darkfield")[1]: []]
+        externalStack.darkfieldA = [image_stack.get("darkfield")[0]? image_stack.get("darkfield")[0]: {"id": []}]
+        externalStack.darkfieldB = [image_stack.get("darkfield")[1]? image_stack.get("darkfield")[1]: {"id": []}]
         // images.splice(images.indexOf(image_stack.get("darkfield")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("darkfield")[1]), 1)
 
