@@ -20,14 +20,30 @@
       if ($modal === "CustomRefData") {
         console.log("Saving to color target");
         $customRefData.calibration = {
-          name: filePaths[0],
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
         };
-        $persistentCustomRefData.calibration.push(filePaths[0]);
+        $persistentCustomRefData.calibration.push({
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
+        });
       } else if ($modal === "CustomRefDataVer") {
         $customRefData.verification = {
-          name: filePaths[0],
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
         };
-        $persistentCustomRefData.verification.push(filePaths[0]);
+        $persistentCustomRefData.verification.push({
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
+        });
       }
     }
     closeModal();
