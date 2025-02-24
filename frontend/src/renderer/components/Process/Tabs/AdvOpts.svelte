@@ -1,16 +1,34 @@
 <script lang="ts">
   import Dropdown from "@root/components/Dropdown.svelte";
   import { processState } from "@util/stores";
-  let sharpingSettings = ["None", "Low", "Medium", "High"];
+  // let sharpingSettings = ["None", "Low", "Medium", "High"];
+  let sharpingSettings = [
+    {
+      name: "None",
+      value: "N",
+    },
+    {
+      name: "Low",
+      value: "L",
+    },
+    {
+      name: "Medium",
+      value: "M",
+    },
+    {
+      name: "High",
+      value: "H",
+    },
+  ]
 
-  let selected = "None";
+  let selected = sharpingSettings[0];
 
   $: if ($processState.currentTab === 4 && !$processState.completedTabs[4]) {
     $processState.completedTabs[4] = true;
   }
 
   $: if (selected) {
-    $processState.artStacks[0].sharpenString = selected.slice(0, 1);
+    $processState.artStacks[0].sharpenString = selected.value;
   }
 </script>
 
@@ -22,7 +40,7 @@
     <div class="settings">
       <div class="sharpness">
         <p>Sharpening Level</p>
-        <Dropdown values={sharpingSettings} bind:selected isFile={false} />
+        <Dropdown values={sharpingSettings} bind:selected />
       </div>
     </div>
   </right>
