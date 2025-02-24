@@ -28,11 +28,31 @@
   let loading = false;
 
   let staticRefData = [
-    "NGT_Reflectance_Data.csv",
-    "APT_Reflectance_Data.csv",
-    "CCSG_Reflectance_Data.csv",
-    "CC_Classic_Reflectance_Data.csv",
-    ];
+    {
+      name: "NGT",
+      fileName: "NGT_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    },
+    {
+      name: "APT",
+      fileName: "APT_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    },
+    {
+      name: "CCSG",
+      fileName: "CCSG_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    },
+    {
+      name: "CC Classic",
+      fileName: "CC_Classic_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    }
+  ]
 
   let refDataMeta = [
     { rows: 10, cols: 13 },
@@ -154,7 +174,10 @@
     return [
       ...staticRefData,
       ...$persistentCustomRefData.calibration,
-      "Choose a custom file....csv",
+      {
+        name: "Choose a Custom CSV File",
+        fileName: "Choose a custom file....csv",
+      },
     ];
   }
 
@@ -162,7 +185,10 @@
     return [
       ...staticRefData,
       ...$persistentCustomRefData.verification,
-      "Choose a custom file....csv",
+      {
+        name: "Choose a Custom CSV File",
+        fileName: "Choose a custom file....csv",
+      },
     ];
   }
 
@@ -179,7 +205,8 @@
           col: null,
         },
         refData: {
-          name: "---None---.csv",
+          name: "---None---",
+          fileName: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -197,7 +224,8 @@
           col: 1,
         },
         refData: {
-          name: "---None---.csv",
+          name: "---None---",
+          fileName: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -271,6 +299,7 @@
         },
         refData: {
           name: $processState.artStacks[0].colorTarget.refData.name,
+          fileName: $processState.artStacks[0].colorTarget.refData.fileName,
           standardObserver: $processState.artStacks[0].colorTarget.refData.standardObserver,
           illuminants: $processState.artStacks[0].colorTarget.refData.illuminants,
         },
@@ -290,6 +319,7 @@
         },
         refData: {
           name: $processState.artStacks[0].verificationTarget.refData.name,
+          fileName: $processState.artStacks[0].verificationTarget.refData.fileName,
           standardObserver: $processState.artStacks[0].verificationTarget.refData.standardObserver,
           illuminants: $processState.artStacks[0].verificationTarget.refData.illuminants,
         },
@@ -299,26 +329,48 @@
     }
   }
 
-  $: if (colorTarget?.refData?.name === "Choose a custom file....csv") {
+  $: if (colorTarget?.refData?.fileName === "Choose a custom file....csv") {
     console.log("OPENING CUSTOM REF MODAL");
     modal.set("CustomRefData");
     colorTarget.refData.name = "CUSTOM DATA";
   }
-  $: if (verifyTarget?.refData?.name === "Choose a custom file....csv") {
+  $: if (verifyTarget?.refData?.fileName === "Choose a custom file....csv") {
     console.log("OPENING CUSTOM REF MODAL VER");
     modal.set("CustomRefDataVer");
     verifyTarget.refData.name = "CUSTOM DATA";
   }
 
-  $: if (staticRefData.includes(colorTarget?.refData?.name)) {
+  $: if (colorTarget?.refData?.name === "CUSTOM DATA" && $customRefData.calibration !== null) {
+    console.log("Resetting Custom Calibration Ref Data");
+    colorTarget.refData = {
+      name: $customRefData.calibration.name,
+      fileName: $customRefData.calibration.fileName,
+      standardObserver: $customRefData.calibration.standardObserver,
+      illuminants: $customRefData.calibration.illuminants,
+    };
+    $customRefData.calibration = null;
+  }
+
+  $: if (verifyTarget?.refData?.name === "CUSTOM DATA" && $customRefData.verification !== null) {
+    console.log("Resetting Custom Verification Ref Data");
+    verifyTarget.refData = {
+      name: $customRefData.verification.name,
+      fileName: $customRefData.verification.fileName,
+      standardObserver: $customRefData.verification.standardObserver,
+      illuminants: $customRefData.verification.illuminants,
+    }
+    $customRefData.verification = null;
+  }
+
+  $: if (staticRefData.includes(colorTarget?.refData)) {
     console.log("Setting Refdata ROW/COl");
-    let index = staticRefData.findIndex((x) => x === colorTarget.refData.name);
+    let index = staticRefData.findIndex((x) => x === colorTarget.refData);
 
     colorTarget.rows = refDataMeta[index].rows;
     colorTarget.cols = refDataMeta[index].cols;
   }
-  $: if (staticRefData.includes(verifyTarget?.refData?.name)) {
-    let index = staticRefData.findIndex((x) => x === verifyTarget.refData.name);
+  $: if (staticRefData.includes(verifyTarget?.refData)) {
+    let index = staticRefData.findIndex((x) => x === verifyTarget.refData);
 
     verifyTarget.rows = refDataMeta[index].rows;
     verifyTarget.cols = refDataMeta[index].cols;
@@ -328,8 +380,8 @@
 
   $: if (
     colorTarget &&
-    colorTarget.refData.name !== "---None---.csv" &&
-    (!verifyTarget || verifyTarget.refData?.name !== "---None---.csv") &&
+    colorTarget.refData.fileName !== "---None---.csv" &&
+    (!verifyTarget || verifyTarget.refData?.fileName !== "---None---.csv") &&
     colorTarget?.whitePatch?.row &&
     colorTarget?.whitePatch?.col
   ) {
@@ -421,7 +473,7 @@
             </div>
             <div class="refDataDiv">
               <span class="validatedTitle">
-                {#if target.refData.name === "---None---.csv"}
+                {#if target.refData.fileName === "---None---.csv"}
                   <span class="invalid"
                     ><AlertTriangleIcon size="1.5x" />
                   </span>
@@ -430,8 +482,8 @@
               >
               <Dropdown
                 values={i === 0 ? buildCalibrationRefData() : buildVerificationRefData() }
-                bind:selected={target.refData.name}
-                invalid={target.refData.name === "---None---.csv"}
+                bind:selected={target.refData}
+                invalid={target.refData.fileName === "---None---.csv"}
                 spaceLast
               />
             </div>
