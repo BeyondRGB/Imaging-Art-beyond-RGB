@@ -173,8 +173,11 @@
         // images.splice(null, 1)
         // console.table(images)
 
-        externalStack.imageA = [[image_stack.get("image")[0]? image_stack.get("image")[0]: [{"id": []}]]]
-        externalStack.imageB = [[image_stack.get("image")[1]? image_stack.get("image")[1]: [{"id": []}]]]
+        // externalStack.imageA = [[image_stack.get("image")[0]? image_stack.get("image")[0]: [{"imageA": []}]]]
+        // externalStack.imageB = [[image_stack.get("image")[1]? image_stack.get("image")[1]: [{"imageB": []}]]]
+
+        // TODO does the [] need to be inside of "imageA/B" : [] ..? check later
+
         // images = filter(images, (e) => e !== image_stack.get("image"))
         // images.splice(images.indexOf(image_stack.get("image")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("image")[1]), 1)
@@ -188,37 +191,54 @@
         // see if you can get rejected old autosort
 
 
-        externalStack.targetA = [image_stack.get("target")[0]? image_stack.get("target")[0]: {"id": []}]
-        externalStack.targetB = [image_stack.get("target")[1]? image_stack.get("target")[1]: {"id": []}]
+        // externalStack.targetA = [image_stack.get("target")[0]? image_stack.get("target")[0]: {"targetA": []}]
+        // externalStack.targetB = [image_stack.get("target")[1]? image_stack.get("target")[1]: {"targetB": []}]
+
         // images.splice(images.indexOf(image_stack.get("target")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("target")[1]), 1)
 
         // console.log("minus targets:")
         // console.table(images)
 
-        externalStack.flatfieldA = [image_stack.get("flatfield")[0]? image_stack.get("flatfield")[0]: {"id": []}]
-        externalStack.flatfieldB = [image_stack.get("flatfield")[1]? image_stack.get("flatfield")[1]: {"id": []}]
+        // externalStack.flatfieldA = [image_stack.get("flatfield")[0]? image_stack.get("flatfield")[0]: {"flatfieldA": []}]
+        // externalStack.flatfieldB = [image_stack.get("flatfield")[1]? image_stack.get("flatfield")[1]: {"flatfieldB": []}]
+
         // images.splice(images.indexOf(image_stack.get("flatfield")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("flatfield")[1]), 1)
 
         // console.log("minus flatfields:")
         // console.table(images)
 
-        externalStack.darkfieldA = [image_stack.get("darkfield")[0]? image_stack.get("darkfield")[0]: {"id": []}]
-        externalStack.darkfieldB = [image_stack.get("darkfield")[1]? image_stack.get("darkfield")[1]: {"id": []}]
+        // externalStack.darkfieldA = [image_stack.get("darkfield")[0]? image_stack.get("darkfield")[0]: {"darkfieldA": []}]
+        // externalStack.darkfieldB = [image_stack.get("darkfield")[1]? image_stack.get("darkfield")[1]: {"id":null, "name":null}]
+
         // images.splice(images.indexOf(image_stack.get("darkfield")[0]), 1)
         // images.splice(images.indexOf(image_stack.get("darkfield")[1]), 1)
 
+        console.log("before " + JSON.stringify(externalStack, null, 4))
+
         var img_stck_keys = ["image", "target", "flatfield", "darkfield"]
+        var ext_stck_keys = ["imageA", "imageB", "targetA", "targetB", "flatfieldA", "flatfieldB", "darkfieldA", "darkfieldB"]
+        var ext_idx = 0
         for(let i = 0; i<size(img_stck_keys); i++){
             for(let c = 0; c<2; c++){
                 var t = image_stack.get(img_stck_keys[i])[c]
                 if(t != null){
+                    console.log("curr: " + ext_stck_keys[ext_idx+c] )
+                    externalStack[ext_stck_keys[ext_idx+c]] = [t]
                     images.splice(images.indexOf(t), 1)
                 }
+                else{
+                    externalStack[ext_stck_keys[ext_idx+c]] = new Array(2)
+                    
+                }
+                if(ext_idx<2){
+                        externalStack[ext_stck_keys[ext_idx+c]] = [externalStack[ext_stck_keys[ext_idx+c]]]
+                    }
             }
+            ext_idx+=2
         }
-
+        console.log("after " + JSON.stringify(externalStack, null, 4))
         console.log("minus splice loops:")
         console.table(images)
 
@@ -267,17 +287,17 @@
                 image[property] = 0;
             });
             image.imageA = false;});
-
-            images = suffixSortImages(images, externalStack);
+            var remaining_images = null
+            remaining_images = suffixSortImages(images, externalStack);
             console.log("remaining images: ")
-            console.table(size(images))
+            console.table(size(remaining_images))
 
             /**
              * console.log("NEW MOVED STACK:")
                 console.table(JSON.stringify(externalStack, null, 4))
             */
 
-            return images;
+            return remaining_images;
         }
         // Otherwise, use the legacy sorting (not recommended)
         else{
@@ -494,6 +514,16 @@
                 leftovers.push(...artImageSet)
             }
         });
+
+        console.log("BATCH STACK:")
+        console.table(JSON.stringify(externalStack, null, 4))
+
+        console.log("SIZE OF IMAGES: " + size(images))
+        console.log("leftovers: " + JSON.stringify(leftovers, null, 4))
+        console.log("images: " +JSON.stringify(images, null, 4))
+        throw "error to find me"
+
+
         
 
         // return any images that weren't assigned
