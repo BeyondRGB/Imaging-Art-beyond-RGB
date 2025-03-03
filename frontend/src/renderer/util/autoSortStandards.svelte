@@ -103,24 +103,22 @@
 
 
     /**
-     * 
+     * Sorts images to the externalStack using a sort that checks the suffix for a keyword and an image identifier that matches the 
+     *  other images
+     *  - externalStack requires the following fields:
+     *      - imageA, imageB
+     *      - targetA, targetB
+     *      - flatfieldA, flatfieldB
+     *      - darkfieldA, darkfieldB
      * 
      * @param images
      * @param externalStack
      * @returns any remaining unsorted images
      */
     export function suffixSortImages(images, externalStack){
-        console.log(images)
-        console.log(externalStack)
-        /**
-         * Are these required..? so long as the code bounces any images that don't belong to a specific category
-         * let includeTarget = false;
-            if(size(images) < 6) {
-                return images;
-            } else if(size(images) >= 8) {
-                includeTarget = true;
-            }
-        */
+        if(size(images) < 6) {
+            return images;
+        }
 
         // Create a mapping of known image types to the [[]]
         let image_stack = new Map([
@@ -165,82 +163,38 @@
                 }
             }
         });
-        
-        console.log("image stack pre splice:")
-        console.table(image_stack)
 
-        // console.log("null test")
-        // images.splice(null, 1)
-        // console.table(images)
-
-        // externalStack.imageA = [[image_stack.get("image")[0]? image_stack.get("image")[0]: [{"imageA": []}]]]
-        // externalStack.imageB = [[image_stack.get("image")[1]? image_stack.get("image")[1]: [{"imageB": []}]]]
-
-        // TODO does the [] need to be inside of "imageA/B" : [] ..? check later
-
-        // images = filter(images, (e) => e !== image_stack.get("image"))
-        // images.splice(images.indexOf(image_stack.get("image")[0]), 1)
-        // images.splice(images.indexOf(image_stack.get("image")[1]), 1)
-        // console.log("minus images:")
-        // console.table(images)
-        // console.log(size(images))
-
-        // tomorrow: try moving [] around just the operator outputs TODO
-        // also try uhhh using keys array and id array to just skip assigning something to externalstack? if its null
-        // idk
-        // see if you can get rejected old autosort
-
-
-        // externalStack.targetA = [image_stack.get("target")[0]? image_stack.get("target")[0]: {"targetA": []}]
-        // externalStack.targetB = [image_stack.get("target")[1]? image_stack.get("target")[1]: {"targetB": []}]
-
-        // images.splice(images.indexOf(image_stack.get("target")[0]), 1)
-        // images.splice(images.indexOf(image_stack.get("target")[1]), 1)
-
-        // console.log("minus targets:")
-        // console.table(images)
-
-        // externalStack.flatfieldA = [image_stack.get("flatfield")[0]? image_stack.get("flatfield")[0]: {"flatfieldA": []}]
-        // externalStack.flatfieldB = [image_stack.get("flatfield")[1]? image_stack.get("flatfield")[1]: {"flatfieldB": []}]
-
-        // images.splice(images.indexOf(image_stack.get("flatfield")[0]), 1)
-        // images.splice(images.indexOf(image_stack.get("flatfield")[1]), 1)
-
-        // console.log("minus flatfields:")
-        // console.table(images)
-
-        // externalStack.darkfieldA = [image_stack.get("darkfield")[0]? image_stack.get("darkfield")[0]: {"darkfieldA": []}]
-        // externalStack.darkfieldB = [image_stack.get("darkfield")[1]? image_stack.get("darkfield")[1]: {"id":null, "name":null}]
-
-        // images.splice(images.indexOf(image_stack.get("darkfield")[0]), 1)
-        // images.splice(images.indexOf(image_stack.get("darkfield")[1]), 1)
-
-        console.log("before " + JSON.stringify(externalStack, null, 4))
-
+        //Creating keys for the sorted array as well as the external stack, in order
         var img_stck_keys = ["image", "target", "flatfield", "darkfield"]
         var ext_stck_keys = ["imageA", "imageB", "targetA", "targetB", "flatfieldA", "flatfieldB", "darkfieldA", "darkfieldB"]
         var ext_idx = 0
+        // For a loop the length of the sorted array:
         for(let i = 0; i<size(img_stck_keys); i++){
             for(let c = 0; c<2; c++){
                 var t = image_stack.get(img_stck_keys[i])[c]
+                // If there exists an image at the set key and key'ed array index:
                 if(t != null){
-                    console.log("curr: " + ext_stck_keys[ext_idx+c] )
+                    // Add it to the external stack
                     externalStack[ext_stck_keys[ext_idx+c]] = [t]
+                    // Note on how this works: external stack ID goes up in increments of 2
+                    // c is always 0 or 1
+                    // [name]A is always at even indexes and [name]B is always at odd indexes, so images put into A or B will always match
+                    // So the increments in c allow the odd external stack keys to be hit during this loop
                     images.splice(images.indexOf(t), 1)
                 }
                 else{
-                    externalStack[ext_stck_keys[ext_idx+c]] = new Array(2)
+                    // If there is no match in the sorted array, set the external stack to have a []
+                    externalStack[ext_stck_keys[ext_idx+c]] = []
                     
                 }
                 if(ext_idx<2){
+                        // imageA and imageB require an extra [] around them no matter if it's 
                         externalStack[ext_stck_keys[ext_idx+c]] = [externalStack[ext_stck_keys[ext_idx+c]]]
                     }
             }
             ext_idx+=2
         }
-        console.log("after " + JSON.stringify(externalStack, null, 4))
-        console.log("minus splice loops:")
-        console.table(images)
+        console.log("SUFFIX AUTOSORT " + JSON.stringify(externalStack, null, 4))
 
         return  images;
 
@@ -381,11 +335,8 @@
         externalStack.darkfieldA = [imageStack?.bestDarkFieldImages[0]];
         externalStack.darkfieldB = [imageStack?.bestDarkFieldImages[1]];
 
-        console.log("OLD STACK:")
+        console.log("AUTOSORTED:")
         console.table(JSON.stringify(externalStack, null, 4))
-
-        console.log("SIZE OF IMAGES: " + size(images))
-        console.log(JSON.stringify(images, null, 4))
 
         // return any images that weren't assigned
         return images;
@@ -521,7 +472,6 @@
         console.log("SIZE OF IMAGES: " + size(images))
         console.log("leftovers: " + JSON.stringify(leftovers, null, 4))
         console.log("images: " +JSON.stringify(images, null, 4))
-        throw "error to find me"
 
 
         
