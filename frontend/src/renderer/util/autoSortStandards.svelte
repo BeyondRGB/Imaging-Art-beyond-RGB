@@ -246,11 +246,6 @@
             console.log("remaining images: ")
             console.table(size(remaining_images))
 
-            /**
-             * console.log("NEW MOVED STACK:")
-                console.table(JSON.stringify(externalStack, null, 4))
-            */
-
             return remaining_images;
         }
         // Otherwise, use the legacy sorting (not recommended)
@@ -314,11 +309,6 @@
         // fill in the image stack
         externalStack.imageA = [[imageStack?.bestArtImages[0]]];
         externalStack.imageB = [[imageStack?.bestArtImages[1]]];
-
-        console.log("trying something")
-        console.table(JSON.stringify(externalStack, null, 4))
-        console.log("size: " + size(externalStack))
-        console.log(typeof(externalStack))
 
         // handle A - B sorting
         if(includeTarget) {
