@@ -54,6 +54,7 @@
 #define GI_Y                  "Y white patche meas"
 #define GI_W                  "W Value"
 #define GI_ADVANCED_FILTERS   "Sharpaning/NoiseReduction Filter Settings"
+#define GI_MATCHED_POINTS     "Matched Points"
 
 // Verification Keys
 #define V_XYZ              "Verification Calibrated XYZ Values"

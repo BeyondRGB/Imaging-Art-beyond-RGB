@@ -113,7 +113,9 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     else if(option == "L")
         option_string = "Low";
     results_obj->store_string(GI_ADVANCED_FILTERS, option_string);
-
+    // Number of matched points
+    int matched_points = art_obj->getMatched();
+    results_obj->store_int(GI_MATCHED_POINTS, matched_points);
 }
 
 void Pipeline::run() {
