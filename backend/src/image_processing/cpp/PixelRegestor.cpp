@@ -40,7 +40,10 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         matched = this->appy_regestration(comms, target1, target2, 2, regestration_count, output);
     }
 
-    images->setMatched(matched);
+    // Add number of matched points to results
+    CalibrationResults* results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
+    results_obj->store_int(GI_MATCHED_POINTS, (matched / 2));
+
     //Outputs TIFFs for each image group for after this step, temporary
     // images->outputImageAs(btrgb::TIFF, "art1", "art1_rgstr");
     // images->outputImageAs(btrgb::TIFF, "art2", "art2_rgstr");

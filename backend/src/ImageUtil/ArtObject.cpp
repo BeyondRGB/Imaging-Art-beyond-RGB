@@ -204,7 +204,7 @@ namespace btrgb {
     /*
     * Sets the number of matched points found from the PixelRegestor
     */
-    void ArtObject::setMatched(float matched) 
+    void ArtObject::setMatched(int matched) 
     {
         this->matched_points = matched;
     }
