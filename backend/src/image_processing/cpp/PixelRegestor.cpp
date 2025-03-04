@@ -34,19 +34,20 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         regestration_count = 2;
     }
 
-    this->appy_regestration(comms, img1, img2, 1, regestration_count, output);
+    int matched = this->appy_regestration(comms, img1, img2, 1, regestration_count, output);
 
     if(found_target){
-        this->appy_regestration(comms, target1, target2, 2, regestration_count, output);
+        matched = this->appy_regestration(comms, target1, target2, 2, regestration_count, output);
     }
 
+    images->setMatched(matched);
     //Outputs TIFFs for each image group for after this step, temporary
     // images->outputImageAs(btrgb::TIFF, "art1", "art1_rgstr");
     // images->outputImageAs(btrgb::TIFF, "art2", "art2_rgstr");
 
 }
 
-void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img1, btrgb::Image *img2, int cycle, int cycle_count, std::string output){
+int PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img1, btrgb::Image *img2, int cycle, int cycle_count, std::string output){
     
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
@@ -54,7 +55,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
      //Check that there is actual data in them
     if (!im1.data || !im2.data)
     {
-        return;
+        return 0;
     }
 
     int MAX_FEATURES;
@@ -155,7 +156,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     std::unique_ptr<btrgb::Image> btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
     comms->send_binary(btrgb_matches.get(), btrgb::FULL);
-    btrgb::ImageWriter(btrgb::TIFF).write(btrgb_matches.get(), output + "matches"); // Output matches as a PNG in the output folder
+    btrgb::ImageWriter(btrgb::TIFF).write(btrgb_matches.get(), output + "matches"); // Output matches as a TIFF in the output folder
     btrgb_matches.reset(nullptr);
 
     // Find homography
@@ -177,6 +178,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
 
     prog = this->calc_progress(1, (float)cycle, (float)cycle_count);
     comms->send_progress(prog, this->get_name());
+    return good_matches.size();
 }
 
 float PixelRegestor::calc_progress(float progress, float cycle, float cycle_count){

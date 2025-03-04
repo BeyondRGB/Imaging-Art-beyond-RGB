@@ -63,6 +63,7 @@ namespace btrgb {
         CalibrationResults general_info;
         CalibrationResults calibration_res; 
         CalibrationResults verification_res;
+        int matched_points = 0;
 
     public:
         ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory, bool batch);
@@ -89,6 +90,8 @@ namespace btrgb {
         Image* getImage(std::string name);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
+        int getMatched();
+        void setMatched(float matched);
 
         int imageCount();
 

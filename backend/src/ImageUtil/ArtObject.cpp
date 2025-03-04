@@ -193,6 +193,21 @@ namespace btrgb {
         return this->images.contains(name);
     }
 
+    /*
+    * Returns the number of matched points from PixelRegestor
+    */
+    int ArtObject::getMatched() 
+    {
+        return this->matched_points;
+    }
+
+    /*
+    * Sets the number of matched points found from the PixelRegestor
+    */
+    void ArtObject::setMatched(float matched) 
+    {
+        this->matched_points = matched;
+    }
 
     /*
      * The key of the image stored in memory to write to disk.
