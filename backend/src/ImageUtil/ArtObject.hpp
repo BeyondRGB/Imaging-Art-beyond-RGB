@@ -91,7 +91,7 @@ namespace btrgb {
         void deleteImage(std::string name);
         bool imageExists(std::string name);
         int getMatched();
-        void setMatched(float matched);
+        void setMatched(int matched);
 
         int imageCount();
 

@@ -113,9 +113,6 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     else if(option == "L")
         option_string = "Low";
     results_obj->store_string(GI_ADVANCED_FILTERS, option_string);
-    // Number of matched points
-    int matched_points = art_obj->getMatched();
-    results_obj->store_int(GI_MATCHED_POINTS, matched_points);
 }
 
 void Pipeline::run() {
@@ -229,6 +226,7 @@ void Pipeline::run() {
     try { 
         this->coms_obj_m->send_pipeline_components(pipeline->get_component_list());
         pipeline->execute(this->coms_obj_m.get(), images.get());
+
         std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
         this->coms_obj_m->send_post_calibration_msg(Pro_file);
     } catch(const ImgProcessingComponent::error& e) {
@@ -242,7 +240,6 @@ void Pipeline::run() {
         this->report_error(this->get_process_name(), err.what());
         return;
     }
-
 }
 
 
