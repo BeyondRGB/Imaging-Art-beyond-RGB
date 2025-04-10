@@ -359,11 +359,7 @@
         if(size(images) < 6) {
             return images;
         }
-        // else{ 
-        //     image_stack['image'] = 
-        // }
-        console.log("img stk len: " + typeof(image_stack['image']))
-
+        
         // List of endings- 'id's for the image- to the images
         let image_id = []
 
@@ -401,13 +397,9 @@
                     if(indexOf(art_filenames, art_filename) == -1){
                     // Add it to art_filenames
                     art_filenames.push(art_filename)
-                    // TODO: just skipped over this entirely? why LMAO
                     }
                 }   
             }
-
-            console.log("test: ")
-            console.table(image_stack)
 
             for(let i = 0; i < suffixStandards.length; i++) {
                 var ind = indexOf(suffixStandards[i], img_str)
@@ -416,17 +408,23 @@
                 if(ind!= -1){
                     var temp = image_stack.get(suffixStandards[i][0]) 
                     console.log(image)
-                    temp[image_id.indexOf(img_id)] = image  
+                    var ar_fl = 0
+                    if(suffixStandards[i][0] == "image"){
+                        // If this is an "image" type file, then with the batch set the indexes cannot just be 0 and 1, rather 0.... i 
+                        // where i is the number of "image" type images in the image set. ar_fl increases the index only if this is an 
+                        // "image" type image and the filename has been recorded, IE a set of images exists with that file name. 
+                        ar_fl = art_filenames.indexOf(art_filename)*2
+                        // ar_fl increases the index by the index of the filename * 2 --> a filename index of 0 would add nothing, so 
+                        // the 0 and 1 indexes would be reserved for those, a filename index of 1 would reserve 2 and 3, and so forth.
+                        // With this specific indexes are still reserved for specific images, so that the variable number of images 
+                        // will not override each other.
+                    }
+                    temp[image_id.indexOf(img_id) + ar_fl] = image  
                     image_stack.set(suffixStandards[i][0], temp);
                 }
             }
         });
 
-
-        console.log("artfile names: ")
-        console.table(art_filenames)
-        console.log("image stack contents")
-        console.table(image_stack)
 
         //Creating keys for the sorted array as well as the external stack, in order
         var img_stck_keys = ["target", "flatfield", "darkfield"]
@@ -461,6 +459,8 @@
 
         console.log("img stack shape")
         console.log(JSON.stringify(images, null, 4))
+        console.log("prog point: ")
+
 
         var img_key = "image"
         var img_ext_stck_keys = ["imageA", "imageB"]
