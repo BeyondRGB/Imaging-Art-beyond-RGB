@@ -34,15 +34,15 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         regestration_count = 2;
     }
 
-    int matched = this->appy_regestration(comms, img1, img2, 1, regestration_count, output);
+    int matched = this->appy_regestration(comms, img1, img2, 1, regestration_count, output + "img");
 
     if(found_target){
-        matched = this->appy_regestration(comms, target1, target2, 2, regestration_count, output);
+        matched = this->appy_regestration(comms, target1, target2, 2, regestration_count, output + "target");
     }
 
     // Add number of matched points to results
     CalibrationResults* results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
-    results_obj->store_int(GI_MATCHED_POINTS, (matched / 2));
+    results_obj->store_int(GI_MATCHED_POINTS, matched);
 
     //Outputs TIFFs for each image group for after this step, temporary
     // images->outputImageAs(btrgb::TIFF, "art1", "art1_rgstr");
@@ -153,13 +153,15 @@ int PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img1
     drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
     cv::Mat imS;
     cv::resize(imMatches, imS, cv::Size(), 0.25, 0.25);
-    // cv::imwrite("matches.png", imMatches);
+    //cv::imwrite("matches.tiff", imMatches);
     cv::Mat matchfloat;
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
     std::unique_ptr<btrgb::Image> btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
     comms->send_binary(btrgb_matches.get(), btrgb::FULL);
-    btrgb::ImageWriter(btrgb::TIFF).write(btrgb_matches.get(), output + "matches"); // Output matches as a TIFF in the output folder
+
+    btrgb::ImageWriter(btrgb::TIFF).write(btrgb_matches.get(), output + "_matches"); // Output matches as a TIFF in the output folder
+
     btrgb_matches.reset(nullptr);
 
     // Find homography

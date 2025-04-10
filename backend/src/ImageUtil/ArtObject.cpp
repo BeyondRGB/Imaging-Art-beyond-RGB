@@ -194,22 +194,6 @@ namespace btrgb {
     }
 
     /*
-    * Returns the number of matched points from PixelRegestor
-    */
-    int ArtObject::getMatched() 
-    {
-        return this->matched_points;
-    }
-
-    /*
-    * Sets the number of matched points found from the PixelRegestor
-    */
-    void ArtObject::setMatched(int matched) 
-    {
-        this->matched_points = matched;
-    }
-
-    /*
      * The key of the image stored in memory to write to disk.
      */
     void ArtObject::outputImageAs(enum output_type filetype, std::string name, std::string filename) {

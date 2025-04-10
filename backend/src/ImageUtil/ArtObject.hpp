@@ -63,7 +63,6 @@ namespace btrgb {
         CalibrationResults general_info;
         CalibrationResults calibration_res; 
         CalibrationResults verification_res;
-        int matched_points = 0;
 
     public:
         ArtObject(std::string ref_file, IlluminantType ilumination, ObserverType observer, std::string output_directory, bool batch);
