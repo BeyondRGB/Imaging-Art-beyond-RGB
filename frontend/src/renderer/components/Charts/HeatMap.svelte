@@ -19,10 +19,25 @@
     const deltaE = find(data?.matrix_values, {'name': 'CM DeltaE Values'});
     mapData = deltaE?.data.slice().reverse();
   }
+  $: flattenedValues = mapData ? mapData.flat() : [];
+  $: sortedValues = flattenedValues.slice().sort((a, b) => a - b);
+  let p90obj = null;
+
+  $: p90obj = sortedValues.length ? sortedValues[(Math.floor(0.9 * sortedValues.length) - 1 )] : null;
+  $: if (p90obj !== null) {
+        console.log("Dispatching p90update:", p90obj);
+        dispatch('p90update', { p90: p90obj });
+      }
+
+
+
 
   const exportCSV = function () {
     // Reverse this without mutating because it's upside down
     const flipped = reverse(cloneDeep(mapData));
+    let valueSum = 0;
+
+
 
     // Construct CSV by hand because there is a bug in Apexcharts relating to 2d data
     let csv = '"Row","Col","Value"\r\n';
@@ -34,6 +49,11 @@
         csv += '\r\n';
       }
     }
+    csv += `\r\n"Computed 90th Percentile","${p90obj !== null ? p90obj.toFixed(2) : 'N/A'}"\r\n`;
+
+    //double p90 = btrgb::calibration::compute_90th_percentile(deltaE_matrix);
+    //calibrationResults.store_double("90th Percentile", p90);
+
 
     // Kinda jank, but found multiple sources with this strategy for
     // downloading constructed CSVs
@@ -55,7 +75,11 @@
       <label>Grayscale</label>
     </span>
      <div style="display: flex; align-items: center;">
-        <AtomicHeatMap on:datapointselect={handleDataPointSelect} data={mapData} visionDeficiencyMode={visionDeficiencyMode}></AtomicHeatMap>
+        <AtomicHeatMap
+          on:datapointselect={handleDataPointSelect}
+          data={mapData}
+          visionDeficiencyMode={visionDeficiencyMode}>
+        </AtomicHeatMap>
      </div>
   </div>
 {/if}

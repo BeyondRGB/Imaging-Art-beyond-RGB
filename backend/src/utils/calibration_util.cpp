@@ -1,4 +1,8 @@
 #include "calibration_util.hpp"
+#include <vector>
+#include <algorithm>
+#include <limits>
+#include <stdexcept>
 
 cv::Mat btrgb::calibration::build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count){
     int row_count = targets[0].get_row_count();
@@ -253,6 +257,27 @@ double btrgb::calibration::compute_deltaE_sum(RefData *ref_data, cv::Mat xyz, cv
     }
     return deltaE_sum;
 }
+
+double btrgb::calibration::compute_90th_percentile(const cv::Mat& deltaE_values) {
+    std::vector<double> values;
+    for (int row = 0; row < deltaE_values.rows; row++) {
+        for (int col = 0; col < deltaE_values.cols; col++) {
+            values.push_back(deltaE_values.at<double>(row, col));
+        }
+    }
+    if (values.empty()) {
+        throw std::runtime_error("DeltaE matrix is empty, cannot compute 90th percentile.");
+    }
+    std::sort(values.begin(), values.end());
+    int index = static_cast<int>(0.9 * values.size());
+    if (index >= values.size()) {
+        index = values.size() - 1;
+    }
+
+    return values[index];
+}
+
+//double p90 = btrgb::calibration::compute_90th_percentile(deltaE_values);
 
 double btrgb::calibration::compute_RMSE(cv::Mat R_camera, cv::Mat R_ref){
     double RMSE = 0;
