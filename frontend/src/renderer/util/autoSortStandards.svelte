@@ -223,7 +223,6 @@
         // Keeping track of how many file names have a suffix cordoned from the rest of the file name with a - and has a _ separating only 2 parts
         var suffix_score = 0
         each(images, function(image){
-            // Discuss with team later how the sort type is determined, TODO
             var img_test_str = split(image.name.toLowerCase(), '-')
             if(img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], '_').length ==2 ){
                 suffix_score = suffix_score += 1
@@ -362,7 +361,6 @@
 
         // List of filenames for art objects, which functions as an 'id' for the art images to compare to one another
         // Art filenames that don't match one another will not sort
-        // 
         let art_filenames = []
 
         // for IMAGE in IMAGES, 
@@ -445,10 +443,6 @@
                     externalStack[ext_stck_keys[ext_idx+c]] = []
                     
                 }
-                //if(ext_idx<2){
-                        // imageA and imageB require an extra [] around them no matter if it's 
-                      //  externalStack[ext_stck_keys[ext_idx+c]] = [externalStack[ext_stck_keys[ext_idx+c]]]
-                  //  }
             }
             ext_idx+=2
         }
@@ -462,11 +456,11 @@
         for(let i = 0; i<size(image_stack); i++){
             var t = img_stk[i]
             if(t != null){
-                // var art_filename = t.name.slice(0, t.name.lastIndexOf('-'))
-                // var ar_fl = art_filenames.indexOf(art_filename)*2
-
                 // Add it to the external stack
                 externalStack[img_ext_stck_keys[i%2]][Math.floor(i/2)] = [t]
+                // Indexes here are to access only the imageA and imageB image stack keys for the i%2 line
+                // The latter goes in order of the already sorted images - index 0 for the first two, since they're paired,
+                // then index 1 for the next set, and so on
                 images.splice(images.indexOf(t), 1)
 
             }
@@ -502,7 +496,6 @@
          // Keeping track of how many file names have a suffix cordoned from the rest of the file name with a - and has a _ separating only 2 parts
          var suffix_score = 0
         each(images, function(image){
-            // Discuss with team later how the sort type is determined, TODO
             var img_test_str = split(image.name.toLowerCase(), '-')
             if(img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], '_').length ==2 ){
                 suffix_score = suffix_score += 1
