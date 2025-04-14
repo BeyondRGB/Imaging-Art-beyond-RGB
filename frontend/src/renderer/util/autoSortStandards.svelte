@@ -457,17 +457,31 @@
             ext_idx+=2
         }
 
-        console.log("img stack shape")
-        console.log(JSON.stringify(images, null, 4))
         console.log("prog point: ")
 
 
         var img_key = "image"
+        var img_stk = image_stack.get(img_key)
         var img_ext_stck_keys = ["imageA", "imageB"]
+        
+        console.table(img_stk)
+        
         //Looking back through the rest of the remaining files for the target images -- only has a number of matches up to double the length of
         // art_filenames list 
         for(let i = 0; i<size(image_stack); i++){
-            var t = image_stack.get(img_key)[i]
+            var t = img_stk[i]
+            if(t != null){
+                // var art_filename = t.name.slice(0, t.name.lastIndexOf('-'))
+                // var ar_fl = art_filenames.indexOf(art_filename)*2
+
+                // Add it to the external stack
+                externalStack[img_ext_stck_keys[i%2]][Math.floor(i/2)] = [t]
+                images.splice(images.indexOf(t), 1)
+
+            }
+            else{
+                externalStack[img_ext_stck_keys[i%2]][Math.floor(i/2)] = []
+            }
         }
 
 
