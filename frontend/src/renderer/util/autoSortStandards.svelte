@@ -146,7 +146,7 @@
             // if the ids have not yet been captured and the image id isn't already in image ids, add it in there
             // this could get buggy if there are more than 2 suffixes, either by design or by accident. Only the first 2 suffixes are recorded in this statement
             if(image_id.length < 2){
-                if(indexOf(img_id) == -1){
+                if(indexOf(image_id, img_id) == -1){
                     image_id.push(img_id);
                 }
             }
@@ -213,9 +213,6 @@
      * @returns any remaining unsorted images
      */
     export function autoSortImages(images, externalStack) {
-
-        console.log(images)
-        console.log(externalStack)
         let includeTarget = false;
         if(size(images) < 6) {
             return images;
@@ -385,7 +382,7 @@
             // this could get buggy if there are more than 2 suffixes, either by design or by accident. 
             // Only the first 2 suffixes are recorded in this statement
             if(image_id.length < 2){
-                if(indexOf(img_id) == -1){
+                if(indexOf(image_id, img_id) == -1){
                     image_id.push(img_id);
                 }
             }
@@ -407,7 +404,6 @@
                 //  where the key for the image stack belongs to the list of suffixes that the matched suffix is from
                 if(ind!= -1){
                     var temp = image_stack.get(suffixStandards[i][0]) 
-                    console.log(image)
                     var ar_fl = 0
                     if(suffixStandards[i][0] == "image"){
                         // If this is an "image" type file, then with the batch set the indexes cannot just be 0 and 1, rather 0.... i 
@@ -457,14 +453,9 @@
             ext_idx+=2
         }
 
-        console.log("prog point: ")
-
-
         var img_key = "image"
         var img_stk = image_stack.get(img_key)
         var img_ext_stck_keys = ["imageA", "imageB"]
-        
-        console.table(img_stk)
         
         //Looking back through the rest of the remaining files for the target images -- only has a number of matches up to double the length of
         // art_filenames list 
