@@ -549,9 +549,6 @@
             images = filter(images, (e) => e !== maxBy(images, probabilityScoreProperties[1]))
         }
 
-        console.log("ext_stack setup: ")
-        console.table(externalStack['imageA'])
-
         let bestFlatFieldImage = maxBy(images, probabilityScoreProperties[2]);
         images = filter(images, (e) => e !== bestFlatFieldImage)
         imageStack.bestFlatFieldImages = [bestFlatFieldImage, maxBy(images, probabilityScoreProperties[2])];
@@ -629,18 +626,8 @@
             else{
                 leftovers.push(...artImageSet)
             }
-        });
-
-        console.log("BATCH STACK:")
-        console.table(JSON.stringify(externalStack, null, 4))
-
-        console.log("SIZE OF IMAGES: " + size(images))
-        console.log("leftovers: " + JSON.stringify(leftovers, null, 4))
-        console.log("images: " +JSON.stringify(images, null, 4))
-
-
+        });    
         
-
         // return any images that weren't assigned
         return leftovers;
     }
