@@ -59,6 +59,7 @@
 #define V_XYZ              "Verification Calibrated XYZ Values"
 #define V_DLETA_E_VALUES   "Verification DeltaE Values"
 #define V_DELTA_E_AVG      "Verification DeltaE Mean"
+#define V_DELTA_E_P90 "P90"
 #define V_L_CAMERA         "Verification L*_camera"
 #define V_a_CAMERA         "Verification a*_camera"
 #define V_b_CAMERA         "Verification b*_camera"
@@ -69,6 +70,7 @@
 #define V_R_reference      "Verification R_ref"
 #define V_R_CAMERA         "Verification R_camera"
 #define V_RMSE             "Verification RMSE"
+#define V_DELTA_E_P90 "P90"
 
 
 #define PRO_FILE              "BTRGB Results File"

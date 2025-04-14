@@ -109,6 +109,9 @@ namespace btrgb{
          */
         void display_matrix(cv::Mat* matrix, std::string name);
 
+        double compute_90th_percentile(const cv::Mat& deltaE_values);
+
+
         /**
          * @brief Find min value in specified targets row 
          * 

@@ -267,4 +267,3 @@ void CalibrationResults::reconstruct_strings(Json parser){
         std::cerr << "Corrupt string List: " << e.what() << std::endl; 
     }
 }
-
