@@ -1,9 +1,11 @@
 lcms
 libraw
 tiff
-websocketpp
 asio
 jsoncons
 libpng
 cppcodec
 opencv4
+boost-asio
+openssl
+zlib
