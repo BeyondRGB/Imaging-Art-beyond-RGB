@@ -1,4 +1,5 @@
 #include "ColorTarget.hpp"
+#include <numbers>
 
 ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* ref_data) {
 	this->im = im;
@@ -81,7 +82,7 @@ float ColorTarget::get_patch_avg(int row, int col, int chan)
     double unrotatedCenterY = this->target_top_edge  + (row + 0.5)*patchHeight;
 
     // Rotate that center around (boxCenterX, boxCenterY) by rotation_angle
-    double rad = this->rotation_angle * M_PI / 180.0; // convert degrees to radians
+    double rad = this->rotation_angle * std::numbers::pi / 180.0; // convert degrees to radians
     double dx  = unrotatedCenterX - boxCenterX;
     double dy  = unrotatedCenterY - boxCenterY;
 
