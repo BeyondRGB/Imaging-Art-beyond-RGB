@@ -346,6 +346,7 @@ TargetData Pipeline::build_target_data(Json target_json){
     td.row_count = target_json.get_number("rows");
     td.sample_size = target_json.get_number("size");
     Json white_loc = target_json.get_obj("whitePatch");
+    td.rotation_angle = target_json.get_number("calibrationTargetRotationAngle");
     // subtract one to make it zero based, due to front end sending 1 based.
     td.w_row = white_loc.get_number("row") - 1;
     td.w_col = white_loc.get_number("col") - 1;
