@@ -27,6 +27,8 @@
 
   export let linearZoom = 100;
 
+  export let calibrationTargetRotationAngle = 0; // Rotation angle in degrees
+
   let imageUrl;
 
   const createViewer = () => {
@@ -264,30 +266,35 @@
           } else if (pressPos.ele.classList[1] === "br") {
             box.height += viewDeltaPoint.y;
             box.width += viewDeltaPoint.x;
-          } else if (
-            pressPos.ele.classList[0] === "line" ||
-            pressPos.ele.classList[0] === "target" ||
-            pressPos.ele.classList[0] === "verTarget"
-          ) {
+          } else {
+            // Dragging the entire target: axis‐aligned move
             box.x += viewDeltaPoint.x;
             box.y += viewDeltaPoint.y;
           }
           overlay.update(box);
           overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 
+          // Re-apply the visual rotation
+          const selectorBox = document.getElementById(`sBox-${id}`);
+          if (selectorBox) {
+            selectorBox.style.transform = `rotate(${calibrationTargetRotationAngle}deg)`;
+            selectorBox.style.transformOrigin = "center";
+          }
+
+          // Update position
           if (id === 0) {
             colorPos = {
-              top: overlay.bounds.y,
-              left: overlay.bounds.x,
-              bottom: overlay.bounds.y + overlay.bounds.height,
-              right: overlay.bounds.x + overlay.bounds.width,
+              top: box.y,
+              left: box.x,
+              bottom: box.y + box.height,
+              right: box.x + box.width,
             };
           } else if (id === 1) {
             verifyPos = {
-              top: overlay.bounds.y,
-              left: overlay.bounds.x,
-              bottom: overlay.bounds.y + overlay.bounds.height,
-              right: overlay.bounds.x + overlay.bounds.width,
+              top: box.y,
+              left: box.x,
+              bottom: box.y + box.height,
+              right: box.x + box.width,
             };
           }
         },
@@ -391,6 +398,13 @@
 
     overlay.update(box);
     overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
+
+    // Re-apply the CSS rotation so it stays at calibrationTargetRotationAngle
+    const selectorBox = document.getElementById('sBox-0');
+    if (selectorBox) {
+      selectorBox.style.transform = `rotate(${calibrationTargetRotationAngle}deg)`;
+      selectorBox.style.transformOrigin = 'center';
+    }
   }
 
   //Same as updateCoords() for the VerifyTarget
@@ -425,7 +439,7 @@
 
   {#each [colorTarget, verifyTarget] as target, i}
     {#if target}
-      <div class="selectorBox" class:ver={i === 1} id={`sBox-${i}`}>
+      <div class="selectorBox" class:ver={i === 1} id={`sBox-${i}`} style="transform: rotate({calibrationTargetRotationAngle}deg); transform-origin: center;">
         <div class="layout">
           <div class="gridBox" id={`gBox-${i}`}>
             {#each [...Array(target.rows * target.cols).keys()].map((i) => i + 1) as boxIndex}
@@ -666,4 +680,9 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-red-500;
   }
+
+  .selectorBox {
+    transition: transform 0.3s ease; /* Smooth rotation effect */
+  }
+
 </style>
