@@ -146,7 +146,8 @@
             // if the ids have not yet been captured and the image id isn't already in image ids, add it in there
             // this could get buggy if there are more than 2 suffixes, either by design or by accident. Only the first 2 suffixes are recorded in this statement
             if(image_id.length < 2){
-                if(indexOf(img_id) == -1){
+                if(indexOf(image_id, img_id) == -1){
+
                     image_id.push(img_id);
                 }
             }
@@ -213,9 +214,6 @@
      * @returns any remaining unsorted images
      */
     export function autoSortImages(images, externalStack) {
-
-        console.log(images)
-        console.log(externalStack)
         let includeTarget = false;
         if(size(images) < 6) {
             return images;
@@ -226,7 +224,6 @@
         // Keeping track of how many file names have a suffix cordoned from the rest of the file name with a - and has a _ separating only 2 parts
         var suffix_score = 0
         each(images, function(image){
-            // Discuss with team later how the sort type is determined, TODO
             var img_test_str = split(image.name.toLowerCase(), '-')
             if(img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], '_').length ==2 ){
                 suffix_score = suffix_score += 1
@@ -333,6 +330,154 @@
     }
 }
 
+  /**
+     * Sorts images to the externalStack using a sort that checks the suffix for a keyword and an image identifier that matches the 
+     *  other images
+     *  - externalStack requires the following fields:
+     *      - imageA, imageB
+     *      - targetA, targetB
+     *      - flatfieldA, flatfieldB
+     *      - darkfieldA, darkfieldB
+     * 
+     * @param images
+     * @param externalStack
+     * @returns any remaining unsorted images
+     */
+     export function suffixBatchSortImages(images, externalStack){
+        console.log("SUFFIX BATCH AUTOSORT")
+         // Create a mapping of known image types to the [[]]
+         let image_stack = new Map([
+            ["target", [null, null]],
+            ["image", new Array((size(images) - 6))],
+            ["darkfield", [null, null]],
+            [ "flatfield", [null, null]]
+        ])
+
+        if(size(images) < 6) {
+            return images;
+        }
+        
+        // List of endings- 'id's for the image- to the images
+        let image_id = []
+
+        // List of filenames for art objects, which functions as an 'id' for the art images to compare to one another
+        // Art filenames that don't match one another will not sort
+        let art_filenames = []
+
+        // for IMAGE in IMAGES, 
+        each(images, function (image){
+            var img_str = split(image.name.toLowerCase(), '-');
+            let art_filename = image.name.slice(0, image.name.lastIndexOf('-'))
+            // Tear off just the suffix, ignoring all other hyphens in the filename barring the one connected to the suffix (i.e. the last hyphen)
+            img_str = img_str[img_str.length - 1];
+            // Split into the image type and image id
+            let img_parts = split(img_str, '_')
+
+            // img_str becomes the image type, and img_id becomes the image identifier
+            img_str = img_parts[0];
+            let img_id = img_parts[1];
+
+            // if the ids have not yet been captured and the image id isn't already in image ids, add it in there
+            // this could get buggy if there are more than 2 suffixes, either by design or by accident. 
+            // Only the first 2 suffixes are recorded in this statement
+            if(image_id.length < 2){
+                if(indexOf(image_id, img_id) == -1){
+                    image_id.push(img_id);
+                }
+            }
+
+            // If the image has the art object type (i.e. is in the first suffixStandards set of names), that there are fewer registered filenames than 
+            // there are art objects divided by two (checking to make sure we only capture), and that the filename hasn't already been captured in art_filenames
+            if (indexOf(suffixStandards[0], img_str) >= 0 ){
+                if(size(art_filenames)<Math.floor((size(images)-6)/2)){
+                    if(indexOf(art_filenames, art_filename) == -1){
+                    // Add it to art_filenames
+                    art_filenames.push(art_filename)
+                    }
+                }   
+            }
+
+            for(let i = 0; i < suffixStandards.length; i++) {
+                var ind = indexOf(suffixStandards[i], img_str)
+                // If the given suffix is in the array of suffixes, add it to the image stack,
+                //  where the key for the image stack belongs to the list of suffixes that the matched suffix is from
+                if(ind!= -1){
+                    var temp = image_stack.get(suffixStandards[i][0]) 
+                    var ar_fl = 0
+                    if(suffixStandards[i][0] == "image"){
+                        // If this is an "image" type file, then with the batch set the indexes cannot just be 0 and 1, rather 0.... i 
+                        // where i is the number of "image" type images in the image set. ar_fl increases the index only if this is an 
+                        // "image" type image and the filename has been recorded, IE a set of images exists with that file name. 
+                        ar_fl = art_filenames.indexOf(art_filename)*2
+                        // ar_fl increases the index by the index of the filename * 2 --> a filename index of 0 would add nothing, so 
+                        // the 0 and 1 indexes would be reserved for those, a filename index of 1 would reserve 2 and 3, and so forth.
+                        // With this specific indexes are still reserved for specific images, so that the variable number of images 
+                        // will not override each other.
+                    }
+                    temp[image_id.indexOf(img_id) + ar_fl] = image  
+                    image_stack.set(suffixStandards[i][0], temp);
+                }
+            }
+        });
+
+
+        //Creating keys for the sorted array as well as the external stack, in order
+        var img_stck_keys = ["target", "flatfield", "darkfield"]
+        var ext_stck_keys = ["targetA", "targetB", "flatfieldA", "flatfieldB", "darkfieldA", "darkfieldB"]
+        var ext_idx = 0
+        // For a loop the length of the sorted array:
+        for(let i = 0; i<size(img_stck_keys); i++){
+            for(let c = 0; c<2; c++){
+                var t = image_stack.get(img_stck_keys[i])[c]
+                // If there exists an image at the set key and key'ed array index:
+                if(t != null){
+                    // Add it to the external stack
+                    externalStack[ext_stck_keys[ext_idx+c]] = [t]
+                    // Note on how this works: external stack ID goes up in increments of 2
+                    // c is always 0 or 1
+                    // [name]A is always at even indexes and [name]B is always at odd indexes, so images put into A or B will always match
+                    // So the increments in c allow the odd external stack keys to be hit during this loop
+                    images.splice(images.indexOf(t), 1)
+                }
+                else{
+                    // If there is no match in the sorted array, set the external stack to have a []
+                    externalStack[ext_stck_keys[ext_idx+c]] = []
+                    
+                }
+            }
+            ext_idx+=2
+        }
+
+        var img_key = "image"
+        var img_stk = image_stack.get(img_key)
+        var img_ext_stck_keys = ["imageA", "imageB"]
+        
+        //Looking back through the rest of the remaining files for the target images -- only has a number of matches up to double the length of
+        // art_filenames list 
+        for(let i = 0; i<size(image_stack); i++){
+            var t = img_stk[i]
+            if(t != null){
+                // Add it to the external stack
+                externalStack[img_ext_stck_keys[i%2]][Math.floor(i/2)] = [t]
+                // Indexes here are to access only the imageA and imageB image stack keys for the i%2 line
+                // The latter goes in order of the already sorted images - index 0 for the first two, since they're paired,
+                // then index 1 for the next set, and so on
+                images.splice(images.indexOf(t), 1)
+
+            }
+            else{
+                externalStack[img_ext_stck_keys[i%2]][Math.floor(i/2)] = []
+            }
+        }
+
+
+
+        console.log("SUFFIX AUTOSORT " + JSON.stringify(externalStack, null, 4))
+
+        return  images;
+
+    }
+
     /**
      * Sorts images to the externalStack
      *  - externalStack requires the following fields:
@@ -348,6 +493,34 @@
     export function autoSortBatchImages(images, externalStack) {
 
         let includeTarget = true;
+
+         // Keeping track of how many file names have a suffix cordoned from the rest of the file name with a - and has a _ separating only 2 parts
+         var suffix_score = 0
+        each(images, function(image){
+            var img_test_str = split(image.name.toLowerCase(), '-')
+            if(img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], '_').length ==2 ){
+                suffix_score = suffix_score += 1
+            }
+        })
+        
+        // If the number of valid suffixes is more than half the size of the images array, then it is assumed 
+        // that the user is using suffixes on their images. The code then uses the suffix sort;
+        if(suffix_score > size(images)/2){
+             each(images, function (image){
+            each(probabilityScoreProperties, function (property) {
+                image[property] = 0;
+            });
+            image.imageA = false;});
+            var remaining_images = null
+            remaining_images = suffixBatchSortImages(images, externalStack);
+            console.log("remaining images: ")
+            console.table(size(remaining_images))
+
+            return remaining_images;
+        }
+        // Otherwise, use the legacy sorting (not recommended)
+        else{
+
         // scan each image name (and path) for possible matches
         each(images, function (image){
             each(probabilityScoreProperties, function (property) {
@@ -454,20 +627,11 @@
             else{
                 leftovers.push(...artImageSet)
             }
-        });
-
-        console.log("BATCH STACK:")
-        console.table(JSON.stringify(externalStack, null, 4))
-
-        console.log("SIZE OF IMAGES: " + size(images))
-        console.log("leftovers: " + JSON.stringify(leftovers, null, 4))
-        console.log("images: " +JSON.stringify(images, null, 4))
-
-
+        });    
         
-
         // return any images that weren't assigned
         return leftovers;
     }
+}
 
 </script>
