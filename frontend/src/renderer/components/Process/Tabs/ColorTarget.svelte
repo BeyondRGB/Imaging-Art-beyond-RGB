@@ -1,6 +1,7 @@
 <script>
   import {
     customRefData,
+    persistentCustomRefData,
     processState,
     modal,
     sendMessage,
@@ -26,13 +27,32 @@
 
   let loading = false;
 
-  let refData = [
-    "NGT_Reflectance_Data.csv",
-    "APT_Reflectance_Data.csv",
-    "CCSG_Reflectance_Data.csv",
-    "CC_Classic_Reflectance_Data.csv",
-    "Choose a custom file....csv",
-  ];
+  let staticRefData = [
+    {
+      name: "NGT",
+      fileName: "NGT_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    },
+    {
+      name: "APT",
+      fileName: "APT_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    },
+    {
+      name: "CCSG",
+      fileName: "CCSG_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    },
+    {
+      name: "CC Classic",
+      fileName: "CC_Classic_Reflectance_Data.csv",
+      standardObserver: 1931,
+      illuminants: "D50",
+    }
+  ]
 
   let refDataMeta = [
     { rows: 10, cols: 13 },
@@ -40,6 +60,8 @@
     { rows: 10, cols: 14 },
     { rows: 4, cols: 6 },
   ];
+
+  let calibrationTargetRotationAngle = 0; // Default rotation angle in degrees
 
   function update() {
     if (colorPos) {
@@ -55,6 +77,8 @@
       $processState.artStacks[0].colorTarget.whitePatch =
         colorTarget.whitePatch;
       $processState.artStacks[0].colorTarget.refData = colorTarget.refData;
+      $processState.artStacks[0].colorTarget.calibrationTargetRotationAngle = calibrationTargetRotationAngle; // Add rotation to process state
+      
       if (colorTarget.refData.name !== "CUSTOM DATA") {
         $processState.artStacks[0].colorTarget.refData.name =
           colorTarget.refData.name;
@@ -150,6 +174,28 @@
 
   $: console.log($processState);
 
+  function buildCalibrationRefData() {
+    return [
+      ...staticRefData,
+      ...$persistentCustomRefData.calibration,
+      {
+        name: "Choose a Custom CSV File",
+        fileName: "Choose a custom file....csv",
+      },
+    ];
+  }
+
+  function buildVerificationRefData() {
+    return [
+      ...staticRefData,
+      ...$persistentCustomRefData.verification,
+      {
+        name: "Choose a Custom CSV File",
+        fileName: "Choose a custom file....csv",
+      },
+    ];
+  }
+
   function addTarget() {
     if (!colorTarget) {
       colorTarget = {
@@ -163,7 +209,8 @@
           col: null,
         },
         refData: {
-          name: "---None---.csv",
+          name: "---None---",
+          fileName: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -181,7 +228,8 @@
           col: 1,
         },
         refData: {
-          name: "---None---.csv",
+          name: "---None---",
+          fileName: "---None---.csv",
           standardObserver: 1931,
           illuminants: "D50",
         },
@@ -255,6 +303,7 @@
         },
         refData: {
           name: $processState.artStacks[0].colorTarget.refData.name,
+          fileName: $processState.artStacks[0].colorTarget.refData.fileName,
           standardObserver: $processState.artStacks[0].colorTarget.refData.standardObserver,
           illuminants: $processState.artStacks[0].colorTarget.refData.illuminants,
         },
@@ -274,6 +323,7 @@
         },
         refData: {
           name: $processState.artStacks[0].verificationTarget.refData.name,
+          fileName: $processState.artStacks[0].verificationTarget.refData.fileName,
           standardObserver: $processState.artStacks[0].verificationTarget.refData.standardObserver,
           illuminants: $processState.artStacks[0].verificationTarget.refData.illuminants,
         },
@@ -283,26 +333,48 @@
     }
   }
 
-  $: if (colorTarget?.refData?.name === "Choose a custom file....csv") {
+  $: if (colorTarget?.refData?.fileName === "Choose a custom file....csv") {
     console.log("OPENING CUSTOM REF MODAL");
     modal.set("CustomRefData");
     colorTarget.refData.name = "CUSTOM DATA";
   }
-  $: if (verifyTarget?.refData?.name === "Choose a custom file....csv") {
+  $: if (verifyTarget?.refData?.fileName === "Choose a custom file....csv") {
     console.log("OPENING CUSTOM REF MODAL VER");
     modal.set("CustomRefDataVer");
     verifyTarget.refData.name = "CUSTOM DATA";
   }
 
-  $: if (refData.includes(colorTarget?.refData?.name)) {
+  $: if (colorTarget?.refData?.name === "CUSTOM DATA" && $customRefData.calibration !== null) {
+    console.log("Resetting Custom Calibration Ref Data");
+    colorTarget.refData = {
+      name: $customRefData.calibration.name,
+      fileName: $customRefData.calibration.fileName,
+      standardObserver: $customRefData.calibration.standardObserver,
+      illuminants: $customRefData.calibration.illuminants,
+    };
+    $customRefData.calibration = null;
+  }
+
+  $: if (verifyTarget?.refData?.name === "CUSTOM DATA" && $customRefData.verification !== null) {
+    console.log("Resetting Custom Verification Ref Data");
+    verifyTarget.refData = {
+      name: $customRefData.verification.name,
+      fileName: $customRefData.verification.fileName,
+      standardObserver: $customRefData.verification.standardObserver,
+      illuminants: $customRefData.verification.illuminants,
+    }
+    $customRefData.verification = null;
+  }
+
+  $: if (staticRefData.includes(colorTarget?.refData)) {
     console.log("Setting Refdata ROW/COl");
-    let index = refData.findIndex((x) => x === colorTarget.refData.name);
+    let index = staticRefData.findIndex((x) => x === colorTarget.refData);
 
     colorTarget.rows = refDataMeta[index].rows;
     colorTarget.cols = refDataMeta[index].cols;
   }
-  $: if (refData.includes(verifyTarget?.refData?.name)) {
-    let index = refData.findIndex((x) => x === verifyTarget.refData.name);
+  $: if (staticRefData.includes(verifyTarget?.refData)) {
+    let index = staticRefData.findIndex((x) => x === verifyTarget.refData);
 
     verifyTarget.rows = refDataMeta[index].rows;
     verifyTarget.cols = refDataMeta[index].cols;
@@ -312,8 +384,8 @@
 
   $: if (
     colorTarget &&
-    colorTarget.refData.name !== "---None---.csv" &&
-    (!verifyTarget || verifyTarget.refData?.name !== "---None---.csv") &&
+    colorTarget.refData.fileName !== "---None---.csv" &&
+    (!verifyTarget || verifyTarget.refData?.fileName !== "---None---.csv") &&
     colorTarget?.whitePatch?.row &&
     colorTarget?.whitePatch?.col
   ) {
@@ -345,6 +417,7 @@
           bind:verifyPos
           bind:loading
           bind:viewerOpen
+          bind:calibrationTargetRotationAngle={calibrationTargetRotationAngle}
           bind:this={colorTargetViewer}
         />
       </div>
@@ -405,7 +478,7 @@
             </div>
             <div class="refDataDiv">
               <span class="validatedTitle">
-                {#if target.refData.name === "---None---.csv"}
+                {#if target.refData.fileName === "---None---.csv"}
                   <span class="invalid"
                     ><AlertTriangleIcon size="1.5x" />
                   </span>
@@ -413,9 +486,9 @@
                 Reference Data:</span
               >
               <Dropdown
-                values={refData}
-                bind:selected={target.refData.name}
-                invalid={target.refData.name === "---None---.csv"}
+                values={i === 0 ? buildCalibrationRefData() : buildVerificationRefData() }
+                bind:selected={target.refData}
+                invalid={target.refData.fileName === "---None---.csv"}
                 spaceLast
               />
             </div>
@@ -519,6 +592,21 @@
                     }}
                   />
                 </div>
+                <div>
+                  <label for="rotation-slider">Rotation Angle (degrees):</label>
+                  <input
+                    id="rotation-slider"
+                    type="range"
+                    min="-10"
+                    max="10"
+                    step="0.01"
+                    value="{calibrationTargetRotationAngle}"
+                    on:input="{(e) => {
+                      calibrationTargetRotationAngle = parseFloat(event.target.value);  
+                    }}"
+                  />
+                  <span>{calibrationTargetRotationAngle}°</span>
+                </div>                
               </div>
             {:else if target !== "Add"}
               <div class="target-coordinates">

@@ -1,4 +1,12 @@
 <script lang="ts">
+
+  type DropdownOption = {
+    name: string,
+    fileName: string,
+    standardObserver: number,
+    illuminants: string
+  }
+
   import {
     computePosition,
     autoPlacement,
@@ -8,10 +16,10 @@
     inline,
   } from "@floating-ui/dom";
   import { ChevronDownIcon, ChevronUpIcon } from "svelte-feather-icons";
-  export let values: string[];
-  export let selected;
+  export let values: Array<DropdownOption>;
+  export let selected: DropdownOption;
   export let invalid = false;
-  export let isFile = true;
+  //export let isFile = true;
 
   let show = false;
   export let spaceLast = false;
@@ -42,8 +50,6 @@
       });
     }
   };
-
-  $: console.log({ SHOW: show });
 </script>
 
 {#if show}
@@ -55,7 +61,7 @@
   class:invalid
   on:click={toggleDropdown}
   bind:this={btnRef}
-  ><span class="btnText">{isFile ? selected.slice(0, -4) : selected}</span>
+  ><span class="btnText">{selected.name}</span>
   <div class="iconSqu">
     {#if show}
       <ChevronUpIcon size="1.5x" />
@@ -76,7 +82,7 @@
         show = false;
       }}
     >
-      {isFile ? value.slice(0, -4) : value}
+      {value.name}
     </li>
   {/each}
 </div>

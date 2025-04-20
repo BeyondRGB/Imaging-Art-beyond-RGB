@@ -79,7 +79,7 @@ void Pipeline::init_general_info(btrgb::ArtObject* art_obj){
     // Target ID
     Json target_json = this->process_data_m->get_obj(key_map[DataKey::TargetLocation]);
     Json ref_data_json = target_json.get_obj(key_map[DataKey::ReferenceData]);
-    results_obj->store_string(GI_TARGET_ID, ref_data_json.get_string("name"));
+    results_obj->store_string(GI_TARGET_ID, ref_data_json.get_string("fileName"));
     // Target Dims
     results_obj->store_int(GI_TARGET_ROWS, target_json.get_number("rows"));
     results_obj->store_int(GI_TARGET_COLS, target_json.get_number("cols"));
@@ -346,11 +346,12 @@ TargetData Pipeline::build_target_data(Json target_json){
     td.row_count = target_json.get_number("rows");
     td.sample_size = target_json.get_number("size");
     Json white_loc = target_json.get_obj("whitePatch");
+    td.rotation_angle = target_json.get_number("calibrationTargetRotationAngle");
     // subtract one to make it zero based, due to front end sending 1 based.
     td.w_row = white_loc.get_number("row") - 1;
     td.w_col = white_loc.get_number("col") - 1;
     Json ref_loc = target_json.get_obj("refData");
-    td.ref_base = ref_loc.get_string("name");
+    td.ref_base = ref_loc.get_string("fileName");
     td.illum_base = ref_loc.get_string("illuminants");
     td.obsv_base = ref_loc.get_number("standardObserver");
     return td;
@@ -360,7 +361,7 @@ std::string Pipeline::get_ref_file(Json target_data) {
     std::string ref_file = "";
     try {
         Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
-        ref_file = ref_data.get_string("name");
+        ref_file = ref_data.get_string("fileName");
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();

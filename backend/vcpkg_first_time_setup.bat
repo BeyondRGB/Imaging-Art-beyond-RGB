@@ -6,4 +6,5 @@ if exist vcpkg\ (
   git clone https://github.com/microsoft/vcpkg
   cmd /c .\vcpkg\bootstrap-vcpkg.bat
   cmd /c config_depends.bat
+  cmd /c websocketpp_bundle.bat
 )

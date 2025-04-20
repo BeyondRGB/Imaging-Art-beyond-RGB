@@ -1,6 +1,6 @@
 <script lang="ts">
   import Switch from "@components/Switch.svelte";
-  import { appSettings, processState, customRefData } from "@util/stores";
+  import { appSettings, processState, customRefData, persistentCustomRefData } from "@util/stores";
   import { modal } from "@util/stores";
   import { DownloadCloudIcon } from "svelte-feather-icons";
   import RefDataTemplate from "@assets/RefDataTemplate.csv?url";
@@ -20,12 +20,30 @@
       if ($modal === "CustomRefData") {
         console.log("Saving to color target");
         $customRefData.calibration = {
-          name: filePaths[0],
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
         };
+        $persistentCustomRefData.calibration.push({
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
+        });
       } else if ($modal === "CustomRefDataVer") {
         $customRefData.verification = {
-          name: filePaths[0],
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
         };
+        $persistentCustomRefData.verification.push({
+          name: filePaths[0].split('\\').pop(),
+          fileName: filePaths[0],
+          standardObserver: 1931,
+          illuminants: "D50",
+        });
       }
     }
     closeModal();

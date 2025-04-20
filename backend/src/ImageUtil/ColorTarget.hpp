@@ -19,6 +19,8 @@ typedef struct target_location {
 	// Ref Data
 	std::string ref_base, illum_base;
 	int obsv_base;
+	// Rotation angle of target
+	double rotation_angle;
 }TargetData;
 
 /**
@@ -86,6 +88,8 @@ private:
 	RefData* ref_data;
 	// Size of the sample to take from a color patch as a percentage of the patch size
 	double sample_size = 0.3;
+
+	double rotation_angle = 0.0;
 
 	/**
 	 * @brief Calculate the center x postiton for the specified col

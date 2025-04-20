@@ -147,6 +147,7 @@
             // this could get buggy if there are more than 2 suffixes, either by design or by accident. Only the first 2 suffixes are recorded in this statement
             if(image_id.length < 2){
                 if(indexOf(image_id, img_id) == -1){
+
                     image_id.push(img_id);
                 }
             }
