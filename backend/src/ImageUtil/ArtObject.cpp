@@ -193,7 +193,6 @@ namespace btrgb {
         return this->images.contains(name);
     }
 
-
     /*
      * The key of the image stored in memory to write to disk.
      */

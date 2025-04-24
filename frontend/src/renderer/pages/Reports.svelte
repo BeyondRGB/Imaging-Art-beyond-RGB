@@ -29,6 +29,29 @@
 
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
+        let p90Value = null;
+
+        function handleP90Update(e) {
+          const rawVal = e.detail.p90;
+          console.log("Received p90 update:", rawVal, "typeof:", typeof rawVal, "JSON:", JSON.stringify(rawVal));
+          if (rawVal === null || rawVal === undefined) {
+          console.log("Received null or undefined value. Ignoring update.");
+          return;
+          }    
+
+          let num;
+          if (typeof rawVal === "object") {
+            num = +rawVal;
+          } else {
+            num = parseFloat(rawVal);
+          }
+    
+          if (!isNaN(num)) {
+            p90Value = num;
+          }
+          console.log("Converted p90Value is now:", p90Value);
+        }
+
 
 	function handleDataPointSelect(event) {
 		const { yAxisLabel, xValue } = event.detail;
@@ -174,19 +197,23 @@
 							: $viewState.projectKey?.split("/").at(-1)}
 					</div>
 					<div class="report-info">
-						Mean ΔE: {parseFloat(
-              $viewState.reports.calibration?.["double_values"]?.[0]?.["data"]
-						).toFixed(4)}
+						Mean ΔE: {parseFloat($viewState.reports.calibration?.["double_values"]?.[0]?.["data"]).toFixed(4)}
+<br>           {#if p90Value !== null && !isNaN(p90Value)}
+    90th Percentile: {p90Value.toFixed(2)}
+  {/if}
+
+
+
+
 					</div>
+
             <button class="report-info new-window-button" on:click={() => { window.electron.openNewWindow() }}>View Another Report</button>
 
 					{#if isVerification}
 						<div class="report-info">
-							Verification Mean ΔE: {parseFloat(
-                $viewState.reports.verification?.["double_values"]?.[0]?.[
-                  "data"
-                ]
-							).toFixed(4)}
+							Verification Mean ΔE: {parseFloat($viewState.reports.verification?.["double_values"]?.[0]?.["data"]).toFixed(4)}
+<br>
+Verification 90th Percentile: {p90Value.toFixed(2)}
 						</div>
 					{/if}
 				</div>
@@ -195,7 +222,10 @@
 				<div class="reportBody">
 					<div class="report-item">
 						<Heatmap
-							on:datapointselect={handleDataPointSelect}
+	
+                on:datapointselect={handleDataPointSelect}
+                  on:p90update={handleP90Update}
+
 							data={$viewState.reports.calibration}
 							matrixName={"CM DeltaE Values"}
 						/>

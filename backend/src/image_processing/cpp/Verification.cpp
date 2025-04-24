@@ -71,6 +71,9 @@ void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObje
     double deltaE_sum = btrgb::calibration::compute_deltaE_sum(verification_data, xyz, &deltaE_values);
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
+
+    // Compute the 90th percentile from the DeltaE matrix
+    double p90 = btrgb::calibration::compute_90th_percentile(deltaE_values);
     
     // Store Verification Results
     std::cout << "Storing Results" << std::endl;
@@ -84,6 +87,7 @@ void Verification::verify_CM_calibration(CommunicationObj* comms, btrgb::ArtObje
     verification_res->store_matrix(V_b_REF, b_ref);
     verification_res->store_matrix(V_DLETA_E_VALUES, deltaE_values);
     verification_res->store_double(V_DELTA_E_AVG, deltaE_avg);
+    verification_res->store_double("P90", p90);
     
 }
 

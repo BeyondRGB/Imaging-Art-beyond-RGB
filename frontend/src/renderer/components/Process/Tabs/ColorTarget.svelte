@@ -61,6 +61,8 @@
     { rows: 4, cols: 6 },
   ];
 
+  let calibrationTargetRotationAngle = 0; // Default rotation angle in degrees
+
   function update() {
     if (colorPos) {
       $processState.artStacks[0].colorTarget.top = colorPos.top;
@@ -75,6 +77,8 @@
       $processState.artStacks[0].colorTarget.whitePatch =
         colorTarget.whitePatch;
       $processState.artStacks[0].colorTarget.refData = colorTarget.refData;
+      $processState.artStacks[0].colorTarget.calibrationTargetRotationAngle = calibrationTargetRotationAngle; // Add rotation to process state
+      
       if (colorTarget.refData.name !== "CUSTOM DATA") {
         $processState.artStacks[0].colorTarget.refData.name =
           colorTarget.refData.name;
@@ -413,6 +417,7 @@
           bind:verifyPos
           bind:loading
           bind:viewerOpen
+          bind:calibrationTargetRotationAngle={calibrationTargetRotationAngle}
           bind:this={colorTargetViewer}
         />
       </div>
@@ -587,6 +592,21 @@
                     }}
                   />
                 </div>
+                <div>
+                  <label for="rotation-slider">Rotation Angle (degrees):</label>
+                  <input
+                    id="rotation-slider"
+                    type="range"
+                    min="-10"
+                    max="10"
+                    step="0.01"
+                    value="{calibrationTargetRotationAngle}"
+                    on:input="{(e) => {
+                      calibrationTargetRotationAngle = parseFloat(event.target.value);  
+                    }}"
+                  />
+                  <span>{calibrationTargetRotationAngle}°</span>
+                </div>                
               </div>
             {:else if target !== "Add"}
               <div class="target-coordinates">

@@ -1,4 +1,5 @@
 #include "ColorTarget.hpp"
+#include <numbers>
 
 ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* ref_data) {
 	this->im = im;
@@ -30,6 +31,7 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* re
 	// The TargetData has already subtraced one so this is already zero based
 	this->white_row = location_data.w_row;
 	this->white_col = location_data.w_col;
+    this->rotation_angle = location_data.rotation_angle;
 	// Ref Data Collection
 	this->reference = location_data.ref_base;
 	this->illuminant = RefData::get_illuminant(location_data.illum_base);
@@ -57,48 +59,93 @@ ColorTarget::ColorTarget(btrgb::Image* im, TargetData location_data, RefData* re
 *		sr = (sw - 1) / 2
 *
 */
-float ColorTarget::get_patch_avg(int row, int col, int chan) {
-	int center_pixX = this->patch_posX(col);
-	int center_pixY = this->patch_posY(row);
-	// The sample_size is the size of the sample to take from a color patch as a percentage of the patch size
-	// Sample width/height
-	int sw = this->sample_size * this->col_width;
-	// Sample radious(number of pixels on either side of center)
-	int sr = (sw - 1) / 2;
+float ColorTarget::get_patch_avg(int row, int col, int chan)
+{
+    // Convert the stored bounding box into absolute pixel coordinates.
+    //
+    //       this->target_left_edge    // in pixels
+    //       this->target_top_edge     // in pixels
+    //       this->target_width        // in pixels
+    //       this->target_height       // in pixels
+    //   and this->rotation_angle     // in degrees
 
-	// Find sume of pixel values for all pixels within sample
-	float pixel_value_sum = 0;
-	for (int yOffset = -sr; yOffset < sr + 1; yOffset++) {
-		for (int xOffset = -sr; xOffset < sr + 1; xOffset++) {
-			int col = center_pixX + xOffset;
-			int row = center_pixY + yOffset;
-			pixel_value_sum += im->getPixel(row, col, chan);
-			//std::cout << "pixel(" << col << "," << row << "): " << im->getPixel(row, col, chan) << std::endl;
-		}
-	}
+    // bounding box center
+    double boxCenterX = this->target_left_edge + (this->target_width / 2.0);
+    double boxCenterY = this->target_top_edge  + (this->target_height / 2.0);
 
-	// The sample pixels form a square so the number of pixels is sample_width squared
-	int pixel_count = pow(sw, 2);
-	float avg = pixel_value_sum / pixel_count;
-	return avg;
+    // Compute the patch unrotated center
+    // Without rotation the patch (row,col) center is
+    double patchWidth  = (double)this->target_width  / this->col_count;
+    double patchHeight = (double)this->target_height / this->row_count;
+
+    double unrotatedCenterX = this->target_left_edge + (col + 0.5)*patchWidth;
+    double unrotatedCenterY = this->target_top_edge  + (row + 0.5)*patchHeight;
+
+    // Rotate that center around (boxCenterX, boxCenterY) by rotation_angle
+    double rad = this->rotation_angle * std::numbers::pi / 180.0; // convert degrees to radians
+    double dx  = unrotatedCenterX - boxCenterX;
+    double dy  = unrotatedCenterY - boxCenterY;
+
+    double rotatedX =  dx*std::cos(rad) - dy*std::sin(rad);
+    double rotatedY =  dx*std::sin(rad) + dy*std::cos(rad);
+
+    double finalCenterX = boxCenterX + rotatedX;
+    double finalCenterY = boxCenterY + rotatedY;
+
+    // sample a local region around (finalCenterX, finalCenterY)
+    int sw = (int)(this->sample_size * patchWidth);
+    int sr = sw / 2; // half on each side
+    if (sw < 1) sw = 1; // just in case
+
+    float pixel_value_sum = 0.0f;
+    int   count           = 0;
+
+    for (int yOffset = -sr; yOffset <= sr; yOffset++) {
+        for (int xOffset = -sr; xOffset <= sr; xOffset++) {
+            int sx = (int)std::round(finalCenterX + xOffset);
+            int sy = (int)std::round(finalCenterY + yOffset);
+            if (sx >= 0 && sx < im->width() && sy >= 0 && sy < im->height()) {
+                pixel_value_sum += im->getPixel(sy, sx, chan);
+                count++;
+            }
+        }
+    }
+    if (count == 0) {
+        // fallback if no valid samples
+        return 0.0f;
+    }
+    return pixel_value_sum / (float)count;
 }
 
-int ColorTarget::patch_posX(int col) {
-	int col_width = this->target_width / this->col_count;
-	int offset = col * col_width;
-	// left edge of target + offset gives the left edge of patch so add col_width/2 to get to center
-	int patch_centerX = this->target_left_edge + offset + (col_width / 2);
-	return patch_centerX;
+/*int ColorTarget::patch_posX(int col) {
+    // Dynamically compute edges and assign them to local variables
+    double left = static_cast<double>(this->target_left_edge) / im->width();
+    double right = static_cast<double>(this->target_left_edge + this->target_width) / im->width();
+
+    // Pass variables as lvalues to transform_edges
+    double top = static_cast<double>(this->target_top_edge) / im->height(); // Needed for transform_edges
+    double bottom = static_cast<double>(this->target_top_edge + this->target_height) / im->height(); // Needed for transform_edges
+    transform_edges(left, top, right, bottom, this->rotation_angle, im->width(), im->height());
+
+    int patch_width = (right - left) * im->width() / this->col_count;
+    return left * im->width() + col * patch_width + patch_width / 2;
 }
 
 int ColorTarget::patch_posY(int row) {
-	int row_height = this->target_height / this->row_count;
-	int offset = row * row_height;
-	// top edge of target + offset gives the top edge of patch so add row_height/2 to get to center
-	int patch_centerY = this->target_top_edge + offset + (row_height / 2);
-	return patch_centerY;
+    // Dynamically compute edges and assign them to local variables
+    double top = static_cast<double>(this->target_top_edge) / im->height();
+    double bottom = static_cast<double>(this->target_top_edge + this->target_height) / im->height();
 
-}
+    // Pass variables as lvalues to transform_edges
+    double left = static_cast<double>(this->target_left_edge) / im->width(); // Needed for transform_edges
+    double right = static_cast<double>(this->target_left_edge + this->target_width) / im->width(); // Needed for transform_edges
+    transform_edges(left, top, right, bottom, this->rotation_angle, im->width(), im->height());
+
+    int patch_height = (bottom - top) * im->height() / this->row_count;
+    return top * im->height() + row * patch_height + patch_height / 2;
+}*/
+
+
 
 int ColorTarget::get_row_count() {
 	return this->row_count;

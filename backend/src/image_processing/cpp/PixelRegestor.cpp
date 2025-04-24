@@ -1,4 +1,5 @@
 #include "ImageUtil/Image.hpp"
+#include "ImageUtil/ImageWriter/ImageWriter.hpp"
 #include "../header/PixelRegestor.h"
 #include <opencv2/opencv.hpp>
 
@@ -9,6 +10,8 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 {
     comms->send_info("", this->get_name());
     comms->send_progress(0, this->get_name());
+
+    std::string output = images->get_output_dir();
 
     //Grab the image data from the art object
     btrgb::Image* img1 = images->getImage("art1");
@@ -31,11 +34,15 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         regestration_count = 2;
     }
 
-    this->appy_regestration(comms, img1, img2, 1, regestration_count);
+    int matched = this->appy_regestration(comms, img1, img2, 1, regestration_count, output + "img");
 
     if(found_target){
-        this->appy_regestration(comms, target1, target2, 2, regestration_count);
+        matched = this->appy_regestration(comms, target1, target2, 2, regestration_count, output + "target");
     }
+
+    // Add number of matched points to results
+    CalibrationResults* results_obj = images->get_results_obj(btrgb::ResultType::GENERAL);
+    results_obj->store_int(GI_MATCHED_POINTS, matched);
 
     //Outputs TIFFs for each image group for after this step, temporary
     // images->outputImageAs(btrgb::TIFF, "art1", "art1_rgstr");
@@ -43,7 +50,7 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
 
 }
 
-void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img1, btrgb::Image *img2, int cycle, int cycle_count){
+int PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img1, btrgb::Image *img2, int cycle, int cycle_count, std::string output){
     
     cv::Mat im1 = img1->getMat();
     cv::Mat im2 = img2->getMat();
@@ -51,7 +58,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
      //Check that there is actual data in them
     if (!im1.data || !im2.data)
     {
-        return;
+        return 0;
     }
 
     int MAX_FEATURES;
@@ -137,7 +144,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
             points1.push_back(p1);
             points2.push_back(p2);
             good_matches.push_back(matches[i]);
-            //cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
+            // cout << "(" << p1.x << "," << p1.y << ") <=> (" << p2.x << "," << p2.y << ")" << std::endl;
         }
     }
 
@@ -146,12 +153,15 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
     drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
     cv::Mat imS;
     cv::resize(imMatches, imS, cv::Size(), 0.25, 0.25);
-    // cv::imwrite("matches.tiff", imMatches);
+    //cv::imwrite("matches.tiff", imMatches);
     cv::Mat matchfloat;
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
     std::unique_ptr<btrgb::Image> btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
     comms->send_binary(btrgb_matches.get(), btrgb::FULL);
+
+    btrgb::ImageWriter(btrgb::TIFF).write(btrgb_matches.get(), output + "_matches"); // Output matches as a TIFF in the output folder
+
     btrgb_matches.reset(nullptr);
 
     // Find homography
@@ -173,6 +183,7 @@ void PixelRegestor::appy_regestration(CommunicationObj* comms, btrgb::Image *img
 
     prog = this->calc_progress(1, (float)cycle, (float)cycle_count);
     comms->send_progress(prog, this->get_name());
+    return good_matches.size();
 }
 
 float PixelRegestor::calc_progress(float progress, float cycle, float cycle_count){

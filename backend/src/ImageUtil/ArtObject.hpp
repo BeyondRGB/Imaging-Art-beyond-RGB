@@ -89,6 +89,8 @@ namespace btrgb {
         Image* getImage(std::string name);
         void deleteImage(std::string name);
         bool imageExists(std::string name);
+        int getMatched();
+        void setMatched(int matched);
 
         int imageCount();
 
