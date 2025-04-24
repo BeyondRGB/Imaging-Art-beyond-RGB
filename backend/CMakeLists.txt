@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)  
 include(${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake)
-project(BeyondRGB DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.1.0)
+project(BeyondRGB DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.2.0)
 
 configure_file(
     ${CMAKE_SOURCE_DIR}/src/version.h.in
