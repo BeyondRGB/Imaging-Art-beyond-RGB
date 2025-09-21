@@ -11,7 +11,8 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 #------------------------------------------
 #Add VCPKG provided find_package Here
 #------------------------------------------
-find_package(websocketpp CONFIG REQUIRED)
+add_library(websocketpp INTERFACE)
+target_link_directories(websocketpp INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
 find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
@@ -38,22 +39,16 @@ if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx")
 endif()
 
 # Find all Header and Source files
-file(GLOB_RECURSE HEADERS RELATIVE ${CMAKE_SOURCE_DIR} "src/*.h")
 file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
-
-# Print out all Header and Source files found
-message(STATUS "Headers: ${HEADERS}")
-message(STATUS "Source Files: ${SOURCES}")
 
 # Create .exe
 add_executable(beyond-rgb-backend ${SOURCES})
 
 # Set all source include files (ie. *.h)
-target_include_directories(beyond-rgb-backend PUBLIC ${HEADERS})
 target_include_directories(beyond-rgb-backend PUBLIC "src/")
 
 # VCPKG provided target_link_libraries
-target_link_libraries(beyond-rgb-backend PRIVATE websocketpp::websocketpp)
+target_link_libraries(beyond-rgb-backend PRIVATE websocketpp)
 target_link_libraries(beyond-rgb-backend PRIVATE asio asio::asio)
 target_link_libraries(beyond-rgb-backend PRIVATE jsoncons)
 target_include_directories(beyond-rgb-backend PRIVATE ${CPPCODEC_INCLUDE_DIRS})
@@ -82,3 +77,12 @@ endif()
 
 # Set C++ standard
 set_property(TARGET beyond-rgb-backend PROPERTY CXX_STANDARD 20)
+
+# weird fix for linus to remove malformed macro included in lib dependency
+if (UNIX AND NOT APPLE)
+    get_target_property(current_defs beyond-rgb-backend COMPILE_DEFINITIONS)
+    if(current_defs)
+        list(FILTER current_defs EXCLUDE REGEX "^-pthread$")
+        set_target_properties(beyond-rgb-backend PROPERTIES COMPILE_DEFINITIONS "${current_defs}")
+    endif()
+endif()
