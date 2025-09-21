@@ -11,8 +11,6 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 #------------------------------------------
 #Add VCPKG provided find_package Here
 #------------------------------------------
-add_library(websocketpp INTERFACE)
-target_link_directories(websocketpp INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
 find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
@@ -38,6 +36,11 @@ if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx")
     find_package(OpenMP REQUIRED)
 endif()
 
+# add these AFTER vcpkg dependencies are added
+set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/submodules/websocketpp)
+
 # Find all Header and Source files
 file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
 
@@ -47,8 +50,17 @@ add_executable(beyond-rgb-backend ${SOURCES})
 # Set all source include files (ie. *.h)
 target_include_directories(beyond-rgb-backend PUBLIC "src/")
 
+# adds websocketpp as a target lib for compilation
+target_include_directories(beyond-rgb-backend PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/submodules/websocketpp
+)
+# adds extra modes for compilation, since we dont use boost and asio instead, we need these
+target_compile_definitions(beyond-rgb-backend PRIVATE
+    ASIO_STANDALONE
+    WEBSOCKETPP_NO_BOOST
+    _WEBSOCKETPP_CPP11_STL_
+)
 # VCPKG provided target_link_libraries
-target_link_libraries(beyond-rgb-backend PRIVATE websocketpp)
 target_link_libraries(beyond-rgb-backend PRIVATE asio asio::asio)
 target_link_libraries(beyond-rgb-backend PRIVATE jsoncons)
 target_include_directories(beyond-rgb-backend PRIVATE ${CPPCODEC_INCLUDE_DIRS})
@@ -79,6 +91,7 @@ endif()
 set_property(TARGET beyond-rgb-backend PROPERTY CXX_STANDARD 20)
 
 # weird fix for linus to remove malformed macro included in lib dependency
+# TODO: remove this with a better fix
 if (UNIX AND NOT APPLE)
     get_target_property(current_defs beyond-rgb-backend COMPILE_DEFINITIONS)
     if(current_defs)
