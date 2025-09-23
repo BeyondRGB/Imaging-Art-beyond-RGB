@@ -182,7 +182,7 @@ endif()
 # Set C++ standard
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
-# weird fix for linus to remove malformed macro included in lib dependency
+# weird fix for linux to remove malformed macro included in lib dependency
 # TODO: remove this with a better fix
 if (UNIX AND NOT APPLE)
     get_target_property(current_defs ${PROJECT_NAME} COMPILE_DEFINITIONS)
