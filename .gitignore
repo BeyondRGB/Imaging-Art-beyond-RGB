@@ -285,3 +285,4 @@ typings/
 
 # Electron-Forge
 out/
+/backend/.idea
