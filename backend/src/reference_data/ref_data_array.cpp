@@ -1,4 +1,4 @@
-#include "ref_data_array.hpp"
+#include <reference_data/ref_data_array.hpp>
 
 RefDataArray::RefDataArray(int size) {
 	this->size = size;

@@ -19,11 +19,11 @@ endif()
 # Trace VCPKG package finding (Use for debugging VCPKG errors)
 set(VCPKG_TRACE_FIND_PACKAGE ON)
 
-project(BeyondRGB DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.2.0)
+project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.2.0)
 
 configure_file(
-    ${CMAKE_SOURCE_DIR}/src/version.h.in
-    ${CMAKE_SOURCE_DIR}/src/version.h
+    ${CMAKE_SOURCE_DIR}/include/version.h.in
+    ${CMAKE_SOURCE_DIR}/include/version.h
     @ONLY)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
@@ -59,56 +59,135 @@ set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
 
-# Find all Header and Source files
-file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "src/*.cpp")
-
 # Create .exe
-add_executable(beyond-rgb-backend ${SOURCES})
+add_executable(${PROJECT_NAME})
+
+# Find all Header and Source files
+target_sources(${PROJECT_NAME} PRIVATE
+        src/main.cpp
+
+        # backend_process
+        src/backend_process/backend_process.cpp
+        src/backend_process/ColorManagedImage.cpp
+        src/backend_process/HalfSizePreview.cpp
+        src/backend_process/pipeline.cpp
+        src/backend_process/ReportRequest.cpp
+        src/backend_process/SpectralPicker.cpp
+        src/backend_process/SpectralPickerMeasured.cpp
+        src/backend_process/ThumbnailLoader.cpp
+
+        # image_processing
+        src/image_processing/BitDepthScaler.cpp
+        src/image_processing/ChannelSelector.cpp
+        src/image_processing/ColorManagedCalibrator.cpp
+        src/image_processing/FlatFieldor.cpp
+        src/image_processing/ImageCalibrator.cpp
+        src/image_processing/ImageProcessor.cpp
+        src/image_processing/ImageReader.cpp
+        src/image_processing/NoiseReduction.cpp
+        src/image_processing/PixelRegestor.cpp
+        src/image_processing/PreProcessor.cpp
+        src/image_processing/ResultsProcessor.cpp
+        src/image_processing/SpectralCalibrator.cpp
+        src/image_processing/Verification.cpp
+
+        # image_processing / results
+        src/image_processing/results/calibration_results.cpp
+        src/image_processing/results/colorimetry_formater.cpp
+        src/image_processing/results/general_info_formater.cpp
+        src/image_processing/results/m_color_formater.cpp
+        src/image_processing/results/m_spectral_formater.cpp
+        src/image_processing/results/r_camera_formater.cpp
+
+        # image_util
+        src/image_util/ArtObject.cpp
+        src/image_util/BitDepthFinder.cpp
+        src/image_util/ColorProfiles.cpp
+        src/image_util/ColorTarget.cpp
+        src/image_util/Image.cpp
+
+        # image_util / image_reader
+        src/image_util/image_reader/LibRawReader.cpp
+        src/image_util/image_reader/LibRawThumbnail.cpp
+        src/image_util/image_reader/LibTiffReader.cpp
+        src/image_util/image_reader/TiffReaderOpenCV.cpp
+
+        # image_util / image_writer
+        src/image_util/image_writer/ImageWriter.cpp
+        src/image_util/image_writer/ImageWriterStrategy.cpp
+        src/image_util/image_writer/LibpngWriter.cpp
+        src/image_util/image_writer/LibTiffWriter.cpp
+
+        # reference_data
+        src/reference_data/color_patch.cpp
+        src/reference_data/illuminants.cpp
+        src/reference_data/ref_data.cpp
+        src/reference_data/ref_data_array.cpp
+        src/reference_data/standard_observer.cpp
+        src/reference_data/white_points.cpp
+
+        # server
+        src/server/communication_obj.cpp
+        src/server/communicator.cpp
+        src/server/globals_singleton.cpp
+        src/server/process_manager.cpp
+        src/server/request_server.cpp
+
+        # utils
+        src/utils/calibration_util.cpp
+        src/utils/cmd_arg_manager.cpp
+        src/utils/color_conversions.cpp
+        src/utils/csv_parser.cpp
+        src/utils/general_utils.cpp
+        src/utils/json.cpp
+        src/utils/jsonafiable.cpp
+        src/utils/time_tracker.cpp
+)
 
 # Set all source include files (ie. *.h)
-target_include_directories(beyond-rgb-backend PUBLIC "src/")
+target_include_directories(${PROJECT_NAME} PUBLIC "include/")
 
 # adds websocketpp as a target lib for compilation
 
-target_include_directories(beyond-rgb-backend PRIVATE
+target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp
 )
 # adds extra modes for compilation, since we dont use boost and asio instead, we need these
-target_compile_definitions(beyond-rgb-backend PRIVATE
+target_compile_definitions(${PROJECT_NAME} PRIVATE
     ASIO_STANDALONE
     WEBSOCKETPP_NO_BOOST
     _WEBSOCKETPP_CPP11_STL_
 )
 # VCPKG provided target_link_libraries
-target_link_libraries(beyond-rgb-backend PRIVATE asio asio::asio)
-target_link_libraries(beyond-rgb-backend PRIVATE jsoncons)
-target_include_directories(beyond-rgb-backend PRIVATE ${CPPCODEC_INCLUDE_DIRS})
-target_link_libraries(beyond-rgb-backend PRIVATE ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE asio asio::asio)
+target_link_libraries(${PROJECT_NAME} PRIVATE jsoncons)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CPPCODEC_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
 
-target_include_directories(beyond-rgb-backend PRIVATE ${TIFF_INCLUDE_DIR})
-target_link_libraries(beyond-rgb-backend PRIVATE ${TIFF_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PRIVATE ${TIFF_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${TIFF_LIBRARIES})
 
-target_compile_definitions(beyond-rgb-backend PRIVATE ${LibRaw_r_DEFINITIONS})
-target_include_directories(beyond-rgb-backend PRIVATE ${LibRaw_INCLUDE_DIR})
-target_link_libraries(beyond-rgb-backend PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
+target_compile_definitions(${PROJECT_NAME} PRIVATE ${LibRaw_r_DEFINITIONS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${LibRaw_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
-target_link_libraries(beyond-rgb-backend PRIVATE PNG::PNG)
+target_link_libraries(${PROJECT_NAME} PRIVATE PNG::PNG)
 
 # Pthreads & OpenMP, only required on Linux & Windows since macOS includes these in its compiler.
 if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "arm64-osx")
-    target_link_libraries(beyond-rgb-backend PRIVATE Threads::Threads)
-    target_link_libraries(beyond-rgb-backend PRIVATE OpenMP::OpenMP_CXX)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+    target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
 endif()
 
 # Set C++ standard
-set_property(TARGET beyond-rgb-backend PROPERTY CXX_STANDARD 20)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
 # weird fix for linus to remove malformed macro included in lib dependency
 # TODO: remove this with a better fix
 if (UNIX AND NOT APPLE)
-    get_target_property(current_defs beyond-rgb-backend COMPILE_DEFINITIONS)
+    get_target_property(current_defs ${PROJECT_NAME} COMPILE_DEFINITIONS)
     if(current_defs)
         list(FILTER current_defs EXCLUDE REGEX "^-pthread$")
-        set_target_properties(beyond-rgb-backend PROPERTIES COMPILE_DEFINITIONS "${current_defs}")
+        set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS "${current_defs}")
     endif()
 endif()

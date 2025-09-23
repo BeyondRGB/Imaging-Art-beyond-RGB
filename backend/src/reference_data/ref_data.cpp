@@ -1,8 +1,7 @@
-#include "ref_data.hpp"
+#include <reference_data/ref_data.hpp>
 #include <iostream>
 #include <fstream>
-#include "server/globals_siglton.hpp"
-
+#include <server/globals_singleton.hpp>
 
 
 RefData::RefData(std::string file, IlluminantType illum_type, ObserverType so_type) {

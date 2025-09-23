@@ -1,4 +1,5 @@
-#include "standard_observer.hpp"
+#include <reference_data/standard_observer.hpp>
+#include <reference_data/ref_data_defines.hpp>
 
 StandardObserver::StandardObserver(ObserverType type) {
 	if (type == ObserverType::SO_1931)

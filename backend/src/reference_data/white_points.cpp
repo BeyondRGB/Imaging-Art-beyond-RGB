@@ -1,4 +1,4 @@
-#include "white_points.hpp"
+#include <reference_data/white_points.hpp>
 
 double WhitePoints::values[VALUE_COUNT][ILLUMINANT_COUNT][OBSERVER_COUNT] = { 0 };
 

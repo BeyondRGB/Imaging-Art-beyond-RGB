@@ -1,4 +1,4 @@
-#include "communicator.hpp"
+#include <server/communicator.hpp>
 
 void Communicator::send_info(std::string msg, std::string reporter) {
 	if (nullptr == coms_obj_m) {
