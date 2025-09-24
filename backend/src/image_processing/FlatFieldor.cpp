@@ -1,6 +1,6 @@
 #include <image_processing/FlatFieldor.h>
 #include <iostream>
-#include <../../vcpkg/installed/arm64-osx/include/boost/range/irange.hpp>
+#include <boost/range/irange.hpp>
 
 void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
 {
