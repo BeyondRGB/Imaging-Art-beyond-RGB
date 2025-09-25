@@ -10,7 +10,7 @@ fi
 # Check for vcpkg updates. Exit if fail.
 cd vcpkg || exit
 git pull --ff-only
-sh vcpkg/bootstrap-vcpkg.sh
+sh bootstrap-vcpkg.sh
 cd ..
 
 # Install dependencies.
