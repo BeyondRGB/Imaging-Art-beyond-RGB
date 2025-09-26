@@ -1,6 +1,16 @@
-#include "ImageUtil/ArtObject.hpp"
-#include "pipeline.hpp"
-
+#include <image_util/ArtObject.hpp>
+#include <backend_process/pipeline.hpp>
+#include <image_processing/ImageReader.h>
+#include <image_processing/BitDepthScaler.h>
+#include <image_processing/FlatFieldor.h>
+#include <image_processing/NoiseReduction.h>
+#include <image_processing/PixelRegestor.h>
+#include <image_processing/SpectralCalibrator.h>
+#include <image_processing/Verification.h>
+#include <image_processing/ResultsProcessor.h>
+#include <image_processing/PreProcessor.h>
+#include <image_processing/ImageCalibrator.h>
+#include <image_processing/ImageProcessor.h>
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components

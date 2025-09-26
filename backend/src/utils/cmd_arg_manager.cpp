@@ -1,4 +1,5 @@
-#include "cmd_arg_manager.hpp"
+#include <utils/cmd_arg_manager.hpp>
+#include <server/globals_singleton.hpp>
 
 void CMDArgManager::process_args(int argc, char** argv) {
     for (int i = 1; i < argc; i++) {
@@ -44,14 +45,14 @@ void CMDArgManager::set_option(std::string key, std::string value) {
     if (key == "--test_run") {
         value = toLowerCase(value);
         if (value == "true") {
-            GlobalsSinglton::get_instance()->set_is_test(true);
+            GlobalsSingleton::get_instance()->set_is_test(true);
         }
     }
     if (key == "--app_root") {
-        GlobalsSinglton::get_instance()->set_app_root(value);
+        GlobalsSingleton::get_instance()->set_app_root(value);
     }
     if (key == "--port") {
-        GlobalsSinglton::get_instance()->set_port(std::stoi(value));
+        GlobalsSingleton::get_instance()->set_port(std::stoi(value));
     }
 }
 

@@ -1,4 +1,5 @@
-#include "request_server.hpp"
+#include <server/globals_singleton.hpp>
+#include <server/request_server.hpp>
 
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
@@ -22,7 +23,7 @@ void RequestServer::init_server() {
                  ::_2));
 
         // Listen on port 9002
-        server_m.listen(GlobalsSinglton::get_instance()->get_port());
+        server_m.listen(GlobalsSingleton::get_instance()->get_port());
     }
     catch (websocketpp::exception const& e) {
         std::cout << e.what() << std::endl;

@@ -1,8 +1,9 @@
-#include "calibration_util.hpp"
+#include <utils/calibration_util.hpp>
 #include <vector>
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
+#include <utils/color_conversions.hpp>
 
 cv::Mat btrgb::calibration::build_target_avg_matrix(ColorTarget targets[], int target_count, int channel_count){
     int row_count = targets[0].get_row_count();

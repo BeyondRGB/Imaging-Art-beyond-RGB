@@ -1,8 +1,10 @@
-
-
-#include "process_manager.hpp"
-
+#include <server/process_manager.hpp>
 #include <iostream>
+#include <backend_process/ColorManagedImage.hpp>
+#include <backend_process/ReportRequest.hpp>
+#include <backend_process/SpectralPicker.hpp>
+#include <backend_process/SpectralPickerMeasured.hpp>
+#include <backend_process/ThumbnailLoader.hpp>
 
 void ProcessManager::process_request(std::string request, std::shared_ptr<CommunicationObj> coms_obj) {
 	this->set_coms_obj(coms_obj);

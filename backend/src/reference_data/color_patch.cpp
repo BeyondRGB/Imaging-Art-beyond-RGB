@@ -1,5 +1,5 @@
-#include "color_patch.hpp"
-#include <math.h>
+#include <reference_data/color_patch.hpp>
+#include <utils/color_conversions.hpp>
 
 ColorPatch::ColorPatch(short row, short col, Illuminants* illum, StandardObserver* so, WhitePoints* white_pts) {
 	this->row = row;

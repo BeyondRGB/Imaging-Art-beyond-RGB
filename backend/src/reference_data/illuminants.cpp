@@ -1,4 +1,5 @@
-#include "illuminants.hpp"
+#include <reference_data/illuminants.hpp>
+#include <reference_data/ref_data_defines.hpp>
 
 Illuminants::Illuminants(IlluminantType type) {
 	this->type = type;
