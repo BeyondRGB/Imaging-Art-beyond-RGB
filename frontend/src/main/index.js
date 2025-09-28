@@ -1,7 +1,7 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const child_process = require('child_process');
-const getPortSync = require('get-port-sync');
+const {getPort} = require('get-port-please');
 const { shell } = require('electron')
 
 let freePort = 47382;
@@ -10,7 +10,7 @@ try {
   if (process.env.ELEC_ENV === 'dev') {
     freePort = 9002;
   } else {
-    freePort = getPortSync();
+    freePort = getPort();
   }
   console.log(freePort);
 } catch (e) {
@@ -26,9 +26,9 @@ else {
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
-  setTimeout(app.quit, 1000);
-}
+// if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
+//   setTimeout(app.quit, 1000);
+// }
 
 process.on('loaded', (event, args) => {
   console.log('LOADED');
