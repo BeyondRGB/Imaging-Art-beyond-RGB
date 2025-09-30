@@ -25,7 +25,8 @@ if [ $? -ne 0 ]; then
     exit
 fi
 
-cd .. || exit
+# Go back to root of the script
+cd ../.. || exit
 
 if [ -d ../frontend/ ]; then
     # Make sure the release directory is gone so that the
@@ -43,4 +44,6 @@ if [ -d ../frontend/ ]; then
     # Copy resource files over.
     mkdir ../frontend/res/
     cp -rv ./res/* ../frontend/res/
+else
+    echo "! Could not find the frontend files to copy the backend into..."
 fi
