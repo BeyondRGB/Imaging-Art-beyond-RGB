@@ -88,7 +88,7 @@
       }
     }
 
-    if (verifyPos) {
+      if (verifyPos) {
       $processState.artStacks[0].verificationTarget.top = verifyPos.top;
       $processState.artStacks[0].verificationTarget.left = verifyPos.left;
       $processState.artStacks[0].verificationTarget.bottom = verifyPos.bottom;
@@ -102,6 +102,9 @@
         verifyTarget.whitePatch;
       $processState.artStacks[0].verificationTarget.refData =
         verifyTarget.refData;
+      // Verification does not support rotation, but the backend is expecting it in the package.
+      $processState.artStacks[0].verificationTarget.calibrationTargetRotationAngle = 0
+
       if (verifyTarget.refData.name !== "CUSTOM DATA") {
         $processState.artStacks[0].verificationTarget.refData.name =
           verifyTarget.refData.name;
