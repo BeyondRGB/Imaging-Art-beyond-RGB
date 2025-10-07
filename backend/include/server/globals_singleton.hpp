@@ -2,6 +2,9 @@
 #define GLOBALS_SINGLTON_H
 
 #include <string>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 class GlobalsSingleton {
 public:
@@ -21,7 +24,7 @@ private:
 	GlobalsSingleton() {}
 	static GlobalsSingleton* instance;
 	bool is_test_m = false;
-	std::string app_root_m = "./";
+	std::string app_root_m = fs::canonical("./..");
 	int port = 9002;
 
 };

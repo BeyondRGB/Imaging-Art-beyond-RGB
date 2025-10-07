@@ -1,6 +1,8 @@
 #ifndef REF_DATA_DEFINE
 #define REF_DATA_DEFINE
 
+#include "server/globals_singleton.hpp"
+
 #define MAX_WAVE_LEN 730 // max wave length value
 #define MIN_WAVE_LEN 380 // min wave length value
 #define SAMPLING_INCREMENT 10 // wave length increments
@@ -13,8 +15,8 @@
 #define STANDARD_OBSERVER_SIZE REFLECTANCE_SIZE
 
 
-#define BASE_PATH "./" // relative to executable
-#define REF_DATA_PATH BASE_PATH "/res/ref_data/"
+#define BASE_PATH GlobalsSingleton::get_instance()->app_root()+"/"+ // relative to executable
+#define REF_DATA_PATH BASE_PATH "res/ref_data/"
 #define ILLUMINANTS_FILE_PATH REF_DATA_PATH "Illuminants.csv"
 #define STANDARD_OBSERVER_1931_PATH REF_DATA_PATH "Standard_Observer_1931.csv"
 #define STANDARD_OBSERVER_1964_PATH REF_DATA_PATH "Standard_Observer_1964.csv"
