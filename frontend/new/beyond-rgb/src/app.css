@@ -1,0 +1,18 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+/* Theme configurations are done here. */
+@theme {
+    /*--color-gray-50:  #f2f2f7;*/
+    /*--color-gray-100: #e5e5ea;*/
+    /*--color-gray-200: #c7c7cc;*/
+    /*--color-gray-300: #939394;*/
+    /*--color-gray-400: #8e8e93;*/
+    /*--color-gray-500: #636366;*/
+    /*--color-gray-600: #3a3a3c;*/
+    /*--color-gray-700: #2c2c2e;*/
+    /*--color-gray-800: #1c1c1e;*/
+    /*--color-gray-900: #0e0e0f;*/
+
+
+}
