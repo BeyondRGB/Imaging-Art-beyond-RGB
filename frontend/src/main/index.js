@@ -7,15 +7,13 @@ const { shell } = require('electron')
 let freePort = 47382;
 
 
+
+
 if (process.env.ELEC_ENV === 'dev') {
   freePort = 9002;
 } else {
-  getPort().then((port) => { // wait until free port found
-    console.log("Using port " + port);
-    freePort = port;
-  }, (reason) => { // if free port could not be found, print why
-    console.log("Error! could not find free port due to " + reason);
-  });
+  (async () => { freePort = await getPort();
+                  console.log("Using port " + freePort); })(); //apparently this works for awaiting async functions inside sync environment
 }
 
 var executablePath;
