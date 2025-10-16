@@ -10,7 +10,7 @@ try {
   if (process.env.ELEC_ENV === 'dev') {
     freePort = 9002;
   } else {
-    freePort = getPort();
+    freePort = await getPort();
   }
   console.log(freePort);
 } catch (e) {
@@ -26,9 +26,9 @@ else {
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-// if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
-//   setTimeout(app.quit, 1000);
-// }
+if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
+  setTimeout(app.quit, 1000);
+}
 
 process.on('loaded', (event, args) => {
   console.log('LOADED');
