@@ -1,21 +1,21 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const child_process = require('child_process');
-const getPortSync = require('get-port-sync');
+const {getPort} = require('get-port-please');
 const { shell } = require('electron')
 
 let freePort = 47382;
 
-try {
-  if (process.env.ELEC_ENV === 'dev') {
-    freePort = 9002;
-  } else {
-    freePort = getPortSync();
-  }
-  console.log(freePort);
-} catch (e) {
-  console.log(e);
+
+
+
+if (process.env.ELEC_ENV === 'dev') {
+  freePort = 9002;
+} else {
+  (async () => { freePort = await getPort();
+                  console.log("Using port " + freePort); })(); //apparently this works for awaiting async functions inside sync environment
 }
+
 var executablePath;
 var loader;
 
