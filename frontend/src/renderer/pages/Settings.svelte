@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Switch from "@components/Switch.svelte";
+  import SwitchRow from "@components/SwitchRow.svelte";
   import { appSettings } from "@util/stores";
 </script>
 
@@ -10,21 +10,20 @@
     <div class="section">
       <h2>Interface</h2>
       
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-label">Side Menu</span>
-          <span class="setting-desc">Display navigation on the left side</span>
-        </div>
-        <Switch bind:checked={$appSettings.sideNav} />
-      </div>
+      <SwitchRow
+        label="Side Menu"
+        description="Display navigation on the left side"
+        bind:checked={$appSettings.sideNav}
+        ariaLabel="Toggle side menu navigation"
+      />
 
-      <div class="setting-row disabled">
-        <div class="setting-info">
-          <span class="setting-label">Theme</span>
-          <span class="setting-desc">not fully supported yet</span>
-        </div>
-        <Switch checked={true} on:click={(e) => e.preventDefault()} />
-      </div>
+      <SwitchRow
+        label="Theme"
+        description="not fully supported yet"
+        checked={true}
+        disabled={true}
+        ariaLabel="Toggle dark theme (currently disabled)"
+      />
     </div>
   </div>
 </main>
@@ -48,27 +47,6 @@
 
   h2 {
     @apply text-sm font-medium text-gray-400 uppercase tracking-wider mb-2;
-  }
-
-  .setting-row {
-    @apply flex items-center justify-between gap-6 py-3 px-4 
-           bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors;
-  }
-
-  .setting-row.disabled {
-    @apply opacity-50 cursor-not-allowed hover:bg-gray-700/50;
-  }
-
-  .setting-info {
-    @apply flex flex-col gap-1 flex-1;
-  }
-
-  .setting-label {
-    @apply text-base text-gray-100 font-medium;
-  }
-
-  .setting-desc {
-    @apply text-sm text-gray-400;
   }
 
   .settings::-webkit-scrollbar {
