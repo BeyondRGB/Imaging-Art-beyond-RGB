@@ -38,7 +38,7 @@
       <div class="setting-row disabled">
         <div class="setting-info">
           <span class="setting-label">Theme</span>
-          <span class="setting-desc">Light theme coming soon</span>
+          <span class="setting-desc">not fully supported yet</span>
         </div>
         <Switch checked={true} on:click={(e) => e.preventDefault()} />
       </div>
