@@ -46,7 +46,6 @@
       preserveImageSizeOnResize: false,
       maxZoomPixelRatio: 30,
       zoomPerScroll: 1.15,
-      // zoomPerScroll: 1.5,
       visibilityRatio: 1,
       animationTime: 0.4,
     });
@@ -166,6 +165,12 @@
       } else if (id === 1) {
         verifyOverlay = true;
       }
+      // TODO: idea for fixing resizing of rotated image:
+      // Lock the corner opposite of the selected corner
+      // When the selected corner moves, make changes to the other 2 as well. 
+      // Attempt to give example: selected x increase, then the corner with the same y-value also increase x.
+      // potential problems: not working on simple x,y plane cuz rotated
+
       trackers[id] = new OpenSeadragon.MouseTracker({
         element: `sBox-${id}`,
         pressHandler: function (e) {
