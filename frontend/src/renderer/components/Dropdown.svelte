@@ -89,34 +89,34 @@
 
 <style lang="postcss">
   .refDataBtn {
-    @apply bg-gray-800/75 z-50 text-sm flex justify-between items-center
-          gap-1 p-0 pl-1;
+    @apply bg-gray-700 z-50 text-sm flex justify-between items-center
+          gap-1 p-0 pl-3 rounded-lg hover:bg-gray-600 transition-colors;
   }
   .invalid {
-    @apply focus:ring-red-600;
+    @apply ring-2 ring-red-500;
   }
   .body {
-    @apply bg-gray-600 z-50 hidden fixed;
+    @apply bg-gray-700 z-50 hidden fixed border border-gray-600;
   }
   .shown {
-    @apply block bg-gray-600 rounded-md fixed;
+    @apply block bg-gray-700 rounded-lg fixed shadow-xl;
   }
   li {
-    @apply list-none hover:text-blue-300 px-2 py-1 hover:bg-blue-800/25  rounded-md;
+    @apply list-none text-gray-200 hover:text-gray-50 px-3 py-2 hover:bg-gray-600 rounded-md cursor-pointer;
   }
   .background {
     @apply fixed top-0 left-0 w-full h-full z-10 block float-none;
   }
   .iconSqu {
-    @apply bg-blue-600/75 h-full w-full rounded-r-lg p-0.5 py-1;
+    @apply bg-gray-600 h-full w-full rounded-r-lg p-1.5 py-2;
   }
   .invalid .iconSqu {
     @apply bg-red-600;
   }
   .btnText {
-    @apply p-0.5 py-1 whitespace-nowrap;
+    @apply py-2 whitespace-nowrap text-gray-100;
   }
   .sep {
-    @apply bg-gray-500 h-0.5 flex justify-center items-center mx-4 rounded-lg my-0.5;
+    @apply bg-gray-600 h-px flex justify-center items-center mx-2 my-1;
   }
 </style>
