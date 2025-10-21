@@ -1,23 +1,6 @@
 <script lang="ts">
   import Switch from "@components/Switch.svelte";
-  import Dropdown from "@components/Dropdown.svelte";
   import { appSettings } from "@util/stores";
-
-  // Sharpening options
-  const sharpeningOptions = [
-    { name: "None", value: "N", fileName: "", standardObserver: 1931, illuminants: "" },
-    { name: "Low", value: "L", fileName: "", standardObserver: 1931, illuminants: "" },
-    { name: "Medium", value: "M", fileName: "", standardObserver: 1931, illuminants: "" },
-    { name: "High", value: "H", fileName: "", standardObserver: 1931, illuminants: "" },
-  ];
-
-  let selectedSharpening = sharpeningOptions.find(
-    (opt) => opt.value === $appSettings.defaultSharpening
-  ) || sharpeningOptions[0];
-
-  $: if (selectedSharpening) {
-    $appSettings.defaultSharpening = selectedSharpening.value;
-  }
 </script>
 
 <main>
@@ -41,18 +24,6 @@
           <span class="setting-desc">not fully supported yet</span>
         </div>
         <Switch checked={true} on:click={(e) => e.preventDefault()} />
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Processing</h2>
-      
-      <div class="setting-row">
-        <div class="setting-info">
-          <span class="setting-label">Default Sharpening</span>
-          <span class="setting-desc">Applied to new images</span>
-        </div>
-        <Dropdown values={sharpeningOptions} bind:selected={selectedSharpening} />
       </div>
     </div>
   </div>
