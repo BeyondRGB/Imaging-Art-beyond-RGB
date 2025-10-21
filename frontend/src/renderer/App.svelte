@@ -64,8 +64,7 @@
 
 	appSettings.set({
 		theme: false,
-		sideNav: $appSettings.sideNav,
-		defaultSharpening: $appSettings.defaultSharpening ?? "N"
+		sideNav: $appSettings.sideNav
 	});
 	let theme = "dark";
 
@@ -96,7 +95,9 @@
 	// });
 	// ------
 	let pages;
-	$: if (pages) {
+	
+	// Only scroll when the current page actually changes, not when sideNav toggles
+	$: if (pages && $currentPage) {
 		let activePages = [];
 		Object.keys(routes).map((key) => {
 			if (routes[key].page && !routes[key].disabled) {
@@ -104,26 +105,28 @@
 			}
 		});
 
-		let width = pages.scrollWidth;
-		let height = pages.scrollHeight;
+		// Use setTimeout to ensure dimensions are updated after layout change
+		setTimeout(() => {
+			if (!pages) return;
+			
+			let width = pages.scrollWidth;
+			let height = pages.scrollHeight;
+			let pageIndex = activePages.findIndex((item) => item === $currentPage);
 
-		if ($appSettings.sideNav) {
-			pages.scroll({
-				top:
-					activePages.findIndex((item) => item === $currentPage) *
-					(height / activePages.length),
-				left: 0,
-				behavior: "smooth",
-			});
-		} else {
-			pages.scroll({
-				top: 0,
-				left:
-					activePages.findIndex((item) => item === $currentPage) *
-					(width / activePages.length),
-				behavior: "smooth",
-			});
-		}
+			if ($appSettings.sideNav) {
+				pages.scroll({
+					top: pageIndex * (height / activePages.length),
+					left: 0,
+					behavior: "smooth",
+				});
+			} else {
+				pages.scroll({
+					top: 0,
+					left: pageIndex * (width / activePages.length),
+					behavior: "smooth",
+				});
+			}
+		}, 0);
 	}
 </script>
 

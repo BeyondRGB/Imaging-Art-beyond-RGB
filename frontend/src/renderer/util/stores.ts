@@ -4,8 +4,7 @@ import { writable, derived } from 'svelte/store';
 export const currentPage = writable(null);
 export const appSettings = writable({ 
   theme: false, 
-  sideNav: true,
-  defaultSharpening: "N"
+  sideNav: true
 });
 export const modal = writable(null);
 
