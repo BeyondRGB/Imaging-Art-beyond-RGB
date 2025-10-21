@@ -93,48 +93,13 @@
 	// 		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
 	// 	});
 	// });
-	// ------
-	let pages;
-	
-	// Only scroll when the current page actually changes, not when sideNav toggles
-	$: if (pages && $currentPage) {
-		let activePages = [];
-		Object.keys(routes).map((key) => {
-			if (routes[key].page && !routes[key].disabled) {
-				activePages.push(key);
-			}
-		});
-
-		// Use setTimeout to ensure dimensions are updated after layout change
-		setTimeout(() => {
-			if (!pages) return;
-			
-			let width = pages.scrollWidth;
-			let height = pages.scrollHeight;
-			let pageIndex = activePages.findIndex((item) => item === $currentPage);
-
-			if ($appSettings.sideNav) {
-				pages.scroll({
-					top: pageIndex * (height / activePages.length),
-					left: 0,
-					behavior: "smooth",
-				});
-			} else {
-				pages.scroll({
-					top: 0,
-					left: pageIndex * (width / activePages.length),
-					behavior: "smooth",
-				});
-			}
-		}, 0);
-	}
 </script>
 
 <main class={theme}>
 	<div class="app {theme}" class:sideMenu={$appSettings.sideNav}>
 		<Menu {routes} />
 
-		<Page {routes} bind:pages />
+		<Page {routes} />
 	</div>
 </main>
 
