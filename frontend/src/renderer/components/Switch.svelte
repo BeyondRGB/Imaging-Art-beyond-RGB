@@ -2,16 +2,17 @@
   export let label: string = "Placeholder...";
   export let checked: boolean = false;
   export let large = false;
+  export let disabled: boolean = false;
   import { appSettings } from "@util/stores";
 
   $: theme = $appSettings.theme ? "dark" : "";
 </script>
 
-<label class="group" class:large>
+<label class="group" class:large class:disabled>
   {#if label}
     <p>{label}</p>
   {/if}
-  <input type="checkbox" class="peer" bind:checked />
+  <input type="checkbox" class="peer" bind:checked {disabled} />
   <span />
 </label>
 
@@ -33,6 +34,9 @@
     @apply text-xl;
   }
   input {
-    @apply absolute left-0 top-0 w-full h-full appearance-none cursor-pointer opacity-0;
+    @apply absolute left-0 top-0 w-full h-full appearance-none opacity-0;
+  }
+  .disabled {
+    @apply opacity-50;
   }
 </style>
