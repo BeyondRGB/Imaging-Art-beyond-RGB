@@ -9,3 +9,4 @@ opencv4
 boost-asio
 openssl
 zlib
+catch2

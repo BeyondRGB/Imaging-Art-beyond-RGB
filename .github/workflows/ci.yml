@@ -81,9 +81,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
+          node-version: '20'
 
       # ========================================
       # vcpkg caching for backend
@@ -115,20 +113,37 @@ jobs:
         if: matrix.platform == 'macos'
         working-directory: backend
         run: |
-          chmod +x osx_config_environment.sh osx_release.sh
+          chmod +x osx_config_environment.sh
           # First time setup if vcpkg doesn't exist
           if [ ! -d "vcpkg/installed" ]; then
             echo "Setting up vcpkg for first time..."
             ./osx_config_environment.sh
           fi
-          # Build with verbose output
-          echo "Starting build process..."
-          set -x  # Enable debug output
-          ./osx_release.sh
-          set +x  # Disable debug output
+          
+          # Determine architecture
+          if [ "$(uname -m)" = "arm64" ]; then
+            TRIPLET="arm64-osx"
+          else
+            TRIPLET="x64-osx"
+          fi
+          
+          # Build main backend (tests disabled by default)
+          echo "Building backend for $TRIPLET..."
+          cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=$TRIPLET -D ENABLE_TESTS=OFF
+          cmake --build ./build/Release --verbose
+          
           echo "Build completed. Checking for binary..."
           ls -la build/Release/ || echo "No build/Release directory"
-          find build -name "*backend*" -type f || echo "No backend binary found"
+          find build/Release -name "*backend*" -type f || echo "No backend binary found"
+          
+          # Build unit tests separately
+          echo "Building unit tests..."
+          cmake -B ./build/Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=$TRIPLET -D ENABLE_TESTS=ON
+          cmake --build ./build/Tests
+          
+          echo "Checking for test binary..."
+          ls -la build/Tests/ || echo "No build/Tests directory"
+          find build/Tests -name "unit_tests" -type f || echo "No unit_tests binary found"
 
       - name: Setup and Build Backend (Linux)
         if: matrix.platform == 'linux'
@@ -140,32 +155,87 @@ jobs:
             echo "Setting up vcpkg for first time..."
             ./linux_config_environment.sh
           fi
-          # Build with verbose output
-          echo "Starting build process..."
-          set -x  # Enable debug output
-          ./linux_release.sh
-          set +x  # Disable debug output
+          
+          # Build main backend (tests disabled by default)
+          echo "Building backend..."
+          cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-linux -D ENABLE_TESTS=OFF
+          cmake --build ./build/Release --verbose
+          
           echo "Build completed. Checking for binary..."
           ls -la build/Release/ || echo "No build/Release directory"
-          find build -name "*backend*" -type f || echo "No backend binary found"
+          find build/Release -name "*backend*" -type f || echo "No backend binary found"
+          
+          # Build unit tests separately
+          echo "Building unit tests..."
+          cmake -B ./build/Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-linux -D ENABLE_TESTS=ON
+          cmake --build ./build/Tests
+          
+          echo "Checking for test binary..."
+          ls -la build/Tests/ || echo "No build/Tests directory"
+          find build/Tests -name "unit_tests" -type f || echo "No unit_tests binary found"
 
       - name: Setup and Build Backend (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
+        timeout-minutes: 90
         run: |
           REM First time setup if vcpkg doesn't exist
           if not exist "vcpkg\installed" (
             echo Setting up vcpkg for first time...
             call vcpkg_first_time_setup.bat
           )
-          REM Build with verbose output
-          echo Starting build process...
-          call win10_release.bat
+          
+          REM Build main backend (tests disabled by default)
+          echo Building backend...
+          cmake -B .\build\Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=OFF
+          cmake --build .\build\Release --config Release --verbose
+          
           echo Build completed. Checking for binary...
-          dir build\Release\ /b || echo No build\Release directory
-          dir /s /b build\*backend* || echo No backend binary found
+          dir build\Release\Release\ /b 2>nul || dir build\Release\ /b || echo No binary found
+          
+          REM Build unit tests separately
+          echo Building unit tests...
+          cmake -B .\build\Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=ON
+          cmake --build .\build\Tests --config Release
+          
+          echo Checking for test binary...
+          dir build\Tests\Release\ /b 2>nul || dir build\Tests\ /b || echo No test binary found
 
+      # ========================================
+      # Backend Unit Tests
+      # ========================================
+      
+      - name: Run Backend Unit Tests (Unix)
+        if: matrix.platform != 'windows'
+        working-directory: backend/build/Tests
+        run: |
+          if [ -f "unit_tests" ]; then
+            echo "Running unit tests..."
+            ./unit_tests
+          else
+            echo "⚠️  Unit tests binary not found"
+            find . -name "unit_tests" -type f || echo "Searched but not found"
+            exit 1
+          fi
+
+      - name: Run Backend Unit Tests (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: backend/build/Tests
+        shell: cmd
+        run: |
+          if exist "Release\unit_tests.exe" (
+            echo Running unit tests...
+            Release\unit_tests.exe
+          ) else if exist "unit_tests.exe" (
+            echo Running unit tests...
+            unit_tests.exe
+          ) else (
+            echo Unit tests binary not found
+            dir /s /b unit_tests.exe 2>nul || echo Not found in any subdirectory
+            exit /b 1
+          )
+      
       # ========================================
       # Backend Smoke Test
       # ========================================
@@ -190,7 +260,7 @@ jobs:
       
       - name: Install Frontend Dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install
 
       - name: Build Frontend (Development)
         working-directory: frontend

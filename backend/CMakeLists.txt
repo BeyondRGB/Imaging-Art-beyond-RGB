@@ -182,6 +182,57 @@ endif()
 # Set C++ standard
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
+# Testing Support
+option(ENABLE_TESTS "Enable building unit tests" OFF)
+
+if(ENABLE_TESTS)
+    enable_testing()
+    find_package(Catch2 3 CONFIG REQUIRED)
+    
+    # Create test executable
+    add_executable(unit_tests
+        test/unit/test_main.cpp
+        test/unit/test_color_conversions.cpp
+        test/unit/test_matrix_utils.cpp
+        test/unit/test_csv_parser.cpp
+        
+        # Include necessary source files for testing
+        src/utils/color_conversions.cpp
+        src/utils/csv_parser.cpp
+        src/reference_data/white_points.cpp
+        src/reference_data/standard_observer.cpp
+        src/reference_data/illuminants.cpp
+        src/reference_data/ref_data.cpp
+        src/reference_data/ref_data_array.cpp
+        src/reference_data/color_patch.cpp
+    )
+    
+    # Link test executable with Catch2 and project sources
+    target_link_libraries(unit_tests PRIVATE Catch2::Catch2WithMain)
+    target_include_directories(unit_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    
+    # Link the same libraries as main project
+    target_link_libraries(unit_tests PRIVATE asio asio::asio)
+    target_link_libraries(unit_tests PRIVATE jsoncons)
+    target_link_libraries(unit_tests PRIVATE ${OpenCV_LIBS})
+    target_link_libraries(unit_tests PRIVATE ${TIFF_LIBRARIES})
+    target_link_libraries(unit_tests PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
+    target_link_libraries(unit_tests PRIVATE PNG::PNG)
+    
+    # Platform-specific libs for tests
+    if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "arm64-osx")
+        target_link_libraries(unit_tests PRIVATE Threads::Threads)
+        target_link_libraries(unit_tests PRIVATE OpenMP::OpenMP_CXX)
+    endif()
+    
+    # Register tests with CTest
+    include(CTest)
+    include(Catch)
+    catch_discover_tests(unit_tests)
+    
+    message(STATUS "Unit tests enabled")
+endif()
+
 # Code Coverage Support (optional, enabled with -DENABLE_COVERAGE=ON)
 option(ENABLE_COVERAGE "Enable code coverage reporting" OFF)
 
