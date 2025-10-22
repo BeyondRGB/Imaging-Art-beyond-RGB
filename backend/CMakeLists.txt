@@ -24,7 +24,15 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 #------------------------------------------
 #Add VCPKG provided find_package Here
 #------------------------------------------
-find_package(asio CONFIG REQUIRED)
+find_package(asio CONFIG QUIET)
+if(NOT asio_FOUND)
+    message(STATUS "Standalone ASIO not found, falling back to boost-asio")
+    find_package(boost_asio CONFIG REQUIRED)
+    set(ASIO_FALLBACK_TO_BOOST ON)
+else()
+    message(STATUS "Using standalone ASIO")
+    set(ASIO_FALLBACK_TO_BOOST OFF)
+endif()
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
 find_package(PNG REQUIRED)
@@ -152,7 +160,11 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     _WEBSOCKETPP_CPP11_STL_
 )
 # VCPKG provided target_link_libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE asio asio::asio)
+if(ASIO_FALLBACK_TO_BOOST)
+    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio)
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE asio::asio)
+endif()
 target_link_libraries(${PROJECT_NAME} PRIVATE jsoncons)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CPPCODEC_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
@@ -205,7 +217,11 @@ if(ENABLE_TESTS)
     target_include_directories(unit_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     
     # Link the same libraries as main project
-    target_link_libraries(unit_tests PRIVATE asio asio::asio)
+    if(ASIO_FALLBACK_TO_BOOST)
+        target_link_libraries(unit_tests PRIVATE Boost::asio)
+    else()
+        target_link_libraries(unit_tests PRIVATE asio::asio)
+    endif()
     target_link_libraries(unit_tests PRIVATE jsoncons)
     target_link_libraries(unit_tests PRIVATE ${OpenCV_LIBS})
     target_link_libraries(unit_tests PRIVATE ${TIFF_LIBRARIES})

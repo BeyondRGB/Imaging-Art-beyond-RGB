@@ -160,12 +160,13 @@ jobs:
         working-directory: backend
         run: |
           chmod +x linux_config_environment.sh
-          
+
           # Always run setup (idempotent installs)
           ./linux_config_environment.sh
-          
+
+          TRIPLET="x64-linux"
           VCPKG_ROOT="$(pwd)/vcpkg"
-          
+
           # Build unit tests only (no release binaries on push/PR)
           echo "Building unit tests..."
           cmake -B ./build/Tests -S . \

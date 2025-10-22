@@ -12,12 +12,20 @@ else
     cd ..
 fi
 
+# Set default triplet for Linux
+TRIPLET="x64-linux"
+
+echo "Installing dependencies for Linux ($TRIPLET)..."
+
 # Install dependencies with explicit triplet.
 packages=$(cat "dependencies.txt")
 for p in $packages
 do
-    echo "Installing $p for x64-linux..."
-    vcpkg/vcpkg install $p:x64-linux
+    echo "Installing $p for $TRIPLET..."
+    if ! vcpkg/vcpkg install $p:$TRIPLET; then
+        echo "Warning: Failed to install $p for $TRIPLET, trying without triplet..."
+        vcpkg/vcpkg install $p
+    fi
 done
 
 echo "All vcpkg dependencies installed successfully!"
