@@ -1,17 +1,17 @@
 #!/bin/sh
 minimum_macOS_version=10.15
 
-# If vcpkg not set-up, clone and bootstrap.
-if ! [ -d "vcpkg" ]; then
+# Ensure a healthy vcpkg checkout (handle partial caches)
+if [ ! -d "vcpkg" ] || [ ! -d "vcpkg/.git" ] || [ ! -f "vcpkg/bootstrap-vcpkg.sh" ]; then
+    rm -rf vcpkg
     git clone https://github.com/microsoft/vcpkg.git
     sh vcpkg/bootstrap-vcpkg.sh
+else
+    cd vcpkg || exit
+    git pull --ff-only
+    sh bootstrap-vcpkg.sh
+    cd ..
 fi
-
-# Check for vcpkg updates. Exit if fail.
-cd vcpkg || exit
-git pull --ff-only
-sh bootstrap-vcpkg.sh
-cd ..
 
 # Only Apple Silicon (arm64) is supported - Intel Macs are no longer supported
 TRIPLET="arm64-osx"

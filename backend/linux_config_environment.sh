@@ -1,16 +1,16 @@
 #!/bin/sh
 
-# If vcpkg not set-up, clone and bootstrap.
-if ! [ -d "vcpkg" ]; then
+# Ensure a healthy vcpkg checkout (handle partial caches)
+if [ ! -d "vcpkg" ] || [ ! -d "vcpkg/.git" ] || [ ! -f "vcpkg/bootstrap-vcpkg.sh" ]; then
+    rm -rf vcpkg
     git clone https://github.com/microsoft/vcpkg
     sh vcpkg/bootstrap-vcpkg.sh
+else
+    cd vcpkg || exit
+    git pull --ff-only
+    sh bootstrap-vcpkg.sh
+    cd ..
 fi
-
-# Check for vcpkg updates.
-cd vcpkg
-git pull --ff-only
-sh bootstrap-vcpkg.sh
-cd ..
 
 # Install dependencies with explicit triplet.
 packages=$(cat "dependencies.txt")

@@ -101,9 +101,6 @@ jobs:
             backend/vcpkg/installed
             backend/vcpkg/buildtrees
             backend/vcpkg/packages
-            backend/vcpkg/scripts
-            backend/vcpkg/vcpkg
-            backend/vcpkg/.git
           key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
           restore-keys: |
             vcpkg-${{ matrix.platform }}-
