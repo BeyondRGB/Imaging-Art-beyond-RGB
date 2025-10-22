@@ -121,8 +121,14 @@ jobs:
             echo "Setting up vcpkg for first time..."
             ./osx_config_environment.sh
           fi
-          # Build
+          # Build with verbose output
+          echo "Starting build process..."
+          set -x  # Enable debug output
           ./osx_release.sh
+          set +x  # Disable debug output
+          echo "Build completed. Checking for binary..."
+          ls -la build/Release/ || echo "No build/Release directory"
+          find build -name "*backend*" -type f || echo "No backend binary found"
 
       - name: Setup and Build Backend (Linux)
         if: matrix.platform == 'linux'
@@ -134,8 +140,14 @@ jobs:
             echo "Setting up vcpkg for first time..."
             ./linux_config_environment.sh
           fi
-          # Build
+          # Build with verbose output
+          echo "Starting build process..."
+          set -x  # Enable debug output
           ./linux_release.sh
+          set +x  # Disable debug output
+          echo "Build completed. Checking for binary..."
+          ls -la build/Release/ || echo "No build/Release directory"
+          find build -name "*backend*" -type f || echo "No backend binary found"
 
       - name: Setup and Build Backend (Windows)
         if: matrix.platform == 'windows'
@@ -147,8 +159,12 @@ jobs:
             echo Setting up vcpkg for first time...
             call vcpkg_first_time_setup.bat
           )
-          REM Build
+          REM Build with verbose output
+          echo Starting build process...
           call win10_release.bat
+          echo Build completed. Checking for binary...
+          dir build\Release\ /b || echo No build\Release directory
+          dir /s /b build\*backend* || echo No backend binary found
 
       # ========================================
       # Backend Smoke Test

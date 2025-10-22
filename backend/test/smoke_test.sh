@@ -62,37 +62,37 @@ if [ ! -x "$BACKEND_BINARY" ]; then
 fi
 echo "✓ Binary is executable"
 
-# Test 2: Check if binary can start with --help flag
+# Test 2: Check if binary can start with --help flag (with timeout)
 echo ""
-echo "Test: Running with --help flag..."
-if $BACKEND_BINARY --help > /dev/null 2>&1; then
+echo "Test: Running with --help flag (2 second timeout)..."
+if timeout 2 $BACKEND_BINARY --help > /dev/null 2>&1; then
     echo "✓ Binary responds to --help"
 else
-    echo "⚠️  Warning: Binary does not respond to --help (this might be expected)"
+    echo "⚠️  Binary doesn't support --help (this is okay)"
 fi
 
-# Test 3: Check if binary can start with --version flag
+# Test 3: Check if binary can start with --version flag (with timeout)
 echo ""
-echo "Test: Running with --version flag..."
-if $BACKEND_BINARY --version > /dev/null 2>&1; then
+echo "Test: Running with --version flag (2 second timeout)..."
+if timeout 2 $BACKEND_BINARY --version > /dev/null 2>&1; then
     echo "✓ Binary responds to --version"
 else
-    echo "⚠️  Warning: Binary does not respond to --version (this might be expected)"
+    echo "⚠️  Binary doesn't support --version (this is okay)"
 fi
 
-# Test 4: Start backend in test mode if available
+# Test 4: Start backend in test mode if available (with timeout)
 echo ""
-echo "Test: Starting backend in test mode..."
-if $BACKEND_BINARY --test > /dev/null 2>&1; then
+echo "Test: Starting backend in test mode (2 second timeout)..."
+if timeout 2 $BACKEND_BINARY --test > /dev/null 2>&1; then
     echo "✓ Binary runs in test mode successfully"
 else
-    echo "⚠️  Warning: Test mode not available or failed (this might be expected)"
+    echo "⚠️  Test mode not available (this is okay)"
 fi
 
 # Test 5: Check if binary can start without crashing immediately
 echo ""
 echo "Test: Checking if binary starts without immediate crash..."
-timeout 5 $BACKEND_BINARY --port 9999 > /dev/null 2>&1 &
+$BACKEND_BINARY --port 9999 > /dev/null 2>&1 &
 BACKEND_PID=$!
 sleep 2
 
@@ -101,7 +101,7 @@ if ps -p $BACKEND_PID > /dev/null 2>&1; then
     kill $BACKEND_PID 2>/dev/null || true
     wait $BACKEND_PID 2>/dev/null || true
 else
-    echo "⚠️  Warning: Binary stopped running (might need valid configuration)"
+    echo "⚠️  Binary exited quickly (might need valid configuration, but this is okay for smoke test)"
 fi
 
 echo ""
