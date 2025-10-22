@@ -12,9 +12,14 @@ git pull --ff-only
 sh bootstrap-vcpkg.sh
 cd ..
 
-# Install dependencies.
+# Install dependencies with explicit triplet.
 packages=$(cat "dependencies.txt")
 for p in $packages
 do
-    vcpkg/vcpkg install $p
+    echo "Installing $p for x64-linux..."
+    vcpkg/vcpkg install $p:x64-linux
 done
+
+echo "All vcpkg dependencies installed successfully!"
+echo "Installed packages:"
+vcpkg/vcpkg list

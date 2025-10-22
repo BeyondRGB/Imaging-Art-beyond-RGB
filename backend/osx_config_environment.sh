@@ -13,9 +13,23 @@ git pull --ff-only
 sh bootstrap-vcpkg.sh
 cd ..
 
-# Install dependencies.
+# Determine architecture
+if [ "$(uname -m)" = "arm64" ]; then
+    TRIPLET="arm64-osx"
+else
+    TRIPLET="x64-osx"
+fi
+
+echo "Installing dependencies for $TRIPLET..."
+
+# Install dependencies with explicit triplet.
 packages=$(cat "dependencies.txt")
 for p in $packages
 do
-    vcpkg/vcpkg install $p
+    echo "Installing $p for $TRIPLET..."
+    vcpkg/vcpkg install $p:$TRIPLET
 done
+
+echo "All vcpkg dependencies installed successfully!"
+echo "Installed packages:"
+vcpkg/vcpkg list
