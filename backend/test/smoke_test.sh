@@ -8,6 +8,25 @@ echo "=========================================="
 echo "Backend Smoke Test"
 echo "=========================================="
 
+# Debug: Show what's in the build directory
+echo "Checking build directory contents..."
+if [ -d "build" ]; then
+    echo "Build directory exists. Contents:"
+    ls -la build/ || true
+    if [ -d "build/Release" ]; then
+        echo "build/Release contents:"
+        ls -la build/Release/ || true
+    fi
+    if [ -d "build/Debug" ]; then
+        echo "build/Debug contents:"
+        ls -la build/Debug/ || true
+    fi
+else
+    echo "❌ ERROR: build/ directory does not exist!"
+    echo "The backend build step may have failed."
+    exit 1
+fi
+
 # Find the backend executable
 BACKEND_BINARY=""
 
@@ -18,12 +37,19 @@ elif [ -f "build/Debug/beyond-rgb-backend" ]; then
     BACKEND_BINARY="build/Debug/beyond-rgb-backend"
 elif [ -f "build/beyond-rgb-backend" ]; then
     BACKEND_BINARY="build/beyond-rgb-backend"
+elif [ -f "../frontend/lib/beyond-rgb-backend" ]; then
+    # Check if it was copied to frontend
+    BACKEND_BINARY="../frontend/lib/beyond-rgb-backend"
 else
     echo "❌ ERROR: Could not find backend binary"
     echo "Searched in:"
     echo "  - build/Release/beyond-rgb-backend"
     echo "  - build/Debug/beyond-rgb-backend"
     echo "  - build/beyond-rgb-backend"
+    echo "  - ../frontend/lib/beyond-rgb-backend"
+    echo ""
+    echo "Build directory structure:"
+    find build -type f -name "*backend*" 2>/dev/null || echo "No backend binary found"
     exit 1
 fi
 

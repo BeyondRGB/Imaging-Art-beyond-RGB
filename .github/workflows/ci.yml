@@ -36,6 +36,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          
+      - name: Sync and update submodules
+        run: |
+          git submodule sync --recursive
+          git submodule update --init --recursive
 
       # ========================================
       # Platform-specific dependencies
@@ -106,27 +111,43 @@ jobs:
       # Build Backend
       # ========================================
       
-      - name: Build Backend (macOS)
+      - name: Setup and Build Backend (macOS)
         if: matrix.platform == 'macos'
         working-directory: backend
         run: |
           chmod +x osx_config_environment.sh osx_release.sh
-          ./osx_config_environment.sh
+          # First time setup if vcpkg doesn't exist
+          if [ ! -d "vcpkg/installed" ]; then
+            echo "Setting up vcpkg for first time..."
+            ./osx_config_environment.sh
+          fi
+          # Build
           ./osx_release.sh
 
-      - name: Build Backend (Linux)
+      - name: Setup and Build Backend (Linux)
         if: matrix.platform == 'linux'
         working-directory: backend
         run: |
           chmod +x linux_config_environment.sh linux_release.sh
-          ./linux_config_environment.sh
+          # First time setup if vcpkg doesn't exist
+          if [ ! -d "vcpkg/installed" ]; then
+            echo "Setting up vcpkg for first time..."
+            ./linux_config_environment.sh
+          fi
+          # Build
           ./linux_release.sh
 
-      - name: Build Backend (Windows)
+      - name: Setup and Build Backend (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
         run: |
+          REM First time setup if vcpkg doesn't exist
+          if not exist "vcpkg\installed" (
+            echo Setting up vcpkg for first time...
+            call vcpkg_first_time_setup.bat
+          )
+          REM Build
           call win10_release.bat
 
       # ========================================

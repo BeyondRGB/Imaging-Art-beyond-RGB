@@ -6,6 +6,25 @@ echo ==========================================
 echo Backend Smoke Test
 echo ==========================================
 
+REM Debug: Show what's in the build directory
+echo Checking build directory contents...
+if exist "build" (
+    echo Build directory exists. Contents:
+    dir /b build\
+    if exist "build\Release" (
+        echo build\Release contents:
+        dir /b build\Release\
+    )
+    if exist "build\Debug" (
+        echo build\Debug contents:
+        dir /b build\Debug\
+    )
+) else (
+    echo ERROR: build\ directory does not exist!
+    echo The backend build step may have failed.
+    exit /b 1
+)
+
 REM Find the backend executable
 set BACKEND_BINARY=
 
@@ -15,12 +34,18 @@ if exist "build\Release\beyond-rgb-backend.exe" (
     set BACKEND_BINARY=build\Debug\beyond-rgb-backend.exe
 ) else if exist "build\beyond-rgb-backend.exe" (
     set BACKEND_BINARY=build\beyond-rgb-backend.exe
+) else if exist "..\frontend\lib\beyond-rgb-backend.exe" (
+    set BACKEND_BINARY=..\frontend\lib\beyond-rgb-backend.exe
 ) else (
     echo ERROR: Could not find backend binary
     echo Searched in:
     echo   - build\Release\beyond-rgb-backend.exe
     echo   - build\Debug\beyond-rgb-backend.exe
     echo   - build\beyond-rgb-backend.exe
+    echo   - ..\frontend\lib\beyond-rgb-backend.exe
+    echo.
+    echo Build directory structure:
+    dir /s /b build\*backend* 2>nul
     exit /b 1
 )
 
