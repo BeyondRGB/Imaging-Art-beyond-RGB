@@ -3,11 +3,17 @@ cmake_minimum_required(VERSION 3.16)
 # Sets the CMAKE Toolchain to the vcpkg installed using ./arch_config_environment
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
-# VCPKG on macOS requires system architectures to be set.
-# Only Apple Silicon (arm64) is supported - Intel Macs are no longer supported.
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES)
-    set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "macOS architecture (Apple Silicon only)" FORCE)
-    message(STATUS "macOS: Building for Apple Silicon (arm64)")
+# VCPKG on macOS requires system architectures to be set, so set those here.
+# Requires a check for the right architecture (x_86 or arm64) as well as making sure
+# it is not already defined to allow the user to override it using the command line.
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES )
+    if (CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+        set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+        set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+    else()
+        message("Target architecture is unknown or different: ${CMAKE_SYSTEM_PROCESSOR}")
+    endif()
 endif()
 
 # Trace VCPKG package finding (Use for debugging VCPKG errors)
@@ -24,20 +30,13 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 #------------------------------------------
 #Add VCPKG provided find_package Here
 #------------------------------------------
-find_package(asio CONFIG QUIET)
-if(NOT asio_FOUND)
-    message(STATUS "Standalone ASIO not found, falling back to boost-asio")
-    find_package(boost_asio CONFIG REQUIRED)
-    set(ASIO_FALLBACK_TO_BOOST ON)
-else()
-    message(STATUS "Using standalone ASIO")
-    set(ASIO_FALLBACK_TO_BOOST OFF)
-endif()
+find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
 find_package(PNG REQUIRED)
 find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 
+set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
 find_package(OpenCV REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -160,11 +159,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     _WEBSOCKETPP_CPP11_STL_
 )
 # VCPKG provided target_link_libraries
-if(ASIO_FALLBACK_TO_BOOST)
-    target_link_libraries(${PROJECT_NAME} PRIVATE Boost::asio)
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE asio::asio)
-endif()
+target_link_libraries(${PROJECT_NAME} PRIVATE asio asio::asio)
 target_link_libraries(${PROJECT_NAME} PRIVATE jsoncons)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CPPCODEC_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS})
@@ -217,11 +212,7 @@ if(ENABLE_TESTS)
     target_include_directories(unit_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     
     # Link the same libraries as main project
-    if(ASIO_FALLBACK_TO_BOOST)
-        target_link_libraries(unit_tests PRIVATE Boost::asio)
-    else()
-        target_link_libraries(unit_tests PRIVATE asio::asio)
-    endif()
+    target_link_libraries(unit_tests PRIVATE asio asio::asio)
     target_link_libraries(unit_tests PRIVATE jsoncons)
     target_link_libraries(unit_tests PRIVATE ${OpenCV_LIBS})
     target_link_libraries(unit_tests PRIVATE ${TIFF_LIBRARIES})
@@ -240,19 +231,6 @@ if(ENABLE_TESTS)
     catch_discover_tests(unit_tests)
     
     message(STATUS "Unit tests enabled")
-endif()
-
-# Code Coverage Support (optional, enabled with -DENABLE_COVERAGE=ON)
-option(ENABLE_COVERAGE "Enable code coverage reporting" OFF)
-
-if(ENABLE_COVERAGE)
-    message(STATUS "Code coverage enabled")
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        target_compile_options(${PROJECT_NAME} PRIVATE --coverage -O0 -g)
-        target_link_options(${PROJECT_NAME} PRIVATE --coverage)
-    else()
-        message(WARNING "Code coverage not supported for this compiler")
-    endif()
 endif()
 
 # weird fix for linux to remove malformed macro included in lib dependency

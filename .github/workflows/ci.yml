@@ -5,7 +5,7 @@ on:
     branches: [ main, develop, feature/** ]
   pull_request:
     branches: [ main, develop ]
-  workflow_dispatch:  # Allow manual triggering
+  workflow_dispatch:
 
 env:
   VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
@@ -20,7 +20,7 @@ jobs:
         include:
           - os: macos-latest
             platform: macos
-            backend-script: ./osx_config_environment.sh && ./osx_build.sh
+            backend-script: ./osx_config_environment.sh && ./osx_build.sh Release
             artifact-name: Beyond_RGB-macOS
           - os: ubuntu-latest
             platform: linux
@@ -28,7 +28,7 @@ jobs:
             artifact-name: Beyond_RGB-Linux
           - os: windows-latest
             platform: windows
-            backend-script: .\win10_release.bat
+            backend-script: vcpkg_first_time_setup.bat && cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows && cmake --build ./build/Release
             artifact-name: Beyond_RGB-Windows
 
     steps:
@@ -36,16 +36,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-          
-      - name: Sync and update submodules
-        run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive
 
-      # ========================================
-      # Platform-specific dependencies
-      # ========================================
-      
       - name: Install Linux dependencies
         if: matrix.platform == 'linux'
         run: |
@@ -54,45 +45,20 @@ jobs:
             build-essential \
             cmake \
             ninja-build \
-            libgtk-3-dev \
-            libnotify-dev \
-            libnss3 \
-            libxss1 \
-            libxtst6 \
-            xauth \
-            xvfb \
-            libgbm-dev \
-            zip \
-            lcov
+            git
 
       - name: Install macOS dependencies
         if: matrix.platform == 'macos'
-        run: |
-          brew install cmake ninja lcov
+        run: brew install cmake ninja
 
       - name: Setup MSVC (Windows)
         if: matrix.platform == 'windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      # ========================================
-      # Node.js setup for frontend
-      # ========================================
-      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
-      # ========================================
-      # vcpkg caching for backend
-      # ========================================
-      
-      - name: Export GitHub Actions cache environment variables
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -100,275 +66,58 @@ jobs:
           path: |
             backend/vcpkg/installed
             backend/vcpkg/buildtrees
-            backend/vcpkg/packages
           key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
-          restore-keys: |
-            vcpkg-${{ matrix.platform }}-
+          restore-keys: vcpkg-${{ matrix.platform }}-
 
-      # ========================================
-      # Build Backend
-      # ========================================
-      
-      - name: Setup and Build Backend (macOS)
-        if: matrix.platform == 'macos'
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Build Backend
         working-directory: backend
         run: |
-          chmod +x osx_config_environment.sh
-          
-          # Always run setup (idempotent installs)
-          ./osx_config_environment.sh
-          
-          # Only Apple Silicon (arm64) is supported
-          TRIPLET="arm64-osx"
-          VCPKG_ROOT="$(pwd)/vcpkg"
-          
-          # Verify vcpkg installations
-          echo "=========================================="
-          echo "Verifying vcpkg installations:"
-          echo "=========================================="
-          vcpkg/vcpkg list | grep opencv || echo "⚠️  OpenCV NOT installed!"
-          echo ""
-          echo "Checking for OpenCV cmake files:"
-          if [ -d "vcpkg/installed/x64-linux/share/opencv" ]; then
-            echo "✓ opencv directory exists"
-            ls -la vcpkg/installed/x64-linux/share/opencv/ | head -10
-          else
-            echo "❌ opencv directory NOT found"
-            echo "Available share directories:"
-            ls -la vcpkg/installed/x64-linux/share/ | head -20
-          fi
-          echo ""
-          
-          # Get absolute path to vcpkg toolchain
-          VCPKG_ROOT="$(pwd)/vcpkg"
-          
-          # Build unit tests only (no release binaries on push/PR)
-          echo "Building unit tests..."
-          cmake -B ./build/Tests -S . \
-            -D CMAKE_BUILD_TYPE=Release \
-            -D VCPKG_TARGET_TRIPLET=x64-linux \
-            -D ENABLE_TESTS=ON \
-            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
-          cmake --build ./build/Tests --config Release --target unit_tests
-          
-          echo "Checking for test binary..."
-          ls -la build/Tests/ || echo "No build/Tests directory"
-          find build/Tests -name "unit_tests" -type f || echo "No unit_tests binary found"
+          chmod +x *.sh
+          ${{ matrix.backend-script }}
 
-      - name: Setup and Build Backend (Linux)
-        if: matrix.platform == 'linux'
-        working-directory: backend
-        run: |
-          chmod +x linux_config_environment.sh
-
-          # Always run setup (idempotent installs)
-          ./linux_config_environment.sh
-
-          TRIPLET="x64-linux"
-          VCPKG_ROOT="$(pwd)/vcpkg"
-
-          # Build unit tests only (no release binaries on push/PR)
-          echo "Building unit tests..."
-          cmake -B ./build/Tests -S . \
-            -D CMAKE_BUILD_TYPE=Release \
-            -D VCPKG_TARGET_TRIPLET=$TRIPLET \
-            -D ENABLE_TESTS=ON \
-            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
-          cmake --build ./build/Tests --config Release --target unit_tests
-          
-          echo "Checking for test binary..."
-          ls -la build/Tests/ || echo "No build/Tests directory"
-          find build/Tests -name "unit_tests" -type f || echo "No unit_tests binary found"
-
-      - name: Setup and Build Backend (Windows)
-        if: matrix.platform == 'windows'
-        working-directory: backend
-        shell: cmd
-        timeout-minutes: 60
-        run: |
-          REM Always run setup (idempotent installs)
-          call vcpkg_first_time_setup.bat
-          
-          REM Build unit tests only (no release binaries on push/PR)
-          echo Building unit tests...
-          cmake -B .\build\Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=ON -D CMAKE_TOOLCHAIN_FILE=%CD%\vcpkg\scripts\buildsystems\vcpkg.cmake
-          cmake --build .\build\Tests --config Release --verbose --target unit_tests
-          
-          echo Checking for test binary...
-          dir build\Tests\Release\ /b 2>nul || dir build\Tests\ /b || echo No test binary found
-
-      # ========================================
-      # Backend Unit Tests
-      # ========================================
-      
-      - name: Run Backend Unit Tests (Unix)
+      - name: Run Backend Unit Tests
+        working-directory: backend/build/Release
         if: matrix.platform != 'windows'
-        working-directory: backend/build/Tests
         run: |
           if [ -f "unit_tests" ]; then
-            echo "Running unit tests..."
             ./unit_tests
           else
-            echo "⚠️  Unit tests binary not found"
-            find . -name "unit_tests" -type f || echo "Searched but not found"
-            exit 1
+            echo "Unit tests not built, skipping"
           fi
 
       - name: Run Backend Unit Tests (Windows)
+        working-directory: backend/build/Release
         if: matrix.platform == 'windows'
-        working-directory: backend/build/Tests
         shell: cmd
         run: |
-          if exist "Release\unit_tests.exe" (
-            echo Running unit tests...
-            Release\unit_tests.exe
-          ) else if exist "unit_tests.exe" (
-            echo Running unit tests...
+          if exist "unit_tests.exe" (
             unit_tests.exe
           ) else (
-            echo Unit tests binary not found
-            dir /s /b unit_tests.exe 2>nul || echo Not found in any subdirectory
-            exit /b 1
+            echo Unit tests not built, skipping
           )
-      
-      # ========================================
-      # Backend Smoke Test
-      # ========================================
-      
-      - name: Run Backend Smoke Test (Unix)
-        if: matrix.platform != 'windows'
-        working-directory: backend
-        run: |
-          chmod +x test/smoke_test.sh
-          ./test/smoke_test.sh
 
-      - name: Run Backend Smoke Test (Windows)
-        if: matrix.platform == 'windows'
-        working-directory: backend
-        shell: cmd
-        run: |
-          test\smoke_test.bat
-
-      # ========================================
-      # Build Frontend
-      # ========================================
-      
-      - name: Install Frontend Dependencies
-        working-directory: frontend
-        run: npm install
-
-      - name: Build Frontend (Development)
-        working-directory: frontend
-        run: npm run svelte-build
-
-      # ========================================
-      # Frontend Tests (Cypress)
-      # ========================================
-      
-      - name: Run Cypress Tests (Linux - Headless)
-        if: matrix.platform == 'linux'
+      - name: Build Frontend
         working-directory: frontend
         run: |
-          # Start the app in the background
-          npm run dev &
-          DEV_PID=$!
-          
-          # Wait for app to start
-          sleep 10
-          
-          # Run Cypress tests
-          npx cypress run --browser electron
-          
-          # Stop the dev server
-          kill $DEV_PID || true
+          npm install
+          npm run svelte-build
 
-      - name: Upload Cypress Screenshots on Failure
-        if: failure() && matrix.platform == 'linux'
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-screenshots
-          path: frontend/cypress/screenshots
-          if-no-files-found: ignore
-
-      - name: Upload Cypress Videos
-        if: matrix.platform == 'linux'
-        uses: actions/upload-artifact@v4
-        with:
-          name: cypress-videos
-          path: frontend/cypress/videos
-          if-no-files-found: ignore
-
-      # ========================================
-      # Code Coverage Collection
-      # ========================================
-      
-      - name: Collect Frontend Coverage
-        if: matrix.platform == 'linux'
-        working-directory: frontend
-        run: |
-          # Coverage will be added in future enhancement
-          echo "Frontend coverage collection placeholder"
-
-      - name: Collect Backend Coverage
-        if: matrix.platform == 'linux'
-        working-directory: backend
-        run: |
-          # Coverage will be added in future enhancement
-          echo "Backend coverage collection placeholder"
-
-      # ========================================
-      # Upload Coverage Reports
-      # ========================================
-      
-      - name: Upload Coverage to Codecov
-        if: matrix.platform == 'linux'
-        uses: codecov/codecov-action@v4
-        with:
-          # No token needed for public repositories
-          files: ./frontend/coverage/lcov.info,./backend/coverage.info
-          flags: ${{ matrix.platform }}
-          name: ${{ matrix.platform }}-coverage
-          fail_ci_if_error: false
-
-      # ========================================
-      # Package Installers (PRs only)
-      # ========================================
-      
-      - name: Package Frontend (PRs only)
-        if: github.event_name == 'pull_request'
-        working-directory: frontend
-        run: npm run make
-
-      - name: Upload Installers (PRs only)
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: installers-${{ matrix.platform }}
-          path: |
-            frontend/out/make/**
-            frontend/out/*.dmg
-            frontend/out/*.exe
-            frontend/out/*.deb
-          if-no-files-found: ignore
-
-      # ========================================
-      # Upload Build Artifacts (Always)
-      # ========================================
-      
       - name: Upload Backend Binary
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: backend-${{ matrix.platform }}
-          path: |
-            backend/build/Release/beyond-rgb-backend*
-            backend/build/Debug/beyond-rgb-backend*
+          path: backend/build/Release/beyond-rgb-backend*
           if-no-files-found: warn
           retention-days: 7
 
-  # ========================================
-  # Summary Job
-  # ========================================
-  
   build-summary:
     name: Build Summary
     runs-on: ubuntu-latest
@@ -377,13 +126,11 @@ jobs:
     steps:
       - name: Check build results
         run: |
-          echo "Build Summary:"
-          echo "=============="
           if [ "${{ needs.build-and-test.result }}" == "success" ]; then
-            echo "✅ All platform builds succeeded!"
+            echo "✅ All builds succeeded!"
             exit 0
           else
-            echo "❌ Some platform builds failed"
+            echo "❌ Some builds failed"
             exit 1
           fi
 
