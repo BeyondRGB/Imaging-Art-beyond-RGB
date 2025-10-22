@@ -75,16 +75,19 @@
 
 <style lang="postcss">
   main {
-    @apply max-w-[50%] min-w-[35%] max-h-[50%] bg-gray-700 rounded-2xl shadow-xl overflow-auto flex flex-col;
+    background-color: var(--color-surface);
+    @apply max-w-[50%] min-w-[35%] max-h-[50%] rounded-2xl shadow-xl overflow-auto flex flex-col;
   }
   .body {
     @apply h-full flex flex-col justify-between p-1;
   }
   .title {
-    @apply bg-gray-800 text-2xl p-2 flex items-center gap-2 text-red-600;
+    background-color: var(--color-surface-base);
+    @apply text-2xl p-2 flex items-center gap-2 text-red-600;
   }
   .title p {
-    @apply text-2xl flex text-gray-100;
+    color: var(--color-text-primary);
+    @apply text-2xl flex;
   }
   .info {
     @apply flex flex-col p-2;
@@ -96,10 +99,12 @@
     @apply p-2;
   }
   .sender {
-    @apply bg-gray-500 p-1;
+    background-color: var(--color-surface-sunken);
+    @apply p-1;
   }
   .msg {
-    @apply flex flex-col p-2 bg-gray-600;
+    background-color: var(--color-surface-elevated);
+    @apply flex flex-col p-2;
   }
   .btns {
     @apply flex justify-end gap-2 p-1;

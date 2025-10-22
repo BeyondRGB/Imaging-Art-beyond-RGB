@@ -27,7 +27,7 @@
 	}
 </script>
 
-<div class="page dark:bg-gray-800 bg-white">
+<div class="page">
 	{#each Object.keys(routes) as pageKey}
 		{#if routes[pageKey].page && !routes[pageKey].disabled && $currentPage === pageKey}
 			<div
@@ -90,6 +90,7 @@
 
 <style lang="postcss" local>
 	.page {
+		background-color: var(--color-surface-base);
 		@apply w-full h-full pt-0 relative overflow-hidden;
 	}
 	

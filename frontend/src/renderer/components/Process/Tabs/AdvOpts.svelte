@@ -51,10 +51,12 @@
     @apply flex justify-between h-full w-full overflow-hidden;
   }
   left {
-    @apply bg-gray-600 w-full h-full p-6 flex-col;
+    background-color: var(--color-surface-elevated);
+    @apply w-full h-full p-6 flex-col;
   }
   right {
-    @apply bg-gray-700 w-full h-full p-6 flex justify-center;
+    background-color: var(--color-surface);
+    @apply w-full h-full p-6 flex justify-center;
   }
   h1 {
     @apply text-3xl;
@@ -63,7 +65,8 @@
     @apply w-[75%] flex justify-center items-start;
   }
   .settings .sharpness {
-    @apply flex w-full max-w-lg justify-between bg-gray-600 rounded-xl p-2;
+    background-color: var(--color-surface-elevated);
+    @apply flex w-full max-w-lg justify-between rounded-xl p-2;
   }
 
   .sharpness p {

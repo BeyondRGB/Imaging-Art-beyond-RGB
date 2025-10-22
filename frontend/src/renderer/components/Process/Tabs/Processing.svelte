@@ -207,7 +207,8 @@
     @apply w-full h-full absolute bg-black/75 z-50 flex justify-center items-center;
   }
   card {
-    @apply bg-gray-600 w-64 h-64 p-5 flex flex-col justify-between py-10 rounded-xl font-semibold;
+    background-color: var(--color-surface-elevated);
+    @apply w-64 h-64 p-5 flex flex-col justify-between py-10 rounded-xl font-semibold;
   }
   main {
     @apply w-full h-full flex flex-col relative p-2 gap-2;
@@ -222,7 +223,8 @@
     margin-left: 5%;
     margin-top: 5%;
     overflow-wrap: break-word;
-    @apply w-[90%] h-[90%] rounded-full bg-gray-600 flex flex-col justify-center items-center
+    background-color: var(--color-surface-elevated);
+    @apply w-[90%] h-[90%] rounded-full flex flex-col justify-center items-center
             absolute top-0 left-0;
   }
   .stepTitle {
@@ -239,7 +241,8 @@
     @apply w-full h-full absolute bg-black/50 z-50 flex justify-center items-center;
   }
   .completedOptions {
-    @apply w-1/2 bg-gray-700 flex flex-col p-2 rounded-lg gap-2;
+    background-color: var(--color-surface);
+    @apply w-1/2 flex flex-col p-2 rounded-lg gap-2;
   }
   .completedOptions button {
     @apply w-full h-full text-xl;
@@ -247,8 +250,8 @@
   .sender {
     word-break: break-word;
     white-space: pre-line;
-    @apply w-[90%] bg-gray-600 text-base flex rounded-full justify-center items-center
-          text-center;
+    background-color: var(--color-surface-elevated);
+    @apply w-[90%] text-base flex rounded-full justify-center items-center text-center;
   }
   .progress-circle {
     background: linear-gradient(
@@ -259,7 +262,7 @@
     );
     background-size: 400% 400%;
     animation: gradient 5s ease infinite;
-    @apply bg-gray-600 h-[8vw] w-[8vw] rounded-full p-1 relative;
+    @apply h-[8vw] w-[8vw] rounded-full p-1 relative;
   }
 
   .progress-circle.completed {
@@ -291,13 +294,18 @@
   }
 
   .image {
-    @apply w-full h-full bg-blue-600/25 relative items-center flex justify-center;
+    background-color: var(--color-overlay-medium);
+    @apply w-full h-full relative items-center flex justify-center;
   }
   h4 {
-    @apply text-gray-200 bg-gray-900/90 absolute top-0 pb-1 pt-0 px-2 rounded-lg z-50;
+    background-color: var(--color-overlay-heavy);
+    color: var(--color-text-secondary);
+    @apply absolute top-0 pb-1 pt-0 px-2 rounded-lg z-50;
   }
   span {
-    @apply bg-gray-700 text-gray-200 font-semibold whitespace-nowrap select-text;
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    @apply font-semibold whitespace-nowrap select-text;
   }
   .cont {
     @apply bg-red-500;
@@ -321,17 +329,5 @@
     }
   }
 
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    @apply bg-gray-600 rounded-full;
-  }
-
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-500;
-  }
+  /* Scrollbar styling now handled globally in theme.css */
 </style>

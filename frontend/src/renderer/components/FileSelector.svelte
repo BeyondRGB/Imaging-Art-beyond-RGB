@@ -48,6 +48,7 @@
     @apply text-lg;
   }
   .icon {
-    @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
+    background-color: var(--color-surface-sunken);
+    @apply p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
   }
 </style>

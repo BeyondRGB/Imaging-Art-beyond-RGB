@@ -2,7 +2,6 @@
     import { FilePlusIcon } from "svelte-feather-icons";
     import { processState, sendMessage} from "@util/stores";
     import { forEach, find } from "lodash";
-    import { testStyle } from "@util/styles";
     import { countFields } from "@root/util/storesUtil";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
     import Dropzone from "svelte-file-dropzone";
@@ -87,7 +86,6 @@
     <Dropzone
             on:drop={handleFilesSelect}
             noClick
-            containerStyles={testStyle}
             disableDefaultStyles
             containerClasses="custom-dropzone">
         {#if $processState.imageFilePaths?.length > 0}
@@ -147,6 +145,16 @@
     main {
         @apply h-full ;
     }
+    
+    /* Custom dropzone styling - converted from inline styles.js */
+    main :global(.custom-dropzone) {
+        background-color: var(--color-surface-base);
+        color: var(--color-text-tertiary);
+        border-color: var(--color-border);
+        @apply flex flex-col items-center p-5 border-2 border-dashed 
+               rounded-[10px] outline-none transition-all duration-200;
+    }
+    
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2;
     }
@@ -154,19 +162,22 @@
         @apply text-lg;
     }
     .icon {
-        @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
+        background-color: var(--color-surface-sunken);
+        @apply p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
     }
     ul {
         @apply flex flex-col gap-2 w-full justify-center items-center;
     }
     article {
-        @apply bg-gray-800 w-full min-h-[12rem] max-h-[30rem] overflow-auto rounded-[32px] py-2 px-6;
+        background-color: var(--color-surface-base);
+        @apply w-full min-h-[12rem] max-h-[30rem] overflow-auto rounded-[32px] py-2 px-6;
     }
     button {
         @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
     }
     .icon {
-        @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
+        background-color: var(--color-surface-sunken);
+        @apply p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
     }
     .two-col {
         overflow: hidden;/* Makes this div contain its floats */

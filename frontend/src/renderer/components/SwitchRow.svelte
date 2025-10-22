@@ -42,17 +42,22 @@
 
 <style lang="postcss">
   .row {
-    @apply flex items-center justify-between gap-6 py-3 px-4 
-           bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors 
-           cursor-pointer focus:outline-none;
+    background-color: var(--color-surface-sunken);
+    @apply flex items-center justify-between gap-6 py-3 px-4 rounded-lg 
+           transition-colors cursor-pointer focus:outline-none;
+  }
+  
+  .row:hover:not(.disabled) {
+    background-color: var(--color-interactive-hover);
   }
   
   .row.focus {
-    @apply ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-800;
+    @apply ring-2 ring-blue-500 ring-offset-2;
+    ring-offset-color: var(--color-surface-base);
   }
 
   .row.disabled {
-    @apply opacity-50 cursor-not-allowed hover:bg-gray-700/50;
+    @apply opacity-50 cursor-not-allowed;
   }
 
   .info {
@@ -60,11 +65,13 @@
   }
 
   .label {
-    @apply text-base text-gray-100 font-medium;
+    color: var(--color-text-primary);
+    @apply text-base font-medium;
   }
 
   .desc {
-    @apply text-sm text-gray-400;
+    color: var(--color-text-tertiary);
+    @apply text-sm;
   }
   
   .row :global(.group) {

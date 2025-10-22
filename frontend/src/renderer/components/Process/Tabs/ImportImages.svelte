@@ -73,22 +73,27 @@
     display:flex;
     flex-direction: column;
     justify-content:start;
-    @apply bg-gray-600 w-full h-full p-6 flex-col overflow-auto;
+    background-color: var(--color-surface-elevated);
+    @apply w-full h-full p-6 flex-col overflow-auto;
   }
   right {
-    @apply bg-gray-700 w-full h-full p-6 flex flex-col justify-center items-center gap-4;
+    background-color: var(--color-surface);
+    @apply w-full h-full p-6 flex flex-col justify-center items-center gap-4;
   }
   h1 {
     @apply text-3xl;
   }
   p {
-    @apply text-center pt-[30vh] bg-gray-500/25 m-4 h-[90%] rounded-lg;
+    background-color: var(--color-overlay-light);
+    @apply text-center pt-[30vh] m-4 h-[90%] rounded-lg;
   }
   article {
-    @apply bg-gray-800 w-full min-h-[12rem] overflow-auto rounded-[32px] py-2 px-6;
+    background-color: var(--color-surface-sunken);
+    @apply w-full min-h-[12rem] overflow-auto rounded-[32px] py-2 px-6;
   }
   .number {
-    @apply flex justify-center bg-gray-700/50;
+    background-color: var(--color-overlay-light);
+    @apply flex justify-center;
   }
   ul {
     @apply flex flex-col gap-2 w-full justify-center items-center;
@@ -157,12 +162,13 @@
 
   /* Handle */
   .artImageObjects::-webkit-scrollbar-thumb {
-    @apply bg-gray-500 rounded-full;
+    background-color: var(--color-border);
+    @apply rounded-full;
   }
 
   /* Handle on hover */
   .artImageObjects::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-700;
+    background-color: var(--color-interactive-hover);
   }
     
   

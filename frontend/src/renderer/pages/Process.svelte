@@ -15,9 +15,10 @@
   import SpecFileRoles from "@components/Process/Tabs/SpecFileRoles.svelte";
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
-import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
+  import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
   import SelectProcessingType from "@root/components/Process/Tabs/SelectProcessingType.svelte";
   import Layout from "@components/Process/Layout.svelte";
+  import Button from "@components/Button.svelte";
   let tabList;
 
   let showWhitePatchWarning = false;
@@ -310,8 +311,9 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
     {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
-      <button
-        on:click={() => {
+      <Button
+        variant="success"
+        onClick={() => {
           if (!$processState.whitePatchFilled) {
             showWhitePatchWarning = true;
             return;
@@ -323,12 +325,12 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
           showWhitePatchWarning = false;
           showDialog = false;
         }}
-        class="nextBtn">Begin Processing</button
+        class="nextBtn">Begin Processing</Button
       >
     {:else if tabs[$processState.currentTab].hidden}
       <br />
     {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options" &&  $processState.currentTab !== 0 }
-      <button on:click={nextTab} class="nextBtn">Next</button>
+      <Button variant="success" onClick={nextTab} class="nextBtn">Next</Button>
     {/if}
   </botnav>
 
@@ -336,8 +338,8 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     <div class="warningDialog">
       <p>Please select a white patch before continuing</p>
       <div class="btnGroup">
-        <button class="cancel" on:click={() => (showWhitePatchWarning = false)}
-          >Close</button
+        <Button variant="secondary" onClick={() => (showWhitePatchWarning = false)}
+          >Close</Button
         >
       </div>
     </div>
@@ -347,10 +349,10 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     <div class="confirmDialog">
       <p>Are you sure you're ready to proceed?</p>
       <div class="btnGroup">
-        <button class="cancel" on:click={() => (showDialog = false)}
-          >Cancel</button
+        <Button variant="secondary" onClick={() => (showDialog = false)}
+          >Cancel</Button
         >
-        <button class="confirm" on:click={handleConfirm}>Confirm</button>
+        <Button variant="success" onClick={handleConfirm}>Confirm</Button>
       </div>
     </div>
   </div>
@@ -361,6 +363,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     @apply relative h-full w-full overflow-hidden flex flex-col min-h-0;
   }
   nav {
+    background-color: var(--color-surface-sunken);
     @apply flex h-12;
   }
   botnav {
@@ -370,7 +373,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     @apply flex-grow justify-center flex mr-[5vw];
   }
   .nextBtn {
-    @apply m-4 bg-green-700 hover:bg-green-600 focus:ring-green-600 transition-all;
+    @apply m-4;
   }
   .page {
     overflow: overlay;
@@ -378,7 +381,8 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   }
 
   .confirmModal {
-    @apply absolute bg-black/75 z-50 items-center justify-center w-full h-full hidden;
+    background-color: var(--color-overlay-heavy);
+    @apply absolute z-50 items-center justify-center w-full h-full hidden;
   }
 
   .show {
@@ -386,15 +390,18 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   }
 
   .confirmDialog {
-    @apply bg-gray-700 w-1/2 h-1/3 text-xl rounded-xl p-4 flex flex-col justify-between;
+    background-color: var(--color-surface);
+    @apply w-1/2 h-1/3 text-xl rounded-xl p-4 flex flex-col justify-between;
   }
 
   .confirmDialog p {
-    @apply bg-gray-800/25 rounded-md flex justify-center p-2 text-lg mt-10;
+    background-color: var(--color-surface-sunken);
+    @apply rounded-md flex justify-center p-2 text-lg mt-10;
   }
 
   .warningDialog {
-    @apply bg-gray-700 w-1/3 h-1/6 text-xl rounded-xl p-4 flex flex-col justify-between;
+    background-color: var(--color-surface);
+    @apply w-1/3 h-1/6 text-xl rounded-xl p-4 flex flex-col justify-between;
   }
 
   .warning {
@@ -404,19 +411,13 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   .btnGroup {
     @apply flex justify-end gap-2;
   }
-
-  .confirm {
-    @apply bg-green-600 hover:bg-green-500 focus:ring-green-600 transition-all;
-  }
-
-  .cancel {
-    @apply bg-gray-500 hover:bg-blue-500/50 focus:ring-green-600 transition-all;
-  }
   /* div {
     @apply w-full h-full;
   } */
   .tab {
-    @apply w-16 h-2 rounded-full bg-gray-400 self-center mx-2 ring-1 ring-gray-400
+    background-color: var(--color-interactive);
+    border: 1px solid var(--color-border);
+    @apply w-16 h-2 rounded-full self-center mx-2 ring-1 
           transition-all duration-700 ease-out;
   }
 
@@ -430,7 +431,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     @apply absolute h-8 py-0 ml-2 my-2;
   }
   .tab.none {
-    @apply bg-gray-600;
+    background-color: var(--color-surface-sunken);
   }
   .component {
     @apply relative float-left flex-shrink-0 block;

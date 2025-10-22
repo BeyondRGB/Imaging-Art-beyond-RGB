@@ -38,7 +38,8 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-[97%] bg-gray-800 mt-[3%] relative flex justify-center items-center;
+    background-color: var(--color-surface-base);
+    @apply w-full h-[97%] mt-[3%] relative flex justify-center items-center;
   }
 
   #selectProcessingTypesContent {
@@ -46,8 +47,14 @@
   }
 
   .homeBtn {
-    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg
-          bg-gray-900/25 ring-0 hover:bg-gray-700 text-gray-100 hover:text-white;
+    background-color: var(--color-surface-sunken);
+    color: var(--color-text-primary);
+    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg ring-0;
+  }
+  
+  .homeBtn:hover {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
   }
   .btnCol {
     @apply w-[60vw] flex flex-col justify-center items-center gap-4;

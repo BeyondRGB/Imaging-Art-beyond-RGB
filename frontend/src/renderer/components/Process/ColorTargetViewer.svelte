@@ -490,7 +490,9 @@
   }
 
   main {
-    @apply w-full h-[90%] ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg flex flex-col;
+    background-color: var(--color-overlay-medium);
+    border: 1px solid var(--color-border);
+    @apply w-full h-[90%] aspect-[3/2] shadow-lg flex flex-col;
   }
   #color-seadragon-viewer {
     @apply h-full w-full;
@@ -630,12 +632,14 @@
   }
 
   .corner {
-    background-color: hsla(var(--color_hue), 100%, 50%, 0.75);
+    background-color: hsla(var(--color_hue), 100%, 50%, 0.9);
+    border: 2px solid white;
     @apply absolute h-[5%] aspect-square z-50;
   }
 
   .ver .corner {
-    background-color: hsla(var(--verfiy_hue), 100%, 50%, 0.75);
+    background-color: hsla(var(--verfiy_hue), 100%, 50%, 0.9);
+    border: 2px solid white;
   }
 
   .tl {
@@ -654,32 +658,16 @@
     @apply bg-transparent flex;
   }
   .targetNum {
-    color: hsla(var(--color_hue), 100%, 50%, 0.75);
+    color: white;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(0, 0, 0, 0.6);
     @apply absolute top-0 left-0 p-1 text-base font-semibold;
   }
 
   #rowCol > p {
     @apply bg-black flex px-2;
   }
-  /* width */
-  ::-webkit-scrollbar {
-    @apply relative transition-all w-2 h-2;
-  }
-
-  /* Track */
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    @apply bg-red-500 rounded-full;
-  }
-
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-red-500;
-  }
+  
+  /* Scrollbar styling now handled globally in theme.css */
 
   .selectorBox {
     transition: transform 0.3s ease; /* Smooth rotation effect */

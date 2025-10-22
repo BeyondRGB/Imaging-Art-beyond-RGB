@@ -112,7 +112,9 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-full ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
+    background-color: var(--color-overlay-medium);
+    border: 1px solid var(--color-border);
+    @apply w-full h-full aspect-[3/2] shadow-lg;
   }
   .image-seadragon-viewer {
     @apply h-full w-full;

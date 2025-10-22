@@ -58,11 +58,16 @@
     @apply w-full h-full;
   }
   .bubble {
-    @apply bg-gray-600 py-2 rounded-3xl hover:bg-gray-500/25
+    background-color: var(--color-surface-elevated);
+    @apply py-2 rounded-3xl;
+  }
+  .dropbox:hover {
+    background-color: var(--color-surface-sunken)
             flex justify-between items-center text-[1.05rem] px-4 gap-1;
   }
   .body {
-    @apply bg-gray-700/75 w-0 opacity-0 fixed max-w-[35vw] p-1
+    background-color: var(--color-overlay-heavy);
+    @apply w-0 opacity-0 fixed max-w-[35vw] p-1
            group-hover:w-full group-hover:opacity-100 rounded-md transition-all 
            bottom-0 left-24 delay-100;
   }

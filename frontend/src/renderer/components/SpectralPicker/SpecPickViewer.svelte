@@ -263,7 +263,9 @@
 
 <style lang="postcss">
   main {
-    @apply w-full ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
+    background-color: var(--color-overlay-medium);
+    border: 1px solid var(--color-border);
+    @apply w-full aspect-[3/2] shadow-lg;
   }
   #specpick-seadragon-viewer {
     @apply h-full w-full;
@@ -272,9 +274,11 @@
     @apply absolute left-1/2 bottom-1/2;
   }
   #specView-brush {
-    @apply bg-gray-800/25 hidden  outline-[1%] outline-dashed outline-red-500;
+    background-color: var(--color-overlay-light);
+    @apply hidden outline-[1%] outline-dashed outline-red-500;
   }
   #specView-brush-shadow {
-    @apply bg-gray-800/25 hidden  outline-[1%] outline-dashed outline-blue-500;
+    background-color: var(--color-overlay-light);
+    @apply hidden outline-[1%] outline-dashed outline-blue-500;
   }
 </style>

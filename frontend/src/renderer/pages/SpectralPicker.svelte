@@ -209,11 +209,12 @@
     @apply flex h-full w-full justify-center flex-col relative;
   }
   .noFile {
-    @apply absolute w-full h-full z-[99] flex justify-center bg-gray-800
-            items-center;
+    background-color: var(--color-surface-base);
+    @apply absolute w-full h-full z-[99] flex justify-center items-center;
   }
   .inputBox {
-    @apply w-auto h-auto bg-gray-700 flex flex-col gap-2 justify-center items-center
+    background-color: var(--color-surface);
+    @apply w-auto h-auto flex flex-col gap-2 justify-center items-center
           p-8 rounded-2xl;
   }
   .inputBox h2 {
@@ -226,7 +227,8 @@
     @apply w-full h-full flex justify-center items-center;
   }
   .image-container {
-    @apply relative w-full h-full bg-gray-500 overflow-visible;
+    background-color: var(--color-surface-sunken);
+    @apply relative w-full h-full overflow-visible;
   }
   .image {
     @apply bg-green-400 overflow-auto h-[90%] aspect-[3/2];
@@ -240,36 +242,42 @@
     @apply aspect-[145/100] w-auto;
   }
   .tabs {
-    @apply w-auto bg-gray-700 flex gap-1 pt-1 px-1 rounded-t-lg;
+    background-color: var(--color-surface);
+    @apply w-auto flex gap-1 pt-1 px-1 rounded-t-lg;
   }
   .tab {
     @apply relative;
   }
   .btnTab {
-    @apply w-16 h-full bg-gray-700 flex justify-center items-center
+    background-color: var(--color-surface);
+    @apply w-16 h-full flex justify-center items-center
           rounded-t-xl rounded-b-none relative;
   }
   .pixSize {
-    @apply flex bg-gray-800/50 gap-1 p-1 rounded-lg;
+    background-color: var(--color-surface-sunken);
+    @apply flex gap-1 p-1 rounded-lg;
   }
   .brushBar {
     @apply w-full h-2 rounded-xl;
   }
   .brushBar::-webkit-slider-thumb {
-    @apply w-4 h-4 bg-gray-600 cursor-pointer rounded-full outline outline-1
-          outline-gray-200;
+    background-color: var(--color-interactive);
+    @apply w-4 h-4 cursor-pointer rounded-full outline outline-1;
+    outline-color: var(--color-border);
   }
 
   .closeTab {
+    color: var(--color-text-tertiary);
     @apply absolute -right-0.5 -top-0.5 flex justify-center items-center
-            p-0.5 bg-transparent ring-0 text-gray-400 
+            p-0.5 bg-transparent ring-0
             hover:bg-red-500/50 hover:text-white z-[49];
   }
 
   .floatBox {
-    border: 1px solid red;
-    @apply absolute h-auto w-[30vw] bg-gray-500/75 z-[49] right-0 transition-all duration-500
-            translate-x-0 border border-gray-700 rounded-bl-xl;
+    background-color: var(--color-overlay-medium);
+    border: 1px solid var(--color-border);
+    @apply absolute h-auto w-[30vw] z-[49] right-0 transition-all duration-500
+            translate-x-0 rounded-bl-xl;
   }
 
   .notExpanded {
@@ -277,7 +285,8 @@
   }
 
   .loading {
-    @apply bg-gray-700 absolute w-full h-full z-[49] flex justify-center items-center;
+    background-color: var(--color-surface);
+    @apply absolute w-full h-full z-[49] flex justify-center items-center;
   }
   .loading-box {
     @apply h-full flex flex-col gap-2 justify-center items-center
@@ -340,20 +349,25 @@
   }
 
   .chart {
-    @apply bg-gray-600 m-2 p-2 pb-4 rounded-lg pr-4;
+    background-color: var(--color-surface-elevated);
+    @apply m-2 p-2 pb-4 rounded-lg pr-4;
   }
 
   .box {
-    @apply m-2 shadow-md px-2 pt-1 bg-gray-600 rounded-lg p-2;
+    background-color: var(--color-surface-elevated);
+    @apply m-2 shadow-md px-2 pt-1 rounded-lg p-2;
   }
   .numberInput {
-    @apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+    @apply p-0.5 rounded-lg
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
   }
   .handle {
-    border: 1px solid red;
-    @apply bg-gray-500/75 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-							text-2xl rounded-l-full border border-r-[0px] border-gray-800;
+    background-color: var(--color-overlay-medium);
+    border: 1px solid var(--color-border);
+    @apply h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
+							text-2xl rounded-l-full border-r-0;
   }
 
   .sizeSettings {

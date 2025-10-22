@@ -97,8 +97,8 @@
   }
 
   ul {
-    @apply flex list-none m-0 justify-between h-full w-full bg-gray-100 
-          dark:bg-gray-700;
+    background-color: var(--color-surface);
+    @apply flex list-none m-0 justify-between h-full w-full;
   }
 
   .sideMain ul {
@@ -110,13 +110,19 @@
   }
 
   .selected span {
-    @apply dark:text-gray-50;
+    color: var(--color-text-primary);
   }
 
   button {
+    background-color: transparent;
+    color: var(--color-text-secondary);
     @apply rounded-none h-full w-full flex flex-col justify-center items-center
-            ring-0 bg-transparent dark:hover:bg-gray-800 hover:bg-gray-200 
-            dark:text-gray-300 dark:hover:text-gray-50 shadow-none;
+            ring-0 shadow-none;
+  }
+  
+  button:hover {
+    background-color: var(--color-interactive-hover);
+    color: var(--color-text-primary);
   }
 
   :root {
@@ -128,12 +134,18 @@
   }
 
   .selected {
-    @apply dark:bg-gray-900 bg-gray-400 dark:hover:bg-gray-900/40 hover:bg-gray-600/40 
-          dark:text-blue-500 border-b-4 border-blue-500;
+    background-color: var(--color-surface-sunken);
+    @apply border-b-4 border-blue-500;
+  }
+  
+  .selected:hover {
+    background-color: var(--color-surface-sunken);
+    opacity: 0.8;
   }
 
   .disabled {
-    @apply dark:text-gray-500/50 cursor-not-allowed dark:hover:text-gray-500;
+    color: var(--color-text-disabled);
+    @apply cursor-not-allowed;
   }
 
   .menuBtns {
@@ -150,12 +162,13 @@
   }
 
   .ctlBtns {
-    @apply flex dark:bg-gray-600/30 bg-gray-200/30 rounded-l-2xl px-4 gap-2 items-center;
+    background-color: var(--color-overlay-light);
+    @apply flex rounded-l-2xl px-4 gap-2 items-center;
   }
 
   .ctlBtns button {
-    @apply rounded-full hover:text-blue-500 dark:hover:text-blue-500 
-            hover:bg-transparent dark:text-gray-50;
+    color: var(--color-text-primary);
+    @apply rounded-full hover:text-blue-500 hover:bg-transparent;
   }
 
   .sideMain .ctlBtns {

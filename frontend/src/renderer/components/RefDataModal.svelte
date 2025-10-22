@@ -112,8 +112,8 @@
 
 <style lang="postcss">
   main {
-    @apply max-w-[50%] max-h-[50%] flex justify-center items-center bg-gray-700 rounded-2xl
-            shadow-xl;
+    background-color: var(--color-surface);
+    @apply max-w-[50%] max-h-[50%] flex justify-center items-center rounded-2xl shadow-xl;
   }
   .settings {
     @apply w-full h-full flex flex-col justify-between p-6 pb-6;
@@ -137,7 +137,8 @@
     @apply h-full bg-green-500/90 rounded-r-lg p-1;
   }
   .input {
-    @apply w-full bg-gray-800 rounded-r-lg h-full flex items-center justify-center p-2;
+    background-color: var(--color-surface-base);
+    @apply w-full rounded-r-lg h-full flex items-center justify-center p-2;
   }
 
   .buttonGroup {

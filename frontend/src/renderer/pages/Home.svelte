@@ -85,7 +85,8 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-[97%] bg-gray-800 mt-[3%] relative flex justify-center items-center;
+    background-color: var(--color-surface-base);
+    @apply w-full h-[97%] mt-[3%] relative flex justify-center items-center;
   }
 
   #homeContent {
@@ -93,8 +94,13 @@
   }
 
   .homeBtn {
-    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg
-          bg-gray-900/25 ring-0 hover:bg-gray-700 text-gray-100 hover:text-white;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg ring-0;
+  }
+  
+  .homeBtn:hover {
+    background-color: var(--color-interactive-hover);
   }
   .btnCol {
     @apply w-[60vw] flex flex-col justify-center items-center gap-4;
@@ -111,7 +117,8 @@
     @apply absolute w-full h-full flex justify-center items-center;
   }
   .aboutBg {
-    @apply absolute w-full h-full bg-black/40 flex justify-center items-center;
+    background-color: var(--color-overlay-heavy);
+    @apply absolute w-full h-full flex justify-center items-center;
   }
   .aboutBox {
     @apply absolute w-1/2 h-auto z-[9999];
@@ -126,8 +133,8 @@
   }
 
   #welcome {
-    @apply text-black text-opacity-40 flex flex-col justify-center 
-            items-center gap-2 pb-[1vh];
+    color: var(--color-text-tertiary);
+    @apply flex flex-col justify-center items-center gap-2 pb-[1vh];
   }
 
   #getting-started {

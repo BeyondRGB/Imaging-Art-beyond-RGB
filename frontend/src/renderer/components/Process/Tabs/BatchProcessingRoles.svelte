@@ -172,7 +172,8 @@
         background-color: #3a3a3c;
     }
     right {
-        @apply bg-gray-700 w-full h-full p-6 flex justify-center overflow-auto;
+        background-color: var(--color-surface);
+        @apply w-full h-full p-6 flex justify-center overflow-auto;
     }
     h1 {
         margin: 25px;

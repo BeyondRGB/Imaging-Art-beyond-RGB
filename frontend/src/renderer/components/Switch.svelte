@@ -24,11 +24,16 @@
     @apply hidden;
   }
   span {
+    background-color: var(--color-interactive);
     @apply w-11 h-6 flex items-center flex-shrink-0 p-0.5 rounded-full 
           duration-200 ease-in-out after:w-5 after:h-5 
           after:rounded-full after:shadow-sm after:duration-200 
-          bg-gray-600 peer-checked:after:translate-x-5
-          after:bg-gray-300 peer-checked:bg-blue-500;
+          peer-checked:after:translate-x-5 peer-checked:bg-blue-500;
+  }
+  
+  span::after {
+    background-color: var(--color-surface-elevated);
+    content: "";
   }
   .large p {
     @apply text-xl;

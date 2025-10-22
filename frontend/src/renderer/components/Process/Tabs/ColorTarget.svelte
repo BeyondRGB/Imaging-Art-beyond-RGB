@@ -695,7 +695,8 @@
   }
 
   .left {
-    @apply w-full h-full flex flex-col justify-start bg-gray-600 p-2 m-1 gap-2;
+    background-color: var(--color-surface-elevated);
+    @apply w-full h-full flex flex-col justify-start p-2 m-1 gap-2;
   }
 
   .title {
@@ -703,11 +704,13 @@
   }
 
   .right {
-    @apply w-[40vw] h-full flex flex-col m-1 bg-gray-700 pt-[2vh] pb-[8vh] items-center;
+    background-color: var(--color-surface);
+    @apply w-[40vw] h-full flex flex-col m-1 pt-[2vh] pb-[8vh] items-center;
   }
 
   .cardBox {
-    @apply bg-gray-800 min-h-[60vh] w-[85%] p-2 gap-2 flex flex-col items-center
+    background-color: var(--color-surface-base);
+    @apply min-h-[60vh] w-[85%] p-2 gap-2 flex flex-col items-center
 	rounded-2xl overflow-y-auto overflow-x-hidden;
   }
 
@@ -730,7 +733,8 @@
 	active:bg-green-400/75;
   }
   .verificationAdd {
-    @apply bg-gray-500/50 hover:bg-green-400/40 active:bg-green-400/50;
+    background-color: var(--color-surface-sunken);
+    @apply hover:bg-green-400/40 active:bg-green-400/50;
   }
   .clickHere {
     @apply text-2xl;
@@ -739,7 +743,8 @@
     @apply w-full h-auto flex items-center;
   }
   .image-container {
-    @apply relative w-full h-auto bg-gray-800 overflow-visible;
+    background-color: var(--color-surface-base);
+    @apply relative w-full h-auto overflow-visible;
   }
   .colorTarget {
     background-color: hsl(var(--color_hue), 100%, 30%);
@@ -765,8 +770,8 @@
   }
 
   .addTarget {
-    @apply bg-green-500 w-16 h-16 transition-all rounded-full flex items-center justify-center
-	text-gray-100;
+    color: var(--color-text-primary);
+    @apply bg-green-500 w-16 h-16 transition-all rounded-full flex items-center justify-center;
   }
 
   .removeButton {
@@ -775,19 +780,24 @@
 
   .rowcol input {
     text-align: center;
-    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+    background-color: var(--color-surface-sunken);
+    border: 2px solid var(--color-border);
+    @apply p-0.5 rounded-lg
 	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
 	h-full w-12 min-w-[1rem];
   }
 
   .whitePatch input {
-    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+    background-color: var(--color-surface-sunken);
+    border: 2px solid var(--color-border);
+    @apply p-0.5 rounded-lg
 	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
 	h-full w-full;
   }
 
   .extra {
-    @apply bg-gray-700 p-2;
+    background-color: var(--color-surface);
+    @apply p-2;
   }
 
   .rowcol .inputGroup {
@@ -806,7 +816,8 @@
   }
 
   .close {
-    @apply absolute top-0 right-0 bg-transparent text-gray-100
+    color: var(--color-text-primary);
+    @apply absolute top-0 right-0 bg-transparent
 	hover:bg-red-600/50 hover:text-white ring-0 p-1;
   }
   .refDataDiv {
@@ -845,8 +856,9 @@
   .colorSlider::-webkit-slider-thumb {
     -webkit-appearance: none; /* Override default look */
     appearance: none;
-    @apply w-4 h-4 bg-gray-600 cursor-pointer rounded-full outline outline-1
-	outline-gray-200;
+    background-color: var(--color-interactive);
+    @apply w-4 h-4 cursor-pointer rounded-full outline outline-1;
+    outline-color: var(--color-border);
   }
   .sizeDiv {
     @apply flex justify-between items-center;
@@ -856,7 +868,8 @@
   }
 
   .loading {
-    @apply bg-gray-700 absolute w-full h-full z-[49] flex justify-center items-center;
+    background-color: var(--color-surface);
+    @apply absolute w-full h-full z-[49] flex justify-center items-center;
   }
   .loading-box {
     @apply h-full flex flex-col gap-2 justify-center items-center
@@ -902,13 +915,17 @@
 
   .rowcol input {
     text-align: center;
-    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+    background-color: var(--color-surface-sunken);
+    border: 2px solid var(--color-border);
+    @apply p-0.5 rounded-lg
 	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
 	h-full w-12 min-w-[1rem];
   }
 
   .target-coordinates input {
-    @apply p-0.5 bg-gray-900 border-2 border-gray-800 rounded-lg
+    background-color: var(--color-surface-sunken);
+    border: 2px solid var(--color-border);
+    @apply p-0.5 rounded-lg
 	focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2
 	h-full w-full;
   }

@@ -298,25 +298,28 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
   }
   .reportBody {
     transform-origin: left top;
+    background-color: var(--color-surface);
     @apply w-full h-full transition-all duration-300
-          bg-gray-700 rounded-b-2xl p-4 flex flex-col items-center justify-center
-          gap-2;
+          rounded-b-2xl p-4 flex flex-col items-center justify-center gap-2;
 	}
 	.report-item {
 		width:fit-content;
-		@apply h-full flex justify-center items-center bg-gray-800 ring-1 ring-gray-500
-          p-4 pr-8 rounded-xl;
+		background-color: var(--color-surface-base);
+    border: 1px solid var(--color-border);
+		@apply h-full flex justify-center items-center p-4 pr-8 rounded-xl;
 	}
 	.dropdown-report-btn {
 		@apply w-full flex flex-col justify-center items-center z-50;
 	}
 
 	.noFile {
-		@apply absolute w-full h-full z-[99] flex justify-center bg-gray-800
+		background-color: var(--color-surface-base);
+		@apply absolute w-full h-full z-[99] flex justify-center
             items-center top-0 left-0;
 	}
 	.inputBox {
-		@apply w-auto h-auto bg-gray-700 flex flex-col gap-2 justify-center items-center
+		background-color: var(--color-surface);
+		@apply w-auto h-auto flex flex-col gap-2 justify-center items-center
           p-8 rounded-2xl;
   }
   .inputBox h2 {
@@ -325,7 +328,8 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
   .report-header {
     width: 100%;
     height: 20vh;
-    @apply sticky top-0 bg-gray-800 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
+    background-color: var(--color-surface-base);
+    @apply sticky top-0 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
             transition-all delay-150 duration-300 ease-in justify-between;
   }
   .close-report {
@@ -348,7 +352,8 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 		@apply w-full text-3xl;
 	}
 	.verificationBar {
-		@apply w-full h-full bg-gray-500 flex flex-col p-2 rounded-xl;
+		background-color: var(--color-surface-sunken);
+		@apply w-full h-full flex flex-col p-2 rounded-xl;
 	}
 	.new-window-button {
 		align-self: baseline;
@@ -360,8 +365,8 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
   }
 
 	.reports-floatBox {
-		position: fixed; 
-		@apply bg-gray-500/75;
+		position: fixed;
+		background-color: var(--color-overlay-medium);
 		transition: right 0.5s ease-in-out;
 		width: 30vw; /* Adjust as needed */
 		min-height: 100px; /* Prevents squishing */
@@ -386,12 +391,14 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 		@apply w-full h-2 rounded-xl;
 	}
 	.brushBar::-webkit-slider-thumb {
-		@apply w-4 h-4 bg-gray-500 cursor-pointer rounded-full outline outline-1
-          outline-gray-200;
+		background-color: var(--color-interactive);
+		@apply w-4 h-4 cursor-pointer rounded-full outline outline-1;
+    outline-color: var(--color-border);
 	}
 
 	.pixSize {
-		@apply flex bg-gray-800/50 gap-1 p-1 rounded-lg;
+		background-color: var(--color-surface-sunken);
+		@apply flex gap-1 p-1 rounded-lg;
 	}
 
 	.chart {
@@ -403,12 +410,16 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 	}
 
 	.numberInput {
-		@apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
+		background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+		@apply p-0.5 rounded-lg
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
 	}
 	.reports-handle {
-		@apply bg-gray-500/75 h-12 w-8  flex justify-center items-center
-							text-2xl rounded-l-full border border-r-[0px] border-gray-800;
+		background-color: var(--color-overlay-medium);
+    border: 1px solid var(--color-border);
+		@apply h-12 w-8  flex justify-center items-center
+							text-2xl rounded-l-full border-r-0;
 		position: fixed; /* Position relative to the viewport */
 		top: 50%; /* Center vertically */
 		right: 0; /* Place it at the right edge of the viewport */

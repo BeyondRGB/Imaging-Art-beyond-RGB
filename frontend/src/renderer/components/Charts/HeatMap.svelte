@@ -117,7 +117,8 @@
   }
   /* --- Tooltip */
   .bx--cc--tooltip {
-    @apply bg-gray-700 text-white;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
   }
   .bx--cc--tooltip .content-box {
     @apply text-white;
