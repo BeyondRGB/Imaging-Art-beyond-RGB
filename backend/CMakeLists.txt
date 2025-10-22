@@ -182,6 +182,19 @@ endif()
 # Set C++ standard
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
+# Code Coverage Support (optional, enabled with -DENABLE_COVERAGE=ON)
+option(ENABLE_COVERAGE "Enable code coverage reporting" OFF)
+
+if(ENABLE_COVERAGE)
+    message(STATUS "Code coverage enabled")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${PROJECT_NAME} PRIVATE --coverage -O0 -g)
+        target_link_options(${PROJECT_NAME} PRIVATE --coverage)
+    else()
+        message(WARNING "Code coverage not supported for this compiler")
+    endif()
+endif()
+
 # weird fix for linux to remove malformed macro included in lib dependency
 # TODO: remove this with a better fix
 if (UNIX AND NOT APPLE)

@@ -1,0 +1,60 @@
+codecov:
+  require_ci_to_pass: true
+  notify:
+    wait_for_ci: true
+
+coverage:
+  precision: 2
+  round: down
+  range: "70...100"
+
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 5%
+        informational: false
+    patch:
+      default:
+        target: auto
+        threshold: 5%
+        informational: true
+
+comment:
+  layout: "reach,diff,flags,tree,footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+flags:
+  frontend:
+    paths:
+      - frontend/src/
+    carryforward: true
+  backend:
+    paths:
+      - backend/src/
+      - backend/include/
+    carryforward: true
+  macos:
+    carryforward: true
+  linux:
+    carryforward: true
+  windows:
+    carryforward: true
+
+ignore:
+  - "frontend/node_modules"
+  - "frontend/out"
+  - "frontend/public"
+  - "backend/vcpkg"
+  - "backend/build"
+  - "backend/submodules"
+  - "backend/test"
+  - "docs"
+  - "**/*.md"
+  - "**/test/**"
+  - "**/*.test.*"
+  - "**/*.spec.*"
+

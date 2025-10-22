@@ -15,7 +15,10 @@
     "electron-preview": "electron-forge start",
     "svelte-dev": "vite",
     "svelte-build": "vite build",
-    "svelte-start": "vite preview"
+    "svelte-start": "vite preview",
+    "test": "cypress run",
+    "test:open": "cypress open",
+    "test:ci": "start-server-and-test dev http://localhost:3000 'cypress run --browser electron'"
   },
   "keywords": [],
   "author": {
@@ -91,6 +94,7 @@
     "svelte-drag": "^2.1.0",
     "svelte-feather-icons": "^3.5.1",
     "svelte-preprocess": "^4.10.4",
+    "start-server-and-test": "^2.0.3",
     "tailwindcss": "^3.0.23",
     "typescript": "^4.6.3",
     "vite": "^2.9.1",
