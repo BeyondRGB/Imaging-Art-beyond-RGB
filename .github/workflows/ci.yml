@@ -118,42 +118,41 @@ jobs:
         run: |
           chmod +x osx_config_environment.sh
           
-          # Setup vcpkg and install dependencies
-          # Check for toolchain file specifically, not just installed directory
-          if [ ! -f "vcpkg/scripts/buildsystems/vcpkg.cmake" ]; then
-            echo "Setting up vcpkg and installing dependencies..."
-            ./osx_config_environment.sh
-          else
-            echo "vcpkg already set up, skipping initial setup"
-          fi
+          # Always run setup (idempotent installs)
+          ./osx_config_environment.sh
           
           # Only Apple Silicon (arm64) is supported
           TRIPLET="arm64-osx"
+          VCPKG_ROOT="$(pwd)/vcpkg"
+          
+          # Verify vcpkg installations
+          echo "=========================================="
+          echo "Verifying vcpkg installations:"
+          echo "=========================================="
+          vcpkg/vcpkg list | grep opencv || echo "⚠️  OpenCV NOT installed!"
+          echo ""
+          echo "Checking for OpenCV cmake files:"
+          if [ -d "vcpkg/installed/x64-linux/share/opencv" ]; then
+            echo "✓ opencv directory exists"
+            ls -la vcpkg/installed/x64-linux/share/opencv/ | head -10
+          else
+            echo "❌ opencv directory NOT found"
+            echo "Available share directories:"
+            ls -la vcpkg/installed/x64-linux/share/ | head -20
+          fi
+          echo ""
           
           # Get absolute path to vcpkg toolchain
           VCPKG_ROOT="$(pwd)/vcpkg"
           
-          # Build main backend (tests disabled by default)
-          echo "Building main backend executable for Apple Silicon ($TRIPLET)..."
-          cmake -B ./build/Release -S . \
-            -D CMAKE_BUILD_TYPE=Release \
-            -D VCPKG_TARGET_TRIPLET=$TRIPLET \
-            -D ENABLE_TESTS=OFF \
-            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
-          cmake --build ./build/Release --verbose
-          
-          echo "Build completed. Checking for binary..."
-          ls -la build/Release/ || echo "No build/Release directory"
-          find build/Release -name "*backend*" -type f || echo "No backend binary found"
-          
-          # Build unit tests separately (reuses vcpkg dependencies)
+          # Build unit tests only (no release binaries on push/PR)
           echo "Building unit tests..."
           cmake -B ./build/Tests -S . \
             -D CMAKE_BUILD_TYPE=Release \
-            -D VCPKG_TARGET_TRIPLET=$TRIPLET \
+            -D VCPKG_TARGET_TRIPLET=x64-linux \
             -D ENABLE_TESTS=ON \
             -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
-          cmake --build ./build/Tests
+          cmake --build ./build/Tests --config Release --target unit_tests
           
           echo "Checking for test binary..."
           ls -la build/Tests/ || echo "No build/Tests directory"
@@ -163,63 +162,21 @@ jobs:
         if: matrix.platform == 'linux'
         working-directory: backend
         run: |
-          chmod +x linux_config_environment.sh linux_release.sh
+          chmod +x linux_config_environment.sh
           
-          # Setup vcpkg and install dependencies
-          # Check for toolchain file specifically, not just installed directory
-          if [ ! -f "vcpkg/scripts/buildsystems/vcpkg.cmake" ]; then
-            echo "Setting up vcpkg and installing dependencies..."
-            ./linux_config_environment.sh
-          else
-            echo "vcpkg already set up, verifying OpenCV..."
-            # Even if vcpkg exists, check if opencv4 is installed
-            if ! vcpkg/vcpkg list | grep -q opencv4; then
-              echo "OpenCV not found, installing..."
-              vcpkg/vcpkg install opencv4:x64-linux
-            fi
-          fi
+          # Always run setup (idempotent installs)
+          ./linux_config_environment.sh
           
-          # Verify vcpkg installations
-          echo "=========================================="
-          echo "Verifying vcpkg installations:"
-          echo "=========================================="
-          vcpkg/vcpkg list | grep opencv || echo "⚠️  OpenCV NOT installed!"
-          echo ""
-          echo "Checking for OpenCV cmake files:"
-          if [ -d "vcpkg/installed/x64-linux/share/opencv4" ]; then
-            echo "✓ opencv4 directory exists"
-            ls -la vcpkg/installed/x64-linux/share/opencv4/ | head -10
-          else
-            echo "❌ opencv4 directory NOT found"
-            echo "Available share directories:"
-            ls -la vcpkg/installed/x64-linux/share/ | head -20
-          fi
-          echo ""
-          
-          # Get absolute path to vcpkg toolchain
           VCPKG_ROOT="$(pwd)/vcpkg"
           
-          # Build main backend (tests disabled by default)
-          echo "Building main backend executable..."
-          cmake -B ./build/Release -S . \
-            -D CMAKE_BUILD_TYPE=Release \
-            -D VCPKG_TARGET_TRIPLET=x64-linux \
-            -D ENABLE_TESTS=OFF \
-            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
-          cmake --build ./build/Release --verbose
-          
-          echo "Build completed. Checking for binary..."
-          ls -la build/Release/ || echo "No build/Release directory"
-          find build/Release -name "*backend*" -type f || echo "No backend binary found"
-          
-          # Build unit tests separately (reuses vcpkg dependencies)
+          # Build unit tests only (no release binaries on push/PR)
           echo "Building unit tests..."
           cmake -B ./build/Tests -S . \
             -D CMAKE_BUILD_TYPE=Release \
-            -D VCPKG_TARGET_TRIPLET=x64-linux \
+            -D VCPKG_TARGET_TRIPLET=$TRIPLET \
             -D ENABLE_TESTS=ON \
             -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
-          cmake --build ./build/Tests
+          cmake --build ./build/Tests --config Release --target unit_tests
           
           echo "Checking for test binary..."
           ls -la build/Tests/ || echo "No build/Tests directory"
@@ -229,28 +186,15 @@ jobs:
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
-        timeout-minutes: 90
+        timeout-minutes: 60
         run: |
-          REM Setup vcpkg and install dependencies
-          if not exist "vcpkg\installed" (
-            echo Setting up vcpkg and installing dependencies...
-            call vcpkg_first_time_setup.bat
-          ) else (
-            echo vcpkg already set up, skipping initial setup
-          )
+          REM Always run setup (idempotent installs)
+          call vcpkg_first_time_setup.bat
           
-          REM Build main backend (tests disabled by default)
-          echo Building main backend executable...
-          cmake -B .\build\Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=OFF -D CMAKE_TOOLCHAIN_FILE=%CD%\vcpkg\scripts\buildsystems\vcpkg.cmake
-          cmake --build .\build\Release --config Release --verbose
-          
-          echo Build completed. Checking for binary...
-          dir build\Release\Release\ /b 2>nul || dir build\Release\ /b || echo No binary found
-          
-          REM Build unit tests separately (reuses vcpkg dependencies)
+          REM Build unit tests only (no release binaries on push/PR)
           echo Building unit tests...
           cmake -B .\build\Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=ON -D CMAKE_TOOLCHAIN_FILE=%CD%\vcpkg\scripts\buildsystems\vcpkg.cmake
-          cmake --build .\build\Tests --config Release
+          cmake --build .\build\Tests --config Release --verbose --target unit_tests
           
           echo Checking for test binary...
           dir build\Tests\Release\ /b 2>nul || dir build\Tests\ /b || echo No test binary found
@@ -401,10 +345,13 @@ jobs:
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact-name }}
+          name: installers-${{ matrix.platform }}
           path: |
-            frontend/out/make/**/*
-          retention-days: 30
+            frontend/out/make/**
+            frontend/out/*.dmg
+            frontend/out/*.exe
+            frontend/out/*.deb
+          if-no-files-found: ignore
 
       # ========================================
       # Upload Build Artifacts (Always)

@@ -5,7 +5,7 @@ asio
 jsoncons
 libpng
 cppcodec
-opencv4
+opencv
 boost-asio
 openssl
 zlib
