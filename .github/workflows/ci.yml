@@ -114,10 +114,13 @@ jobs:
         working-directory: backend
         run: |
           chmod +x osx_config_environment.sh
-          # First time setup if vcpkg doesn't exist
+          
+          # Setup vcpkg and install dependencies
           if [ ! -d "vcpkg/installed" ]; then
-            echo "Setting up vcpkg for first time..."
+            echo "Setting up vcpkg and installing dependencies..."
             ./osx_config_environment.sh
+          else
+            echo "vcpkg already set up, skipping initial setup"
           fi
           
           # Determine architecture
@@ -128,17 +131,25 @@ jobs:
           fi
           
           # Build main backend (tests disabled by default)
-          echo "Building backend for $TRIPLET..."
-          cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=$TRIPLET -D ENABLE_TESTS=OFF
+          echo "Building main backend executable for $TRIPLET..."
+          cmake -B ./build/Release -S . \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D VCPKG_TARGET_TRIPLET=$TRIPLET \
+            -D ENABLE_TESTS=OFF \
+            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Release --verbose
           
           echo "Build completed. Checking for binary..."
           ls -la build/Release/ || echo "No build/Release directory"
           find build/Release -name "*backend*" -type f || echo "No backend binary found"
           
-          # Build unit tests separately
+          # Build unit tests separately (reuses vcpkg dependencies)
           echo "Building unit tests..."
-          cmake -B ./build/Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=$TRIPLET -D ENABLE_TESTS=ON
+          cmake -B ./build/Tests -S . \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D VCPKG_TARGET_TRIPLET=$TRIPLET \
+            -D ENABLE_TESTS=ON \
+            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Tests
           
           echo "Checking for test binary..."
@@ -150,24 +161,35 @@ jobs:
         working-directory: backend
         run: |
           chmod +x linux_config_environment.sh linux_release.sh
-          # First time setup if vcpkg doesn't exist
+          
+          # Setup vcpkg and install dependencies
           if [ ! -d "vcpkg/installed" ]; then
-            echo "Setting up vcpkg for first time..."
+            echo "Setting up vcpkg and installing dependencies..."
             ./linux_config_environment.sh
+          else
+            echo "vcpkg already set up, skipping initial setup"
           fi
           
           # Build main backend (tests disabled by default)
-          echo "Building backend..."
-          cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-linux -D ENABLE_TESTS=OFF
+          echo "Building main backend executable..."
+          cmake -B ./build/Release -S . \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D VCPKG_TARGET_TRIPLET=x64-linux \
+            -D ENABLE_TESTS=OFF \
+            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Release --verbose
           
           echo "Build completed. Checking for binary..."
           ls -la build/Release/ || echo "No build/Release directory"
           find build/Release -name "*backend*" -type f || echo "No backend binary found"
           
-          # Build unit tests separately
+          # Build unit tests separately (reuses vcpkg dependencies)
           echo "Building unit tests..."
-          cmake -B ./build/Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-linux -D ENABLE_TESTS=ON
+          cmake -B ./build/Tests -S . \
+            -D CMAKE_BUILD_TYPE=Release \
+            -D VCPKG_TARGET_TRIPLET=x64-linux \
+            -D ENABLE_TESTS=ON \
+            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Tests
           
           echo "Checking for test binary..."
@@ -180,23 +202,25 @@ jobs:
         shell: cmd
         timeout-minutes: 90
         run: |
-          REM First time setup if vcpkg doesn't exist
+          REM Setup vcpkg and install dependencies
           if not exist "vcpkg\installed" (
-            echo Setting up vcpkg for first time...
+            echo Setting up vcpkg and installing dependencies...
             call vcpkg_first_time_setup.bat
+          ) else (
+            echo vcpkg already set up, skipping initial setup
           )
           
           REM Build main backend (tests disabled by default)
-          echo Building backend...
-          cmake -B .\build\Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=OFF
+          echo Building main backend executable...
+          cmake -B .\build\Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=OFF -D CMAKE_TOOLCHAIN_FILE=%CD%\vcpkg\scripts\buildsystems\vcpkg.cmake
           cmake --build .\build\Release --config Release --verbose
           
           echo Build completed. Checking for binary...
           dir build\Release\Release\ /b 2>nul || dir build\Release\ /b || echo No binary found
           
-          REM Build unit tests separately
+          REM Build unit tests separately (reuses vcpkg dependencies)
           echo Building unit tests...
-          cmake -B .\build\Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=ON
+          cmake -B .\build\Tests -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-windows -D ENABLE_TESTS=ON -D CMAKE_TOOLCHAIN_FILE=%CD%\vcpkg\scripts\buildsystems\vcpkg.cmake
           cmake --build .\build\Tests --config Release
           
           echo Checking for test binary...
