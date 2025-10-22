@@ -13,14 +13,10 @@ git pull --ff-only
 sh bootstrap-vcpkg.sh
 cd ..
 
-# Determine architecture
-if [ "$(uname -m)" = "arm64" ]; then
-    TRIPLET="arm64-osx"
-else
-    TRIPLET="x64-osx"
-fi
+# Only Apple Silicon (arm64) is supported - Intel Macs are no longer supported
+TRIPLET="arm64-osx"
 
-echo "Installing dependencies for $TRIPLET..."
+echo "Installing dependencies for Apple Silicon ($TRIPLET)..."
 
 # Install dependencies with explicit triplet.
 packages=$(cat "dependencies.txt")

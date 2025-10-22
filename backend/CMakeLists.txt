@@ -3,36 +3,11 @@ cmake_minimum_required(VERSION 3.16)
 # Sets the CMAKE Toolchain to the vcpkg installed using ./arch_config_environment
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
-# VCPKG on macOS requires system architectures to be set, so set those here.
-# Requires a check for the right architecture (x_86 or arm64) as well as making sure
-# it is not already defined to allow the user to override it using the command line.
-if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES )
-    # Try to detect from CMAKE_SYSTEM_PROCESSOR first
-    if (CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
-        set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
-        message(STATUS "macOS architecture set to: arm64")
-    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
-        set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
-        message(STATUS "macOS architecture set to: x86_64")
-    else()
-        # Fallback: try to detect from uname
-        execute_process(
-            COMMAND uname -m
-            OUTPUT_VARIABLE DETECTED_ARCH
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        message(STATUS "CMAKE_SYSTEM_PROCESSOR detection failed (got: '${CMAKE_SYSTEM_PROCESSOR}'), using uname result: ${DETECTED_ARCH}")
-        if (DETECTED_ARCH MATCHES "arm64|aarch64")
-            set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
-            message(STATUS "macOS architecture set to: arm64 (from uname)")
-        elseif (DETECTED_ARCH MATCHES "x86_64")
-            set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
-            message(STATUS "macOS architecture set to: x86_64 (from uname)")
-        else()
-            message(WARNING "Could not detect macOS architecture (CMAKE_SYSTEM_PROCESSOR: '${CMAKE_SYSTEM_PROCESSOR}', uname: '${DETECTED_ARCH}'). Using x86_64 as default.")
-            set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
-        endif()
-    endif()
+# VCPKG on macOS requires system architectures to be set.
+# Only Apple Silicon (arm64) is supported - Intel Macs are no longer supported.
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES)
+    set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "macOS architecture (Apple Silicon only)" FORCE)
+    message(STATUS "macOS: Building for Apple Silicon (arm64)")
 endif()
 
 # Trace VCPKG package finding (Use for debugging VCPKG errors)
@@ -55,7 +30,19 @@ find_package(jsoncons CONFIG REQUIRED)
 find_package(PNG REQUIRED)
 find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 
-set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
+# Debug vcpkg paths
+message(STATUS "VCPKG_INSTALLED_DIR: ${VCPKG_INSTALLED_DIR}")
+message(STATUS "VCPKG_TARGET_TRIPLET: ${VCPKG_TARGET_TRIPLET}")
+message(STATUS "CMAKE_TOOLCHAIN_FILE: ${CMAKE_TOOLCHAIN_FILE}")
+
+# Set OpenCV directory manually since vcpkg uses opencv4
+if(DEFINED VCPKG_INSTALLED_DIR AND DEFINED VCPKG_TARGET_TRIPLET)
+    set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
+    message(STATUS "OpenCV_DIR set to: ${OpenCV_DIR}")
+else()
+    message(WARNING "VCPKG_INSTALLED_DIR or VCPKG_TARGET_TRIPLET not defined. OpenCV_DIR may not be set correctly.")
+endif()
+
 find_package(OpenCV REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})

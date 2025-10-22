@@ -123,18 +123,14 @@ jobs:
             echo "vcpkg already set up, skipping initial setup"
           fi
           
-          # Determine architecture
-          if [ "$(uname -m)" = "arm64" ]; then
-            TRIPLET="arm64-osx"
-          else
-            TRIPLET="x64-osx"
-          fi
+          # Only Apple Silicon (arm64) is supported
+          TRIPLET="arm64-osx"
           
           # Get absolute path to vcpkg toolchain
           VCPKG_ROOT="$(pwd)/vcpkg"
           
           # Build main backend (tests disabled by default)
-          echo "Building main backend executable for $TRIPLET..."
+          echo "Building main backend executable for Apple Silicon ($TRIPLET)..."
           cmake -B ./build/Release -S . \
             -D CMAKE_BUILD_TYPE=Release \
             -D VCPKG_TARGET_TRIPLET=$TRIPLET \
@@ -169,6 +165,17 @@ jobs:
           if [ ! -d "vcpkg/installed" ]; then
             echo "Setting up vcpkg and installing dependencies..."
             ./linux_config_environment.sh
+            
+            # Verify vcpkg installations
+            echo "=========================================="
+            echo "Verifying vcpkg installations:"
+            echo "=========================================="
+            vcpkg/vcpkg list
+            echo ""
+            echo "Checking for OpenCV installation:"
+            ls -la vcpkg/installed/x64-linux/share/ | grep -i opencv || echo "No OpenCV found in share/"
+            ls -la vcpkg/installed/x64-linux/include/ | grep -i opencv || echo "No OpenCV found in include/"
+            echo ""
           else
             echo "vcpkg already set up, skipping initial setup"
           fi
