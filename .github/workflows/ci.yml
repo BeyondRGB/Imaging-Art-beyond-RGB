@@ -130,13 +130,16 @@ jobs:
             TRIPLET="x64-osx"
           fi
           
+          # Get absolute path to vcpkg toolchain
+          VCPKG_ROOT="$(pwd)/vcpkg"
+          
           # Build main backend (tests disabled by default)
           echo "Building main backend executable for $TRIPLET..."
           cmake -B ./build/Release -S . \
             -D CMAKE_BUILD_TYPE=Release \
             -D VCPKG_TARGET_TRIPLET=$TRIPLET \
             -D ENABLE_TESTS=OFF \
-            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Release --verbose
           
           echo "Build completed. Checking for binary..."
@@ -149,7 +152,7 @@ jobs:
             -D CMAKE_BUILD_TYPE=Release \
             -D VCPKG_TARGET_TRIPLET=$TRIPLET \
             -D ENABLE_TESTS=ON \
-            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Tests
           
           echo "Checking for test binary..."
@@ -170,13 +173,16 @@ jobs:
             echo "vcpkg already set up, skipping initial setup"
           fi
           
+          # Get absolute path to vcpkg toolchain
+          VCPKG_ROOT="$(pwd)/vcpkg"
+          
           # Build main backend (tests disabled by default)
           echo "Building main backend executable..."
           cmake -B ./build/Release -S . \
             -D CMAKE_BUILD_TYPE=Release \
             -D VCPKG_TARGET_TRIPLET=x64-linux \
             -D ENABLE_TESTS=OFF \
-            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Release --verbose
           
           echo "Build completed. Checking for binary..."
@@ -189,7 +195,7 @@ jobs:
             -D CMAKE_BUILD_TYPE=Release \
             -D VCPKG_TARGET_TRIPLET=x64-linux \
             -D ENABLE_TESTS=ON \
-            -D CMAKE_TOOLCHAIN_FILE="${PWD}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            -D CMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
           cmake --build ./build/Tests
           
           echo "Checking for test binary..."

@@ -7,12 +7,31 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems
 # Requires a check for the right architecture (x_86 or arm64) as well as making sure
 # it is not already defined to allow the user to override it using the command line.
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES )
+    # Try to detect from CMAKE_SYSTEM_PROCESSOR first
     if (CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
         set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
-    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+        message(STATUS "macOS architecture set to: arm64")
+    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
         set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+        message(STATUS "macOS architecture set to: x86_64")
     else()
-        message("Target architecture is unknown or different: ${CMAKE_SYSTEM_PROCESSOR}")
+        # Fallback: try to detect from uname
+        execute_process(
+            COMMAND uname -m
+            OUTPUT_VARIABLE DETECTED_ARCH
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+        message(STATUS "CMAKE_SYSTEM_PROCESSOR detection failed (got: '${CMAKE_SYSTEM_PROCESSOR}'), using uname result: ${DETECTED_ARCH}")
+        if (DETECTED_ARCH MATCHES "arm64|aarch64")
+            set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+            message(STATUS "macOS architecture set to: arm64 (from uname)")
+        elseif (DETECTED_ARCH MATCHES "x86_64")
+            set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+            message(STATUS "macOS architecture set to: x86_64 (from uname)")
+        else()
+            message(WARNING "Could not detect macOS architecture (CMAKE_SYSTEM_PROCESSOR: '${CMAKE_SYSTEM_PROCESSOR}', uname: '${DETECTED_ARCH}'). Using x86_64 as default.")
+            set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+        endif()
     endif()
 endif()
 
