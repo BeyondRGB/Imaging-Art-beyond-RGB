@@ -101,7 +101,10 @@ jobs:
             backend/vcpkg/installed
             backend/vcpkg/buildtrees
             backend/vcpkg/packages
-          key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/vcpkg.json') }}
+            backend/vcpkg/scripts
+            backend/vcpkg/vcpkg
+            backend/vcpkg/.git
+          key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
           restore-keys: |
             vcpkg-${{ matrix.platform }}-
 
@@ -116,7 +119,8 @@ jobs:
           chmod +x osx_config_environment.sh
           
           # Setup vcpkg and install dependencies
-          if [ ! -d "vcpkg/installed" ]; then
+          # Check for toolchain file specifically, not just installed directory
+          if [ ! -f "vcpkg/scripts/buildsystems/vcpkg.cmake" ]; then
             echo "Setting up vcpkg and installing dependencies..."
             ./osx_config_environment.sh
           else
@@ -162,23 +166,35 @@ jobs:
           chmod +x linux_config_environment.sh linux_release.sh
           
           # Setup vcpkg and install dependencies
-          if [ ! -d "vcpkg/installed" ]; then
+          # Check for toolchain file specifically, not just installed directory
+          if [ ! -f "vcpkg/scripts/buildsystems/vcpkg.cmake" ]; then
             echo "Setting up vcpkg and installing dependencies..."
             ./linux_config_environment.sh
-            
-            # Verify vcpkg installations
-            echo "=========================================="
-            echo "Verifying vcpkg installations:"
-            echo "=========================================="
-            vcpkg/vcpkg list
-            echo ""
-            echo "Checking for OpenCV installation:"
-            ls -la vcpkg/installed/x64-linux/share/ | grep -i opencv || echo "No OpenCV found in share/"
-            ls -la vcpkg/installed/x64-linux/include/ | grep -i opencv || echo "No OpenCV found in include/"
-            echo ""
           else
-            echo "vcpkg already set up, skipping initial setup"
+            echo "vcpkg already set up, verifying OpenCV..."
+            # Even if vcpkg exists, check if opencv4 is installed
+            if ! vcpkg/vcpkg list | grep -q opencv4; then
+              echo "OpenCV not found, installing..."
+              vcpkg/vcpkg install opencv4:x64-linux
+            fi
           fi
+          
+          # Verify vcpkg installations
+          echo "=========================================="
+          echo "Verifying vcpkg installations:"
+          echo "=========================================="
+          vcpkg/vcpkg list | grep opencv || echo "⚠️  OpenCV NOT installed!"
+          echo ""
+          echo "Checking for OpenCV cmake files:"
+          if [ -d "vcpkg/installed/x64-linux/share/opencv4" ]; then
+            echo "✓ opencv4 directory exists"
+            ls -la vcpkg/installed/x64-linux/share/opencv4/ | head -10
+          else
+            echo "❌ opencv4 directory NOT found"
+            echo "Available share directories:"
+            ls -la vcpkg/installed/x64-linux/share/ | head -20
+          fi
+          echo ""
           
           # Get absolute path to vcpkg toolchain
           VCPKG_ROOT="$(pwd)/vcpkg"
