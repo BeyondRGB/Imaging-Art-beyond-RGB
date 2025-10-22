@@ -136,7 +136,4 @@
 	.sideMenu {
 		@apply flex flex-row;
 	}
-
-	/* Global button styles removed - use Button.svelte component instead */
-	/* Scrollbar styles removed - use ScrollContainer.svelte component instead */
 </style>

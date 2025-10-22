@@ -12,8 +12,11 @@
 	import VectorChart from "@components/Charts/VectorChart.svelte";
 	import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
 	import ImageViewer from "@root/components/ImageViewer.svelte";
-	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
+	import LineChart from "@components/Charts/LineChart.svelte";
 	import Switch from "@components/Switch.svelte";
+	import EmptyState from "@components/EmptyState.svelte";
+	import ExpandablePanel from "@components/ExpandablePanel.svelte";
+	import CloseButton from "@components/CloseButton.svelte";
 
 	let open = false;
 	let spectrumDataHeatMap_est;
@@ -180,16 +183,13 @@
 
 <main class="reports-main">
 	{#if $viewState.projectKey === null}
-		<div class="noFile">
-			<div class="inputBox">
-				<h2>Select a project file to import into BeyondRGB</h2>
-				<FileSelector bind:filePaths={mainfilePath} filter="project" />
-			</div>
-		</div>
+		<EmptyState title="Select a project file to import into BeyondRGB">
+			<FileSelector bind:filePaths={mainfilePath} filter="project" />
+		</EmptyState>
 	{:else}
 		<div class="art">
 			<div class="report-header" class:show={$currentPage === "Reports"}>
-        	<button class="close-report" on:click={handleCloseReport}>X</button>
+        	<CloseButton variant="absolute-top-right" onClick={handleCloseReport} />
 				<div class="report-left">
 					<div class="report-name">
 						{$viewState.projectKey?.split("\\").length > 2
@@ -233,30 +233,27 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 						  <ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
 						</div>
 							{#if $currentPage === "Reports"}
-								<div class="reports-floatBox" class:expanded={expand}>
+								<ExpandablePanel 
+									bind:expanded={expand}
+									position="right"
+									width="30vw"
+									handlePosition="50%"
+								>
 									<div class="box" id="brush">
 										<p>Click on a Heatmap box to view the Estimated vs. Reference Spectral Curve</p>
-										</div>
+									</div>
 									<div class="chart">
-										<LineChartMeasured
+										<LineChart
+											multiDataset={true}
 											bind:data={combinedData}
 											bind:wavelengthArray
 											stack={stackCurves}
 											bind:trueShadowPos
 										/>
 									</div>
-								</div>
+								</ExpandablePanel>
 							{/if}
 					</div>
-						{#if $currentPage === "Reports"}
-							<div
-								class="reports-handle"
-								class:expanded={expand}
-								on:click={() => (expand = !expand)}
-							>
-								{expand ? ">" : "<"}
-							</div>
-						{/if}
 					
 					<div class="report-item">
 						<!-- AB vector chart -->
@@ -311,29 +308,12 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 	.dropdown-report-btn {
 		@apply w-full flex flex-col justify-center items-center z-50;
 	}
-
-	.noFile {
-		background-color: var(--color-surface-base);
-		@apply absolute w-full h-full z-[99] flex justify-center
-            items-center top-0 left-0;
-	}
-	.inputBox {
-		background-color: var(--color-surface);
-		@apply w-auto h-auto flex flex-col gap-2 justify-center items-center
-          p-8 rounded-2xl;
-  }
-  .inputBox h2 {
-    @apply text-xl;
-  }
   .report-header {
     width: 100%;
     height: 20vh;
     background-color: var(--color-surface-base);
     @apply sticky top-0 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
             transition-all delay-150 duration-300 ease-in justify-between;
-  }
-  .close-report {
-    @apply absolute top-5 right-0;
   }
   .report-header.show {
     @apply translate-y-0;
@@ -364,29 +344,6 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
     @apply w-full bg-blue-600/25 relative items-center flex justify-center;
   }
 
-	.reports-floatBox {
-		position: fixed;
-		background-color: var(--color-overlay-medium);
-		transition: right 0.5s ease-in-out;
-		width: 30vw; /* Adjust as needed */
-		min-height: 100px; /* Prevents squishing */
-		position: fixed;
-		top: 50%; /* Originally set to 50%, adjust this if the box is too low */
-		right: -30vw; /* Initially off-screen */
-		transform: translateY(
-			-30%
-		); /* Adjust this value to move up (-) or down (+) */
-		z-index: 10;
-	}
-	/* When expanded, the box should come into view */
-	.expanded {
-		right: 0; /* Bring into view by adjusting the right position */
-	}
-	.reports-floatBox > * {
-		min-width: 0; /* Prevent flexbox items from overflowing */
-		overflow: hidden; /* Hide overflow content */
-	}
-
 	.brushBar {
 		@apply w-full h-2 rounded-xl;
 	}
@@ -414,22 +371,6 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
     border: 1px solid var(--color-border);
 		@apply p-0.5 rounded-lg
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
-	}
-	.reports-handle {
-		background-color: var(--color-overlay-medium);
-    border: 1px solid var(--color-border);
-		@apply h-12 w-8  flex justify-center items-center
-							text-2xl rounded-l-full border-r-0;
-		position: fixed; /* Position relative to the viewport */
-		top: 50%; /* Center vertically */
-		right: 0; /* Place it at the right edge of the viewport */
-		transform: translateY(-50%); /* Center it vertically */
-		z-index: 20; /* Ensure it's clickable and above the float box */
-		cursor: pointer; /* Indicate it's clickable */
-		transition: right 0.5s ease-in-out;
-	}
-	.reports-handle.expanded {
-		right: 30vw; /* Moves the handle to be attached to the floatBox */
 	}
 	.sizeSettings {
 		@apply flex justify-between items-center text-base pl-4;

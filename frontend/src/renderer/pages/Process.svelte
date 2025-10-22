@@ -19,6 +19,7 @@
   import SelectProcessingType from "@root/components/Process/Tabs/SelectProcessingType.svelte";
   import Layout from "@components/Process/Layout.svelte";
   import Button from "@components/Button.svelte";
+  import ConfirmDialog from "@components/ConfirmDialog.svelte";
   let tabList;
 
   let showWhitePatchWarning = false;
@@ -310,52 +311,49 @@
   {/if}
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
-    {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
-      <Button
-        variant="success"
-        onClick={() => {
-          if (!$processState.whitePatchFilled) {
-            showWhitePatchWarning = true;
-            return;
-          }
-          if ($processState.completedTabs[$processState.currentTab]) {
-            showDialog = true;
-            return;
-          }
-          showWhitePatchWarning = false;
-          showDialog = false;
-        }}
-        class="nextBtn">Begin Processing</Button
-      >
-    {:else if tabs[$processState.currentTab].hidden}
-      <br />
-    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options" &&  $processState.currentTab !== 0 }
-      <Button variant="success" onClick={nextTab} class="nextBtn">Next</Button>
-    {/if}
+    <div class="nextBtn">
+      {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
+        <Button
+          variant="success"
+          onClick={() => {
+            if (!$processState.whitePatchFilled) {
+              showWhitePatchWarning = true;
+              return;
+            }
+            if ($processState.completedTabs[$processState.currentTab]) {
+              showDialog = true;
+              return;
+            }
+            showWhitePatchWarning = false;
+            showDialog = false;
+          }}
+        >Begin Processing</Button>
+      {:else if tabs[$processState.currentTab].hidden}
+        <br />
+      {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options" &&  $processState.currentTab !== 0 }
+        <Button variant="success" onClick={nextTab}>Next</Button>
+      {/if}
+    </div>
   </botnav>
 
-  <div class={`confirmModal ${showWhitePatchWarning ? "show" : ""}`}>
-    <div class="warningDialog">
-      <p>Please select a white patch before continuing</p>
-      <div class="btnGroup">
-        <Button variant="secondary" onClick={() => (showWhitePatchWarning = false)}
-          >Close</Button
-        >
-      </div>
-    </div>
-  </div>
+  <ConfirmDialog 
+    bind:show={showWhitePatchWarning}
+    message="Please select a white patch before continuing"
+    type="warning"
+    confirmLabel="Close"
+    cancelLabel=""
+    onConfirm={() => (showWhitePatchWarning = false)}
+  />
 
-  <div class={`confirmModal ${showDialog ? "show" : ""}`}>
-    <div class="confirmDialog">
-      <p>Are you sure you're ready to proceed?</p>
-      <div class="btnGroup">
-        <Button variant="secondary" onClick={() => (showDialog = false)}
-          >Cancel</Button
-        >
-        <Button variant="success" onClick={handleConfirm}>Confirm</Button>
-      </div>
-    </div>
-  </div>
+  <ConfirmDialog 
+    bind:show={showDialog}
+    message="Are you sure you're ready to proceed?"
+    type="info"
+    confirmLabel="Confirm"
+    cancelLabel="Cancel"
+    onConfirm={handleConfirm}
+    onCancel={() => (showDialog = false)}
+  />
 </main>
 
 <style lang="postcss" local>
@@ -375,45 +373,6 @@
   .nextBtn {
     @apply m-4;
   }
-  .page {
-    overflow: overlay;
-    @apply w-full h-full flex overflow-x-auto;
-  }
-
-  .confirmModal {
-    background-color: var(--color-overlay-heavy);
-    @apply absolute z-50 items-center justify-center w-full h-full hidden;
-  }
-
-  .show {
-    @apply flex;
-  }
-
-  .confirmDialog {
-    background-color: var(--color-surface);
-    @apply w-1/2 h-1/3 text-xl rounded-xl p-4 flex flex-col justify-between;
-  }
-
-  .confirmDialog p {
-    background-color: var(--color-surface-sunken);
-    @apply rounded-md flex justify-center p-2 text-lg mt-10;
-  }
-
-  .warningDialog {
-    background-color: var(--color-surface);
-    @apply w-1/3 h-1/6 text-xl rounded-xl p-4 flex flex-col justify-between;
-  }
-
-  .warning {
-    @apply text-red-500 font-bold text-2xl flex items-center justify-center;
-  }
-
-  .btnGroup {
-    @apply flex justify-end gap-2;
-  }
-  /* div {
-    @apply w-full h-full;
-  } */
   .tab {
     background-color: var(--color-interactive);
     border: 1px solid var(--color-border);
@@ -429,14 +388,5 @@
   }
   #backBtn {
     @apply absolute h-8 py-0 ml-2 my-2;
-  }
-  .tab.none {
-    background-color: var(--color-surface-sunken);
-  }
-  .component {
-    @apply relative float-left flex-shrink-0 block;
-  }
-  .component:last-of-type {
-    @apply z-0;
   }
 </style>

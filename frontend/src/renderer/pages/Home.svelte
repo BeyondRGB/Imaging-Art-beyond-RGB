@@ -7,9 +7,9 @@
     CrosshairIcon,
     ApertureIcon,
     InfoIcon,
-    XCircleIcon,
     CopyIcon
   } from "svelte-feather-icons";
+  import CloseButton from "@components/CloseButton.svelte";
     
 
   function handleClick(page) {
@@ -29,11 +29,13 @@
 <main>
   {#if showAbout}
     <div class="aboutContent">
-      <div class="aboutBg" on:click={() => (showAbout = false)} />
+      <div class="aboutBg" on:click={() => (showAbout = false)} on:keydown={(e) => e.key === 'Escape' && (showAbout = false)} role="button" tabindex="0" />
       <div class="aboutBox">
-        <button class="closeBtn" on:click={() => (showAbout = false)}
-          ><XCircleIcon size="1.5x" /></button
-        >
+        <CloseButton 
+          variant="absolute-top-right" 
+          onClick={() => (showAbout = false)}
+          size="1.5x"
+        />
         <About />
       </div>
     </div>
@@ -123,10 +125,6 @@
   .aboutBox {
     @apply absolute w-1/2 h-auto z-[9999];
   }
-  .closeBtn {
-    @apply absolute right-0 m-2 bg-transparent ring-0 hover:bg-red-400/50
-            p-1;
-  }
 
   .btnTitle {
     @apply w-full flex justify-center items-center gap-1 p-1 text-xl;
@@ -135,10 +133,6 @@
   #welcome {
     color: var(--color-text-tertiary);
     @apply flex flex-col justify-center items-center gap-2 pb-[1vh];
-  }
-
-  #getting-started {
-    @apply text-base flex flex-col justify-center items-center;
   }
 
   span {

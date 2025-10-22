@@ -6,17 +6,19 @@
   import html2canvas from "html2canvas";
   import { element } from "svelte/internal";
   import { chart } from "svelte-apexcharts";
+  import { exportSpectralCSV } from "@util/csvExport.js";
 
   export let data = [];
   export let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);;
   export let trueShadowPos;
   export let stack = false;
+  export let multiDataset = false; // For handling measured vs estimated spectra
   let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
-
 
   let inputData = [];
 
-  $: if (data.length > 1) {
+  // Handle single dataset (original LineChart behavior)
+  $: if (!multiDataset && data.length > 1) {
       const dataDict = [];
 
       // Clear the graph if we aren't stacking curves
@@ -40,15 +42,47 @@
       data = [];
   }
 
+  // Handle multiple datasets (LineChartMeasured behavior)
+  $: if (multiDataset && data.length > 1) {
+      inputData = [];
+
+      // Add data for both estimated and reference spectrum
+      data.forEach((dataset, j) => {
+          const dataDict = [];
+          var namer;
+          wavelengthArray.forEach((element, i) => {
+              dataDict.push({
+                  x: element,
+                  y: dataset[i] * 100,
+                  fillColor: pointColors[i]
+              });
+          });
+          if (j==0) {
+              namer = 'Estimated Spectrum: (' + trueShadowPos.left + ";" + trueShadowPos.top.toFixed(1) + ")";
+          }
+          else {
+              namer = 'Reference Spectrum: (' + trueShadowPos.left + ";" + trueShadowPos.top.toFixed(1) + ")";
+          }
+          inputData.push({
+              type: 'line',
+              name: namer,
+              data: dataDict,
+              color: j === 0 ? '#FFFFFF' : '#000000' 
+          });
+          options.series = inputData;
+      });
+      data = [];
+  }
+
   const options = {
       series: [],
       stroke: {
           show: true,
           curve: 'smooth',
-          width: 1,
+          width: multiDataset ? 2 : 1,
       },
       chart: {
-          background: 'rgb(58, 58, 60)',
+          background: multiDataset ? '#4A4A4C' : 'rgb(58, 58, 60)',
           animations: {
               enabled: false
           },
@@ -86,7 +120,7 @@
                 return `${value.toFixed(2)}%`;
             },
             title: {
-                  formatter: () => '',
+                  formatter: multiDataset ? (seriesName, info) => seriesName : () => '',
               }
           },
           z: {
@@ -134,10 +168,14 @@
       },
       legend: {
           show: true,
-          showForSingleSeries: true,
+          showForSingleSeries: !multiDataset,
           labels: {
-            colors: '#FFFFFF',
+            colors: multiDataset ? undefined : '#FFFFFF',
+            useSeriesColors: multiDataset,
           },
+          markers: multiDataset ? {
+              fillColors: pointColors,
+          } : undefined,
       },
       title: {
           text: "Estimated Spectrum",
@@ -148,50 +186,9 @@
       }
   };
 
-  const createCSVContent = () => {
-    let csvContent = "data:text/csv;charset=utf-8,"; //doesn't actually show up in file
-    const delimiter = ",";
-
-    //Add column headers as first row
-    csvContent += "wavelength,"
-    inputData.forEach((spectralLine) => {
-        csvContent += spectralLine.name + delimiter;
-    });        
-    csvContent += "\r\n";
-
-    //for each row of wavelength values
-    for(let i=0; i<wavelengthArray.length; i++){ 
-        //add the wavelength value first
-        csvContent += wavelengthArray[i].toString() + delimiter;
-
-        //then add each spectral line's percentage value at that wavelength 
-        inputData.forEach((spectralLine) => {
-            //do not want to assume spectralLine.data is in increasing order of wavelength
-            //so filter the array for the current wavelength value 
-            let filteredArray = spectralLine.data.filter((item) => {
-                return item.x==wavelengthArray[i]
-            });
-            //assume filteredArray has one object in it
-            //divide y value by 100, so value will be between 0 and 1
-            csvContent += (filteredArray[0].y / 100) + delimiter;
-        });
-
-        csvContent += "\r\n"; 
-    }
-
-    return csvContent;
+  const downloadCSV = () => {
+    exportSpectralCSV(inputData, wavelengthArray, "SpectralLineChart.csv");
   };
-
-    const downloadCSV = () => {   
-        let csvContent = createCSVContent();
-      
-        //create a hidden <a> element, then click it to download csv
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "SpectralLineChart.csv");
-        link.click();
-    };
        
   
 </script>

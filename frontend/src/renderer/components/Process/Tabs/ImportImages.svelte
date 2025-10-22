@@ -2,7 +2,7 @@
   import { processState } from "@util/stores";
   import ImageImporter from "@components/ImageImporter.svelte";
   import {get} from "lodash";
-  import Dropbox from "../Dropbox.svelte";
+  import ImageRoleGrid from "@components/ImageRoleGrid.svelte";
   import { countFields } from "@root/util/storesUtil";
   let imageStack = get($processState, 'artStacks[0].fields');
   let sortedImageCount=0;
@@ -24,39 +24,35 @@
     <br><br>
     <div>
       {#if sortedImageCount>0}
-      <h2>Already Sorted Images</h2>
-      <div >
-        <div class="inputGroup">
-            <div class="imageLetter">A</div>
-            <div class="imageLetter">B</div>
-        </div>
+        <h2>Already Sorted Images</h2>
+        <ImageRoleGrid 
+          bind:imageStack={imageStack}
+          roleType="object"
+          artImageCount={artImageCount}
+          showHeaders={true}
+        />
         <h3 class="text">Object</h3>
-        <div class="artImageObjects">
-          {#each Array(artImageCount) as count, index (index)}
-          <div class="inputGroup">
-              <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA[index]} singleItem={true} dragDisabled={true}/></div>
-              <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[index]} singleItem={true} dragDisabled={true}/></div>
-          </div>
-          <br>
-          {/each}
-        </div>
-      </div>
+        
         <h3 class="text">Target</h3>
-        <div class="inputGroup">
-          <div class="cell"><Dropbox type="image" bind:items={imageStack.targetA} singleItem={true} dragDisabled={true}/></div>
-          <div class="cell"><Dropbox type="image" bind:items={imageStack.targetB} singleItem={true} dragDisabled={true}/></div>
-        </div>
+        <ImageRoleGrid 
+          bind:imageStack={imageStack}
+          roleType="target"
+          showHeaders={false}
+        />
+        
         <h3 class="text">FlatField</h3>
-        <div class="inputGroup">
-          <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldA} singleItem={true} dragDisabled={true}/></div>
-          <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldB} singleItem={true} dragDisabled={true}/></div>
-        </div>
+        <ImageRoleGrid 
+          bind:imageStack={imageStack}
+          roleType="flatfield"
+          showHeaders={false}
+        />
+        
         <h3 class="text">DarkField</h3>
-
-        <div class="inputGroup">
-          <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldA} singleItem={true} dragDisabled={true}/></div>
-          <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true} dragDisabled={true}/></div>
-        </div>          
+        <ImageRoleGrid 
+          bind:imageStack={imageStack}
+          roleType="darkfield"
+          showHeaders={false}
+        />
       {/if}
     </div>
   </left>
@@ -98,14 +94,6 @@
   ul {
     @apply flex flex-col gap-2 w-full justify-center items-center;
   }
-  .inputGroup {
-    display: flex;
-    flex-direction: row;
-    height: auto;
-    gap: 20px;
-    width: 100%;
-    justify-content: center;
-  }
   card {
     width: auto;
     padding-right: 10px;
@@ -121,15 +109,6 @@
     margin-top:5px;
     margin-bottom:10px;
   }
-  .imageLetter{
-    width: 50%;
-    text-align: center;
-    font-size: 20px;
-    margin-top:10px;
-  }
-  .cell {
-    width: 50%;
-  }
   section {
     background-color: #2c2c2f;
     height: auto;
@@ -143,32 +122,6 @@
     gap: 10px;
     align-items: center;
     padding: 10px;
-  }
-  .artImageObjects{
-    max-height:210px;
-    overflow-y:auto;
-    scrollbar-width: 10px;
-  }
-
-  /* width */
-  .artImageObjects::-webkit-scrollbar {
-    @apply relative transition-all w-1;
-  }
-
-  /* Track */
-  .artImageObjects::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  /* Handle */
-  .artImageObjects::-webkit-scrollbar-thumb {
-    background-color: var(--color-border);
-    @apply rounded-full;
-  }
-
-  /* Handle on hover */
-  .artImageObjects::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-interactive-hover);
   }
     
   

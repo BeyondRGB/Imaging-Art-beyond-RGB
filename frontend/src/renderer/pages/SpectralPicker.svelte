@@ -8,7 +8,6 @@
     currentPage,
   } from "@util/stores";
   import {
-    XCircleIcon,
     Maximize2Icon,
     Minimize2Icon,
   } from "svelte-feather-icons";
@@ -17,6 +16,10 @@
   import Switch from "@components/Switch.svelte";
   import FileSelector from "@components/FileSelector.svelte";
   import { fullScreenApi } from "openseadragon";
+  import EmptyState from "@components/EmptyState.svelte";
+  import ExpandablePanel from "@components/ExpandablePanel.svelte";
+  import CloseButton from "@components/CloseButton.svelte";
+  import LoadingOverlay from "@components/LoadingOverlay.svelte";
 
   let brushShow = false;
   let stackCurves = false;
@@ -114,12 +117,9 @@
 
 <main>
   {#if $viewState.projectKey === null}
-    <div class="noFile">
-      <div class="inputBox">
-        <h2>Select a project file to import into BeyondRGB</h2>
-        <FileSelector bind:filePaths={mainfilePath} filter="project" />
-      </div>
-    </div>
+    <EmptyState title="Select a project file to import into BeyondRGB">
+      <FileSelector bind:filePaths={mainfilePath} filter="project" defaultPath="" />
+    </EmptyState>
   {/if}
   <div class="content" id="picker-content">
     <div class="panel">
@@ -142,21 +142,17 @@
             <Maximize2Icon size="1.25x" />
           {/if}
         </button>
-        <button class="closeBtn" on:click={closeImage}>
-          <XCircleIcon size="1.25x" />
-        </button>
+        <CloseButton variant="floating" onClick={closeImage} />
 
         <div class="image-container">
-          {#if loading}
-            <div class="loading">
-              <div class="loading-box">Loading<span class="loader" /></div>
-            </div>
-          {/if}
+          <LoadingOverlay show={loading} message="Loading" />
 
-          <div class="floatBox" class:notExpanded={!expand}>
-            <div class="handle" on:click={() => (expand = !expand)}>
-              {expand ? ">" : "<"}
-            </div>
+          <ExpandablePanel 
+            bind:expanded={expand}
+            position="right"
+            width="30vw"
+            handlePosition="0%"
+          >
             <div class="box" id="brush">
               <Switch label="Enable Spectral Picker" bind:checked={brushShow} />
               <Switch label="Stack Spectral Curves" bind:checked={stackCurves} />
@@ -186,7 +182,7 @@
                 stack={stackCurves}
               />
             </div>
-          </div>
+          </ExpandablePanel>
           <SpecPickViewer
             bind:shadowPos
             bind:trueShadowPos
@@ -208,18 +204,6 @@
   main {
     @apply flex h-full w-full justify-center flex-col relative;
   }
-  .noFile {
-    background-color: var(--color-surface-base);
-    @apply absolute w-full h-full z-[99] flex justify-center items-center;
-  }
-  .inputBox {
-    background-color: var(--color-surface);
-    @apply w-auto h-auto flex flex-col gap-2 justify-center items-center
-          p-8 rounded-2xl;
-  }
-  .inputBox h2 {
-    @apply text-xl;
-  }
   .content {
     @apply w-full h-full flex justify-center items-center p-6;
   }
@@ -230,9 +214,6 @@
     background-color: var(--color-surface-sunken);
     @apply relative w-full h-full overflow-visible;
   }
-  .image {
-    @apply bg-green-400 overflow-auto h-[90%] aspect-[3/2];
-  }
   .image-tabs {
     @apply h-full w-full bg-red-500/50 relative
           flex flex-col;
@@ -240,18 +221,6 @@
 
   .aspect {
     @apply aspect-[145/100] w-auto;
-  }
-  .tabs {
-    background-color: var(--color-surface);
-    @apply w-auto flex gap-1 pt-1 px-1 rounded-t-lg;
-  }
-  .tab {
-    @apply relative;
-  }
-  .btnTab {
-    background-color: var(--color-surface);
-    @apply w-16 h-full flex justify-center items-center
-          rounded-t-xl rounded-b-none relative;
   }
   .pixSize {
     background-color: var(--color-surface-sunken);
@@ -266,74 +235,6 @@
     outline-color: var(--color-border);
   }
 
-  .closeTab {
-    color: var(--color-text-tertiary);
-    @apply absolute -right-0.5 -top-0.5 flex justify-center items-center
-            p-0.5 bg-transparent ring-0
-            hover:bg-red-500/50 hover:text-white z-[49];
-  }
-
-  .floatBox {
-    background-color: var(--color-overlay-medium);
-    border: 1px solid var(--color-border);
-    @apply absolute h-auto w-[30vw] z-[49] right-0 transition-all duration-500
-            translate-x-0 rounded-bl-xl;
-  }
-
-  .notExpanded {
-    @apply translate-x-full;
-  }
-
-  .loading {
-    background-color: var(--color-surface);
-    @apply absolute w-full h-full z-[49] flex justify-center items-center;
-  }
-  .loading-box {
-    @apply h-full flex flex-col gap-2 justify-center items-center
-            text-2xl;
-  }
-  .loader {
-    /* position: absolute; */
-    width: 48px;
-    height: 48px;
-    background: #11ff00;
-    transform: rotateX(65deg) rotate(45deg);
-    /* remove bellows command for perspective change */
-    transform: perspective(200px) rotateX(65deg) rotate(45deg);
-    color: rgb(255, 0, 0);
-    animation: layers1 1s linear infinite alternate;
-    @apply z-50;
-  }
-  .loader:after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgb(0, 0, 255);
-    animation: layerTr 1s linear infinite alternate;
-  }
-
-  @keyframes layers1 {
-    0% {
-      box-shadow: 0px 0px 0 0px;
-    }
-    90%,
-    100% {
-      box-shadow: 20px 20px 0 -4px;
-    }
-  }
-  @keyframes layerTr {
-    0% {
-      transform: translate(0, 0) scale(1);
-    }
-    100% {
-      transform: translate(-25px, -25px) scale(1);
-    }
-  }
-
-  .selected {
-    @apply bg-blue-500/50;
-  }
-
   .side {
     @apply h-full w-[45vw];
   }
@@ -341,11 +242,6 @@
   .fullBtn {
     @apply absolute right-0 m-1 z-50 p-1 bg-transparent ring-0
             hover:bg-blue-500/25 transition-all duration-500;
-  }
-
-  .closeBtn {
-    @apply absolute right-8 m-1 z-50 p-1 bg-transparent ring-0
-            hover:bg-red-500/25 transition-all duration-500;
   }
 
   .chart {
@@ -356,18 +252,6 @@
   .box {
     background-color: var(--color-surface-elevated);
     @apply m-2 shadow-md px-2 pt-1 rounded-lg p-2;
-  }
-  .numberInput {
-    background-color: var(--color-surface-sunken);
-    border: 1px solid var(--color-border);
-    @apply p-0.5 rounded-lg
-          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
-  }
-  .handle {
-    background-color: var(--color-overlay-medium);
-    border: 1px solid var(--color-border);
-    @apply h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-							text-2xl rounded-l-full border-r-0;
   }
 
   .sizeSettings {

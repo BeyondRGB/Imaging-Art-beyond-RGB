@@ -1,9 +1,10 @@
 <script>
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
-  import { find, reverse, cloneDeep } from "lodash";
+  import { find } from "lodash";
   import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
   import { createEventDispatcher } from 'svelte';
+  import { exportHeatmapCSV } from "@util/csvExport.js";
   export let data;
 
   const dispatch = createEventDispatcher();
@@ -29,39 +30,8 @@
         dispatch('p90update', { p90: p90obj });
       }
 
-
-
-
   const exportCSV = function () {
-    // Reverse this without mutating because it's upside down
-    const flipped = reverse(cloneDeep(mapData));
-    let valueSum = 0;
-
-
-
-    // Construct CSV by hand because there is a bug in Apexcharts relating to 2d data
-    let csv = '"Row","Col","Value"\r\n';
-    for(let i = 0; i < flipped.length; i++) {
-      for(let j = 0; j < flipped[i].length; j++) {
-        csv += [String(i+1), String.fromCharCode(j + 65), flipped[i][j]]
-                .map(v => `"${v}"`)
-                .join(',');
-        csv += '\r\n';
-      }
-    }
-    csv += `\r\n"Computed 90th Percentile","${p90obj !== null ? p90obj.toFixed(2) : 'N/A'}"\r\n`;
-
-    //double p90 = btrgb::calibration::compute_90th_percentile(deltaE_matrix);
-    //calibrationResults.store_double("90th Percentile", p90);
-
-
-    // Kinda jank, but found multiple sources with this strategy for
-    // downloading constructed CSVs
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const downloadLink = document.createElement('a');
-    downloadLink.href = window.URL.createObjectURL(blob);
-    downloadLink.setAttribute('download', 'calibrationReport.csv');
-    downloadLink.click();
+    exportHeatmapCSV(mapData, p90obj, 'calibrationReport.csv');
   };
 
 </script>
