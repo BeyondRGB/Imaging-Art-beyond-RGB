@@ -165,11 +165,6 @@
       } else if (id === 1) {
         verifyOverlay = true;
       }
-      // TODO: idea for fixing resizing of rotated image:
-      // Lock the corner opposite of the selected corner
-      // When the selected corner moves, make changes to the other 2 as well. 
-      // Attempt to give example: selected x increase, then the corner with the same y-value also increase x.
-      // potential problems: not working on simple x,y plane cuz rotated
 
       trackers[id] = new OpenSeadragon.MouseTracker({
         element: `sBox-${id}`,
@@ -243,18 +238,31 @@
             }
           });
         },
+      // TODO: idea for fixing resizing of rotated image:
+      // Lock the corner opposite of the selected corner
+      // When the selected corner moves, make changes to the other 2 as well. 
+      // Attempt to give example: selected x increase, then the corner with the same y-value also increase x.
+      // potential problems: not working on simple x,y plane cuz rotated
+
+        // this is the code we have to look at changing
         dragHandler: function (e) {
           var overlay = viewer.getOverlayById(`sBox-${id}`);
 
           let viewDeltaPoint = viewer.viewport.deltaPointsFromPixels(e.delta);
-
+          
+          // https://openseadragon.github.io/docs/OpenSeadragon.Rect.html
+          // x and y is top left corner. width to the right and height downwards
           let box = new OpenSeadragon.Rect(
             overlay.bounds.x,
             overlay.bounds.y,
             overlay.width,
             overlay.height
           );
-
+          
+          // cant really "lock corners". look into how to correctly adjust corners?
+          // if looking at the box in inspect element, we observe left and top properties represent x and y, and height/width props represent those?
+          // if so, why does the box's x/y seem to change when changing bottom right corner, which should only change height/weight. (left+top props remain unchanged)
+          // could try playing with resetting the transformation. maybe that is problem somehow???
           if (pressPos.ele.classList[1] === "tl") {
             box.y += viewDeltaPoint.y;
             box.height -= viewDeltaPoint.y;
