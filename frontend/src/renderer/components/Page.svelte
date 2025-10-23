@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let routes;
-	export let pages; // bound to the scroll container in parent
+	export let pages;
 	import { fade, fly } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";
 	import { currentPage, appSettings, modal, serverError } from "@util/stores";
