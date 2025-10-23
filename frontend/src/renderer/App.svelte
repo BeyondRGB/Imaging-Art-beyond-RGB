@@ -129,8 +129,8 @@
 <main class={theme}>
 	<div class="app {theme}" class:sideMenu={$appSettings.sideNav}>
 		<Menu {routes} />
-		
-		<Page {routes} bind:pages/>
+
+		<Page {routes} bind:pages />
 	</div>
 </main>
 
