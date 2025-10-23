@@ -96,7 +96,6 @@ export function resetProcess() {
     completedTabs: [false, false, false, false, false, false],
     pipelineComplete: false,
     destDir: "",
-    destFileName: "",
     imageFilePaths: [],
     thumbnailID: null,
     colorTargetID: null,
