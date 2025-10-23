@@ -2,7 +2,10 @@ import { writable, derived } from 'svelte/store';
 
 // Stores
 export const currentPage = writable(null);
-export const appSettings = writable({ theme: false, sideNav: true });
+export const appSettings = writable({ 
+  theme: false, 
+  sideNav: true
+});
 export const modal = writable(null);
 
 export const batchImagesA = writable(['E:\\BeyondRGBPics\\picasso_1_A.ARW']);
