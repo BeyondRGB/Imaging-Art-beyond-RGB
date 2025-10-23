@@ -138,16 +138,13 @@
 
   .menuBtns {
     @apply flex list-none w-[60%] whitespace-nowrap overflow-hidden 
-            self-center justify-start items-stretch;
+            self-center justify-start;
   }
 
   .sideMain .menuBtns {
-    @apply flex-col h-[60%] w-full whitespace-normal overflow-visible;
+    @apply flex-col h-[60%] w-full whitespace-normal;
   }
   
-  .sideMain .menuBtns button {
-    @apply h-auto min-h-[4rem];
-  }
 
   .ctlBtns {
     @apply flex dark:bg-gray-600/30 bg-gray-200/30 rounded-l-2xl px-4 gap-2 items-center;
