@@ -114,14 +114,13 @@
       }
   }
 
-  // This is where the problem lies. This function is only called on the first image, which means  future ones never get updated. I think this is the main problem.
-  // When a new project is opened, and the colorManagedImage is not available.
+  // When a new project is opened, and the colorManagedImage is not available fetch the image.
   $: if (
     $currentPage === "SpecPicker" &&
     $viewState.projectKey !== null &&
     $viewState.colorManagedImage.dataURL.length < 1
   ) {
-    console.log("Getting FIRST Color Managed Image");
+    console.log("Getting Color Managed Image");
     colorManagedImage();
   }
 
