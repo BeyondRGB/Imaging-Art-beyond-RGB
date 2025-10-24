@@ -26,6 +26,7 @@
   let trueShadowPos = { left: "0px", top: "0px" };
   let spectrumData;
   let mainfilePath;
+  let oldProjectKey: String;
 
   let loading = false;
 
@@ -87,29 +88,54 @@
     sendMessage(JSON.stringify(msg));
   }
 
+  // Close the current image whenever a new project is opened
+  $: if ($viewState.projectKey !== null) {
+      console.log(`New Project Key 2 ${$viewState.projectKey}, Old: ${oldProjectKey}`)
+
+      if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
+          console.log(`Closing Old Project Key ${oldProjectKey}`);
+          loading = true;
+          closeImage(false);
+
+          // Track the current open project
+          oldProjectKey = $viewState.projectKey;
+      }
+  }
+
+  // When the user loads a file from the file browser.
+  $: if (mainfilePath?.length > 0) {
+      console.log(`New Project Key ${mainfilePath[0]}, Old Key ${mainfilePath[0]}`);
+      $viewState.projectKey = mainfilePath[0];
+
+      // If ther eis no previous project, set the old project key. Other wise it will be set in the above function.
+      if (oldProjectKey === null || oldProjectKey === undefined) {
+          console.log(`Setting Old Project Key ${mainfilePath[0]}`);
+          oldProjectKey = mainfilePath[0];
+      }
+  }
+
+  // This is where the problem lies. This function is only called on the first image, which means  future ones never get updated. I think this is the main problem.
+  // When a new project is opened, and the colorManagedImage is not available.
   $: if (
     $currentPage === "SpecPicker" &&
     $viewState.projectKey !== null &&
     $viewState.colorManagedImage.dataURL.length < 1
   ) {
     console.log("Getting FIRST Color Managed Image");
-    // CALL FOR CM
     colorManagedImage();
-  }
-
-  $: if (mainfilePath?.length > 0) {
-    console.log("New Project Key");
-    $viewState.projectKey = mainfilePath[0];
   }
 
   let isFullScreen = window.innerHeight == screen.height;
 
-  function closeImage() {
-    $viewState.projectKey = null;
-    $viewState.colorManagedImage.dataURL = "";
-    mainfilePath = "";
+  function closeImage(removeProjectKey = true) {
+      console.log("Closing Image");
+      if (removeProjectKey) {
+          $viewState.projectKey = null;
+      }
+      $viewState.colorManagedImage.dataURL = "";
+      oldProjectKey = null
+      mainfilePath = "";
   }
-
 </script>
 
 <main>

@@ -10,7 +10,6 @@
     XCircleIcon,
     CopyIcon
   } from "svelte-feather-icons";
-    
 
   function handleClick(page) {
     currentPage.set(page);

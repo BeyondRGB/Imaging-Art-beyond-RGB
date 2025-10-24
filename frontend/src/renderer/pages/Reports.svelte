@@ -124,7 +124,7 @@
 	}
 	let mainfilePath;
 	$: if (mainfilePath?.length > 0) {
-		console.log("New Project Key");
+		console.log(`New Project Key ${mainfilePath[0]}`);
 		$viewState.projectKey = mainfilePath[0];
 	}
 
@@ -140,7 +140,7 @@
 				} 
 				else if (temp["ResponseData"]["reportType"] === "Verification") {
 					$viewState.reports.verification = temp["ResponseData"]["reports"];
-				} 
+				}
 				else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
 					console.log("Spectrum Data From Server");
 					spectrumDataHeatMap_est = temp["ResponseData"]["estimated_spectrum"];
