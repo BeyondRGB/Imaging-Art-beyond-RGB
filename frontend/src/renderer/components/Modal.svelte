@@ -48,7 +48,9 @@
 
 <svelte:window on:keydown={handle_keydown} />
 
-<div class="modal-background" on:click={close} />
+{#if !minimal}
+  <div class="modal-background" on:click={close} />
+{/if}
 
 {#if !minimal}
   <div
@@ -77,7 +79,9 @@
     <button class="close-home" on:click={close} aria-label="Close">
       <ChevronDownIcon size="2x" />
     </button>
-    <svelte:component this={component} />
+    <div class="minimal-content">
+      <svelte:component this={component} />
+    </div>
   </div>
 {/if}
 
@@ -92,6 +96,10 @@
 
   .modal-content {
     @apply relative pointer-events-auto;
+  }
+
+  .minimal-content {
+    @apply pointer-events-auto w-full h-full;
   }
 
   .close-button {
