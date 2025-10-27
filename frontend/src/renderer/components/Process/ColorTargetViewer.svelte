@@ -4,6 +4,7 @@
     import OpenSeadragon from "openseadragon";
     import { afterUpdate, onDestroy, onMount } from "svelte";
     import { getZoomPercentage } from "@util/photoViewerHelper";
+    import ca from "date-fns/locale/ca";
 
     let viewer;
     let mouseTracker;
@@ -277,15 +278,21 @@
                         overlay.height
                     );
 
+                    const rotate_points = (x, y, degrees) => {
+                        const rad = degrees * (Math.PI / 180);
+                        const cos = Math.cos(rad);
+                        const sin = Math.sin(rad);
+                        return [x * cos - y * sin, x * sin + y * cos];
+                    };
+
                     let dx = viewDeltaPoint.x;
                     let dy = viewDeltaPoint.y;
                     if (calibrationTargetRotationAngle != 0) {
-                        const rad =
-                            calibrationTargetRotationAngle * (Math.PI / 180);
-                        const cos = Math.cos(-rad);
-                        const sin = Math.sin(-rad);
-                        dx = viewDeltaPoint.x * cos - viewDeltaPoint.y * sin;
-                        dy = viewDeltaPoint.x * sin + viewDeltaPoint.y * cos;
+                        [dx, dy] = rotate_points(
+                            viewDeltaPoint.x,
+                            viewDeltaPoint.y,
+                            -calibrationTargetRotationAngle
+                        );
                     }
 
                     let funkyFlag = false;
@@ -337,12 +344,11 @@
                         box.y -= d_cor_y;
 
                         // 6.
-                        const rad =
-                            calibrationTargetRotationAngle * (Math.PI / 180);
-                        const cos = Math.cos(rad);
-                        const sin = Math.sin(rad);
-                        const d_cor_r_x = d_cor_x * cos - d_cor_y * sin;
-                        const d_cor_r_y = d_cor_x * sin + d_cor_y * cos;
+                        const [d_cor_r_x, d_cor_r_y] = rotate_points(
+                            d_cor_x,
+                            d_cor_y,
+                            calibrationTargetRotationAngle
+                        );
 
                         //7.
                         box.x += d_cor_r_x;
