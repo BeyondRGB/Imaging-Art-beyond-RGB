@@ -34,7 +34,11 @@
     };
 
     const autoSort = function () {
-        $processState.imageFilePaths = autoSortImages(getAllImages(), imageStack);
+        let leftoverImages = autoSortImages(getAllImages(), imageStack);
+        if (leftoverImages.length > 0) {
+            console.log("Sort had " + leftoverImages.length + " leftover images");
+        }
+        $processState.imageFilePaths = leftoverImages;
         rerenderToggle = !rerenderToggle;
     };
 
@@ -71,11 +75,27 @@
             <h1>Specify Image Roles</h1>
             <p>Drag and drop each image into its appropriate role</p>
             <div>
-            <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
-            <div class="btnGroup">
-                <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+                <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+                <div class="btnGroup">
+                    <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+                </div>
             </div>
-        </div>
+            <div>
+                <h2>Image file naming conventions:</h2>
+                <p>
+                    Filename format: anyFilename-typeIndicator_imageID.extension
+                </p>
+                <p>
+                    Where type indicator is one of the types listed below and imageID is A or B
+                </p>
+                <p>
+                    Image: "image", "print", "object", "art", "exhibit", "paint", "subject", "item", "obj"<br>
+                    Color Target: "target", "targets", "color", "grid", "map", "passport"<br>
+                    Flatfield: "flatfield", "flat", "white", "ff", "vignetting", "vignette", "light", "correction", "f", "w"<br>
+                    Darkfield: "darkfield", "d", "darkcurrent", "dc", "black", "dark", "current", "signal", ”internal", "camera"<br>
+                </p>
+            </div>
+            
         </panel>
         <right>
             <div class="centerFlexBox">
@@ -136,6 +156,11 @@
     h1 {
         margin: 25px;
         font-size: 35px;
+        width: 100%;
+    }
+    h2 {
+        margin: 25px;
+        font-size: 28px;
         width: 100%;
     }
     p {
