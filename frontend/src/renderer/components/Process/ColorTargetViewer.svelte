@@ -288,10 +288,18 @@
                         dy = viewDeltaPoint.x * sin + viewDeltaPoint.y * cos;
                     }
 
+                    let funkyFlag = false;
+
+                    // 1.
+                    const cor_prev_x = box.x + box.width / 2;
+                    const cor_prev_y = box.y + box.height / 2;
+
                     // cant really "lock corners". look into how to correctly adjust corners?
                     // if looking at the box in inspect element, we observe left and top properties represent x and y, and height/width props represent those?
                     // if so, why does the box's x/y seem to change when changing bottom right corner, which should only change height/weight. (left+top props remain unchanged)
                     // could try playing with resetting the transformation. maybe that is problem somehow???
+
+                    // 2.
                     if (pressPos.ele.classList[1] === "tl") {
                         box.y += dy;
                         box.height -= dy;
@@ -312,7 +320,35 @@
                         // Dragging the entire target: axis‐aligned move
                         box.x += viewDeltaPoint.x;
                         box.y += viewDeltaPoint.y;
+                        funkyFlag = true;
                     }
+
+                    if (!funkyFlag) {
+                        // 3.
+                        const cor_next_x = box.x + box.width / 2;
+                        const cor_next_y = box.y + box.height / 2;
+
+                        // 4.
+                        const d_cor_x = cor_next_x - cor_prev_x;
+                        const d_cor_y = cor_next_y - cor_prev_y;
+
+                        // 5.
+                        box.x -= d_cor_x;
+                        box.y -= d_cor_y;
+
+                        // 6.
+                        const rad =
+                            calibrationTargetRotationAngle * (Math.PI / 180);
+                        const cos = Math.cos(rad);
+                        const sin = Math.sin(rad);
+                        const d_cor_r_x = d_cor_x * cos - d_cor_y * sin;
+                        const d_cor_r_y = d_cor_x * sin + d_cor_y * cos;
+
+                        //7.
+                        box.x += d_cor_r_x;
+                        box.y += d_cor_r_y;
+                    }
+
                     overlay.update(box);
                     overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 
@@ -517,9 +553,6 @@
                         {/each}
                     </div>
                 </div>
-                <div
-                    style="border: 4px solid black; height: 100%; transform: rotate({-calibrationTargetRotationAngle}deg); transform-origin: center;"
-                />
                 <div class="corner tl" />
                 <div class="corner tr" />
                 <div class="corner bl" />
