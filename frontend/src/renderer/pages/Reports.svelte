@@ -118,7 +118,7 @@
 
         if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
             console.log(`Closing Old Project Key ${oldProjectKey}`);
-                handleCloseReport(false)
+            handleCloseReport(false)
 
             // Track the current open project
             oldProjectKey = $viewState.projectKey;
@@ -143,7 +143,13 @@
 	$: if (mainfilePath?.length > 0) {
 		console.log(`New Project Key ${mainfilePath[0]}`);
 		$viewState.projectKey = mainfilePath[0];
-	}
+
+        // If there is no previous project, set the old project key. Otherwise it will be set in the above function.
+        if (oldProjectKey === null || oldProjectKey === undefined) {
+            console.log(`Setting Old Project Key ${mainfilePath[0]}`);
+            oldProjectKey = mainfilePath[0];
+        }
+    }
 
 	$: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
 		console.log("New Message REPORTS");

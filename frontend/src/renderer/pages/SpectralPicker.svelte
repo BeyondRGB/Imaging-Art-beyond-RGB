@@ -107,7 +107,7 @@
       console.log(`New Project Key ${mainfilePath[0]}, Old Key ${mainfilePath[0]}`);
       $viewState.projectKey = mainfilePath[0];
 
-      // If ther eis no previous project, set the old project key. Other wise it will be set in the above function.
+      // If there is no previous project, set the old project key. Otherwise it will be set in the above function.
       if (oldProjectKey === null || oldProjectKey === undefined) {
           console.log(`Setting Old Project Key ${mainfilePath[0]}`);
           oldProjectKey = mainfilePath[0];
