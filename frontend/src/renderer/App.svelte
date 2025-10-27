@@ -63,8 +63,8 @@
 	}, 0);
 
 	appSettings.set({
-		theme: true,
-		sideNav: $appSettings.sideNav,
+		theme: false,
+		sideNav: $appSettings.sideNav
 	});
 	let theme = "dark";
 

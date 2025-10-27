@@ -2,7 +2,7 @@
   import { createEventDispatcher, onDestroy } from "svelte";
   import { fly } from "svelte/transition";
   import { appSettings } from "@util/stores";
-  import { ChevronDownIcon } from "svelte-feather-icons";
+  import { XIcon, ChevronDownIcon } from "svelte-feather-icons";
   const dispatch = createEventDispatcher();
   const close = () => dispatch("close");
 
@@ -48,64 +48,71 @@
 
 <svelte:window on:keydown={handle_keydown} />
 
-<div class="modal-background" on:click={close} />
+{#if !minimal}
+  <div class="modal-background" on:click={close} />
+{/if}
 
 {#if !minimal}
   <div
-    class="{theme} modal"
+    class="{theme} modal-container"
     role="dialog"
     aria-modal="true"
     bind:this={modal}
     transition:fly={{ y: window.innerHeight, duration: 250, opacity: 0 }}
   >
-    <!-- <slot /> -->
-    <svelte:component this={component} closeModal={close} />
-
-    <!-- svelte-ignore a11y-autofocus -->
-    {#if !customExit}
-      <button class="closeDia" autofocus on:click={close}>close modal</button>
-    {/if}
+    <div class="modal-content">
+      {#if !customExit}
+        <button class="close-button" on:click={close} aria-label="Close">
+          <XIcon size="1.25x" />
+        </button>
+      {/if}
+      <svelte:component this={component} closeModal={close} />
+    </div>
   </div>
 {:else}
   <div
-    class="{theme} modal"
+    class="{theme} modal-container"
     bind:this={modal}
     role="dialog"
     transition:fly={{ y: window.innerHeight, duration: 400, opacity: 1 }}
   >
-    <button class="closeHome" on:click={close}
-      ><ChevronDownIcon size="2x" /></button
-    >
-    <!-- <slot /> -->
-    <svelte:component this={component} />
+    <button class="close-home" on:click={close} aria-label="Close">
+      <ChevronDownIcon size="2x" />
+    </button>
+    <div class="minimal-content">
+      <svelte:component this={component} />
+    </div>
   </div>
 {/if}
 
 <style lang="postcss">
   .modal-background {
-    background: rgba(0, 0, 0, 0.6);
-    @apply fixed top-0 left-0 w-full h-full z-[9999];
+    @apply fixed top-0 left-0 w-full h-full z-[9999] bg-black/60 backdrop-blur-sm;
   }
 
-  .modal {
-    @apply absolute flex flex-col items-center justify-center z-[9999] w-full h-full;
+  .modal-container {
+    @apply absolute flex flex-col items-center justify-center z-[9999] w-full h-full pointer-events-none;
   }
 
-  .box {
-    @apply bg-red-300 h-full w-full;
+  .modal-content {
+    @apply relative pointer-events-auto;
   }
 
-  .closeHome {
+  .minimal-content {
+    @apply pointer-events-auto w-full h-full;
+  }
+
+  .close-button {
+    @apply absolute -top-3 -right-3 z-10 w-9 h-9 rounded-full 
+           bg-gray-700 hover:bg-gray-600 text-gray-300 hover:text-gray-100
+           flex items-center justify-center transition-all duration-200
+           shadow-lg hover:shadow-xl hover:scale-110 ring-1 ring-gray-600;
+  }
+
+  .close-home {
     @apply absolute top-0 left-0 bg-gray-800/75 w-full h-[6%] rounded-none
-          border-2 border-gray-700 text-gray-200/50 hover:bg-gray-600/75 hover:rounded-none
-          m-0 flex items-center justify-center active:scale-100 active:bg-gray-400/75 transition-all;
-  }
-
-  .closeDia {
-    @apply bg-gray-500 h-10 -translate-y-16;
-  }
-
-  button {
-    @apply mt-2;
+           border-2 border-gray-700 text-gray-200/50 hover:bg-gray-600/75
+           m-0 flex items-center justify-center active:scale-100 
+           active:bg-gray-400/75 transition-all pointer-events-auto;
   }
 </style>

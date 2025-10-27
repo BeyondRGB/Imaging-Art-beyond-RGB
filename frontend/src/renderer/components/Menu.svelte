@@ -144,9 +144,10 @@
   .sideMain .menuBtns {
     @apply flex-col h-[60%] w-full whitespace-normal;
   }
+  
 
   .ctlBtns {
-    @apply flex dark:bg-gray-600/30 bg-gray-200/30 rounded-l-2xl px-4 gap-2;
+    @apply flex dark:bg-gray-600/30 bg-gray-200/30 rounded-l-2xl px-4 gap-2 items-center;
   }
 
   .ctlBtns button {
@@ -155,7 +156,7 @@
   }
 
   .sideMain .ctlBtns {
-    @apply flex-col py-4 px-0;
+    @apply flex-col py-4 px-0 rounded-l-none rounded-t-2xl items-center justify-center;
   }
 
   .connected {
