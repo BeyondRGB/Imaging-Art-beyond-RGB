@@ -303,8 +303,6 @@
                     const [cor_prev_x, cor_prev_y] =
                         getBoxCenterOfRotation(box);
 
-                    console.log(pressPos.ele.classList);
-
                     if (!pressPos.ele.classList.contains("corner")) {
                         // Dragging the entire target: axis‐aligned move
                         // Means the user is dragging on the target itself, not the corners.
