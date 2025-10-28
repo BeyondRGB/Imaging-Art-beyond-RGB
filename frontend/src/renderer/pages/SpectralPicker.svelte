@@ -94,7 +94,6 @@
 
       if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
           console.log(`Closing Old Project Key ${oldProjectKey}`);
-          loading = true;
           closeImage(false);
 
           // Track the current open project
