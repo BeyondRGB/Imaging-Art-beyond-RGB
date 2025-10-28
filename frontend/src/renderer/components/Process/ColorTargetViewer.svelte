@@ -278,6 +278,11 @@
                         overlay.height
                     );
 
+                    // Beginning of the movement/rotation handling math.
+                    // There is a diagram in the GitHub docs folder for your viewing pleasure that
+                    // visualizes the math going on here. Hopefully it helps and is not just
+                    // heiroglyphics.
+
                     const rotatePoints = (x, y, degrees) => {
                         const rad = degrees * (Math.PI / 180);
                         const cos = Math.cos(rad);
@@ -295,11 +300,14 @@
                         [dx, dy] = rotatePoints(
                             viewDeltaPoint.x,
                             viewDeltaPoint.y,
+
+                            // negative b/c we are unrotating the mouse movement
+                            // to align with the unrotated version of the overlay.
                             -calibrationTargetRotationAngle
                         );
                     }
 
-                    // 1.
+                    // 1. Get the coordinates of the center of rotation (CoR) of the box before being dragged.
                     const [cor_prev_x, cor_prev_y] =
                         getBoxCenterOfRotation(box);
 
@@ -309,7 +317,7 @@
                         box.x += viewDeltaPoint.x;
                         box.y += viewDeltaPoint.y;
                     } else {
-                        // 2.
+                        // 2. Edit the box properties such that it is moved to its newly dragged location.
                         if (pressPos.ele.classList[1] === "tl") {
                             box.y += dy;
                             box.height -= dy;
@@ -328,26 +336,26 @@
                             box.width += dx;
                         }
 
-                        // 3.
+                        // 3. Get the coordinates of the CoR of the box after being dragged.
                         const [cor_next_x, cor_next_y] =
                             getBoxCenterOfRotation(box);
 
-                        // 4.
+                        // 4. Calculate the change in the CoR (dCoR) of the box from the drag.
                         const d_cor_x = cor_next_x - cor_prev_x;
                         const d_cor_y = cor_next_y - cor_prev_y;
 
-                        // 5.
+                        // 5. Reset the box to its previous location.
                         box.x -= d_cor_x;
                         box.y -= d_cor_y;
 
-                        // 6.
+                        // 6. Rotate dCoR based on the calibration target's rotation angle.
                         const [d_cor_r_x, d_cor_r_y] = rotatePoints(
                             d_cor_x,
                             d_cor_y,
                             calibrationTargetRotationAngle
                         );
 
-                        //7.
+                        // 7. Move the box properly such that its CoR is aligned with the rotation.
                         box.x += d_cor_r_x;
                         box.y += d_cor_r_y;
                     }
