@@ -123,6 +123,12 @@
             // Track the current open project
             oldProjectKey = $viewState.projectKey;
         }
+
+        // If there is no previous project, set the old project key. Otherwise, it will be set in the above function.
+        if (oldProjectKey === null || oldProjectKey === undefined) {
+            console.log(`Setting Old Project Key ${$viewState.projectKey}`);
+            oldProjectKey =  $viewState.projectKey;
+        }
     }
 
     // Initialize a new project key
@@ -144,7 +150,7 @@
 		console.log(`New Project Key ${mainfilePath[0]}`);
 		$viewState.projectKey = mainfilePath[0];
 
-        // If there is no previous project, set the old project key. Otherwise it will be set in the above function.
+        // If there is no previous project, set the old project key. Otherwise, it will be set in the above function.
         if (oldProjectKey === null || oldProjectKey === undefined) {
             console.log(`Setting Old Project Key ${mainfilePath[0]}`);
             oldProjectKey = mainfilePath[0];
