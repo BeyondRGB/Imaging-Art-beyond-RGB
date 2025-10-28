@@ -285,6 +285,10 @@
                         return [x * cos - y * sin, x * sin + y * cos];
                     };
 
+                    const get_box_center_of_rotation = (box) => {
+                        return [box.x + box.width / 2, box.y + box.height / 2];
+                    };
+
                     let dx = viewDeltaPoint.x;
                     let dy = viewDeltaPoint.y;
                     if (calibrationTargetRotationAngle != 0) {
@@ -295,45 +299,40 @@
                         );
                     }
 
-                    let funkyFlag = false;
-
                     // 1.
-                    const cor_prev_x = box.x + box.width / 2;
-                    const cor_prev_y = box.y + box.height / 2;
+                    const [cor_prev_x, cor_prev_y] =
+                        get_box_center_of_rotation(box);
 
-                    // cant really "lock corners". look into how to correctly adjust corners?
-                    // if looking at the box in inspect element, we observe left and top properties represent x and y, and height/width props represent those?
-                    // if so, why does the box's x/y seem to change when changing bottom right corner, which should only change height/weight. (left+top props remain unchanged)
-                    // could try playing with resetting the transformation. maybe that is problem somehow???
+                    console.log(pressPos.ele.classList);
 
-                    // 2.
-                    if (pressPos.ele.classList[1] === "tl") {
-                        box.y += dy;
-                        box.height -= dy;
-                        box.x += dx;
-                        box.width -= dx;
-                    } else if (pressPos.ele.classList[1] === "tr") {
-                        box.y += dy;
-                        box.height -= dy;
-                        box.width += dx;
-                    } else if (pressPos.ele.classList[1] === "bl") {
-                        box.height += dy;
-                        box.x += dx;
-                        box.width -= dx;
-                    } else if (pressPos.ele.classList[1] === "br") {
-                        box.height += dy;
-                        box.width += dx;
-                    } else {
+                    if (!pressPos.ele.classList.contains("corner")) {
                         // Dragging the entire target: axis‐aligned move
+                        // Means the user is dragging on the target itself, not the corners.
                         box.x += viewDeltaPoint.x;
                         box.y += viewDeltaPoint.y;
-                        funkyFlag = true;
-                    }
+                    } else {
+                        // 2.
+                        if (pressPos.ele.classList[1] === "tl") {
+                            box.y += dy;
+                            box.height -= dy;
+                            box.x += dx;
+                            box.width -= dx;
+                        } else if (pressPos.ele.classList[1] === "tr") {
+                            box.y += dy;
+                            box.height -= dy;
+                            box.width += dx;
+                        } else if (pressPos.ele.classList[1] === "bl") {
+                            box.height += dy;
+                            box.x += dx;
+                            box.width -= dx;
+                        } else if (pressPos.ele.classList[1] === "br") {
+                            box.height += dy;
+                            box.width += dx;
+                        }
 
-                    if (!funkyFlag) {
                         // 3.
-                        const cor_next_x = box.x + box.width / 2;
-                        const cor_next_y = box.y + box.height / 2;
+                        const [cor_next_x, cor_next_y] =
+                            get_box_center_of_rotation(box);
 
                         // 4.
                         const d_cor_x = cor_next_x - cor_prev_x;
