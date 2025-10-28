@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		viewState,
 		sendMessage,
@@ -25,7 +25,8 @@
 	let shadowPos = { left: 0, top: 0 };
 	let expand = false;
 	let combinedData = [];
-	  let trueShadowPos = shadowPos;
+    let trueShadowPos = shadowPos;
+    let oldProjectKey: String;
 
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
@@ -111,6 +112,20 @@
 		sendMessage(JSON.stringify(msg));
 	}
 
+    // Close the current image whenever a new project is opened
+    $: if ($viewState.projectKey !== null) {
+        console.log(`New Project Key ${$viewState.projectKey}, Old: ${oldProjectKey}`)
+
+        if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
+            console.log(`Closing Old Project Key ${oldProjectKey}`);
+            handleCloseReport(false)
+
+            // Track the current open project
+            oldProjectKey = $viewState.projectKey;
+        }
+    }
+
+    // Initialize a new project key
 	let toggle = false;
 	$: if (
 		$currentPage === "Reports" &&
@@ -122,11 +137,19 @@
 		colorManagedTargetImage();
 		getReports();
 	}
+
+    // Load an image from a file
 	let mainfilePath;
 	$: if (mainfilePath?.length > 0) {
-		console.log("New Project Key");
+		console.log(`New Project Key ${mainfilePath[0]}`);
 		$viewState.projectKey = mainfilePath[0];
-	}
+
+        // If there is no previous project, set the old project key. Otherwise it will be set in the above function.
+        if (oldProjectKey === null || oldProjectKey === undefined) {
+            console.log(`Setting Old Project Key ${mainfilePath[0]}`);
+            oldProjectKey = mainfilePath[0];
+        }
+    }
 
 	$: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
 		console.log("New Message REPORTS");
@@ -140,7 +163,7 @@
 				} 
 				else if (temp["ResponseData"]["reportType"] === "Verification") {
 					$viewState.reports.verification = temp["ResponseData"]["reports"];
-				} 
+				}
 				else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
 					console.log("Spectrum Data From Server");
 					spectrumDataHeatMap_est = temp["ResponseData"]["estimated_spectrum"];
@@ -162,8 +185,11 @@
 
 	let showVerification = false;
 
-	function handleCloseReport() {
-		$viewState.projectKey = null;
+	function handleCloseReport(removeProjectKey = true) {
+        console.log("Closing Image");
+        if (removeProjectKey) {
+            $viewState.projectKey = null;
+        }
 		$viewState.reports = {
 			calibration: null,
 			verification: null,

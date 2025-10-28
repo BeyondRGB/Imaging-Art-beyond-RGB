@@ -2,6 +2,7 @@
 	export let routes;
 	export let pages;
 	import { fade, fly } from "svelte/transition";
+	import { cubicOut } from "svelte/easing";
 	import { currentPage, appSettings, modal, serverError } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 	import RefDataModal from "@components/RefDataModal.svelte";
@@ -27,27 +28,16 @@
 	}
 </script>
 
-<div
-	bind:this={pages}
-	class="page dark:bg-gray-800 bg-white {$appSettings.sideNav ? 'sideNav' : ''}"
->
+<div class="page dark:bg-gray-800 bg-white" bind:this={pages} class:sideMain={$appSettings.sideNav}>
 	{#each Object.keys(routes) as pageKey}
 		{#if routes[pageKey].page && !routes[pageKey].disabled}
-			<div
-				class="content"
-				in:fade={{ duration: 250, delay: 250 }}
-				out:fade={{ duration: 250 }}
-			>
+			<div class="content">
 				<svelte:component this={routes[pageKey].component} />
 			</div>
 		{/if}
 	{/each}
 </div>
 {#if showModal}
-	<!-- <h2 slot="header">
-      modal
-      <small><em>adjective</em> mod·al \ˈmō-dəl\</small>
-    </h2> -->
 	{#if $modal === "Settings"}
 		<Modal
 			component={routes.Settings.component}
@@ -97,22 +87,13 @@
 
 <style lang="postcss" local>
 	.page {
-		scroll-snap-type: y mandatory;
-		scroll-behavior: smooth;
-		overflow: hidden;
-		@apply w-full h-full pt-0 relative flex;
+		@apply w-full h-full pt-0 relative overflow-hidden flex;
 	}
-	.sideNav {
+	.sideMain {
 		@apply flex-col;
 	}
-	::-webkit-scrollbar {
-		@apply w-1;
-	}
+	
 	.content {
-		scroll-snap-align: start;
-		@apply flex-shrink-0 w-full h-full relative;
-	}
-	.modal {
-		@apply absolute w-full h-full bg-black/25 flex justify-center items-center;
+		@apply w-full h-full relative flex-shrink-0;
 	}
 </style>
