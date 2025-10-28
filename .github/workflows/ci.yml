@@ -80,16 +80,22 @@ jobs:
           ./linux_config_environment.sh
           ./linux_release.sh
 
+      - name: Setup vcpkg (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: backend
+        shell: cmd
+        run: |
+          if not exist "vcpkg\" mkdir vcpkg
+          mklink /J vcpkg\vcpkg C:\vcpkg
+          for /F "tokens=*" %%A in (dependencies.txt) do (
+            C:\vcpkg\vcpkg.exe install %%A:x64-windows
+          )
+
       - name: Build Backend (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
-        env:
-          VCPKG_INSTALLATION_ROOT: '${{ github.workspace }}\backend\vcpkg'
-          VCPKG_ROOT: '${{ github.workspace }}\backend\vcpkg'
         shell: cmd
-        run: |
-          call win10_config_environment.bat
-          call win10_release.bat
+        run: call win10_release.bat
 
       - name: Run Unit Tests (Unix)
         if: matrix.platform != 'windows'
