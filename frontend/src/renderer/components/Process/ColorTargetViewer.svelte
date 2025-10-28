@@ -278,21 +278,21 @@
                         overlay.height
                     );
 
-                    const rotate_points = (x, y, degrees) => {
+                    const rotatePoints = (x, y, degrees) => {
                         const rad = degrees * (Math.PI / 180);
                         const cos = Math.cos(rad);
                         const sin = Math.sin(rad);
                         return [x * cos - y * sin, x * sin + y * cos];
                     };
 
-                    const get_box_center_of_rotation = (box) => {
+                    const getBoxCenterOfRotation = (box) => {
                         return [box.x + box.width / 2, box.y + box.height / 2];
                     };
 
                     let dx = viewDeltaPoint.x;
                     let dy = viewDeltaPoint.y;
                     if (calibrationTargetRotationAngle != 0) {
-                        [dx, dy] = rotate_points(
+                        [dx, dy] = rotatePoints(
                             viewDeltaPoint.x,
                             viewDeltaPoint.y,
                             -calibrationTargetRotationAngle
@@ -301,7 +301,7 @@
 
                     // 1.
                     const [cor_prev_x, cor_prev_y] =
-                        get_box_center_of_rotation(box);
+                        getBoxCenterOfRotation(box);
 
                     console.log(pressPos.ele.classList);
 
@@ -332,7 +332,7 @@
 
                         // 3.
                         const [cor_next_x, cor_next_y] =
-                            get_box_center_of_rotation(box);
+                            getBoxCenterOfRotation(box);
 
                         // 4.
                         const d_cor_x = cor_next_x - cor_prev_x;
@@ -343,7 +343,7 @@
                         box.y -= d_cor_y;
 
                         // 6.
-                        const [d_cor_r_x, d_cor_r_y] = rotate_points(
+                        const [d_cor_r_x, d_cor_r_y] = rotatePoints(
                             d_cor_x,
                             d_cor_y,
                             calibrationTargetRotationAngle
