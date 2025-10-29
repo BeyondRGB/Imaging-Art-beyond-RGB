@@ -54,7 +54,7 @@
         viewer.addHandler("open", () => (viewerOpen = true));
     };
 
-    const destoryViewer = () => {
+    const destroyViewer = () => {
         if (viewer) {
             viewer.destroy();
             viewer = null;
@@ -69,7 +69,7 @@
     });
     onDestroy(() => {
         console.log("Color target viewer Destroy");
-        destoryViewer();
+        destroyViewer();
     });
 
     function handleZoom(e) {
