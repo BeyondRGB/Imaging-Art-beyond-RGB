@@ -255,13 +255,6 @@
                         }
                     });
                 },
-                // TODO: idea for fixing resizing of rotated image:
-                // Lock the corner opposite of the selected corner
-                // When the selected corner moves, make changes to the other 2 as well.
-                // Attempt to give example: selected x increase, then the corner with the same y-value also increase x.
-                // potential problems: not working on simple x,y plane cuz rotated
-
-                // this is the code we have to look at changing
                 dragHandler: function (e) {
                     var overlay = viewer.getOverlayById(`sBox-${id}`);
 
@@ -306,6 +299,11 @@
                             -calibrationTargetRotationAngle
                         );
                     }
+
+                    // This numbered list of steps walks through the process of compensating for the fact that
+                    // the center of rotation of the box moves with the box when dragged. Because of this, we have
+                    // to ensure the box is moved such that its center of rotation follows the rotated overlay's center of rotation,
+                    // not the original box's center of rotation.
 
                     // 1. Get the coordinates of the center of rotation (CoR) of the box before being dragged.
                     const [cor_prev_x, cor_prev_y] =
