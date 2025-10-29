@@ -80,13 +80,11 @@ jobs:
           ./linux_config_environment.sh
           ./linux_release.sh
 
-      - name: Setup vcpkg (Windows)
+      - name: Install vcpkg dependencies (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
         run: |
-          if not exist "vcpkg\" mkdir vcpkg
-          mklink /J vcpkg\scripts C:\vcpkg\scripts
           for /F "tokens=*" %%A in (dependencies.txt) do (
             C:\vcpkg\vcpkg.exe install %%A:x64-windows
           )
@@ -95,7 +93,15 @@ jobs:
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
-        run: call win10_release.bat
+        run: |
+          del /F /Q "..\frontend\lib\*" 2>nul
+          del /F /Q "..\frontend\res\*" 2>nul
+          cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows
+          cmake --build .\build\ --config Release
+          if not exist "..\frontend\lib\" mkdir "..\frontend\lib\"
+          xcopy /y ".\build\Release\" "..\frontend\lib\"
+          if not exist "..\frontend\res\" mkdir "..\frontend\res\"
+          xcopy /y /e ".\res\" "..\frontend\res\"
 
       - name: Run Unit Tests (Unix)
         if: matrix.platform != 'windows'
