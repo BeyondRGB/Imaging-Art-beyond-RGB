@@ -86,7 +86,7 @@ jobs:
         shell: cmd
         run: |
           if not exist "vcpkg\" mkdir vcpkg
-          mklink /J vcpkg\vcpkg C:\vcpkg
+          mklink /J vcpkg\scripts C:\vcpkg\scripts
           for /F "tokens=*" %%A in (dependencies.txt) do (
             C:\vcpkg\vcpkg.exe install %%A:x64-windows
           )
