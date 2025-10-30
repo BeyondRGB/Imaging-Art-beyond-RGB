@@ -37,7 +37,7 @@ find_package(PNG REQUIRED)
 find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 
 set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
-find_package(OpenCV REQUIRED)
+find_package(OpenCV CONFIG REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 

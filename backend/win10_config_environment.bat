@@ -1,28 +1,39 @@
 @echo off
+setlocal
 
-:: If vcpkg not set-up, clone and bootstrap
-if not exist "vcpkg\" (
+if not defined VCPKG_ROOT set "VCPKG_ROOT=%CD%\vcpkg"
+
+::: If vcpkg not set-up, clone and bootstrap
+if not exist "%VCPKG_ROOT%\bootstrap-vcpkg.bat" (
     echo Setting up vcpkg...
-    git clone https://github.com/microsoft/vcpkg
-    call vcpkg\bootstrap-vcpkg.bat
-    if errorlevel 1 (
-        echo Failed to bootstrap vcpkg
-        exit /b 1
+    if not exist "%VCPKG_ROOT%" (
+        git clone https://github.com/microsoft/vcpkg "%VCPKG_ROOT%"
+        if errorlevel 1 (
+            echo Failed to clone vcpkg
+            exit /b 1
+        )
     )
 )
 
 :: Update vcpkg
-cd vcpkg
+pushd "%VCPKG_ROOT%"
 git pull --ff-only
 call bootstrap-vcpkg.bat
-cd ..
+if errorlevel 1 (
+    echo Failed to bootstrap vcpkg
+    popd
+    exit /b 1
+)
+popd
 
-:: Install dependencies
+::: Install dependencies
 echo Installing dependencies...
 for /F "tokens=*" %%A in (dependencies.txt) do (
     echo Installing %%A...
-    vcpkg\vcpkg.exe install %%A:x64-windows
+    "%VCPKG_ROOT%\vcpkg.exe" install %%A:x64-windows
 )
 
 echo Environment configured successfully!
+
+endlocal
 
