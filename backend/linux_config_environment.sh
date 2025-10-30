@@ -19,5 +19,5 @@ cd ..
 packages=$(cat "dependencies.txt")
 for p in $packages
 do
-    ./vcpkg/vcpkg install $p
+    ./vcpkg/vcpkg install $p:x64-linux
 done

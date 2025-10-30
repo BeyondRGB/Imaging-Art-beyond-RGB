@@ -8,6 +8,11 @@ on:
 env:
   VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
 
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 jobs:
   build-and-test:
     name: Build & Test (${{ matrix.platform }})
@@ -101,35 +106,57 @@ jobs:
         working-directory: backend
         shell: cmd
         run: |
-          for /F "tokens=*" %%A in (dependencies.txt) do (
-            C:\vcpkg\vcpkg.exe install %%A:x64-windows
-          )
+          call win10_config_environment.bat
 
       - name: Build Backend with Tests (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
         run: |
-          cmake -B build -S . \
-            -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake \
-            -DVCPKG_TARGET_TRIPLET=x64-windows \
-            -DENABLE_TESTS=ON \
-            -DENABLE_COVERAGE=ON \
-            -DCMAKE_BUILD_TYPE=Debug
-          cmake --build .\build\ --config Debug
+          cmake -B build\Debug -S . -DVCPKG_TARGET_TRIPLET=x64-windows -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
+          if errorlevel 1 exit /b 1
+          cmake --build build\Debug --config Debug
+          if errorlevel 1 exit /b 1
 
       - name: Run Backend Unit Tests (Unix)
         if: matrix.platform != 'windows'
         working-directory: backend/build/Debug
         run: |
-          ./unit_tests
+          ./unit_tests 2>&1 | tee test_output.log
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          
+          # Parse Catch2 output and create annotations
+          if [ $TEST_EXIT_CODE -eq 0 ]; then
+            echo "::notice::Backend tests passed on ${{ matrix.platform }}"
+            # Extract test summary
+            TEST_SUMMARY=$(grep -E "All tests passed|test cases|assertions" test_output.log | tail -1 || echo "")
+            if [ ! -z "$TEST_SUMMARY" ]; then
+              echo "::notice::$TEST_SUMMARY"
+            fi
+          else
+            echo "::error::Backend tests failed on ${{ matrix.platform }}"
+            # Extract failed test details
+            grep -E "FAILED|failed|error" test_output.log | while read line; do
+              echo "::error::$line"
+            done
+          fi
+          
+          exit $TEST_EXIT_CODE
 
       - name: Run Backend Unit Tests (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend/build/Debug
         shell: cmd
         run: |
-          unit_tests.exe
+          unit_tests.exe > test_output.log 2>&1
+          if errorlevel 1 (
+            echo ::error::Backend tests failed on windows
+            type test_output.log | findstr /C:"FAILED" /C:"failed" /C:"error"
+            exit /b 1
+          ) else (
+            echo ::notice::Backend tests passed on windows
+            type test_output.log | findstr /C:"All tests passed" /C:"test cases" /C:"assertions"
+          )
 
       - name: Generate Backend Coverage Report (Unix)
         if: matrix.platform != 'windows'
@@ -152,6 +179,8 @@ jobs:
           flags: backend,${{ matrix.platform }}
           name: backend-coverage-${{ matrix.platform }}
           fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          # Token is optional for public repos, but helps with protected branches
 
       - name: Install Frontend Dependencies
         working-directory: frontend
@@ -176,16 +205,40 @@ jobs:
               break
             fi
             if [ $i -eq 30 ]; then
-              echo "Dev server failed to start"
+              echo "::error::Dev server failed to start"
               kill $DEV_PID 2>/dev/null || true
               exit 1
             fi
             sleep 2
           done
           # Run tests with coverage
-          npm run test:coverage || npm run test
+          if npm run test:coverage 2>&1 | tee cypress_output.log; then
+            TEST_EXIT_CODE=0
+          else
+            TEST_EXIT_CODE=${PIPESTATUS[0]}
+          fi
+          
+          # Parse Cypress output and create annotations
+          if [ $TEST_EXIT_CODE -eq 0 ]; then
+            echo "::notice::Frontend Cypress tests passed on ${{ matrix.platform }}"
+            # Extract test summary
+            TEST_SUMMARY=$(grep -E "Tests:|Passing:|Failing:" cypress_output.log | tail -3 || echo "")
+            if [ ! -z "$TEST_SUMMARY" ]; then
+              echo "$TEST_SUMMARY" | while read line; do
+                echo "::notice::$line"
+              done
+            fi
+          else
+            echo "::error::Frontend Cypress tests failed on ${{ matrix.platform }}"
+            # Extract failed test details
+            grep -E "FAILED|failing|error" cypress_output.log | while read line; do
+              echo "::error::$line"
+            done
+          fi
+          
           # Kill dev server
           kill $DEV_PID 2>/dev/null || true
+          exit $TEST_EXIT_CODE
 
       - name: Upload Frontend Coverage
         if: always()
@@ -195,16 +248,53 @@ jobs:
           flags: frontend,${{ matrix.platform }}
           name: frontend-coverage-${{ matrix.platform }}
           fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+          # Token is optional for public repos, but helps with protected branches
 
-      - name: Upload Backend Binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-${{ matrix.platform }}
-          path: |
-            backend/build/Debug/beyond-rgb-backend*
-            backend/build/Debug/beyond-rgb-backend*
-            backend/build/Release/beyond-rgb-backend*
-            backend/build/beyond-rgb-backend*
-          if-no-files-found: warn
-          retention-days: 7
+      - name: Test Summary (Unix)
+        if: always() && matrix.platform != 'windows'
+        run: |
+          echo "## Test Results Summary - ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Backend Tests" >> $GITHUB_STEP_SUMMARY
+          if [ -f backend/build/Debug/test_output.log ]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            grep -E "All tests passed|test cases|assertions|FAILED" backend/build/Debug/test_output.log | tail -5 >> $GITHUB_STEP_SUMMARY || echo "Test output not available" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Test output not available" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Frontend Tests" >> $GITHUB_STEP_SUMMARY
+          if [ -f frontend/cypress_output.log ]; then
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            grep -E "Tests:|Passing:|Failing:" frontend/cypress_output.log | tail -5 >> $GITHUB_STEP_SUMMARY || echo "Test output not available" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Test output not available" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Test Summary (Windows)
+        if: always() && matrix.platform == 'windows'
+        shell: cmd
+        run: |
+          echo ## Test Results Summary - windows >> %GITHUB_STEP_SUMMARY%
+          echo. >> %GITHUB_STEP_SUMMARY%
+          echo ### Backend Tests >> %GITHUB_STEP_SUMMARY%
+          if exist backend\build\Debug\test_output.log (
+            echo ``` >> %GITHUB_STEP_SUMMARY%
+            type backend\build\Debug\test_output.log | findstr /C:"All tests passed" /C:"test cases" /C:"assertions" /C:"FAILED" >> %GITHUB_STEP_SUMMARY% || echo Test output not available >> %GITHUB_STEP_SUMMARY%
+            echo ``` >> %GITHUB_STEP_SUMMARY%
+          ) else (
+            echo Test output not available >> %GITHUB_STEP_SUMMARY%
+          )
+          echo. >> %GITHUB_STEP_SUMMARY%
+          echo ### Frontend Tests >> %GITHUB_STEP_SUMMARY%
+          if exist frontend\cypress_output.log (
+            echo ``` >> %GITHUB_STEP_SUMMARY%
+            type frontend\cypress_output.log | findstr /C:"Tests:" /C:"Passing:" /C:"Failing:" >> %GITHUB_STEP_SUMMARY% || echo Test output not available >> %GITHUB_STEP_SUMMARY%
+            echo ``` >> %GITHUB_STEP_SUMMARY%
+          ) else (
+            echo Test output not available >> %GITHUB_STEP_SUMMARY%
+          )
 

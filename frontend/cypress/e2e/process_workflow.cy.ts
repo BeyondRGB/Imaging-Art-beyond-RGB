@@ -1,7 +1,12 @@
 describe('Process Workflow', () => {
   beforeEach(() => {
     cy.visit('http://localhost:3000/');
-    cy.get("#homeContent .homeBtn").contains("Process").click();
+    // Wait for app to load - Home modal appears first
+    cy.wait(1000);
+    // Home content is visible inside the modal
+    cy.get("#homeContent", { timeout: 10000 }).should("be.visible");
+    cy.get("#homeContent .homeBtn", { timeout: 10000 }).contains("Process").click();
+    cy.wait(500);
   });
 
   it('Shows processing type selection screen', () => {
@@ -44,25 +49,31 @@ describe('Process Workflow', () => {
 
   it('Can navigate back from processing workflow', () => {
     cy.get("#selectProcessingTypesContent .homeBtn").contains("Batch Processing").click();
-    cy.wait(200);
+    cy.wait(500);
     
-    // Go back home
-    cy.get(".ctlBtns .feather-home").click();
-    cy.get(".homeBtn").contains("Process").should("be.visible");
+    // Go back home - Home button is first button in ctlBtns
+    cy.get(".ctlBtns button").first().click();
+    cy.wait(500);
+    // Home modal opens - home content should be visible inside modal
+    cy.get("#homeContent", { timeout: 5000 }).should("be.visible");
+    cy.get(".homeBtn", { timeout: 5000 }).contains("Process").should("be.visible");
   });
 
   it('Settings accessible during processing workflow', () => {
     cy.get("#selectProcessingTypesContent .homeBtn").contains("Batch Processing").click();
+    cy.wait(500);
     
-    // Open settings
-    cy.get(".ctlBtns .feather-settings").click();
-    cy.get(".settings").should("be.visible");
+    // Open settings - Settings button is second button in ctlBtns (index 1)
+    cy.get(".ctlBtns button").eq(1).click();
+    cy.get(".modal-container .settings", { timeout: 5000 }).should("be.visible");
     
     // Close settings
-    cy.get(".closeDia").click();
+    cy.get(".modal-container .close-button", { timeout: 5000 }).click();
+    cy.wait(300);
+    cy.get(".modal-container").should("not.exist");
     
     // Should still be in workflow
-    cy.contains("Import Images").should("be.visible");
+    cy.contains("Import Images", { timeout: 5000 }).should("be.visible");
   });
 });
 
