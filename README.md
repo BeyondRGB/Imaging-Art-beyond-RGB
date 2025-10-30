@@ -2,10 +2,6 @@
 
 # Imaging-Art-Beyond-RGB-Project
 
-[![CI/CD Pipeline](https://github.com/YOUR-ORG/Imaging-Art-beyond-RGB/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR-ORG/Imaging-Art-beyond-RGB/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/YOUR-ORG/Imaging-Art-beyond-RGB/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR-ORG/Imaging-Art-beyond-RGB)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 Spectral imaging is a powerful technique that enables higher color accuracy than conventional RGB capture, as well as material identification capabilities. However, it is still relatively unused for everyday museum photography due to perceived complexity and high cost. This project seeks to develop a standalone spectral image processing tool that is user-friendly, yet capable of handling complex image data. We will integrate existing image calibration routines and repackage them into a standalone application, enabling a simpler and more efficient user experience over current methods.  We hope that eliminating the current need for command line operation will enable non-expert users to process spectral images. A user will be able to import a number of RAW images and then will receive a true spectral image in the form of a TIFF file, as well as a color-managed RGB image. The user will only need to make a few basic selections before the images are processed. As the necessary image processing routines, which will be hidden under the hood, are executed, the application will provide progress updates in the form of status messages, Finally, the user will be able to view and interact with the output images inside, and also inspect reports detailing the accuracy of the color and spectral calibrations developed during the processing.
 
 
@@ -30,44 +26,6 @@ Ray Axmann, Noah Pelletier, Mitchell Sulkowski, Christopher Cabonilas, Cameron R
 * [BackendDesign](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/Backend-Overview)
 * [TIFF Output](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/TIFF-Output-Images)
 * [BeyondRGB Under The Hood](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/BeyondRGB-Under-The-Hood)
-
-# CI/CD Pipeline
-
-This project uses GitHub Actions for automated building and testing across all supported platforms (macOS, Linux, Windows).
-
-## Automated Builds
-
-Every push and pull request triggers:
-- Multi-platform builds (macOS, Linux, Windows)
-- Backend compilation and smoke tests
-- Frontend Cypress E2E tests
-- Code coverage reporting
-
-## Testing Locally
-
-Before pushing changes, you can test the CI pipeline locally:
-
-**Quick test with `act`:**
-```bash
-brew install act  # macOS
-act -n  # Dry run to see what would execute
-act push  # Run the workflow locally
-```
-
-**Manual component testing:**
-```bash
-# Test backend
-cd backend
-./osx_release.sh  # or linux_release.sh / win10_release.bat
-
-# Test frontend
-cd frontend
-npm ci
-npm run svelte-build
-npm run test:ci  # Run Cypress tests
-```
-
-For detailed instructions, see [`.github/TESTING_CI.md`](.github/TESTING_CI.md)
 
 ## Pull Request Artifacts
 
