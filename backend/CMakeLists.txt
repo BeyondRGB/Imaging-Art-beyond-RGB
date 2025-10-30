@@ -184,6 +184,18 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
 # Testing Support
 option(ENABLE_TESTS "Enable building unit tests" OFF)
+option(ENABLE_COVERAGE "Enable code coverage collection" OFF)
+
+# Configure coverage flags if enabled
+if(ENABLE_COVERAGE)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        message(STATUS "Code coverage enabled")
+        add_compile_options(--coverage -fprofile-arcs -ftest-coverage)
+        add_link_options(--coverage)
+    else()
+        message(WARNING "Coverage not supported for compiler: ${CMAKE_CXX_COMPILER_ID}")
+    endif()
+endif()
 
 if(ENABLE_TESTS)
     enable_testing()

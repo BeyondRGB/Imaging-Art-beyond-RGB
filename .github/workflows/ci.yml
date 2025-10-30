@@ -33,7 +33,7 @@ jobs:
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake ninja-build
+          sudo apt-get install -y build-essential cmake ninja-build lcov
 
       - name: Install macOS dependencies
         if: matrix.platform == 'macos'
@@ -64,21 +64,37 @@ jobs:
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
-      - name: Build Backend (macOS)
+      - name: Build Backend with Tests (macOS)
         if: matrix.platform == 'macos'
         working-directory: backend
         run: |
           chmod +x *.sh
           ./osx_config_environment.sh
-          ./osx_release.sh
+          # Determine architecture
+          if [ "$(uname -m)" = "arm64" ]; then
+            VCPKG_TRIPLET="arm64-osx"
+          else
+            VCPKG_TRIPLET="x64-osx"
+          fi
+          cmake -B build/Debug -S . \
+            -D CMAKE_BUILD_TYPE=Debug \
+            -D ENABLE_TESTS=ON \
+            -D ENABLE_COVERAGE=ON \
+            -D VCPKG_TARGET_TRIPLET=$VCPKG_TRIPLET
+          cmake --build build/Debug
 
-      - name: Build Backend (Linux)
+      - name: Build Backend with Tests (Linux)
         if: matrix.platform == 'linux'
         working-directory: backend
         run: |
           chmod +x *.sh
           ./linux_config_environment.sh
-          ./linux_release.sh
+          cmake -B build/Debug -S . \
+            -D CMAKE_BUILD_TYPE=Debug \
+            -D ENABLE_TESTS=ON \
+            -D ENABLE_COVERAGE=ON \
+            -D VCPKG_TARGET_TRIPLET=x64-linux
+          cmake --build build/Debug
 
       - name: Install vcpkg dependencies (Windows)
         if: matrix.platform == 'windows'
@@ -89,42 +105,53 @@ jobs:
             C:\vcpkg\vcpkg.exe install %%A:x64-windows
           )
 
-      - name: Build Backend (Windows)
+      - name: Build Backend with Tests (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
         run: |
-          del /F /Q "..\frontend\lib\*" 2>nul
-          del /F /Q "..\frontend\res\*" 2>nul
-          cmake -B build -S . -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows
-          cmake --build .\build\ --config Release
-          if not exist "..\frontend\lib\" mkdir "..\frontend\lib\"
-          xcopy /y ".\build\Release\" "..\frontend\lib\"
-          if not exist "..\frontend\res\" mkdir "..\frontend\res\"
-          xcopy /y /e ".\res\" "..\frontend\res\"
+          cmake -B build -S . \
+            -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_TARGET_TRIPLET=x64-windows \
+            -DENABLE_TESTS=ON \
+            -DENABLE_COVERAGE=ON \
+            -DCMAKE_BUILD_TYPE=Debug
+          cmake --build .\build\ --config Debug
 
-      - name: Run Unit Tests (Unix)
+      - name: Run Backend Unit Tests (Unix)
         if: matrix.platform != 'windows'
-        continue-on-error: true
-        working-directory: backend/build/Release
+        working-directory: backend/build/Debug
         run: |
-          if [ -f "unit_tests" ]; then
-            ./unit_tests
-          else
-            echo "Unit tests not found, skipping"
-          fi
+          ./unit_tests
 
-      - name: Run Unit Tests (Windows)
+      - name: Run Backend Unit Tests (Windows)
         if: matrix.platform == 'windows'
-        continue-on-error: true
-        working-directory: backend/build/Release
+        working-directory: backend/build/Debug
         shell: cmd
         run: |
-          if exist "unit_tests.exe" (
-            unit_tests.exe
-          ) else (
-            echo Unit tests not found, skipping
-          )
+          unit_tests.exe
+
+      - name: Generate Backend Coverage Report (Unix)
+        if: matrix.platform != 'windows'
+        working-directory: backend/build/Debug
+        run: |
+          lcov --capture --directory . --output-file coverage.info || true
+          lcov --remove coverage.info \
+            '/usr/*' \
+            '*/vcpkg/*' \
+            '*/submodules/*' \
+            '*/test/*' \
+            --output-file coverage.info || true
+          lcov --list coverage.info || true
+
+      - name: Upload Backend Coverage (Unix)
+        if: matrix.platform != 'windows'
+        uses: codecov/codecov-action@v4
+        with:
+          file: backend/build/Debug/coverage.info
+          flags: backend,${{ matrix.platform }}
+          name: backend-coverage-${{ matrix.platform }}
+          fail_ci_if_error: false
 
       - name: Install Frontend Dependencies
         working-directory: frontend
@@ -134,11 +161,48 @@ jobs:
         working-directory: frontend
         run: npm run svelte-build
 
+      - name: Run Cypress Tests
+        working-directory: frontend
+        env:
+          COVERAGE: 'true'
+        run: |
+          # Start dev server in background
+          npm run dev &
+          DEV_PID=$!
+          # Wait for server to be ready
+          for i in {1..30}; do
+            if curl -s http://localhost:3000 > /dev/null 2>&1; then
+              echo "Dev server is ready"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Dev server failed to start"
+              kill $DEV_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          done
+          # Run tests with coverage
+          npm run test:coverage || npm run test
+          # Kill dev server
+          kill $DEV_PID 2>/dev/null || true
+
+      - name: Upload Frontend Coverage
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: frontend/coverage/lcov.info
+          flags: frontend,${{ matrix.platform }}
+          name: frontend-coverage-${{ matrix.platform }}
+          fail_ci_if_error: false
+
       - name: Upload Backend Binary
         uses: actions/upload-artifact@v4
         with:
           name: backend-${{ matrix.platform }}
           path: |
+            backend/build/Debug/beyond-rgb-backend*
+            backend/build/Debug/beyond-rgb-backend*
             backend/build/Release/beyond-rgb-backend*
             backend/build/beyond-rgb-backend*
           if-no-files-found: warn

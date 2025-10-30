@@ -6,7 +6,7 @@ enable_coverage=${3:-OFF}
 
 if ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
     echo "Mode not set to Debug or Release."
-    echo "usage: osx_build.sh [Debug | Release] [ENABLE_TESTS=ON/OFF] [ENABLE_COVERAGE=ON/OFF]"
+    echo "usage: linux_build.sh [Debug | Release] [ENABLE_TESTS=ON/OFF] [ENABLE_COVERAGE=ON/OFF]"
     exit
 fi
 
@@ -22,7 +22,7 @@ fi
 cmake $cmake_args
 
 if [ $? -ne 0 ]; then
-    echo "Failed to create cmake project. Make sure you have run ./osx_config_environment.sh."
+    echo "Failed to create cmake project. Make sure you have run ./linux_config_environment.sh."
     exit
 fi
 
@@ -57,3 +57,4 @@ if [ -d ../frontend/ ]; then
 else
     echo "! Could not find the frontend files to copy the backend into..."
 fi
+

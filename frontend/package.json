@@ -18,7 +18,8 @@
     "svelte-start": "vite preview",
     "test": "cypress run",
     "test:open": "cypress open",
-    "test:ci": "start-server-and-test dev http://localhost:3000 'cypress run --browser electron'"
+    "test:ci": "start-server-and-test dev http://localhost:3000 'cypress run --browser electron'",
+    "test:coverage": "cypress run --env coverage=true"
   },
   "keywords": [],
   "author": {
@@ -98,6 +99,9 @@
     "tailwindcss": "^3.0.23",
     "typescript": "^4.6.3",
     "vite": "^2.9.1",
-    "vite-tsconfig-paths": "^3.4.1"
+    "vite-tsconfig-paths": "^3.4.1",
+    "@cypress/code-coverage": "^3.12.0",
+    "vite-plugin-istanbul": "^3.0.0",
+    "nyc": "^15.1.0"
   }
 }
