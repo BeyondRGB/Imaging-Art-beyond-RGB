@@ -272,8 +272,9 @@
                     );
 
                     // Beginning of the movement/rotation handling math.
-                    // There is a diagram in the GitHub docs folder for your viewing pleasure that
-                    // visualizes the math going on here. Hopefully it helps and is not just
+                    // There is a diagram in the GitHub docs folder for your viewing pleasure
+                    // (at ../docs/resources/Rotation Math Intuition.jpg)
+                    // that visualizes the math going on here. Hopefully it helps and is not just
                     // heiroglyphics.
 
                     const rotatePoints = (x, y, degrees) => {
