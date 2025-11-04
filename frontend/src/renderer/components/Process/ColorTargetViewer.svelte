@@ -84,6 +84,7 @@
         linearZoom = getZoomPercentage(viewer.viewport.getZoom(true));
     }
 
+    // TODO: Make this an enum across the app
     $: if ($processState.currentTab === 5) {
         if (viewer && !viewer.isOpen()) {
             let temp = new Image();
