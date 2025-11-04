@@ -3,6 +3,9 @@
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
+    import { modal } from "@util/stores";
+    import Modal from "@components/Modal.svelte";
+    import SortInfoModal from "@components/SortInfoModal.svelte";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let rerenderToggle = false;
@@ -70,6 +73,15 @@
 </script>
 
 <main>
+    {#if $modal === "SortInfoModal"}
+        <Modal
+            component={SortInfoModal}
+            on:close={() => {
+                // showModal = false;
+                $modal = null;
+            }}
+        />
+    {/if}
     {#key rerenderToggle}
         <panel>
             <h1>Specify Image Roles</h1>
@@ -80,21 +92,7 @@
                     <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
                 </div>
             </div>
-            <div>
-                <h2>Image file naming conventions:</h2>
-                <p>
-                    Filename format: anyFilename-typeIndicator_imageID.extension
-                </p>
-                <p>
-                    Where type indicator is one of the types listed below and imageID is A or B
-                </p>
-                <p>
-                    Image: "image", "print", "object", "art", "exhibit", "paint", "subject", "item", "obj"<br>
-                    Color Target: "target", "targets", "color", "grid", "map", "passport"<br>
-                    Flatfield: "flatfield", "flat", "white", "ff", "vignetting", "vignette", "light", "correction", "f", "w"<br>
-                    Darkfield: "darkfield", "d", "darkcurrent", "dc", "black", "dark", "current", "signal", ”internal", "camera"<br>
-                </p>
-            </div>
+               
             
         </panel>
         <right>
