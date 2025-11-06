@@ -136,7 +136,7 @@
       targetImage = $processState.artStacks[0].fields.targetA[0].name;
     }
     else{
-      console.log("Didnt Found Target");
+      console.log("Didnt Find Target");
       targetImage = $processState.artStacks[0].fields.imageA[0][0].name; 
     }
 
@@ -600,8 +600,8 @@
                   <input
                     id="rotation-slider"
                     type="range"
-                    min="-10"
-                    max="10"
+                    min="-180"
+                    max="180"
                     step="0.01"
                     value="{calibrationTargetRotationAngle}"
                     on:input="{(e) => {
