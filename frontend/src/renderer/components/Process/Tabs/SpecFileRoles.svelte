@@ -38,9 +38,6 @@
 
     const autoSort = function () {
         let leftoverImages = autoSortImages(getAllImages(), imageStack);
-        if (leftoverImages.length > 0) {
-            console.log("Sort had " + leftoverImages.length + " leftover images");
-        }
         $processState.imageFilePaths = leftoverImages;
         rerenderToggle = !rerenderToggle;
     };
@@ -77,7 +74,6 @@
         <Modal
             component={SortInfoModal}
             on:close={() => {
-                // showModal = false;
                 $modal = null;
             }}
         />

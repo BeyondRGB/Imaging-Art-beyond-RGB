@@ -524,7 +524,7 @@
         }
         // Otherwise, use the legacy sorting (not recommended)
         else{
-
+        modal.set("SortInfoModal");
         // scan each image name (and path) for possible matches
         each(images, function (image){
             each(probabilityScoreProperties, function (property) {

@@ -1,9 +1,4 @@
-<script lang="ts">
-     // Optional: you can receive closeModal as a prop
-     export let closeModal = () => {};
-   </script>
-   
-<main>
+ <main>
     <div class="infomodal">
         <h1>
             Not enough recognizable image filename suffixes were found, the program will attempt to sort by name but the selected roles may not be accurate.
@@ -36,19 +31,16 @@
     @apply w-[600px] max-h-[80vh] bg-gray-800 rounded-xl shadow-2xl overflow-hidden;
   }
 
-  .infomodal {
-    @apply flex flex-col p-8 gap-8 overflow-y-auto;
-  }
-
   h1 {
     @apply text-xl font-semibold text-gray-100 mb-2;
-  }
-  h2 {
-    @apply text-sm font-medium text-gray-100 tracking-wider mb-2;
   }
 
   p {
     @apply text-gray-400;
+  }
+
+  .infomodal {
+    @apply flex flex-col p-8 gap-8 overflow-y-auto;
   }
 
   .section {
