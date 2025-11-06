@@ -401,6 +401,25 @@
     $processState.whitePatchFilled =
       colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
   }
+
+    // Clamp all the whitepatch column and row values to the maximum rows.
+    // Fixes a bug where the user can type a value that is greater than the available columns. This is a result of
+    // this page not using a form for submission (it can't since of how the state is being handled).
+    $: if (targetArray) {
+      targetArray.forEach((target) => {
+          if (target.whitePatch.col > target.cols) {
+            target.whitePatch.col = target.cols;
+          } else if (target.whitePatch.col < 1) {
+              target.whitePatch.col = 1;
+          }
+
+          if (target.whitePatch.row > target.rows) {
+              target.whitePatch.row = target.rows;
+          } else if (target.whitePatch.row < 1) {
+              target.whitePatch.row = 1;
+          }
+      })
+    }
 </script>
 
 <main>
