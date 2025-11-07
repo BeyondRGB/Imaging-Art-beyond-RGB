@@ -24,13 +24,28 @@ if errorlevel 1 (
     popd
     exit /b 1
 )
+set "VCPKG_EXE=%VCPKG_ROOT%\vcpkg.exe"
+if not exist "%VCPKG_EXE%" (
+    for /f "delims=" %%I in ('where vcpkg.exe 2^>nul') do (
+        set "VCPKG_EXE=%%I"
+        goto :found_vcpkg_exe
+    )
+    if exist "%VCPKG_ROOT%\vcpkg" (
+        set "VCPKG_EXE=%VCPKG_ROOT%\vcpkg"
+        goto :found_vcpkg_exe
+    )
+    echo Failed to locate vcpkg executable after bootstrap.
+    popd
+    exit /b 1
+)
+:found_vcpkg_exe
 popd
 
 ::: Install dependencies
 echo Installing dependencies...
 for /F "tokens=*" %%A in (dependencies.txt) do (
     echo Installing %%A...
-    "%VCPKG_ROOT%\vcpkg.exe" install %%A:x64-windows
+    "%VCPKG_EXE%" install %%A:x64-windows
 )
 
 echo Environment configured successfully!
