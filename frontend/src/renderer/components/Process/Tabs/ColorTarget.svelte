@@ -401,25 +401,6 @@
     $processState.whitePatchFilled =
       colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
   }
-
-    // Clamp all the whitepatch column and row values to the maximum rows.
-    // Fixes a bug where the user can type a value that is greater than the available columns. This is a result of
-    // this page not using a form for submission (it can't since of how the state is being handled).
-    $: if (targetArray) {
-      targetArray.forEach((target) => {
-          if (target.whitePatch.col > target.cols) {
-            target.whitePatch.col = target.cols;
-          } else if (target.whitePatch.col < 1) {
-              target.whitePatch.col = 1;
-          }
-
-          if (target.whitePatch.row > target.rows) {
-              target.whitePatch.row = target.rows;
-          } else if (target.whitePatch.row < 1) {
-              target.whitePatch.row = 1;
-          }
-      })
-    }
 </script>
 
 <main>
@@ -544,6 +525,17 @@
                         min="1"
                         max={target.rows}
                         bind:value={target.whitePatch.row}
+                        on:change={() => {
+                            // Clamp the white patch row to the total number of rows in the target.
+                            // Fixes an issue where the user can type a value that is greater than the available rows.
+                            // Min and Max values do not apply when the user types into the input field and are used for form validation.
+                            // Since no form is being used, the min and max values are not being applied, hence the clamping.
+                            if (target.whitePatch.row > target.rows) {
+                                target.whitePatch.row = target.rows;
+                            } else if (target.whitePatch.row < 1) {
+                                target.whitePatch.row = 1;
+                            }
+                        }}
                       />
                     </div>
                     <span class="and">&</span>
@@ -555,6 +547,15 @@
                         min="1"
                         max={target.cols}
                         bind:value={target.whitePatch.col}
+                        on:change={() => {
+                            // Clamp the white patch column to the total number of columns in the target.
+                            // Fixes an issue where the user can type a value that is greater than the available columns.
+                            if (target.whitePatch.col > target.cols) {
+                                target.whitePatch.col = target.cols;
+                            } else if (target.whitePatch.col < 1) {
+                                target.whitePatch.col = 1;
+                            }
+                        }}
                       />
                     </div>
                   </div>
