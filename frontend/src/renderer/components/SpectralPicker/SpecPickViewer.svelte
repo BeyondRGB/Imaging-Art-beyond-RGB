@@ -6,7 +6,7 @@
 
   export let size = 0.01;
   export let trueSize;
-  export let show = true;
+  export let showBrush;
 
   export let shadowPos;
   export let trueShadowPos;
@@ -16,7 +16,6 @@
   let viewer;
   let imageUrl;
 
-  let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
   let linearZoom = 0;
   let viewportPoint;
   let imagePoint;
@@ -45,14 +44,6 @@
     viewer.addHandler("zoom", handleZoom);
   };
 
-  onDestroy(() => {
-    if (viewer) {
-      viewer.destroy();
-      viewer = null;
-      console.log("SpecPicker viewer destroyed");
-    }
-  });
-
   const destoryViewer = () => {
     if (viewer) {
       viewer.destroy();
@@ -70,67 +61,45 @@
     destoryViewer();
   });
 
-  $: if ($currentPage === "SpecPicker") {
-    if (viewer && !viewer.isOpen()) {
-      console.log("Opening Image");
-      if (!imageUrl.includes("undefined")) {
+  // Open/Close image viewer
+  $: if (viewer && $viewState.colorManagedImage.dataURL) {
+    if(viewer && !viewer.isOpen()) {
+        let temp = new Image();
+        temp.src = $viewState.colorManagedImage.dataURL;
+        imageUrl = temp.src;
+
+      console.log("Opening Spectral Image");
+      // Don't load the image if we haven't recieved it
+      if (imageUrl && imageUrl != "http://localhost:3000/") {
         loading = false;
-      }
-      setTimeout(() => {
-        viewer.open({
-          type: "image",
-          url: imageUrl,
-        });
-      }, 50);
-      if (show) {
-        console.log("Brush Enabled 1");
+
         setTimeout(() => {
-          addOverlay();
-        }, 150);
+          viewer.open({
+            type: "image",
+            url: imageUrl,
+          });
+        }, 50);
       }
     } else if (viewer?.world) {
       trueSize = viewer.world.getItemAt(0).getContentSize().x * size;
     }
   } else {
     if (viewer) {
-      console.log("Close Image");
+      console.log("Close Spectral Image");
       viewer.close();
     }
   }
 
-  $: if (viewer) {
-    // console.log($processState.artStacks[0].colorTargetImage);
-    console.log("New Image (Spec Viewer)");
-    let temp = new Image();
-    temp.src = $viewState.colorManagedImage.dataURL;
-
-    imageUrl = temp.src;
-
+$: if (viewer) {
+  if (showBrush) {
+    console.log("Brush Enabled");
     setTimeout(() => {
-      viewer.open({
-        type: "image",
-        url: imageUrl,
-      });
-    }, 50);
-
-    if (show) {
-      console.log("Brush Enabled 3");
-      setTimeout(() => {
-        addOverlay();
-      }, 150);
-    } else {
-      removeOverlay();
-    }
+      addOverlay();
+    }, 150);
+  } else {
+    removeOverlay();
   }
-
-  // $: if (show) {
-  //   console.log("Brush Enabled 3");
-  //   setTimeout(() => {
-  //     addOverlay();
-  //   }, 0);
-  // } else {
-  //   removeOverlay();
-  // }
+}
 
   function removeOverlay() {
     console.log("Remove Brush");
