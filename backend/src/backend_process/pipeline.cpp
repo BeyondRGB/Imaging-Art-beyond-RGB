@@ -262,7 +262,7 @@ std::string Pipeline::get_output_directory(std::string artImage) {
     std::string time_string = btrgb::get_time(btrgb::TimeType::MILITARY, "-");
     try {
         std::string base_dir = this->process_data_m->get_string("destinationDirectory");
-        std::string dir = base_dir + "/" + OUTPUT_PREFIX + date_string + "_" + time_string + "/";
+        std::string dir = base_dir + "/" + OUTPUT_PREFIX + date_string + "_" + time_string;
         dir = dir + "/" + artImage;
         std::filesystem::create_directories(dir);
         return dir;
