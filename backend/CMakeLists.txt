@@ -58,6 +58,7 @@ endif()
 set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpptrace)
 
 # Create .exe
 add_executable(${PROJECT_NAME})
@@ -146,6 +147,12 @@ target_sources(${PROJECT_NAME} PRIVATE
 
 # Set all source include files (ie. *.h)
 target_include_directories(${PROJECT_NAME} PUBLIC "include/")
+
+# adds cpptrace
+
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+    cpptrace::cpptrace
+)
 
 # adds websocketpp as a target lib for compilation
 

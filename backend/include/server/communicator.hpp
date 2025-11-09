@@ -32,6 +32,16 @@ public:
 	* @param error: the error msg to report
 	*/
 	void report_error(std::string reporter, std::string error);
+
+	/**
+	* Report error
+	* This will print error to
+	*	print error to consol
+	*	report error to fontend
+	*	TODO log error?
+	* @param error: the error msg to report
+	*/
+	void report_error(std::string reporter, std::string error, std::string trace);
 protected:
 	std::shared_ptr<CommunicationObj> coms_obj_m;
 };

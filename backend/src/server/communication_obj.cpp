@@ -60,6 +60,22 @@ void CommunicationObj::send_error(std::string msg, std::string sender, bool crit
 	send_msg(all_info);
 }
 
+void CommunicationObj::send_error(std::string msg, std::string sender, std::string trace, bool critical){
+	jsoncons::json info_body;
+	info_body.insert_or_assign("RequestID", id);
+	info_body.insert_or_assign("ResponseType", "Error");
+	jsoncons::json response_data;
+	response_data.insert_or_assign("message", msg);
+	response_data.insert_or_assign("sender", sender);
+	response_data.insert_or_assign("trace", trace);
+	response_data.insert_or_assign("critical", critical);
+	info_body.insert_or_assign("ResponseData", response_data);
+	std::string all_info;
+	info_body.dump(all_info);
+	//std::cout<<all_info<<std::endl;
+	send_msg(all_info);
+}
+
 void CommunicationObj::send_progress(double val, std::string sender){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);

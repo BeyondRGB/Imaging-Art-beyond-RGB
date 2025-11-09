@@ -18,3 +18,11 @@ void Communicator::report_error(std::string reporter, std::string error) {
 	this->coms_obj_m->send_error(error, reporter);
 	//TODO report to log when loggin gets implemented
 }
+
+void Communicator::report_error(std::string reporter, std::string error, std::string trace) {
+	std::string error_msg = "ERROR: [" + reporter + "] " + error;
+	std::cerr << error_msg << std::endl;
+	std::cerr << trace << std::endl;
+	this->coms_obj_m->send_error(error, reporter, trace);
+	//TODO report to log when loggin gets implemented
+}

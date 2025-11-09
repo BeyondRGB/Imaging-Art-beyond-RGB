@@ -67,6 +67,13 @@ public:
 	*/
 	void send_error(std::string msg, std::string sender, bool critical=true);
 	/**
+	* Function for sending a Error Message to the front end
+	* @param msg: the message being sent to the front end
+	* @param sender: what function is sending the message
+	* @param critical: indicates process has stopped running (defaults to true)
+	*/
+	void send_error(std::string msg, std::string sender, std::string trace, bool critical=true);
+	/**
 	* Function for sending a Progress Update Message to the front end
 	* @param val: amount of progress made in a overall step
 	* @param sender: what function is sending the message
