@@ -69,8 +69,9 @@
         imageUrl = temp.src;
 
       console.log("Opening Spectral Image");
+
       // Don't load the image if we haven't recieved it
-      if (imageUrl && imageUrl != "http://localhost:3000/") {
+      if (imageUrl) {
         loading = false;
 
         setTimeout(() => {
