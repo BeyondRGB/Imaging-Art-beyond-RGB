@@ -22,17 +22,7 @@ public:
 	* Set the CommunicationObj to be used for sending messages
 	* @param coms_obj: the CommunicationObj to set
 	*/
-	void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj);
-
-	/**
-	* Report error
-	* This will print error to
-	*	print error to consol
-	*	report error to fontend
-	*	TODO log error?
-	* @param error: the error msg to report
-	*/
-	void report_error(std::string reporter, std::string error);
+	void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj); 
 
 	/**
 	* Report error

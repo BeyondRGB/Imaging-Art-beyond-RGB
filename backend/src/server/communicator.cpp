@@ -11,12 +11,7 @@ void Communicator::send_info(std::string msg, std::string reporter) {
 
 void Communicator::set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj) {
 	coms_obj_m = coms_obj;
-}
-
-void Communicator::report_error(std::string reporter, std::string error) {
-	this->coms_obj_m->send_error(error, reporter);
-	//TODO report to log when loggin gets implemented
-}
+} 
 
 void Communicator::report_error(std::string reporter, std::string error, std::stacktrace trace) {
 	this->coms_obj_m->send_error(error, reporter, trace);

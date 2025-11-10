@@ -75,7 +75,7 @@ void HalfSizePreview::run() {
         }
     }
     catch(const std::exception& e) {
-        this->coms_obj_m->send_error("[HalfSizePreview] Request failed.", "HalfSizePreview");
+        this->coms_obj_m->send_error("[HalfSizePreview] Request failed.", "HalfSizePreview", std::stacktrace::current());
         return;
     }
 

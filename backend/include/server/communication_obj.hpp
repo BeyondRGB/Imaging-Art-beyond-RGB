@@ -59,18 +59,12 @@ public:
 	* @param msg: the message being sent to the front end
 	* @param sender: what function is sending the message
 	*/
-	void send_info(std::string msg, std::string sender);
+	void send_info(std::string msg, std::string sender); 
 	/**
 	* Function for sending a Error Message to the front end
 	* @param msg: the message being sent to the front end
 	* @param sender: what function is sending the message
-	* @param critical: indicates process has stopped running (defaults to true)
-	*/
-	void send_error(std::string msg, std::string sender, bool critical=true);
-	/**
-	* Function for sending a Error Message to the front end
-	* @param msg: the message being sent to the front end
-	* @param sender: what function is sending the message
+	* @param trace: stacktrace of where the error sourced from
 	* @param critical: indicates process has stopped running (defaults to true)
 	*/
 	void send_error(std::string msg, std::string sender, std::stacktrace trace, bool critical=true);
