@@ -10,10 +10,8 @@
 	import LinearChart from "@root/components/Charts/LinearChart.svelte";
 	import FileSelector from "@components/FileSelector.svelte";
 	import VectorChart from "@components/Charts/VectorChart.svelte";
-	import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
 	import ImageViewer from "@root/components/ImageViewer.svelte";
 	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
-	import Switch from "@components/Switch.svelte";
 
 	let open = false;
 	let spectrumDataHeatMap_est;

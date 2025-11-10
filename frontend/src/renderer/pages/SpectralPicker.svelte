@@ -12,13 +12,11 @@
     Maximize2Icon,
     Minimize2Icon,
   } from "svelte-feather-icons";
-  import { fly } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import Switch from "@components/Switch.svelte";
   import FileSelector from "@components/FileSelector.svelte";
-  import { fullScreenApi } from "openseadragon";
 
-  let brushShow = false;
+  let showBrush = false;
   let stackCurves = false;
   let size;
   let trueSize;
@@ -139,6 +137,7 @@
       $viewState.colorManagedImage.dataURL = "";
       oldProjectKey = null
       mainfilePath = "";
+      showBrush = false
   }
 </script>
 
@@ -188,7 +187,7 @@
               {expand ? ">" : "<"}
             </div>
             <div class="box" id="brush">
-              <Switch label="Enable Spectral Picker" bind:checked={brushShow} />
+              <Switch label="Enable Spectral Picker" bind:checked={showBrush} />
               <Switch label="Stack Spectral Curves" bind:checked={stackCurves} />
               <div class="sizeSettings">
                 Set Brush Size:
@@ -221,7 +220,7 @@
             bind:shadowPos
             bind:trueShadowPos
             bind:trueSize
-            bind:show={brushShow}
+            bind:showBrush={showBrush}
             bind:size
             bind:loading
           />
