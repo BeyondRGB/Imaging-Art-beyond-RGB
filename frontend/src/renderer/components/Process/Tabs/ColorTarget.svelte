@@ -136,7 +136,7 @@
       targetImage = $processState.artStacks[0].fields.targetA[0].name;
     }
     else{
-      console.log("Didnt Found Target");
+      console.log("Didnt Find Target");
       targetImage = $processState.artStacks[0].fields.imageA[0][0].name; 
     }
 
@@ -401,6 +401,40 @@
     $processState.whitePatchFilled =
       colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
   }
+
+  // Clamp the white patch rows to the number of rows in the target
+  $: if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.row > colorTarget.rows
+  ) {
+    colorTarget.whitePatch.row = colorTarget.rows;
+  } else if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.row < 1
+  ) {
+    colorTarget.whitePatch.row = 1;
+  }
+
+  // Clamp the white patch columns to the number of columns in the target
+  $: if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.col > colorTarget.cols
+  ) {
+      colorTarget.whitePatch.col = colorTarget.cols;
+  } else if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.col < 1
+  ) {
+      colorTarget.whitePatch.col = 1;
+  }
 </script>
 
 <main>
@@ -600,8 +634,8 @@
                   <input
                     id="rotation-slider"
                     type="range"
-                    min="-10"
-                    max="10"
+                    min="-180"
+                    max="180"
                     step="0.01"
                     value="{calibrationTargetRotationAngle}"
                     on:input="{(e) => {

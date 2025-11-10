@@ -1,5 +1,6 @@
-#include <server/process_manager.hpp>
 #include <iostream>
+#include <stacktrace>
+#include <server/process_manager.hpp>
 #include <backend_process/ColorManagedImage.hpp>
 #include <backend_process/ReportRequest.hpp>
 #include <backend_process/SpectralPicker.hpp>
@@ -30,7 +31,7 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 		p_thread.detach();
 	}
 	catch (ParsingError e) {
-		this->report_error("ProcessManager", e.what());
+		this->report_error("ProcessManager", e.what(), std::stacktrace::current());
 	}
 }
 
@@ -66,7 +67,7 @@ std::shared_ptr<BackendProcess> ProcessManager::identify_process(std::string key
 void ProcessManager::start_process(std::shared_ptr<BackendProcess> process, std::shared_ptr<CommunicationObj> coms_obj, Json request_data) {
 	std::cout << "Finalizing Process Initialization" << std::endl;
 	if (nullptr == process) {
-		this->report_error("ProcessManager", "Unknown RequestType");
+		this->report_error("ProcessManager", "Unknown RequestType", std::stacktrace::current());
 		return;
 	}
 	process->set_coms_obj(coms_obj);
