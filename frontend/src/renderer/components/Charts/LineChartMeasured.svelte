@@ -11,44 +11,53 @@
   export let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);;
   export let trueShadowPos;
   export let stack = false;
+  let currentData = [];
   let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
 
 
   let inputData = [];
 
-  $: if (data.length > 1) {
-      const dataDict = [];
 
-      // Clear the graph if we aren't stacking curves
-      if(!stack) {
-        inputData = [];
-      }
+$: if (data.length > 1) {
+    inputData = [];
 
-      wavelengthArray.forEach((element, i) => {
-          dataDict.push({
-              x: element,
-              y: data[i] * 100,
-              fillColor: pointColors[i]
-          });
-      });
-      inputData.push({
-          type: 'line',
-          name: 'Spectrum: (' + (typeof trueShadowPos.left === 'number' ? trueShadowPos.left.toFixed(1) : '0') + ";" + (typeof trueShadowPos.top === 'number' ? trueShadowPos.top.toFixed(1) : '0') + ")",
-          data: dataDict
-      });
-      options.series = inputData;
-      data = [];
-  }
+    // Add data for both estimated and reference spectrum
+    data.forEach((dataset, j) => {
+        const dataDict = [];
+        var namer;
+        wavelengthArray.forEach((element, i) => {
+            dataDict.push({
+                x: element,
+                y: dataset[i] * 100,
+                fillColor: pointColors[i]
+            });
+        });
+        if (j==0) {
+            namer = 'Estimated Spectrum: (' + trueShadowPos.left + ";" + trueShadowPos.top.toFixed(1) + ")";
+        }
+        else {
+            namer = 'Reference Spectrum: (' + trueShadowPos.left + ";" + trueShadowPos.top.toFixed(1) + ")";
+        }
+        inputData.push({
+            type: 'line',
+            name: namer,
+            data: dataDict,
+            color: j === 0 ? '#FFFFFF' : '#000000' 
+        });
+        options.series = inputData;
+    });
+    data = [];
+}
 
   const options = {
       series: [],
       stroke: {
           show: true,
           curve: 'smooth',
-          width: 1,
+          width: 2,
       },
       chart: {
-          background: 'rgb(58, 58, 60)',
+          background: '#4A4A4C',
           animations: {
               enabled: false
           },
@@ -79,14 +88,14 @@
           intersect: false,
           theme: 'dark',
           x: {
-            show: false
+              show: false
           },
           y: {
-            formatter: function(value) {
+              formatter: function(value) {
                 return `${value.toFixed(2)}%`;
-            },
-            title: {
-                  formatter: () => '',
+              },
+              title: {
+                  formatter: (seriesName, info) => seriesName,
               }
           },
           z: {
@@ -134,10 +143,12 @@
       },
       legend: {
           show: true,
-          showForSingleSeries: true,
           labels: {
-            colors: '#FFFFFF',
+              useSeriesColors: true
           },
+          markers: {
+              fillColors: pointColors,
+          }
       },
       title: {
           text: "Estimated Spectrum",

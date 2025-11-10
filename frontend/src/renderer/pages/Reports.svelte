@@ -13,6 +13,7 @@
 	import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
 	import ImageViewer from "@root/components/ImageViewer.svelte";
 	import LineChart from "@components/Charts/LineChart.svelte";
+	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
 	import Switch from "@components/Switch.svelte";
 	import EmptyState from "@components/EmptyState.svelte";
 	import ExpandablePanel from "@components/ExpandablePanel.svelte";
@@ -303,8 +304,7 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 										<p>Click on a Heatmap box to view the Estimated vs. Reference Spectral Curve</p>
 									</div>
 									<div class="chart">
-										<LineChart
-											multiDataset={true}
+										<LineChartMeasured
 											bind:data={combinedData}
 											bind:wavelengthArray
 											stack={stackCurves}
