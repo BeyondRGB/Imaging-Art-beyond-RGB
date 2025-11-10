@@ -146,10 +146,8 @@ export async function connect() {
   let ipcResponse = undefined;
   let errorCount = 0;
   do {
-    console.log("Fetching port");
     ipcResponse = await window.electron.getPort();
 
-    console.log(`resp: ${ipcResponse}`);
     // if port is undefined, fully restart the backend (this means its crashed)
     if (!ipcResponse || ipcResponse === 3000)
     {
