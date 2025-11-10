@@ -124,7 +124,10 @@
   }
 
   function colorTargetPrev() {
-    $processState.colorTargetID = Math.floor(Math.random() * 999999999);
+    processState.update(state => ({
+      ...state,
+      colorTargetID: Math.floor(Math.random() * 999999999)
+    }));
     console.log($processState);
 
     let targetImage = "";
@@ -288,7 +291,10 @@
     if ($processState.artStacks[0].verificationTarget && Object.keys($processState.artStacks[0].verificationTarget).length !== 0) {
       addDataToTarget();
     }
-    $processState.returnedFromProcessing = false;
+    processState.update(state => ({
+      ...state,
+      returnedFromProcessing: false
+    }));
   }
 
   // Add data to targets from $processState
@@ -392,14 +398,22 @@
     colorTarget?.whitePatch?.row &&
     colorTarget?.whitePatch?.col
   ) {
-    $processState.completedTabs[5] = true;
+    processState.update(state => ({
+      ...state,
+      completedTabs: state.completedTabs.map((completed, i) => i === 5 ? true : completed)
+    }));
   } else {
-     $processState.completedTabs[5] = false;
+    processState.update(state => ({
+      ...state,
+      completedTabs: state.completedTabs.map((completed, i) => i === 5 ? false : completed)
+    }));
   }
 
   $: if (colorTarget) {
-    $processState.whitePatchFilled =
-      colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
+    processState.update(state => ({
+      ...state,
+      whitePatchFilled: colorTarget.whitePatch?.row && colorTarget.whitePatch?.col
+    }));
   }
 </script>
 

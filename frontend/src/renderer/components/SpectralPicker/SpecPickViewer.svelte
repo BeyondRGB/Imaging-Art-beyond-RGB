@@ -14,7 +14,7 @@
   export let loading;
 
   let viewer;
-  let imageUrl;
+  let imageUrl = "";
 
   let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
   let linearZoom = 0;
@@ -71,34 +71,44 @@
   });
 
   $: if ($currentPage === "SpecPicker") {
-    if (viewer && !viewer.isOpen()) {
-      console.log("Opening Image");
+    if (viewer && !viewer.isOpen() && imageUrl && imageUrl.length > 0) {
+      console.log("Opening Image on page load");
       if (!imageUrl.includes("undefined")) {
         loading = false;
       }
       setTimeout(() => {
-        viewer.open({
-          type: "image",
-          url: imageUrl,
-        });
-      }, 50);
-      if (show) {
-        console.log("Brush Enabled 1");
-        setTimeout(() => {
-          addOverlay();
-        }, 150);
+        if (viewer && imageUrl) {
+          try {
+            viewer.open({
+              type: "image",
+              url: imageUrl,
+            });
+          } catch (e) {
+            console.log("Error opening image on page load:", e);
+          }
+        }
+      }, 100);
+    } else if (viewer?.world && viewer.world.getItemCount() > 0) {
+      try {
+        trueSize = viewer.world.getItemAt(0).getContentSize().x * size;
+      } catch (e) {
+        console.log("Error getting content size:", e);
       }
-    } else if (viewer?.world) {
-      trueSize = viewer.world.getItemAt(0).getContentSize().x * size;
     }
   } else {
-    if (viewer) {
-      console.log("Close Image");
-      viewer.close();
+    if (viewer && viewer.isOpen()) {
+      console.log("Close Image - leaving page");
+      try {
+        // Remove overlays before closing
+        removeOverlay();
+        viewer.close();
+      } catch (e) {
+        console.log("Error closing viewer when leaving page:", e);
+      }
     }
   }
 
-  $: if (viewer) {
+  $: if (viewer && $viewState.colorManagedImage.dataURL && $currentPage === "SpecPicker") {
     // console.log($processState.artStacks[0].colorTargetImage);
     console.log("New Image (Spec Viewer)");
     let temp = new Image();
@@ -106,20 +116,33 @@
 
     imageUrl = temp.src;
 
+    // Close existing image before opening new one
+    if (viewer.isOpen()) {
+      try {
+        viewer.close();
+      } catch (e) {
+        console.log("Error closing viewer:", e);
+      }
+    }
+
     setTimeout(() => {
-      viewer.open({
-        type: "image",
-        url: imageUrl,
-      });
-    }, 50);
+      if (viewer && imageUrl) {
+        try {
+          viewer.open({
+            type: "image",
+            url: imageUrl,
+          });
+        } catch (e) {
+          console.log("Error opening image:", e);
+        }
+      }
+    }, 100);
 
     if (show) {
       console.log("Brush Enabled 3");
       setTimeout(() => {
         addOverlay();
-      }, 150);
-    } else {
-      removeOverlay();
+      }, 200);
     }
   }
 
@@ -138,12 +161,20 @@
       const brush = document.getElementById("specView-brush");
       const shadow = document.getElementById("specView-brush-shadow");
 
-      viewer.removeOverlay(brush);
-      viewer.removeOverlay(shadow);
-      overTracker.destroy();
-      mouseTracker.destroy();
+      if (brush && viewer) {
+        viewer.removeOverlay(brush);
+      }
+      if (shadow && viewer) {
+        viewer.removeOverlay(shadow);
+      }
+      if (overTracker && typeof overTracker.destroy === 'function') {
+        overTracker.destroy();
+      }
+      if (mouseTracker && typeof mouseTracker.destroy === 'function') {
+        mouseTracker.destroy();
+      }
     } catch (e) {
-      console.log(e);
+      console.log("Error removing overlay:", e);
     }
   }
 

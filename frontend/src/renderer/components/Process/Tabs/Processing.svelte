@@ -41,8 +41,14 @@
       if (temp["ResponseType"] === "CalibrationComplete") {
         // Project Key handler
         console.log("CalibrationComplete Project Key From Server");
-        $viewState.projectKey = temp["ResponseData"]["path"];
-        $processState.pipelineComplete = true;
+        viewState.update(state => ({
+          ...state,
+          projectKey: temp["ResponseData"]["path"]
+        }));
+        processState.update(state => ({
+          ...state,
+          pipelineComplete: true
+        }));
       } else if (temp["ResponseType"] === "Progress") {
         // Progress Update
         console.log("Progress From Server");

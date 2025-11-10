@@ -34,7 +34,10 @@
     };
 
     const autoSort = function () {
-        $processState.imageFilePaths = autoSortImages(getAllImages(), imageStack);
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: autoSortImages(getAllImages(), imageStack)
+        }));
         rerenderToggle = !rerenderToggle;
     };
 
@@ -54,13 +57,12 @@
         if(validationError = validate()) {
             return;
         }
-        $processState.imageFilePaths = [];
-        $processState.completedTabs[3] = true;
-        if(skipOptionalFiltering) {
-            $processState.currentTab += 2;
-        } else {
-            $processState.currentTab++;
-        }
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: [],
+          completedTabs: state.completedTabs.map((completed, i) => i === 3 ? true : completed),
+          currentTab: skipOptionalFiltering ? state.currentTab + 2 : state.currentTab + 1
+        }));
     };
 
 </script>

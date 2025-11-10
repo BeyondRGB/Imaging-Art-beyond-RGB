@@ -6,6 +6,7 @@
     sendMessage,
     messageStore,
     currentPage,
+    serverError,
   } from "@util/stores";
   import {
     Maximize2Icon,
@@ -23,16 +24,21 @@
 
   let brushShow = false;
   let stackCurves = false;
-  let size;
+  let size = 0.01; // Default size matching SpecPickViewer default
   let trueSize;
   let shadowPos = { left: 0, top: 0 };
-  let trueShadowPos = { left: "0px", top: "0px" };
+  let trueShadowPos = { left: 0, top: 0 };
   let spectrumData;
   let mainfilePath;
 
   let loading = false;
 
   let expand = false;
+
+  let binaryType = null;
+  let binaryName = null;
+  let binaryID = null;
+  let binaryFor = null;
 
   let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
 
@@ -62,19 +68,77 @@
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
     console.log("New Message Spec");
     try {
-      let temp = JSON.parse($messageStore[0]);
-      if (temp["ResponseType"] === "SpectralPicker") {
-        console.log("Spectrum Data From Server");
-        spectrumData = temp["ResponseData"]["spectrum"];
+      // Validate message is a string before parsing
+      const message = $messageStore[0];
+      if (typeof message === 'string' && message.trim().length > 0) {
+        let temp = JSON.parse(message);
+        console.log("Parsed message ResponseType:", temp["ResponseType"], "RequestID:", temp["RequestID"], "CMID:", $processState.CMID);
+        
+        if (temp["ResponseType"] === "SpectralPicker") {
+          console.log("Spectrum Data From Server");
+          spectrumData = temp["ResponseData"]["spectrum"];
+        } else if (
+          // CM Art Binary Handler
+          temp["ResponseType"] === "ImageBinary" &&
+          temp["RequestID"] === $processState.CMID
+        ) {
+          console.log("Color Managed Binary From Server - setting binaryFor to ColorManaged");
+          binaryType = temp["ResponseData"]["type"];
+          binaryName = temp["ResponseData"]["name"];
+          binaryID = temp["RequestID"];
+          binaryFor = "ColorManaged";
+          console.log("binaryFor is now:", binaryFor, "binaryType:", binaryType, "binaryName:", binaryName);
+        } else if (temp["ResponseType"] === "Error") {
+          // Error handler
+          if (temp["ResponseData"] && temp["ResponseData"]["critical"]) {
+            serverError.set({
+              sender: temp["ResponseData"]["sender"],
+              message: temp["ResponseData"]["message"],
+            });
+            console.log({ SERVERERROR: temp["ResponseData"] });
+          }
+        } else {
+          console.log("Message type not handled:", temp["ResponseType"]);
+        }
+      } else {
+        console.log("Invalid or empty message received");
       }
     } catch (e) {
-      console.log(e);
+      console.error("JSON parse error in SpectralPicker:", e);
+      console.error("Message content:", $messageStore[0]);
     }
+  }
+
+  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
+    console.log("creating blob for:", binaryFor);
+    let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
+    let temp = new Image();
+    temp.src = URL.createObjectURL(blob);
+
+    if (binaryFor === "ColorManaged") {
+      console.log("Setting color managed image dataURL:", temp.src.substring(0, 50));
+      viewState.update(state => ({
+        ...state,
+        colorManagedImage: {
+          dataURL: temp.src,
+          name: binaryName,
+        }
+      }));
+      console.log("Setting loading to false");
+      loading = false;
+    }
+    binaryType = null;
+    binaryName = null;
+    binaryID = null;
+    binaryFor = null;
   }
 
   function colorManagedImage() {
     let rand = Math.floor(Math.random() * 999999);
-    $processState.CMID = rand;
+    processState.update(state => ({
+      ...state,
+      CMID: rand
+    }));
     let msg = {
       RequestID: rand,
       RequestType: "ColorManagedImage",
@@ -102,14 +166,23 @@
 
   $: if (mainfilePath?.length > 0) {
     console.log("New Project Key");
-    $viewState.projectKey = mainfilePath[0];
+    viewState.update(state => ({
+      ...state,
+      projectKey: mainfilePath[0]
+    }));
   }
 
   let isFullScreen = window.innerHeight == screen.height;
 
   function closeImage() {
-    $viewState.projectKey = null;
-    $viewState.colorManagedImage.dataURL = "";
+    viewState.update(state => ({
+      ...state,
+      projectKey: null,
+      colorManagedImage: {
+        ...state.colorManagedImage,
+        dataURL: ""
+      }
+    }));
     mainfilePath = "";
   }
 

@@ -16,9 +16,13 @@
     };
 
     function getThumbnails() {
-        $processState.thumbnailID = Math.floor(Math.random() * 999999999);
+        const thumbnailID = Math.floor(Math.random() * 999999999);
+        processState.update(state => ({
+          ...state,
+          thumbnailID: thumbnailID
+        }));
         let msg = {
-            RequestID: $processState.thumbnailID,
+            RequestID: thumbnailID,
             RequestType: "Thumbnails",
             RequestData: {
                 names: filePaths,
@@ -32,7 +36,10 @@
         $processState.imageFilePaths.length >= 6 &&
         !$processState.completedTabs[1]
     ) {
-        $processState.completedTabs[1] = true;
+        processState.update(state => ({
+          ...state,
+          completedTabs: state.completedTabs.map((completed, i) => i === 1 ? true : completed)
+        }));
     }
 
     function handleFilesSelect(e) {
@@ -46,32 +53,49 @@
             files.accepted = [...e.detail?.acceptedFiles];
         }
 
+        const newFiles = [];
         forEach(files.accepted, (f) => {
             if (!find($processState.imageFilePaths, {id: f.path, name: f.name})) {
-                $processState.imageFilePaths.push({
+                newFiles.push({
                     id: f.path,
                     name: f.path
                 });
             }
         });
-        forEach($processState.imageFilePaths, function (f){
-           filePaths.push(f.name);
+        processState.update(state => {
+          const updatedFilePaths = [...state.imageFilePaths, ...newFiles];
+          const totalImageCount = updatedFilePaths.length + countFields(state.artStacks[0].fields);
+          let artImageCount = state.artImageCount;
+          if(totalImageCount >= 6 && totalImageCount <=8  ){
+              artImageCount = 1;
+          }else if ( totalImageCount > 8){
+              artImageCount = Math.ceil((totalImageCount - 6) / 2);
+          }
+          // Update filePaths array for thumbnail request
+          forEach(updatedFilePaths, function (f){
+             filePaths.push(f.name);
+          });
+          return {
+            ...state,
+            imageFilePaths: updatedFilePaths,
+            artImageCount: artImageCount
+          };
         });
         getThumbnails();
-        let totalImageCount = $processState.imageFilePaths.length + countFields($processState.artStacks[0].fields); 
-        if(totalImageCount >= 6 && totalImageCount <=8  ){
-            $processState.artImageCount = 1;
-        }else if ( totalImageCount > 8){
-            $processState.artImageCount = Math.ceil((totalImageCount - 6) / 2);
-        }
     }
 
     const remove = (item) => {
-        $processState.imageFilePaths = $processState.imageFilePaths.filter((value) => value.id !== item.id);
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: state.imageFilePaths.filter((value) => value.id !== item.id)
+        }));
     };
 
     const removeAll = () => {
-        $processState.imageFilePaths = [];
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: []
+        }));
     };
 
     function openAttachment() {

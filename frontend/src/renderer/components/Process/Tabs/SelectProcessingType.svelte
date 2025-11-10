@@ -6,10 +6,13 @@
   } from "svelte-feather-icons";
 
   function handleClick(page) {
-    $processState.processType = page;
+    processState.update(state => ({
+      ...state,
+      processType: page,
+      completedTabs: state.completedTabs.map((completed, i) => i === 0 ? true : completed),
+      currentTab: state.currentTab + 1
+    }));
     modal.set(null);
-    $processState.completedTabs[0] = true;
-    $processState.currentTab++;
   }
 
   let showAbout = false;

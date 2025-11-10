@@ -30,12 +30,18 @@
   let binaryID = null;
   let batchCount = 0;
 
-  let tabs: any = [
-{ name: "Select Processing Type", component: SelectProcessingType },
+  $: tabs = [
+    { name: "Select Processing Type", component: SelectProcessingType },
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
-    { name: "Specify File Roles", component: SpecFileRoles },
-//{ name: "Batch Processing Roles", component:BatchProcessingRoles},
+    { 
+      name: $processState.processType === "Batch" 
+        ? "Specify File Roles - Batch" 
+        : "Specify File Roles",
+      component: $processState.processType === "Batch" 
+        ? BatchProcessingRoles 
+        : SpecFileRoles 
+    },
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
@@ -45,7 +51,10 @@
   function nextTab() {
     if ($processState.currentTab !== tabs.length - 1) {
       if ($processState.completedTabs[$processState.currentTab]) {
-        $processState.currentTab += 1;
+        processState.update(state => ({
+          ...state,
+          currentTab: state.currentTab + 1
+        }));
       }
     } else {
       console.log("Error overflow");
@@ -53,24 +62,24 @@
   }
 
     $: if($processState.pipelineComplete && $processState.artStacks[0].fields.imageA.length >= 2 && $processState.artStacks[0].fields.imageA[1].length !== 0 ) {
-    $processState.completedTabs =[
-        true,
-        true,
-        true,
-        true,
-        false,
-        true
-    ];
-	$processState.batch=true;
-    $processState.currentTab-=1;
-    $processState.pipelineComplete = false;
-    $processState.artStacks[0].fields.imageA.shift();
-    $processState.artStacks[0].fields.imageB.shift();
-
-
-    // $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
-    // $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
-    batchCount+=1;
+    processState.update(state => ({
+      ...state,
+      completedTabs: [true, true, true, true, false, true],
+      batch: true,
+      currentTab: state.currentTab - 1,
+      pipelineComplete: false,
+      artStacks: state.artStacks.map((stack, i) => 
+        i === 0 ? {
+          ...stack,
+          fields: {
+            ...stack.fields,
+            imageA: stack.fields.imageA.slice(1),
+            imageB: stack.fields.imageB.slice(1)
+          }
+        } : stack
+      )
+    }));
+    batchCount += 1;
     handleConfirm();
   }
   
@@ -81,17 +90,15 @@
 
   function prevTab() {
     if ($processState.currentTab !== 0) {
-      $processState.currentTab -= 1;
+      processState.update(state => ({
+        ...state,
+        currentTab: state.currentTab - 1
+      }));
     } else {
       console.log("Error overflow");
     }
   }
 
-  $: if($processState.processType === "Batch"){
-    tabs[3] =  { name: "Specify File Roles - Batch", component: BatchProcessingRoles }
-  } else{
-    tabs[3] = { name: "Specify File Roles", component: SpecFileRoles }
-  }
 
   $: if (tabList) {
     let width = tabList.scrollWidth;
@@ -145,28 +152,44 @@
       } else if (temp["RequestID"] === $processState.colorTargetID) {
         // Base64 Halfsize handler
         console.log("HalfSizedPreview From Server");
-        $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
-        $processState.colorTargetID = null;
+        processState.update(state => ({
+          ...state,
+          colorTargetID: null,
+          artStacks: state.artStacks.map((stack, i) => 
+            i === 0 ? {
+              ...stack,
+              colorTargetImage: temp["ResponseData"]
+            } : stack
+          )
+        }));
       } else if (
         // Base64 Thumbnail Handler
         temp["ResponseType"] === "ImageBase64" &&
         temp["RequestID"] === $processState.thumbnailID
       ) {
         console.log("Thumbnail Base64 From Server");
-        $processState.imageThumbnails[temp["ResponseData"]["name"]] =
-          temp["ResponseData"]["dataURL"];
+        processState.update(state => ({
+          ...state,
+          imageThumbnails: {
+            ...state.imageThumbnails,
+            [temp["ResponseData"]["name"]]: temp["ResponseData"]["dataURL"]
+          }
+        }));
       } else if (temp["ResponseType"] === "ImageBase64") {
         // base64 output handler
         console.log("Base64 From Server");
-        $processState.outputImage = temp["ResponseData"];
+        processState.update(state => ({
+          ...state,
+          outputImage: temp["ResponseData"]
+        }));
       } else if (temp["ResponseType"] === "Error") {
         // Error handler
         if (temp["ResponseData"]["critical"]) {
-          $serverError = {
+          serverError.set({
             sender: temp["ResponseData"]["sender"],
             message: temp["ResponseData"]["message"],
-          };
-          console.log({ SERVERERROR: $serverError });
+          });
+          console.log({ SERVERERROR: temp["ResponseData"] });
         }
       }
     } catch (e) {
@@ -181,27 +204,47 @@
     temp.src = URL.createObjectURL(blob);
 
     if (binaryFor === "Thumbnail") {
-      $processState.imageThumbnails[binaryName] = temp.src;
+      processState.update(state => ({
+        ...state,
+        imageThumbnails: {
+          ...state.imageThumbnails,
+          [binaryName]: temp.src
+        }
+      }));
     } else if (binaryFor === "Output") {
-      $processState.artStacks[0].colorTargetImage = {
-        dataURL: temp.src,
-        filename: binaryName,
-      };
-      $processState.outputImage = {
-        dataURL: temp.src,
-        name: binaryName,
-      };
+      processState.update(state => ({
+        ...state,
+        artStacks: state.artStacks.map((stack, i) => 
+          i === 0 ? {
+            ...stack,
+            colorTargetImage: {
+              dataURL: temp.src,
+              filename: binaryName,
+            }
+          } : stack
+        ),
+        outputImage: {
+          dataURL: temp.src,
+          name: binaryName,
+        }
+      }));
     } else if (binaryFor === "ColorManaged") {
-      $viewState.colorManagedImage = {
-        dataURL: temp.src,
-        name: binaryName,
-      };
+      viewState.update(state => ({
+        ...state,
+        colorManagedImage: {
+          dataURL: temp.src,
+          name: binaryName,
+        }
+      }));
     }else if(binaryFor === "ColorManagedTarget"){ 
       console.log("Got target!");
-      $viewState.colorManagedTargetImage = {
-        dataURL:temp.src,
-        name:binaryName
-      };
+      viewState.update(state => ({
+        ...state,
+        colorManagedTargetImage: {
+          dataURL: temp.src,
+          name: binaryName
+        }
+      }));
     }
     binaryType = null;
     binaryName = null;

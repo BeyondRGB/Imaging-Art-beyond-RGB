@@ -129,6 +129,37 @@ export function resetProcess() {
   });
 }
 
+// State update helper functions
+type ProcessState = ReturnType<typeof processState.set> extends (value: infer T) => void ? T : never;
+type ArtStack = ProcessState['artStacks'][0];
+
+/**
+ * Helper function to update processState using the update method
+ */
+export function updateProcessState(updater: (state: ProcessState) => ProcessState) {
+  processState.update(updater);
+}
+
+/**
+ * Helper function to update a specific art stack in the artStacks array
+ */
+export function updateArtStack(stackIndex: number, updater: (stack: ArtStack) => ArtStack) {
+  processState.update(state => ({
+    ...state,
+    artStacks: state.artStacks.map((stack, i) => 
+      i === stackIndex ? updater(stack) : stack
+    )
+  }));
+}
+
+/**
+ * Helper function to update viewState
+ */
+type ViewState = ReturnType<typeof viewState.set> extends (value: infer T) => void ? T : never;
+export function updateViewState(updater: (state: ViewState) => ViewState) {
+  viewState.update(updater);
+}
+
 
 // Webstocket Stores
 export const messageStore = writable([]);

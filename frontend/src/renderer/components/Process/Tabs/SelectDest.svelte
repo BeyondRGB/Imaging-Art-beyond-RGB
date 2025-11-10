@@ -6,14 +6,20 @@
   $: console.log(filePaths);
 
   $: if (filePaths) {
-    $processState.destDir = filePaths[0];
+    processState.update(state => ({
+      ...state,
+      destDir: filePaths[0]
+    }));
   }
   $: if (
     $processState.destDir &&
     $processState.destDir?.length > 1 &&
     !$processState.completedTabs[2]
   ) {
-    $processState.completedTabs[2] = true;
+    processState.update(state => ({
+      ...state,
+      completedTabs: state.completedTabs.map((completed, i) => i === 2 ? true : completed)
+    }));
   }
 </script>
 

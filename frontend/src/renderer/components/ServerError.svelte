@@ -21,18 +21,27 @@
    * reset fields in the processState
    */
   function returnToSetup() {
+    let targetTab = 0;
     for (let i = 0; i < $processState.completedTabs.length - 1; i++) {
       if ($processState.completedTabs[i+1] === false || i === $processState.completedTabs.length - 2) {
-        $processState.currentTab = i;
-        $processState.completedTabs[i] = false;
+        targetTab = i;
         break;
       }
     }
-    $processState.whitePatchFilled = false;
-    $processState.returnedFromProcessing = true;
-    if ($processState.artStacks[0].verificationTarget === null) {
-      $processState.artStacks[0].verificationTarget = {};
-    }
+    const finalTab = targetTab;
+    processState.update(state => ({
+      ...state,
+      currentTab: finalTab,
+      completedTabs: state.completedTabs.map((completed, i) => i === finalTab ? false : completed),
+      whitePatchFilled: false,
+      returnedFromProcessing: true,
+      artStacks: state.artStacks.map((stack, i) => 
+        i === 0 ? {
+          ...stack,
+          verificationTarget: stack.verificationTarget === null ? {} : stack.verificationTarget
+        } : stack
+      )
+    }));
   }
 </script>
 

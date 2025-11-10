@@ -98,7 +98,10 @@
 
 	function colorManagedTargetImage() {
 		let randID = Math.floor(Math.random() * 999999);
-		$processState.CMTID = randID;
+		processState.update(state => ({
+			...state,
+			CMTID: randID
+		}));
 		let msg = {
 			RequestID: randID,
 			RequestType: "ColorManagedImage",
@@ -128,8 +131,16 @@
 	let mainfilePath;
 	$: if (mainfilePath?.length > 0) {
 		console.log("New Project Key");
-		$viewState.projectKey = mainfilePath[0];
+		viewState.update(state => ({
+			...state,
+			projectKey: mainfilePath[0]
+		}));
 	}
+
+	let binaryType = null;
+	let binaryName = null;
+	let binaryID = null;
+	let binaryFor = null;
 
 	$: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
 		console.log("New Message REPORTS");
@@ -139,10 +150,22 @@
 				// Report handler
 				console.log("Report From Server");
 				if (temp["ResponseData"]["reportType"] === "Calibration") {
-					$viewState.reports.calibration = temp["ResponseData"]["reports"];
+					viewState.update(state => ({
+						...state,
+						reports: {
+							...state.reports,
+							calibration: temp["ResponseData"]["reports"]
+						}
+					}));
 				} 
 				else if (temp["ResponseData"]["reportType"] === "Verification") {
-					$viewState.reports.verification = temp["ResponseData"]["reports"];
+					viewState.update(state => ({
+						...state,
+						reports: {
+							...state.reports,
+							verification: temp["ResponseData"]["reports"]
+						}
+					}));
 				} 
 				else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
 					console.log("Spectrum Data From Server");
@@ -153,10 +176,44 @@
 						spectrumDataHeatMap_ref
 					]
 				}
+			} else if (
+				// Color Managed Target image Binary handler
+				temp["ResponseType"] === "ImageBinary" &&
+				temp["RequestID"] === $processState.CMTID
+			) {
+				console.log("Color Managed Target Binary From Server (Reports)");
+				binaryType = temp["ResponseData"]["type"];
+				binaryName = temp["ResponseData"]["name"];
+				binaryID = temp["RequestID"];
+				binaryFor = "ColorManagedTarget";
+				console.log("binaryFor is now:", binaryFor, "binaryType:", binaryType, "binaryName:", binaryName);
 			}
 		} catch (e) {
 			console.log(e);
 		}
+	}
+
+	$: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
+		console.log("creating blob for:", binaryFor, "in Reports");
+		let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
+		let temp = new Image();
+		temp.src = URL.createObjectURL(blob);
+
+		if (binaryFor === "ColorManagedTarget") {
+			console.log("Setting color managed TARGET image dataURL:", temp.src.substring(0, 50));
+			viewState.update(state => ({
+				...state,
+				colorManagedTargetImage: {
+					dataURL: temp.src,
+					name: binaryName,
+				}
+			}));
+			console.log("Color managed target image updated");
+		}
+		binaryType = null;
+		binaryName = null;
+		binaryID = null;
+		binaryFor = null;
 	}
 
 	$: isVerification =
@@ -166,15 +223,18 @@
 	let showVerification = false;
 
 	function handleCloseReport() {
-		$viewState.projectKey = null;
-		$viewState.reports = {
-			calibration: null,
-			verification: null,
-		};
-		$viewState.colorManagedTargetImage = {
-			dataURL: "",
-			name: "Waiting...",
-		};
+		viewState.update(state => ({
+			...state,
+			projectKey: null,
+			reports: {
+				calibration: null,
+				verification: null,
+			},
+			colorManagedTargetImage: {
+				dataURL: "",
+				name: "Waiting...",
+			}
+		}));
 		toggle = false;
 		mainfilePath = null;
 	}

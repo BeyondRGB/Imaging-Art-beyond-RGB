@@ -38,7 +38,7 @@
   .expandable-panel {
     background-color: var(--color-overlay-medium);
     border: 1px solid var(--color-border);
-    @apply fixed h-auto min-h-[100px] z-10 transition-all duration-500
+    @apply fixed top-0 bottom-0 h-screen overflow-y-auto z-10 transition-all duration-500
            transform;
   }
   

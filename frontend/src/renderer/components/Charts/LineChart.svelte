@@ -35,7 +35,7 @@
       });
       inputData.push({
           type: 'line',
-          name: 'Spectrum: (' + trueShadowPos.left.toFixed(1) + ";" + trueShadowPos.top.toFixed(1) + ")",
+          name: 'Spectrum: (' + (typeof trueShadowPos.left === 'number' ? trueShadowPos.left.toFixed(1) : '0') + ";" + (typeof trueShadowPos.top === 'number' ? trueShadowPos.top.toFixed(1) : '0') + ")",
           data: dataDict
       });
       options.series = inputData;

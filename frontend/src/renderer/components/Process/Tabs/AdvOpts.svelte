@@ -24,11 +24,22 @@
   let selected = sharpingSettings[0];
 
   $: if ($processState.currentTab === 4 && !$processState.completedTabs[4]) {
-    $processState.completedTabs[4] = true;
+    processState.update(state => ({
+      ...state,
+      completedTabs: state.completedTabs.map((completed, i) => i === 4 ? true : completed)
+    }));
   }
 
   $: if (selected) {
-    $processState.artStacks[0].sharpenString = selected.value;
+    processState.update(state => ({
+      ...state,
+      artStacks: state.artStacks.map((stack, i) => 
+        i === 0 ? {
+          ...stack,
+          sharpenString: selected.value
+        } : stack
+      )
+    }));
   }
 </script>
 
