@@ -85,7 +85,10 @@
 
 <style lang="postcss">
   main {
-    @apply max-w-[70%] min-w-[70%] max-h-[70%] bg-gray-700 rounded-2xl shadow-xl overflow-auto flex flex-col;
+    left: 15%;
+    top: 15%;
+    /* position: absolute; */
+    @apply w-[70vw] h-[70vh] bg-gray-700 rounded-2xl shadow-xl overflow-auto flex flex-col;
   }
   .body {
     @apply h-full flex flex-col justify-between p-1;
@@ -118,15 +121,22 @@
     @apply text-lg
   }
   .stack_trace {
+    /* by default hidden */
     display: hidden;
+    /* overflow control */
     overflow-x: scroll;
     overflow-y: scroll;
+
+    /* wraps on newline only */
+    white-space: pre;
+    /* allows text to be highlighted */
+    user-select: text !important;
+    
+    /* font stuff */
+    font-family: 'Fira Code', monospace;
     font-size: 0.8em;
-    white-space: pre-line;
-    text-wrap: nowrap;
-    font-family: 'Fira Code', monospace; /* Example font */
     color: #333;
-    @apply max-h-[50%] p-1 flex flex-col bg-gray-400
+    @apply p-1 flex flex-col bg-gray-400
   }
   .btns {
     @apply flex justify-end gap-2 p-1;

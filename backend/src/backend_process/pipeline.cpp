@@ -11,7 +11,7 @@
 #include <image_processing/PreProcessor.h>
 #include <image_processing/ImageCalibrator.h>
 #include <image_processing/ImageProcessor.h>
-#include <cpptrace/cpptrace.hpp>
+#include <stacktrace>
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
@@ -195,13 +195,16 @@ void Pipeline::run() {
         ObserverType observer = this->get_observer_type(target_data);
         images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir,batch)); 
     }catch(RefData_FailedToRead e){
-        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace().to_string());
+        std::stacktrace trace = std::stacktrace::current();
+        this->report_error(this->get_process_name(), e.what(), std::to_string(trace));
         return;
     }catch(RefData_ParssingError e){
-        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace().to_string());
+        std::stacktrace trace = std::stacktrace::current();
+        this->report_error(this->get_process_name(), e.what(), std::to_string(trace));
         return;
-    }catch(const std::exception& err) {
-        this->report_error(this->get_process_name(), err.what(), cpptrace::generate_trace().to_string());
+    }catch(const std::exception& err) { 
+        std::stacktrace trace = std::stacktrace::current();
+        this->report_error(this->get_process_name(), err.what(), std::to_string(trace));
         return;
     }
 
