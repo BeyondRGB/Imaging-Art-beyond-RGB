@@ -1,3 +1,4 @@
+#include <stacktrace>
 #include "backend_process/SpectralPicker.hpp"
 
 SpectralPicker::~SpectralPicker() {}
@@ -63,10 +64,10 @@ void SpectralPicker::run() {
 
     }
     catch(const ParsingError& e) {
-        this->coms_obj_m->send_error("Invalid SpectralPicker JSON", "SpectralPicker");
+        this->coms_obj_m->send_error("Invalid SpectralPicker JSON", "SpectralPicker", std::stacktrace::current());
     }
     catch(const std::exception& e) {
-        this->coms_obj_m->send_error(e.what(), "SpectralPicker");
+        this->coms_obj_m->send_error(e.what(), "SpectralPicker", std::stacktrace::current());
     }
 
     tiff_reader->recycle();

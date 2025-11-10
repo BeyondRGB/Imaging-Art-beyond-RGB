@@ -147,6 +147,11 @@ target_sources(${PROJECT_NAME} PRIVATE
 # Set all source include files (ie. *.h)
 target_include_directories(${PROJECT_NAME} PUBLIC "include/")
 
+# adds stacktraces to unix machines
+if (UNIX)
+    target_link_libraries(${PROJECT_NAME} PRIVATE "-rdynamic")
+endif()
+
 # adds websocketpp as a target lib for compilation
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -179,8 +184,14 @@ if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLET
     target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
 endif()
 
+if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
+    target_link_libraries(${PROJECT_NAME} PRIVATE stdc++exp)
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE stdc++_libbacktrace)
+endif()
+
 # Set C++ standard
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
 
 # weird fix for linux to remove malformed macro included in lib dependency
 # TODO: remove this with a better fix
