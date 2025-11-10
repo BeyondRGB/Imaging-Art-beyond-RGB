@@ -4,7 +4,7 @@ const child_process = require('child_process');
 const {getPort} = require('get-port-please');
 const { shell } = require('electron');
 
-// Undefined to start, as we can't garuntee any port is free to start
+// Undefined to start, as we can't guarantee any port is free to start
 let freePort = undefined;
 let executablePath;
 let loader;
