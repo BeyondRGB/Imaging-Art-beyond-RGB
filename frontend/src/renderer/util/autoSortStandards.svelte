@@ -1,6 +1,8 @@
 <script context="module">
     import { maxBy, split, each, size, filter, indexOf, remove } from "lodash";
     import { findBestMatch } from "./stringCompare";
+    import { modal } from "@util/stores";
+
 
     const matchingStandards = [
         [
@@ -247,7 +249,7 @@
         }
         // Otherwise, use the legacy sorting (not recommended)
         else{
-
+        modal.set("SortInfoModal");
         // scan each image name (and path) for possible matches
         each(images, function (image){
             each(probabilityScoreProperties, function (property) {
@@ -520,7 +522,7 @@
         }
         // Otherwise, use the legacy sorting (not recommended)
         else{
-
+        modal.set("SortInfoModal");
         // scan each image name (and path) for possible matches
         each(images, function (image){
             each(probabilityScoreProperties, function (property) {
