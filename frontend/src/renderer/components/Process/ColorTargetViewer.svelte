@@ -170,6 +170,23 @@
                 verifyOverlay = true;
             }
 
+            // Observes the color target to see if its rotation style has been removed.
+            // If so, reapply the rotation. Happens whenever the user pans or zooms the image,
+            // as well as if the user edits the color target's coords manually in the sidebar.
+            const mo = new MutationObserver(() => {
+                if (
+                    selBox.style.transform === "" ||
+                    selBox.style.transformOrigin === ""
+                ) {
+                    selBox.style.transform = `rotate(${calibrationTargetRotationAngle}deg)`;
+                    selBox.style.transformOrigin = "center";
+                }
+            });
+            mo.observe(selBox, {
+                attributes: true,
+                attributeFilter: ["style"],
+            });
+
             trackers[id] = new OpenSeadragon.MouseTracker({
                 element: `sBox-${id}`,
                 pressHandler: function (e) {
@@ -369,13 +386,6 @@
                     overlay.update(box);
                     overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
 
-                    // Re-apply the visual rotation
-                    const selectorBox = document.getElementById(`sBox-${id}`);
-                    if (selectorBox) {
-                        selectorBox.style.transform = `rotate(${calibrationTargetRotationAngle}deg)`;
-                        selectorBox.style.transformOrigin = "center";
-                    }
-
                     // Update position
                     if (id === 0) {
                         colorPos = {
@@ -493,13 +503,6 @@
 
         overlay.update(box);
         overlay.drawHTML(viewer.overlaysContainer, viewer.viewport);
-
-        // Re-apply the CSS rotation so it stays at calibrationTargetRotationAngle
-        const selectorBox = document.getElementById("sBox-0");
-        if (selectorBox) {
-            selectorBox.style.transform = `rotate(${calibrationTargetRotationAngle}deg)`;
-            selectorBox.style.transformOrigin = "center";
-        }
     }
 
     //Same as updateCoords() for the VerifyTarget

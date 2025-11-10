@@ -8,6 +8,7 @@
   import { AlertCircleIcon } from "svelte-feather-icons";
 
   export let closeModal;
+  let showTrace: boolean = false;
 
   function handleClose() {
     console.log("Close");
@@ -33,7 +34,7 @@
     if ($processState.artStacks[0].verificationTarget === null) {
       $processState.artStacks[0].verificationTarget = {};
     }
-  }
+  } 
 </script>
 
 <main>
@@ -52,6 +53,15 @@
           <p>Message:</p>
           {$serverError?.message}
         </div>
+        <!-- optional to show stack trace -->
+        {#if showTrace}
+          <div class="stack_trace">
+            {$serverError?.trace}
+          </div>
+          <p class="trace_reveal" on:click={()=>showTrace = !showTrace}>Show less...</p>
+        {:else}
+          <p class="trace_reveal" on:click={()=>showTrace = !showTrace}>Show more...</p>
+        {/if}
       </div>
     </div>
     <div class="btns">
@@ -75,7 +85,10 @@
 
 <style lang="postcss">
   main {
-    @apply max-w-[50%] min-w-[35%] max-h-[50%] bg-gray-700 rounded-2xl shadow-xl overflow-auto flex flex-col;
+    left: 15%;
+    top: 15%;
+    /* position: absolute; */
+    @apply w-[70vw] h-[70vh] bg-gray-700 rounded-2xl shadow-xl overflow-auto flex flex-col;
   }
   .body {
     @apply h-full flex flex-col justify-between p-1;
@@ -100,6 +113,30 @@
   }
   .msg {
     @apply flex flex-col p-2 bg-gray-600;
+  }
+  .trace_reveal {
+    color: blue;
+    text-decoration-line: underline;
+    cursor: pointer;
+    @apply text-lg
+  }
+  .stack_trace {
+    /* by default hidden */
+    display: hidden;
+    /* overflow control */
+    overflow-x: scroll;
+    overflow-y: scroll;
+
+    /* wraps on newline only */
+    white-space: pre;
+    /* allows text to be highlighted */
+    user-select: text !important;
+    
+    /* font stuff */
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8em;
+    color: #333;
+    @apply p-1 flex flex-col bg-gray-400
   }
   .btns {
     @apply flex justify-end gap-2 p-1;

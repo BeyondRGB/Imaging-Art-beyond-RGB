@@ -14,6 +14,7 @@
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 #include <image_util/Image.hpp>
+#include <stacktrace>
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
@@ -58,14 +59,15 @@ public:
 	* @param msg: the message being sent to the front end
 	* @param sender: what function is sending the message
 	*/
-	void send_info(std::string msg, std::string sender);
+	void send_info(std::string msg, std::string sender); 
 	/**
 	* Function for sending a Error Message to the front end
 	* @param msg: the message being sent to the front end
 	* @param sender: what function is sending the message
+	* @param trace: stacktrace of where the error sourced from
 	* @param critical: indicates process has stopped running (defaults to true)
 	*/
-	void send_error(std::string msg, std::string sender, bool critical=true);
+	void send_error(std::string msg, std::string sender, std::stacktrace trace, bool critical=true);
 	/**
 	* Function for sending a Progress Update Message to the front end
 	* @param val: amount of progress made in a overall step
