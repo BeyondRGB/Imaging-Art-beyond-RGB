@@ -19,8 +19,6 @@
     export let dragMonitor = undefined;
     export let dropFunction = undefined;
 
-    $: console.log(JSON.stringify(items))
-
     function handleConsider(e) {
         items = e.detail.items
 

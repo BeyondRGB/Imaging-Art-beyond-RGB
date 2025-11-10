@@ -1,4 +1,5 @@
 import { writable, derived } from 'svelte/store';
+import { ImageField } from "@util/ImageField";
 
 // Stores
 export const currentPage = writable(null);
@@ -61,14 +62,14 @@ export const processState = writable({
       verificationTarget: {},
       sharpenString: "N",
       fields: {
-        imageA: [],
-        imageB: [],
-        targetA: [],
-        targetB: [],
-        flatfieldA: [],
-        flatfieldB: [],
-        darkfieldA: [],
-        darkfieldB: [],
+          [ImageField.IMAGE_A]: [[]],
+          [ImageField.IMAGE_B]: [[]],
+          [ImageField.TARGET_A]: [],
+          [ImageField.TARGET_B]: [],
+          [ImageField.FLAT_A]: [],
+          [ImageField.FLAT_B]: [],
+          [ImageField.DARK_A]: [],
+          [ImageField.DARK_B]: [],
       },
     },]
 });
@@ -78,12 +79,12 @@ export const batchProcessState = writable({
   artImagesB: [],
   artImageOutputUrls: [],
   proccessingImages: {
-    targetA: [],
-    targetB: [],
-    flatfieldA: [],
-    flatfieldB: [],
-    darkfieldA: [],
-    darkfieldB: [],
+      [ImageField.TARGET_A]: [],
+      [ImageField.TARGET_B]: [],
+      [ImageField.FLAT_A]: [],
+      [ImageField.FLAT_B]: [],
+      [ImageField.DARK_A]: [],
+      [ImageField.DARK_B]: [],
   },
 })
 
@@ -114,14 +115,14 @@ export function resetProcess() {
         verificationTarget: {},
         sharpenString: "N",
         fields: {
-          imageA: [[]],
-          imageB: [[]],
-          targetA: [],
-          targetB: [],
-          flatfieldA: [],
-          flatfieldB: [],
-          darkfieldA: [],
-          darkfieldB: [],
+            [ImageField.IMAGE_A]: [[]],
+            [ImageField.IMAGE_B]: [[]],
+            [ImageField.TARGET_A]: [],
+            [ImageField.TARGET_B]: [],
+            [ImageField.FLAT_A]: [],
+            [ImageField.FLAT_B]: [],
+            [ImageField.DARK_A]: [],
+            [ImageField.DARK_B]: [],
         },
       },
     ],
