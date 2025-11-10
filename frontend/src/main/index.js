@@ -2,22 +2,12 @@ const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
 const child_process = require('child_process');
 const {getPort} = require('get-port-please');
-const { shell } = require('electron')
+const { shell } = require('electron');
 
-let freePort = 47382;
-
-
-
-
-if (process.env.ELEC_ENV === 'dev') {
-  freePort = 9002;
-} else {
-  (async () => { freePort = await getPort();
-                  console.log("Using port " + freePort); })(); //apparently this works for awaiting async functions inside sync environment
-}
-
-var executablePath;
-var loader;
+// Undefined to start, as we can't garuntee any port is free to start
+let freePort = undefined;
+let executablePath;
+let loader;
 
 if (process.platform == 'win32')
   executablePath = path.join(__dirname, '../../lib/beyond-rgb-backend.exe');
@@ -33,22 +23,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 process.on('loaded', (event, args) => {
   console.log('LOADED');
   console.log(app.getAppPath());
-
-  // Start Backend Server
-  loader = child_process.spawn(
-    executablePath, [
-    `--app_root=${app.getAppPath()}`,
-    `--port=${freePort}`
-  ], {
-    detached: true
-  }
-  );
-  loader.stdout.on('data', (data) => {
-    console.log(`[Backend stdout]\n${data}`);
-  });
-  loader.stderr.on('data', (data) => {
-    console.log(`========[ BACKEND STDERR ]=======\n${data}`);
-  });
+  createBackendContext();
 });
 
 app.on('before-quit', function () {
@@ -58,6 +33,10 @@ app.on('before-quit', function () {
 
 ipcMain.handle('ipc-getPort', async (event, arg) => {
   return freePort;
+});
+
+ipcMain.handle('ipc-restartBackend', async (event, arg) => {
+  createBackendContext(true);
 });
 
 //Use the shell to open the File explorer as a separate process,
@@ -117,13 +96,48 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   return dia;
 });
 
-// process.on('loaded', (event, args) => {
-//   console.log('LOADED');
-//   console.log(process.resourcesPath);
-//   // console.log(process.getCPUUsage());
-//   // console.log(process.getProcessMemoryInfo());
-//   console.log(app.getAppPath());
-// });
+const createBackendContext = (kill_process = false) => {
+  // once port is received, it returns from .then() and continues forth
+  // has to be done the line after, otherwise returns promise while awaiting
+  getPort()
+    .then(port => {
+      // kill backend if already running 
+      //    (if freePort is undefined, but loader exists, the port was busy and should be restarted)
+      if (loader && (kill_process || !freePort))
+      {
+        try {
+          process.kill(loader.pid);
+        } catch (_) {
+          console.log(`Process with pid ${loader.pid} already killed`);
+        }
+      }
+
+      // set new port
+      freePort = port;
+
+
+      // Start Backend Server
+      loader = child_process.spawn(
+        executablePath, [
+          `--app_root=${app.getAppPath()}`,
+          `--port=${freePort}`
+        ], { detached: true }
+      );
+      loader.stdout.on('data', (data) => {
+        console.log(`[Backend stdout]\n${data}`);
+      });
+      loader.stderr.on('data', (data) => {
+        console.log(`========[ BACKEND STDERR ]=======\n${data}`);
+      });
+    })
+    .catch(
+      e => {
+        console.error(`[Error] Failed to fetch port. Backend not initialized. Cause: ${e}`);
+        // set that the port never created, and as such we should kill the child process next time we restart
+        freePort = undefined;
+      }
+    )
+}
 
 const createMainWindow = () => {
   // Create the browser window.
