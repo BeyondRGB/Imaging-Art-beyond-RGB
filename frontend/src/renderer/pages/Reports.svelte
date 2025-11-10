@@ -15,6 +15,7 @@
 	import LineChart from "@components/Charts/LineChart.svelte";
 	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
 	import Switch from "@components/Switch.svelte";
+	import Button from "@components/Button.svelte";
 	import EmptyState from "@components/EmptyState.svelte";
 	import ExpandablePanel from "@components/ExpandablePanel.svelte";
 	import CloseButton from "@components/CloseButton.svelte";
@@ -268,7 +269,7 @@
 
 					</div>
 
-            <button class="report-info new-window-button" on:click={() => { window.electron.openNewWindow() }}>View Another Report</button>
+            <Button variant="secondary" size="md" onClick={() => { window.electron.openNewWindow() }}>View Another Report</Button>
 
 					{#if isVerification}
 						<div class="report-info">
@@ -299,6 +300,7 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 									position="right"
 									width="30vw"
 									handlePosition="50%"
+									zIndex={40}
 								>
 									<div class="box" id="brush">
 										<p>Click on a Heatmap box to view the Estimated vs. Reference Spectral Curve</p>
@@ -372,7 +374,8 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
     width: 100%;
     height: 20vh;
     background-color: var(--color-surface-base);
-    @apply sticky top-0 z-[9999] flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
+    border-bottom: 1px solid var(--color-border);
+    @apply sticky top-0 z-30 flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
             transition-all delay-150 duration-300 ease-in justify-between;
   }
   .report-header.show {

@@ -4,6 +4,7 @@
     import { forEach, find } from "lodash";
     import { countFields } from "@root/util/storesUtil";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
+    import Button from "@components/Button.svelte";
     import Dropzone from "svelte-file-dropzone";
     export let label = "Select Files";
     export let icon = FilePlusIcon;
@@ -112,39 +113,36 @@
             noClick
             disableDefaultStyles
             containerClasses="custom-dropzone">
+        <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
         {#if $processState.imageFilePaths?.length > 0}
-            <div class="two-col">
-                <div class="col1">
-                    <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
-                    <button
-                            type="button"
-                            class="file"
-                            class:largeText
-                            id="btnAttachment"
-                            on:click={openAttachment}
-                    >{label}
-                        <div class="icon">
-                            <svelte:component this={icon} size="1.5x" />
-                        </div>
-                    </button>
-                </div>
-                <div class="col2">
-                    <button on:click={removeAll} class="remove-button" class:largeText> Remove All</button>
-                </div>
+            <div class="button-row">
+                <Button
+                    variant="default"
+                    size={largeText ? "lg" : "md"}
+                    onClick={openAttachment}
+                    icon={icon}
+                    iconPosition="right"
+                >
+                    {label}
+                </Button>
+                <Button 
+                    variant="danger" 
+                    size={largeText ? "lg" : "md"}
+                    onClick={removeAll}
+                >
+                    Remove All
+                </Button>
             </div>
         {:else}
-            <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
-            <button
-                    type="button"
-                    class="file"
-                    class:largeText
-                    id="btnAttachment"
-                    on:click={openAttachment}
-            >{label}
-                <div class="icon">
-                    <svelte:component this={icon} size="1.5x" />
-                </div>
-            </button>
+            <Button
+                variant="default"
+                size={largeText ? "lg" : "md"}
+                onClick={openAttachment}
+                icon={icon}
+                iconPosition="right"
+            >
+                {label}
+            </Button>
         {/if}
 
         <br>
@@ -179,15 +177,8 @@
                rounded-[10px] outline-none transition-all duration-200;
     }
     
-    button {
-        @apply flex justify-between items-center gap-2 p-0 pl-2;
-    }
-    .largeText {
-        @apply text-lg;
-    }
-    .icon {
-        background-color: var(--color-surface-sunken);
-        @apply p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
+    .button-row {
+        @apply flex gap-3 w-full justify-center;
     }
     ul {
         @apply flex flex-col gap-2 w-full justify-center items-center;
@@ -195,42 +186,6 @@
     article {
         background-color: var(--color-surface-base);
         @apply w-full min-h-[12rem] max-h-[30rem] overflow-auto rounded-[32px] py-2 px-6;
-    }
-    button {
-        @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
-    }
-    .icon {
-        background-color: var(--color-surface-sunken);
-        @apply p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
-    }
-    .two-col {
-        overflow: hidden;/* Makes this div contain its floats */
-        width: 100%
-    }
-
-    .two-col .col1,
-    .two-col .col2 {
-        /*width: 80%;*/
-    }
-
-    .two-col .col1 {
-        float: left;
-        width: 60%;
-        padding-left: 40%;
-    }
-
-    .two-col .col2 {
-        float: right;
-        align-items: flex-end;
-        vertical-align: center;
-    }
-
-    .two-col label {
-        display: block;
-    }
-
-    .remove-button:hover {
-        background-color: red;
     }
 
 </style>

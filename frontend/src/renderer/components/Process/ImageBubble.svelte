@@ -3,6 +3,8 @@
   import { processState } from "@util/stores";
   import { ImageIcon, TrashIcon } from "svelte-feather-icons";
   import { createEventDispatcher} from "svelte";
+  import Card from "@components/Card.svelte";
+  import Button from "@components/Button.svelte";
 
   export let filename = "Empty...";
   export let minimal = false;
@@ -27,29 +29,44 @@
 </script>
 
 <main class="group">
-  <div
-    class:bubble={!minimal}
-    on:mouseenter={toggleDropdown}
-    on:mouseleave={toggleDropdown}
-    bind:this={btnRef}
-  >
-    {#if minimal}
+  {#if minimal}
+    <div
+      on:mouseenter={toggleDropdown}
+      on:mouseleave={toggleDropdown}
+      bind:this={btnRef}
+    >
       {filename.split("\\").length > 2
         ? filename.split("\\").at(-1)
         : filename.split("/").at(-1)}
-    {:else}
-      <ImageIcon size="1.5x" />
-      {filename}
-      <button on:click={remove}><TrashIcon size="1.25x"/></button>
-
-    {/if}
-  </div>
-  <!-- class:shown={show} -->
-  <!-- bind:this={popRef} -->
+    </div>
+  {:else}
+    <Card 
+      variant="elevated" 
+      padding="sm" 
+      rounded={true}
+      borderWidth="thin"
+      className="bubble-card"
+      on:mouseenter={toggleDropdown}
+      on:mouseleave={toggleDropdown}
+    >
+      <div class="bubble-content" bind:this={btnRef}>
+        <div class="file-info">
+          <ImageIcon size="1.5x" />
+          <span class="filename">{filename}</span>
+        </div>
+        <Button 
+          variant="danger" 
+          size="sm" 
+          onClick={remove}
+          icon={TrashIcon}
+          className="remove-btn"
+        />
+      </div>
+    </Card>
+  {/if}
+  
   <div class="body">
-
     <img src={$processState.imageThumbnails[filename]} alt={filename}/>
-
   </div>
 </main>
 
@@ -57,14 +74,28 @@
   main {
     @apply w-full h-full;
   }
-  .bubble {
-    background-color: var(--color-surface-elevated);
-    @apply py-2 rounded-3xl;
+  
+  :global(.bubble-card) {
+    @apply w-full;
   }
-  .dropbox:hover {
-    background-color: var(--color-surface-sunken)
-            flex justify-between items-center text-[1.05rem] px-4 gap-1;
+  
+  .bubble-content {
+    @apply flex justify-between items-center gap-3 w-full;
   }
+  
+  .file-info {
+    @apply flex items-center gap-2 overflow-hidden;
+  }
+  
+  .filename {
+    color: var(--color-text-primary);
+    @apply text-sm truncate;
+  }
+  
+  :global(.remove-btn) {
+    @apply flex-shrink-0;
+  }
+  
   .body {
     background-color: var(--color-overlay-heavy);
     @apply w-0 opacity-0 fixed max-w-[35vw] p-1
@@ -73,14 +104,5 @@
   }
   img {
     @apply w-full h-full;
-  }
-
-  button {
-    @apply flex justify-between items-center gap-2 p-0 pl-0 whitespace-nowrap;
-  }
-
-  button:hover {
-    @apply flex justify-between items-center gap-2 p-0 pl-0 whitespace-nowrap;
-    background-color: #FF0000;
   }
 </style>

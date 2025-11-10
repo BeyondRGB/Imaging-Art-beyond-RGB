@@ -42,7 +42,7 @@ $: if (data.length > 1) {
             type: 'line',
             name: namer,
             data: dataDict,
-            color: j === 0 ? '#FFFFFF' : '#000000' 
+            color: j === 0 ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' 
         });
         options.series = inputData;
     });
@@ -57,7 +57,7 @@ $: if (data.length > 1) {
           width: 2,
       },
       chart: {
-          background: '#4A4A4C',
+          background: 'transparent',
           animations: {
               enabled: false
           },
@@ -86,7 +86,7 @@ $: if (data.length > 1) {
       tooltip: {
           shared: true,
           intersect: false,
-          theme: 'dark',
+          theme: 'light',
           x: {
               show: false
           },
@@ -107,7 +107,7 @@ $: if (data.length > 1) {
           tickAmount: 9,
           labels: {
               style: {
-                  colors: '#FFFFFF',
+                  colors: 'var(--color-text-secondary)',
               }
           },
           title: {
@@ -115,7 +115,7 @@ $: if (data.length > 1) {
               offsetX: 0,
               offsetY: 110,
               style: {
-                  color: '#FFFFFF',
+                  color: 'var(--color-text-primary)',
               }
           },
       },
@@ -131,13 +131,13 @@ $: if (data.length > 1) {
           },
           labels: {
               style: {
-                  colors: "#FFFFFF"
+                  colors: "var(--color-text-secondary)"
               }
           },
           title: {
               text: "Reflectance (%)",
               style: {
-                  color: '#FFFFFF',
+                  color: 'var(--color-text-primary)',
               },
           },
       },
@@ -250,8 +250,9 @@ $: if (data.length > 1) {
   }
 
   .apexcharts-menu {
-    color: #27293d!important;
-    border: 0px;
+    color: var(--color-text-primary) !important;
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-border);
   }
 
   #spectral-csv-download-button:hover {

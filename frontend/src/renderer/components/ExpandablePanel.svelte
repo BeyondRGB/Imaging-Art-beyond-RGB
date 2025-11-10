@@ -3,10 +3,13 @@
    * Generic Expandable Panel Component
    * Provides a slide-out panel with expand/collapse functionality
    */
+  import { ChevronLeftIcon, ChevronRightIcon } from "svelte-feather-icons";
+  
   export let expanded: boolean = false;
   export let position: 'right' | 'left' = 'right';
   export let width: string = '30vw';
   export let handlePosition: string = '50%'; // CSS value for top/bottom positioning
+  export let zIndex: number = 50; // Configurable z-index
 </script>
 
 <div 
@@ -14,7 +17,7 @@
   class:expanded
   class:position-right={position === 'right'}
   class:position-left={position === 'left'}
-  style="width: {width};"
+  style="width: {width}; z-index: {zIndex};"
 >
   <slot />
 </div>
@@ -24,21 +27,31 @@
   class:expanded
   class:position-right={position === 'right'}
   class:position-left={position === 'left'}
-  style="top: {handlePosition}; --panel-width: {width};"
+  style="top: {handlePosition}; --panel-width: {width}; z-index: {zIndex + 1};"
   on:click={() => (expanded = !expanded)}
+  aria-label={expanded ? "Collapse panel" : "Expand panel"}
 >
   {#if position === 'right'}
-    {expanded ? ">" : "<"}
+    {#if expanded}
+      <ChevronRightIcon size="1.5x" />
+    {:else}
+      <ChevronLeftIcon size="1.5x" />
+    {/if}
   {:else}
-    {expanded ? "<" : ">"}
+    {#if expanded}
+      <ChevronLeftIcon size="1.5x" />
+    {:else}
+      <ChevronRightIcon size="1.5x" />
+    {/if}
   {/if}
 </button>
 
 <style lang="postcss">
   .expandable-panel {
-    background-color: var(--color-overlay-medium);
+    background-color: var(--color-surface-elevated);
     border: 1px solid var(--color-border);
-    @apply fixed top-0 bottom-0 h-screen overflow-y-auto z-10 transition-all duration-500
+    box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+    @apply fixed top-0 bottom-0 h-screen overflow-y-auto transition-all duration-500
            transform;
   }
   
@@ -62,11 +75,22 @@
   
   /* Handle button */
   .panel-handle {
-    background-color: var(--color-overlay-medium);
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
     border: 1px solid var(--color-border);
-    @apply fixed h-12 w-8 flex justify-center items-center
-           text-2xl z-20 cursor-pointer transition-all duration-500
-           transform -translate-y-1/2;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+    @apply fixed h-12 w-10 flex justify-center items-center
+           cursor-pointer transition-all duration-500
+           transform -translate-y-1/2 hover:bg-opacity-90;
+  }
+  
+  .panel-handle:hover {
+    background-color: var(--color-interactive-hover);
+  }
+  
+  .panel-handle:focus {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
   }
   
   .panel-handle.position-right {

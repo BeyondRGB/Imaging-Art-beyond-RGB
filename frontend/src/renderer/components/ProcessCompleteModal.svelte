@@ -10,10 +10,9 @@
 <main>
   <h2>Processing Complete</h2>
   <div class="modal-content">
-    <p>Your image has been successfully processed.</p>
     <div class="button-group">
       <Button 
-        variant="primary" 
+        variant="default" 
         size="lg" 
         onClick={() => {
           onViewImage();
@@ -32,7 +31,7 @@
         Open File Location
       </Button>
       <Button 
-        variant="success" 
+        variant="default" 
         size="lg" 
         onClick={() => {
           onProcessAnother();
@@ -67,6 +66,10 @@
 
   .button-group {
     @apply flex flex-col gap-3;
+  }
+
+  .button-group :global(button) {
+    @apply w-full;
   }
 </style>
 

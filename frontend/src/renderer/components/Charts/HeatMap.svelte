@@ -3,6 +3,8 @@
   import "carbon-components/css/carbon-components.min.css";
   import { find } from "lodash";
   import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
+  import Button from "@components/Button.svelte";
+  import Switch from "@components/Switch.svelte";
   import { createEventDispatcher } from 'svelte';
   import { exportHeatmapCSV } from "@util/csvExport.js";
   export let data;
@@ -38,12 +40,23 @@
 
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
-    ΔE Heatmap
-    <button on:click={exportCSV} style="float: right; margin-left: 20px;">Export</button>
-    <span style="float: right; margin-top: 2px;">
-      <input type="checkbox" class="peer" bind:checked={visionDeficiencyMode} >
-      <label>Grayscale</label>
-    </span>
+    <div class="heatmap-header">
+      <span class="heatmap-title">ΔE Heatmap</span>
+      <div class="heatmap-controls">
+        <Switch
+          label="Grayscale"
+          bind:checked={visionDeficiencyMode}
+          ariaLabel="Toggle grayscale mode"
+        />
+        <Button 
+          variant="secondary" 
+          size="sm" 
+          onClick={exportCSV}
+        >
+          Export
+        </Button>
+      </div>
+    </div>
      <div style="display: flex; align-items: center;">
         <AtomicHeatMap
           on:datapointselect={handleDataPointSelect}
@@ -63,27 +76,41 @@
             top-0 left-0;
   }
   .heatmap-value {
-    @apply flex justify-center items-center h-full w-full font-bold text-black;
+    color: var(--color-text-primary);
+    @apply flex justify-center items-center h-full w-full font-bold;
   }
   .heatmap-chart {
     @apply relative;
   }
+  
+  .heatmap-header {
+    @apply flex justify-between items-center mb-4;
+  }
+  
+  .heatmap-title {
+    color: var(--color-text-primary);
+    @apply text-lg font-semibold;
+  }
+  
+  .heatmap-controls {
+    @apply flex items-center gap-3;
+  }
 
   /* Global Chart Styles */
   .bx--cc--chart-wrapper text {
-    @apply fill-white;
+    fill: var(--color-text-primary);
   }
   .bx--cc--grid rect.chart-grid-backdrop {
-    @apply fill-gray-700;
+    fill: var(--color-surface-sunken);
   }
   .bx--cc--axes g.axis g.tick text {
-    @apply fill-white;
+    fill: var(--color-text-secondary);
   }
   .bx--cc--title p.title {
-    @apply text-white;
+    color: var(--color-text-primary);
   }
   .bx--cc--axes g.axis .axis-title {
-    @apply fill-white;
+    fill: var(--color-text-primary);
   }
   /* --- Tooltip */
   .bx--cc--tooltip {
