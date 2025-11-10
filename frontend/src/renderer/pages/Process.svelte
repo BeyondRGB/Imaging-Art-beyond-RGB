@@ -229,9 +229,6 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     },
   };
 
-  $: console.log($processState.artStacks[0].colorTarget);
-  $: console.log({ processRequest });
-
   $: if (processRequest != null) {
   	if($viewState.projectKey != null) {
 	    processRequest.RequestData.outputDirectory = $viewState.projectKey;

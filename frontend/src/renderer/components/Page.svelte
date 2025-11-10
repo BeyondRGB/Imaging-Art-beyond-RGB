@@ -20,7 +20,6 @@
 	} else {
 		showModal = false;
 	}
-	$: console.log($currentPage);
 
 	$: if ($serverError != null) {
 		console.log("Encountered Server Error");

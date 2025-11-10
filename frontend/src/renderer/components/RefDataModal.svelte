@@ -12,8 +12,8 @@
   function handle() {
     modal.set(null);
   }
-  $: console.log($appSettings);
-  $: console.log(closeModal);
+  // $: console.log($appSettings);
+  // $: console.log(closeModal);
   function confirm() {
     console.log("Confirm");
     if (filePaths) {

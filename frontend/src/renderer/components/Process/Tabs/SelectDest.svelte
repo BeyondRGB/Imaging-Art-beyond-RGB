@@ -3,7 +3,6 @@
   import { FolderPlusIcon, FolderIcon } from "svelte-feather-icons";
   import { currentPage, processState } from "@util/stores";
   let filePaths = [];
-  $: console.log(filePaths);
 
   $: if (filePaths) {
     $processState.destDir = filePaths[0];

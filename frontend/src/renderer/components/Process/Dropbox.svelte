@@ -4,7 +4,11 @@
     import {flip} from 'svelte/animate';
     import ImageBubble from "@components/Process/ImageBubble.svelte";
     import { isEmpty } from "lodash";
+    import {drag} from "d3";
     const flipDurationMs = 200;
+
+    // String ID representing the dropbox.
+    export let id;
 
     export let items = [];
     export let type;
@@ -12,16 +16,34 @@
     export let showError = false;
     export let dragDisabled = false;
 
-    function handleSort(e) {
-        items = e.detail.items;
+    export let dragMonitor = undefined;
+    export let dropFunction = undefined;
+
+    $: console.log(JSON.stringify(items))
+
+    function handleConsider(e) {
+        items = e.detail.items
+
+        if (dragMonitor) {
+            dragMonitor(e, id)
+        }
+    }
+
+    function handleFinalize(e) {
+        items = e.detail.items
+
+        if (dropFunction) {
+            dropFunction(e, id)
+        }
     }
 
 </script>
 <main>
+<!--    dropFromOthersDisabled: singleItem && items.length > 0 -->
     <div class="sectionStyle {showError && singleItem && isEmpty(items) ? 'errorStyle' : ''}">
-        <section use:dndzone={{items, flipDurationMs, type, dragDisabled, dropFromOthersDisabled: singleItem && items.length > 0}}
-            on:consider={handleSort}
-            on:finalize={handleSort}
+        <section use:dndzone={{items, flipDurationMs, type, dragDisabled}}
+            on:consider={handleConsider}
+            on:finalize={handleFinalize}
         >
             {#each items as item (item?.id)}
                 <card animate:flip={{ duration: flipDurationMs }} class="{singleItem ? 'verified' : ''}">

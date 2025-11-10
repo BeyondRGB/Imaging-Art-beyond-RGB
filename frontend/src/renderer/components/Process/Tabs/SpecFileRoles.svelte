@@ -3,6 +3,19 @@
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
+    import { TRIGGERS } from "svelte-dnd-action";
+
+    enum FileRoles {
+        ROLES = "roles",
+        OBJECT_A = "objectA",
+        OBJECT_B = "objectB",
+        TARGET_A = "targetA",
+        TARGET_B = "targetB",
+        FLAT_A = "flatA",
+        FLAT_B = "flatB",
+        DARK_A = "darkA",
+        DARK_B = "darkB",
+    }
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let rerenderToggle = false;
@@ -11,7 +24,6 @@
     // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 3) {
         imageStack = get($processState, 'artStacks[0].fields');
-
     }
 
     const getAllImages = function () {
@@ -63,6 +75,178 @@
         }
     };
 
+    let lastDragLocation = null;
+
+    function listForLocation(location) {
+        switch (location) {
+            case FileRoles.ROLES:
+                return $processState.imageFilePaths;
+            case FileRoles.OBJECT_A:
+                return imageStack.imageA[0];
+            case FileRoles.OBJECT_B:
+                return imageStack.imageB[0];
+            case FileRoles.TARGET_A:
+                return imageStack.targetA;
+            case FileRoles.TARGET_B:
+                return imageStack.targetB;
+            case FileRoles.FLAT_A:
+                return imageStack.flatfieldA;
+            case FileRoles.FLAT_B:
+                return imageStack.flatfieldB;
+            case FileRoles.DARK_A:
+                return imageStack.darkfieldA;
+            case FileRoles.DARK_B:
+                return imageStack.darkfieldB;
+        }
+    }
+
+
+    function appendToList(item, location) {
+        switch (location) {
+            case FileRoles.ROLES:
+                $processState.imageFilePaths.push(item);
+                break;
+            case FileRoles.OBJECT_A:
+                imageStack.imageA[0].push(item);
+                break;
+            case FileRoles.OBJECT_B:
+                imageStack.imageB[0].push(item);
+                break;
+            case FileRoles.TARGET_A:
+                imageStack.targetA.push(item);
+                break;
+            case FileRoles.TARGET_B:
+                imageStack.targetB.push(item);
+                break;
+            case FileRoles.FLAT_A:
+                imageStack.flatfieldA.push(item);
+                break;
+            case FileRoles.FLAT_B:
+                imageStack.flatfieldB.push(item);
+                break;
+            case FileRoles.DARK_A:
+                imageStack.darkfieldA.push(item);
+                break;
+            case FileRoles.DARK_B:
+                imageStack.darkfieldB.push(item);
+                break;
+        }
+    }
+
+    function moveFirstElement(fromLocation, toLocation) {
+        let firstItem = null;
+
+        switch (fromLocation) {
+            case FileRoles.ROLES:
+                console.log("Moving from roles");
+                firstItem = $processState.imageFilePaths.shift();
+                break;
+            case FileRoles.OBJECT_A:
+                console.log("Moving from objectA");
+                firstItem = imageStack.imageA[0].shift();
+                break;
+            case FileRoles.OBJECT_B:
+                console.log("Moving from objectB");
+                firstItem = imageStack.imageB[0].shift();
+                break;
+            case FileRoles.TARGET_A:
+                console.log("Moving from targetA");
+                firstItem = imageStack.targetA[0].shift();
+                break;
+            case FileRoles.TARGET_B:
+                console.log("Moving from targetB");
+                firstItem = imageStack.targetB[0].shift();
+                break;
+            case FileRoles.FLAT_A:
+                console.log("Moving from flatA");
+                firstItem = imageStack.flatfieldA[0].shift();
+                break;
+            case FileRoles.FLAT_B:
+                console.log("Moving from flatB");
+                firstItem = imageStack.flatfieldB[0].shift();
+                break;
+            case FileRoles.DARK_A:
+                console.log("Moving from darkA");
+                firstItem = imageStack.darkfieldA[0].shift();
+                break;
+            case FileRoles.DARK_B:
+                console.log("Moving from darkB");
+                firstItem = imageStack.darkfieldB[0].shift();
+                break;
+        }
+
+        if (firstItem === null) {
+            console.log("No item to move");
+            return;
+        }
+
+        switch (toLocation) {
+            case FileRoles.ROLES:
+                $processState.imageFilePaths.push(firstItem);
+                console.log("Moving to roles");
+                break;
+            case FileRoles.OBJECT_A:
+                imageStack.imageA[0].push(firstItem);
+                console.log("Moving to objectA");
+                break;
+            case FileRoles.OBJECT_B:
+                imageStack.imageB[0].push(firstItem);
+                console.log("Moving to objectB");
+                break;
+            case FileRoles.TARGET_A:
+                imageStack.targetA.push(firstItem);
+                console.log("Moving to targetA");
+                break;
+            case FileRoles.TARGET_B:
+                imageStack.targetB.push(firstItem);
+                console.log("Moving to targetB");
+                break;
+            case FileRoles.FLAT_A:
+                imageStack.flatfieldA.push(firstItem);
+                console.log("Moving to flatA");
+                break;
+            case FileRoles.FLAT_B:
+                imageStack.flatfieldB.push(firstItem);
+                console.log("Moving to flatB");
+                break;
+            case FileRoles.DARK_A:
+                imageStack.darkfieldA.push(firstItem);
+                console.log("Moving to darkA");
+                break;
+            case FileRoles.DARK_B:
+                imageStack.darkfieldB.push(firstItem);
+                console.log("Moving to darkB");
+                break;
+        }
+    }
+
+    const dropFunction = function (event, location) {
+        console.log(`Drop: ${event.detail.info.trigger}`)
+
+        if (event.detail.info.trigger == TRIGGERS.DROPPED_INTO_ZONE) {
+            // The event we are looking at, is a drop into this zone. Check if the list has more items than needed. If so, move that item into lastDragSource
+            console.log(`Dropped into ${location}`)
+
+            let list = listForLocation(location);
+            console.log(`List: ${JSON.stringify(list)}`)
+            if (list.length > 1) {
+                console.log(`Moving ${JSON.stringify(list[0])} from ${location} to ${lastDragLocation}`)
+                moveFirstElement(location, lastDragLocation);
+            }
+        }
+    }
+
+    const dragMonitor = function (event, location) {
+        console.log(`Monitor: ${event.detail.info.trigger}`)
+
+        const trigger = event.detail.info.trigger;
+        if (trigger == TRIGGERS.DRAG_STARTED) {
+            console.log(`Drag started from ${location}`)
+            lastDragLocation = location;
+        } else if (trigger == TRIGGERS.DROPPED_INTO_ANOTHER || trigger == TRIGGERS.DROPPED_INTO_ZONE || trigger == TRIGGERS.DROPPED_OUTSIDE_OF_ANY) {
+            lastDragLocation = null;
+        }
+    }
 </script>
 
 <main>
@@ -71,7 +255,7 @@
             <h1>Specify Image Roles</h1>
             <p>Drag and drop each image into its appropriate role</p>
             <div>
-            <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+            <Dropbox id={FileRoles.ROLES} bind:items={$processState.imageFilePaths} type="image" singleItem={false} dragMonitor={dragMonitor}/>
             <div class="btnGroup">
                 <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
             </div>
@@ -86,25 +270,25 @@
                     </div>
                     <div class="text">Object</div>
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA[0]} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB[0]} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox id={FileRoles.OBJECT_A} type="image" bind:items={imageStack.imageA[0]} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                        <div class="cell"><Dropbox id={FileRoles.OBJECT_B} type="image" bind:items={imageStack.imageB[0]} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
                     </div>
                     {#if $processState.imageFilePaths && showTargetDropZones()}
                         <div class="text">Target</div>
                         <div class="inputGroup">
-                            <div class="cell"><Dropbox type="image" bind:items={imageStack.targetA} singleItem={true} showError={!!validationError}/></div>
-                            <div class="cell"><Dropbox type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError}/></div>
+                            <div class="cell"><Dropbox id={FileRoles.TARGET_B} type="image" bind:items={imageStack.targetA} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                            <div class="cell"><Dropbox id={FileRoles.TARGET_A} type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
                         </div>
                     {/if}
                     <div class="text">FlatField</div>
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldA} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.flatfieldB} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox id={FileRoles.FLAT_A} type="image" bind:items={imageStack.flatfieldA} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                        <div class="cell"><Dropbox id={FileRoles.FLAT_B} type="image" bind:items={imageStack.flatfieldB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
                     </div>
                     <div class="text">DarkField</div>
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldA} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.darkfieldB} singleItem={true} showError={!!validationError}/></div>
+                        <div class="cell"><Dropbox id={FileRoles.DARK_A} type="image" bind:items={imageStack.darkfieldA} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                        <div class="cell"><Dropbox id={FileRoles.DARK_B} type="image" bind:items={imageStack.darkfieldB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
                     </div>
                     {#if validationError && imageStack && validate()}
                         <div class="errorText">

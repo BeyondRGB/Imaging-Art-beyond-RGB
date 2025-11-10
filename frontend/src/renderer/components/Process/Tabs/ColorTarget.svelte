@@ -125,7 +125,7 @@
 
   function colorTargetPrev() {
     $processState.colorTargetID = Math.floor(Math.random() * 999999999);
-    console.log($processState);
+    // console.log($processState);
 
     let targetImage = "";
     
@@ -174,8 +174,6 @@
     console.log($processState);
     colorTargetPrev();
   }
-
-  $: console.log($processState);
 
   function buildCalibrationRefData() {
     return [
