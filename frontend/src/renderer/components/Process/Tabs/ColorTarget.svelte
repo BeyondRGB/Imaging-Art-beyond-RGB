@@ -401,6 +401,40 @@
     $processState.whitePatchFilled =
       colorTarget.whitePatch?.row && colorTarget.whitePatch?.col;
   }
+
+  // Clamp the white patch rows to the number of rows in the target
+  $: if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.row > colorTarget.rows
+  ) {
+    colorTarget.whitePatch.row = colorTarget.rows;
+  } else if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.row < 1
+  ) {
+    colorTarget.whitePatch.row = 1;
+  }
+
+  // Clamp the white patch columns to the number of columns in the target
+  $: if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.col > colorTarget.cols
+  ) {
+      colorTarget.whitePatch.col = colorTarget.cols;
+  } else if (
+      colorTarget !== undefined &&
+      colorTarget.whitePatch !== undefined &&
+      colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
+      colorTarget.whitePatch.col < 1
+  ) {
+      colorTarget.whitePatch.col = 1;
+  }
 </script>
 
 <main>
@@ -525,17 +559,6 @@
                         min="1"
                         max={target.rows}
                         bind:value={target.whitePatch.row}
-                        on:change={() => {
-                            // Clamp the white patch row to the total number of rows in the target.
-                            // Fixes an issue where the user can type a value that is greater than the available rows.
-                            // Min and Max values do not apply when the user types into the input field and are used for form validation.
-                            // Since no form is being used, the min and max values are not being applied, hence the clamping.
-                            if (target.whitePatch.row > target.rows) {
-                                target.whitePatch.row = target.rows;
-                            } else if (target.whitePatch.row < 1) {
-                                target.whitePatch.row = 1;
-                            }
-                        }}
                       />
                     </div>
                     <span class="and">&</span>
@@ -547,15 +570,6 @@
                         min="1"
                         max={target.cols}
                         bind:value={target.whitePatch.col}
-                        on:change={() => {
-                            // Clamp the white patch column to the total number of columns in the target.
-                            // Fixes an issue where the user can type a value that is greater than the available columns.
-                            if (target.whitePatch.col > target.cols) {
-                                target.whitePatch.col = target.cols;
-                            } else if (target.whitePatch.col < 1) {
-                                target.whitePatch.col = 1;
-                            }
-                        }}
                       />
                     </div>
                   </div>
