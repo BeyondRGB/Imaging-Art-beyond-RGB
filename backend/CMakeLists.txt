@@ -150,6 +150,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC "include/")
 # adds stacktraces to unix machines
 if (UNIX)
     target_link_libraries(${PROJECT_NAME} PRIVATE "-rdynamic")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
+        target_link_libraries(${PROJECT_NAME} PRIVATE stdc++exp)
+    else()
+        target_link_libraries(${PROJECT_NAME} PRIVATE stdc++_libbacktrace)
+    endif()
 endif()
 
 # adds websocketpp as a target lib for compilation
@@ -182,12 +187,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE PNG::PNG)
 if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "arm64-osx")
     target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
     target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
-endif()
-
-if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
-    target_link_libraries(${PROJECT_NAME} PRIVATE stdc++exp)
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE stdc++_libbacktrace)
 endif()
 
 # Set C++ standard
