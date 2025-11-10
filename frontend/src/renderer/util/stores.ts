@@ -141,7 +141,33 @@ let socket;
 
 export async function connect() {
   console.log({ "Attempting to Connect": socket });
-  let ipcResponse = await window.electron.getPort();
+  
+  // connect or restart
+  let ipcResponse = undefined;
+  let errorCount = 0;
+  do {
+    console.log("Fetching port");
+    ipcResponse = await window.electron.getPort();
+
+    console.log(`resp: ${ipcResponse}`);
+    // if port is undefined, fully restart the backend (this means its crashed)
+    if (!ipcResponse || ipcResponse === 3000)
+    {
+      errorCount++;
+      console.log(`Error occurred when reattaching backend. Error number ${errorCount}`);
+      await window.electron.restartBackend();
+    }
+  } while (!ipcResponse && errorCount < 5);
+
+  // if still disconnected after all that, set to closed
+  if (!ipcResponse || ipcResponse === 3000)
+  {
+    console.log(`Too many errors occured when trying to reconnect backend. Please try again later.`);
+    connectionState.set("Closed");
+    return;
+  }
+  
+  // set websocket listeners
   console.log(ipcResponse);
   socket = new WebSocket(`ws://localhost:${ipcResponse}`);
   socket.addEventListener('open', function (event) {
@@ -153,9 +179,6 @@ export async function connect() {
     console.log("Closed - Trying again in 15 seconds.");
     connectionState.set("Closed");
     close();
-    // setTimeout(function () {
-    //   connect();
-    // }, 15000);
   });
 
   socket.addEventListener('error', function (event) {
