@@ -6,6 +6,7 @@
     processState,
   } from "@util/stores";
   import { AlertCircleIcon } from "svelte-feather-icons";
+  import ScrollContainer from "@components/ScrollContainer.svelte";
 
   export let closeModal;
 
@@ -45,6 +46,7 @@
   }
 </script>
 
+<ScrollContainer maxHeight="50vh" className="main-container">
 <main>
   <h2 class="title">
     <AlertCircleIcon size="1x" />
@@ -81,11 +83,16 @@
     </div>
   </div>
 </main>
+</ScrollContainer>
 
 <style lang="postcss">
-  main {
+  :global(.main-container) {
     background-color: var(--color-surface);
-    @apply max-w-[50%] min-w-[35%] max-h-[50%] rounded-2xl shadow-xl overflow-auto flex flex-col;
+    @apply max-w-[50%] min-w-[35%] rounded-2xl shadow-xl flex flex-col;
+  }
+  
+  main {
+    @apply flex flex-col;
   }
   .body {
     @apply h-full flex flex-col justify-between p-1;

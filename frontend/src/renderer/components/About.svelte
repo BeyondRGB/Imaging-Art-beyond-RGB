@@ -1,9 +1,10 @@
 <script lang="ts">
+  import ScrollContainer from "@components/ScrollContainer.svelte";
 </script>
 
 <main>
   <div class="title">About</div>
-  <div class="body">
+  <ScrollContainer maxHeight="70vh" className="body">
     <p>
       Beyond RGB is an open-source software application for processing spectral
       image sets. It takes as input two RAW (or unprocessed linear TIFF) RGB
@@ -54,20 +55,20 @@
       you devoted to creating this tool. It really is better than Really Good
       Bread.
     </p>
-  </div>
+  </ScrollContainer>
 </main>
 
 <style lang="postcss">
   main {
     background-color: var(--color-surface);
-    @apply rounded-xl overflow-auto;
+    @apply rounded-xl;
   }
   .title {
     background-color: var(--color-surface-elevated);
     @apply text-2xl p-2;
   }
-  .body {
-    @apply p-4 flex flex-col gap-2 max-h-[70vh] overflow-auto select-text;
+  :global(.body) {
+    @apply p-4 flex flex-col gap-2 select-text;
   }
   ol {
     list-style: decimal;

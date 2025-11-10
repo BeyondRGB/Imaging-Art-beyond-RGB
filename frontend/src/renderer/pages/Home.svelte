@@ -10,6 +10,7 @@
     CopyIcon
   } from "svelte-feather-icons";
   import CloseButton from "@components/CloseButton.svelte";
+  import Button from "@components/Button.svelte";
     
 
   function handleClick(page) {
@@ -52,35 +53,34 @@
       />
     </div>
     <div class="btnCol">
-      <button on:click={() => handleClick("Process")} class="homeBtn">
+      <Button onClick={() => handleClick("Process")} className="homeBtn" size="lg">
         <div class="btnTitle">
           <ApertureIcon size="1.25x" />
           <h2>Process</h2>
         </div>
-
         <span> Process a new RAW image set </span>
-      </button>
-      <button on:click={() => handleClick("SpecPicker")} class="homeBtn">
+      </Button>
+      <Button onClick={() => handleClick("SpecPicker")} className="homeBtn" size="lg">
         <div class="btnTitle">
           <CrosshairIcon size="1.25x" />
           <h2>View</h2>
         </div>
         <span> View a previously-processed imaged set </span>
-      </button>
-      <button on:click={() => openNewWindow()} class="homeBtn">
+      </Button>
+      <Button onClick={() => openNewWindow()} className="homeBtn" size="lg">
         <div class="btnTitle">
           <CopyIcon size="1.25x" />
           <h2>Create Another Window</h2>
         </div>
         <span> View two reports at once </span>
-      </button>
-      <button on:click={() => (showAbout = true)} class="homeBtn">
+      </Button>
+      <Button onClick={() => (showAbout = true)} className="homeBtn" size="lg">
         <div class="btnTitle">
           <InfoIcon size="1.25x" />
           <h2>About</h2>
         </div>
         <span> About the program </span>
-      </button>
+      </Button>
     </div>
   </div>
 </main>
@@ -95,14 +95,14 @@
     @apply h-[50vh] flex flex-col items-center justify-between mb-[15vh];
   }
 
-  .homeBtn {
-    background-color: var(--color-surface);
-    color: var(--color-text-primary);
-    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg ring-0;
+  :global(.homeBtn) {
+    background-color: var(--color-surface) !important;
+    color: var(--color-text-primary) !important;
+    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg ring-0 !important;
   }
   
-  .homeBtn:hover {
-    background-color: var(--color-interactive-hover);
+  :global(.homeBtn:hover) {
+    background-color: var(--color-interactive-hover) !important;
   }
   .btnCol {
     @apply w-[60vw] flex flex-col justify-center items-center gap-4;

@@ -7,11 +7,16 @@
   export let variant: 'default' | 'elevated' | 'dark' | 'outlined' = 'default';
   export let padding: 'none' | 'sm' | 'md' | 'lg' = 'md';
   export let rounded: boolean = true;
-  export let shadow: boolean = false;
+  export let shadow: 'none' | 'subtle' | 'medium' | 'large' = 'none';
+  export let borderWidth: 'none' | 'thin' | 'medium' | 'thick' = 'none';
+  export let hover: boolean = false;
+  export let interactive: boolean = false;
+  export let className: string = '';
 </script>
 
 <div 
-  class="card"
+  class="card {className}"
+  on:click
   class:card-default={variant === 'default'}
   class:card-elevated={variant === 'elevated'}
   class:card-dark={variant === 'dark'}
@@ -21,14 +26,23 @@
   class:padding-md={padding === 'md'}
   class:padding-lg={padding === 'lg'}
   class:rounded={rounded}
-  class:shadow={shadow}
+  class:shadow-none={shadow === 'none'}
+  class:shadow-subtle={shadow === 'subtle'}
+  class:shadow-medium={shadow === 'medium'}
+  class:shadow-large={shadow === 'large'}
+  class:border-none={borderWidth === 'none'}
+  class:border-thin={borderWidth === 'thin'}
+  class:border-medium={borderWidth === 'medium'}
+  class:border-thick={borderWidth === 'thick'}
+  class:card-hover={hover}
+  class:card-interactive={interactive}
 >
   <slot />
 </div>
 
 <style lang="postcss">
   .card {
-    @apply relative transition-colors duration-200;
+    @apply relative transition-all duration-200;
   }
   
   /* Variant styles - NO color literals! */
@@ -46,7 +60,7 @@
   
   .card-outlined {
     background-color: transparent;
-    border: 1px solid var(--color-border);
+    border-color: var(--color-border);
   }
   
   /* Padding options */
@@ -71,9 +85,66 @@
     @apply rounded-xl;
   }
   
-  /* Shadow */
-  .shadow {
+  /* Shadow variants */
+  .shadow-none {
+    box-shadow: none;
+  }
+  
+  .shadow-subtle {
+    @apply shadow-sm;
+  }
+  
+  .shadow-medium {
+    @apply shadow-md;
+  }
+  
+  .shadow-large {
     @apply shadow-lg;
+  }
+  
+  /* Border width options */
+  .border-none {
+    border-width: 0;
+  }
+  
+  .border-thin {
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--color-border);
+  }
+  
+  .border-medium {
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--color-border);
+  }
+  
+  .border-thick {
+    border-width: 3px;
+    border-style: solid;
+    border-color: var(--color-border);
+  }
+  
+  /* Hover effects */
+  .card-hover:hover {
+    @apply shadow-md;
+    transform: translateY(-1px);
+  }
+  
+  /* Interactive card (clickable) */
+  .card-interactive {
+    @apply cursor-pointer;
+  }
+  
+  .card-interactive:hover {
+    background-color: var(--color-interactive-hover);
+    @apply shadow-md;
+    transform: translateY(-2px);
+  }
+  
+  .card-interactive:active {
+    transform: translateY(0);
+    @apply shadow-sm;
   }
 </style>
 

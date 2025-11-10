@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Button from "@components/Button.svelte";
   import { FilePlusIcon } from "svelte-feather-icons";
   import { forEach } from "lodash";
   import Dropzone from "svelte-file-dropzone";
@@ -24,31 +25,21 @@
 </script>
 
 <main>
-  <button
-          class="group"
-          class:largeText
-          on:click={async () => {
+  <Button
+    variant="primary"
+    size={largeText ? "lg" : "md"}
+    onClick={async () => {
       await temp();
     }}
-  >{label}
-    <div class="icon">
-      <svelte:component this={icon} size="1.5x" />
-    </div></button
+    icon={icon}
+    iconPosition="right"
   >
+    {label}
+  </Button>
 </main>
 
 <style lang="postcss">
   main {
     @apply h-full;
-  }
-  button {
-    @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
-  }
-  .largeText {
-    @apply text-lg;
-  }
-  .icon {
-    background-color: var(--color-surface-sunken);
-    @apply p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
   }
 </style>

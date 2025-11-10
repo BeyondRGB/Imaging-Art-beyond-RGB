@@ -14,6 +14,8 @@
     AlertTriangleIcon,
   } from "svelte-feather-icons";
   import Dropdown from "@root/components/Dropdown.svelte";
+  import Card from "@components/Card.svelte";
+  import ScrollContainer from "@components/ScrollContainer.svelte";
 
   let colorTarget;
   let colorPos;
@@ -442,29 +444,33 @@
   </div>
   <div class="right">
     <!-- <div class="boxHead">Targets</div> -->
-    <div class="cardBox">
-      {#if viewerOpen}
-      {#each [...targetArray, "Add"] as target, i (target)}
-        {#if target === "Add" && i < 2}
-          <div
-            class="addCard"
-            on:click={() => addTarget()}
-            class:verificationAdd={i === 1}
-          >
-            <div class="clickHere">Click Here</div>
-            {#if i === 0}
-              Add a patch selection grid for calibration
-            {:else}
-              Add a patch selection grid for verification
-            {/if}
-            <PlusCircleIcon size="2x" />
-          </div>
-        {:else if target !== "Add"}
-          <div
-            class="card"
-            class:colorTarget={i === 0}
-            class:verificationTarget={i !== 0}
-          >
+    <Card variant="dark" padding="sm" rounded={true} className="cardBox">
+      <ScrollContainer maxHeight="60vh" className="scroll-content">
+        {#if viewerOpen}
+        {#each [...targetArray, "Add"] as target, i (target)}
+          {#if target === "Add" && i < 2}
+            <Card
+              className="addCard {i === 1 ? 'verificationAdd' : ''}"
+              on:click={() => addTarget()}
+              interactive={true}
+              padding="md"
+              rounded={true}
+            >
+              <div class="clickHere">Click Here</div>
+              {#if i === 0}
+                Add a patch selection grid for calibration
+              {:else}
+                Add a patch selection grid for verification
+              {/if}
+              <PlusCircleIcon size="2x" />
+            </Card>
+          {:else if target !== "Add"}
+            <Card
+              className="card {i === 0 ? 'colorTarget' : ''} {i !== 0 ? 'verificationTarget' : ''}"
+              variant="default"
+              padding="lg"
+              rounded={true}
+            >
             <h2>{target.name}</h2>
             <input
               type="range"
@@ -690,11 +696,12 @@
               on:click={() => removeTarget(i)}
               ><XCircleIcon size="1.25x" /></button
             >
-          </div>
+            </Card>
         {/if}
       {/each}
       {/if}
-    </div>
+      </ScrollContainer>
+    </Card>
   </div>
 </main>
 
@@ -722,14 +729,16 @@
     @apply w-[40vw] h-full flex flex-col m-1 pt-[2vh] pb-[8vh] items-center;
   }
 
-  .cardBox {
-    background-color: var(--color-surface-base);
-    @apply min-h-[60vh] w-[85%] p-2 gap-2 flex flex-col items-center
-	rounded-2xl overflow-y-auto overflow-x-hidden;
+  :global(.cardBox) {
+    @apply min-h-[60vh] w-[85%] gap-2 flex flex-col items-center !important;
+  }
+  
+  :global(.scroll-content) {
+    @apply w-full flex flex-col gap-2;
   }
 
-  .card {
-    @apply rounded-lg w-full h-auto p-[1.5vw] flex flex-col gap-2 relative font-semibold;
+  :global(.card) {
+    @apply w-full h-auto flex flex-col gap-2 relative font-semibold !important;
   }
   .invalid {
     @apply text-red-600;
@@ -741,13 +750,13 @@
     @apply flex flex-col w-full;
   }
 
-  .addCard {
-    @apply w-full h-full max-h-[50%] bg-green-400/50 rounded-lg p-4 flex flex-col gap-2 relative
+  :global(.addCard) {
+    @apply w-full h-full max-h-[50%] bg-green-400/50 flex flex-col gap-2 relative
 	justify-center items-center hover:bg-green-400/60 active:scale-95 transition-all
-	active:bg-green-400/75;
+	active:bg-green-400/75 !important;
   }
-  .verificationAdd {
-    background-color: var(--color-surface-sunken);
+  :global(.verificationAdd) {
+    background-color: var(--color-surface-sunken) !important;
     @apply hover:bg-green-400/40 active:bg-green-400/50;
   }
   .clickHere {

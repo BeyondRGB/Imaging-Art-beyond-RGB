@@ -5,6 +5,7 @@
   import { DownloadCloudIcon } from "svelte-feather-icons";
   import RefDataTemplate from "@assets/RefDataTemplate.csv?url";
   import FileSelector from "@components/FileSelector.svelte";
+  import Button from "@components/Button.svelte";
 
   export let closeModal;
   let filePaths = [];
@@ -62,10 +63,10 @@
         class="downloadLink"
         href={RefDataTemplate}
         download="RefDataTemplate.csv"
-        ><button class="downloadBtn">
+        ><Button className="downloadBtn" variant="default" size="md">
           Open Template
           <div class="iconBox"><DownloadCloudIcon size="1.25x" /></div>
-        </button></a
+        </Button></a
       >
     </div>
 
@@ -104,8 +105,8 @@
       </div>
     </div>
     <div class="buttonGroup">
-      <button class="cancel" on:click={closeModal}>Cancel</button>
-      <button class="confirm" on:click={confirm}>Confirm</button>
+      <Button variant="secondary" onClick={closeModal}>Cancel</Button>
+      <Button variant="success" onClick={confirm}>Confirm</Button>
     </div>
   </div>
 </main>
@@ -121,8 +122,8 @@
   .downloadLink {
     @apply p-0 w-1/2;
   }
-  .downloadBtn {
-    @apply w-full p-0 pl-2 text-lg flex justify-between gap-2 items-center whitespace-nowrap;
+  :global(.downloadBtn) {
+    @apply w-full p-0 pl-2 text-lg flex justify-between gap-2 items-center whitespace-nowrap !important;
   }
   h2 {
     @apply w-full text-xl flex justify-center;
@@ -143,12 +144,6 @@
 
   .buttonGroup {
     @apply flex justify-end gap-2;
-  }
-  .confirm {
-    @apply bg-green-600/75 hover:bg-green-500;
-  }
-  .cancel {
-    @apply hover:bg-red-500/50;
   }
   .inputLabel {
     @apply h-full flex justify-center items-center bg-blue-600/25 rounded-l-lg

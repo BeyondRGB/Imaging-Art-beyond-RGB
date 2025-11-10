@@ -1,10 +1,11 @@
 <script lang="ts">
   import SwitchRow from "@components/SwitchRow.svelte";
   import { appSettings } from "@util/stores";
+  import ScrollContainer from "@components/ScrollContainer.svelte";
 </script>
 
 <main>
-  <div class="settings">
+  <ScrollContainer className="settings">
     <h1>Settings</h1>
     
     <div class="section">
@@ -24,7 +25,7 @@
         ariaLabel="Toggle dark theme"
       />
     </div>
-  </div>
+  </ScrollContainer>
 </main>
 
 <style lang="postcss">
@@ -33,8 +34,8 @@
     @apply w-[600px] max-h-[80vh] rounded-xl shadow-2xl overflow-hidden;
   }
 
-  .settings {
-    @apply flex flex-col p-8 gap-8 overflow-y-auto;
+  :global(.settings) {
+    @apply flex flex-col p-8 gap-8;
   }
 
   h1 {

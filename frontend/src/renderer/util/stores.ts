@@ -1,12 +1,31 @@
 import { writable, derived } from 'svelte/store';
 
+// Load settings from localStorage
+function loadSettings() {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('appSettings');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved settings:', e);
+      }
+    }
+  }
+  return { theme: false, sideNav: true };
+}
+
 // Stores
 export const currentPage = writable(null);
-export const appSettings = writable({ 
-  theme: false, 
-  sideNav: true
-});
+export const appSettings = writable(loadSettings());
 export const modal = writable(null);
+
+// Persist settings to localStorage
+if (typeof window !== 'undefined') {
+  appSettings.subscribe(settings => {
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+  });
+}
 
 export const batchImagesA = writable(['E:\\BeyondRGBPics\\picasso_1_A.ARW']);
 export const batchImagesB = writable(['E:\\BeyondRGBPics\\picasso_1_B.ARW']);

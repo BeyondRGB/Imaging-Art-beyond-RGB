@@ -1,6 +1,6 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher, onDestroy } from "svelte";
-  import { fly } from "svelte/transition";
+  import { fly, fade } from "svelte/transition";
   import { appSettings } from "@util/stores";
   import { XIcon, ChevronDownIcon } from "svelte-feather-icons";
   const dispatch = createEventDispatcher();
@@ -11,6 +11,9 @@
   export let minimal = false;
   export let customExit = false;
   export let component;
+  export let size: 'small' | 'medium' | 'large' | 'fullscreen' = 'medium';
+  export let backdropBlur: 'none' | 'sm' | 'md' | 'lg' = 'sm';
+  export let backdropOpacity: 'light' | 'medium' | 'heavy' = 'medium';
 
   $: theme = $appSettings.theme ? "dark" : "";
 
@@ -48,7 +51,18 @@
 
 <svelte:window on:keydown={handle_keydown} />
 
-<div class="modal-background" on:click={close} />
+<div 
+  class="modal-background"
+  class:blur-none={backdropBlur === 'none'}
+  class:blur-sm={backdropBlur === 'sm'}
+  class:blur-md={backdropBlur === 'md'}
+  class:blur-lg={backdropBlur === 'lg'}
+  class:opacity-light={backdropOpacity === 'light'}
+  class:opacity-medium={backdropOpacity === 'medium'}
+  class:opacity-heavy={backdropOpacity === 'heavy'}
+  on:click={close}
+  transition:fade={{ duration: 200 }}
+/>
 
 {#if !minimal}
   <div
@@ -56,15 +70,21 @@
     role="dialog"
     aria-modal="true"
     bind:this={modal}
-    transition:fly={{ y: window.innerHeight, duration: 250, opacity: 0 }}
+    transition:fly={{ y: window.innerHeight, duration: 300, opacity: 0, easing: (t) => 1 - Math.pow(1 - t, 3) }}
   >
-    <div class="modal-content">
+    <div 
+      class="modal-content"
+      class:size-small={size === 'small'}
+      class:size-medium={size === 'medium'}
+      class:size-large={size === 'large'}
+      class:size-fullscreen={size === 'fullscreen'}
+    >
       {#if !customExit}
         <button class="close-button" on:click={close} aria-label="Close">
           <XIcon size="1.25x" />
         </button>
       {/if}
-      <svelte:component this={component} closeModal={close} />
+      <svelte:component this={component} closeModal={close} {...$$restProps} />
     </div>
   </div>
 {:else}
@@ -83,8 +103,37 @@
 
 <style lang="postcss">
   .modal-background {
+    @apply fixed top-0 left-0 w-full h-full z-[9999];
+  }
+  
+  /* Backdrop blur variants */
+  .blur-none {
+    backdrop-filter: none;
+  }
+  
+  .blur-sm {
+    @apply backdrop-blur-sm;
+  }
+  
+  .blur-md {
+    @apply backdrop-blur-md;
+  }
+  
+  .blur-lg {
+    @apply backdrop-blur-lg;
+  }
+  
+  /* Backdrop opacity variants */
+  .opacity-light {
+    background-color: var(--color-overlay-light);
+  }
+  
+  .opacity-medium {
     background-color: var(--color-overlay-medium);
-    @apply fixed top-0 left-0 w-full h-full z-[9999] backdrop-blur-sm;
+  }
+  
+  .opacity-heavy {
+    background-color: var(--color-overlay-heavy);
   }
 
   .modal-container {
@@ -92,7 +141,27 @@
   }
 
   .modal-content {
-    @apply relative pointer-events-auto;
+    @apply relative pointer-events-auto bg-transparent;
+    max-height: 90vh;
+    max-width: 90vw;
+    position: relative;
+  }
+  
+  /* Size variants */
+  .size-small {
+    @apply max-w-md w-full;
+  }
+  
+  .size-medium {
+    @apply max-w-2xl w-full;
+  }
+  
+  .size-large {
+    @apply max-w-4xl w-full;
+  }
+  
+  .size-fullscreen {
+    @apply max-w-full max-h-full w-full h-full;
   }
 
   .close-button {
@@ -101,12 +170,21 @@
     border: 1px solid var(--color-border);
     @apply absolute -top-3 -right-3 z-10 w-9 h-9 rounded-full 
            flex items-center justify-center transition-all duration-200
-           shadow-lg hover:shadow-xl hover:scale-110;
+           shadow-lg hover:shadow-xl hover:scale-110 focus:outline-none;
+  }
+  
+  .close-button:focus {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
   }
   
   .close-button:hover {
     background-color: var(--color-interactive-hover);
     color: var(--color-text-primary);
+  }
+  
+  .close-button:active {
+    transform: scale(1.05);
   }
 
   .close-home {
@@ -114,7 +192,13 @@
     color: var(--color-text-tertiary);
     border: 2px solid var(--color-border);
     @apply absolute top-0 left-0 w-full h-[6%] rounded-none
-           m-0 flex items-center justify-center active:scale-100 transition-all pointer-events-auto;
+           m-0 flex items-center justify-center active:scale-100 transition-all pointer-events-auto
+           focus:outline-none;
+  }
+  
+  .close-home:focus {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
   }
   
   .close-home:hover {

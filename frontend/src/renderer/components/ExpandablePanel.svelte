@@ -24,7 +24,7 @@
   class:expanded
   class:position-right={position === 'right'}
   class:position-left={position === 'left'}
-  style="top: {handlePosition}; width: {width};"
+  style="top: {handlePosition}; --panel-width: {width};"
   on:click={() => (expanded = !expanded)}
 >
   {#if position === 'right'}

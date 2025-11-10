@@ -4,6 +4,7 @@
    * Handles A/B image pair layouts for different image roles
    */
   import Dropbox from "./Process/Dropbox.svelte";
+  import ScrollContainer from "./ScrollContainer.svelte";
   
   export let imageStack: any;
   export let roleType: 'object' | 'target' | 'flatfield' | 'darkfield' = 'object';
@@ -29,7 +30,7 @@
 {/if}
 
 {#if roleType === 'object'}
-  <div class="art-image-objects">
+  <ScrollContainer maxHeight="210px" className="art-image-objects">
     {#each Array(artImageCount) as count, index (index)}
       <div class="input-group">
         <div class="cell">
@@ -51,7 +52,7 @@
       </div>
       <br>
     {/each}
-  </div>
+  </ScrollContainer>
 {:else}
   <div class="input-group">
     <div class="cell">
@@ -94,28 +95,8 @@
     width: 50%;
   }
   
-  .art-image-objects {
-    max-height: 210px;
-    overflow-y: auto;
+  :global(.art-image-objects) {
     scrollbar-width: 10px;
-  }
-
-  /* Scrollbar styles */
-  .art-image-objects::-webkit-scrollbar {
-    @apply relative transition-all w-1;
-  }
-
-  .art-image-objects::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  .art-image-objects::-webkit-scrollbar-thumb {
-    background-color: var(--color-border);
-    @apply rounded-full;
-  }
-
-  .art-image-objects::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-interactive-hover);
   }
 </style>
 

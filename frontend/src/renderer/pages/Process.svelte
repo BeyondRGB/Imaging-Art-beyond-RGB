@@ -90,10 +90,18 @@
 
   function prevTab() {
     if ($processState.currentTab !== 0) {
-      processState.update(state => ({
-        ...state,
-        currentTab: state.currentTab - 1
-      }));
+      processState.update(state => {
+        const newTab = state.currentTab - 1;
+        // Clear completed status for tabs after the one we're going back to
+        const newCompletedTabs = state.completedTabs.map((completed, i) => 
+          i > newTab ? false : completed
+        );
+        return {
+          ...state,
+          currentTab: newTab,
+          completedTabs: newCompletedTabs
+        };
+      });
     } else {
       console.log("Error overflow");
     }
@@ -335,7 +343,7 @@
   {#if !tabs[$processState.currentTab].hidden}
     <nav class="dark:bg-gray-800/25">
       {#if $processState.currentTab !== 0}
-        <button id="backBtn" on:click={prevTab}>Back</button>
+        <Button id="backBtn" onClick={prevTab} variant="secondary" size="sm">Back</Button>
       {/if}
 
       <tabs>
@@ -429,7 +437,7 @@
   .completed {
     @apply bg-green-400 ring-green-400;
   }
-  #backBtn {
-    @apply absolute h-8 py-0 ml-2 my-2;
+  :global(#backBtn) {
+    @apply absolute h-8 py-0 ml-8 my-2;
   }
 </style>

@@ -70,16 +70,28 @@
 		});
 	}
 
+	// Apply theme on initial load
+	function applyTheme(isDark: boolean) {
+		if (isDark) {
+			document.documentElement.classList.add("dark");
+			document.body.classList.add("dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+			document.body.classList.remove("dark");
+		}
+	}
+
+	// Apply theme immediately on load
+	applyTheme($appSettings.theme);
+
 	// Theme Switching Logic - Now enabled with centralized theme system
 	$: theme = $appSettings.theme ? "dark" : "";
 	$: if (theme !== "") {
 		console.log("Theme Change: Dark Mode");
-		document.documentElement.classList.add(theme);
-		document.body.classList.add(theme);
+		applyTheme(true);
 	} else {
 		console.log("Theme Change: Light Mode");
-		document.documentElement.classList.remove("dark");
-		document.body.classList.remove("dark");
+		applyTheme(false);
 	}
 
 	// Optional: Auto-detect system theme preference

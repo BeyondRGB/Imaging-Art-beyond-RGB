@@ -31,6 +31,11 @@
   --color-overlay-light: rgba(0, 0, 0, 0.1);
   --color-overlay-medium: rgba(0, 0, 0, 0.4);
   --color-overlay-heavy: rgba(0, 0, 0, 0.7);
+  
+  /* Semantic colors */
+  --color-error: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #ea580c;
 }
 
 /* Dark theme */
@@ -60,6 +65,11 @@
   --color-overlay-light: rgba(0, 0, 0, 0.25);
   --color-overlay-medium: rgba(0, 0, 0, 0.5);
   --color-overlay-heavy: rgba(0, 0, 0, 0.75);
+  
+  /* Semantic colors */
+  --color-error: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f97316;
 }
 
 /* Semantic utility classes - NO color literals! */

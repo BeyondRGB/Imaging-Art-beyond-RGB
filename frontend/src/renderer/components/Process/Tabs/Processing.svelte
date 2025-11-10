@@ -7,9 +7,14 @@
     currentPage,
     messageStore,
     resetProcess,
-    batchImagesA
+    batchImagesA,
+    modal
   } from "@util/stores";
   import ImageViewer from "@components/ImageViewer.svelte";
+  import Card from "@components/Card.svelte";
+  import Button from "@components/Button.svelte";
+  import Modal from "@components/Modal.svelte";
+  import ProcessCompleteModal from "@components/ProcessCompleteModal.svelte";
 
   let notConnectedMode = false;
 
@@ -74,6 +79,19 @@
     }
   }
 
+  // Show modal when processing is complete
+  $: if ($processState.pipelineComplete && $modal !== "ProcessComplete") {
+    modal.set("ProcessComplete");
+  }
+  
+  function closeCompletionModal() {
+    modal.set(null);
+    processState.update(state => ({
+      ...state,
+      pipelineComplete: false
+    }));
+  }
+
 
   //Open the file explorer using ipc after an image is finished processing. 
   const openFileExplorer = async() =>{
@@ -89,17 +107,15 @@
 </script>
 
 <main>
-  {#if $processState.pipelineComplete}
-    <div class="completedBox">
-      <div class="completedOptions">
-        <button on:click={() => handleComplete(0)}>View Image</button>
-        <button on:click={() => {openFileExplorer()}}
-          >Open File Location</button
-        >
-        <button on:click={() => handleComplete(1)}>Process Another Image</button
-        >
-      </div>
-    </div>
+  {#if $modal === "ProcessComplete"}
+    <Modal 
+      component={ProcessCompleteModal} 
+      on:close={closeCompletionModal}
+      size="medium"
+      onViewImage={() => handleComplete(0)}
+      onOpenFileLocation={openFileExplorer}
+      onProcessAnother={() => handleComplete(1)}
+    />
   {/if}
   <div class="top">
     <div class="right">
@@ -112,14 +128,20 @@
   <div class="bottom">
     <div class="stepBox">
       {#if Object.keys(pipelineComponents).length < 1}
-        <div class="waitingBox">
-          <div class="waitingMsg">Waiting</div>
-        </div>
+        <Card variant="elevated" padding="lg" rounded={true} shadow="medium" className="waitingBox">
+          <div class="waitingMsg">Waiting for processing to begin...</div>
+        </Card>
       {:else}
         {#each Object.keys(pipelineComponents) as component1, i1}
           {#if component1 !== "name"}
             {#each Object.keys(pipelineComponents[component1]) as component2, i2}
-              <div class="stepGroup">
+              <Card 
+                variant="dark" 
+                padding="sm" 
+                rounded={true} 
+                borderWidth="thin"
+                className="stepGroup"
+              >
                 <div class="stepTitle">
                   {pipelineComponents[component1][component2]["name"]}
                 </div>
@@ -188,7 +210,7 @@
                     </div>
                   {/if}
                 </div>
-              </div>
+              </Card>
             {/each}
           {/if}
         {/each}
@@ -197,13 +219,13 @@
   </div>
   {#if $connectionState !== "Connected" && !notConnectedMode}
     <div class="notConnected">
-      <card>
-        WARNING YOU ARE NOT CONNECTED TO THE BACKEND
-        <button class="" on:click={() => connect()}>Reconnect</button>
-        <button on:click={() => (notConnectedMode = true)} class="cont"
-          >Continue Anyway</button
-        >
-      </card>
+      <Card variant="elevated" padding="lg" rounded={true} shadow="medium" className="notConnectedCard">
+        <div class="notConnectedMsg">WARNING YOU ARE NOT CONNECTED TO THE BACKEND</div>
+        <div class="notConnectedBtns">
+          <Button variant="primary" size="md" onClick={() => connect()}>Reconnect</Button>
+          <Button variant="secondary" size="md" onClick={() => (notConnectedMode = true)}>Continue Anyway</Button>
+        </div>
+      </Card>
     </div>
   {/if}
 </main>
@@ -212,9 +234,15 @@
   .notConnected {
     @apply w-full h-full absolute bg-black/75 z-50 flex justify-center items-center;
   }
-  card {
-    background-color: var(--color-surface-elevated);
-    @apply w-64 h-64 p-5 flex flex-col justify-between py-10 rounded-xl font-semibold;
+  :global(.notConnectedCard) {
+    @apply flex flex-col gap-4 items-center;
+  }
+  .notConnectedMsg {
+    color: var(--color-text-primary);
+    @apply text-xl font-semibold text-center;
+  }
+  .notConnectedBtns {
+    @apply flex gap-4;
   }
   main {
     @apply w-full h-full flex flex-col relative p-2 gap-2;
@@ -234,24 +262,15 @@
             absolute top-0 left-0;
   }
   .stepTitle {
-    @apply text-white;
+    color: var(--color-text-primary);
+    @apply font-medium;
   }
-  .stepGroup {
+  :global(.stepGroup) {
     @apply gap-1 flex flex-col justify-items-center items-center
-            text-lg ring-1 ring-gray-600 p-1;
+            text-lg p-4;
   }
   .steps {
     @apply flex w-full justify-center gap-2;
-  }
-  .completedBox {
-    @apply w-full h-full absolute bg-black/50 z-50 flex justify-center items-center;
-  }
-  .completedOptions {
-    background-color: var(--color-surface);
-    @apply w-1/2 flex flex-col p-2 rounded-lg gap-2;
-  }
-  .completedOptions button {
-    @apply w-full h-full text-xl;
   }
   .sender {
     word-break: break-word;
@@ -284,12 +303,13 @@
     @apply w-full h-full absolute top-0 left-0 rounded-full;
   }
 
-  .waitingBox {
-    @apply w-full h-[10vw] flex justify-center items-center;
+  :global(.waitingBox) {
+    @apply w-1/2 flex flex-col;
   }
 
   .waitingMsg {
-    @apply text-xl;
+    color: var(--color-text-primary);
+    @apply text-xl text-center;
   }
 
   .top {
