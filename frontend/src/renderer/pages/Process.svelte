@@ -163,6 +163,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
           $serverError = {
             sender: temp["ResponseData"]["sender"],
             message: temp["ResponseData"]["message"],
+            trace: temp["ResponseData"]["trace"],
           };
           console.log({ SERVERERROR: $serverError });
         }

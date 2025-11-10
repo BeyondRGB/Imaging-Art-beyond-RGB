@@ -1,6 +1,6 @@
 #include <regex>
+#include <stacktrace>
 #include "backend_process/HalfSizePreview.hpp"
-
 
 HalfSizePreview::~HalfSizePreview() {}
 
@@ -60,22 +60,22 @@ void HalfSizePreview::run() {
 
             }
             catch(const btrgb::LibRawFileTypeUnsupported& e) {
-                this->report_error(this->get_process_name(), "File type unknown, or unsupported by LibRaw.");
+                this->report_error(this->get_process_name(), "File type unknown, or unsupported by LibRaw.", std::stacktrace::current());
             }
             catch(const ParsingError& e) {
-                this->report_error(this->get_process_name(), e.what());
+                this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
             }
             catch(const std::runtime_error& e) {
-                this->report_error(this->get_process_name(), std::string(e.what()) + " (" + fname + ")");
+                this->report_error(this->get_process_name(), std::string(e.what()) + " (" + fname + ")", std::stacktrace::current());
             }
             catch(const btrgb::FailedToEncode& e) {
-                this->report_error(this->get_process_name(), std::string(e.what()) + " (" + fname + ")");
+                this->report_error(this->get_process_name(), std::string(e.what()) + " (" + fname + ")", std::stacktrace::current());
             }
             reader->recycle();
         }
     }
     catch(const std::exception& e) {
-        this->coms_obj_m->send_error("[HalfSizePreview] Request failed.", "HalfSizePreview");
+        this->coms_obj_m->send_error("[HalfSizePreview] Request failed.", "HalfSizePreview", std::stacktrace::current());
         return;
     }
 
