@@ -36,7 +36,7 @@ ipcMain.handle('ipc-getPort', async (event, arg) => {
 });
 
 ipcMain.handle('ipc-restartBackend', async (event, arg) => {
-  createBackendContext(true);
+  createBackendContext();
 });
 
 //Use the shell to open the File explorer as a separate process,
@@ -96,14 +96,13 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
   return dia;
 });
 
-const createBackendContext = (kill_process = false) => {
+const createBackendContext = () => {
   // once port is received, it returns from .then() and continues forth
   // has to be done the line after, otherwise returns promise while awaiting
   getPort()
     .then(port => {
       // kill backend if already running 
-      //    (if freePort is undefined, but loader exists, the port was busy and should be restarted)
-      if (loader && (kill_process || !freePort))
+      if (loader)
       {
         try {
           process.kill(loader.pid);
@@ -114,7 +113,6 @@ const createBackendContext = (kill_process = false) => {
 
       // set new port
       freePort = port;
-
 
       // Start Backend Server
       loader = child_process.spawn(
@@ -133,7 +131,7 @@ const createBackendContext = (kill_process = false) => {
     .catch(
       e => {
         console.error(`[Error] Failed to fetch port. Backend not initialized. Cause: ${e}`);
-        // set that the port never created, and as such we should kill the child process next time we restart
+        // set that the port never created
         freePort = undefined;
       }
     )
