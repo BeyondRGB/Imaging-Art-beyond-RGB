@@ -2,6 +2,7 @@
 #define COMMUNICATOR_H
 
 #include <server/communication_obj.hpp>
+#include <stacktrace>
 
 /*
 Communications class, used for communication with the front end.
@@ -41,7 +42,7 @@ public:
 	*	TODO log error?
 	* @param error: the error msg to report
 	*/
-	void report_error(std::string reporter, std::string error, std::string trace);
+	void report_error(std::string reporter, std::string error, std::stacktrace trace);
 protected:
 	std::shared_ptr<CommunicationObj> coms_obj_m;
 };

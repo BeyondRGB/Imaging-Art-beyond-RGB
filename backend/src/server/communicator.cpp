@@ -1,4 +1,5 @@
 #include <server/communicator.hpp>
+#include <stacktrace>
 
 void Communicator::send_info(std::string msg, std::string reporter) {
 	if (nullptr == coms_obj_m) {
@@ -17,7 +18,7 @@ void Communicator::report_error(std::string reporter, std::string error) {
 	//TODO report to log when loggin gets implemented
 }
 
-void Communicator::report_error(std::string reporter, std::string error, std::string trace) {
+void Communicator::report_error(std::string reporter, std::string error, std::stacktrace trace) {
 	this->coms_obj_m->send_error(error, reporter, trace);
 	//TODO report to log when loggin gets implemented
 }

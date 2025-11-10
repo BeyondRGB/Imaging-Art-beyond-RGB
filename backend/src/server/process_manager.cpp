@@ -1,5 +1,6 @@
-#include <server/process_manager.hpp>
 #include <iostream>
+#include <stacktrace>
+#include <server/process_manager.hpp>
 #include <backend_process/ColorManagedImage.hpp>
 #include <backend_process/ReportRequest.hpp>
 #include <backend_process/SpectralPicker.hpp>
@@ -30,7 +31,7 @@ void ProcessManager::process_request(std::string request, std::shared_ptr<Commun
 		p_thread.detach();
 	}
 	catch (ParsingError e) {
-		this->report_error("ProcessManager", e.what());
+		this->report_error("ProcessManager", e.what(), std::stacktrace::current());
 	}
 }
 
