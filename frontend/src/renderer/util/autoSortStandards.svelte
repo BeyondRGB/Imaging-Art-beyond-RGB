@@ -250,8 +250,6 @@
         // Otherwise, use the legacy sorting (not recommended)
         else{
         modal.set("SortInfoModal");
-        // alert("Not enough recognizable image filename suffixes were found, the program will attempt to sort by name but the selected roles may not be accurate.\n \
-        //        Try renaming your images to match the guide on this page for better sorting results.");
         // scan each image name (and path) for possible matches
         each(images, function (image){
             each(probabilityScoreProperties, function (property) {

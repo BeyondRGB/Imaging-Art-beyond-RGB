@@ -7,7 +7,7 @@
         <p class="section">
           Try renaming your images to match the guide on this page for better sorting results.
         </p>
-        <div class="mono_text">anyFilename-typeIndicator_imageID.extension</div>
+        <div class="mono_text">anyFilename-typeIndicator_ImageID.extension</div>
         <p class="section">
             anyFilename can be any identifier you want.<br>
             
