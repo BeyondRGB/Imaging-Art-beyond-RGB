@@ -1,7 +1,10 @@
 <script lang="ts">
   import FileSelector from "@components/FileSelector.svelte";
-  import { FolderPlusIcon, FolderIcon } from "svelte-feather-icons";
+  import TextInputRow from "@components/TextInputRow.svelte";
+  import { FolderPlusIcon, FolderIcon, FileTextIcon } from "svelte-feather-icons";
   import { currentPage, processState } from "@util/stores";
+  import Card from "@components/Card.svelte";
+  
   let filePaths = [];
   $: console.log(filePaths);
 
@@ -29,35 +32,49 @@
     <p>Select the destination for output files</p>
   </left>
   <right>
-    <div class="selectBox">
-      <div class="fileSelector">
-        <FileSelector
-          bind:filePaths
-          type="Dir"
-          label="Select Folder"
-          icon={FolderPlusIcon}
-          largeText
-        />
-      </div>
-      {#if filePaths?.length > 0}
-        <div class="folderDisp">
-          <div class="destLabel">
-            <FolderIcon size="3x" />
-            Destination Folder:
-          </div>
-          <div class="folderLoc">
-            {$processState.destDir}
-          </div>
+    <div class="content-wrapper">
+      <Card variant="default" padding="lg" rounded={true} className="destination-card">
+        <div class="card-header">
+          <FolderIcon size="1.5x" />
+          <h2>Destination Settings</h2>
         </div>
-      {/if}
-    </div>
-    <div>
-      <div class="outputNameDisp">
-        <div class="outputLabel">
-          Destination Filename:
+        
+        <div class="form-section">
+          <div class="select-button-wrapper">
+            <FileSelector
+              bind:filePaths
+              type="Dir"
+              label="Select Folder"
+              icon={FolderPlusIcon}
+              largeText
+            />
+          </div>
+          
+          {#if filePaths?.length > 0}
+            <div class="selected-folder">
+              <div class="folder-icon-wrapper">
+                <FolderIcon size="1.25x" />
+              </div>
+              <div class="folder-path">
+                <span class="folder-label">Selected Location</span>
+                <span class="folder-value">{$processState.destDir}</span>
+              </div>
+            </div>
+          {/if}
         </div>
-        <input class="outputName" bind:value={$processState.destFileName} />
-      </div>
+        
+        <div class="divider"></div>
+        
+        <div class="form-section">
+          <TextInputRow 
+            label="Output Filename"
+            icon={FileTextIcon}
+            bind:value={$processState.destFileName}
+            placeholder="Enter output filename..."
+            type="text"
+          />
+        </div>
+      </Card>
     </div>
   </right>
 </main>
@@ -66,42 +83,83 @@
   main {
     @apply flex justify-between h-full w-full overflow-hidden;
   }
+  
   left {
     background-color: var(--color-surface-elevated);
     @apply w-full h-full p-6 flex-col;
   }
+  
   right {
     background-color: var(--color-surface);
-    @apply w-full h-full p-6 flex flex-col items-center;
+    @apply w-full h-full p-8 flex items-center justify-center;
   }
+  
   h1 {
-    @apply text-3xl;
+    color: var(--color-text-primary);
+    @apply text-3xl font-semibold mb-4;
   }
+  
   p {
     background-color: var(--color-overlay-light);
-    @apply text-center pt-[30vh] m-6 h-[90%] rounded-lg;
+    color: var(--color-text-secondary);
+    @apply text-center pt-[30vh] m-6 h-[90%] rounded-lg text-base;
   }
-  .folderDisp {
-    @apply flex justify-between m-1 text-base;
+  
+  .content-wrapper {
+    @apply w-full max-w-xl;
   }
-  .destLabel {
-    @apply bg-blue-500/50 flex justify-between items-center p-1 rounded-l-xl;
+  
+  :global(.destination-card) {
+    background-color: var(--color-surface-elevated);
+    @apply shadow-sm !important;
   }
-  .folderLoc {
+  
+  .card-header {
+    @apply flex items-center gap-2.5 mb-5 pb-4;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .card-header h2 {
+    @apply text-lg font-semibold;
+  }
+  
+  .form-section {
+    @apply flex flex-col gap-5;
+  }
+  
+  .select-button-wrapper {
+    @apply w-full flex justify-center;
+  }
+  
+  .selected-folder {
     background-color: var(--color-surface-base);
-    @apply flex items-center justify-center rounded-r-xl p-1;
+    border: 1px solid var(--color-border);
+    @apply flex items-start gap-3 p-3.5 rounded-lg transition-all duration-150;
   }
-  .selectBox {
-    @apply h-[70%] flex flex-col justify-center items-center gap-2;
+  
+  .folder-icon-wrapper {
+    color: rgb(59, 130, 246);
+    @apply flex items-center justify-center w-9 h-9 rounded-md flex-shrink-0;
+    background-color: rgba(59, 130, 246, 0.08);
   }
-  .outputNameDisp {
-    @apply flex justify-between m-1 text-base;
+  
+  .folder-path {
+    @apply flex flex-col gap-0.5 flex-1 min-w-0;
   }
-  .outputLabel {
-    @apply bg-blue-500/50 flex justify-between items-center p-1 rounded-l-xl;
+  
+  .folder-label {
+    color: var(--color-text-secondary);
+    @apply text-xs font-medium;
   }
-  .outputName {
-    background-color: var(--color-surface-base);
-    @apply flex items-center justify-center rounded-r-xl p-1;
+  
+  .folder-value {
+    color: var(--color-text-primary);
+    @apply text-sm break-all font-mono;
+  }
+  
+  .divider {
+    background-color: var(--color-border);
+    @apply h-px w-full my-3;
   }
 </style>

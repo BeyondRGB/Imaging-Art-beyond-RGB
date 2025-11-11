@@ -10,12 +10,13 @@
 
   import {
     PlusCircleIcon,
-    XCircleIcon,
+    XIcon,
     AlertTriangleIcon,
   } from "svelte-feather-icons";
   import Dropdown from "@root/components/Dropdown.svelte";
   import Card from "@components/Card.svelte";
   import ScrollContainer from "@components/ScrollContainer.svelte";
+  import TextInputRow from "@components/TextInputRow.svelte";
 
   let colorTarget;
   let colorPos;
@@ -445,7 +446,7 @@
   <div class="right">
     <!-- <div class="boxHead">Targets</div> -->
     <Card variant="dark" padding="sm" rounded={true} className="cardBox">
-      <ScrollContainer maxHeight="60vh" className="scroll-content">
+      <ScrollContainer maxHeight="none" className="scroll-content">
       {#if viewerOpen}
       {#each [...targetArray, "Add"] as target, i (target)}
         {#if target === "Add" && i < 2}
@@ -456,13 +457,16 @@
               padding="md"
               rounded={true}
           >
-            <div class="clickHere">Click Here</div>
-            {#if i === 0}
-              Add a patch selection grid for calibration
-            {:else}
-              Add a patch selection grid for verification
-            {/if}
-            <PlusCircleIcon size="2x" />
+            <div class="addCard-content">
+              <PlusCircleIcon size="1.5x" class="addCard-icon" />
+              <span class="addCard-text">
+                {#if i === 0}
+                  Add Calibration Target
+                {:else}
+                  Add Verification Target
+                {/if}
+              </span>
+            </div>
             </Card>
         {:else if target !== "Add"}
             <Card
@@ -482,24 +486,20 @@
             />
 
             <div class="rowcol">
-              <div class="inputGroup">
-                <span>Rows:</span>
-                <input
-                  placeholder="1..26 [a-z]"
-                  type="number"
-                  min="1"
-                  bind:value={target.rows}
-                />
-              </div>
-              <div class="inputGroup">
-                <span>Columns:</span>
-                <input
-                  placeholder="1..26 [a-z]"
-                  type="number"
-                  min="1"
-                  bind:value={target.cols}
-                />
-              </div>
+              <TextInputRow
+                label="Rows"
+                type="number"
+                min={1}
+                bind:value={target.rows}
+                placeholder="1-26"
+              />
+              <TextInputRow
+                label="Columns"
+                type="number"
+                min={1}
+                bind:value={target.cols}
+                placeholder="1-26"
+              />
             </div>
             <div class="refDataDiv">
               <span class="validatedTitle">
@@ -696,9 +696,9 @@
                 typeof verifyTarget != "undefined" &&
                 verifyTarget != null}
               on:click={() => removeTarget(i)}
-              ><XCircleIcon size="1.25x" /></button
+              ><XIcon size="1.25x" /></button
             >
-            </div>
+          </div>
             </Card>
         {/if}
       {/each}
@@ -729,19 +729,21 @@
 
   .right {
     background-color: var(--color-surface);
-    @apply w-[40vw] h-full flex flex-col m-1 pt-[2vh] pb-[8vh] items-center;
+    @apply w-[40vw] h-full flex flex-col m-1 py-2 items-center overflow-hidden;
   }
 
   :global(.cardBox) {
-    @apply min-h-[60vh] w-[85%] gap-2 flex flex-col items-center !important;
+    @apply flex-1 w-[90%] gap-2 flex flex-col items-center overflow-hidden !important;
   }
   
   :global(.scroll-content) {
-    @apply w-full flex flex-col gap-2;
+    @apply w-full h-full flex flex-col gap-2 overflow-y-auto;
   }
 
   :global(.card) {
     @apply w-full h-auto flex flex-col gap-2 relative font-semibold !important;
+    padding-top: 0.5rem;
+    padding-right: 0.5rem;
   }
   .invalid {
     @apply text-red-600;
@@ -754,16 +756,38 @@
   }
 
   :global(.addCard) {
-    @apply w-full h-full max-h-[50%] bg-green-400/50 flex flex-col gap-2 relative
-	justify-center items-center hover:bg-green-400/60 active:scale-95 transition-all
-	active:bg-green-400/75 !important;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(34, 197, 94, 0.12) 100%);
+    border: 2px dashed rgba(34, 197, 94, 0.3);
+    @apply w-full h-auto min-h-[4rem] max-h-[5rem] flex flex-col gap-2 relative
+	justify-center items-center transition-all duration-200 cursor-pointer
+	hover:bg-green-500/15 hover:border-green-500/50 hover:shadow-md
+	active:scale-[0.99] active:bg-green-500/20 !important;
   }
   :global(.verificationAdd) {
-    background-color: var(--color-surface-sunken) !important;
-    @apply hover:bg-green-400/40 active:bg-green-400/50;
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(34, 197, 94, 0.1) 100%);
+    border: 2px dashed rgba(34, 197, 94, 0.25);
   }
-  .clickHere {
-    @apply text-2xl;
+  :global(.verificationAdd:hover) {
+    background-color: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.4);
+  }
+  .addCard-content {
+    @apply flex flex-row items-center justify-center gap-3 px-4 py-2 w-full;
+  }
+  .addCard-icon {
+    color: rgba(34, 197, 94, 0.9);
+    @apply transition-transform duration-200 flex-shrink-0;
+  }
+  :global(.addCard:hover) .addCard-icon {
+    @apply scale-110;
+    color: rgba(34, 197, 94, 1);
+  }
+  .addCard-text {
+    @apply text-base font-medium;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .left-content {
     @apply w-full h-auto flex items-center;
@@ -789,7 +813,7 @@
   }
 
   .rowcol {
-    @apply flex flex-col justify-between items-center;
+    @apply flex flex-col justify-between items-center gap-2;
   }
 
   .whitePatch {
@@ -843,9 +867,37 @@
   }
 
   .close {
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    @apply absolute top-2 right-2 z-10 w-8 h-8 rounded-full 
+           flex items-center justify-center transition-all duration-200
+           shadow-md hover:shadow-lg hover:scale-110 focus:outline-none;
+  }
+  
+  .close:focus {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+  
+  .close:hover {
+    background-color: var(--color-interactive-hover);
     color: var(--color-text-primary);
-    @apply absolute top-0 right-0 bg-transparent
-	hover:bg-red-600/50 hover:text-white ring-0 p-1;
+  }
+  
+  .close:active {
+    transform: scale(1.05);
+  }
+  
+  .close:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .close:disabled:hover {
+    background-color: var(--color-surface);
+    color: var(--color-text-secondary);
+    transform: none;
   }
   .refDataDiv {
     @apply flex justify-between items-center;

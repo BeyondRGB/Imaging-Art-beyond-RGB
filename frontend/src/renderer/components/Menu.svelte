@@ -3,6 +3,7 @@
   import TextLogo from "@assets/TextLogo.svg";
   import TextLogoAlt from "@assets/TextLogoAlt.svg";
   import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+  import { RefreshCwIcon } from "svelte-feather-icons";
 
   import {
     currentPage,
@@ -63,12 +64,16 @@
         <svelte:component this={routes["Settings"].icon} size="1.75x" />
       </button>
 
-      <button
-        on:click={() => connect()}
-        
-        class:connected={$connectionState === "Connected"}
-        class:disconnected={$connectionState !== "Connected"}
-      />
+      {#if $connectionState === "Connected"}
+        <div class="status-indicator connected"></div>
+      {:else}
+        <button
+          on:click={() => connect()}
+          class="reconnect-btn disconnected"
+        >
+          <RefreshCwIcon size="1.75x" />
+        </button>
+      {/if}
     </div>
   </ul>
   <SvelteToast/>
@@ -175,10 +180,27 @@
     @apply flex-col py-4 px-0 rounded-l-none rounded-t-2xl items-center justify-center;
   }
 
-  .connected {
-    @apply w-2 h-4 rounded-full bg-green-400 dark:hover:bg-green-500 dark:hover:scale-125;
+  .status-indicator {
+    @apply w-7 h-7 rounded-full;
   }
-  .disconnected {
-    @apply w-2 h-4 bg-red-500 dark:hover:bg-red-400 dark:hover:scale-125;
+  
+  .status-indicator.connected {
+    background-color: var(--color-success);
+    @apply shadow-lg;
+    box-shadow: 0 0 9px var(--color-success);
+  }
+  
+  .reconnect-btn {
+    @apply transition-all duration-200;
+  }
+  
+  .reconnect-btn.disconnected {
+    color: var(--color-error);
+    @apply animate-pulse;
+  }
+  
+  .reconnect-btn.disconnected:hover {
+    @apply scale-110;
+    color: var(--color-error);
   }
 </style>

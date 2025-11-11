@@ -3,12 +3,12 @@
    * Generic Close Button Component
    * Provides consistent close button styling across the app
    */
-  import { XCircleIcon } from "svelte-feather-icons";
+  import { XIcon } from "svelte-feather-icons";
   
   export let onClick: () => void = () => {};
   export let variant: 'default' | 'absolute-top-right' | 'absolute-top-left' | 'floating' = 'default';
   export let size: string = "1.25x";
-  export let iconComponent = XCircleIcon;
+  export let iconComponent = XIcon;
 </script>
 
 <button 

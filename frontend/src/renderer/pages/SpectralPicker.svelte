@@ -9,7 +9,7 @@
     serverError,
   } from "@util/stores";
   import {
-    XCircleIcon,
+    XIcon,
     Maximize2Icon,
     Minimize2Icon,
     ChevronLeftIcon,
@@ -231,7 +231,7 @@
           {/if}
         </button>
         <button class="closeBtn" on:click={closeImage}>
-          <XCircleIcon size="1.25x" />
+          <XIcon size="1.25x" />
         </button>
 
         <div class="image-container">

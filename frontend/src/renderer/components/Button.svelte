@@ -44,7 +44,7 @@
         <svelte:component this={icon} size="1x" />
       </span>
     {/if}
-    <slot />
+  <slot />
     {#if icon && iconPosition === 'right'}
       <span class="btn-icon-right">
         <svelte:component this={icon} size="1x" />
