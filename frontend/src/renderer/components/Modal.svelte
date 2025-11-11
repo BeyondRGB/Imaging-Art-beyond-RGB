@@ -51,18 +51,20 @@
 
 <svelte:window on:keydown={handle_keydown} />
 
-<div 
-  class="modal-background"
-  class:blur-none={backdropBlur === 'none'}
-  class:blur-sm={backdropBlur === 'sm'}
-  class:blur-md={backdropBlur === 'md'}
-  class:blur-lg={backdropBlur === 'lg'}
-  class:opacity-light={backdropOpacity === 'light'}
-  class:opacity-medium={backdropOpacity === 'medium'}
-  class:opacity-heavy={backdropOpacity === 'heavy'}
-  on:click={close}
-  transition:fade={{ duration: 200 }}
-/>
+{#if !minimal}
+  <div 
+    class="modal-background"
+    class:blur-none={backdropBlur === 'none'}
+    class:blur-sm={backdropBlur === 'sm'}
+    class:blur-md={backdropBlur === 'md'}
+    class:blur-lg={backdropBlur === 'lg'}
+    class:opacity-light={backdropOpacity === 'light'}
+    class:opacity-medium={backdropOpacity === 'medium'}
+    class:opacity-heavy={backdropOpacity === 'heavy'}
+    on:click={close}
+    transition:fade={{ duration: 200 }}
+  />
+{/if}
 
 {#if !minimal}
   <div
@@ -97,7 +99,9 @@
     <button class="close-home" on:click={close} aria-label="Close">
       <ChevronDownIcon size="2x" />
     </button>
-    <svelte:component this={component} />
+    <div class="minimal-content">
+      <svelte:component this={component} />
+    </div>
   </div>
 {/if}
 
@@ -207,5 +211,9 @@
   
   .close-home:active {
     background-color: var(--color-interactive-active);
+  }
+  
+  .minimal-content {
+    @apply pointer-events-auto w-full h-full;
   }
 </style>

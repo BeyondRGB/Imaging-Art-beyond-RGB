@@ -159,11 +159,11 @@
   }
 
   .sideMain .menuBtns {
-    @apply flex-col h-[60%] w-full whitespace-normal overflow-visible;
+    @apply flex-col h-[60%] w-full whitespace-normal overflow-visible items-stretch;
   }
   
   .sideMain .menuBtns button {
-    @apply h-auto min-h-[4rem];
+    @apply h-full flex-1;
   }
 
   .ctlBtns {
