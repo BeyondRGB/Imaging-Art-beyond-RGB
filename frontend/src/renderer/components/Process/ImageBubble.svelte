@@ -52,13 +52,16 @@
       <div class="bubble-content" bind:this={btnRef}>
         <div class="file-info">
           <ImageIcon size="1.5x" />
-          <span class="filename">{filename}</span>
+          <span class="filename">{filename.split("\\").length > 2
+            ? filename.split("\\").at(-1)
+            : filename.split("/").at(-1)}</span>
         </div>
         <Button 
           variant="danger" 
           size="sm" 
           onClick={remove}
           icon={TrashIcon}
+          iconOnly={true}
           className="remove-btn"
         />
       </div>

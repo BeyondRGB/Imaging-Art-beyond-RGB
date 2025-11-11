@@ -6,6 +6,7 @@
   import html2canvas from "html2canvas";
   import { element } from "svelte/internal";
   import { chart } from "svelte-apexcharts";
+  import Button from "@components/Button.svelte";
 
   export let data = [];
   export let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);;
@@ -48,7 +49,7 @@
           width: 1,
       },
       chart: {
-          background: 'rgb(58, 58, 60)',
+          background: 'transparent',
           animations: {
               enabled: false
           },
@@ -77,7 +78,7 @@
       tooltip: {
           shared: true,
           intersect: false,
-          theme: 'dark',
+          theme: 'light',
           x: {
             show: false
           },
@@ -98,7 +99,7 @@
           tickAmount: 9,
           labels: {
               style: {
-                  colors: '#FFFFFF',
+                  colors: 'var(--color-text-secondary)',
               }
           },
           title: {
@@ -106,7 +107,7 @@
               offsetX: 0,
               offsetY: 110,
               style: {
-                  color: '#FFFFFF',
+                  color: 'var(--color-text-primary)',
               }
           },
       },
@@ -122,13 +123,13 @@
           },
           labels: {
               style: {
-                  colors: "#FFFFFF"
+                  colors: "var(--color-text-secondary)"
               }
           },
           title: {
               text: "Reflectance (%)",
               style: {
-                  color: '#FFFFFF',
+                  color: 'var(--color-text-primary)',
               },
           },
       },
@@ -136,14 +137,14 @@
           show: true,
           showForSingleSeries: true,
           labels: {
-            colors: '#FFFFFF',
+            colors: 'var(--color-text-primary)',
           },
       },
       title: {
           text: "Estimated Spectrum",
           align: 'left',
           style: {
-              color:  '#FFFFFF'
+              color:  'var(--color-text-primary)'
           },
       }
   };
@@ -198,7 +199,14 @@
   
 <div class="line-chart" id="EstSpecChart">
   <div id="spectral-chart" use:chart={options}></div>
-    <div id="spectral-csv-download-button" on:click={downloadCSV}>Download CSV</div>
+    <Button
+      variant="secondary"
+      size="sm"
+      onClick={downloadCSV}
+      className="download-btn"
+    >
+      Download CSV
+    </Button>
 </div>
 
 <style lang="postcss" global>
@@ -239,16 +247,17 @@
   }
 
   .apexcharts-menu {
-    color: #27293d!important;
-    border: 0px;
-  }
-
-  #spectral-csv-download-button:hover {
-    cursor: pointer;
+    color: var(--color-text-primary) !important;
+    background-color: var(--color-surface) !important;
+    border: 1px solid var(--color-border);
   }
 
   .apexcharts-menu-item.exportCSV {
     display: none;
+  }
+
+  :global(.download-btn) {
+    @apply mt-3;
   }
 
 </style>

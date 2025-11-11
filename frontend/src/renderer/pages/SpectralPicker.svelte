@@ -12,10 +12,13 @@
     XCircleIcon,
     Maximize2Icon,
     Minimize2Icon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
   } from "svelte-feather-icons";
   import { fly } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
-  import Switch from "@components/Switch.svelte";
+  import SwitchRow from "@components/SwitchRow.svelte";
+  import Card from "@components/Card.svelte";
   import FileSelector from "@components/FileSelector.svelte";
   import { fullScreenApi } from "openseadragon";
   import EmptyState from "@components/EmptyState.svelte";
@@ -207,8 +210,8 @@
     </div>
   {/if}
   <div class="content" id="picker-content">
-    <div class="panel">
-      <div class="image-tabs" class:aspect={expand}>
+    <div class="viewer-layout">
+      <div class="image-section">
         <button
           class="fullBtn"
           on:click={() => {
@@ -216,7 +219,7 @@
               document.exitFullscreen();
               isFullScreen = false;
             } else {
-              document.querySelector(".image-tabs").requestFullscreen();
+              document.querySelector(".image-section").requestFullscreen();
               isFullScreen = true;
             }
           }}
@@ -238,17 +241,50 @@
             </div>
           {/if}
 
-          <div class="floatBox" class:notExpanded={!expand}>
-            <div class="handle" on:click={() => (expand = !expand)}>
-              {expand ? ">" : "<"}
+          <SpecPickViewer
+            bind:shadowPos
+            bind:trueShadowPos
+            bind:trueSize
+            bind:show={brushShow}
+            bind:size
+            bind:loading
+          />
+        </div>
+      </div>
+
+      <div class="drawer-wrapper" class:open={expand}>
+        <button class="drawer-toggle" on:click={() => (expand = !expand)}>
+          {#if expand}
+            <ChevronRightIcon size="1.25x" />
+          {:else}
+            <ChevronLeftIcon size="1.25x" />
+          {/if}
+        </button>
+        
+        <div class="drawer-panel">
+          <div class="spectral-panel">
+            <div class="panel-section">
+              <SwitchRow
+                label="Enable Spectral Picker"
+                description="Show the sampling brush on the image preview"
+                bind:checked={brushShow}
+                ariaLabel="Toggle spectral picker"
+              />
+              <SwitchRow
+                label="Stack Spectral Curves"
+                description="Keep previous spectra visible when sampling"
+                bind:checked={stackCurves}
+                ariaLabel="Toggle stacking spectral curves"
+              />
             </div>
-            <div class="box" id="brush">
-              <Switch label="Enable Spectral Picker" bind:checked={brushShow} />
-              <Switch label="Stack Spectral Curves" bind:checked={stackCurves} />
-              <div class="sizeSettings">
-                Set Brush Size:
-                <div class="flex justify-center items-center gap-1">
+
+            <div class="panel-section brush-section">
+              <div class="panel-heading">Brush Size</div>
+              <div class="brush-controls">
+                <label class="brush-label" for="brush-size">Set brush size</label>
+                <div class="brush-slider">
                   <input
+                    id="brush-size"
                     class="brushBar"
                     type="range"
                     min="0.001"
@@ -263,28 +299,20 @@
                 </div>
               </div>
             </div>
-            <div class="chart">
-              <LineChart
-                bind:data={spectrumData}
-                bind:wavelengthArray
-                bind:trueShadowPos
-                stack={stackCurves}
-              />
+
+            <div class="panel-section chart-section">
+              <Card variant="elevated" padding="md" rounded={true} shadow="medium" className="chart-card">
+                <LineChart
+                  bind:data={spectrumData}
+                  bind:wavelengthArray
+                  bind:trueShadowPos
+                  stack={stackCurves}
+                />
+              </Card>
             </div>
           </div>
-          <SpecPickViewer
-            bind:shadowPos
-            bind:trueShadowPos
-            bind:trueSize
-            bind:show={brushShow}
-            bind:size
-            bind:loading
-          />
         </div>
       </div>
-      {#if !expand}
-        <div class="side" />
-      {/if}
     </div>
   </div>
 </main>
@@ -308,23 +336,23 @@
   .content {
     @apply w-full h-full flex justify-center items-center p-6;
   }
-  .panel {
-    @apply w-full h-full flex justify-center items-center;
+  
+  .viewer-layout {
+    @apply w-full h-full flex gap-0;
   }
-  .image-container {
+  
+  .image-section {
     background-color: var(--color-surface-sunken);
+    @apply relative flex-1 flex flex-col transition-all duration-500;
+  }
+  
+  .image-container {
     @apply relative w-full h-full overflow-visible;
   }
-  .image-tabs {
-    @apply h-full w-full relative flex flex-col;
-  }
-
-  .aspect {
-    @apply aspect-[145/100] w-auto;
-  }
   .pixSize {
-    background-color: var(--color-surface-sunken);
-    @apply flex gap-1 p-1 rounded-lg;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    @apply flex gap-1 px-2 py-1 rounded-lg text-sm font-medium;
   }
   .brushBar {
     @apply w-full h-2 rounded-xl;
@@ -335,15 +363,79 @@
     outline-color: var(--color-border);
   }
 
-  .floatBox {
-    background-color: var(--color-overlay-medium);
+  .drawer-wrapper {
+    @apply relative flex h-full transition-all duration-500;
+    width: 0;
+  }
+  
+  .drawer-wrapper.open {
+    width: 30vw;
+  }
+  
+  .drawer-toggle {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
     border: 1px solid var(--color-border);
-    @apply absolute h-auto w-[30vw] z-[49] right-0 transition-all duration-500
-            translate-x-0 rounded-bl-xl;
+    border-right: 0;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+    @apply absolute top-1/2 -translate-y-1/2 h-12 w-10 flex justify-center 
+           items-center cursor-pointer transition-all duration-500 z-10 rounded-l-full;
+    left: -2.5rem;
+  }
+  
+  .drawer-toggle:hover {
+    background-color: var(--color-interactive-hover);
+  }
+  
+  .drawer-toggle:focus {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+  
+  .drawer-panel {
+    background-color: var(--color-surface-elevated);
+    border-left: 1px solid var(--color-border);
+    @apply flex-1 h-full overflow-y-auto;
   }
 
-  .notExpanded {
-    @apply translate-x-full;
+  .spectral-panel {
+    @apply flex flex-col gap-4 p-4 h-full;
+  }
+
+  .panel-section {
+    @apply flex flex-col gap-4;
+  }
+
+  .brush-section {
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+    @apply rounded-lg p-4 gap-3;
+  }
+
+  .panel-heading {
+    color: var(--color-text-primary);
+    @apply text-sm font-semibold uppercase tracking-wide;
+  }
+
+  .brush-controls {
+    @apply flex flex-col gap-3;
+  }
+
+  .brush-label {
+    color: var(--color-text-secondary);
+    @apply text-sm font-medium;
+  }
+
+  .brush-slider {
+    @apply flex justify-center items-center gap-2;
+  }
+  
+  .chart-section {
+    @apply flex-1;
+  }
+  
+  :global(.chart-card) {
+    @apply h-full;
   }
 
   .loading {
@@ -388,10 +480,6 @@
     }
   }
 
-  .side {
-    @apply h-full w-[45vw];
-  }
-
   .fullBtn {
     @apply absolute right-0 m-1 z-50 p-1 bg-transparent ring-0
             hover:bg-blue-500/25 transition-all duration-500;
@@ -400,26 +488,5 @@
   .closeBtn {
     @apply absolute right-8 m-1 z-50 p-1 bg-transparent ring-0
             hover:bg-red-500/25 transition-all duration-500;
-  }
-
-  .chart {
-    background-color: var(--color-surface-elevated);
-    @apply m-2 p-2 pb-4 rounded-lg pr-4;
-  }
-
-  .box {
-    background-color: var(--color-surface-elevated);
-    @apply m-2 shadow-md px-2 pt-1 rounded-lg p-2;
-  }
-
-  .handle {
-    background-color: var(--color-overlay-medium);
-    border: 1px solid var(--color-border);
-    @apply h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-            text-2xl rounded-l-full border-r-[0px] cursor-pointer;
-  }
-
-  .sizeSettings {
-    @apply flex justify-between items-center text-base pl-4;
   }
 </style>

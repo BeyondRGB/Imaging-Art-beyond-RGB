@@ -12,6 +12,7 @@
   export let onClick: ((e: MouseEvent) => void) | undefined = undefined;
   export let icon: any = undefined; // Icon component from svelte-feather-icons
   export let iconPosition: 'left' | 'right' = 'left';
+  export let iconOnly: boolean = false; // Set true for icon-only buttons
   export let className: string = '';
 </script>
 
@@ -24,6 +25,7 @@
   class:btn-sm={size === 'sm'}
   class:btn-md={size === 'md'}
   class:btn-lg={size === 'lg'}
+  class:btn-icon-only={iconOnly}
   class:btn-disabled={disabled || loading}
   {type}
   disabled={disabled || loading}
@@ -32,16 +34,20 @@
 >
   {#if loading}
     <span class="btn-loading">Loading...</span>
+  {:else if iconOnly && icon}
+    <span class="btn-icon-center">
+      <svelte:component this={icon} size="1x" />
+    </span>
   {:else}
     {#if icon && iconPosition === 'left'}
       <span class="btn-icon-left">
-        <svelte:component this={icon} size="1em" />
+        <svelte:component this={icon} size="1x" />
       </span>
     {/if}
     <slot />
     {#if icon && iconPosition === 'right'}
       <span class="btn-icon-right">
-        <svelte:component this={icon} size="1em" />
+        <svelte:component this={icon} size="1x" />
       </span>
     {/if}
   {/if}
@@ -51,13 +57,18 @@
   .btn {
     @apply rounded-lg self-center transition-all duration-200
            active:scale-[0.98] shadow-sm ring-1 focus:ring-2 focus:outline-none
-           flex items-center justify-center gap-2 font-medium;
+           flex items-center justify-center font-medium;
     border: 1px solid transparent;
+    gap: 0.5rem;
+  }
+  
+  .btn-icon-only {
+    gap: 0;
   }
   
   /* Size variants */
   .btn-sm {
-    @apply text-sm px-2 py-1;
+    @apply text-sm px-3 py-1.5;
   }
   
   .btn-md {
@@ -66,6 +77,19 @@
   
   .btn-lg {
     @apply text-lg px-6 py-3;
+  }
+  
+  /* Icon-only buttons have equal padding for square shape */
+  .btn-icon-only.btn-sm {
+    @apply px-2 py-2;
+  }
+  
+  .btn-icon-only.btn-md {
+    @apply px-3 py-3;
+  }
+  
+  .btn-icon-only.btn-lg {
+    @apply px-4 py-4;
   }
   
   /* Variant styles */
@@ -138,8 +162,19 @@
   
   /* Icon positioning */
   .btn-icon-left,
-  .btn-icon-right {
-    @apply flex items-center;
+  .btn-icon-right,
+  .btn-icon-center {
+    @apply flex items-center justify-center;
+    color: inherit;
+  }
+  
+  .btn-icon-center {
+    @apply w-full h-full;
+  }
+  
+  /* Ensure SVG icons inherit color */
+  .btn :global(svg) {
+    stroke: currentColor;
   }
   
   /* Loading state */

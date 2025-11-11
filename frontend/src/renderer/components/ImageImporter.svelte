@@ -48,6 +48,8 @@
         if (e.detail == null){
             /* handles files being added from the select files button */
             files.accepted = [...files.accepted, ...e.target.files];
+            // Reset input value to allow re-adding the same files
+            e.target.value = '';
         }
         else {
             /* handles files being added from dragging and dropping */

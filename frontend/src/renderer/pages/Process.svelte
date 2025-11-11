@@ -97,7 +97,7 @@
           i > newTab ? false : completed
         );
         return {
-          ...state,
+        ...state,
           currentTab: newTab,
           completedTabs: newCompletedTabs
         };

@@ -9,6 +9,9 @@
   export let position: 'right' | 'left' = 'right';
   export let width: string = '30vw';
   export let handlePosition: string = '50%'; // CSS value for top/bottom positioning
+  export let top: string = '0';
+  export let bottom: string = '0';
+  export let positioning: 'fixed' | 'absolute' = 'fixed';
   export let zIndex: number = 50; // Configurable z-index
 </script>
 
@@ -17,7 +20,7 @@
   class:expanded
   class:position-right={position === 'right'}
   class:position-left={position === 'left'}
-  style="width: {width}; z-index: {zIndex};"
+  style={`width: ${width}; z-index: ${zIndex}; top: ${top}; bottom: ${bottom}; position: ${positioning};`}
 >
   <slot />
 </div>
@@ -27,7 +30,7 @@
   class:expanded
   class:position-right={position === 'right'}
   class:position-left={position === 'left'}
-  style="top: {handlePosition}; --panel-width: {width}; z-index: {zIndex + 1};"
+  style={`top: ${handlePosition}; --panel-width: ${width}; z-index: ${zIndex + 1}; position: ${positioning};`}
   on:click={() => (expanded = !expanded)}
   aria-label={expanded ? "Collapse panel" : "Expand panel"}
 >
@@ -51,8 +54,8 @@
     background-color: var(--color-surface-elevated);
     border: 1px solid var(--color-border);
     box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
-    @apply fixed top-0 bottom-0 h-screen overflow-y-auto transition-all duration-500
-           transform;
+    @apply overflow-y-auto transition-all duration-500 transform;
+    max-height: 100%;
   }
   
   /* Right-side positioning */
@@ -79,7 +82,7 @@
     color: var(--color-text-primary);
     border: 1px solid var(--color-border);
     box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
-    @apply fixed h-12 w-10 flex justify-center items-center
+    @apply h-12 w-10 flex justify-center items-center
            cursor-pointer transition-all duration-500
            transform -translate-y-1/2 hover:bg-opacity-90;
   }

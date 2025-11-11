@@ -446,31 +446,33 @@
     <!-- <div class="boxHead">Targets</div> -->
     <Card variant="dark" padding="sm" rounded={true} className="cardBox">
       <ScrollContainer maxHeight="60vh" className="scroll-content">
-        {#if viewerOpen}
-        {#each [...targetArray, "Add"] as target, i (target)}
-          {#if target === "Add" && i < 2}
+      {#if viewerOpen}
+      {#each [...targetArray, "Add"] as target, i (target)}
+        {#if target === "Add" && i < 2}
             <Card
               className="addCard {i === 1 ? 'verificationAdd' : ''}"
-              on:click={() => addTarget()}
+            on:click={() => addTarget()}
               interactive={true}
               padding="md"
               rounded={true}
-            >
-              <div class="clickHere">Click Here</div>
-              {#if i === 0}
-                Add a patch selection grid for calibration
-              {:else}
-                Add a patch selection grid for verification
-              {/if}
-              <PlusCircleIcon size="2x" />
+          >
+            <div class="clickHere">Click Here</div>
+            {#if i === 0}
+              Add a patch selection grid for calibration
+            {:else}
+              Add a patch selection grid for verification
+            {/if}
+            <PlusCircleIcon size="2x" />
             </Card>
-          {:else if target !== "Add"}
+        {:else if target !== "Add"}
             <Card
               className="card {i === 0 ? 'colorTarget' : ''} {i !== 0 ? 'verificationTarget' : ''}"
               variant="default"
-              padding="lg"
+              padding="none"
               rounded={true}
-            >
+          >
+            <div class="color-indicator" style="background-color: hsl({target.color}, 100%, 50%);"></div>
+            <div class="card-content">
             <h2>{target.name}</h2>
             <input
               type="range"
@@ -696,6 +698,7 @@
               on:click={() => removeTarget(i)}
               ><XCircleIcon size="1.25x" /></button
             >
+            </div>
             </Card>
         {/if}
       {/each}
@@ -769,15 +772,16 @@
     background-color: var(--color-surface-base);
     @apply relative w-full h-auto overflow-visible;
   }
-  .colorTarget {
-    background-color: hsl(var(--color_hue), 100%, 30%);
-  }
   .validatedTitle {
     @apply flex items-center justify-center gap-2;
   }
 
-  .verificationTarget {
-    background-color: hsl(var(--verfiy_hue), 100%, 30%);
+  .color-indicator {
+    @apply w-full h-1.5 rounded-t-lg;
+  }
+
+  .card-content {
+    @apply p-4 flex flex-col gap-3;
   }
 
   h2 {
