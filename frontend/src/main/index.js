@@ -99,7 +99,7 @@ ipcMain.handle('ipc-Dialog', async (event, arg) => {
 const createBackendContext = () => {
   // once port is received, it returns from .then() and continues forth
   // has to be done the line after, otherwise returns promise while awaiting
-  getPort({ host: '127.0.0.1' })
+  getPort({ host: '127.0.0.1', random: true})
     .then(port => {
       // kill backend if already running 
       if (loader)
