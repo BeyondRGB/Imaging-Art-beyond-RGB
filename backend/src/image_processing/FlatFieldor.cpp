@@ -36,7 +36,7 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
             target_found = true;
         }
         catch (const btrgb::ArtObj_ImageDoesNotExist& e){
-            comms->send_error("[Flat Fieldor]", "ArtObject Image does not exist.", std::stacktrace::current());
+            comms->send_error("[Flat Fieldor]", "ArtObject Image does not exist.", cpptrace::generate_trace());
             target_found = false;
         }
 

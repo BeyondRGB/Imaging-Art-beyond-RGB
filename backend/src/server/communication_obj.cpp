@@ -4,7 +4,7 @@
 
 #include <cppcodec/base64_rfc4648.hpp>
 #include <server/communication_obj.hpp>
-#include <stacktrace>
+#include <cpptrace/cpptrace.hpp>
 
 CommunicationObj::CommunicationObj(server* s, websocketpp::connection_hdl hd1, message_ptr msg) {
 	server_m = s;
@@ -45,14 +45,14 @@ void CommunicationObj::send_info(std::string msg, std::string sender){
 	send_msg(all_info);
 } 
 
-void CommunicationObj::send_error(std::string msg, std::string sender, std::stacktrace trace, bool critical){
+void CommunicationObj::send_error(std::string msg, std::string sender, cpptrace::stacktrace trace, bool critical){
 	jsoncons::json info_body;
 	info_body.insert_or_assign("RequestID", id);
 	info_body.insert_or_assign("ResponseType", "Error");
 	jsoncons::json response_data;
 	response_data.insert_or_assign("message", msg);
 	response_data.insert_or_assign("sender", sender);
-	response_data.insert_or_assign("trace", std::to_string(trace));
+	response_data.insert_or_assign("trace", trace.to_string());
 	response_data.insert_or_assign("critical", critical);
 	info_body.insert_or_assign("ResponseData", response_data);
 	std::string all_info;

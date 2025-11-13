@@ -1,5 +1,5 @@
 #include <regex>
-#include <stacktrace>
+#include <cpptrace/cpptrace.hpp>
 #include "backend_process/ReportRequest.hpp"
 
 ReportRequest::~ReportRequest() {}
@@ -16,7 +16,7 @@ void ReportRequest::run() {
         this->coms_obj_m->send_reports(verifcation_data.get_jsoncons(), "Verification");
     }
     catch(const std::exception& e) {
-        this->coms_obj_m->send_error("[ReportRequest] Invalid request.", "ReportRequest", std::stacktrace::current());
+        this->coms_obj_m->send_error("[ReportRequest] Invalid request.", "ReportRequest", cpptrace::generate_trace());
         return;
     }
 }

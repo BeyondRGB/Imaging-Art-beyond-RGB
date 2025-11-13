@@ -1,3 +1,6 @@
 [submodule "backend/submodules/websocketpp"]
 	path = backend/submodules/websocketpp
 	url = git@github.com:zaphoyd/websocketpp.git
+[submodule "backend/submodules/cpptrace"]
+	path = backend/submodules/cpptrace
+	url = git@github.com:jeremy-rifkin/cpptrace.git
