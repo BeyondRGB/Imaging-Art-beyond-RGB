@@ -54,8 +54,8 @@
   
   /* Interactive states */
   --color-interactive: #2c2c2e;         /* Buttons, switches base */
-  --color-interactive-hover: #3a3a3c;   /* Hover state */
-  --color-interactive-active: #48484a;  /* Active/pressed state */
+  --color-interactive-hover: #48484a;   /* Hover state - more distinct from surface */
+  --color-interactive-active: #5a5a5c;  /* Active/pressed state */
   
   /* Borders */
   --color-border: #3a3a3c;

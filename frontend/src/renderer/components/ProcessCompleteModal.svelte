@@ -47,16 +47,16 @@
 <style lang="postcss">
   main {
     background-color: var(--color-surface-elevated);
-    @apply w-[500px] rounded-xl shadow-2xl overflow-hidden p-8;
+    @apply w-[500px] rounded-xl shadow-2xl overflow-hidden;
   }
 
   h2 {
     color: var(--color-text-primary);
-    @apply text-2xl font-semibold mb-4 text-center;
+    @apply text-2xl font-semibold mb-4 text-center pt-8 px-8;
   }
 
   .modal-content {
-    @apply flex flex-col gap-6;
+    @apply flex flex-col gap-6 p-8 pt-0;
   }
 
   p {

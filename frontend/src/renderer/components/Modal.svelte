@@ -153,15 +153,15 @@
   
   /* Size variants */
   .size-small {
-    @apply max-w-md w-full;
+    @apply max-w-md w-fit;
   }
   
   .size-medium {
-    @apply max-w-2xl w-full;
+    @apply max-w-2xl w-fit;
   }
   
   .size-large {
-    @apply max-w-4xl w-full;
+    @apply max-w-4xl w-fit;
   }
   
   .size-fullscreen {

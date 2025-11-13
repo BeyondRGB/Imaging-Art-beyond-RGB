@@ -1,6 +1,7 @@
 <script lang="ts">
   import TextLogo from "@assets/TextLogo.svg";
   import About from "@root/components/About.svelte";
+  import Modal from "@root/components/Modal.svelte";
   import { currentPage, modal } from "@util/stores";
   import { fade } from "svelte/transition";
   import {
@@ -9,7 +10,6 @@
     InfoIcon,
     CopyIcon
   } from "svelte-feather-icons";
-  import CloseButton from "@components/CloseButton.svelte";
   import Button from "@components/Button.svelte";
     
 
@@ -29,17 +29,13 @@
 
 <main>
   {#if showAbout}
-    <div class="aboutContent">
-      <div class="aboutBg" on:click={() => (showAbout = false)} on:keydown={(e) => e.key === 'Escape' && (showAbout = false)} role="button" tabindex="0" />
-      <div class="aboutBox">
-        <CloseButton 
-          variant="absolute-top-right" 
-          onClick={() => (showAbout = false)}
-          size="1.5x"
-        />
-        <About />
-      </div>
-    </div>
+    <Modal 
+      component={About} 
+      size="large"
+      backdropBlur="md"
+      backdropOpacity="heavy"
+      on:close={() => (showAbout = false)}
+    />
   {/if}
   <div id="homeContent">
     <div id="welcome">
@@ -115,17 +111,6 @@
     pointer-events: none;
     @apply h-[10vh];
   }
-  .aboutContent {
-    @apply absolute w-full h-full flex justify-center items-center;
-  }
-  .aboutBg {
-    background-color: var(--color-overlay-heavy);
-    @apply absolute w-full h-full flex justify-center items-center;
-  }
-  .aboutBox {
-    @apply absolute w-1/2 h-auto z-[9999];
-  }
-
   .btnTitle {
     @apply w-full flex justify-center items-center gap-1 p-1 text-xl;
   }
