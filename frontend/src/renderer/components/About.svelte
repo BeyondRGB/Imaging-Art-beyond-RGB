@@ -1,14 +1,11 @@
 <script lang="ts">
   import ScrollContainer from "@components/ScrollContainer.svelte";
-  import { InfoIcon, BookOpenIcon, UsersIcon, CheckCircleIcon } from "svelte-feather-icons";
+  import { CheckCircleIcon } from "svelte-feather-icons";
   import { fade, fly } from "svelte/transition";
 </script>
 
 <main>
   <div class="modal-header" in:fly={{ y: -20, duration: 400, delay: 100 }}>
-    <div class="header-icon">
-      <InfoIcon size="2x" />
-    </div>
     <h1 class="title">About Beyond RGB</h1>
     <p class="subtitle">Imaging Art beyond RGB</p>
   </div>
@@ -18,7 +15,6 @@
       <!-- Overview Section -->
       <section class="info-section">
         <div class="section-header">
-          <InfoIcon size="1.25x" />
           <h2>Overview</h2>
         </div>
         <p class="section-text">
@@ -48,7 +44,6 @@
       <!-- Design Philosophy Section -->
       <section class="info-section">
         <div class="section-header">
-          <BookOpenIcon size="1.25x" />
           <h2>Design Philosophy</h2>
         </div>
         <p class="section-text">
@@ -71,7 +66,6 @@
       <!-- Development Team Section -->
       <section class="info-section team-section">
         <div class="section-header">
-          <UsersIcon size="1.25x" />
           <h2>Development Teams</h2>
         </div>
         <p class="section-text">
