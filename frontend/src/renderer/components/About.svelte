@@ -72,25 +72,75 @@
       <section class="info-section team-section">
         <div class="section-header">
           <UsersIcon size="1.25x" />
-          <h2>Development Team</h2>
+          <h2>Development Teams</h2>
         </div>
         <p class="section-text">
-          Beyond RGB was developed by a talented team of developers who dedicated their
+          Beyond RGB was developed by talented teams of developers across five years who dedicated their
           time and expertise to creating this powerful tool for the cultural heritage imaging community.
         </p>
-        <div class="team-grid">
-          <div class="team-member">Patrick Dalesio</div>
-          <div class="team-member">Andrew Hammerstone</div>
-          <div class="team-member">Tristan Knox</div>
-          <div class="team-member">Jake O'Neil</div>
-          <div class="team-member">Jared Ponzetti</div>
-          <div class="team-member">Nat Manoucheri</div>
-          <div class="team-member">Parker Noffke</div>
-          <div class="team-member">Taylor Lineman</div>
-          <div class="team-member">Raynard Miot</div>
-          <div class="team-member">Jack Ganger-Spivak</div>
-          <div class="team-member">Jakob Langtry</div>
+
+        <!-- Team 1 -->
+        <div class="team-year">
+          <h3>Senior Project Team 1</h3>
+          <div class="team-grid">
+            <div class="team-member">Tristan Knox</div>
+            <div class="team-member">Jacob O'Neil</div>
+            <div class="team-member">Andrew Hammerstone</div>
+            <div class="team-member">Jared Ponzetti</div>
+            <div class="team-member">Patrick Dalesio</div>
+          </div>
         </div>
+
+        <!-- Team 2 -->
+        <div class="team-year">
+          <h3>Senior Project Team 2</h3>
+          <div class="team-grid">
+            <div class="team-member">Brendan Grau</div>
+            <div class="team-member">Sungmin Kim</div>
+            <div class="team-member">Keenan Miller</div>
+            <div class="team-member">John Akey</div>
+            <div class="team-member">Elijah Cooper</div>
+          </div>
+        </div>
+
+        <!-- Team 3 -->
+        <div class="team-year">
+          <h3>Senior Project Team 3</h3>
+          <div class="team-grid">
+            <div class="team-member">Sam McQuate</div>
+            <div class="team-member">Jacob Auger</div>
+            <div class="team-member">Josh Greco</div>
+            <div class="team-member">Robert Loos</div>
+            <div class="team-member">Jonathan Pofcher</div>
+          </div>
+        </div>
+
+        <!-- Team 4 -->
+        <div class="team-year">
+          <h3>Senior Project Team 4</h3>
+          <div class="team-grid">
+            <div class="team-member">Ray Axmann</div>
+            <div class="team-member">Noah Pelletier</div>
+            <div class="team-member">Mitchell Sulkowski</div>
+            <div class="team-member">Christopher Cabonilas</div>
+            <div class="team-member">Cameron Robinson</div>
+            <div class="team-member">Adam Cropp</div>
+          </div>
+        </div>
+
+        <!-- Team 5 -->
+        <div class="team-year">
+          <h3>Senior Project Team 5</h3>
+          <div class="team-grid">
+            <div class="team-member">Nat Manoucheri</div>
+            <div class="team-member">Parker Noffke</div>
+            <div class="team-member">Taylor Lineman</div>
+            <div class="team-member">Raynard Miot</div>
+            <div class="team-member">Jack Ganger-Spivak</div>
+            <div class="team-member">Jakob Langtry</div>
+          </div>
+        </div>
+
         <p class="thank-you">
           Thank you for the time and talent you devoted to creating this tool.
           <span class="easter-egg">It really is better than Really Good Bread.</span>
@@ -201,8 +251,17 @@
     @apply font-mono bg-gray-700/30 px-2 py-1 rounded;
   }
 
+  .team-year {
+    @apply mt-6 first:mt-0;
+  }
+
+  .team-year h3 {
+    color: var(--color-text-secondary);
+    @apply text-base font-semibold mb-3 pb-2 border-b border-gray-700/20;
+  }
+
   .team-grid {
-    @apply grid grid-cols-2 gap-3 mt-4 mb-4;
+    @apply grid grid-cols-2 gap-3;
   }
 
   .team-member {
