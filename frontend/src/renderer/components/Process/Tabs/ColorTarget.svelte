@@ -475,7 +475,6 @@
               padding="none"
               rounded={true}
           >
-            <div class="color-indicator" style="background-color: hsl({target.color}, 100%, 50%);"></div>
             <div class="card-content">
             <h2>{target.name}</h2>
             <input
@@ -745,6 +744,16 @@
     padding-top: 0.5rem;
     padding-right: 0.5rem;
   }
+  
+  :global(.colorTarget) {
+    border: 3px solid hsl(var(--color_hue), 100%, 50%) !important;
+    box-shadow: 0 0 15px hsla(var(--color_hue), 100%, 50%, 0.4) !important;
+  }
+  
+  :global(.verificationTarget) {
+    border: 3px solid hsl(var(--verfiy_hue), 100%, 50%) !important;
+    box-shadow: 0 0 15px hsla(var(--verfiy_hue), 100%, 50%, 0.4) !important;
+  }
   .invalid {
     @apply text-red-600;
   }
@@ -798,10 +807,6 @@
   }
   .validatedTitle {
     @apply flex items-center justify-center gap-2;
-  }
-
-  .color-indicator {
-    @apply w-full h-1.5 rounded-t-lg;
   }
 
   .card-content {
