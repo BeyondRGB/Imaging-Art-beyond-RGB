@@ -10,6 +10,10 @@ contextBridge.exposeInMainWorld('electron', {
     const result = await ipcRenderer.invoke('ipc-getPort');
     return result;
   },
+  async restartBackend() {
+    const result = await ipcRenderer.invoke('ipc-restartBackend');
+    return result;
+  },
   async openNewWindow() {
     const result = await ipcRenderer.invoke('ipc-createNewWindow');
     return result;

@@ -113,5 +113,6 @@ void SpectralPickerMeasured::run() {
     }
     catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
+        this->coms_obj_m->send_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
     }
 }

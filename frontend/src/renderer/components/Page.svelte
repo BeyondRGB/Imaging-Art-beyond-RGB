@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let routes;
+	export let pages;
 	import { fade, fly } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";
 	import { currentPage, appSettings, modal, serverError } from "@util/stores";
@@ -27,14 +28,10 @@
 	}
 </script>
 
-<div class="page">
+<div class="page" bind:this={pages} class:sideMain={$appSettings.sideNav}>
 	{#each Object.keys(routes) as pageKey}
-		{#if routes[pageKey].page && !routes[pageKey].disabled && $currentPage === pageKey}
-			<div
-				class="content"
-				in:fly={{ y: 20, duration: 200, easing: cubicOut }}
-				out:fade={{ duration: 150 }}
-			>
+		{#if routes[pageKey].page && !routes[pageKey].disabled}
+			<div class="content">
 				<svelte:component this={routes[pageKey].component} />
 			</div>
 		{/if}
@@ -91,10 +88,13 @@
 <style lang="postcss" local>
 	.page {
 		background-color: var(--color-surface-base);
-		@apply w-full h-full pt-0 relative overflow-hidden;
+		@apply w-full h-full pt-0 relative overflow-hidden flex;
+	}
+	.sideMain {
+		@apply flex-col;
 	}
 	
 	.content {
-		@apply w-full h-full relative;
+		@apply w-full h-full relative flex-shrink-0;
 	}
 </style>

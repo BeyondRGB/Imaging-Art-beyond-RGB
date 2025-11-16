@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		viewState,
 		sendMessage,
@@ -10,7 +10,6 @@
 	import LinearChart from "@root/components/Charts/LinearChart.svelte";
 	import FileSelector from "@components/FileSelector.svelte";
 	import VectorChart from "@components/Charts/VectorChart.svelte";
-	import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
 	import ImageViewer from "@root/components/ImageViewer.svelte";
 	import LineChart from "@components/Charts/LineChart.svelte";
 	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
@@ -30,7 +29,8 @@
 	let shadowPos = { left: 0, top: 0 };
 	let expand = false;
 	let combinedData = [];
-	  let trueShadowPos = shadowPos;
+    let trueShadowPos = shadowPos;
+    let oldProjectKey: String;
 
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
@@ -119,6 +119,26 @@
 		sendMessage(JSON.stringify(msg));
 	}
 
+    // Close the current image whenever a new project is opened
+    $: if ($viewState.projectKey !== null) {
+        console.log(`New Project Key ${$viewState.projectKey}, Old: ${oldProjectKey}`)
+
+        if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
+            console.log(`Closing Old Project Key ${oldProjectKey}`);
+            handleCloseReport(false)
+
+            // Track the current open project
+            oldProjectKey = $viewState.projectKey;
+        }
+
+        // If there is no previous project, set the old project key. Otherwise, it will be set in the above function.
+        if (oldProjectKey === null || oldProjectKey === undefined) {
+            console.log(`Setting Old Project Key ${$viewState.projectKey}`);
+            oldProjectKey =  $viewState.projectKey;
+        }
+    }
+
+    // Initialize a new project key
 	let toggle = false;
 	$: if (
 		$currentPage === "Reports" &&
@@ -130,6 +150,8 @@
 		colorManagedTargetImage();
 		getReports();
 	}
+
+    // Load an image from a file
 	let mainfilePath;
 	$: if (mainfilePath?.length > 0) {
 		console.log("New Project Key");
@@ -159,17 +181,17 @@
 							calibration: temp["ResponseData"]["reports"]
 						}
 					}));
-				} 
-				else if (temp["ResponseData"]["reportType"] === "Verification") {
-					viewState.update(state => ({
-						...state,
-						reports: {
-							...state.reports,
-							verification: temp["ResponseData"]["reports"]
-						}
-					}));
-				} 
-				else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
+			} 
+			else if (temp["ResponseData"]["reportType"] === "Verification") {
+				viewState.update(state => ({
+					...state,
+					reports: {
+						...state.reports,
+						verification: temp["ResponseData"]["reports"]
+					}
+				}));
+			} 
+			else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
 					console.log("Spectrum Data From Server");
 					spectrumDataHeatMap_est = temp["ResponseData"]["estimated_spectrum"];
 					spectrumDataHeatMap_ref = temp["ResponseData"]["referenced_spectrum"];

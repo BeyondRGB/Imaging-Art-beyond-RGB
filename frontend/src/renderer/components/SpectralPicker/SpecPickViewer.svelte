@@ -6,7 +6,7 @@
 
   export let size = 0.01;
   export let trueSize;
-  export let show = true;
+  export let showBrush;
 
   export let shadowPos;
   export let trueShadowPos;
@@ -16,7 +16,6 @@
   let viewer;
   let imageUrl = "";
 
-  let pressPos = { top: 0, bottom: 0, left: 0, right: 0 };
   let linearZoom = 0;
   let viewportPoint;
   let imagePoint;
@@ -44,14 +43,6 @@
 
     viewer.addHandler("zoom", handleZoom);
   };
-
-  onDestroy(() => {
-    if (viewer) {
-      viewer.destroy();
-      viewer = null;
-      console.log("SpecPicker viewer destroyed");
-    }
-  });
 
   const destoryViewer = () => {
     if (viewer) {
@@ -145,15 +136,6 @@
       }, 200);
     }
   }
-
-  // $: if (show) {
-  //   console.log("Brush Enabled 3");
-  //   setTimeout(() => {
-  //     addOverlay();
-  //   }, 0);
-  // } else {
-  //   removeOverlay();
-  // }
 
   function removeOverlay() {
     console.log("Remove Brush");

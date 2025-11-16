@@ -22,7 +22,7 @@ void RequestServer::init_server() {
                  ::_1, 
                  ::_2));
 
-        // Listen on port 9002
+        // Listen on port given by frontend
         server_m.listen(GlobalsSingleton::get_instance()->get_port());
     }
     catch (websocketpp::exception const& e) {

@@ -71,9 +71,9 @@
 
   function handleComplete(id) {
     if (id === 0) {
-      reset();
-      currentPage.set("SpecPicker");
-      console.log({ RESETING: $currentPage });
+        reset();
+        console.log({ RESETTING: $currentPage });
+        currentPage.set("SpecPicker");
     } else if (id === 1) {
       reset();
     }

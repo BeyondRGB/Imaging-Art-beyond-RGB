@@ -2,6 +2,7 @@
 #define COMMUNICATOR_H
 
 #include <server/communication_obj.hpp>
+#include <cpptrace/cpptrace.hpp>
 
 /*
 Communications class, used for communication with the front end.
@@ -21,7 +22,7 @@ public:
 	* Set the CommunicationObj to be used for sending messages
 	* @param coms_obj: the CommunicationObj to set
 	*/
-	void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj);
+	void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj); 
 
 	/**
 	* Report error
@@ -31,7 +32,7 @@ public:
 	*	TODO log error?
 	* @param error: the error msg to report
 	*/
-	void report_error(std::string reporter, std::string error);
+	void report_error(std::string reporter, std::string error, cpptrace::stacktrace trace);
 protected:
 	std::shared_ptr<CommunicationObj> coms_obj_m;
 };

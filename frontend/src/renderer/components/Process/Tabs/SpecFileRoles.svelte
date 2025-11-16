@@ -4,6 +4,9 @@
     import Button from "@components/Button.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
+    import { modal } from "@util/stores";
+    import Modal from "@components/Modal.svelte";
+    import SortInfoModal from "@components/SortInfoModal.svelte";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let rerenderToggle = false;
@@ -69,16 +72,26 @@
 </script>
 
 <main>
+    {#if $modal === "SortInfoModal"}
+        <Modal
+            component={SortInfoModal}
+            on:close={() => {
+                $modal = null;
+            }}
+        />
+    {/if}
     {#key rerenderToggle}
         <panel>
             <h1>Specify Image Roles</h1>
             <p>Drag and drop each image into its appropriate role</p>
             <div>
-            <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
-            <div class="btnGroup" style="margin: 50px 65px 0 0;">
-                <Button variant="secondary" size="md" onClick={autoSort}>Auto-sort images</Button>
+                <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
+                <div class="btnGroup" style="margin: 50px 65px 0 0;">
+                    <Button variant="secondary" size="md" onClick={autoSort}>Auto-sort images</Button>
+                </div>
             </div>
-        </div>
+               
+            
         </panel>
         <right>
             <div class="centerFlexBox">
@@ -141,6 +154,11 @@
         color: var(--color-text-primary);
         margin: 25px;
         font-size: 35px;
+        width: 100%;
+    }
+    h2 {
+        margin: 25px;
+        font-size: 28px;
         width: 100%;
     }
     p {

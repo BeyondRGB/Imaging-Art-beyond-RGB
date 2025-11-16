@@ -6,6 +6,9 @@
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortBatchImages } from "@util/autoSortStandards.svelte";
     import { countFields } from "@root/util/storesUtil";
+    import { modal } from "@util/stores";
+    import Modal from "@components/Modal.svelte";
+    import SortInfoModal from "@components/SortInfoModal.svelte";
 
     let imageStack = get($processState, 'artStacks[0].fields');
     let artImageStackA = get($batchImagesA);
@@ -87,6 +90,14 @@
 </script>
 
 <main>
+    {#if $modal === "SortInfoModal"}
+        <Modal
+            component={SortInfoModal}
+            on:close={() => {
+                $modal = null;
+            }}
+        />
+    {/if}
     {#key rerenderToggle}
         <panel>
             <div class="leftHeader">

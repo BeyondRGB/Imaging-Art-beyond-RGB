@@ -1,4 +1,5 @@
 #include "backend_process/ColorManagedImage.hpp"
+#include <cpptrace/cpptrace.hpp>
 
 ColorManagedImage::~ColorManagedImage() {}
 
@@ -21,8 +22,7 @@ void ColorManagedImage::run() {
             }catch(const std::exception& e){
                 //CM_target may be unavailable since it was added in BeyondRGB 2.0
                 //in which case end early using return
-                std::cout << e.what() << std::endl;
-                this->coms_obj_m->send_error("Color Managed Target image is unavailable", "ColorManagedImage", true);
+                this->coms_obj_m->send_error("Color Managed Target image is unavailable", "ColorManagedImage", cpptrace::generate_trace(), true);
                 return;
             }
         }else{
@@ -46,7 +46,9 @@ void ColorManagedImage::run() {
                 profile, profile_size, 
                 (void*) btrgb::sRGB2014_icc_data, btrgb::sRGB2014_icc_size
             );
-        } catch(const std::exception& e) {}
+        } catch(const std::exception& e) {
+                this->coms_obj_m->send_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
+        }
 
 
         /* Wrap the Mat as an Image object. */
@@ -59,10 +61,10 @@ void ColorManagedImage::run() {
 
     }
     catch(const ParsingError& e) {
-        this->coms_obj_m->send_error("Invalid ColorManagedImage JSON", "ColorManagedImage");
+        this->coms_obj_m->send_error("Invalid ColorManagedImage JSON", "ColorManagedImage", cpptrace::generate_trace());
     }
     catch(const std::exception& e) {
-        this->coms_obj_m->send_error(e.what(), "ColorManagedImage");
+        this->coms_obj_m->send_error(e.what(), "ColorManagedImage", cpptrace::generate_trace());
     }
     
     tiff_reader->recycle();

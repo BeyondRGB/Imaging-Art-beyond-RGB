@@ -15,7 +15,6 @@
     ChevronLeftIcon,
     ChevronRightIcon,
   } from "svelte-feather-icons";
-  import { fly } from "svelte/transition";
   import LineChart from "@components/Charts/LineChart.svelte";
   import SwitchRow from "@components/SwitchRow.svelte";
   import Card from "@components/Card.svelte";
@@ -23,7 +22,7 @@
   import { fullScreenApi } from "openseadragon";
   import EmptyState from "@components/EmptyState.svelte";
 
-  let brushShow = false;
+  let showBrush = false;
   let stackCurves = false;
   let size = 0.01; // Default size matching SpecPickViewer default
   let trueSize;
@@ -31,6 +30,7 @@
   let trueShadowPos = { left: 0, top: 0 };
   let spectrumData = []; // Initialize as empty array
   let mainfilePath;
+  let oldProjectKey: String;
 
   let loading = false;
 
@@ -155,13 +155,44 @@
     sendMessage(JSON.stringify(msg));
   }
 
+  // Close the current image whenever a new project is opened
+  $: if ($viewState.projectKey !== null) {
+      console.log(`New Project Key 2 ${$viewState.projectKey}, Old: ${oldProjectKey}`)
+
+      if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
+          console.log(`Closing Old Project Key ${oldProjectKey}`);
+          closeImage(false);
+
+          // Track the current open project
+          oldProjectKey = $viewState.projectKey;
+      }
+
+      // If there is no previous project, set the old project key. Otherwise, it will be set in the above function.
+      if (oldProjectKey === null || oldProjectKey === undefined) {
+          console.log(`Setting Old Project Key ${$viewState.projectKey}`);
+          oldProjectKey =  $viewState.projectKey;
+      }
+  }
+
+  // When the user loads a file from the file browser.
+  $: if (mainfilePath?.length > 0) {
+      console.log(`New Project Key ${mainfilePath[0]}, Old Key ${mainfilePath[0]}`);
+      $viewState.projectKey = mainfilePath[0];
+
+      // If there is no previous project, set the old project key. Otherwise it will be set in the above function.
+      if (oldProjectKey === null || oldProjectKey === undefined) {
+          console.log(`Setting Old Project Key ${mainfilePath[0]}`);
+          oldProjectKey = mainfilePath[0];
+      }
+  }
+
+  // When a new project is opened, and the colorManagedImage is not available fetch the image.
   $: if (
     $currentPage === "SpecPicker" &&
     $viewState.projectKey !== null &&
     $viewState.colorManagedImage.dataURL.length < 1
   ) {
-    console.log("Getting FIRST Color Managed Image");
-    // CALL FOR CM
+    console.log("Getting Color Managed Image");
     colorManagedImage();
   }
 
@@ -196,8 +227,8 @@
       }
     }));
     mainfilePath = "";
+    showBrush = false;
   }
-
 </script>
 
 <main>
@@ -245,7 +276,7 @@
             bind:shadowPos
             bind:trueShadowPos
             bind:trueSize
-            bind:show={brushShow}
+            bind:showBrush={showBrush}
             bind:size
             bind:loading
           />
@@ -267,7 +298,7 @@
               <SwitchRow
                 label="Enable Spectral Picker"
                 description="Show the sampling brush on the image preview"
-                bind:checked={brushShow}
+                bind:checked={showBrush}
                 ariaLabel="Toggle spectral picker"
               />
               <SwitchRow

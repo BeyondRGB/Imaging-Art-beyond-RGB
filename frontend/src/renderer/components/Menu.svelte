@@ -155,7 +155,7 @@
 
   .menuBtns {
     @apply flex list-none w-[60%] whitespace-nowrap overflow-hidden 
-            self-center justify-start items-stretch;
+            self-center justify-start;
   }
 
   .sideMain .menuBtns {
@@ -165,6 +165,7 @@
   .sideMain .menuBtns button {
     @apply h-full flex-1;
   }
+
 
   .ctlBtns {
     background-color: var(--color-overlay-light);

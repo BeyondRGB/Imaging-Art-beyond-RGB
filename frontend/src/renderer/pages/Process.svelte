@@ -84,7 +84,7 @@
   }
   
 	$: if($viewState.projectKey != null) {
-	    processRequest.RequestData.outputDirectory=$viewState.projectKey;
+	    processRequest.RequestData.outputDirectory = $viewState.projectKey;
 	}
 		
 
@@ -196,6 +196,7 @@
           serverError.set({
             sender: temp["ResponseData"]["sender"],
             message: temp["ResponseData"]["message"],
+            trace: temp["ResponseData"]["trace"],
           });
           console.log({ SERVERERROR: temp["ResponseData"] });
         }
@@ -287,7 +288,7 @@
 
   $: if (processRequest != null) {
   	if($viewState.projectKey != null) {
-	    processRequest.RequestData.outputDirectory=$viewState.projectKey;
+	    processRequest.RequestData.outputDirectory = $viewState.projectKey;
 	}
 	processRequest.RequestData.batch = $processState.batch;
     if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
