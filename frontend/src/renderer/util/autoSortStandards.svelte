@@ -311,16 +311,16 @@
 
         // handle A - B sorting
         if(includeTarget) {
-            imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.imageA[0][0]);
+            imageStack.bestTargetImages = sortImageByLighting(imageStack?.bestTargetImages[0], imageStack?.bestTargetImages[1], externalStack.imageA[0]);
             externalStack.targetA = [imageStack?.bestTargetImages[0]];
             externalStack.targetB = [imageStack?.bestTargetImages[1]];
         }
 
-        imageStack.bestFlatFieldImages = sortImageByLighting(imageStack?.bestFlatFieldImages[0], imageStack?.bestFlatFieldImages[1], externalStack.imageA[0][0]);
+        imageStack.bestFlatFieldImages = sortImageByLighting(imageStack?.bestFlatFieldImages[0], imageStack?.bestFlatFieldImages[1], externalStack.imageA[0]);
         externalStack.flatfieldA = [imageStack?.bestFlatFieldImages[0]];
         externalStack.flatfieldB = [imageStack?.bestFlatFieldImages[1]];
 
-        imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.imageA[0][0]);
+        imageStack.bestDarkFieldImages = sortImageByLighting(imageStack?.bestDarkFieldImages[0], imageStack?.bestDarkFieldImages[1], externalStack.imageA[0]);
         externalStack.darkfieldA = [imageStack?.bestDarkFieldImages[0]];
         externalStack.darkfieldB = [imageStack?.bestDarkFieldImages[1]];
 

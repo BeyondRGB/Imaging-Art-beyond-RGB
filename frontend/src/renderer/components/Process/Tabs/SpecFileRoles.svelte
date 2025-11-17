@@ -74,8 +74,8 @@
     function getList(location) {
         const mapping = {
             [ImageField.ROLES]: $processState.imageFilePaths,
-            [ImageField.IMAGE_A]: imageStack.imageA[0],
-            [ImageField.IMAGE_B]: imageStack.imageB[0],
+            [ImageField.IMAGE_A]: imageStack.imageA,
+            [ImageField.IMAGE_B]: imageStack.imageB,
             [ImageField.TARGET_A]: imageStack.targetA,
             [ImageField.TARGET_B]: imageStack.targetB,
             [ImageField.FLAT_A]: imageStack.flatfieldA,
@@ -164,9 +164,11 @@
 
         if (trigger === TRIGGERS.DRAG_STARTED) {
             // If the drag started, record the last drag location.
+            console.log(`Drag Started ${location}`)
             lastDragLocation = location;
         } else if ([TRIGGERS.DROPPED_INTO_ANOTHER, TRIGGERS.DROPPED_INTO_ZONE, TRIGGERS.DROPPED_OUTSIDE_OF_ANY].includes(trigger)) {
             // If any of the ending drag triggers have been sent, reset the last drag location.
+            console.log('Drag Ended')
             lastDragLocation = null;
         }
     }
@@ -201,14 +203,14 @@
                     </div>
                     <div class="text">Object</div>
                     <div class="inputGroup">
-                        <div class="cell"><Dropbox id={ImageField.IMAGE_A} type="image" bind:items={imageStack.imageA[0]} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
-                        <div class="cell"><Dropbox id={ImageField.IMAGE_B} type="image" bind:items={imageStack.imageB[0]} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                        <div class="cell"><Dropbox id={ImageField.IMAGE_A} type="image" bind:items={imageStack.imageA} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                        <div class="cell"><Dropbox id={ImageField.IMAGE_B} type="image" bind:items={imageStack.imageB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
                     </div>
                     {#if $processState.imageFilePaths && showTargetDropZones()}
                         <div class="text">Target</div>
                         <div class="inputGroup">
                             <div class="cell"><Dropbox id={ImageField.TARGET_B} type="image" bind:items={imageStack.targetA} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
-                            <div class="cell"><Dropbox id={ImageField.TARGET_A} type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                            <div class="cell"><Dropbox .={ImageField.TARGET_A} type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
                         </div>
                     {/if}
                     <div class="text">FlatField</div>

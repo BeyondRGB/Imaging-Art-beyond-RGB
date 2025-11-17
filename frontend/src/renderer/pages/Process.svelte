@@ -62,12 +62,12 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
 	$processState.batch=true;
     $processState.currentTab-=1;
     $processState.pipelineComplete = false;
-    $processState.artStacks[0].fields.imageA.shift();
-    $processState.artStacks[0].fields.imageB.shift();
+    $processState.artStacks[0].fields.imageA = [];
+    $processState.artStacks[0].fields.imageB = [];
 
 
-    // $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
-    // $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
+    // $processState.artStacks[0].fields.imageA.name = $batchImagesA[batchCount]
+    // $processState.artStacks[0].fields.imageB.name = $batchImagesB[batchCount]
     batchCount+=1;
     handleConfirm();
   }
@@ -213,12 +213,12 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     RequestData: {
       images: [
         {
-          art: $processState.artStacks[0].fields.imageA[0]?.[0]?.name,
+          art: $processState.artStacks[0].fields.imageA[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldA[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldA[0]?.name,
         },
         {
-          art: $processState.artStacks[0].fields.imageB[0]?.[0]?.name,
+          art: $processState.artStacks[0].fields.imageB[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldB[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldB[0]?.name,
         },

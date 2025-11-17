@@ -125,19 +125,16 @@
 
   function colorTargetPrev() {
     $processState.colorTargetID = Math.floor(Math.random() * 999999999);
-    // console.log($processState);
 
     let targetImage = "";
-    
-
 
     if ($processState.artStacks[0].fields.targetA.length !== 0) {
       console.log("Found Target");
       targetImage = $processState.artStacks[0].fields.targetA[0].name;
     }
     else{
-      console.log("Didnt Find Target");
-      targetImage = $processState.artStacks[0].fields.imageA[0][0].name; 
+      console.log(`Didnt Find Target, using imageA`);
+      targetImage = $processState.artStacks[0].fields.imageA[0].name;
     }
 
     let msg = {
@@ -152,26 +149,21 @@
       !loading
     ) {
       console.log("Getting Color Target Preview");
-      console.log(msg);
       loading = true;
       sendMessage(JSON.stringify(msg));
     }
   }
 
   $: if ($processState.currentTab === 6) {
-    console.log("Update");
-    console.log($processState);
     update();
-    console.log($processState);
   }
 
   $: if (
     $processState.currentTab === 5 &&
     $processState.artStacks[0].colorTargetImage?.filename?.length === 0 &&
-    $processState.artStacks[0].fields.imageA[0] != null
+    $processState.artStacks[0].fields.imageA != null
   ) {
     console.log("Getting Color Target Preview");
-    console.log($processState);
     colorTargetPrev();
   }
 

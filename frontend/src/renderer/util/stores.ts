@@ -62,8 +62,8 @@ export const processState = writable({
       verificationTarget: {},
       sharpenString: "N",
       fields: {
-          [ImageField.IMAGE_A]: [[]],
-          [ImageField.IMAGE_B]: [[]],
+          [ImageField.IMAGE_A]: [],
+          [ImageField.IMAGE_B]: [],
           [ImageField.TARGET_A]: [],
           [ImageField.TARGET_B]: [],
           [ImageField.FLAT_A]: [],
