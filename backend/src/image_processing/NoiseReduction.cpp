@@ -27,7 +27,7 @@ void NoiseReduction::execute(CommunicationObj* comms, btrgb::ArtObject* images) 
         targets_found = true;
     }
     catch (std::exception e) {
-        comms->send_error("[Noise Reduction]", "No target was able to be found.", std::stacktrace::current());
+        comms->send_error("[Noise Reduction]", "No target was able to be found.", cpptrace::generate_trace());
         targets_found = false;
     }
 

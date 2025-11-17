@@ -3,6 +3,9 @@
     import Dropbox from "@components/Process/Dropbox.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
+    import { modal } from "@util/stores";
+    import Modal from "@components/Modal.svelte";
+    import SortInfoModal from "@components/SortInfoModal.svelte";
     import { TRIGGERS } from "svelte-dnd-action";
     import { ImageField } from "@util/ImageField";
 
@@ -35,7 +38,8 @@
     };
 
     const autoSort = function () {
-        $processState.imageFilePaths = autoSortImages(getAllImages(), imageStack);
+        let leftoverImages = autoSortImages(getAllImages(), imageStack);
+        $processState.imageFilePaths = leftoverImages;
         rerenderToggle = !rerenderToggle;
     };
 
@@ -169,6 +173,14 @@
 </script>
 
 <main>
+    {#if $modal === "SortInfoModal"}
+        <Modal
+            component={SortInfoModal}
+            on:close={() => {
+                $modal = null;
+            }}
+        />
+    {/if}
     {#key rerenderToggle}
         <panel>
             <h1>Specify Image Roles</h1>
@@ -239,6 +251,11 @@
     h1 {
         margin: 25px;
         font-size: 35px;
+        width: 100%;
+    }
+    h2 {
+        margin: 25px;
+        font-size: 28px;
         width: 100%;
     }
     p {

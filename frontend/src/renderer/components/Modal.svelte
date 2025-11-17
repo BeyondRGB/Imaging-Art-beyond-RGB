@@ -91,7 +91,7 @@
   }
 
   .modal-container {
-    @apply absolute flex flex-col items-center justify-center z-[9999] w-full h-full pointer-events-none;
+    @apply absolute top-0 left-0 flex flex-col items-center justify-center z-[9999] w-full h-full pointer-events-none;
   }
 
   .modal-content {

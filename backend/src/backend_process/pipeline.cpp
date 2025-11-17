@@ -11,7 +11,7 @@
 #include <image_processing/PreProcessor.h>
 #include <image_processing/ImageCalibrator.h>
 #include <image_processing/ImageProcessor.h>
-#include <stacktrace>
+#include <cpptrace/cpptrace.hpp>
 
 std::shared_ptr<ImgProcessingComponent> Pipeline::pipelineSetup() {
     //Set up PreProcess components
@@ -64,7 +64,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
                 art_obj->newImage(("target" + std::to_string(i + 1)), target_file);
             }catch(ParsingError e){ 
                 /* No target provided. We expect the target to be in the art image */
-                this->report_error(this->get_process_name(), "No target provided when target was expected.", std::stacktrace::current());
+                this->report_error(this->get_process_name(), "No target provided when target was expected.", cpptrace::generate_trace());
             }
         }
         //Collect the information provided about the color target
@@ -81,7 +81,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
-        this->report_error(name, "ParsingError Occurred while trying to initialize an ArtObject.", std::stacktrace::current());
+        this->report_error(name, "ParsingError Occurred while trying to initialize an ArtObject.", cpptrace::generate_trace());
     }
     return false;
 }
@@ -176,14 +176,14 @@ void Pipeline::run() {
         }
    
         catch (const ParsingError& e) {
-            this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+            this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         }
     }
     else {
         try {
             out_dir = this->get_output_directory(filenameWithoutExtension);
         } catch(const std::exception& err) {
-            this->report_error(this->get_process_name(), err.what(), std::stacktrace::current());
+            this->report_error(this->get_process_name(), err.what(), cpptrace::generate_trace());
         }
     }
 
@@ -197,13 +197,13 @@ void Pipeline::run() {
         ObserverType observer = this->get_observer_type(target_data);
         images.reset(new  btrgb::ArtObject(ref_file, illuminant, observer, out_dir,batch)); 
     }catch(RefData_FailedToRead e){
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         return;
     }catch(RefData_ParssingError e){
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         return;
     }catch(const std::exception& err) { 
-        this->report_error(this->get_process_name(), err.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), err.what(), cpptrace::generate_trace());
         return;
     }
 
@@ -214,7 +214,7 @@ void Pipeline::run() {
         this->init_art_obj(images.get());
         this->init_verification(images.get());
     }catch(std::exception e){
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         return;
     }
 
@@ -223,7 +223,7 @@ void Pipeline::run() {
     try{
         this->init_general_info(images.get());
     }catch(std::exception e){
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         return;
     }
 
@@ -243,14 +243,14 @@ void Pipeline::run() {
         std::string Pro_file = images.get()->get_results_obj(btrgb::ResultType::GENERAL)->get_string(PRO_FILE);
         this->coms_obj_m->send_post_calibration_msg(Pro_file);
     } catch(const ImgProcessingComponent::error& e) {
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         return;
     }
     catch(ColorTarget_MissmatchingRefData e){
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         return;
     }catch(const std::exception& err) {
-        this->report_error(this->get_process_name(), err.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), err.what(), cpptrace::generate_trace());
         return;
     }
 }
@@ -270,11 +270,11 @@ std::string Pipeline::get_output_directory(std::string artImage) {
         return dir;
     }
     catch (ParsingError e) {
-        this->report_error("[Pipeline]", "Process request: The desired output directory [\"destinationDirectory\"] is invalid.", std::stacktrace::current());
+        this->report_error("[Pipeline]", "Process request: The desired output directory [\"destinationDirectory\"] is invalid.", cpptrace::generate_trace());
         throw;
     }
     catch (const std::filesystem::filesystem_error& err) {
-        this->report_error("[Pipeline]", "Failed to create or access output directory.", std::stacktrace::current());
+        this->report_error("[Pipeline]", "Failed to create or access output directory.", cpptrace::generate_trace());
         throw;
     }
 
@@ -293,7 +293,7 @@ std::string Pipeline::get_sharpen_type() {
         }
     }
     catch (ParsingError e) {  
-        this->report_error("[Pipeline]", "Failed to parse sharpening type [" + this->process_data_m->get_string("sharpenString") + "].", std::stacktrace::current());
+        this->report_error("[Pipeline]", "Failed to parse sharpening type [" + this->process_data_m->get_string("sharpenString") + "].", cpptrace::generate_trace());
     }
     return sharpen_string;
 }
@@ -311,7 +311,7 @@ std::string Pipeline::get_registration_type() {
         }
     }
     catch (ParsingError e) {
-        this->report_error("[Pipeline]", "Failed to parse registration string [" + this->process_data_m->get_string("sharpenString") + "].", std::stacktrace::current());
+        this->report_error("[Pipeline]", "Failed to parse registration string [" + this->process_data_m->get_string("sharpenString") + "].", cpptrace::generate_trace());
     }
     return registration_string;
 }
@@ -328,7 +328,7 @@ IlluminantType Pipeline::get_illuminant_type(Json target_data) {
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
-        this->report_error(name, e.what(), std::stacktrace::current());
+        this->report_error(name, e.what(), cpptrace::generate_trace());
     }
     return type;
 }
@@ -343,7 +343,7 @@ ObserverType Pipeline::get_observer_type(Json target_data) {
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
-        this->report_error(name, e.what(), std::stacktrace::current());
+        this->report_error(name, e.what(), cpptrace::generate_trace());
     }
     return type;
 
@@ -379,7 +379,7 @@ std::string Pipeline::get_ref_file(Json target_data) {
     }
     catch (ParsingError e) {
         std::string name = this->get_process_name();
-        this->report_error(name, e.what(), std::stacktrace::current());
+        this->report_error(name, e.what(), cpptrace::generate_trace());
         throw e;
     }
     return ref_file;
@@ -405,10 +405,10 @@ bool Pipeline::verify_targets(btrgb::ArtObject *images){
         images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
         images->get_target(TARGET(1), btrgb::TargetType::VERIFICATION_TARGET);
     }catch(ColorTarget_MissmatchingRefData e){
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
         return false;
     }catch(btrgb::ArtObj_VerificationDataNull e){
-        this->report_error(this->get_process_name(), e.what(), std::stacktrace::current());
+        this->report_error(this->get_process_name(), e.what(), cpptrace::generate_trace());
     }
     return true;
 }

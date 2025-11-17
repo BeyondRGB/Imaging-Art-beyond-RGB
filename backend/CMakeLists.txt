@@ -58,6 +58,7 @@ endif()
 set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpptrace)
 
 # Create .exe
 add_executable(${PROJECT_NAME})
@@ -147,10 +148,10 @@ target_sources(${PROJECT_NAME} PRIVATE
 # Set all source include files (ie. *.h)
 target_include_directories(${PROJECT_NAME} PUBLIC "include/")
 
-# adds stacktraces to unix machines
-if (UNIX)
-    target_link_libraries(${PROJECT_NAME} PRIVATE "-rdynamic")
-endif()
+# adds stacktraces via cpptrace
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    cpptrace::cpptrace
+)
 
 # adds websocketpp as a target lib for compilation
 
@@ -184,14 +185,8 @@ if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLET
     target_link_libraries(${PROJECT_NAME} PRIVATE OpenMP::OpenMP_CXX)
 endif()
 
-if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 14)
-    target_link_libraries(${PROJECT_NAME} PRIVATE stdc++exp)
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE stdc++_libbacktrace)
-endif()
-
 # Set C++ standard
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 23)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 
 # weird fix for linux to remove malformed macro included in lib dependency
 # TODO: remove this with a better fix
