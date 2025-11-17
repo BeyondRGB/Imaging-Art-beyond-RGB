@@ -86,7 +86,7 @@
         return mapping[location];
     }
 
-    function moveItem(fromLocation, toLocation) {
+    function moveItem(fromLocation, toLocation, ignoreItemID) {
         const sourceList = getList(fromLocation);
 
         if (sourceList === undefined) {
@@ -94,8 +94,17 @@
             return;
         }
 
-        // Remove the item from the source list.
-        const item = sourceList.shift();
+        // Remove the item from the source list, ignore the item we are moving.
+        const ignoreIndex = sourceList.findIndex(obj => obj.id === ignoreItemID);
+
+        let item;
+        if (ignoreIndex == 0) {
+            // Take the last element
+            item = sourceList.pop();
+        } else {
+            // Take the first element
+            item = sourceList.shift();
+        }
 
         if (!item) {
             console.log("Item is undefined");
@@ -115,7 +124,7 @@
             };
         }
 
-        // Special processing is needed for the roles list, since it uses the imageFilePaths array.
+        // Special processing is needed for the role list, since it uses the imageFilePaths array.
         if (toLocation === ImageField.ROLES) {
             // Force Svelte reactivity by reassigning the imageFilePaths.
             $processState.imageFilePaths = [...$processState.imageFilePaths, item];
@@ -154,7 +163,11 @@
 
             // If the list has more than one item, move the last item to the list that the new item came from.
             if (list.length > 1 && lastDragLocation) {
-                moveItem(location, lastDragLocation);
+                const justDroppedItem = event.detail.info.id;
+
+                moveItem(location, lastDragLocation, justDroppedItem);
+
+                lastDragLocation = null;
             }
         }
     }
@@ -170,6 +183,8 @@
             // If any of the ending drag triggers have been sent, reset the last drag location.
             console.log('Drag Ended')
             lastDragLocation = null;
+        } else if (trigger === TRIGGERS.DRAGGED_OVER_INDEX) {
+            console.log(event)
         }
     }
 </script>
