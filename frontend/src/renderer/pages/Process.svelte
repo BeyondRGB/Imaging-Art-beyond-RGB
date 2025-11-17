@@ -269,66 +269,67 @@
           art: $processState.artStacks[0].fields.imageA[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldA[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldA[0]?.name,
+          ...($processState.artStacks[0].fields.targetA.length !== 0 && 
+             $processState.artStacks[0].colorTarget?.refData !== undefined
+            ? { target: $processState.artStacks[0].fields.targetA[0]?.name }
+            : {}),
         },
         {
           art: $processState.artStacks[0].fields.imageB[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldB[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldB[0]?.name,
+          ...($processState.artStacks[0].fields.targetB.length !== 0 && 
+             $processState.artStacks[0].colorTarget?.refData !== undefined
+            ? { target: $processState.artStacks[0].fields.targetB[0]?.name }
+            : {}),
         },
       ],
       destinationDirectory: $processState.destDir,
       outputFileName: $processState.destFileName,
+      outputDirectory: $viewState.projectKey || $processState.destDir,
       sharpenString: $processState.artStacks[0].sharpenString,
-      targetLocation: $processState.artStacks[0].colorTarget,
+      batch: $processState.batch,
+      targetLocation: $processState.artStacks[0].colorTarget
+        ? {
+            ...$processState.artStacks[0].colorTarget,
+            refData: $processState.artStacks[0].colorTarget.refData
+              ? {
+                  ...$processState.artStacks[0].colorTarget.refData,
+                  standardObserver: 1931,
+                  illuminants: "D50",
+                }
+              : undefined,
+          }
+        : undefined,
+      ...($processState.artStacks[0].verificationTarget != null &&
+      Object.keys($processState.artStacks[0].verificationTarget).length > 0
+        ? {
+            verificationLocation: {
+              ...$processState.artStacks[0].verificationTarget,
+              refData: $processState.artStacks[0].verificationTarget.refData
+                ? {
+                    ...$processState.artStacks[0].verificationTarget.refData,
+                    standardObserver: 1931,
+                    illuminants: "D50",
+                  }
+                : undefined,
+            },
+          }
+        : {}),
     },
   };
 
   $: console.log($processState.artStacks[0].colorTarget);
   $: console.log({ processRequest });
 
-  $: if (processRequest != null) {
-  	if($viewState.projectKey != null) {
-	    processRequest.RequestData.outputDirectory = $viewState.projectKey;
-	}
-	processRequest.RequestData.batch = $processState.batch;
-    if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
-      processRequest.RequestData.targetLocation["refData"][
-        "standardObserver"
-      ] = 1931;
-      processRequest.RequestData.targetLocation["refData"]["illuminants"] =
-        "D50";
-
-      if ($processState.artStacks[0].fields.targetA.length !== 0) {
-        processRequest.RequestData.images[0]["target"] =
-          $processState.artStacks[0].fields.targetA[0]?.name;
-        processRequest.RequestData.images[1]["target"] =
-          $processState.artStacks[0].fields.targetB[0]?.name;
-      }
-    }
-    if (
-      $processState.artStacks[0].verificationTarget != null &&
-      Object.keys($processState.artStacks[0].verificationTarget).length > 0
-    ) {
-      console.log("Adding Verification to Process Request");
-      console.log($processState.artStacks[0].verificationTarget);
-      processRequest.RequestData["verificationLocation"] =
-        $processState.artStacks[0].verificationTarget;
-      if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
-        processRequest.RequestData["verificationLocation"]["refData"][
-          "standardObserver"
-        ] = 1931;
-        processRequest.RequestData["verificationLocation"]["refData"][
-          "illuminants"
-        ] = "D50";
-      }
-    }
-  }
-
   function handleConfirm() {
     showDialog = false;
 
     if ($processState.currentTab !== tabs.length - 1) {
-      $processState.currentTab += 1;
+      processState.update(state => ({
+        ...state,
+        currentTab: state.currentTab + 1
+      }));
       console.log("Sending Process Request");
       console.log(processRequest);
       setTimeout(() => {
@@ -373,6 +374,7 @@
               return;
             }
             if ($processState.completedTabs[$processState.currentTab]) {
+              console.log("Opening confirm dialog");
               showDialog = true;
               return;
             }

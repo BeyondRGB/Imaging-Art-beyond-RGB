@@ -105,43 +105,13 @@
 	// 	});
 	// });
 	// ------
-	let pages;
-	$: if (pages) {
-		let activePages = [];
-		Object.keys(routes).map((key) => {
-			if (routes[key].page && !routes[key].disabled) {
-				activePages.push(key);
-			}
-		});
-
-		let width = pages.scrollWidth;
-		let height = pages.scrollHeight;
-
-		if ($appSettings.sideNav) {
-			pages.scroll({
-				top:
-					activePages.findIndex((item) => item === $currentPage) *
-					(height / activePages.length),
-				left: 0,
-				behavior: "smooth",
-			});
-		} else {
-			pages.scroll({
-				top: 0,
-				left:
-					activePages.findIndex((item) => item === $currentPage) *
-					(width / activePages.length),
-				behavior: "smooth",
-			});
-		}
-	}
 </script>
 
 <main class={theme}>
 	<div class="app {theme}" class:sideMenu={$appSettings.sideNav}>
 		<Menu {routes} />
 
-		<Page {routes} bind:pages />
+		<Page {routes} />
 	</div>
 </main>
 

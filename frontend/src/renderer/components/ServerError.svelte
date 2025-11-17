@@ -7,6 +7,7 @@
   } from "@util/stores";
   import { AlertCircleIcon } from "svelte-feather-icons";
   import ScrollContainer from "@components/ScrollContainer.svelte";
+  import Button from "@components/Button.svelte";
 
   export let closeModal;
   let showTrace: boolean = false;
@@ -47,7 +48,7 @@
   }
 </script>
 
-<ScrollContainer maxHeight="50vh" className="main-container">
+<ScrollContainer maxHeight="60vh">
 <main>
   <h2 class="title">
     <AlertCircleIcon size="1x" />
@@ -76,36 +77,37 @@
       </div>
     </div>
     <div class="btns">
-      <button
-        class="retry"
-        on:click={() => {
+      <Button
+        variant="secondary"
+        onClick={() => {
           resendMessage();
           handleClose();
-        }}>Retry</button
+        }}
       >
-      <button
-        class="reset"
-        on:click={() => {
+        Retry
+      </Button>
+      <Button
+        variant="default"
+        onClick={() => {
           returnToSetup();
           handleClose();
-        }}>Return to Setup</button
+        }}
       >
+        Return to Setup
+      </Button>
     </div>
   </div>
 </main>
 </ScrollContainer>
 
 <style lang="postcss">
-  :global(.main-container) {
+  main {
     background-color: var(--color-surface);
-    @apply max-w-[50%] min-w-[35%] rounded-2xl shadow-xl flex flex-col;
+    @apply w-full rounded-2xl shadow-xl flex flex-col min-w-[600px];
   }
   
-  main {
-    @apply flex flex-col;
-  }
   .body {
-    @apply h-full flex flex-col justify-between p-1;
+    @apply h-full flex flex-col justify-between p-4 gap-4;
   }
   .title {
     background-color: var(--color-surface-base);
@@ -126,43 +128,43 @@
   }
   .sender {
     background-color: var(--color-surface-sunken);
-    @apply p-1;
+    border: 1px solid var(--color-border);
+    @apply p-2 rounded-md font-semibold text-sm;
   }
   .msg {
     background-color: var(--color-surface-elevated);
-    @apply flex flex-col p-2;
+    border: 1px solid var(--color-border);
+    @apply flex flex-col p-3 rounded-md mt-2;
+  }
+  .msg p {
+    @apply font-semibold text-sm mb-1;
   }
   .trace_reveal {
-    color: blue;
+    color: var(--color-interactive);
     text-decoration-line: underline;
     cursor: pointer;
-    @apply text-lg
+    @apply text-sm mt-2 hover:opacity-80 transition-opacity;
   }
   .stack_trace {
-    /* by default hidden */
-    display: hidden;
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
     /* overflow control */
-    overflow-x: scroll;
-    overflow-y: scroll;
-
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 300px;
     /* wraps on newline only */
     white-space: pre;
     /* allows text to be highlighted */
     user-select: text !important;
     
     /* font stuff */
-    font-family: 'Fira Code', monospace;
-    font-size: 0.8em;
-    color: #333;
-    @apply p-1 flex flex-col bg-gray-400
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    @apply p-3 rounded-md mt-2;
   }
   .btns {
-    @apply flex justify-end gap-2 p-1;
-  }
-  .btns button {
-    @apply p-2 text-lg;
-  }
-  .reset {
-    @apply bg-blue-600;
+    @apply flex justify-end gap-2 p-2;
   }
 </style>

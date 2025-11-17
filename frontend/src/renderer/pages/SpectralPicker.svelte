@@ -331,16 +331,18 @@
               </div>
             </div>
 
-            <div class="panel-section chart-section">
-              <Card variant="elevated" padding="md" rounded={true} shadow="medium" className="chart-card">
-                <LineChart
-                  bind:data={spectrumData}
-                  bind:wavelengthArray
-                  bind:trueShadowPos
-                  stack={stackCurves}
-                />
-              </Card>
-            </div>
+            {#if expand}
+              <div class="panel-section chart-section">
+                <Card variant="elevated" padding="md" rounded={true} shadow="medium" className="chart-card">
+                  <LineChart
+                    bind:data={spectrumData}
+                    bind:wavelengthArray
+                    bind:trueShadowPos
+                    stack={stackCurves}
+                  />
+                </Card>
+              </div>
+            {/if}
           </div>
         </div>
       </div>

@@ -67,62 +67,72 @@
   let calibrationTargetRotationAngle = 0; // Default rotation angle in degrees
 
   function update() {
-    if (colorPos) {
-      $processState.artStacks[0].colorTarget.top = colorPos.top;
-      $processState.artStacks[0].colorTarget.left = colorPos.left;
-      $processState.artStacks[0].colorTarget.bottom = colorPos.bottom;
-      $processState.artStacks[0].colorTarget.right = colorPos.right;
-      $processState.artStacks[0].colorTarget.rows = colorTarget.rows;
-      $processState.artStacks[0].colorTarget.cols = colorTarget.cols;
-      $processState.artStacks[0].colorTarget.size = colorTarget.size;
-      $processState.artStacks[0].colorTarget.resolution =
-        colorTargetViewer.getResolution();
-      $processState.artStacks[0].colorTarget.whitePatch =
-        colorTarget.whitePatch;
-      $processState.artStacks[0].colorTarget.refData = colorTarget.refData;
-      $processState.artStacks[0].colorTarget.calibrationTargetRotationAngle = calibrationTargetRotationAngle; // Add rotation to process state
+    processState.update(state => {
+      const updatedStack = { ...state.artStacks[0] };
       
-      if (colorTarget.refData.name !== "CUSTOM DATA") {
-        $processState.artStacks[0].colorTarget.refData.name =
-          colorTarget.refData.name;
+      // Update color target if present
+      if (colorPos && colorTarget) {
+        const refDataName = colorTarget.refData.name !== "CUSTOM DATA" 
+          ? colorTarget.refData.name 
+          : $customRefData.calibration.name;
+          
+        updatedStack.colorTarget = {
+          ...updatedStack.colorTarget,
+          top: colorPos.top,
+          left: colorPos.left,
+          bottom: colorPos.bottom,
+          right: colorPos.right,
+          rows: colorTarget.rows,
+          cols: colorTarget.cols,
+          size: colorTarget.size,
+          resolution: colorTargetViewer.getResolution(),
+          whitePatch: colorTarget.whitePatch,
+          refData: {
+            ...colorTarget.refData,
+            name: refDataName
+          },
+          calibrationTargetRotationAngle: calibrationTargetRotationAngle
+        };
+      }
+      
+      // Update verification target if present
+      if (verifyPos && verifyTarget) {
+        const verifyRefDataName = verifyTarget.refData.name !== "CUSTOM DATA"
+          ? verifyTarget.refData.name
+          : verifyTarget.refData.name;
+          
+        updatedStack.verificationTarget = {
+          top: verifyPos.top,
+          left: verifyPos.left,
+          bottom: verifyPos.bottom,
+          right: verifyPos.right,
+          rows: verifyTarget.rows,
+          cols: verifyTarget.cols,
+          size: verifyTarget.size,
+          resolution: colorTargetViewer.getResolution(),
+          whitePatch: verifyTarget.whitePatch,
+          refData: {
+            ...verifyTarget.refData,
+            name: verifyRefDataName
+          },
+          calibrationTargetRotationAngle: 0
+        };
       } else {
-        $processState.artStacks[0].colorTarget.refData.name =
-          $customRefData.calibration.name;
+        updatedStack.verificationTarget = null;
       }
-    }
+      
+      return {
+        ...state,
+        artStacks: [updatedStack, ...state.artStacks.slice(1)]
+      };
+    });
 
-      if (verifyPos) {
-      $processState.artStacks[0].verificationTarget.top = verifyPos.top;
-      $processState.artStacks[0].verificationTarget.left = verifyPos.left;
-      $processState.artStacks[0].verificationTarget.bottom = verifyPos.bottom;
-      $processState.artStacks[0].verificationTarget.right = verifyPos.right;
-      $processState.artStacks[0].verificationTarget.rows = verifyTarget.rows;
-      $processState.artStacks[0].verificationTarget.cols = verifyTarget.cols;
-      $processState.artStacks[0].verificationTarget.size = verifyTarget.size;
-      $processState.artStacks[0].verificationTarget.resolution =
-        colorTargetViewer.getResolution();
-      $processState.artStacks[0].verificationTarget.whitePatch =
-        verifyTarget.whitePatch;
-      $processState.artStacks[0].verificationTarget.refData =
-        verifyTarget.refData;
-      // Verification does not support rotation, but the backend is expecting it in the package.
-      $processState.artStacks[0].verificationTarget.calibrationTargetRotationAngle = 0
-
-      if (verifyTarget.refData.name !== "CUSTOM DATA") {
-        $processState.artStacks[0].verificationTarget.refData.name =
-          verifyTarget.refData.name;
-      }
-    } else {
-      $processState.artStacks[0].verificationTarget = null;
-    }
-
+    // Clear local state after updating store
     colorTarget = null;
     colorPos = null;
     verifyTarget = null;
     verifyPos = null;
-
     targetArray = null;
-
     loading = false;
   }
 
@@ -422,6 +432,7 @@
   // Clamp the white patch rows to the number of rows in the target
   $: if (
       colorTarget !== undefined &&
+      colorTarget !== null &&
       colorTarget.whitePatch !== undefined &&
       colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.row > colorTarget.rows
@@ -429,6 +440,7 @@
     colorTarget.whitePatch.row = colorTarget.rows;
   } else if (
       colorTarget !== undefined &&
+      colorTarget !== null &&
       colorTarget.whitePatch !== undefined &&
       colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.row < 1
@@ -439,6 +451,7 @@
   // Clamp the white patch columns to the number of columns in the target
   $: if (
       colorTarget !== undefined &&
+      colorTarget !== null &&
       colorTarget.whitePatch !== undefined &&
       colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.col > colorTarget.cols
@@ -446,6 +459,7 @@
       colorTarget.whitePatch.col = colorTarget.cols;
   } else if (
       colorTarget !== undefined &&
+      colorTarget !== null &&
       colorTarget.whitePatch !== undefined &&
       colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.col < 1

@@ -1,6 +1,5 @@
 <script lang="ts">
 	export let routes;
-	export let pages;
 	import { fade, fly } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";
 	import { currentPage, appSettings, modal, serverError } from "@util/stores";
@@ -22,16 +21,16 @@
 	}
 	$: console.log($currentPage);
 
-	$: if ($serverError != null) {
+	$: if ($serverError != null && $modal !== "ServerError") {
 		console.log("Encountered Server Error");
 		$modal = "ServerError";
 	}
 </script>
 
-<div class="page" bind:this={pages} class:sideMain={$appSettings.sideNav}>
+<div class="page">
 	{#each Object.keys(routes) as pageKey}
-		{#if routes[pageKey].page && !routes[pageKey].disabled}
-			<div class="content">
+		{#if routes[pageKey].page && !routes[pageKey].disabled && $currentPage === pageKey}
+			<div class="content" transition:fade={{ duration: 200 }}>
 				<svelte:component this={routes[pageKey].component} />
 			</div>
 		{/if}
@@ -76,10 +75,11 @@
 	{:else if $modal === "ServerError"}
 		<Modal
 			component={ServerError}
-			customExit
+			size="large"
 			on:close={() => {
 				showModal = false;
 				$modal = null;
+				serverError.set(null);
 			}}
 		/>
 	{/if}
@@ -88,13 +88,10 @@
 <style lang="postcss" local>
 	.page {
 		background-color: var(--color-surface-base);
-		@apply w-full h-full pt-0 relative overflow-hidden flex;
-	}
-	.sideMain {
-		@apply flex-col;
+		@apply w-full h-full pt-0 relative overflow-hidden;
 	}
 	
 	.content {
-		@apply w-full h-full relative flex-shrink-0;
+		@apply w-full h-full relative;
 	}
 </style>

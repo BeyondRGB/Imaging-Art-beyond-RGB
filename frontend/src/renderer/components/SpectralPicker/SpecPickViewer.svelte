@@ -14,7 +14,7 @@
   export let loading;
 
   let viewer;
-  let imageUrl = "";
+  let imageUrl;
 
   let linearZoom = 0;
   let viewportPoint;
@@ -61,81 +61,46 @@
     destoryViewer();
   });
 
-  $: if ($currentPage === "SpecPicker") {
-    if (viewer && !viewer.isOpen() && imageUrl && imageUrl.length > 0) {
-      console.log("Opening Image on page load");
-      if (!imageUrl.includes("undefined")) {
+  // Open/Close image viewer
+  $: if (viewer && $viewState.colorManagedImage.dataURL) {
+    if(viewer && !viewer.isOpen()) {
+        let temp = new Image();
+        temp.src = $viewState.colorManagedImage.dataURL;
+        imageUrl = temp.src;
+
+      console.log("Opening Spectral Image");
+
+      // Don't load the image if we haven't recieved it
+      if (imageUrl) {
         loading = false;
-      }
-      setTimeout(() => {
-        if (viewer && imageUrl) {
-          try {
-            viewer.open({
-              type: "image",
-              url: imageUrl,
-            });
-          } catch (e) {
-            console.log("Error opening image on page load:", e);
-          }
-        }
-      }, 100);
-    } else if (viewer?.world && viewer.world.getItemCount() > 0) {
-      try {
-        trueSize = viewer.world.getItemAt(0).getContentSize().x * size;
-      } catch (e) {
-        console.log("Error getting content size:", e);
-      }
-    }
-  } else {
-    if (viewer && viewer.isOpen()) {
-      console.log("Close Image - leaving page");
-      try {
-        // Remove overlays before closing
-        removeOverlay();
-        viewer.close();
-      } catch (e) {
-        console.log("Error closing viewer when leaving page:", e);
-      }
-    }
-  }
 
-  $: if (viewer && $viewState.colorManagedImage.dataURL && $currentPage === "SpecPicker") {
-    // console.log($processState.artStacks[0].colorTargetImage);
-    console.log("New Image (Spec Viewer)");
-    let temp = new Image();
-    temp.src = $viewState.colorManagedImage.dataURL;
-
-    imageUrl = temp.src;
-
-    // Close existing image before opening new one
-    if (viewer.isOpen()) {
-      try {
-        viewer.close();
-      } catch (e) {
-        console.log("Error closing viewer:", e);
-      }
-    }
-
-    setTimeout(() => {
-      if (viewer && imageUrl) {
-        try {
+        setTimeout(() => {
           viewer.open({
             type: "image",
             url: imageUrl,
           });
-        } catch (e) {
-          console.log("Error opening image:", e);
-        }
+        }, 50);
       }
-    }, 100);
-
-    if (show) {
-      console.log("Brush Enabled 3");
-      setTimeout(() => {
-        addOverlay();
-      }, 200);
+    } else if (viewer?.world) {
+      trueSize = viewer.world.getItemAt(0).getContentSize().x * size;
+    }
+  } else {
+    if (viewer) {
+      console.log("Close Spectral Image");
+      viewer.close();
     }
   }
+
+$: if (viewer) {
+  if (showBrush) {
+    console.log("Brush Enabled");
+    setTimeout(() => {
+      addOverlay();
+    }, 150);
+  } else {
+    removeOverlay();
+  }
+}
 
   function removeOverlay() {
     console.log("Remove Brush");
@@ -143,20 +108,12 @@
       const brush = document.getElementById("specView-brush");
       const shadow = document.getElementById("specView-brush-shadow");
 
-      if (brush && viewer) {
-        viewer.removeOverlay(brush);
-      }
-      if (shadow && viewer) {
-        viewer.removeOverlay(shadow);
-      }
-      if (overTracker && typeof overTracker.destroy === 'function') {
-        overTracker.destroy();
-      }
-      if (mouseTracker && typeof mouseTracker.destroy === 'function') {
-        mouseTracker.destroy();
-      }
+      viewer.removeOverlay(brush);
+      viewer.removeOverlay(shadow);
+      overTracker.destroy();
+      mouseTracker.destroy();
     } catch (e) {
-      console.log("Error removing overlay:", e);
+      console.log(e);
     }
   }
 
@@ -276,9 +233,7 @@
 
 <style lang="postcss">
   main {
-    background-color: var(--color-overlay-medium);
-    border: 1px solid var(--color-border);
-    @apply w-full aspect-[3/2] shadow-lg;
+    @apply w-full ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
   }
   #specpick-seadragon-viewer {
     @apply h-full w-full;
@@ -287,11 +242,9 @@
     @apply absolute left-1/2 bottom-1/2;
   }
   #specView-brush {
-    background-color: var(--color-overlay-light);
-    @apply hidden outline-[1%] outline-dashed outline-red-500;
+    @apply bg-gray-800/25 hidden  outline-[1%] outline-dashed outline-red-500;
   }
   #specView-brush-shadow {
-    background-color: var(--color-overlay-light);
-    @apply hidden outline-[1%] outline-dashed outline-blue-500;
+    @apply bg-gray-800/25 hidden  outline-[1%] outline-dashed outline-blue-500;
   }
 </style>

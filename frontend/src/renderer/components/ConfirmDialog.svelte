@@ -24,31 +24,29 @@
   }
 </script>
 
-<div class="confirm-modal" class:show>
-  <div class="confirm-dialog" class:warning={type === 'warning'} class:error={type === 'error'}>
-    <p class="message">{message}</p>
-    <div class="button-group">
-      {#if cancelLabel}
-        <Button variant="secondary" onClick={handleCancel}>{cancelLabel}</Button>
-      {/if}
-      <Button 
-        variant={type === 'error' ? 'danger' : 'success'} 
-        onClick={handleConfirm}
-      >
-        {confirmLabel}
-      </Button>
+{#if show}
+  <div class="confirm-modal">
+    <div class="confirm-dialog" class:warning={type === 'warning'} class:error={type === 'error'}>
+      <p class="message">{message}</p>
+      <div class="button-group">
+        {#if cancelLabel}
+          <Button variant="secondary" onClick={handleCancel}>{cancelLabel}</Button>
+        {/if}
+        <Button 
+          variant={type === 'error' ? 'danger' : 'success'} 
+          onClick={handleConfirm}
+        >
+          {confirmLabel}
+        </Button>
+      </div>
     </div>
   </div>
-</div>
+{/if}
 
 <style lang="postcss">
   .confirm-modal {
     background-color: var(--color-overlay-heavy);
-    @apply absolute z-50 items-center justify-center w-full h-full hidden;
-  }
-  
-  .show {
-    @apply flex;
+    @apply absolute inset-0 z-50 flex items-center justify-center w-full h-full;
   }
   
   .confirm-dialog {
