@@ -36,7 +36,7 @@ void FlatFieldor::execute(CommunicationObj* comms, btrgb::ArtObject* images)
             target_found = true;
         }
         catch (const btrgb::ArtObj_ImageDoesNotExist& e){
-            comms->send_info("No separate target images found - using embedded targets.", this->get_name());
+            comms->send_info("ArtObject Image does not exist. Using embedded targets.", this->get_name());
             target_found = false;
         }
 

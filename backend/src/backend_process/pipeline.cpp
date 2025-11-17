@@ -64,7 +64,7 @@ bool Pipeline::init_art_obj(btrgb::ArtObject* art_obj) {
                 art_obj->newImage(("target" + std::to_string(i + 1)), target_file);
             }catch(ParsingError e){ 
                 /* No target provided. We expect the target to be in the art image */
-                this->send_info("No separate target file provided - using embedded target from art image.", this->get_process_name());
+                this->send_info("No target provided when target was expected. Using embedded target from art image.", this->get_process_name());
             }
         }
         //Collect the information provided about the color target
