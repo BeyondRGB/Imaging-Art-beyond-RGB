@@ -231,8 +231,14 @@
   }
 
   .contact-text a {
-    color: var(--color-interactive);
-    @apply hover:underline hover:text-blue-400 transition-colors;
+    color: var(--color-border-focus);
+    text-decoration: underline;
+    cursor: pointer;
+    @apply transition-colors;
+  }
+
+  .contact-text a:hover {
+    opacity: 0.8;
   }
 
   .contact-email {
