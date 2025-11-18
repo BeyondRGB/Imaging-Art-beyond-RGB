@@ -1,8 +1,9 @@
+<!--
+  @component
+  Generic Expandable Panel Component
+  Provides a slide-out panel with expand/collapse functionality
+-->
 <script lang="ts">
-  /**
-   * Generic Expandable Panel Component
-   * Provides a slide-out panel with expand/collapse functionality
-   */
   import { ChevronLeftIcon, ChevronRightIcon } from "svelte-feather-icons";
   
   export let expanded: boolean = false;

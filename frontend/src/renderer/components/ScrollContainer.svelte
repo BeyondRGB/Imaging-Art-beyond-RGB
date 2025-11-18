@@ -1,10 +1,10 @@
+<!--
+  @component
+  Generic Scroll Container
+  Provides consistent scrollbar styling across the app
+  Eliminates duplicate scrollbar CSS
+-->
 <script lang="ts">
-  /**
-   * Generic Scroll Container
-   * Provides consistent scrollbar styling across the app
-   * Eliminates duplicate scrollbar CSS
-   */
-  
   export let maxHeight: string = 'none';
   export let className: string = '';
 </script>

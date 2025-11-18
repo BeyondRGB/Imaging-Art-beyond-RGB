@@ -1,9 +1,9 @@
+<!--
+  @component
+  Generic Card Component
+  Provides consistent styling for card-like containers throughout the app
+-->
 <script lang="ts">
-  /**
-   * Generic Card Component
-   * Provides consistent styling for card-like containers throughout the app
-   */
-  
   export let variant: 'default' | 'elevated' | 'dark' | 'outlined' = 'default';
   export let padding: 'none' | 'sm' | 'md' | 'lg' = 'md';
   export let rounded: boolean = true;

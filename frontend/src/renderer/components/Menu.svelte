@@ -13,7 +13,7 @@
     connect,
   } from "@util/stores";
 
-  $: theme = $appSettings.theme ? "dark" : "";
+  $: isDarkTheme = $appSettings.isDarkTheme ? "dark" : "";
   function handleClick(newPage: any[]) {
     if (newPage[0] === "Settings") {
       modal.set(newPage[1].component);
@@ -27,7 +27,7 @@
   }
 </script>
 
-<main class:sideMain={$appSettings.sideNav} class={theme}>
+<main class:sideMain={$appSettings.sideNav} class={isDarkTheme}>
   <ul>
     <div class="logoBox" class:altLogo={$appSettings.sideNav}>
       {#if $appSettings.sideNav}

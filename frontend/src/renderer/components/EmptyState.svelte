@@ -1,8 +1,9 @@
+<!--
+  @component
+  Generic Empty State Box/Panel
+  Displays a centered message with optional action component
+-->
 <script lang="ts">
-  /**
-   * Generic Empty State Component
-   * Displays a centered message with optional action component
-   */
   export let title: string = "No File Selected";
   export let description: string = "";
 </script>

@@ -12,7 +12,7 @@ function loadSettings() {
       }
     }
   }
-  return { theme: false, sideNav: true };
+  return { isDarkTheme: false, sideNav: true };
 }
 
 // Stores
@@ -115,6 +115,7 @@ export function resetProcess() {
     completedTabs: [false, false, false, false, false, false],
     pipelineComplete: false,
     destDir: "",
+    destFileName: "",
     imageFilePaths: [],
     thumbnailID: null,
     colorTargetID: null,
@@ -148,7 +149,7 @@ export function resetProcess() {
 }
 
 // State update helper functions
-type ProcessState = ReturnType<typeof processState.set> extends (value: infer T) => void ? T : never;
+type ProcessState = Parameters<typeof processState.set>[0];
 type ArtStack = ProcessState['artStacks'][0];
 
 /**

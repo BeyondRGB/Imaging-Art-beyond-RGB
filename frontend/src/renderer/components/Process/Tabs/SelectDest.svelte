@@ -139,9 +139,9 @@
   }
   
   .folder-icon-wrapper {
-    color: rgb(59, 130, 246);
+    color: var(--color-folder-blue);
     @apply flex items-center justify-center w-9 h-9 rounded-md flex-shrink-0;
-    background-color: rgba(59, 130, 246, 0.08);
+    background-color: var(--color-folder-blue-bg);
   }
   
   .folder-path {

@@ -15,7 +15,7 @@
   export let backdropBlur: 'none' | 'sm' | 'md' | 'lg' = 'sm';
   export let backdropOpacity: 'light' | 'medium' | 'heavy' = 'medium';
 
-  $: theme = $appSettings.theme ? "dark" : "";
+  $: isDarkTheme = $appSettings.isDarkTheme ? "dark" : "";
 
   const handle_keydown = (e) => {
     if (e.key === "Escape") {
@@ -68,7 +68,7 @@
 
 {#if !minimal}
   <div
-    class="{theme} modal-container"
+    class="{isDarkTheme} modal-container"
     role="dialog"
     aria-modal="true"
     bind:this={modal}
@@ -91,7 +91,7 @@
   </div>
 {:else}
   <div
-    class="{theme} modal-container"
+    class="{isDarkTheme} modal-container"
     bind:this={modal}
     role="dialog"
     transition:fly={{ y: window.innerHeight, duration: 400, opacity: 1 }}

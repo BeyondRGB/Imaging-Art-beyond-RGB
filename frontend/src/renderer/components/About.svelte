@@ -55,10 +55,10 @@
         </p>
         <div class="contact-box">
           <p class="contact-text">
-            It is freely available for download from the RIT Munsell Color Science Laboratory website.
+            It is freely available for download from the <a href="https://beyondrgb.github.io/" target="_blank">BeyondRGB website</a>.
           </p>
           <p class="contact-email">
-            Please direct comments and questions to <strong>susan.farnand@rit.edu</strong>
+            Please direct comments and questions to <a href="mailto:susan.farnand@rit.edu">susan.farnand@rit.edu</a>
           </p>
         </div>
       </section>
@@ -155,11 +155,6 @@
     @apply px-8 py-6 border-b border-gray-700/30 text-center;
   }
 
-  .header-icon {
-    color: var(--color-text-primary);
-    @apply flex justify-center mb-3;
-  }
-
   .title {
     color: var(--color-text-primary);
     @apply text-3xl font-bold mb-2;
@@ -235,14 +230,19 @@
     @apply text-sm mb-2;
   }
 
+  .contact-text a {
+    color: var(--color-interactive);
+    @apply hover:underline hover:text-blue-400 transition-colors;
+  }
+
   .contact-email {
     color: var(--color-text-primary);
     @apply text-sm;
   }
 
-  .contact-email strong {
+  .contact-email a {
     color: var(--color-text-primary);
-    @apply font-mono bg-gray-700/30 px-2 py-1 rounded;
+    @apply font-mono bg-gray-700/30 px-2 py-1 rounded hover:text-blue-400 transition-colors;
   }
 
   .team-year {

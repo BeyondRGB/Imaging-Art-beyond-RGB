@@ -5,7 +5,7 @@
   export let disabled: boolean = false;
   import { appSettings } from "@util/stores";
 
-  $: theme = $appSettings.theme ? "dark" : "";
+  $: isDarkTheme = $appSettings.isDarkTheme ? "dark" : "";
 </script>
 
 <label class="group" class:large class:disabled>

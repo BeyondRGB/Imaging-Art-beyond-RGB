@@ -1,9 +1,9 @@
+<!--
+  @component
+  Generic Button Component
+  Eliminates button styling duplication across the app
+-->
 <script lang="ts">
-  /**
-   * Generic Button Component
-   * Eliminates button styling duplication across the app
-   */
-  
   export let variant: 'default' | 'success' | 'danger' | 'secondary' = 'default';
   export let size: 'sm' | 'md' | 'lg' = 'md';
   export let type: 'button' | 'submit' | 'reset' = 'button';

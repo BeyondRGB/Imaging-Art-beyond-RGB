@@ -36,6 +36,10 @@
   --color-error: #dc2626;
   --color-success: #16a34a;
   --color-warning: #ea580c;
+  
+  /* Folder/File specific */
+  --color-folder-blue: rgb(59, 130, 246);
+  --color-folder-blue-bg: rgba(59, 130, 246, 0.08);
 }
 
 /* Dark theme */

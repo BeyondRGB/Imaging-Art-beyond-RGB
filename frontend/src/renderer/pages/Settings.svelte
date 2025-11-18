@@ -21,7 +21,7 @@
       <SwitchRow
         label="Theme"
         description="Toggle between light and dark mode"
-        bind:checked={$appSettings.theme}
+        bind:checked={$appSettings.isDarkTheme}
         ariaLabel="Toggle dark theme"
       />
     </div>

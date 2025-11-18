@@ -354,6 +354,4 @@
       background-position: 0% 50%;
     }
   }
-
-  /* Scrollbar styling now handled globally in theme.css */
 </style>

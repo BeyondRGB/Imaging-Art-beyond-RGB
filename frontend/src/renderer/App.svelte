@@ -63,9 +63,9 @@
 	}, 0);
 
 	// Initialize theme from settings (default to LIGHT mode)
-	if ($appSettings.theme === undefined) {
+	if ($appSettings.isDarkTheme === undefined) {
 		appSettings.set({
-			theme: false,  // false = light mode, true = dark mode
+			isDarkTheme: false,  // false = light mode, true = dark mode
 			sideNav: $appSettings.sideNav
 		});
 	}
@@ -82,11 +82,11 @@
 	}
 
 	// Apply theme immediately on load
-	applyTheme($appSettings.theme);
+	applyTheme($appSettings.isDarkTheme);
 
 	// Theme Switching Logic - Now enabled with centralized theme system
-	$: theme = $appSettings.theme ? "dark" : "";
-	$: if (theme !== "") {
+	$: isDarkTheme = $appSettings.isDarkTheme ? "dark" : "";
+	$: if (isDarkTheme !== "") {
 		console.log("Theme Change: Dark Mode");
 		applyTheme(true);
 	} else {
@@ -97,18 +97,18 @@
 	// Optional: Auto-detect system theme preference
 	// const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 	// darkThemeMq.addEventListener("change", (e) => {
-	// 	appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// 	appSettings.set({ isDarkTheme: e.matches, sideNav: $appSettings.sideNav });
 	// });
 	// onDestroy(() => {
 	// 	darkThemeMq.removeEventListener("change", (e) => {
-	// 		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// 		appSettings.set({ isDarkTheme: e.matches, sideNav: $appSettings.sideNav });
 	// 	});
 	// });
 	// ------
 </script>
 
-<main class={theme}>
-	<div class="app {theme}" class:sideMenu={$appSettings.sideNav}>
+<main class={isDarkTheme}>
+	<div class="app {isDarkTheme}" class:sideMenu={$appSettings.sideNav}>
 		<Menu {routes} />
 
 		<Page {routes} />
