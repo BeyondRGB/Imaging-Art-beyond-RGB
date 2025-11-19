@@ -5,6 +5,7 @@
     messageStore,
     processState,
   } from "@util/stores";
+  import { slide } from "svelte/transition";
   import { AlertCircleIcon } from "svelte-feather-icons";
   import ScrollContainer from "@components/ScrollContainer.svelte";
   import Button from "@components/Button.svelte";
@@ -48,62 +49,62 @@
   }
 </script>
 
-<ScrollContainer maxHeight="60vh">
 <main>
   <h2 class="title">
     <AlertCircleIcon size="1x" />
     <p>Error</p>
   </h2>
-  <div class="body">
-    <div class="info">
-      <span>Encountered Server Error</span>
-      <div class="err">
-        <div class="sender">
-          Sender: {$serverError?.sender}
-        </div>
-        <div class="msg">
-          <p>Message:</p>
-          {$serverError?.message}
-        </div>
-        <!-- optional to show stack trace -->
-        {#if showTrace}
-          <div class="stack_trace">
-            {$serverError?.trace}
+  <ScrollContainer maxHeight="60vh">
+    <div class="body">
+      <div class="info">
+        <span>Encountered Server Error</span>
+        <div class="err">
+          <div class="sender">
+            Sender: {$serverError?.sender}
           </div>
-          <p class="trace_reveal" on:click={()=>showTrace = !showTrace}>Show less...</p>
-        {:else}
-          <p class="trace_reveal" on:click={()=>showTrace = !showTrace}>Show more...</p>
-        {/if}
+          <div class="msg">
+            <p>Message:</p>
+            {$serverError?.message}
+          </div>
+          <!-- optional to show stack trace -->
+          {#if showTrace}
+            <div class="stack_trace" transition:slide>
+              {$serverError?.trace}
+            </div>
+            <p class="trace_reveal" on:click={()=>showTrace = !showTrace}>Show less...</p>
+          {:else}
+            <p class="trace_reveal" on:click={()=>showTrace = !showTrace}>Show more...</p>
+          {/if}
+        </div>
+      </div>
+      <div class="btns">
+        <Button
+          variant="secondary"
+          onClick={() => {
+            resendMessage();
+            handleClose();
+          }}
+        >
+          Retry
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => {
+            returnToSetup();
+            handleClose();
+          }}
+        >
+          Return to Setup
+        </Button>
       </div>
     </div>
-    <div class="btns">
-      <Button
-        variant="secondary"
-        onClick={() => {
-          resendMessage();
-          handleClose();
-        }}
-      >
-        Retry
-      </Button>
-      <Button
-        variant="default"
-        onClick={() => {
-          returnToSetup();
-          handleClose();
-        }}
-      >
-        Return to Setup
-      </Button>
-    </div>
-  </div>
+  </ScrollContainer>
 </main>
-</ScrollContainer>
 
 <style lang="postcss">
   main {
     background-color: var(--color-surface);
-    @apply w-full rounded-2xl shadow-xl flex flex-col min-w-[600px];
+    @apply w-full rounded-2xl shadow-xl flex flex-col min-w-[600px] overflow-hidden;
   }
   
   .body {
@@ -140,7 +141,7 @@
     @apply font-semibold text-sm mb-1;
   }
   .trace_reveal {
-    color: var(--color-interactive);
+    color: var(--color-text-secondary);
     text-decoration-line: underline;
     cursor: pointer;
     @apply text-sm mt-2 hover:opacity-80 transition-opacity;

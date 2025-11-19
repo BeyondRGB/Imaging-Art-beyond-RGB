@@ -4,7 +4,7 @@
   Eliminates button styling duplication across the app
 -->
 <script lang="ts">
-  export let variant: 'default' | 'success' | 'danger' | 'secondary' = 'default';
+  export let variant: 'default' | 'success' | 'danger' | 'secondary' | 'primary' = 'default';
   export let size: 'sm' | 'md' | 'lg' = 'md';
   export let type: 'button' | 'submit' | 'reset' = 'button';
   export let disabled: boolean = false;
@@ -22,6 +22,7 @@
   class:btn-success={variant === 'success'}
   class:btn-danger={variant === 'danger'}
   class:btn-secondary={variant === 'secondary'}
+  class:btn-primary={variant === 'primary'}
   class:btn-sm={size === 'sm'}
   class:btn-md={size === 'md'}
   class:btn-lg={size === 'lg'}
@@ -30,7 +31,6 @@
   {type}
   disabled={disabled || loading}
   on:click={onClick}
-  on:click
 >
   {#if loading}
     <span class="btn-loading">Loading...</span>
@@ -131,7 +131,16 @@
   .btn-danger:hover:not(.btn-disabled) {
     @apply shadow-md;
   }
-  
+
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white 
+           ring-blue-600 focus:ring-blue-600 focus:ring-offset-2;
+  }
+
+  .btn-primary:hover:not(.btn-disabled) {
+    @apply shadow-md;
+  }
+
   .btn-secondary {
     background-color: var(--color-interactive);
     color: var(--color-text-primary);
