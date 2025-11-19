@@ -53,60 +53,67 @@
 
 <main>
   <div class="settings">
-    <h2>Custom Reference Data</h2>
-    <div class="template">
-      <p>
-        To use custom reference data you must use the template. Note: All data
-        and coordinates must be inputed correctly!
-      </p>
-      <a
-        class="downloadLink"
-        href={RefDataTemplate}
-        download="RefDataTemplate.csv"
-        ><Button className="downloadBtn" variant="default" size="md">
-          Open Template
-          <div class="iconBox"><DownloadCloudIcon size="1.25x" /></div>
-        </Button></a
-      >
+    <div class="header">
+      <h2>Custom Reference Data</h2>
     </div>
 
-    <div class="inputDiv">
-      <FileSelector
-        bind:filePaths
-        label={"Select Reference Data"}
-        type="Single"
-        filter="csv"
-      />
-      <div class="flex flex-col gap-1">
-        {#if filePaths && filePaths.length > 0}
-          <div class="flex items-center justify-center w-full">
-            <p class="inputLabel new">New File:</p>
-            <div class="input">
-              {filePaths}
+    <div class="content">
+      <div class="info-section">
+        <div class="template-info">
+          <p>
+            To use custom reference data you must use the template. All data and coordinates must be inputed correctly!
+          </p>
+          <a
+            class="downloadLink"
+            href={RefDataTemplate}
+            download="RefDataTemplate.csv"
+          >
+            <Button className="w-full justify-between" variant="default" size="md" icon={DownloadCloudIcon} iconPosition="right">
+              Open Template
+            </Button>
+          </a>
+        </div>
+      </div>
+
+      <div class="input-section">
+        <FileSelector
+          bind:filePaths
+          label={"Select Reference Data"}
+          type="Single"
+          filter="csv"
+        />
+        
+        <div class="file-status">
+          {#if filePaths && filePaths.length > 0}
+            <div class="status-row">
+              <span class="label new">New File:</span>
+              <span class="value" title={filePaths[0]}>
+                {filePaths[0].split('\\').pop().split('/').pop()}
+              </span>
             </div>
-          </div>
-        {/if}
-        {#if $processState.artStacks[0].colorTarget?.refData}
-          <div class="flex items-center justify-center w-full">
-            <p class="inputLabel">Current File:</p>
-            <div class="input">
-              {$processState.artStacks[0].colorTarget?.refData?.name}
+          {/if}
+          {#if $processState.artStacks[0].colorTarget?.refData}
+            <div class="status-row">
+              <span class="label">Current:</span>
+              <span class="value">
+                {$processState.artStacks[0].colorTarget?.refData?.name}
+              </span>
             </div>
-          </div>
-        {/if}
-        {#if $processState.artStacks[0].verificationTarget?.refData}
-          <div class="flex items-center justify-center w-full">
-            <p class="inputLabel">Current File:</p>
-            <div class="input">
-              {$processState.artStacks[0].verificationTarget?.refData?.name}
+          {/if}
+          {#if $processState.artStacks[0].verificationTarget?.refData}
+            <div class="status-row">
+              <span class="label">Current:</span>
+              <span class="value">
+                {$processState.artStacks[0].verificationTarget?.refData?.name}
+              </span>
             </div>
-          </div>
-        {/if}
+          {/if}
+        </div>
       </div>
     </div>
-    <div class="buttonGroup">
-      <Button variant="secondary" onClick={closeModal}>Cancel</Button>
-      <Button variant="success" onClick={confirm}>Confirm</Button>
+
+    <div class="footer">
+      <Button variant="success" onClick={confirm} disabled={!filePaths || filePaths.length === 0}>Confirm</Button>
     </div>
   </div>
 </main>
@@ -114,42 +121,67 @@
 <style lang="postcss">
   main {
     background-color: var(--color-surface);
-    @apply max-w-[50%] max-h-[50%] flex justify-center items-center rounded-2xl shadow-xl;
-  }
-  .settings {
-    @apply w-full h-full flex flex-col justify-between p-6 pb-6;
-  }
-  .downloadLink {
-    @apply p-0 w-1/2;
-  }
-  :global(.downloadBtn) {
-    @apply w-full p-0 pl-2 text-lg flex justify-between gap-2 items-center whitespace-nowrap !important;
-  }
-  h2 {
-    @apply w-full text-xl flex justify-center;
-  }
-  .template {
-    @apply w-full flex justify-between items-center gap-2;
-  }
-  .inputDiv {
-    @apply flex flex-col justify-center items-center gap-1;
-  }
-  .iconBox {
-    @apply h-full bg-green-500/90 rounded-r-lg p-1;
-  }
-  .input {
-    background-color: var(--color-surface-base);
-    @apply w-full rounded-r-lg h-full flex items-center justify-center p-2;
+    @apply w-[500px] flex flex-col rounded-xl shadow-2xl overflow-hidden;
   }
 
-  .buttonGroup {
-    @apply flex justify-end gap-2;
+  .settings {
+    @apply flex flex-col h-full;
   }
-  .inputLabel {
-    @apply h-full flex justify-center items-center bg-blue-600/25 rounded-l-lg
-          px-2 whitespace-nowrap;
+
+  .header {
+    @apply p-4;
   }
-  .new {
-    @apply bg-green-600/25;
+
+  h2 {
+    @apply text-xl font-semibold text-center m-0;
+    color: var(--color-text-primary);
+  }
+
+  .content {
+    @apply p-6 flex flex-col gap-6;
+  }
+
+  .info-section {
+    @apply p-4 rounded-lg border border-blue-100 dark:border-blue-800;
+  }
+
+  .template-info p {
+    @apply text-sm mb-3 leading-relaxed;
+    color: var(--color-text-secondary);
+  }
+
+  .downloadLink {
+    @apply block no-underline;
+  }
+
+  .input-section {
+    @apply flex flex-col gap-4;
+  }
+
+  .file-status {
+    @apply flex flex-col gap-2 text-sm;
+  }
+
+  .status-row {
+    border: 1px solid var(--color-border);
+    @apply flex items-center gap-2 p-2 rounded;
+  }
+
+  .label {
+    @apply font-medium px-2 py-0.5 rounded text-xs uppercase tracking-wider;
+    color: var(--color-text-secondary);
+  }
+
+  .label.new {
+    @apply text-green-700 dark:text-green-300;
+  }
+
+  .value {
+    @apply truncate flex-1 font-mono;
+    color: var(--color-text-primary);
+  }
+
+  .footer {
+    @apply p-4 flex justify-end gap-3;
   }
 </style>

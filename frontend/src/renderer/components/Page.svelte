@@ -57,7 +57,6 @@
 	{:else if $modal === "CustomRefData"}
 		<Modal
 			component={RefDataModal}
-			customExit
 			on:close={() => {
 				showModal = false;
 				$modal = null;
@@ -66,7 +65,6 @@
 	{:else if $modal === "CustomRefDataVer"}
 		<Modal
 			component={RefDataModal}
-			customExit
 			on:close={() => {
 				showModal = false;
 				$modal = null;
