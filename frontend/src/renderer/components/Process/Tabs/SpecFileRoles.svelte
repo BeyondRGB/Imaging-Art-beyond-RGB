@@ -86,23 +86,23 @@
         return mapping[location];
     }
 
-    function moveItem(fromLocation, toLocation, ignoreItemID) {
-        const sourceList = getList(fromLocation);
+    function swapItem(sourceLocation, moveToLocation, ignoreItemID) {
+        const sourceList = getList(sourceLocation);
 
         if (sourceList === undefined) {
             console.log("Source list is undefined");
             return;
         }
 
-        // Remove the item from the source list, ignore the item we are moving.
+        // Find the index of the item that we just dropped into sourceLocation. This index will be used to NOT move the item.
         const ignoreIndex = sourceList.findIndex(obj => obj.id === ignoreItemID);
 
-        let item;
+        let item: string;
         if (ignoreIndex == 0) {
-            // Take the last element
+            // The item we just dropped into sourceLocation is the first element, so remove the last element.
             item = sourceList.pop();
         } else {
-            // Take the first element
+            // The item we just dropped into sourceLocation is NOT the first element, so remove the first element.
             item = sourceList.shift();
         }
 
@@ -111,8 +111,9 @@
             return;
         }
 
-        // Special processing is needed for the roles list, since it uses the imageFilePaths array.
-        if (fromLocation === ImageField.ROLES) {
+        // Update the state of the source location to remove the item in the svelte state
+        // Note: Special processing is needed for the roles list, since it uses the imageFilePaths array.
+        if (sourceLocation === ImageField.ROLES) {
             // Force Svelte reactivity by reassigning the imageFilePaths.
             $processState.imageFilePaths = sourceList;
         } else {
@@ -120,17 +121,22 @@
             imageStack = {
                 ...imageStack,
                 // Modify the targetList to remove the item. This uses a JavaScript modification syntax that looks up a field with a name.
-                [fromLocation]: sourceList
+                [sourceLocation]: sourceList
             };
         }
 
+        // TODO: Right now the process state disappears when we swap items.
+
         // Special processing is needed for the role list, since it uses the imageFilePaths array.
-        if (toLocation === ImageField.ROLES) {
+        if (moveToLocation === ImageField.ROLES) {
             // Force Svelte reactivity by reassigning the imageFilePaths.
-            $processState.imageFilePaths = [...$processState.imageFilePaths, item];
+            console.log(`Moving item to roles list ${JSON.stringify($processState.imageFilePaths)}`);
+            // $processState.imageFilePaths = [...$processState.imageFilePaths, item];
+            $processState.imageFilePaths.push(item);
+            console.log(`Done moving item into roles list ${JSON.stringify($processState.imageFilePaths)}`);
         } else {
             // Get the list we are moving items too
-            const targetList = getList(toLocation);
+            const targetList = getList(moveToLocation);
 
             if (sourceList === undefined) {
                 console.log("Source list is undefined");
@@ -144,7 +150,7 @@
             imageStack = {
                 ...imageStack,
                 // Modify the targetList to include the item. This uses a JavaScript modification syntax that looks up a field with a name.
-                [toLocation]: targetList
+                [moveToLocation]: targetList
             };
         }
     }
@@ -165,7 +171,7 @@
             if (list.length > 1 && lastDragLocation) {
                 const justDroppedItem = event.detail.info.id;
 
-                moveItem(location, lastDragLocation, justDroppedItem);
+                swapItem(location, lastDragLocation, justDroppedItem);
 
                 lastDragLocation = null;
             }
