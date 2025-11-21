@@ -4,7 +4,7 @@
   import { find } from "lodash";
   import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
   import Button from "@components/Button.svelte";
-  import Switch from "@components/Switch.svelte";
+  import SwitchRow from "@components/SwitchRow.svelte";
   import { createEventDispatcher } from 'svelte';
   import { exportHeatmapCSV } from "@util/csvExport.js";
   export let data;
@@ -43,11 +43,13 @@
     <div class="heatmap-header">
       <span class="heatmap-title">ΔE Heatmap</span>
       <div class="heatmap-controls">
-        <Switch
-          label="Grayscale"
-          bind:checked={visionDeficiencyMode}
-          ariaLabel="Toggle grayscale mode"
-        />
+        <div class="grayscale-switch">
+          <SwitchRow
+            label="Grayscale"
+            description="Toggle grayscale mode"
+            bind:checked={visionDeficiencyMode}
+          />
+        </div>
         <Button 
           variant="secondary" 
           size="sm" 
@@ -94,6 +96,10 @@
   
   .heatmap-controls {
     @apply flex items-center gap-3;
+  }
+
+  .grayscale-switch {
+    min-width: 200px;
   }
 
   /* Global Chart Styles */

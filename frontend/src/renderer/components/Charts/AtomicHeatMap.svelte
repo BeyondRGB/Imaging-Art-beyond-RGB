@@ -108,7 +108,17 @@ function generateLegendRanges() {
 
     return result;
 }
+    function getCssVar(name) {
+        if (typeof window !== 'undefined') {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+        return '#ffffff';
+    }
+
     const getOptions = function() {
+        const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';
+        const textColorSecondary = getCssVar('--color-text-secondary') || '#ffffff';
+        
         return {
             series: getData(),
             chart: {
@@ -144,7 +154,7 @@ function generateLegendRanges() {
 				    fillColors: generateLegendRanges().map(range => range.color)
 				},
 				labels: {
-				    colors: "#ffffff",
+				    colors: textColorPrimary,
                     formatter: function(value, index) {
                        let legendRanges = generateLegendRanges();
                        return legendRanges[index]?.label || "";
@@ -184,7 +194,7 @@ function generateLegendRanges() {
                         }
                     },
                     style: {
-                        colors: ["#ffffff"]   
+                        colors: [textColorSecondary]   
                     },
                 },
                 
@@ -194,7 +204,7 @@ function generateLegendRanges() {
                     style: {
                         //for some reason colors: ["#ffffff", "#ffffff"] would only make the first two labels white??
                         //so make an array the length of the x-axis of just "#ffffff"
-                        colors:  Array.from({length:data?.[0].length}, ()=> "#ffffff")
+                        colors:  Array.from({length:data?.[0].length}, ()=> textColorSecondary)
                     }
                 }
             },

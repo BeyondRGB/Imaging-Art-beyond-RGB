@@ -14,6 +14,14 @@
       destDir: filePaths[0]
     }));
   }
+
+  $: if ($processState.destFileName) {
+    const sanitized = $processState.destFileName.replace(/[/\\?%*:|"<>]/g, '-');
+    if (sanitized !== $processState.destFileName) {
+       processState.update(state => ({ ...state, destFileName: sanitized }));
+    }
+  }
+
   $: if (
     $processState.destDir &&
     $processState.destDir?.length > 1 &&

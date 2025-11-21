@@ -355,7 +355,7 @@
     @apply flex h-full w-full justify-center flex-col relative;
   }
   .noFile {
-    background-color: var(--color-overlay-heavy);
+    background-color: var(--color-surface-base);
     @apply absolute w-full h-full z-[99] flex justify-center items-center;
   }
   .inputBox {

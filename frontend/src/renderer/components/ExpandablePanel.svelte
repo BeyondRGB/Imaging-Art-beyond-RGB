@@ -86,6 +86,7 @@
     @apply h-12 w-10 flex justify-center items-center
            cursor-pointer transition-all duration-500
            transform -translate-y-1/2 hover:bg-opacity-90;
+    z-index: 60 !important; /* Force z-index to be above panel */
   }
   
   .panel-handle:hover {

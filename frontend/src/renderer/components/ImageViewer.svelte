@@ -68,8 +68,28 @@
   //     url: imageUrl,
   //   });
   // }
+  $: if (viewer) {
+    // console.log($processState.artStacks[0].colorTargetImage);
+    console.log("New Image (Image Viewer)");
+    if (srcUrl && srcUrl !== imageUrl) {
+      let temp = new Image();
+      temp.src = srcUrl;
+
+      imageUrl = temp.src;
+
+      try {
+          viewer.open({
+            type: "image",
+            url: imageUrl,
+          });
+      } catch (e) {
+          console.error("OpenSeadragon Error:", e);
+      }
+    }
+  }
+
   $: if ($processState.currentTab >= 6 || $currentPage === "Reports") {
-    if (viewer && !viewer.isOpen()) {
+    if (viewer && !viewer.isOpen() && imageUrl) {
       console.log("Opening Image");
       console.log(viewer.isOpen());
       viewer.open({
@@ -81,20 +101,6 @@
     if (viewer) {
       viewer.close();
     }
-  }
-
-  $: if (viewer) {
-    // console.log($processState.artStacks[0].colorTargetImage);
-    console.log("New Image (Image Viewer)");
-    let temp = new Image();
-    temp.src = srcUrl;
-
-    imageUrl = temp.src;
-
-    viewer.open({
-      type: "image",
-      url: imageUrl,
-    });
   }
 
   function handleZoom(e) {
@@ -112,7 +118,7 @@
 
 <style lang="postcss">
   main {
-    background-color: var(--color-overlay-medium);
+    background-color: var(--color-surface-base);
     border: 1px solid var(--color-border);
     @apply w-full h-full aspect-[3/2] shadow-lg;
   }

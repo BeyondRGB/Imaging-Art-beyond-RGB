@@ -154,7 +154,7 @@ $: if (data.length > 1) {
           text: "Estimated Spectrum",
           align: 'left',
           style: {
-              color:  '#FFFFFF'
+              color:  'var(--color-text-primary)'
           },
       }
   };
