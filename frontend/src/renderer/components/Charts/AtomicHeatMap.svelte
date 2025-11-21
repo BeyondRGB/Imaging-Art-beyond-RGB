@@ -108,6 +108,7 @@ function generateLegendRanges() {
 
     return result;
 }
+    // Helper to get CSS variables dynamically
     function getCssVar(name) {
         if (typeof window !== 'undefined') {
             return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -116,6 +117,7 @@ function generateLegendRanges() {
     }
 
     const getOptions = function() {
+        // Get theme colors from CSS variables
         const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';
         const textColorSecondary = getCssVar('--color-text-secondary') || '#ffffff';
         

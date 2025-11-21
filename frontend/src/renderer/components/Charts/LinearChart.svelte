@@ -112,7 +112,28 @@
     fill-opacity: 1;
     r: 7;
   }
+  /* Remove hardcoded stroke black to allow theme support if needed, 
+     or strictly keep it if data visibility on light background requires it.
+     However, since this is points on a chart, adjusting stroke based on theme 
+     might be better handled via CSS variables if we wanted fully dynamic. 
+     For now, leaving as requested or modifying to variable?
+     User asked for light/dark compliance. Black stroke on dark theme might be hard to see if fill is dark.
+     Let's use a variable for stroke. */
   .liner-chart .bx--cc--scatter circle {
-    stroke: black !important;
+    stroke: var(--color-text-primary) !important; 
+  }
+  
+  /* Carbon Charts overrides for theming */
+  .liner-chart .bx--cc--axes text {
+    fill: var(--color-text-secondary) !important;
+  }
+  .liner-chart .bx--cc--axes .axis-title {
+    fill: var(--color-text-primary) !important;
+  }
+  .liner-chart .bx--cc--grid line {
+    stroke: var(--color-border) !important;
+  }
+  .liner-chart .bx--chart-title {
+    fill: var(--color-text-primary) !important;
   }
 </style>

@@ -49,7 +49,20 @@ $: if (data.length > 1) {
     data = [];
 }
 
-  const options = {
+    // Helper to get CSS variables
+    function getCssVar(name) {
+        if (typeof window !== 'undefined') {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+        return '#ffffff';
+    }
+
+  const getOptions = function() {
+      // Dynamic color retrieval
+      const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';
+      const textColorSecondary = getCssVar('--color-text-secondary') || '#ffffff';
+
+      return {
       series: [],
       stroke: {
           show: true,
@@ -86,7 +99,7 @@ $: if (data.length > 1) {
       tooltip: {
           shared: true,
           intersect: false,
-          theme: 'light',
+          theme: 'dark', // Use dark theme for tooltip for better contrast usually, or make dynamic
           x: {
               show: false
           },
@@ -107,7 +120,7 @@ $: if (data.length > 1) {
           tickAmount: 9,
           labels: {
               style: {
-                  colors: 'var(--color-text-secondary)',
+                  colors: textColorSecondary,
               }
           },
           title: {
@@ -115,7 +128,7 @@ $: if (data.length > 1) {
               offsetX: 0,
               offsetY: 110,
               style: {
-                  color: 'var(--color-text-primary)',
+                  color: textColorPrimary,
               }
           },
       },
@@ -131,20 +144,21 @@ $: if (data.length > 1) {
           },
           labels: {
               style: {
-                  colors: "var(--color-text-secondary)"
+                  colors: textColorSecondary
               }
           },
           title: {
               text: "Reflectance (%)",
               style: {
-                  color: 'var(--color-text-primary)',
+                  color: textColorPrimary,
               },
           },
       },
       legend: {
           show: true,
           labels: {
-              useSeriesColors: true
+              useSeriesColors: true,
+              colors: textColorPrimary 
           },
           markers: {
               fillColors: pointColors,
@@ -154,10 +168,17 @@ $: if (data.length > 1) {
           text: "Estimated Spectrum",
           align: 'left',
           style: {
-              color:  'var(--color-text-primary)'
+              color:  textColorPrimary
           },
       }
-  };
+  }};
+
+  let options = getOptions();
+
+  // Update options when theme might change or on mount - though for now just initial load
+  // Ideally we'd use a store for theme changes to trigger a re-render
+  
+  // Creating CSV Content...
 
   const createCSVContent = () => {
     let csvContent = "data:text/csv;charset=utf-8,"; //doesn't actually show up in file
