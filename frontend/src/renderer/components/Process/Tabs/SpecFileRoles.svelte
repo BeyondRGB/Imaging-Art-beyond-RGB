@@ -9,13 +9,13 @@
     import { TRIGGERS } from "svelte-dnd-action";
     import { ImageField } from "@util/ImageField";
 
-    let imageStack = get($processState, 'artStacks[0].fields');
+    let imageStack = $processState.artStacks[0].fields
     let rerenderToggle = false;
     let validationError = null;
 
     // this helps force a rerender once the imageStack has been reset
     $:if ($processState.currentTab === 3) {
-        imageStack = get($processState, 'artStacks[0].fields');
+        imageStack = $processState.artStacks[0].fields;
     }
 
     const getAllImages = function () {
@@ -52,8 +52,6 @@
         } else {
             return null;
         }
-
-        return validationError;
     };
 
     const submitSpecFileRoles = function (skipOptionalFiltering) {
@@ -131,8 +129,11 @@
         if (moveToLocation === ImageField.ROLES) {
             // Force Svelte reactivity by reassigning the imageFilePaths.
             console.log(`Moving item to roles list ${JSON.stringify($processState.imageFilePaths)}`);
-            // $processState.imageFilePaths = [...$processState.imageFilePaths, item];
+
             $processState.imageFilePaths.push(item);
+            $processState.imageFilePaths = $processState.imageFilePaths;
+            rerenderToggle = !rerenderToggle;
+            
             console.log(`Done moving item into roles list ${JSON.stringify($processState.imageFilePaths)}`);
         } else {
             // Get the list we are moving items too
@@ -231,7 +232,7 @@
                         <div class="text">Target</div>
                         <div class="inputGroup">
                             <div class="cell"><Dropbox id={ImageField.TARGET_B} type="image" bind:items={imageStack.targetA} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
-                            <div class="cell"><Dropbox .={ImageField.TARGET_A} type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
+                            <div class="cell"><Dropbox id={ImageField.TARGET_A} type="image" bind:items={imageStack.targetB} singleItem={true} showError={!!validationError} dropFunction={dropFunction} dragMonitor={dragMonitor}/></div>
                         </div>
                     {/if}
                     <div class="text">FlatField</div>
