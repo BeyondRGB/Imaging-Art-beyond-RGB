@@ -1,12 +1,12 @@
 <script lang="ts">
   import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
   import {
-    processState,
     viewState,
     sendMessage,
     messageStore,
     currentPage,
     serverError,
+    requestColorManagedImage,
   } from "@util/stores";
   import {
     XIcon,
@@ -19,8 +19,6 @@
   import SwitchRow from "@components/SwitchRow.svelte";
   import Card from "@components/Card.svelte";
   import FileSelector from "@components/FileSelector.svelte";
-  import { fullScreenApi } from "openseadragon";
-  import EmptyState from "@components/EmptyState.svelte";
 
   let showBrush = false;
   let stackCurves = false;
@@ -30,16 +28,10 @@
   let trueShadowPos = { left: 0, top: 0 };
   let spectrumData = []; // Initialize as empty array
   let mainfilePath;
-  let oldProjectKey: String;
+  let oldProjectKey: string | null = null;
 
   let loading = false;
-
   let expand = false; // Start collapsed like master
-
-  let binaryType = null;
-  let binaryName = null;
-  let binaryID = null;
-  let binaryFor = null;
 
   let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
 
@@ -66,29 +58,16 @@
     getData();
   }
 
+  // Handle SpectralPicker and Error responses (page-specific)
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-    console.log("New Message Spec");
     try {
-      // Validate message is a string before parsing
       const message = $messageStore[0];
       if (typeof message === 'string' && message.trim().length > 0) {
         let temp = JSON.parse(message);
-        console.log("Parsed message ResponseType:", temp["ResponseType"], "RequestID:", temp["RequestID"], "CMID:", $processState.CMID);
         
         if (temp["ResponseType"] === "SpectralPicker") {
           console.log("Spectrum Data From Server");
           spectrumData = temp["ResponseData"]["spectrum"];
-        } else if (
-          // CM Art Binary Handler
-          temp["ResponseType"] === "ImageBinary" &&
-          temp["RequestID"] === $processState.CMID
-        ) {
-          console.log("Color Managed Binary From Server - setting binaryFor to ColorManaged");
-          binaryType = temp["ResponseData"]["type"];
-          binaryName = temp["ResponseData"]["name"];
-          binaryID = temp["RequestID"];
-          binaryFor = "ColorManaged";
-          console.log("binaryFor is now:", binaryFor, "binaryType:", binaryType, "binaryName:", binaryName);
         } else if (temp["ResponseType"] === "Error") {
           // Error handler
           if (temp["ResponseData"] && temp["ResponseData"]["critical"]) {
@@ -98,102 +77,52 @@
             });
             console.log({ SERVERERROR: temp["ResponseData"] });
           }
-        } else {
-          console.log("Message type not handled:", temp["ResponseType"]);
         }
-      } else {
-        console.log("Invalid or empty message received");
       }
     } catch (e) {
-      console.error("JSON parse error in SpectralPicker:", e);
-      console.error("Message content:", $messageStore[0]);
+      // Not JSON or parse error, ignore
     }
   }
 
-  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
-    console.log("creating blob for:", binaryFor);
-    let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
-    let temp = new Image();
-    temp.src = URL.createObjectURL(blob);
+  // Track loading state based on colorManagedImage updates
+  $: if ($viewState.colorManagedImage.dataURL.length > 0) {
+    loading = false;
+  }
 
-    if (binaryFor === "ColorManaged") {
-      console.log("Setting color managed image dataURL:", temp.src.substring(0, 50));
+  // Handle project key changes
+  $: if ($viewState.projectKey !== null) {
+    if (oldProjectKey !== $viewState.projectKey && oldProjectKey !== null) {
+      console.log(`Project changed from ${oldProjectKey} to ${$viewState.projectKey}`);
+      // Clear the old image data for the new project
       viewState.update(state => ({
         ...state,
         colorManagedImage: {
-          dataURL: temp.src,
-          name: binaryName,
+          dataURL: "",
+          name: "Waiting..."
         }
       }));
-      console.log("Setting loading to false");
-      loading = false;
     }
-    binaryType = null;
-    binaryName = null;
-    binaryID = null;
-    binaryFor = null;
+    oldProjectKey = $viewState.projectKey;
   }
 
-  function colorManagedImage() {
-    let rand = Math.floor(Math.random() * 999999);
-    processState.update(state => ({
-      ...state,
-      CMID: rand
-    }));
-    let msg = {
-      RequestID: rand,
-      RequestType: "ColorManagedImage",
-      RequestData: {
-        name: $viewState.projectKey,
-        target_requested: false,
-      },
-    };
-
-    console.log("Fetching Color Managed Image");
-    console.log(msg);
-    loading = true;
-    sendMessage(JSON.stringify(msg));
-  }
-
-  // Close the current image whenever a new project is opened
-  $: if ($viewState.projectKey !== null) {
-      console.log(`New Project Key 2 ${$viewState.projectKey}, Old: ${oldProjectKey}`)
-
-      if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
-          console.log(`Closing Old Project Key ${oldProjectKey}`);
-          closeImage(false);
-
-          // Track the current open project
-          oldProjectKey = $viewState.projectKey;
-      }
-
-      // If there is no previous project, set the old project key. Otherwise, it will be set in the above function.
-      if (oldProjectKey === null || oldProjectKey === undefined) {
-          console.log(`Setting Old Project Key ${$viewState.projectKey}`);
-          oldProjectKey =  $viewState.projectKey;
-      }
-  }
-
-  // When the user loads a file from the file browser.
+  // When the user loads a file from the file browser
   $: if (mainfilePath?.length > 0) {
-      console.log(`New Project Key ${mainfilePath[0]}, Old Key ${mainfilePath[0]}`);
-      $viewState.projectKey = mainfilePath[0];
-
-      // If there is no previous project, set the old project key. Otherwise it will be set in the above function.
-      if (oldProjectKey === null || oldProjectKey === undefined) {
-          console.log(`Setting Old Project Key ${mainfilePath[0]}`);
-          oldProjectKey = mainfilePath[0];
-      }
+    console.log("New Project Key from file selector:", mainfilePath[0]);
+    viewState.update(state => ({
+      ...state,
+      projectKey: mainfilePath[0]
+    }));
   }
 
-  // When a new project is opened, and the colorManagedImage is not available fetch the image.
+  // When a new project is opened and colorManagedImage is not available, fetch the image
   $: if (
     $currentPage === "SpecPicker" &&
     $viewState.projectKey !== null &&
     $viewState.colorManagedImage.dataURL.length < 1
   ) {
-    console.log("Getting Color Managed Image");
-    colorManagedImage();
+    console.log("Getting Color Managed Image using centralized handler");
+    loading = true;
+    requestColorManagedImage($viewState.projectKey);
   }
 
   // Fetch initial spectrum data when image is loaded
@@ -207,14 +136,6 @@
     getData();
   }
 
-  $: if (mainfilePath?.length > 0) {
-    console.log("New Project Key");
-    viewState.update(state => ({
-      ...state,
-      projectKey: mainfilePath[0]
-    }));
-  }
-
   let isFullScreen = window.innerHeight == screen.height;
 
   function closeImage() {
@@ -222,12 +143,13 @@
       ...state,
       projectKey: null,
       colorManagedImage: {
-        ...state.colorManagedImage,
-        dataURL: ""
+        dataURL: "",
+        name: "Waiting..."
       }
     }));
     mainfilePath = "";
     showBrush = false;
+    oldProjectKey = null;
   }
 </script>
 

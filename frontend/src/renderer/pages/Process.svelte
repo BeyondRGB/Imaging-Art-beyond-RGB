@@ -118,22 +118,15 @@
     });
   }
 
+  // Handle Process-specific messages (Thumbnails, Output images, HalfSizedPreview, etc.)
+  // Note: ColorManaged and ColorManagedTarget images are handled centrally in stores.ts
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-    //console.log($messageStore[0]);
-    console.log("New Message");
     try {
-      let temp = JSON.parse($messageStore[0]);
+      const message = $messageStore[0];
+      if (typeof message === 'string' && message.trim().length > 0) {
+      let temp = JSON.parse(message);
+      
       if (
-        // CM Art Binary Handler
-        temp["ResponseType"] === "ImageBinary" &&
-        temp["RequestID"] === $processState.CMID
-      ) {
-        console.log("Color Managed Binary From Server");
-        binaryType = temp["ResponseData"]["type"];
-        binaryName = temp["ResponseData"]["name"];
-        binaryID = temp["RequestID"];
-        binaryFor = "ColorManaged";
-      } else if (
         // Thumbnail Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
         temp["RequestID"] === $processState.thumbnailID
@@ -142,18 +135,13 @@
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
         binaryFor = "Thumbnail";
-      } else if(
-        // Color Managed Target image Binary handler
+      } else if (
+        // Output binary handler (not CMID or CMTID)
         temp["ResponseType"] === "ImageBinary" &&
-        temp["RequestID"] === $processState.CMTID
+        temp["RequestID"] !== $processState.CMID &&
+        temp["RequestID"] !== $processState.CMTID
       ) {
-        console.log("Color Managed Target Binary From Server");
-        binaryType = temp["ResponseData"]["type"];
-        binaryName = temp["ResponseData"]["name"];
-        binaryFor = "ColorManagedTarget";
-      }else if (temp["ResponseType"] === "ImageBinary") {
-        // Color target and output binary handler
-        console.log("Binary From Server");
+        console.log("Output Binary From Server");
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
         binaryFor = "Output";
@@ -201,13 +189,16 @@
           console.log({ SERVERERROR: temp["ResponseData"] });
         }
       }
+      }
     } catch (e) {
-      console.log(e);
+      // Not JSON or parse error, ignore
     }
   }
 
-  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
-    console.log("creating blob");
+  // Handle Process-specific blob messages (Thumbnails, Output images)
+  // ColorManaged images are handled centrally in stores.ts
+  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob && binaryFor !== null) {
+    console.log("Processing blob for:", binaryFor);
     let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
     let temp = new Image();
     temp.src = URL.createObjectURL(blob);
@@ -237,27 +228,13 @@
           name: binaryName,
         }
       }));
-    } else if (binaryFor === "ColorManaged") {
-      viewState.update(state => ({
-        ...state,
-        colorManagedImage: {
-          dataURL: temp.src,
-          name: binaryName,
-        }
-      }));
-    }else if(binaryFor === "ColorManagedTarget"){ 
-      console.log("Got target!");
-      viewState.update(state => ({
-        ...state,
-        colorManagedTargetImage: {
-          dataURL: temp.src,
-          name: binaryName
-        }
-      }));
     }
+    
+    // Clear the pending binary request
     binaryType = null;
     binaryName = null;
     binaryID = null;
+    binaryFor = null;
   }
 
   $: processRequest = {

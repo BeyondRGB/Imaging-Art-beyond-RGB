@@ -4,63 +4,56 @@
 		sendMessage,
 		messageStore,
 		currentPage,
-		processState,
+		requestColorManagedTargetImage,
+		clearProjectViewState,
 	} from "@util/stores";
 	import Heatmap from "@components/Charts/HeatMap.svelte";
 	import LinearChart from "@root/components/Charts/LinearChart.svelte";
 	import FileSelector from "@components/FileSelector.svelte";
 	import VectorChart from "@components/Charts/VectorChart.svelte";
 	import ImageViewer from "@root/components/ImageViewer.svelte";
-	import LineChart from "@components/Charts/LineChart.svelte";
 	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
-	import Switch from "@components/Switch.svelte";
 	import Button from "@components/Button.svelte";
 	import EmptyState from "@components/EmptyState.svelte";
 	import ExpandablePanel from "@components/ExpandablePanel.svelte";
 	import CloseButton from "@components/CloseButton.svelte";
 
-	let open = false;
 	let spectrumDataHeatMap_est;
 	let spectrumDataHeatMap_ref;
-	let brushShow = false;
-	let size;
-	let trueSize;
 	let shadowPos = { left: 0, top: 0 };
 	let expand = false;
 	let combinedData = [];
-    let trueShadowPos = shadowPos;
-
+	let trueShadowPos = shadowPos;
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
-        let p90Value = null;
+	let p90Value = null;
 
-        function handleP90Update(e) {
-          const rawVal = e.detail.p90;
-          console.log("Received p90 update:", rawVal, "typeof:", typeof rawVal, "JSON:", JSON.stringify(rawVal));
-          if (rawVal === null || rawVal === undefined) {
-          console.log("Received null or undefined value. Ignoring update.");
-          return;
-          }    
+	function handleP90Update(e) {
+		const rawVal = e.detail.p90;
+		console.log("Received p90 update:", rawVal, "typeof:", typeof rawVal, "JSON:", JSON.stringify(rawVal));
+		if (rawVal === null || rawVal === undefined) {
+			console.log("Received null or undefined value. Ignoring update.");
+			return;
+		}
 
-          let num;
-          if (typeof rawVal === "object") {
-            num = +rawVal;
-          } else {
-            num = parseFloat(rawVal);
-          }
-    
-          if (!isNaN(num)) {
-            p90Value = num;
-          }
-          console.log("Converted p90Value is now:", p90Value);
-        }
+		let num;
+		if (typeof rawVal === "object") {
+			num = +rawVal;
+		} else {
+			num = parseFloat(rawVal);
+		}
 
+		if (!isNaN(num)) {
+			p90Value = num;
+		}
+		console.log("Converted p90Value is now:", p90Value);
+	}
 
 	function handleDataPointSelect(event) {
 		const { yAxisLabel, xValue } = event.detail;
-		shadowPos.left=xValue
-		shadowPos.top=yAxisLabel
-		getData()
+		shadowPos.left = xValue;
+		shadowPos.top = yAxisLabel;
+		getData();
 	}
 
 	function getData() {
@@ -96,34 +89,15 @@
 		sendMessage(JSON.stringify(msg));
 	}
 
-	function colorManagedTargetImage() {
-		let randID = Math.floor(Math.random() * 999999);
-		processState.update(state => ({
-			...state,
-			CMTID: randID
-		}));
-		let msg = {
-			RequestID: randID,
-			RequestType: "ColorManagedImage",
-			RequestData: {
-				name: $viewState.projectKey,
-				target_requested: true,
-			},
-		};
-
-		console.log("Fetching Color Managed Target Image");
-		console.log(msg);
-		//loading = true;
-		sendMessage(JSON.stringify(msg));
-	}
-
-    // Track which projectKey we've loaded and fetch data when it changes
+	// Track which projectKey we've loaded
 	let loadedProjectKey: string | null = null;
-	$: if ($viewState.projectKey !== null && $viewState.projectKey !== loadedProjectKey) {
-		console.log(`Loading new project: ${$viewState.projectKey}, previous: ${loadedProjectKey}`);
+	
+	// Function to load project data
+	function loadProject(projectKey: string) {
+		console.log(`Loading project: ${projectKey}, previous: ${loadedProjectKey}`);
 		
-		// Clear old report data before loading new
-		if (loadedProjectKey !== null) {
+		// Clear old report data if switching projects
+		if (loadedProjectKey !== null && loadedProjectKey !== projectKey) {
 			viewState.update(state => ({
 				...state,
 				reports: {
@@ -137,108 +111,84 @@
 			}));
 		}
 		
-		// Fetch new project data
-		loadedProjectKey = $viewState.projectKey;
-		colorManagedTargetImage();
+		// Update tracking and fetch data
+		loadedProjectKey = projectKey;
+		requestColorManagedTargetImage(projectKey);
 		getReports();
 	}
 
-    // Load an image from a file
+	// Load an image from a file - trigger fetch immediately when file is selected
 	let mainfilePath;
 	$: if (mainfilePath?.length > 0) {
-		console.log("New Project Key");
+		const newProjectKey = mainfilePath[0];
+		console.log("New Project Key from file selector:", newProjectKey);
+		
+		// Set the projectKey in viewState
 		viewState.update(state => ({
 			...state,
-			projectKey: mainfilePath[0]
+			projectKey: newProjectKey
 		}));
+		
+		// Immediately load the project data
+		loadProject(newProjectKey);
+	}
+	
+	// Also handle when projectKey is set from elsewhere (e.g., returning to page)
+	$: if ($viewState.projectKey !== null && $viewState.projectKey !== loadedProjectKey) {
+		loadProject($viewState.projectKey);
 	}
 
-	let binaryType = null;
-	let binaryName = null;
-	let binaryID = null;
-	let binaryFor = null;
-
+	// Handle Report and SpectralPickerMeasured responses (page-specific)
 	$: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-		console.log("New Message REPORTS");
 		try {
-			let temp = JSON.parse($messageStore[0]);
-			if (temp["ResponseType"] === "Report") {
-				// Report handler
-				console.log("Report From Server");
-				if (temp["ResponseData"]["reportType"] === "Calibration") {
-					viewState.update(state => ({
-						...state,
-						reports: {
-							...state.reports,
-							calibration: temp["ResponseData"]["reports"]
-						}
-					}));
-			} 
-			else if (temp["ResponseData"]["reportType"] === "Verification") {
-				viewState.update(state => ({
-					...state,
-					reports: {
-						...state.reports,
-						verification: temp["ResponseData"]["reports"]
+			const message = $messageStore[0];
+			if (typeof message === 'string' && message.trim().length > 0) {
+				let temp = JSON.parse(message);
+				if (temp["ResponseType"] === "Report") {
+					console.log("Report From Server");
+					if (temp["ResponseData"]["reportType"] === "Calibration") {
+						viewState.update(state => ({
+							...state,
+							reports: {
+								...state.reports,
+								calibration: temp["ResponseData"]["reports"]
+							}
+						}));
+					} else if (temp["ResponseData"]["reportType"] === "Verification") {
+						viewState.update(state => ({
+							...state,
+							reports: {
+								...state.reports,
+								verification: temp["ResponseData"]["reports"]
+							}
+						}));
+					} else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
+						console.log("Spectrum Data From Server");
+						spectrumDataHeatMap_est = temp["ResponseData"]["estimated_spectrum"];
+						spectrumDataHeatMap_ref = temp["ResponseData"]["referenced_spectrum"];
+						combinedData = [
+							spectrumDataHeatMap_est, 
+							spectrumDataHeatMap_ref
+						];
 					}
-				}));
-			} 
-			else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
-					console.log("Spectrum Data From Server");
-					spectrumDataHeatMap_est = temp["ResponseData"]["estimated_spectrum"];
-					spectrumDataHeatMap_ref = temp["ResponseData"]["referenced_spectrum"];
-					combinedData = [
-						spectrumDataHeatMap_est, 
-						spectrumDataHeatMap_ref
-					]
 				}
-			} else if (
-				// Color Managed Target image Binary handler
-				temp["ResponseType"] === "ImageBinary" &&
-				temp["RequestID"] === $processState.CMTID
-			) {
-				console.log("Color Managed Target Binary From Server (Reports)");
-				binaryType = temp["ResponseData"]["type"];
-				binaryName = temp["ResponseData"]["name"];
-				binaryID = temp["RequestID"];
-				binaryFor = "ColorManagedTarget";
-				console.log("binaryFor is now:", binaryFor, "binaryType:", binaryType, "binaryName:", binaryName);
 			}
 		} catch (e) {
-			console.log(e);
+			// Not JSON or parse error, ignore
 		}
 	}
 
-	$: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
-		console.log("creating blob for:", binaryFor, "in Reports");
-		let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
-		let temp = new Image();
-		temp.src = URL.createObjectURL(blob);
-
-		if (binaryFor === "ColorManagedTarget") {
-			console.log("Setting color managed TARGET image dataURL:", temp.src.substring(0, 50));
-			viewState.update(state => ({
-				...state,
-				colorManagedTargetImage: {
-					dataURL: temp.src,
-					name: binaryName,
-				}
-			}));
-			console.log("Color managed target image updated");
-		}
-		binaryType = null;
-		binaryName = null;
-		binaryID = null;
-		binaryFor = null;
-	}
+	// Debug: log when colorManagedTargetImage changes
+	$: console.log("[Reports] colorManagedTargetImage changed:", 
+		$viewState.colorManagedTargetImage.dataURL ? 
+		$viewState.colorManagedTargetImage.dataURL.substring(0, 50) + "..." : "(empty)");
 
 	$: isVerification =
 		$viewState.reports.verification != null &&
 		$viewState.reports.verification["double_values"].length > 0;
 
-	let showVerification = false;
-
 	function handleCloseReport() {
+		// Clear only report-specific data, preserve colorManagedImage for Image Viewer
 		viewState.update(state => ({
 			...state,
 			projectKey: null,
