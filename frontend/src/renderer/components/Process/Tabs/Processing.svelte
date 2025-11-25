@@ -69,17 +69,18 @@
   }
 
 
-  //Open the file explorer using ipc after an image is finished processing.
+  // Open the file explorer using ipc after an image is finished processing.
   const openFileExplorer = async() =>{
       // $viewState.projectKey is the filepath of the .btrgb file, but has some odd syntax with forward and backslashes, so it needs cleaning
       let defaultPath = $viewState.projectKey;
 
-      // match "BeyondRGB_" prefix, followed by 1+digits with ".btrgb" at the end. The 'i' at the end means case insensitive
+      // Match "BeyondRGB_" prefix, followed by 1+digits with ".btrgb" at the end. The 'i' at the end means case-insensitive
       let pattern = /BeyondRGB_\d+.btrgb$/i;
 
-      // cut off the BeyondRGB_0000.btrgb file portion to just get the directory
+      // Cut off the BeyondRGB_0000.btrgb file portion to just get the directory
       let parentPath = defaultPath.replace(pattern, "");
 
+      // Use ipc to open the file explorer in the parent directory of the .btrgb file.
       await window.electron.openFileExplorer({directory: parentPath})
   }
 </script>
