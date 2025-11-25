@@ -6,6 +6,7 @@
   import html2canvas from "html2canvas";
   import { element } from "svelte/internal";
   import { chart } from "svelte-apexcharts";
+  import { appSettings } from "@util/stores";
 
   export let data = [];
   export let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);;
@@ -175,8 +176,12 @@ $: if (data.length > 1) {
 
   let options = getOptions();
 
-  // Update options when theme might change or on mount - though for now just initial load
-  // Ideally we'd use a store for theme changes to trigger a re-render
+  // Update options when theme changes
+  $: if ($appSettings) {
+      const currentTheme = $appSettings.isDarkTheme ? 'dark' : 'light';
+      options = getOptions();
+      options.tooltip.theme = currentTheme;
+  }
   
   // Creating CSV Content...
 

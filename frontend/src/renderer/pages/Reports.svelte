@@ -444,11 +444,11 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 	}
 
 	.chart {
-		background-color: #4A4A4C; @apply m-2 p-2 pb-4 rounded-lg pr-4;
+		background-color: var(--color-surface-elevated); @apply m-2 p-2 pb-4 rounded-lg pr-4;
 	}
 
 	.box {
-		@apply m-2 shadow-md px-2 pt-1 rounded-lg p-2; background-color: #4A4A4C;
+		@apply m-2 shadow-md px-2 pt-1 rounded-lg p-2; background-color: var(--color-surface-elevated);
 	}
 
 	.numberInput {

@@ -115,6 +115,7 @@
             ...verifyTarget.refData,
             name: verifyRefDataName
           },
+          // Verification does not support rotation, but the backend is expecting it in the package.
           calibrationTargetRotationAngle: 0
         };
       } else {
