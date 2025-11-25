@@ -5,7 +5,7 @@
   import Dropzone from "svelte-file-dropzone";
   export let type = "File";
   export let filter = "None";
-  export let defaultPath;
+  export let defaultPath = undefined;
   export let label = "Select Files";
   export let filePaths = [];
   export let icon = FilePlusIcon;

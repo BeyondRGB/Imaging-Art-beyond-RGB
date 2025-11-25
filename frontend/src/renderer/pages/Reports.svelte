@@ -23,14 +23,12 @@
 	let spectrumDataHeatMap_est;
 	let spectrumDataHeatMap_ref;
 	let brushShow = false;
-	let stackCurves = false;
 	let size;
 	let trueSize;
 	let shadowPos = { left: 0, top: 0 };
 	let expand = false;
 	let combinedData = [];
     let trueShadowPos = shadowPos;
-    let oldProjectKey: String;
 
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
@@ -119,34 +117,28 @@
 		sendMessage(JSON.stringify(msg));
 	}
 
-    // Close the current image whenever a new project is opened
-    $: if ($viewState.projectKey !== null) {
-        console.log(`New Project Key ${$viewState.projectKey}, Old: ${oldProjectKey}`)
-
-        if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
-            console.log(`Closing Old Project Key ${oldProjectKey}`);
-            handleCloseReport(false)
-
-            // Track the current open project
-            oldProjectKey = $viewState.projectKey;
-        }
-
-        // If there is no previous project, set the old project key. Otherwise, it will be set in the above function.
-        if (oldProjectKey === null || oldProjectKey === undefined) {
-            console.log(`Setting Old Project Key ${$viewState.projectKey}`);
-            oldProjectKey =  $viewState.projectKey;
-        }
-    }
-
-    // Initialize a new project key
-	let toggle = false;
-	$: if (
-		$currentPage === "Reports" &&
-		$viewState.projectKey !== null &&
-		!toggle
-	) {
-		// CALL FOR REPORTS
-		toggle = true;
+    // Track which projectKey we've loaded and fetch data when it changes
+	let loadedProjectKey: string | null = null;
+	$: if ($viewState.projectKey !== null && $viewState.projectKey !== loadedProjectKey) {
+		console.log(`Loading new project: ${$viewState.projectKey}, previous: ${loadedProjectKey}`);
+		
+		// Clear old report data before loading new
+		if (loadedProjectKey !== null) {
+			viewState.update(state => ({
+				...state,
+				reports: {
+					calibration: null,
+					verification: null,
+				},
+				colorManagedTargetImage: {
+					dataURL: "",
+					name: "Waiting...",
+				}
+			}));
+		}
+		
+		// Fetch new project data
+		loadedProjectKey = $viewState.projectKey;
 		colorManagedTargetImage();
 		getReports();
 	}
@@ -259,7 +251,7 @@
 				name: "Waiting...",
 			}
 		}));
-		toggle = false;
+		loadedProjectKey = null;
 		mainfilePath = null;
 	}
 
@@ -281,23 +273,21 @@
 							: $viewState.projectKey?.split("/").at(-1)}
 					</div>
 					<div class="report-info">
-						Mean ΔE: {parseFloat($viewState.reports.calibration?.["double_values"]?.[0]?.["data"]).toFixed(4)}
-<br>           {#if p90Value !== null && !isNaN(p90Value)}
-    90th Percentile: {p90Value.toFixed(2)}
-  {/if}
-
-
-
-
+						{#if $viewState.reports.calibration?.["double_values"]?.[0]?.["data"] !== undefined}
+							Mean ΔE: {parseFloat($viewState.reports.calibration["double_values"][0]["data"]).toFixed(4)}
+							{#if p90Value !== null && !isNaN(p90Value)}
+								<br>90th Percentile: {p90Value.toFixed(2)}
+							{/if}
+						{:else}
+							Loading report data...
+						{/if}
 					</div>
 
             <Button variant="secondary" size="md" onClick={() => { window.electron.openNewWindow() }}>View Another Report</Button>
 
-					{#if isVerification}
+					{#if isVerification && $viewState.reports.verification?.["double_values"]?.[0]?.["data"] !== undefined}
 						<div class="report-info">
-							Verification Mean ΔE: {parseFloat($viewState.reports.verification?.["double_values"]?.[0]?.["data"]).toFixed(4)}
-<br>
-Verification 90th Percentile: {p90Value.toFixed(2)}
+							Verification Mean ΔE: {parseFloat($viewState.reports.verification["double_values"][0]["data"]).toFixed(4)}
 						</div>
 					{/if}
 				</div>
@@ -306,12 +296,9 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 				<div class="reportBody">
 					<div class="report-item">
 						<Heatmap
-	
-                on:datapointselect={handleDataPointSelect}
-                  on:p90update={handleP90Update}
-
+							on:datapointselect={handleDataPointSelect}
+							on:p90update={handleP90Update}
 							data={$viewState.reports.calibration}
-							matrixName={"CM DeltaE Values"}
 						/>
 						<div class="target-image-container">
 						  <ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
@@ -331,7 +318,6 @@ Verification 90th Percentile: {p90Value.toFixed(2)}
 										<LineChartMeasured
 											bind:data={combinedData}
 											bind:wavelengthArray
-											stack={stackCurves}
 											bind:trueShadowPos
 										/>
 									</div>
