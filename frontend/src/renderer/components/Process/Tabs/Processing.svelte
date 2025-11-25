@@ -69,16 +69,18 @@
   }
 
 
-  //Open the file explorer using ipc after an image is finished processing. 
+  //Open the file explorer using ipc after an image is finished processing.
   const openFileExplorer = async() =>{
-    let defaultPath = $viewState.projectKey;
-    //$viewState.projectKey is the filepath of the .btrgb file, but has some odd syntax with forward and backslashes, so it needs cleaning
-    //match "/\BeyondRGB_" prefix, followed by 1+digits with ".btrgb" at the end. The 'i' at the end means case insensitive
-    let pattern = /\\BeyondRGB_\d+.btrgb$/i;
-    //cut off the .btrgb file portion to just get the directory
-    defaultPath = defaultPath.replace(pattern, "\\");
-    //yields something like $processState.destDir + "/BeyondRGB_2024-02-01_20-36-12\\", so replace this other forward slash
-    await window.electron.openFileExplorer({directory:defaultPath})
+      // $viewState.projectKey is the filepath of the .btrgb file, but has some odd syntax with forward and backslashes, so it needs cleaning
+      let defaultPath = $viewState.projectKey;
+
+      // match "BeyondRGB_" prefix, followed by 1+digits with ".btrgb" at the end. The 'i' at the end means case insensitive
+      let pattern = /BeyondRGB_\d+.btrgb$/i;
+
+      // cut off the BeyondRGB_0000.btrgb file portion to just get the directory
+      let parentPath = defaultPath.replace(pattern, "");
+
+      await window.electron.openFileExplorer({directory: parentPath})
   }
 </script>
 
