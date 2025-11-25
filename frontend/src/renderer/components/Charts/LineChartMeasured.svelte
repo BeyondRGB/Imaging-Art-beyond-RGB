@@ -7,19 +7,20 @@
   import { element } from "svelte/internal";
   import { chart } from "svelte-apexcharts";
   import { appSettings } from "@util/stores";
+  import Button from "@components/Button.svelte";
 
   export let data = [];
-  export let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);;
+  export let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
   export let trueShadowPos;
-  export let stack = false;
   let currentData = [];
-  let pointColors = ['#610061', '#79008D', '#8300B5', '#7E00DB', '#6A00FF', '#3D00FF', '#0000FF', '#0046FF', '#007BFF', '#00A9FF', '#00D5FF', '#00FFFF', '#00FF92', '#00FF00', '#36FF00', '#5EFF00', '#81FF00', '#A3FF00', '#C3FF00', '#FFFF00', '#FFDF00', '#FFBE00', '#FF9B00', '#FF7700', '#FF4F00', '#FF2100', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000', '#FF0000'];
-
+  
+  // Distinct colors for estimated vs reference spectrum that work in both themes
+  const ESTIMATED_COLOR = '#2563eb'; // Blue
+  const REFERENCE_COLOR = '#dc2626'; // Red
 
   let inputData = [];
 
-
-$: if (data.length > 1) {
+  $: if (data.length > 1) {
     inputData = [];
 
     // Add data for both estimated and reference spectrum
@@ -30,10 +31,9 @@ $: if (data.length > 1) {
             dataDict.push({
                 x: element,
                 y: dataset[i] * 100,
-                fillColor: pointColors[i]
             });
         });
-        if (j==0) {
+        if (j === 0) {
             namer = 'Estimated Spectrum: (' + trueShadowPos.left + ";" + trueShadowPos.top.toFixed(1) + ")";
         }
         else {
@@ -43,173 +43,204 @@ $: if (data.length > 1) {
             type: 'line',
             name: namer,
             data: dataDict,
-            color: j === 0 ? 'var(--color-text-primary)' : 'var(--color-text-secondary)' 
         });
-        options.series = inputData;
     });
+    
+    // Update chart with new data and colors
+    options = getOptions();
+    options.series = inputData;
     data = [];
-}
+  }
 
-    // Helper to get CSS variables
-    function getCssVar(name) {
-        if (typeof window !== 'undefined') {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        }
-        return '#ffffff';
-    }
+  // Helper to get CSS variables
+  function getCssVar(name) {
+      if (typeof window !== 'undefined') {
+          return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      }
+      return '#ffffff';
+  }
 
-  const getOptions = function() {
-      // Dynamic color retrieval
-      const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';
-      const textColorSecondary = getCssVar('--color-text-secondary') || '#ffffff';
+  function getOptions() {
+      const isDark = $appSettings?.isDarkTheme ?? true;
+      const textColorPrimary = getCssVar('--color-text-primary') || (isDark ? '#ffffff' : '#1f2937');
+      const textColorSecondary = getCssVar('--color-text-secondary') || (isDark ? '#9ca3af' : '#6b7280');
+      const gridColor = isDark ? '#6b7280' : '#d1d5db';
 
       return {
-      series: [],
-      stroke: {
-          show: true,
-          curve: 'smooth',
-          width: 2,
-      },
-      chart: {
-          background: 'transparent',
-          animations: {
-              enabled: false
-          },
-          zoom: false,
-          height: '400px',
-          width: '100%',
-          type: 'line',
-          stroke: {
-              curve: 'smooth',
-          },
-          toolbar: {
-              // Hamburger menu which has exports such as PNG and SVG, CSV is explicitly hidden via css
-              show: true,
-              tools: {
-                  download: true,
-              },
-              export: {
-                png: {},
-                svg: {}
-              }
-          },
-          selection: {
-              enabled: false
-          }
-      },
-      tooltip: {
-          shared: true,
-          intersect: false,
-          theme: 'dark', // Use dark theme for tooltip for better contrast usually, or make dynamic
-          x: {
-              show: false
-          },
-          y: {
-              formatter: function(value) {
-                return `${value.toFixed(2)}%`;
-              },
-              title: {
-                  formatter: (seriesName, info) => seriesName,
-              }
-          },
-          z: {
-              show: false
-          }
-      },
-      xaxis: {
-          categories: [350, 400, 450, 500, 550, 600, 650, 700],
-          tickAmount: 9,
-          labels: {
-              style: {
-                  colors: textColorSecondary,
-              }
-          },
-          title: {
-              text: "Wavelength (nm)",
-              offsetX: 0,
-              offsetY: 110,
-              style: {
-                  color: textColorPrimary,
-              }
-          },
-      },
-      yaxis: {
-          showAlways: false,
-          decimalsInFloat: false,
-          forceNiceScale: true,
-          tickAmount: 6,
-          min: 0,
-          max: 100,
-          axisTicks: {
-              show: true
-          },
-          labels: {
-              style: {
-                  colors: textColorSecondary
-              }
-          },
-          title: {
-              text: "Reflectance (%)",
-              style: {
-                  color: textColorPrimary,
-              },
-          },
-      },
-      legend: {
-          show: true,
-          labels: {
-              useSeriesColors: true,
-              colors: textColorPrimary 
-          },
-          markers: {
-              fillColors: pointColors,
-          }
-      },
-      title: {
-          text: "Estimated Spectrum",
-          align: 'left',
-          style: {
-              color:  textColorPrimary
-          },
-      }
-  }};
+        series: [],
+        colors: [ESTIMATED_COLOR, REFERENCE_COLOR],
+        stroke: {
+            show: true,
+            curve: 'smooth',
+            width: 2,
+        },
+        chart: {
+            background: 'transparent',
+            foreColor: textColorPrimary,
+            animations: {
+                enabled: false
+            },
+            zoom: {
+                enabled: false
+            },
+            height: '400px',
+            width: '100%',
+            type: 'line',
+            toolbar: {
+                show: true,
+                tools: {
+                    download: true,
+                },
+                export: {
+                  png: {},
+                  svg: {}
+                }
+            },
+            selection: {
+                enabled: false
+            }
+        },
+        grid: {
+            borderColor: gridColor,
+            strokeDashArray: 4,
+        },
+        tooltip: {
+            shared: true,
+            intersect: false,
+            theme: isDark ? 'dark' : 'light',
+            x: {
+                show: true,
+                formatter: function(val) {
+                    return val + ' nm';
+                }
+            },
+            y: {
+                formatter: function(value) {
+                  if (value === undefined || value === null) return '';
+                  return `${value.toFixed(2)}%`;
+                },
+            },
+            marker: {
+                show: true,
+            }
+        },
+        xaxis: {
+            type: 'numeric',
+            min: 380,
+            max: 730,
+            tickAmount: 8,
+            labels: {
+                style: {
+                    colors: textColorSecondary,
+                    fontSize: '12px',
+                },
+                formatter: function(val) {
+                    return Math.round(val);
+                }
+            },
+            title: {
+                text: "Wavelength (nm)",
+                style: {
+                    color: textColorPrimary,
+                    fontSize: '14px',
+                    fontWeight: 500,
+                }
+            },
+            axisBorder: {
+                color: gridColor,
+            },
+            axisTicks: {
+                color: gridColor,
+            },
+            crosshairs: {
+                stroke: {
+                    color: textColorSecondary,
+                }
+            }
+        },
+        yaxis: {
+            showAlways: true,
+            decimalsInFloat: 0,
+            forceNiceScale: true,
+            tickAmount: 6,
+            min: 0,
+            max: 100,
+            labels: {
+                style: {
+                    colors: textColorSecondary,
+                    fontSize: '12px',
+                },
+                formatter: function(val) {
+                    return Math.round(val);
+                }
+            },
+            title: {
+                text: "Reflectance (%)",
+                style: {
+                    color: textColorPrimary,
+                    fontSize: '14px',
+                    fontWeight: 500,
+                },
+            },
+        },
+        legend: {
+            show: true,
+            position: 'bottom',
+            horizontalAlign: 'left',
+            labels: {
+                colors: textColorPrimary,
+            },
+            markers: {
+                fillColors: [ESTIMATED_COLOR, REFERENCE_COLOR],
+            }
+        },
+        title: {
+            text: "Estimated Spectrum",
+            align: 'left',
+            style: {
+                color: textColorPrimary,
+                fontSize: '16px',
+                fontWeight: 600,
+            },
+        },
+        markers: {
+            size: 0,
+            hover: {
+                size: 6,
+            }
+        }
+      };
+  }
 
   let options = getOptions();
 
   // Update options when theme changes
   $: if ($appSettings) {
-      const currentTheme = $appSettings.isDarkTheme ? 'dark' : 'light';
       options = getOptions();
-      options.tooltip.theme = currentTheme;
+      if (inputData.length > 0) {
+          options.series = inputData;
+      }
   }
   
   // Creating CSV Content...
 
   const createCSVContent = () => {
-    let csvContent = "data:text/csv;charset=utf-8,"; //doesn't actually show up in file
+    let csvContent = "data:text/csv;charset=utf-8,";
     const delimiter = ",";
 
-    //Add column headers as first row
     csvContent += "wavelength,"
     inputData.forEach((spectralLine) => {
         csvContent += spectralLine.name + delimiter;
     });        
     csvContent += "\r\n";
 
-    //for each row of wavelength values
     for(let i=0; i<wavelengthArray.length; i++){ 
-        //add the wavelength value first
         csvContent += wavelengthArray[i].toString() + delimiter;
 
-        //then add each spectral line's percentage value at that wavelength 
         inputData.forEach((spectralLine) => {
-            //do not want to assume spectralLine.data is in increasing order of wavelength
-            //so filter the array for the current wavelength value 
             let filteredArray = spectralLine.data.filter((item) => {
                 return item.x==wavelengthArray[i]
             });
-            //assume filteredArray has one object in it
-            //divide y value by 100, so value will be between 0 and 1
             csvContent += (filteredArray[0].y / 100) + delimiter;
         });
 
@@ -219,23 +250,29 @@ $: if (data.length > 1) {
     return csvContent;
   };
 
-    const downloadCSV = () => {   
-        let csvContent = createCSVContent();
-      
-        //create a hidden <a> element, then click it to download csv
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "SpectralLineChart.csv");
-        link.click();
-    };
-       
-  
+  const downloadCSV = () => {   
+      let csvContent = createCSVContent();
+    
+      var encodedUri = encodeURI(csvContent);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "SpectralLineChart.csv");
+      link.click();
+  };
+     
+
 </script>
   
 <div class="line-chart" id="EstSpecChart">
   <div id="spectral-chart" use:chart={options}></div>
-    <div id="spectral-csv-download-button" on:click={downloadCSV}>Download CSV</div>
+  <Button
+    variant="secondary"
+    size="sm"
+    onClick={downloadCSV}
+    className="download-btn"
+  >
+    Download CSV
+  </Button>
 </div>
 
 <style lang="postcss" global>
@@ -281,12 +318,12 @@ $: if (data.length > 1) {
     border: 1px solid var(--color-border);
   }
 
-  #spectral-csv-download-button:hover {
-    cursor: pointer;
-  }
-
   .apexcharts-menu-item.exportCSV {
     display: none;
+  }
+
+  :global(.download-btn) {
+    @apply mt-3;
   }
 
 </style>

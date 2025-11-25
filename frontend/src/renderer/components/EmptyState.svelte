@@ -1,6 +1,6 @@
 <!--
   @component
-  Generic Empty State Box/Panel
+  Empty State Box/Panel
   Displays a centered message with optional action component
 -->
 <script lang="ts">
