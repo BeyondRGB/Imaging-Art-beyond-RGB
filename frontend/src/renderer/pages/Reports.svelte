@@ -9,7 +9,6 @@
 	} from "@util/stores";
 	import Heatmap from "@components/Charts/HeatMap.svelte";
 	import LinearChart from "@root/components/Charts/LinearChart.svelte";
-	import FileSelector from "@components/FileSelector.svelte";
 	import VectorChart from "@components/Charts/VectorChart.svelte";
 	import ImageViewer from "@root/components/ImageViewer.svelte";
 	import LineChartMeasured from "@components/Charts/LineChartMeasured.svelte";
@@ -116,20 +115,22 @@
 		getReports();
 	}
 
-	// Load an image from a file - trigger fetch immediately when file is selected
-	let mainfilePath;
-	$: if (mainfilePath?.length > 0) {
-		const newProjectKey = mainfilePath[0];
-		console.log("New Project Key from file selector:", newProjectKey);
-		
-		// Set the projectKey in viewState
-		viewState.update(state => ({
-			...state,
-			projectKey: newProjectKey
-		}));
-		
-		// Immediately load the project data
-		loadProject(newProjectKey);
+	// Handle file selection from EmptyState dropzone
+	function handleFileSelect(e: CustomEvent<string[]>) {
+		const filePaths = e.detail;
+		if (filePaths?.length > 0) {
+			const newProjectKey = filePaths[0];
+			console.log("New Project Key from file selector:", newProjectKey);
+			
+			// Set the projectKey in viewState
+			viewState.update(state => ({
+				...state,
+				projectKey: newProjectKey
+			}));
+			
+			// Immediately load the project data
+			loadProject(newProjectKey);
+		}
 	}
 	
 	// Also handle when projectKey is set from elsewhere (e.g., returning to page)
@@ -201,16 +202,17 @@
 			}
 		}));
 		loadedProjectKey = null;
-		mainfilePath = null;
 	}
 
 </script>
 
 <main class="reports-main">
 	{#if $viewState.projectKey === null}
-		<EmptyState title="Select a project file to import into BeyondRGB">
-			<FileSelector bind:filePaths={mainfilePath} filter="project" />
-		</EmptyState>
+		<EmptyState 
+			title="Select a project file to import into BeyondRGB"
+			filter="project"
+			on:select={handleFileSelect}
+		/>
 	{:else}
 		<div class="art">
 			<div class="report-header" class:show={$currentPage === "Reports"}>
@@ -323,7 +325,7 @@
 
 <style lang="postcss" global>
   .reports-main {
-    @apply flex flex-col w-full h-full overflow-y-scroll ;
+    @apply flex flex-col w-full h-full overflow-y-scroll overflow-x-hidden;
   }
   .art {
     @apply flex flex-col relative;
@@ -338,10 +340,13 @@
           rounded-b-2xl p-4 flex flex-col items-center justify-center gap-2;
 	}
 	.report-item {
-		width:fit-content;
 		background-color: var(--color-surface-base);
     border: 1px solid var(--color-border);
-		@apply h-full flex justify-center items-center p-4 pr-8 rounded-xl;
+		@apply h-full flex justify-center items-center p-4 rounded-xl max-w-full flex-wrap gap-4;
+	}
+	
+	.report-item > :global(*) {
+		@apply min-w-0 flex-shrink;
 	}
 	.dropdown-report-btn {
 		@apply w-full flex flex-col justify-center items-center z-50;
@@ -395,8 +400,9 @@
 		@apply w-full text-3xl;
 	}
   .target-image-container {
-    height:450px;
-    @apply w-full bg-blue-600/25 relative items-center flex justify-center;
+    height: 450px;
+    max-width: 500px;
+    @apply flex-1 min-w-[300px] relative items-center flex justify-center;
   }
 
 	.brushBar {
