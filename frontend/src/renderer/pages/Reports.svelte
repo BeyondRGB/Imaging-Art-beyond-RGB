@@ -26,28 +26,27 @@
 	let trueShadowPos = shadowPos;
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
-	let p90Value = null;
+	let p90Value: number | null = null;
 
 	function handleP90Update(e) {
 		const rawVal = e.detail.p90;
-		console.log("Received p90 update:", rawVal, "typeof:", typeof rawVal, "JSON:", JSON.stringify(rawVal));
+		console.log("Received p90 update:", rawVal, "typeof:", typeof rawVal);
+		
 		if (rawVal === null || rawVal === undefined) {
-			console.log("Received null or undefined value. Ignoring update.");
 			return;
 		}
 
-		let num;
-		if (typeof rawVal === "object") {
-			num = +rawVal;
-		} else {
-			num = parseFloat(rawVal);
-		}
-
+		// Convert to number
+		const num = typeof rawVal === 'number' ? rawVal : parseFloat(rawVal);
+		
 		if (!isNaN(num)) {
 			p90Value = num;
+			console.log("p90Value set to:", p90Value);
 		}
-		console.log("Converted p90Value is now:", p90Value);
 	}
+	
+	// Reactive formatted value for display
+	$: p90Display = p90Value !== null ? p90Value.toFixed(2) : "—";
 
 	function handleDataPointSelect(event) {
 		const { yAxisLabel, xValue } = event.detail;
@@ -215,32 +214,51 @@
 	{:else}
 		<div class="art">
 			<div class="report-header" class:show={$currentPage === "Reports"}>
-        	<CloseButton variant="absolute-top-right" onClick={handleCloseReport} />
-				<div class="report-left">
+				<div class="header-top-row">
 					<div class="report-name">
 						{$viewState.projectKey?.split("\\").length > 2
 							? $viewState.projectKey?.split("\\").at(-1)
 							: $viewState.projectKey?.split("/").at(-1)}
 					</div>
-					<div class="report-info">
-						{#if $viewState.reports.calibration?.["double_values"]?.[0]?.["data"] !== undefined}
-							Mean ΔE: {parseFloat($viewState.reports.calibration["double_values"][0]["data"]).toFixed(4)}
-							{#if p90Value !== null && !isNaN(p90Value)}
-								<br>90th Percentile: {p90Value.toFixed(2)}
-							{/if}
-						{:else}
-							Loading report data...
+					<div class="header-actions">
+						<Button variant="secondary" size="sm" onClick={() => { window.electron.openNewWindow() }}>View Another Report</Button>
+						<CloseButton onClick={handleCloseReport} />
+					</div>
+				</div>
+
+				{#if $viewState.reports.calibration?.["double_values"]?.[0]?.["data"] !== undefined}
+					<div class="stats-grid">
+						<div class="stat-card">
+							<span class="stat-label">Mean ΔE</span>
+							<span class="stat-value">{parseFloat($viewState.reports.calibration["double_values"][0]["data"]).toFixed(4)}</span>
+						</div>
+						
+						<div class="stat-card">
+							<span class="stat-label">90th Percentile</span>
+							<span class="stat-value">{p90Display}</span>
+						</div>
+
+						{#if isVerification && $viewState.reports.verification?.["double_values"]?.[0]?.["data"] !== undefined}
+							<div class="stat-card">
+								<span class="stat-label">Verification Mean ΔE</span>
+								<span class="stat-value">{parseFloat($viewState.reports.verification["double_values"][0]["data"]).toFixed(4)}</span>
+							</div>
+							
+							<div class="stat-card">
+								<span class="stat-label">Verification 90th %</span>
+								<span class="stat-value">
+									{#if $viewState.reports.verification?.["double_values"]?.[1]?.["data"] !== undefined}
+										{parseFloat($viewState.reports.verification["double_values"][1]["data"]).toFixed(2)}
+									{:else}
+										—
+									{/if}
+								</span>
+							</div>
 						{/if}
 					</div>
-
-            <Button variant="secondary" size="md" onClick={() => { window.electron.openNewWindow() }}>View Another Report</Button>
-
-					{#if isVerification && $viewState.reports.verification?.["double_values"]?.[0]?.["data"] !== undefined}
-						<div class="report-info">
-							Verification Mean ΔE: {parseFloat($viewState.reports.verification["double_values"][0]["data"]).toFixed(4)}
-						</div>
-					{/if}
-				</div>
+				{:else}
+					<div class="loading-text">Loading report data...</div>
+				{/if}
 			</div>
 			<div class="reports">
 				<div class="reportBody">
@@ -330,35 +348,51 @@
 	}
   .report-header {
     width: 100%;
-    height: 20vh;
     background-color: var(--color-surface-base);
-    border-bottom: 1px solid var(--color-border);
-    @apply sticky top-0 z-30 flex px-[1vw] pr-[5vw] py-4 rounded-b-xl -translate-y-full
-            transition-all delay-150 duration-300 ease-in justify-between;
+    @apply sticky top-0 z-30 flex flex-col gap-3 px-6 py-4 -translate-y-full
+            transition-all delay-150 duration-300 ease-in;
   }
   .report-header.show {
     @apply translate-y-0;
   }
-  .report-left {
-    @apply w-full flex flex-col justify-center;
+  
+  .header-top-row {
+    @apply flex items-center justify-between gap-4;
   }
-
-	.report-right {
-		@apply w-full rounded-xl overflow-auto;
-	}
+  
+  .header-actions {
+    @apply flex items-center gap-3;
+  }
+  
 	.report-name {
-		@apply text-4xl;
+		@apply text-2xl font-medium;
+    color: var(--color-text-primary);
 	}
+  
+  .stats-grid {
+    @apply flex flex-wrap gap-6;
+  }
+  
+  .stat-card {
+    @apply flex flex-col gap-0.5;
+  }
+  
+  .stat-label {
+    color: var(--color-text-secondary);
+    @apply text-xs font-medium uppercase tracking-wider opacity-70;
+  }
+  
+  .stat-value {
+    color: var(--color-text-primary);
+    @apply text-xl font-semibold;
+  }
+  
+  .loading-text {
+    color: var(--color-text-secondary);
+    @apply text-base opacity-70;
+  }
 	.reports h2 {
 		@apply w-full text-3xl;
-	}
-	.verificationBar {
-		background-color: var(--color-surface-sunken);
-		@apply w-full h-full flex flex-col p-2 rounded-xl;
-	}
-	.new-window-button {
-		align-self: baseline;
-		margin-top: 5px;
 	}
   .target-image-container {
     height:450px;
