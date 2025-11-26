@@ -18,7 +18,7 @@
   import LineChart from "@components/Charts/LineChart.svelte";
   import SwitchRow from "@components/SwitchRow.svelte";
   import Card from "@components/Card.svelte";
-  import FileSelector from "@components/FileSelector.svelte";
+  import EmptyState from "@components/EmptyState.svelte";
 
   let showBrush = false;
   let stackCurves = false;
@@ -27,7 +27,6 @@
   let shadowPos = { left: 0, top: 0 };
   let trueShadowPos = { left: 0, top: 0 };
   let spectrumData = []; // Initialize as empty array
-  let mainfilePath;
   let oldProjectKey: string | null = null;
 
   let loading = false;
@@ -105,13 +104,16 @@
     oldProjectKey = $viewState.projectKey;
   }
 
-  // When the user loads a file from the file browser
-  $: if (mainfilePath?.length > 0) {
-    console.log("New Project Key from file selector:", mainfilePath[0]);
-    viewState.update(state => ({
-      ...state,
-      projectKey: mainfilePath[0]
-    }));
+  // Handle file selection from EmptyState dropzone
+  function handleFileSelect(e: CustomEvent<string[]>) {
+    const filePaths = e.detail;
+    if (filePaths?.length > 0) {
+      console.log("New Project Key from file selector:", filePaths[0]);
+      viewState.update(state => ({
+        ...state,
+        projectKey: filePaths[0]
+      }));
+    }
   }
 
   // When a new project is opened and colorManagedImage is not available, fetch the image
@@ -147,7 +149,6 @@
         name: "Waiting..."
       }
     }));
-    mainfilePath = "";
     showBrush = false;
     oldProjectKey = null;
   }
@@ -155,12 +156,11 @@
 
 <main>
   {#if $viewState.projectKey === null}
-    <div class="noFile">
-      <div class="inputBox">
-        <h2>Select a project file to import into BeyondRGB</h2>
-        <FileSelector bind:filePaths={mainfilePath} filter="project" />
-      </div>
-    </div>
+    <EmptyState 
+      title="Select a project file to import into BeyondRGB"
+      filter="project"
+      on:select={handleFileSelect}
+    />
   {/if}
   <div class="content" id="picker-content">
     <div class="viewer-layout">
@@ -275,18 +275,6 @@
 <style lang="postcss">
   main {
     @apply flex h-full w-full justify-center flex-col relative;
-  }
-  .noFile {
-    background-color: var(--color-surface-base);
-    @apply absolute w-full h-full z-[99] flex justify-center items-center;
-  }
-  .inputBox {
-    background-color: var(--color-surface);
-    @apply w-auto h-auto flex flex-col gap-2 justify-center items-center
-          p-8 rounded-2xl;
-  }
-  .inputBox h2 {
-    @apply text-xl;
   }
   .content {
     @apply w-full h-full flex justify-center items-center p-6;
