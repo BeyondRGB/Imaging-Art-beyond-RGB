@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { currentPage, appSettings, modal } from "@util/stores";
+	import { onDestroy } from "svelte";
+	import { currentPage, appSettings, modal, type ThemePreference } from "@util/stores";
 	// Components
 	import Menu from "@components/Menu.svelte";
 	import Page from "@components/Page.svelte";
@@ -62,15 +63,43 @@
 		modal.set("Home");
 	}, 0);
 
-	// Initialize theme from settings (default to LIGHT mode)
-	if ($appSettings.isDarkTheme === undefined) {
-		appSettings.set({
-			isDarkTheme: false,  // false = light mode, true = dark mode
-			sideNav: $appSettings.sideNav
-		});
+	// System theme detection (works on Windows, macOS, and Linux)
+	const systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+	// Compute isDarkTheme based on preference
+	function computeIsDark(pref: ThemePreference): boolean {
+		if (pref === 'system') {
+			return systemThemeQuery.matches;
+		}
+		return pref === 'dark';
 	}
 
-	// Apply theme on initial load
+	// Update isDarkTheme in settings when preference or system changes
+	function updateDarkTheme() {
+		const isDark = computeIsDark($appSettings.themePreference);
+		if ($appSettings.isDarkTheme !== isDark) {
+			appSettings.update(s => ({ ...s, isDarkTheme: isDark }));
+		}
+	}
+
+	// Apply on load
+	updateDarkTheme();
+
+	// Listen for system theme changes
+	function handleSystemThemeChange() {
+		if ($appSettings.themePreference === 'system') {
+			updateDarkTheme();
+		}
+	}
+	systemThemeQuery.addEventListener("change", handleSystemThemeChange);
+	onDestroy(() => {
+		systemThemeQuery.removeEventListener("change", handleSystemThemeChange);
+	});
+
+	// React to preference changes
+	$: $appSettings.themePreference, updateDarkTheme();
+
+	// Apply theme to DOM (existing logic, unchanged)
 	function applyTheme(isDark: boolean) {
 		if (isDark) {
 			document.documentElement.classList.add("dark");
@@ -81,30 +110,9 @@
 		}
 	}
 
-	// Apply theme immediately on load
-	applyTheme($appSettings.isDarkTheme);
-
-	// Theme Switching Logic - Now enabled with centralized theme system
+	// Theme Switching Logic - reacts to isDarkTheme changes
 	$: isDarkTheme = $appSettings.isDarkTheme ? "dark" : "";
-	$: if (isDarkTheme !== "") {
-		console.log("Theme Change: Dark Mode");
-		applyTheme(true);
-	} else {
-		console.log("Theme Change: Light Mode");
-		applyTheme(false);
-	}
-
-	// Optional: Auto-detect system theme preference
-	// const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-	// darkThemeMq.addEventListener("change", (e) => {
-	// 	appSettings.set({ isDarkTheme: e.matches, sideNav: $appSettings.sideNav });
-	// });
-	// onDestroy(() => {
-	// 	darkThemeMq.removeEventListener("change", (e) => {
-	// 		appSettings.set({ isDarkTheme: e.matches, sideNav: $appSettings.sideNav });
-	// 	});
-	// });
-	// ------
+	$: applyTheme($appSettings.isDarkTheme);
 </script>
 
 <main class={isDarkTheme}>

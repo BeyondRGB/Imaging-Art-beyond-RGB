@@ -1,18 +1,34 @@
 import { writable, derived, get } from 'svelte/store';
 
+// Theme preference: 'light', 'dark', or 'system' (follow OS)
+export type ThemePreference = 'light' | 'dark' | 'system';
+
 // Load settings from localStorage
 function loadSettings() {
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('appSettings');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Migrate from old boolean isDarkTheme to new themePreference
+        if (parsed.themePreference === undefined && parsed.isDarkTheme !== undefined) {
+          return {
+            themePreference: parsed.isDarkTheme ? 'dark' : 'light' as ThemePreference,
+            isDarkTheme: parsed.isDarkTheme,
+            sideNav: parsed.sideNav ?? true
+          };
+        }
+        return {
+          themePreference: parsed.themePreference ?? 'system' as ThemePreference,
+          isDarkTheme: parsed.isDarkTheme ?? false,
+          sideNav: parsed.sideNav ?? true
+        };
       } catch (e) {
         console.error('Failed to parse saved settings:', e);
       }
     }
   }
-  return { isDarkTheme: false, sideNav: true };
+  return { themePreference: 'system' as ThemePreference, isDarkTheme: false, sideNav: true };
 }
 
 // Stores
