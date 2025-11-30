@@ -258,7 +258,7 @@
             image.imageA = false;
 
             for(let i = 0; i < matchingStandards.length; i++) {
-                console.log(image)
+                //console.log(image)
                 each(matchingStandards[i], function (string) {
                     const count = split(image.name.toLowerCase(), string.toLowerCase()).length - 1;
                     image[probabilityScoreProperties[i]] += count;
@@ -324,8 +324,8 @@
         externalStack.darkfieldA = [imageStack?.bestDarkFieldImages[0]];
         externalStack.darkfieldB = [imageStack?.bestDarkFieldImages[1]];
 
-        console.log("AUTOSORTED:")
-        console.table(JSON.stringify(externalStack, null, 4))
+        console.log("AUTOSORTED")
+        //console.table(JSON.stringify(externalStack, null, 4))
 
         // return any images that weren't assigned
         return images;

@@ -404,16 +404,16 @@
 
   // Clamp the white patch rows to the number of rows in the target
   $: if (
-      colorTarget !== undefined &&
-      colorTarget.whitePatch !== undefined &&
-      colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
+      colorTarget != undefined &&
+      colorTarget.whitePatch != undefined &&
+      colorTarget.whitePatch.row != null && // The row is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.row > colorTarget.rows
   ) {
     colorTarget.whitePatch.row = colorTarget.rows;
   } else if (
-      colorTarget !== undefined &&
-      colorTarget.whitePatch !== undefined &&
-      colorTarget.whitePatch.row !== null && // The row is null when the user deletes all content (usually when typing).
+      colorTarget != undefined &&
+      colorTarget.whitePatch != undefined &&
+      colorTarget.whitePatch.row != null && // The row is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.row < 1
   ) {
     colorTarget.whitePatch.row = 1;
@@ -421,16 +421,16 @@
 
   // Clamp the white patch columns to the number of columns in the target
   $: if (
-      colorTarget !== undefined &&
-      colorTarget.whitePatch !== undefined &&
-      colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
+      colorTarget != undefined &&
+      colorTarget.whitePatch != undefined &&
+      colorTarget.whitePatch.col != null && // The column is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.col > colorTarget.cols
   ) {
       colorTarget.whitePatch.col = colorTarget.cols;
   } else if (
-      colorTarget !== undefined &&
-      colorTarget.whitePatch !== undefined &&
-      colorTarget.whitePatch.col !== null && // The column is null when the user deletes all content (usually when typing).
+      colorTarget != undefined &&
+      colorTarget.whitePatch != undefined &&
+      colorTarget.whitePatch.col != null && // The column is null when the user deletes all content (usually when typing).
       colorTarget.whitePatch.col < 1
   ) {
       colorTarget.whitePatch.col = 1;
