@@ -4,6 +4,7 @@
     resendMessage,
     messageStore,
     processState,
+    setTabCompleted,
   } from "@util/stores";
   import { slide } from "svelte/transition";
   import { AlertCircleIcon } from "svelte-feather-icons";
@@ -36,7 +37,6 @@
     processState.update(state => ({
       ...state,
       currentTab: finalTab,
-      completedTabs: state.completedTabs.map((completed, i) => i === finalTab ? false : completed),
       whitePatchFilled: false,
       returnedFromProcessing: true,
       artStacks: state.artStacks.map((stack, i) => 
@@ -46,6 +46,7 @@
         } : stack
       )
     }));
+    setTabCompleted(finalTab, false);
   }
 </script>
 

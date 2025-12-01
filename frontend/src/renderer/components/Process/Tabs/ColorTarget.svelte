@@ -3,6 +3,7 @@
     customRefData,
     persistentCustomRefData,
     processState,
+    setTabCompleted,
     modal,
     sendMessage,
   } from "@util/stores";
@@ -412,15 +413,9 @@
     colorTarget?.whitePatch?.row &&
     colorTarget?.whitePatch?.col
   ) {
-    processState.update(state => ({
-      ...state,
-      completedTabs: state.completedTabs.map((completed, i) => i === 5 ? true : completed)
-    }));
+    setTabCompleted(5, true);
   } else {
-    processState.update(state => ({
-      ...state,
-      completedTabs: state.completedTabs.map((completed, i) => i === 5 ? false : completed)
-    }));
+    setTabCompleted(5, false);
   }
 
   $: if (colorTarget) {

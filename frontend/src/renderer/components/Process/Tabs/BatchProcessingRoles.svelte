@@ -1,6 +1,6 @@
 
 <script lang="ts">
-    import { processState, batchProcessState, batchImagesA, batchImagesB } from "@util/stores";
+    import { processState, batchProcessState, batchImagesA, batchImagesB, setTabCompleted } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import Button from "@components/Button.svelte";
     import {get, isEmpty, each, includes} from "lodash";
@@ -82,9 +82,9 @@
         processState.update(state => ({
           ...state,
           imageFilePaths: [],
-          completedTabs: state.completedTabs.map((completed, i) => i === 3 ? true : completed),
           currentTab: skipOptionalFiltering ? state.currentTab + 2 : state.currentTab + 1
         }));
+        setTabCompleted(3);
     };
 
 </script>

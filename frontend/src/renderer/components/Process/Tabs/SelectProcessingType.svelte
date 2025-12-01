@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { currentPage, modal, processState } from "@util/stores";
+  import { currentPage, modal, processState, setTabCompleted } from "@util/stores";
   import {
     FileIcon,
     FolderIcon,
@@ -10,9 +10,9 @@
     processState.update(state => ({
       ...state,
       processType: page,
-      completedTabs: state.completedTabs.map((completed, i) => i === 0 ? true : completed),
       currentTab: state.currentTab + 1
     }));
+    setTabCompleted(0);
     modal.set(null);
   }
 

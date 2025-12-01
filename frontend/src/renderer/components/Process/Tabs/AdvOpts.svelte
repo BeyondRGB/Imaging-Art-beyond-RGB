@@ -1,6 +1,6 @@
 <script lang="ts">
   import Dropdown from "@root/components/Dropdown.svelte";
-  import { processState } from "@util/stores";
+  import { processState, setTabCompleted } from "@util/stores";
   // let sharpingSettings = ["None", "Low", "Medium", "High"];
   let sharpingSettings = [
     {
@@ -24,10 +24,7 @@
   let selected = sharpingSettings[0];
 
   $: if ($processState.currentTab === 4 && !$processState.completedTabs[4]) {
-    processState.update(state => ({
-      ...state,
-      completedTabs: state.completedTabs.map((completed, i) => i === 4 ? true : completed)
-    }));
+    setTabCompleted(4);
   }
 
   $: if (selected) {

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { FilePlusIcon } from "svelte-feather-icons";
-    import { processState, sendMessage} from "@util/stores";
+    import { processState, sendMessage, setTabCompleted } from "@util/stores";
     import { forEach, find } from "lodash";
     import { countFields } from "@root/util/storesUtil";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
@@ -37,10 +37,7 @@
         $processState.imageFilePaths.length >= 6 &&
         !$processState.completedTabs[1]
     ) {
-        processState.update(state => ({
-          ...state,
-          completedTabs: state.completedTabs.map((completed, i) => i === 1 ? true : completed)
-        }));
+        setTabCompleted(1);
     }
 
     function handleFilesSelect(e) {

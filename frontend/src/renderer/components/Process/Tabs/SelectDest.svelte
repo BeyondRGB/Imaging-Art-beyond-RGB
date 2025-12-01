@@ -2,7 +2,7 @@
   import FileSelector from "@components/FileSelector.svelte";
   import TextInputRow from "@components/TextInputRow.svelte";
   import { FolderPlusIcon, FolderIcon, FileTextIcon } from "svelte-feather-icons";
-  import { currentPage, processState } from "@util/stores";
+  import { currentPage, processState, setTabCompleted } from "@util/stores";
   import Card from "@components/Card.svelte";
   
   let filePaths = [];
@@ -29,10 +29,7 @@
     $processState.destDir?.length > 1 &&
     !$processState.completedTabs[2]
   ) {
-    processState.update(state => ({
-      ...state,
-      completedTabs: state.completedTabs.map((completed, i) => i === 2 ? true : completed)
-    }));
+    setTabCompleted(2);
   }
 </script>
 

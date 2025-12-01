@@ -6,7 +6,8 @@
     viewState,
     serverError,
     batchImagesA,
-    batchImagesB
+    batchImagesB,
+    clearTabsAfter
   } from "@util/stores";
 
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
@@ -90,18 +91,13 @@
 
   function prevTab() {
     if ($processState.currentTab !== 0) {
-      processState.update(state => {
-        const newTab = state.currentTab - 1;
-        // Clear completed status for tabs after the one we're going back to
-        const newCompletedTabs = state.completedTabs.map((completed, i) => 
-          i > newTab ? false : completed
-        );
-        return {
+      const newTab = $processState.currentTab - 1;
+      processState.update(state => ({
         ...state,
-          currentTab: newTab,
-          completedTabs: newCompletedTabs
-        };
-      });
+        currentTab: newTab
+      }));
+      // Clear completed status for tabs after the one we're going back to
+      clearTabsAfter(newTab);
     } else {
       console.log("Error overflow");
     }

@@ -148,6 +148,29 @@ export function resetProcess() {
   });
 }
 
+/**
+ * Helper to set a specific tab's completion status.
+ * @param tabIndex - The index of the tab to update
+ * @param completed - Whether the tab should be marked as completed
+ */
+export function setTabCompleted(tabIndex: number, completed: boolean = true) {
+  processState.update(state => ({
+    ...state,
+    completedTabs: state.completedTabs.map((status, i) => i === tabIndex ? completed : status)
+  }));
+}
+
+/**
+ * Helper to clear completion status for all tabs after a given index.
+ * @param afterIndex - Tabs with index greater than this will be set to false
+ */
+export function clearTabsAfter(afterIndex: number) {
+  processState.update(state => ({
+    ...state,
+    completedTabs: state.completedTabs.map((status, i) => i > afterIndex ? false : status)
+  }));
+}
+
 
 // Websocket Stores
 export const messageStore = writable([]);

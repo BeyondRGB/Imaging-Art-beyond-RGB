@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { processState } from "@util/stores";
+    import { processState, setTabCompleted } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
     import Button from "@components/Button.svelte";
     import {get, isEmpty, each, includes} from "lodash";
@@ -64,9 +64,9 @@
         processState.update(state => ({
           ...state,
           imageFilePaths: [],
-          completedTabs: state.completedTabs.map((completed, i) => i === 3 ? true : completed),
           currentTab: skipOptionalFiltering ? state.currentTab + 2 : state.currentTab + 1
         }));
+        setTabCompleted(3);
     };
 
 </script>
