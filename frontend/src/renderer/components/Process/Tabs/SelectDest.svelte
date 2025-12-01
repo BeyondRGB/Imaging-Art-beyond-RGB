@@ -15,6 +15,8 @@
     }));
   }
 
+  // Sanitize filename by replacing characters that are invalid in file paths across Windows/Mac/Linux.
+  // Invalid chars: / \ ? % * : | " < >
   $: if ($processState.destFileName) {
     const sanitized = $processState.destFileName.replace(/[/\\?%*:|"<>]/g, '-');
     if (sanitized !== $processState.destFileName) {

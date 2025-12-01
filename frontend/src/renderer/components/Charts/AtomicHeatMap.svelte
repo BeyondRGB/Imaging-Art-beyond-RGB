@@ -1,6 +1,7 @@
 <script>
     import { chart } from "svelte-apexcharts";
     import { createEventDispatcher } from 'svelte';
+    import { getCssVar } from "@util/cssUtils";
 
     const dispatch = createEventDispatcher();
 
@@ -108,13 +109,6 @@ function generateLegendRanges() {
 
     return result;
 }
-    // Helper to get CSS variables dynamically
-    function getCssVar(name) {
-        if (typeof window !== 'undefined') {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        }
-        return '#ffffff';
-    }
 
     const getOptions = function() {
         // Get theme colors from CSS variables

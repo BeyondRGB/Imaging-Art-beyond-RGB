@@ -76,7 +76,7 @@
   --color-warning: #f97316;
 }
 
-/* Semantic utility classes - NO color literals! */
+/* Semantic utility classes */
 .bg-base {
   background-color: var(--color-surface-base);
 }
@@ -125,7 +125,7 @@
   border-color: var(--color-border);
 }
 
-/* Global scrollbar - NO color literals */
+/* Global scrollbar */
 ::-webkit-scrollbar {
   width: 0.25rem;
   height: 0.25rem;

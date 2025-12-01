@@ -7,6 +7,7 @@
     currentPage,
     serverError,
     requestColorManagedImage,
+    clearProjectViewState,
   } from "@util/stores";
   import {
     XIcon,
@@ -89,18 +90,19 @@
     loading = false;
   }
 
-  // Handle project key changes
+  // Handle project key changes. When project changes, clear old project state before loading new one.
   $: if ($viewState.projectKey !== null) {
     if (oldProjectKey !== $viewState.projectKey && oldProjectKey !== null) {
       console.log(`Project changed from ${oldProjectKey} to ${$viewState.projectKey}`);
-      // Clear the old image data for the new project
+      // Clear the old project state before loading the new one
+      clearProjectViewState();
+      // Restore the new project key that was just set
       viewState.update(state => ({
         ...state,
-        colorManagedImage: {
-          dataURL: "",
-          name: "Waiting..."
-        }
+        projectKey: $viewState.projectKey
       }));
+      // Reset spectrum data for the new project
+      spectrumData = [];
     }
     oldProjectKey = $viewState.projectKey;
   }
@@ -139,16 +141,11 @@
   let isFullScreen = window.innerHeight == screen.height;
 
   function closeImage() {
-    viewState.update(state => ({
-      ...state,
-      projectKey: null,
-      colorManagedImage: {
-        dataURL: "",
-        name: "Waiting..."
-      }
-    }));
+    // Clear all project state using the centralized helper
+    clearProjectViewState();
     mainfilePath = "";
     showBrush = false;
+    spectrumData = [];
     oldProjectKey = null;
   }
 </script>

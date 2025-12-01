@@ -1,6 +1,7 @@
 <script>
     import { chart } from "svelte-apexcharts";
     import {find, forEach} from "lodash";
+    import { getCssVar } from "@util/cssUtils";
 
     export let dataAB;
     export let dataLC;
@@ -42,13 +43,6 @@
         });
         return data;
     };
-
-    function getCssVar(name) {
-        if (typeof window !== 'undefined') {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        }
-        return '#ffffff';
-    }
 
     const getOptions = function() {
         const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';

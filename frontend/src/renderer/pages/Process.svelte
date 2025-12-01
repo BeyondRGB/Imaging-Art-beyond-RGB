@@ -83,7 +83,7 @@
     handleConfirm();
   }
   
-	$: if($viewState.projectKey != null) {
+	$: if($viewState.projectKey != null && processRequest?.RequestData) {
 	    processRequest.RequestData.outputDirectory = $viewState.projectKey;
 	}
 		

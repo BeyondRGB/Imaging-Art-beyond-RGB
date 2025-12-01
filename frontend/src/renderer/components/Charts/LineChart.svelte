@@ -7,6 +7,7 @@
   import { element } from "svelte/internal";
   import { chart } from "svelte-apexcharts";
   import { appSettings } from "@util/stores";
+  import { getCssVar } from "@util/cssUtils";
   import Button from "@components/Button.svelte";
 
   export let data = [];
@@ -54,14 +55,6 @@
       options = getOptions();
       options.series = inputData;
       data = [];
-  }
-
-  // Helper to get CSS variables
-  function getCssVar(name) {
-      if (typeof window !== 'undefined') {
-          return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      }
-      return '#ffffff';
   }
 
   function getOptions() {
