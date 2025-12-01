@@ -26,7 +26,7 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images)
         target2 = images->getImage(TARGET(2));
         found_target = true;
     }catch(std::exception e){
-        comms->send_error("[Pixel Regestor]", "No target was able to be found.", cpptrace::generate_trace());
+        comms->send_info("No target was able to be found. Skipping target registration.", this->get_name());
         found_target = false;
     }
 
