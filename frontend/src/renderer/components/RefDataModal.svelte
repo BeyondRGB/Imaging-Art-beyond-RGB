@@ -15,32 +15,38 @@
   }
   $: console.log($appSettings);
   $: console.log(closeModal);
+  // Extract filename from path, handling both Windows (\) and Unix (/) separators
+  function getFileName(path: string): string {
+    return path.split(/[/\\]/).pop() || path;
+  }
+
   function confirm() {
     console.log("Confirm");
     if (filePaths) {
+      const fileName = getFileName(filePaths[0]);
       if ($modal === "CustomRefData") {
         console.log("Saving to color target");
         $customRefData.calibration = {
-          name: filePaths[0].split('\\').pop(),
+          name: fileName,
           fileName: filePaths[0],
           standardObserver: 1931,
           illuminants: "D50",
         };
         $persistentCustomRefData.calibration.push({
-          name: filePaths[0].split('\\').pop(),
+          name: fileName,
           fileName: filePaths[0],
           standardObserver: 1931,
           illuminants: "D50",
         });
       } else if ($modal === "CustomRefDataVer") {
         $customRefData.verification = {
-          name: filePaths[0].split('\\').pop(),
+          name: fileName,
           fileName: filePaths[0],
           standardObserver: 1931,
           illuminants: "D50",
         };
         $persistentCustomRefData.verification.push({
-          name: filePaths[0].split('\\').pop(),
+          name: fileName,
           fileName: filePaths[0],
           standardObserver: 1931,
           illuminants: "D50",
@@ -88,7 +94,7 @@
             <div class="status-row">
               <span class="label new">New File:</span>
               <span class="value" title={filePaths[0]}>
-                {filePaths[0].split('\\').pop().split('/').pop()}
+                {filePaths[0].split(/[/\\]/).pop()}
               </span>
             </div>
           {/if}

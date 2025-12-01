@@ -11,9 +11,9 @@
 	$: if (
 		$modal === "Settings" ||
 		$modal === "Home" ||
-		"CustomRefData" ||
-		"CustomRefDataVer" ||
-		"ServerError"
+		$modal === "CustomRefData" ||
+		$modal === "CustomRefDataVer" ||
+		$modal === "ServerError"
 	) {
 		showModal = true;
 	} else {

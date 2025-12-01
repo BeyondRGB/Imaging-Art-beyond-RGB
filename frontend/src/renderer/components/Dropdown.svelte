@@ -91,7 +91,7 @@
   .refDataBtn {
     background-color: var(--color-surface);
     @apply z-50 text-sm flex justify-between items-center
-          gap-1 p-0 pl-3 rounded-lg transition-colors;
+          gap-1 p-0 pl-3 rounded-lg transition-colors max-w-full overflow-hidden;
   }
   
   .refDataBtn:hover {
@@ -128,7 +128,7 @@
   }
   .btnText {
     color: var(--color-text-primary);
-    @apply py-2 whitespace-nowrap;
+    @apply py-2 truncate max-w-[200px];
   }
   .sep {
     background-color: var(--color-interactive);
