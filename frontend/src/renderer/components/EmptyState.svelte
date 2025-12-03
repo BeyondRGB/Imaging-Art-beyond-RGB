@@ -17,6 +17,8 @@
   const dispatch = createEventDispatcher<{ select: string[] }>();
 
   let isDragOver = false;
+  let errorMessage = "";
+  let errorTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Map filter to accepted extensions
   const filterExtensions: Record<string, string[]> = {
@@ -26,8 +28,20 @@
     none: []
   };
 
+  // Human-readable descriptions for filters
+  const filterDescriptions: Record<string, string> = {
+    project: "BeyondRGB Project (.btrgb)",
+    raws: "RAW images (.cr2, .raf, .nef, .arq, .arw, .tiff, .tif, .dng)",
+    csv: "CSV files (.csv)",
+    none: ""
+  };
+
   function getAcceptedExtensions(): string[] {
     return filterExtensions[filter] || [];
+  }
+
+  function getAcceptedDescription(): string {
+    return filterDescriptions[filter] || "";
   }
 
   function isValidFile(fileName: string): boolean {
@@ -37,14 +51,27 @@
     return extensions.some(ext => lowerName.endsWith(ext));
   }
 
+  function showError(message: string) {
+    errorMessage = message;
+    if (errorTimeout) clearTimeout(errorTimeout);
+    errorTimeout = setTimeout(() => {
+      errorMessage = "";
+    }, 4000);
+  }
+
   function handleDrop(e: CustomEvent<{ acceptedFiles: File[] }>) {
     isDragOver = false;
     const files = e.detail.acceptedFiles;
     const validFiles = files.filter(f => isValidFile(f.name));
+    const invalidFiles = files.filter(f => !isValidFile(f.name));
     
     if (validFiles.length > 0) {
+      errorMessage = "";
       const paths = validFiles.map(f => (f as any).path);
       dispatch("select", paths);
+    } else if (invalidFiles.length > 0) {
+      const extensions = getAcceptedExtensions();
+      showError(`Invalid file type. Accepted: ${extensions.join(", ")}`);
     }
   }
 
@@ -92,6 +119,12 @@
       </Button>
       
       <span class="drop-hint">or drag and drop files here</span>
+      {#if filter !== "none"}
+        <span class="accepted-types">Accepted: {getAcceptedDescription()}</span>
+      {/if}
+      {#if errorMessage}
+        <span class="error-message">{errorMessage}</span>
+      {/if}
     </div>
   </Dropzone>
 </div>
@@ -131,5 +164,24 @@
   .drop-hint {
     @apply text-sm;
     color: var(--color-text-tertiary);
+  }
+  
+  .accepted-types {
+    @apply text-xs;
+    color: var(--color-text-tertiary);
+    opacity: 0.8;
+  }
+  
+  .error-message {
+    @apply text-sm font-medium px-3 py-2 rounded-lg;
+    color: var(--color-danger, #ef4444);
+    background-color: var(--color-danger-bg, rgba(239, 68, 68, 0.1));
+    animation: shake 0.4s ease-in-out;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
   }
 </style>

@@ -122,14 +122,16 @@
 			const newProjectKey = filePaths[0];
 			console.log("New Project Key from file selector:", newProjectKey);
 			
+			// Reset loadedProjectKey to ensure the reactive statement triggers a fresh load
+			// This prevents race conditions where the old project data persists
+			loadedProjectKey = null;
+			
 			// Set the projectKey in viewState
+			// The reactive statement will handle calling loadProject
 			viewState.update(state => ({
 				...state,
 				projectKey: newProjectKey
 			}));
-			
-			// Immediately load the project data
-			loadProject(newProjectKey);
 		}
 	}
 	
