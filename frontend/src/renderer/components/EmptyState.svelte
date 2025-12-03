@@ -132,11 +132,11 @@
 <style lang="postcss">
   .empty-state {
     background-color: var(--color-surface-base);
-    @apply absolute w-full h-full z-[99] flex justify-center items-center;
+    @apply absolute inset-0 w-full h-full z-[99] p-6;
   }
   
   .empty-state :global(.dropzone-container) {
-    @apply flex justify-center items-center p-8 rounded-2xl transition-all duration-200;
+    @apply w-full h-full flex justify-center items-center rounded-2xl transition-all duration-200;
     border: 2px dashed var(--color-border);
   }
   
