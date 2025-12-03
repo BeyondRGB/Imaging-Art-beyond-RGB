@@ -58,6 +58,11 @@ endif()
 set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
+
+# Configure cpptrace for macOS
+if(APPLE)
+    set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use _Unwind for stack unwinding on macOS" FORCE)
+endif()
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpptrace)
 
 # Create .exe

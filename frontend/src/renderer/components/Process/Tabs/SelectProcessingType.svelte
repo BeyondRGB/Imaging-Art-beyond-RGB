@@ -1,15 +1,19 @@
 <script lang="ts">
-  import { currentPage, modal, processState } from "@util/stores";
+  import { currentPage, modal, processState, setTabCompleted } from "@util/stores";
   import {
     FileIcon,
     FolderIcon,
   } from "svelte-feather-icons";
+  import Button from "@components/Button.svelte";
 
   function handleClick(page) {
-    $processState.processType = page;
+    processState.update(state => ({
+      ...state,
+      processType: page,
+      currentTab: state.currentTab + 1
+    }));
+    setTabCompleted(0);
     modal.set(null);
-    $processState.completedTabs[0] = true;
-    $processState.currentTab++;
   }
 
   let showAbout = false;
@@ -18,36 +22,43 @@
 <main>
   <div id="selectProcessingTypesContent">
     <div class="btnCol">
-      <button on:click={() => handleClick("Single")} class="homeBtn">
+      <Button onClick={() => handleClick("Single")} className="homeBtn" size="lg">
         <div class="btnTitle">
           <FileIcon size="1.25x" />
           <h2>Single Image Processing</h2>
         </div>
         <span> Process a single RAW image set </span>
-      </button>
-      <button on:click={() => handleClick("Batch")} class="homeBtn">
+      </Button>
+      <Button onClick={() => handleClick("Batch")} className="homeBtn" size="lg">
         <div class="btnTitle">
           <FolderIcon size="1.25x" />
           <h2>Batch Processing</h2>
         </div>
         <span> Process multiple image sets with the same Target, Flatfield and Darkfield </span>
-      </button>
+      </Button>
     </div>
   </div>
 </main>
 
 <style lang="postcss">
   main {
-    @apply w-full h-[97%] bg-gray-800 mt-[3%] relative flex justify-center items-center;
+    background-color: var(--color-surface-base);
+    @apply w-full h-[97%] mt-[3%] relative flex justify-center items-center;
   }
 
   #selectProcessingTypesContent {
     @apply h-[50vh] flex flex-col items-center justify-between mb-[15vh];
   }
 
-  .homeBtn {
-    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg
-          bg-gray-900/25 ring-0 hover:bg-gray-700 text-gray-100 hover:text-white;
+  :global(.homeBtn) {
+    background-color: var(--color-surface-sunken) !important;
+    color: var(--color-text-primary) !important;
+    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg ring-0 !important;
+  }
+  
+  :global(.homeBtn:hover) {
+    background-color: var(--color-surface) !important;
+    color: var(--color-text-primary) !important;
   }
   .btnCol {
     @apply w-[60vw] flex flex-col justify-center items-center gap-4;

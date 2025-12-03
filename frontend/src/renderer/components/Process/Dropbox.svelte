@@ -32,7 +32,7 @@
     </div>
 </main>
 
-<style>
+<style lang="postcss">
     section {
         min-height: 3.25em;
         margin: auto;
@@ -45,26 +45,29 @@
         padding: 10px;
     }
     .sectionStyle {
-        background-color: #2c2c2f;
+        background-color: var(--color-surface-elevated);
+        border: 1px solid var(--color-border);
         height: auto;
         width: 80%;
         border-radius: 10px;
         margin: auto;
     }
     .errorStyle {
-        background-color: red;
+        background-color: var(--color-error);
+        border-color: var(--color-error);
     }
     card {
-        background-color: gray;
+        background-color: var(--color-surface-sunken);
+        color: var(--color-text-primary);
         width: auto;
         padding-right: 10px;
         padding-left: 10px;
         height: 1.8em;
         border-radius: 10px;
-        color: white;
         text-align: center;
     }
     .verified {
-        @apply bg-green-400 text-black dark:bg-green-800 dark:text-white;
+        background-color: var(--color-success);
+        color: white;
     }
 </style>

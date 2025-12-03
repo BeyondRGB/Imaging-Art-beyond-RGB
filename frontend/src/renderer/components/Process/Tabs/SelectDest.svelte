@@ -1,19 +1,35 @@
 <script lang="ts">
   import FileSelector from "@components/FileSelector.svelte";
-  import { FolderPlusIcon, FolderIcon } from "svelte-feather-icons";
-  import { currentPage, processState } from "@util/stores";
+  import TextInputRow from "@components/TextInputRow.svelte";
+  import { FolderPlusIcon, FolderIcon, FileTextIcon } from "svelte-feather-icons";
+  import { currentPage, processState, setTabCompleted } from "@util/stores";
+  import Card from "@components/Card.svelte";
+  
   let filePaths = [];
   $: console.log(filePaths);
 
   $: if (filePaths) {
-    $processState.destDir = filePaths[0];
+    processState.update(state => ({
+      ...state,
+      destDir: filePaths[0]
+    }));
   }
+
+  // Sanitize filename by replacing characters that are invalid in file paths across Windows/Mac/Linux.
+  // Invalid chars: / \ ? % * : | " < >
+  $: if ($processState.destFileName) {
+    const sanitized = $processState.destFileName.replace(/[/\\?%*:|"<>]/g, '-');
+    if (sanitized !== $processState.destFileName) {
+       processState.update(state => ({ ...state, destFileName: sanitized }));
+    }
+  }
+
   $: if (
     $processState.destDir &&
     $processState.destDir?.length > 1 &&
     !$processState.completedTabs[2]
   ) {
-    $processState.completedTabs[2] = true;
+    setTabCompleted(2);
   }
 </script>
 
@@ -23,35 +39,49 @@
     <p>Select the destination for output files</p>
   </left>
   <right>
-    <div class="selectBox">
-      <div class="fileSelector">
-        <FileSelector
-          bind:filePaths
-          type="Dir"
-          label="Select Folder"
-          icon={FolderPlusIcon}
-          largeText
-        />
-      </div>
-      {#if filePaths?.length > 0}
-        <div class="folderDisp">
-          <div class="destLabel">
-            <FolderIcon size="3x" />
-            Destination Folder:
-          </div>
-          <div class="folderLoc">
-            {$processState.destDir}
-          </div>
+    <div class="content-wrapper">
+      <Card variant="default" padding="lg" rounded={true} className="destination-card">
+        <div class="card-header">
+          <FolderIcon size="1.5x" />
+          <h2>Destination Settings</h2>
         </div>
-      {/if}
-    </div>
-    <div>
-      <div class="outputNameDisp">
-        <div class="outputLabel">
-          Destination Filename:
+        
+        <div class="form-section">
+          <div class="select-button-wrapper">
+            <FileSelector
+              bind:filePaths
+              type="Dir"
+              label="Select Folder"
+              icon={FolderPlusIcon}
+              largeText
+            />
+          </div>
+          
+          {#if filePaths?.length > 0}
+            <div class="selected-folder">
+              <div class="folder-icon-wrapper">
+                <FolderIcon size="1.25x" />
+              </div>
+              <div class="folder-path">
+                <span class="folder-label">Selected Location</span>
+                <span class="folder-value">{$processState.destDir}</span>
+              </div>
+            </div>
+          {/if}
         </div>
-        <input class="outputName" bind:value={$processState.destFileName} />
-      </div>
+        
+        <div class="divider"></div>
+        
+        <div class="form-section">
+          <TextInputRow 
+            label="Output Filename"
+            icon={FileTextIcon}
+            bind:value={$processState.destFileName}
+            placeholder="Enter output filename..."
+            type="text"
+          />
+        </div>
+      </Card>
     </div>
   </right>
 </main>
@@ -60,37 +90,83 @@
   main {
     @apply flex justify-between h-full w-full overflow-hidden;
   }
+  
   left {
-    @apply bg-gray-600 w-full h-full p-6 flex-col;
+    background-color: var(--color-surface-elevated);
+    @apply w-full h-full p-6 flex-col;
   }
+  
   right {
-    @apply bg-gray-700 w-full h-full p-6 flex flex-col items-center;
+    background-color: var(--color-surface);
+    @apply w-full h-full p-8 flex items-center justify-center;
   }
+  
   h1 {
-    @apply text-3xl;
+    color: var(--color-text-primary);
+    @apply text-3xl font-semibold mb-4;
   }
+  
   p {
-    @apply text-center pt-[30vh] bg-gray-500/25 m-6 h-[90%] rounded-lg;
+    background-color: var(--color-overlay-light);
+    color: var(--color-text-secondary);
+    @apply text-center pt-[30vh] m-6 h-[90%] rounded-lg text-base;
   }
-  .folderDisp {
-    @apply flex justify-between m-1 text-base;
+  
+  .content-wrapper {
+    @apply w-full max-w-xl;
   }
-  .destLabel {
-    @apply bg-blue-500/50 flex justify-between items-center p-1 rounded-l-xl;
+  
+  :global(.destination-card) {
+    background-color: var(--color-surface-elevated);
+    @apply shadow-sm !important;
   }
-  .folderLoc {
-    @apply bg-gray-800 flex items-center justify-center rounded-r-xl p-1;
+  
+  .card-header {
+    @apply flex items-center gap-2.5 mb-5 pb-4;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
   }
-  .selectBox {
-    @apply h-[70%] flex flex-col justify-center items-center gap-2;
+  
+  .card-header h2 {
+    @apply text-lg font-semibold;
   }
-  .outputNameDisp {
-    @apply flex justify-between m-1 text-base;
+  
+  .form-section {
+    @apply flex flex-col gap-5;
   }
-  .outputLabel {
-    @apply bg-blue-500/50 flex justify-between items-center p-1 rounded-l-xl;
+  
+  .select-button-wrapper {
+    @apply w-full flex justify-center;
   }
-  .outputName {
-    @apply bg-gray-800 flex items-center justify-center rounded-r-xl p-1;
+  
+  .selected-folder {
+    background-color: var(--color-surface-base);
+    border: 1px solid var(--color-border);
+    @apply flex items-start gap-3 p-3.5 rounded-lg transition-all duration-150;
+  }
+  
+  .folder-icon-wrapper {
+    color: var(--color-folder-blue);
+    @apply flex items-center justify-center w-9 h-9 rounded-md flex-shrink-0;
+    background-color: var(--color-folder-blue-bg);
+  }
+  
+  .folder-path {
+    @apply flex flex-col gap-0.5 flex-1 min-w-0;
+  }
+  
+  .folder-label {
+    color: var(--color-text-secondary);
+    @apply text-xs font-medium;
+  }
+  
+  .folder-value {
+    color: var(--color-text-primary);
+    @apply text-sm break-all font-mono;
+  }
+  
+  .divider {
+    background-color: var(--color-border);
+    @apply h-px w-full my-3;
   }
 </style>

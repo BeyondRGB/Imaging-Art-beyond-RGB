@@ -1,9 +1,12 @@
 <script>
   import "@carbon/charts/styles.min.css";
   import "carbon-components/css/carbon-components.min.css";
-  import { find, reverse, cloneDeep } from "lodash";
+  import { find } from "lodash";
   import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
+  import Button from "@components/Button.svelte";
+  import SwitchRow from "@components/SwitchRow.svelte";
   import { createEventDispatcher } from 'svelte';
+  import { exportHeatmapCSV } from "@util/csvExport.js";
   export let data;
 
   const dispatch = createEventDispatcher();
@@ -29,51 +32,33 @@
         dispatch('p90update', { p90: p90obj });
       }
 
-
-
-
   const exportCSV = function () {
-    // Reverse this without mutating because it's upside down
-    const flipped = reverse(cloneDeep(mapData));
-    let valueSum = 0;
-
-
-
-    // Construct CSV by hand because there is a bug in Apexcharts relating to 2d data
-    let csv = '"Row","Col","Value"\r\n';
-    for(let i = 0; i < flipped.length; i++) {
-      for(let j = 0; j < flipped[i].length; j++) {
-        csv += [String(i+1), String.fromCharCode(j + 65), flipped[i][j]]
-                .map(v => `"${v}"`)
-                .join(',');
-        csv += '\r\n';
-      }
-    }
-    csv += `\r\n"Computed 90th Percentile","${p90obj !== null ? p90obj.toFixed(2) : 'N/A'}"\r\n`;
-
-    //double p90 = btrgb::calibration::compute_90th_percentile(deltaE_matrix);
-    //calibrationResults.store_double("90th Percentile", p90);
-
-
-    // Kinda jank, but found multiple sources with this strategy for
-    // downloading constructed CSVs
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const downloadLink = document.createElement('a');
-    downloadLink.href = window.URL.createObjectURL(blob);
-    downloadLink.setAttribute('download', 'calibrationReport.csv');
-    downloadLink.click();
+    exportHeatmapCSV(mapData, p90obj, 'calibrationReport.csv');
   };
 
 </script>
 
 {#if mapData?.length > 1}
   <div class="heatmap-chart">
-    ΔE Heatmap
-    <button on:click={exportCSV} style="float: right; margin-left: 20px;">Export</button>
-    <span style="float: right; margin-top: 2px;">
-      <input type="checkbox" class="peer" bind:checked={visionDeficiencyMode} >
-      <label>Grayscale</label>
-    </span>
+    <div class="heatmap-header">
+      <span class="heatmap-title">ΔE Heatmap</span>
+      <div class="heatmap-controls">
+        <div class="grayscale-switch">
+          <SwitchRow
+            label="Grayscale"
+            description="Toggle grayscale mode"
+            bind:checked={visionDeficiencyMode}
+          />
+        </div>
+        <Button 
+          variant="secondary" 
+          size="sm" 
+          onClick={exportCSV}
+        >
+          Export
+        </Button>
+      </div>
+    </div>
      <div style="display: flex; align-items: center;">
         <AtomicHeatMap
           on:datapointselect={handleDataPointSelect}
@@ -93,31 +78,50 @@
             top-0 left-0;
   }
   .heatmap-value {
-    @apply flex justify-center items-center h-full w-full font-bold text-black;
+    color: var(--color-text-primary);
+    @apply flex justify-center items-center h-full w-full font-bold;
   }
   .heatmap-chart {
     @apply relative;
   }
+  
+  .heatmap-header {
+    @apply flex justify-between items-center mb-4;
+  }
+  
+  .heatmap-title {
+    color: var(--color-text-primary);
+    @apply text-lg font-semibold;
+  }
+  
+  .heatmap-controls {
+    @apply flex items-center gap-3;
+  }
+
+  .grayscale-switch {
+    min-width: 200px;
+  }
 
   /* Global Chart Styles */
   .bx--cc--chart-wrapper text {
-    @apply fill-white;
+    fill: var(--color-text-primary);
   }
   .bx--cc--grid rect.chart-grid-backdrop {
-    @apply fill-gray-700;
+    fill: var(--color-surface-sunken);
   }
   .bx--cc--axes g.axis g.tick text {
-    @apply fill-white;
+    fill: var(--color-text-secondary);
   }
   .bx--cc--title p.title {
-    @apply text-white;
+    color: var(--color-text-primary);
   }
   .bx--cc--axes g.axis .axis-title {
-    @apply fill-white;
+    fill: var(--color-text-primary);
   }
   /* --- Tooltip */
   .bx--cc--tooltip {
-    @apply bg-gray-700 text-white;
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
   }
   .bx--cc--tooltip .content-box {
     @apply text-white;
