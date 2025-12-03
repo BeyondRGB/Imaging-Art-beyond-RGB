@@ -1,10 +1,10 @@
 <script lang="ts">
     import { FilePlusIcon } from "svelte-feather-icons";
-    import { processState, sendMessage} from "@util/stores";
+    import { processState, sendMessage, setTabCompleted } from "@util/stores";
     import { forEach, find } from "lodash";
-    import { testStyle } from "@util/styles";
     import { countFields } from "@root/util/storesUtil";
     import ImageBubble from "@components/Process/ImageBubble.svelte";
+    import Button from "@components/Button.svelte";
     import Dropzone from "svelte-file-dropzone";
     export let label = "Select Files";
     export let icon = FilePlusIcon;
@@ -17,9 +17,13 @@
     };
 
     function getThumbnails() {
-        $processState.thumbnailID = Math.floor(Math.random() * 999999999);
+        const thumbnailID = Math.floor(Math.random() * 999999999);
+        processState.update(state => ({
+          ...state,
+          thumbnailID: thumbnailID
+        }));
         let msg = {
-            RequestID: $processState.thumbnailID,
+            RequestID: thumbnailID,
             RequestType: "Thumbnails",
             RequestData: {
                 names: filePaths,
@@ -33,7 +37,7 @@
         $processState.imageFilePaths.length >= 6 &&
         !$processState.completedTabs[1]
     ) {
-        $processState.completedTabs[1] = true;
+        setTabCompleted(1);
     }
 
     function handleFilesSelect(e) {
@@ -41,38 +45,57 @@
         if (e.detail == null){
             /* handles files being added from the select files button */
             files.accepted = [...files.accepted, ...e.target.files];
+            // Reset input value to allow re-adding the same files
+            e.target.value = '';
         }
         else {
             /* handles files being added from dragging and dropping */
             files.accepted = [...e.detail?.acceptedFiles];
         }
 
+        const newFiles = [];
         forEach(files.accepted, (f) => {
             if (!find($processState.imageFilePaths, {id: f.path, name: f.name})) {
-                $processState.imageFilePaths.push({
+                newFiles.push({
                     id: f.path,
                     name: f.path
                 });
             }
         });
-        forEach($processState.imageFilePaths, function (f){
-           filePaths.push(f.name);
+        processState.update(state => {
+          const updatedFilePaths = [...state.imageFilePaths, ...newFiles];
+          const totalImageCount = updatedFilePaths.length + countFields(state.artStacks[0].fields);
+          let artImageCount = state.artImageCount;
+          if(totalImageCount >= 6 && totalImageCount <=8  ){
+              artImageCount = 1;
+          }else if ( totalImageCount > 8){
+              artImageCount = Math.ceil((totalImageCount - 6) / 2);
+          }
+          // Update filePaths array for thumbnail request
+          forEach(updatedFilePaths, function (f){
+             filePaths.push(f.name);
+          });
+          return {
+            ...state,
+            imageFilePaths: updatedFilePaths,
+            artImageCount: artImageCount
+          };
         });
         getThumbnails();
-        let totalImageCount = $processState.imageFilePaths.length + countFields($processState.artStacks[0].fields); 
-        if(totalImageCount >= 6 && totalImageCount <=8  ){
-            $processState.artImageCount = 1;
-        }else if ( totalImageCount > 8){
-            $processState.artImageCount = Math.ceil((totalImageCount - 6) / 2);
-        }
     }
 
     const remove = (item) => {
-        $processState.imageFilePaths = $processState.imageFilePaths.filter((value) => value.id !== item.id);
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: state.imageFilePaths.filter((value) => value.id !== item.id)
+        }));
     };
 
     const removeAll = () => {
-        $processState.imageFilePaths = [];
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: []
+        }));
     };
 
     function openAttachment() {
@@ -87,42 +110,38 @@
     <Dropzone
             on:drop={handleFilesSelect}
             noClick
-            containerStyles={testStyle}
             disableDefaultStyles
             containerClasses="custom-dropzone">
+        <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
         {#if $processState.imageFilePaths?.length > 0}
-            <div class="two-col">
-                <div class="col1">
-                    <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
-                    <button
-                            type="button"
-                            class="file"
-                            class:largeText
-                            id="btnAttachment"
-                            on:click={openAttachment}
-                    >{label}
-                        <div class="icon">
-                            <svelte:component this={icon} size="1.5x" />
-                        </div>
-                    </button>
-                </div>
-                <div class="col2">
-                    <button on:click={removeAll} class="remove-button" class:largeText> Remove All</button>
-                </div>
+            <div class="button-row">
+                <Button
+                    variant="default"
+                    size={largeText ? "lg" : "md"}
+                    onClick={openAttachment}
+                    icon={icon}
+                    iconPosition="right"
+                >
+                    {label}
+                </Button>
+                <Button 
+                    variant="danger" 
+                    size={largeText ? "lg" : "md"}
+                    onClick={removeAll}
+                >
+                    Remove All
+                </Button>
             </div>
         {:else}
-            <input type="file" class="file" id="attachment" style="display: none;" on:change={handleFilesSelect} multiple/>
-            <button
-                    type="button"
-                    class="file"
-                    class:largeText
-                    id="btnAttachment"
-                    on:click={openAttachment}
-            >{label}
-                <div class="icon">
-                    <svelte:component this={icon} size="1.5x" />
-                </div>
-            </button>
+            <Button
+                variant="default"
+                size={largeText ? "lg" : "md"}
+                onClick={openAttachment}
+                icon={icon}
+                iconPosition="right"
+            >
+                {label}
+            </Button>
         {/if}
 
         <br>
@@ -147,55 +166,25 @@
     main {
         @apply h-full ;
     }
-    button {
-        @apply flex justify-between items-center gap-2 p-0 pl-2;
+    
+    /* Custom dropzone styling - converted from inline styles.js */
+    main :global(.custom-dropzone) {
+        background-color: var(--color-surface-base);
+        color: var(--color-text-tertiary);
+        border-color: var(--color-border);
+        @apply flex flex-col items-center p-5 border-2 border-dashed 
+               rounded-[10px] outline-none transition-all duration-200;
     }
-    .largeText {
-        @apply text-lg;
-    }
-    .icon {
-        @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
+    
+    .button-row {
+        @apply flex gap-3 w-full justify-center;
     }
     ul {
         @apply flex flex-col gap-2 w-full justify-center items-center;
     }
     article {
-        @apply bg-gray-800 w-full min-h-[12rem] max-h-[30rem] overflow-auto rounded-[32px] py-2 px-6;
-    }
-    button {
-        @apply flex justify-between items-center gap-2 p-0 pl-2 whitespace-nowrap;
-    }
-    .icon {
-        @apply bg-gray-500 p-1 group-hover:bg-blue-400 transition-all rounded-r-lg;
-    }
-    .two-col {
-        overflow: hidden;/* Makes this div contain its floats */
-        width: 100%
-    }
-
-    .two-col .col1,
-    .two-col .col2 {
-        /*width: 80%;*/
-    }
-
-    .two-col .col1 {
-        float: left;
-        width: 60%;
-        padding-left: 40%;
-    }
-
-    .two-col .col2 {
-        float: right;
-        align-items: flex-end;
-        vertical-align: center;
-    }
-
-    .two-col label {
-        display: block;
-    }
-
-    .remove-button:hover {
-        background-color: red;
+        background-color: var(--color-surface-base);
+        @apply w-full min-h-[12rem] max-h-[30rem] overflow-auto rounded-[32px] py-2 px-6;
     }
 
 </style>

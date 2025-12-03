@@ -1,6 +1,7 @@
 <script>
     import { chart } from "svelte-apexcharts";
     import { createEventDispatcher } from 'svelte';
+    import { getCssVar } from "@util/cssUtils";
 
     const dispatch = createEventDispatcher();
 
@@ -108,7 +109,12 @@ function generateLegendRanges() {
 
     return result;
 }
+
     const getOptions = function() {
+        // Get theme colors from CSS variables
+        const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';
+        const textColorSecondary = getCssVar('--color-text-secondary') || '#ffffff';
+        
         return {
             series: getData(),
             chart: {
@@ -144,7 +150,7 @@ function generateLegendRanges() {
 				    fillColors: generateLegendRanges().map(range => range.color)
 				},
 				labels: {
-				    colors: "#ffffff",
+				    colors: textColorPrimary,
                     formatter: function(value, index) {
                        let legendRanges = generateLegendRanges();
                        return legendRanges[index]?.label || "";
@@ -184,7 +190,7 @@ function generateLegendRanges() {
                         }
                     },
                     style: {
-                        colors: ["#ffffff"]   
+                        colors: [textColorSecondary]   
                     },
                 },
                 
@@ -194,7 +200,7 @@ function generateLegendRanges() {
                     style: {
                         //for some reason colors: ["#ffffff", "#ffffff"] would only make the first two labels white??
                         //so make an array the length of the x-axis of just "#ffffff"
-                        colors:  Array.from({length:data?.[0].length}, ()=> "#ffffff")
+                        colors:  Array.from({length:data?.[0].length}, ()=> textColorSecondary)
                     }
                 }
             },

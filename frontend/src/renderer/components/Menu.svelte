@@ -3,6 +3,7 @@
   import TextLogo from "@assets/TextLogo.svg";
   import TextLogoAlt from "@assets/TextLogoAlt.svg";
   import { SvelteToast, toast } from '@zerodevx/svelte-toast';
+  import { RefreshCwIcon } from "svelte-feather-icons";
 
   import {
     currentPage,
@@ -12,7 +13,7 @@
     connect,
   } from "@util/stores";
 
-  $: theme = $appSettings.theme ? "dark" : "";
+  $: isDarkTheme = $appSettings.isDarkTheme ? "dark" : "";
   function handleClick(newPage: any[]) {
     if (newPage[0] === "Settings") {
       modal.set(newPage[1].component);
@@ -26,7 +27,7 @@
   }
 </script>
 
-<main class:sideMain={$appSettings.sideNav} class={theme}>
+<main class:sideMain={$appSettings.sideNav} class={isDarkTheme}>
   <ul>
     <div class="logoBox" class:altLogo={$appSettings.sideNav}>
       {#if $appSettings.sideNav}
@@ -63,12 +64,16 @@
         <svelte:component this={routes["Settings"].icon} size="1.75x" />
       </button>
 
-      <button
-        on:click={() => connect()}
-        
-        class:connected={$connectionState === "Connected"}
-        class:disconnected={$connectionState !== "Connected"}
-      />
+      {#if $connectionState === "Connected"}
+        <div class="status-indicator connected"></div>
+      {:else}
+        <button
+          on:click={() => connect()}
+          class="reconnect-btn disconnected"
+        >
+          <RefreshCwIcon size="1.75x" />
+        </button>
+      {/if}
     </div>
   </ul>
   <SvelteToast/>
@@ -97,8 +102,8 @@
   }
 
   ul {
-    @apply flex list-none m-0 justify-between h-full w-full bg-gray-100 
-          dark:bg-gray-700;
+    background-color: var(--color-surface);
+    @apply flex list-none m-0 justify-between h-full w-full;
   }
 
   .sideMain ul {
@@ -110,13 +115,19 @@
   }
 
   .selected span {
-    @apply dark:text-gray-50;
+    color: var(--color-text-primary);
   }
 
   button {
+    background-color: transparent;
+    color: var(--color-text-secondary);
     @apply rounded-none h-full w-full flex flex-col justify-center items-center
-            ring-0 bg-transparent dark:hover:bg-gray-800 hover:bg-gray-200 
-            dark:text-gray-300 dark:hover:text-gray-50 shadow-none;
+            ring-0 shadow-none;
+  }
+  
+  button:hover {
+    background-color: var(--color-interactive-hover);
+    color: var(--color-text-primary);
   }
 
   :root {
@@ -128,12 +139,18 @@
   }
 
   .selected {
-    @apply dark:bg-gray-900 bg-gray-400 dark:hover:bg-gray-900/40 hover:bg-gray-600/40 
-          dark:text-blue-500 border-b-4 border-blue-500;
+    background-color: var(--color-surface-sunken);
+    @apply border-b-4 border-blue-500;
+  }
+  
+  .selected:hover {
+    background-color: var(--color-surface-sunken);
+    opacity: 0.8;
   }
 
   .disabled {
-    @apply dark:text-gray-500/50 cursor-not-allowed dark:hover:text-gray-500;
+    color: var(--color-text-disabled);
+    @apply cursor-not-allowed;
   }
 
   .menuBtns {
@@ -142,27 +159,49 @@
   }
 
   .sideMain .menuBtns {
-    @apply flex-col h-[60%] w-full whitespace-normal;
+    @apply flex-col h-[60%] w-full whitespace-normal overflow-visible items-stretch;
   }
   
+  .sideMain .menuBtns button {
+    @apply h-full flex-1;
+  }
+
 
   .ctlBtns {
-    @apply flex dark:bg-gray-600/30 bg-gray-200/30 rounded-l-2xl px-4 gap-2 items-center;
+    background-color: var(--color-overlay-light);
+    @apply flex rounded-l-2xl px-4 gap-2 items-center;
   }
 
   .ctlBtns button {
-    @apply rounded-full hover:text-blue-500 dark:hover:text-blue-500 
-            hover:bg-transparent dark:text-gray-50;
+    color: var(--color-text-primary);
+    @apply rounded-full hover:text-blue-500 hover:bg-transparent;
   }
 
   .sideMain .ctlBtns {
     @apply flex-col py-4 px-0 rounded-l-none rounded-t-2xl items-center justify-center;
   }
 
-  .connected {
-    @apply w-2 h-4 rounded-full bg-green-400 dark:hover:bg-green-500 dark:hover:scale-125;
+  .status-indicator {
+    @apply w-7 h-7 rounded-full;
   }
-  .disconnected {
-    @apply w-2 h-4 bg-red-500 dark:hover:bg-red-400 dark:hover:scale-125;
+  
+  .status-indicator.connected {
+    background-color: var(--color-success);
+    @apply shadow-lg;
+    box-shadow: 0 0 9px var(--color-success);
+  }
+  
+  .reconnect-btn {
+    @apply transition-all duration-200;
+  }
+  
+  .reconnect-btn.disconnected {
+    color: var(--color-error);
+    @apply animate-pulse;
+  }
+  
+  .reconnect-btn.disconnected:hover {
+    @apply scale-110;
+    color: var(--color-error);
   }
 </style>

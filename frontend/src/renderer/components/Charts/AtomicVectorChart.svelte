@@ -1,6 +1,7 @@
 <script>
     import { chart } from "svelte-apexcharts";
     import {find, forEach} from "lodash";
+    import { getCssVar } from "@util/cssUtils";
 
     export let dataAB;
     export let dataLC;
@@ -44,6 +45,9 @@
     };
 
     const getOptions = function() {
+        const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';
+        const textColorSecondary = getCssVar('--color-text-secondary') || '#ffffff';
+
         return {
             series: getData(),
             markers: { 
@@ -95,35 +99,35 @@
             legend: {
                 show: true,
                 labels:{
-                    colors:["#FFF", "#FFF"]
+                    colors:[textColorPrimary, textColorPrimary]
                 },
                 customLegendItems: ["Reference", "Image"],
                 markers: { 
                     size: 5,
                     strokeWidth: 2, 
-                    strokeColor:"#FFF",
-                    fillColors: ["#FFF", "#000"]
+                    strokeColor: textColorPrimary,
+                    fillColors: [textColorPrimary, "#000"]
                 
                 }
             },
             xaxis: {
                 labels: {
                     style: {
-                        colors: '#fff',
+                        colors: textColorSecondary,
                     }
                 },
                 title: {
                     text: dataAB ? 'a*' : 'C*',
                     offsetY: 75,
                     style: {
-                        color: '#fff'
+                        color: textColorPrimary
                     }
                 }
             },
             yaxis: {
                 labels: {
                     style: {
-                        colors: '#fff',
+                        colors: textColorSecondary,
                     },
                     formatter: function (value, info) {
                         if(isFinite(info)){
@@ -138,7 +142,7 @@
                 title: {
                     text: dataAB ? 'b*' : 'L*',
                     style: {
-                        color: '#fff'
+                        color: textColorPrimary
                     }
                 },
                 decimalsInFloat: 0

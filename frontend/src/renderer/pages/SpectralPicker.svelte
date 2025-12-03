@@ -1,34 +1,38 @@
 <script lang="ts">
   import SpecPickViewer from "@components/SpectralPicker/SpecPickViewer.svelte";
   import {
-    processState,
     viewState,
     sendMessage,
     messageStore,
     currentPage,
+    serverError,
+    requestColorManagedImage,
+    clearProjectViewState,
   } from "@util/stores";
   import {
-    XCircleIcon,
+    XIcon,
     Maximize2Icon,
     Minimize2Icon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
   } from "svelte-feather-icons";
   import LineChart from "@components/Charts/LineChart.svelte";
-  import Switch from "@components/Switch.svelte";
+  import SwitchRow from "@components/SwitchRow.svelte";
+  import Card from "@components/Card.svelte";
   import FileSelector from "@components/FileSelector.svelte";
 
   let showBrush = false;
   let stackCurves = false;
-  let size;
+  let size = 0.01; // Default size matching SpecPickViewer default
   let trueSize;
   let shadowPos = { left: 0, top: 0 };
-  let trueShadowPos = { left: "0px", top: "0px" };
-  let spectrumData;
+  let trueShadowPos = { left: 0, top: 0 };
+  let spectrumData = []; // Initialize as empty array
   let mainfilePath;
-  let oldProjectKey: String;
+  let oldProjectKey: string | null = null;
 
   let loading = false;
-
-  let expand = false;
+  let expand = false; // Start collapsed like master
 
   let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
 
@@ -55,89 +59,94 @@
     getData();
   }
 
+  // Handle SpectralPicker and Error responses (page-specific)
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-    console.log("New Message Spec");
     try {
-      let temp = JSON.parse($messageStore[0]);
-      if (temp["ResponseType"] === "SpectralPicker") {
-        console.log("Spectrum Data From Server");
-        spectrumData = temp["ResponseData"]["spectrum"];
+      const message = $messageStore[0];
+      if (typeof message === 'string' && message.trim().length > 0) {
+        let temp = JSON.parse(message);
+        
+        if (temp["ResponseType"] === "SpectralPicker") {
+          console.log("Spectrum Data From Server");
+          spectrumData = temp["ResponseData"]["spectrum"];
+        } else if (temp["ResponseType"] === "Error") {
+          // Error handler
+          if (temp["ResponseData"] && temp["ResponseData"]["critical"]) {
+            serverError.set({
+              sender: temp["ResponseData"]["sender"],
+              message: temp["ResponseData"]["message"],
+            });
+            console.log({ SERVERERROR: temp["ResponseData"] });
+          }
+        }
       }
     } catch (e) {
-      console.log(e);
+      // Not JSON or parse error, ignore
     }
   }
 
-  function colorManagedImage() {
-    let rand = Math.floor(Math.random() * 999999);
-    $processState.CMID = rand;
-    let msg = {
-      RequestID: rand,
-      RequestType: "ColorManagedImage",
-      RequestData: {
-        name: $viewState.projectKey,
-        target_requested: false,
-      },
-    };
-
-    console.log("Fetching Color Managed Image");
-    console.log(msg);
-    loading = true;
-    sendMessage(JSON.stringify(msg));
+  // Track loading state based on colorManagedImage updates
+  $: if ($viewState.colorManagedImage.dataURL.length > 0) {
+    loading = false;
   }
 
-  // Close the current image whenever a new project is opened
+  // Handle project key changes. When project changes, clear old project state before loading new one.
   $: if ($viewState.projectKey !== null) {
-      console.log(`New Project Key 2 ${$viewState.projectKey}, Old: ${oldProjectKey}`)
-
-      if (oldProjectKey !== $viewState.projectKey && (oldProjectKey !== undefined && oldProjectKey !== null)) {
-          console.log(`Closing Old Project Key ${oldProjectKey}`);
-          closeImage(false);
-
-          // Track the current open project
-          oldProjectKey = $viewState.projectKey;
-      }
-
-      // If there is no previous project, set the old project key. Otherwise, it will be set in the above function.
-      if (oldProjectKey === null || oldProjectKey === undefined) {
-          console.log(`Setting Old Project Key ${$viewState.projectKey}`);
-          oldProjectKey =  $viewState.projectKey;
-      }
+    if (oldProjectKey !== $viewState.projectKey && oldProjectKey !== null) {
+      console.log(`Project changed from ${oldProjectKey} to ${$viewState.projectKey}`);
+      // Clear the old project state before loading the new one
+      clearProjectViewState();
+      // Restore the new project key that was just set
+      viewState.update(state => ({
+        ...state,
+        projectKey: $viewState.projectKey
+      }));
+      // Reset spectrum data for the new project
+      spectrumData = [];
+    }
+    oldProjectKey = $viewState.projectKey;
   }
 
-  // When the user loads a file from the file browser.
+  // When the user loads a file from the file browser
   $: if (mainfilePath?.length > 0) {
-      console.log(`New Project Key ${mainfilePath[0]}, Old Key ${mainfilePath[0]}`);
-      $viewState.projectKey = mainfilePath[0];
-
-      // If there is no previous project, set the old project key. Otherwise it will be set in the above function.
-      if (oldProjectKey === null || oldProjectKey === undefined) {
-          console.log(`Setting Old Project Key ${mainfilePath[0]}`);
-          oldProjectKey = mainfilePath[0];
-      }
+    console.log("New Project Key from file selector:", mainfilePath[0]);
+    viewState.update(state => ({
+      ...state,
+      projectKey: mainfilePath[0]
+    }));
   }
 
-  // When a new project is opened, and the colorManagedImage is not available fetch the image.
+  // When a new project is opened and colorManagedImage is not available, fetch the image
   $: if (
     $currentPage === "SpecPicker" &&
     $viewState.projectKey !== null &&
     $viewState.colorManagedImage.dataURL.length < 1
   ) {
-    console.log("Getting Color Managed Image");
-    colorManagedImage();
+    console.log("Getting Color Managed Image using centralized handler");
+    loading = true;
+    requestColorManagedImage($viewState.projectKey);
+  }
+
+  // Fetch initial spectrum data when image is loaded
+  $: if (
+    $currentPage === "SpecPicker" &&
+    $viewState.projectKey !== null &&
+    $viewState.colorManagedImage.dataURL.length > 0 &&
+    (!spectrumData || spectrumData.length === 0)
+  ) {
+    console.log("Fetching initial spectrum data");
+    getData();
   }
 
   let isFullScreen = window.innerHeight == screen.height;
 
-  function closeImage(removeProjectKey = true) {
-      console.log("Closing Image");
-      if (removeProjectKey) {
-          $viewState.projectKey = null;
-      }
-      $viewState.colorManagedImage.dataURL = "";
-      oldProjectKey = null
-      mainfilePath = "";
-      showBrush = false
+  function closeImage() {
+    // Clear all project state using the centralized helper
+    clearProjectViewState();
+    mainfilePath = "";
+    showBrush = false;
+    spectrumData = [];
+    oldProjectKey = null;
   }
 </script>
 
@@ -151,8 +160,8 @@
     </div>
   {/if}
   <div class="content" id="picker-content">
-    <div class="panel">
-      <div class="image-tabs" class:aspect={expand}>
+    <div class="viewer-layout">
+      <div class="image-section">
         <button
           class="fullBtn"
           on:click={() => {
@@ -160,7 +169,7 @@
               document.exitFullscreen();
               isFullScreen = false;
             } else {
-              document.querySelector(".image-tabs").requestFullscreen();
+              document.querySelector(".image-section").requestFullscreen();
               isFullScreen = true;
             }
           }}
@@ -172,7 +181,7 @@
           {/if}
         </button>
         <button class="closeBtn" on:click={closeImage}>
-          <XCircleIcon size="1.25x" />
+          <XIcon size="1.25x" />
         </button>
 
         <div class="image-container">
@@ -182,40 +191,6 @@
             </div>
           {/if}
 
-          <div class="floatBox" class:notExpanded={!expand}>
-            <div class="handle" on:click={() => (expand = !expand)}>
-              {expand ? ">" : "<"}
-            </div>
-            <div class="box" id="brush">
-              <Switch label="Enable Spectral Picker" bind:checked={showBrush} />
-              <Switch label="Stack Spectral Curves" bind:checked={stackCurves} />
-              <div class="sizeSettings">
-                Set Brush Size:
-                <div class="flex justify-center items-center gap-1">
-                  <input
-                    class="brushBar"
-                    type="range"
-                    min="0.001"
-                    max="0.03"
-                    step=".0005"
-                    bind:value={size}
-                  />
-                  <div class="pixSize">
-                    <span>{parseFloat(trueSize).toFixed(1)}</span>
-                    <span>px</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="chart">
-              <LineChart
-                bind:data={spectrumData}
-                bind:wavelengthArray
-                bind:trueShadowPos
-                stack={stackCurves}
-              />
-            </div>
-          </div>
           <SpecPickViewer
             bind:shadowPos
             bind:trueShadowPos
@@ -226,9 +201,70 @@
           />
         </div>
       </div>
-      {#if !expand}
-        <div class="side" />
-      {/if}
+
+      <div class="drawer-wrapper" class:open={expand}>
+        <button class="drawer-toggle" on:click={() => (expand = !expand)}>
+          {#if expand}
+            <ChevronRightIcon size="1.25x" />
+          {:else}
+            <ChevronLeftIcon size="1.25x" />
+          {/if}
+        </button>
+        
+        <div class="drawer-panel">
+          <div class="spectral-panel">
+            <div class="panel-section">
+              <SwitchRow
+                label="Enable Spectral Picker"
+                description="Show the sampling brush on the image preview"
+                bind:checked={showBrush}
+                ariaLabel="Toggle spectral picker"
+              />
+              <SwitchRow
+                label="Stack Spectral Curves"
+                description="Keep previous spectra visible when sampling"
+                bind:checked={stackCurves}
+                ariaLabel="Toggle stacking spectral curves"
+              />
+            </div>
+
+            <div class="panel-section brush-section">
+              <div class="panel-heading">Brush Size</div>
+              <div class="brush-controls">
+                <label class="brush-label" for="brush-size">Set brush size</label>
+                <div class="brush-slider">
+                  <input
+                    id="brush-size"
+                    class="brushBar"
+                    type="range"
+                    min="0.001"
+                    max="0.03"
+                    step=".0005"
+                    bind:value={size}
+                  />
+                  <div class="pixSize">
+                    <span>{trueSize ? parseFloat(trueSize).toFixed(1) : '0.0'}</span>
+                    <span>px</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {#if expand}
+              <div class="panel-section chart-section">
+                <Card variant="elevated" padding="md" rounded={true} shadow="medium" className="chart-card">
+                  <LineChart
+                    bind:data={spectrumData}
+                    bind:wavelengthArray
+                    bind:trueShadowPos
+                    stack={stackCurves}
+                  />
+                </Card>
+              </div>
+            {/if}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </main>
@@ -238,11 +274,12 @@
     @apply flex h-full w-full justify-center flex-col relative;
   }
   .noFile {
-    @apply absolute w-full h-full z-[99] flex justify-center bg-gray-800
-            items-center;
+    background-color: var(--color-surface-base);
+    @apply absolute w-full h-full z-[99] flex justify-center items-center;
   }
   .inputBox {
-    @apply w-auto h-auto bg-gray-700 flex flex-col gap-2 justify-center items-center
+    background-color: var(--color-surface);
+    @apply w-auto h-auto flex flex-col gap-2 justify-center items-center
           p-8 rounded-2xl;
   }
   .inputBox h2 {
@@ -251,74 +288,119 @@
   .content {
     @apply w-full h-full flex justify-center items-center p-6;
   }
-  .panel {
-    @apply w-full h-full flex justify-center items-center;
+  
+  .viewer-layout {
+    @apply w-full h-full flex gap-0;
   }
+  
+  .image-section {
+    background-color: var(--color-surface-sunken);
+    @apply relative flex-1 flex flex-col transition-all duration-500;
+  }
+  
   .image-container {
-    @apply relative w-full h-full bg-gray-500 overflow-visible;
-  }
-  .image {
-    @apply bg-green-400 overflow-auto h-[90%] aspect-[3/2];
-  }
-  .image-tabs {
-    @apply h-full w-full bg-red-500/50 relative
-          flex flex-col;
-  }
-
-  .aspect {
-    @apply aspect-[145/100] w-auto;
-  }
-  .tabs {
-    @apply w-auto bg-gray-700 flex gap-1 pt-1 px-1 rounded-t-lg;
-  }
-  .tab {
-    @apply relative;
-  }
-  .btnTab {
-    @apply w-16 h-full bg-gray-700 flex justify-center items-center
-          rounded-t-xl rounded-b-none relative;
+    @apply relative w-full h-full overflow-visible;
   }
   .pixSize {
-    @apply flex bg-gray-800/50 gap-1 p-1 rounded-lg;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    @apply flex gap-1 px-2 py-1 rounded-lg text-sm font-medium;
   }
   .brushBar {
     @apply w-full h-2 rounded-xl;
   }
   .brushBar::-webkit-slider-thumb {
-    @apply w-4 h-4 bg-gray-600 cursor-pointer rounded-full outline outline-1
-          outline-gray-200;
+    background-color: var(--color-interactive);
+    @apply w-4 h-4 cursor-pointer rounded-full outline outline-1;
+    outline-color: var(--color-border);
   }
 
-  .closeTab {
-    @apply absolute -right-0.5 -top-0.5 flex justify-center items-center
-            p-0.5 bg-transparent ring-0 text-gray-400 
-            hover:bg-red-500/50 hover:text-white z-[49];
+  .drawer-wrapper {
+    @apply relative flex h-full transition-all duration-500;
+    width: 0;
+  }
+  
+  .drawer-wrapper.open {
+    width: 30vw;
+  }
+  
+  .drawer-toggle {
+    background-color: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-right: 0;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+    @apply absolute top-1/2 -translate-y-1/2 h-12 w-10 flex justify-center 
+           items-center cursor-pointer transition-all duration-500 z-10 rounded-l-full;
+    left: -2.5rem;
+  }
+  
+  .drawer-toggle:hover {
+    background-color: var(--color-interactive-hover);
+  }
+  
+  .drawer-toggle:focus {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: 2px;
+  }
+  
+  .drawer-panel {
+    background-color: var(--color-surface-elevated);
+    border-left: 1px solid var(--color-border);
+    @apply flex-1 h-full overflow-y-auto;
   }
 
-  .floatBox {
-    border: 1px solid red;
-    @apply absolute h-auto w-[30vw] bg-gray-500/75 z-[49] right-0 transition-all duration-500
-            translate-x-0 border border-gray-700 rounded-bl-xl;
+  .spectral-panel {
+    @apply flex flex-col gap-4 p-4 h-full;
   }
 
-  .notExpanded {
-    @apply translate-x-full;
+  .panel-section {
+    @apply flex flex-col gap-4;
+  }
+
+  .brush-section {
+    background-color: var(--color-surface-sunken);
+    border: 1px solid var(--color-border);
+    @apply rounded-lg p-4 gap-3;
+  }
+
+  .panel-heading {
+    color: var(--color-text-primary);
+    @apply text-sm font-semibold uppercase tracking-wide;
+  }
+
+  .brush-controls {
+    @apply flex flex-col gap-3;
+  }
+
+  .brush-label {
+    color: var(--color-text-secondary);
+    @apply text-sm font-medium;
+  }
+
+  .brush-slider {
+    @apply flex justify-center items-center gap-2;
+  }
+  
+  .chart-section {
+    @apply flex-1;
+  }
+  
+  :global(.chart-card) {
+    @apply h-full;
   }
 
   .loading {
-    @apply bg-gray-700 absolute w-full h-full z-[49] flex justify-center items-center;
+    background-color: var(--color-overlay-heavy);
+    @apply absolute w-full h-full z-[49] flex justify-center items-center;
   }
   .loading-box {
-    @apply h-full flex flex-col gap-2 justify-center items-center
-            text-2xl;
+    @apply h-full flex flex-col gap-2 justify-center items-center text-2xl;
   }
   .loader {
-    /* position: absolute; */
     width: 48px;
     height: 48px;
     background: #11ff00;
-    transform: rotateX(65deg) rotate(45deg);
-    /* remove bellows command for perspective change */
     transform: perspective(200px) rotateX(65deg) rotate(45deg);
     color: rgb(255, 0, 0);
     animation: layers1 1s linear infinite alternate;
@@ -350,14 +432,6 @@
     }
   }
 
-  .selected {
-    @apply bg-blue-500/50;
-  }
-
-  .side {
-    @apply h-full w-[45vw];
-  }
-
   .fullBtn {
     @apply absolute right-0 m-1 z-50 p-1 bg-transparent ring-0
             hover:bg-blue-500/25 transition-all duration-500;
@@ -366,26 +440,5 @@
   .closeBtn {
     @apply absolute right-8 m-1 z-50 p-1 bg-transparent ring-0
             hover:bg-red-500/25 transition-all duration-500;
-  }
-
-  .chart {
-    @apply bg-gray-600 m-2 p-2 pb-4 rounded-lg pr-4;
-  }
-
-  .box {
-    @apply m-2 shadow-md px-2 pt-1 bg-gray-600 rounded-lg p-2;
-  }
-  .numberInput {
-    @apply p-0.5 bg-gray-900 border-[1px] border-gray-800 rounded-lg
-          focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
-  }
-  .handle {
-    border: 1px solid red;
-    @apply bg-gray-500/75 h-12 w-8 absolute bottom-1/2 -left-8 flex justify-center items-center
-							text-2xl rounded-l-full border border-r-[0px] border-gray-800;
-  }
-
-  .sizeSettings {
-    @apply flex justify-between items-center text-base pl-4;
   }
 </style>

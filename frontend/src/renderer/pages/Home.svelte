@@ -1,15 +1,17 @@
 <script lang="ts">
   import TextLogo from "@assets/TextLogo.svg";
   import About from "@root/components/About.svelte";
+  import Modal from "@root/components/Modal.svelte";
   import { currentPage, modal } from "@util/stores";
   import { fade } from "svelte/transition";
   import {
     CrosshairIcon,
     ApertureIcon,
     InfoIcon,
-    XCircleIcon,
     CopyIcon
   } from "svelte-feather-icons";
+  import Button from "@components/Button.svelte";
+    
 
   function handleClick(page) {
     currentPage.set(page);
@@ -27,15 +29,13 @@
 
 <main>
   {#if showAbout}
-    <div class="aboutContent">
-      <div class="aboutBg" on:click={() => (showAbout = false)} />
-      <div class="aboutBox">
-        <button class="closeBtn" on:click={() => (showAbout = false)}
-          ><XCircleIcon size="1.5x" /></button
-        >
-        <About />
-      </div>
-    </div>
+    <Modal 
+      component={About} 
+      size="large"
+      backdropBlur="md"
+      backdropOpacity="heavy"
+      on:close={() => (showAbout = false)}
+    />
   {/if}
   <div id="homeContent">
     <div id="welcome">
@@ -49,51 +49,56 @@
       />
     </div>
     <div class="btnCol">
-      <button on:click={() => handleClick("Process")} class="homeBtn">
+      <Button onClick={() => handleClick("Process")} className="homeBtn" size="lg">
         <div class="btnTitle">
           <ApertureIcon size="1.25x" />
           <h2>Process</h2>
         </div>
-
         <span> Process a new RAW image set </span>
-      </button>
-      <button on:click={() => handleClick("SpecPicker")} class="homeBtn">
+      </Button>
+      <Button onClick={() => handleClick("SpecPicker")} className="homeBtn" size="lg">
         <div class="btnTitle">
           <CrosshairIcon size="1.25x" />
           <h2>View</h2>
         </div>
         <span> View a previously-processed imaged set </span>
-      </button>
-      <button on:click={() => openNewWindow()} class="homeBtn">
+      </Button>
+      <Button onClick={() => openNewWindow()} className="homeBtn" size="lg">
         <div class="btnTitle">
           <CopyIcon size="1.25x" />
           <h2>Create Another Window</h2>
         </div>
         <span> View two reports at once </span>
-      </button>
-      <button on:click={() => (showAbout = true)} class="homeBtn">
+      </Button>
+      <Button onClick={() => (showAbout = true)} className="homeBtn" size="lg">
         <div class="btnTitle">
           <InfoIcon size="1.25x" />
           <h2>About</h2>
         </div>
         <span> About the program </span>
-      </button>
+      </Button>
     </div>
   </div>
 </main>
 
 <style lang="postcss">
   main {
-    @apply w-full h-[97%] bg-gray-800 mt-[3%] relative flex justify-center items-center;
+    background-color: var(--color-surface-base);
+    @apply w-full h-[97%] mt-[3%] relative flex justify-center items-center;
   }
 
   #homeContent {
     @apply h-[50vh] flex flex-col items-center justify-between mb-[15vh];
   }
 
-  .homeBtn {
-    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg
-          bg-gray-900/25 ring-0 hover:bg-gray-700 text-gray-100 hover:text-white;
+  :global(.homeBtn) {
+    background-color: var(--color-surface) !important;
+    color: var(--color-text-primary) !important;
+    @apply w-full h-full flex flex-col justify-center items-center p-[2vh] text-lg ring-0 !important;
+  }
+  
+  :global(.homeBtn:hover) {
+    background-color: var(--color-interactive-hover) !important;
   }
   .btnCol {
     @apply w-[60vw] flex flex-col justify-center items-center gap-4;
@@ -106,31 +111,13 @@
     pointer-events: none;
     @apply h-[10vh];
   }
-  .aboutContent {
-    @apply absolute w-full h-full flex justify-center items-center;
-  }
-  .aboutBg {
-    @apply absolute w-full h-full bg-black/40 flex justify-center items-center;
-  }
-  .aboutBox {
-    @apply absolute w-1/2 h-auto z-[9999];
-  }
-  .closeBtn {
-    @apply absolute right-0 m-2 bg-transparent ring-0 hover:bg-red-400/50
-            p-1;
-  }
-
   .btnTitle {
     @apply w-full flex justify-center items-center gap-1 p-1 text-xl;
   }
 
   #welcome {
-    @apply text-black text-opacity-40 flex flex-col justify-center 
-            items-center gap-2 pb-[1vh];
-  }
-
-  #getting-started {
-    @apply text-base flex flex-col justify-center items-center;
+    color: var(--color-text-tertiary);
+    @apply flex flex-col justify-center items-center gap-2 pb-[1vh];
   }
 
   span {

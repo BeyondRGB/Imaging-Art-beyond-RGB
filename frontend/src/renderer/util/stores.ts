@@ -1,12 +1,31 @@
-import { writable, derived } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
+
+// Load settings from localStorage
+function loadSettings() {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem('appSettings');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error('Failed to parse saved settings:', e);
+      }
+    }
+  }
+  return { isDarkTheme: false, sideNav: true };
+}
 
 // Stores
 export const currentPage = writable(null);
-export const appSettings = writable({ 
-  theme: false, 
-  sideNav: true
-});
+export const appSettings = writable(loadSettings());
 export const modal = writable(null);
+
+// Persist settings to localStorage
+if (typeof window !== 'undefined') {
+  appSettings.subscribe(settings => {
+    localStorage.setItem('appSettings', JSON.stringify(settings));
+  });
+}
 
 export const batchImagesA = writable(['E:\\BeyondRGBPics\\picasso_1_A.ARW']);
 export const batchImagesB = writable(['E:\\BeyondRGBPics\\picasso_1_B.ARW']);
@@ -96,6 +115,7 @@ export function resetProcess() {
     completedTabs: [false, false, false, false, false, false],
     pipelineComplete: false,
     destDir: "",
+    destFileName: "",
     imageFilePaths: [],
     thumbnailID: null,
     colorTargetID: null,
@@ -128,11 +148,183 @@ export function resetProcess() {
   });
 }
 
+/**
+ * Helper to set a specific tab's completion status.
+ * @param tabIndex - The index of the tab to update
+ * @param completed - Whether the tab should be marked as completed
+ */
+export function setTabCompleted(tabIndex: number, completed: boolean = true) {
+  processState.update(state => ({
+    ...state,
+    completedTabs: state.completedTabs.map((status, i) => i === tabIndex ? completed : status)
+  }));
+}
 
-// Webstocket Stores
+/**
+ * Helper to clear completion status for all tabs after a given index.
+ * @param afterIndex - Tabs with index greater than this will be set to false
+ */
+export function clearTabsAfter(afterIndex: number) {
+  processState.update(state => ({
+    ...state,
+    completedTabs: state.completedTabs.map((status, i) => i > afterIndex ? false : status)
+  }));
+}
+
+
+// Websocket Stores
 export const messageStore = writable([]);
 export const messageLog = writable([]);
 export const connectionState = writable('Not Connected');
+
+// Centralized binary request tracking for ColorManaged images
+// This is handled directly in the WebSocket message handler to avoid race conditions
+interface PendingBinaryRequest {
+  type: 'ColorManaged' | 'ColorManagedTarget';
+  requestID: number;
+  binaryType?: string;
+  binaryName?: string;
+}
+
+let pendingColorManagedBinary: PendingBinaryRequest | null = null;
+
+// Process incoming WebSocket message for ColorManaged images
+// Called directly from the WebSocket listener before messageStore is updated
+function handleColorManagedMessage(data: any): boolean {
+  // Handle JSON message (binary notification)
+  if (typeof data === 'string') {
+    try {
+      const parsed = JSON.parse(data);
+      
+      if (parsed["ResponseType"] === "ImageBinary") {
+        const currentState = get(processState);
+        const requestID = parsed["RequestID"];
+        
+        console.log("[WS Handler] ImageBinary received, RequestID:", requestID, "CMID:", currentState.CMID, "CMTID:", currentState.CMTID);
+        
+        if (currentState.CMID !== null && requestID === currentState.CMID) {
+          console.log("[WS Handler] Matched CMID - waiting for ColorManaged blob");
+          pendingColorManagedBinary = {
+            type: 'ColorManaged',
+            requestID: requestID,
+            binaryType: parsed["ResponseData"]["type"],
+            binaryName: parsed["ResponseData"]["name"]
+          };
+          return true; // We'll handle this
+        } else if (currentState.CMTID !== null && requestID === currentState.CMTID) {
+          console.log("[WS Handler] Matched CMTID - waiting for ColorManagedTarget blob");
+          pendingColorManagedBinary = {
+            type: 'ColorManagedTarget',
+            requestID: requestID,
+            binaryType: parsed["ResponseData"]["type"],
+            binaryName: parsed["ResponseData"]["name"]
+          };
+          return true; // We'll handle this
+        }
+      }
+    } catch (e) {
+      // Not JSON, ignore
+    }
+    return false;
+  }
+  
+  // Handle Blob message
+  if (data instanceof Blob && pendingColorManagedBinary) {
+    console.log("[WS Handler] Processing blob for:", pendingColorManagedBinary.type);
+    
+    const blob = data.slice(0, data.size, pendingColorManagedBinary.binaryType);
+    const tempImg = new Image();
+    tempImg.src = URL.createObjectURL(blob);
+    
+    if (pendingColorManagedBinary.type === 'ColorManaged') {
+      viewState.update(state => ({
+        ...state,
+        colorManagedImage: {
+          dataURL: tempImg.src,
+          name: pendingColorManagedBinary!.binaryName || ""
+        }
+      }));
+      console.log("[WS Handler] Updated colorManagedImage:", tempImg.src.substring(0, 50));
+    } else if (pendingColorManagedBinary.type === 'ColorManagedTarget') {
+      viewState.update(state => ({
+        ...state,
+        colorManagedTargetImage: {
+          dataURL: tempImg.src,
+          name: pendingColorManagedBinary!.binaryName || ""
+        }
+      }));
+      console.log("[WS Handler] Updated colorManagedTargetImage:", tempImg.src.substring(0, 50));
+    }
+    
+    // Clear the pending request
+    pendingColorManagedBinary = null;
+    return true; // We handled this blob
+  }
+  
+  return false;
+}
+
+// Helper function to request the color managed art image (for Image Viewer / SpectralPicker)
+export function requestColorManagedImage(projectKey: string) {
+  const requestID = Math.floor(Math.random() * 999999);
+  
+  processState.update(state => ({
+    ...state,
+    CMID: requestID
+  }));
+  
+  const msg = {
+    RequestID: requestID,
+    RequestType: "ColorManagedImage",
+    RequestData: {
+      name: projectKey,
+      target_requested: false,
+    },
+  };
+  
+  console.log("[Centralized] Requesting ColorManagedImage:", msg);
+  sendMessage(JSON.stringify(msg));
+  
+  return requestID;
+}
+
+// Helper function to request the color managed target image (for Reports)
+export function requestColorManagedTargetImage(projectKey: string) {
+  const requestID = Math.floor(Math.random() * 999999);
+  
+  processState.update(state => ({
+    ...state,
+    CMTID: requestID
+  }));
+  
+  const msg = {
+    RequestID: requestID,
+    RequestType: "ColorManagedImage",
+    RequestData: {
+      name: projectKey,
+      target_requested: true,
+    },
+  };
+  
+  console.log("[Centralized] Requesting ColorManagedTargetImage:", msg);
+  sendMessage(JSON.stringify(msg));
+  
+  return requestID;
+}
+
+// Helper function to clear view state when closing a project
+export function clearProjectViewState() {
+  viewState.update(state => ({
+    ...state,
+    projectKey: null,
+    colorManagedImage: { dataURL: "", name: "Waiting..." },
+    colorManagedTargetImage: { dataURL: "", name: "Waiting..." },
+    reports: {
+      calibration: null,
+      verification: null
+    }
+  }));
+}
 
 
 // Websocket
@@ -186,7 +378,13 @@ export async function connect() {
   });
 
   socket.addEventListener('message', function (event) {
-    console.log({ RECIVED: event.data });
+    console.log({ RECEIVED: event.data });
+    
+    // Handle ColorManaged messages directly before updating messageStore
+    // This ensures the state is updated before any reactive statements run
+    handleColorManagedMessage(event.data);
+    
+    // Still update messageStore for other handlers (reports, thumbnails, etc.)
     messageStore.set([event.data, new Date()]);
   });
 }

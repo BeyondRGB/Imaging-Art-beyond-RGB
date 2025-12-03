@@ -1,6 +1,7 @@
 <script lang="ts">
-    import { processState } from "@util/stores";
+    import { processState, setTabCompleted } from "@util/stores";
     import Dropbox from "@components/Process/Dropbox.svelte";
+    import Button from "@components/Button.svelte";
     import {get, isEmpty, each, includes} from "lodash";
     import { autoSortImages } from "@util/autoSortStandards.svelte";
     import { modal } from "@util/stores";
@@ -37,8 +38,10 @@
     };
 
     const autoSort = function () {
-        let leftoverImages = autoSortImages(getAllImages(), imageStack);
-        $processState.imageFilePaths = leftoverImages;
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: autoSortImages(getAllImages(), imageStack)
+        }));
         rerenderToggle = !rerenderToggle;
     };
 
@@ -58,13 +61,12 @@
         if(validationError = validate()) {
             return;
         }
-        $processState.imageFilePaths = [];
-        $processState.completedTabs[3] = true;
-        if(skipOptionalFiltering) {
-            $processState.currentTab += 2;
-        } else {
-            $processState.currentTab++;
-        }
+        processState.update(state => ({
+          ...state,
+          imageFilePaths: [],
+          currentTab: skipOptionalFiltering ? state.currentTab + 2 : state.currentTab + 1
+        }));
+        setTabCompleted(3);
     };
 
 </script>
@@ -84,8 +86,8 @@
             <p>Drag and drop each image into its appropriate role</p>
             <div>
                 <Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false}/>
-                <div class="btnGroup">
-                    <button class="autoSortButton" on:click={autoSort}>Auto-sort images</button>
+                <div class="btnGroup" style="margin: 50px 65px 0 0;">
+                    <Button variant="secondary" size="md" onClick={autoSort}>Auto-sort images</Button>
                 </div>
             </div>
                
@@ -128,8 +130,8 @@
                     <br>
                 </div>
                 <div class="btnGroup">
-                    <button on:click={() => submitSpecFileRoles(false)}>Optional filtering</button>
-                    <button on:click={() => submitSpecFileRoles(true)} class="nextBtn">Next: Skip optional filtering</button>
+                    <Button variant="secondary" size="md" onClick={() => submitSpecFileRoles(false)}>Optional filtering</Button>
+                    <Button variant="success" size="md" onClick={() => submitSpecFileRoles(true)}>Next: Skip optional filtering</Button>
                 </div>
             </div>
         </right>
@@ -142,12 +144,14 @@
     }
     panel {
         width: 100%;
-        background-color: #3a3a3c;
+        background-color: var(--color-surface-elevated);
     }
     right {
-        @apply bg-gray-700 w-full h-full p-6 flex justify-center overflow-auto;
+        background-color: var(--color-surface);
+        @apply w-full h-full p-6 flex justify-center overflow-auto;
     }
     h1 {
+        color: var(--color-text-primary);
         margin: 25px;
         font-size: 35px;
         width: 100%;
@@ -158,12 +162,14 @@
         width: 100%;
     }
     p {
+        color: var(--color-text-secondary);
         margin: 25px;
         font-size: 18px;
         width: 100%;
     }
     #imageStack {
-        background-color: #3a3a3d;
+        background-color: var(--color-surface-base);
+        border: 1px solid var(--color-border);
         margin-top: auto;
         margin-bottom: auto;
         border-radius: 30px;
@@ -188,25 +194,21 @@
         width: 50%;
     }
     .text {
+        color: var(--color-text-secondary);
         text-align: center;
     }
     .imageLetter {
+        color: var(--color-text-primary);
         width: 50%;
         margin-top: 20px;
         text-align: center;
         font-size: 30px;
     }
-    .autoSortButton {
-        margin: 50px 65px 0 0;
-    }
     .errorText {
         text-align: center;
-        color: red;
+        color: var(--color-error);
     }
     .btnGroup {
         @apply flex justify-end gap-2;
-    }
-    .nextBtn {
-        @apply m-4 bg-green-700 hover:bg-green-600 focus:ring-green-600 transition-all;
     }
 </style>

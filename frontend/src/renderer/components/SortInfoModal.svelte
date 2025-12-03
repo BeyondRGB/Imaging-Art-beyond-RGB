@@ -28,15 +28,17 @@
 </main>
 <style lang="postcss">
     main {
-    @apply w-[600px] max-h-[80vh] bg-gray-800 rounded-xl shadow-2xl overflow-hidden;
+    background-color: var(--color-surface-elevated);
+    @apply w-[600px] max-h-[80vh] rounded-xl shadow-2xl overflow-hidden;
   }
 
   h1 {
-    @apply text-xl font-semibold text-gray-100 mb-2;
+    color: var(--color-text-primary);
+    @apply text-xl font-semibold mb-2;
   }
 
   p {
-    @apply text-gray-400;
+    color: var(--color-text-secondary);
   }
 
   .infomodal {
@@ -48,6 +50,9 @@
   }
 
   .mono_text {
-    @apply font-mono flex flex-col gap-4 text-gray-100 text-center;
+    background-color: var(--color-surface-sunken);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    @apply font-mono flex flex-col gap-4 text-center p-2 rounded-lg;
   }
 </style>

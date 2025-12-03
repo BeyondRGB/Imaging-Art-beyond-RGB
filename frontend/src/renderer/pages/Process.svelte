@@ -6,7 +6,8 @@
     viewState,
     serverError,
     batchImagesA,
-    batchImagesB
+    batchImagesB,
+    clearTabsAfter
   } from "@util/stores";
 
   import ColorTarget from "@root/components/Process/Tabs/ColorTarget.svelte";
@@ -15,9 +16,11 @@
   import SpecFileRoles from "@components/Process/Tabs/SpecFileRoles.svelte";
   import AdvOpts from "@components/Process/Tabs/AdvOpts.svelte";
   import Processing from "@root/components/Process/Tabs/Processing.svelte";
-import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
+  import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingRoles.svelte";
   import SelectProcessingType from "@root/components/Process/Tabs/SelectProcessingType.svelte";
   import Layout from "@components/Process/Layout.svelte";
+  import Button from "@components/Button.svelte";
+  import ConfirmDialog from "@components/ConfirmDialog.svelte";
   let tabList;
 
   let showWhitePatchWarning = false;
@@ -28,12 +31,18 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   let binaryID = null;
   let batchCount = 0;
 
-  let tabs: any = [
+  $: tabs = [
     { name: "Select Processing Type", component: SelectProcessingType },
     { name: "Import Images", component: ImportImages },
     { name: "Select Destination", component: SelectDest },
-    { name: "Specify File Roles", component: SpecFileRoles },
-//{ name: "Batch Processing Roles", component:BatchProcessingRoles},
+    { 
+      name: $processState.processType === "Batch" 
+        ? "Specify File Roles - Batch" 
+        : "Specify File Roles",
+      component: $processState.processType === "Batch" 
+        ? BatchProcessingRoles 
+        : SpecFileRoles 
+    },
     { name: "Advanced Options", component: AdvOpts },
     { name: "Color Target", component: ColorTarget },
     { name: "Processing", component: Processing, hidden: true },
@@ -43,7 +52,10 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   function nextTab() {
     if ($processState.currentTab !== tabs.length - 1) {
       if ($processState.completedTabs[$processState.currentTab]) {
-        $processState.currentTab += 1;
+        processState.update(state => ({
+          ...state,
+          currentTab: state.currentTab + 1
+        }));
       }
     } else {
       console.log("Error overflow");
@@ -51,45 +63,46 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   }
 
     $: if($processState.pipelineComplete && $processState.artStacks[0].fields.imageA.length >= 2 && $processState.artStacks[0].fields.imageA[1].length !== 0 ) {
-    $processState.completedTabs =[
-        true,
-        true,
-        true,
-        true,
-        false,
-        true
-    ];
-	$processState.batch=true;
-    $processState.currentTab-=1;
-    $processState.pipelineComplete = false;
-    $processState.artStacks[0].fields.imageA.shift();
-    $processState.artStacks[0].fields.imageB.shift();
-
-
-    // $processState.artStacks[0].fields.imageA[0].name = $batchImagesA[batchCount]
-    // $processState.artStacks[0].fields.imageB[0].name = $batchImagesB[batchCount]
-    batchCount+=1;
+    processState.update(state => ({
+      ...state,
+      completedTabs: [true, true, true, true, false, true],
+      batch: true,
+      currentTab: state.currentTab - 1,
+      pipelineComplete: false,
+      artStacks: state.artStacks.map((stack, i) => 
+        i === 0 ? {
+          ...stack,
+          fields: {
+            ...stack.fields,
+            imageA: stack.fields.imageA.slice(1),
+            imageB: stack.fields.imageB.slice(1)
+          }
+        } : stack
+      )
+    }));
+    batchCount += 1;
     handleConfirm();
   }
   
-	$: if($viewState.projectKey != null) {
+	$: if($viewState.projectKey != null && processRequest?.RequestData) {
 	    processRequest.RequestData.outputDirectory = $viewState.projectKey;
 	}
 		
 
   function prevTab() {
     if ($processState.currentTab !== 0) {
-      $processState.currentTab -= 1;
+      const newTab = $processState.currentTab - 1;
+      processState.update(state => ({
+        ...state,
+        currentTab: newTab
+      }));
+      // Clear completed status for tabs after the one we're going back to
+      clearTabsAfter(newTab);
     } else {
       console.log("Error overflow");
     }
   }
 
-  $: if($processState.processType === "Batch"){
-    tabs[3] =  { name: "Specify File Roles - Batch", component: BatchProcessingRoles }
-  } else{
-    tabs[3] = { name: "Specify File Roles", component: SpecFileRoles }
-  }
 
   $: if (tabList) {
     let width = tabList.scrollWidth;
@@ -101,22 +114,15 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     });
   }
 
+  // Handle Process-specific messages (Thumbnails, Output images, HalfSizedPreview, etc.)
+  // Note: ColorManaged and ColorManagedTarget images are handled centrally in stores.ts
   $: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-    //console.log($messageStore[0]);
-    console.log("New Message");
     try {
-      let temp = JSON.parse($messageStore[0]);
+      const message = $messageStore[0];
+      if (typeof message === 'string' && message.trim().length > 0) {
+      let temp = JSON.parse(message);
+      
       if (
-        // CM Art Binary Handler
-        temp["ResponseType"] === "ImageBinary" &&
-        temp["RequestID"] === $processState.CMID
-      ) {
-        console.log("Color Managed Binary From Server");
-        binaryType = temp["ResponseData"]["type"];
-        binaryName = temp["ResponseData"]["name"];
-        binaryID = temp["RequestID"];
-        binaryFor = "ColorManaged";
-      } else if (
         // Thumbnail Binary Handler
         temp["ResponseType"] === "ImageBinary" &&
         temp["RequestID"] === $processState.thumbnailID
@@ -125,86 +131,106 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
         binaryFor = "Thumbnail";
-      } else if(
-        // Color Managed Target image Binary handler
+      } else if (
+        // Output binary handler (not CMID or CMTID)
         temp["ResponseType"] === "ImageBinary" &&
-        temp["RequestID"] === $processState.CMTID
+        temp["RequestID"] !== $processState.CMID &&
+        temp["RequestID"] !== $processState.CMTID
       ) {
-        console.log("Color Managed Target Binary From Server");
-        binaryType = temp["ResponseData"]["type"];
-        binaryName = temp["ResponseData"]["name"];
-        binaryFor = "ColorManagedTarget";
-      }else if (temp["ResponseType"] === "ImageBinary") {
-        // Color target and output binary handler
-        console.log("Binary From Server");
+        console.log("Output Binary From Server");
         binaryType = temp["ResponseData"]["type"];
         binaryName = temp["ResponseData"]["name"];
         binaryFor = "Output";
       } else if (temp["RequestID"] === $processState.colorTargetID) {
         // Base64 Halfsize handler
         console.log("HalfSizedPreview From Server");
-        $processState.artStacks[0].colorTargetImage = temp["ResponseData"];
-        $processState.colorTargetID = null;
+        processState.update(state => ({
+          ...state,
+          colorTargetID: null,
+          artStacks: state.artStacks.map((stack, i) => 
+            i === 0 ? {
+              ...stack,
+              colorTargetImage: temp["ResponseData"]
+            } : stack
+          )
+        }));
       } else if (
         // Base64 Thumbnail Handler
         temp["ResponseType"] === "ImageBase64" &&
         temp["RequestID"] === $processState.thumbnailID
       ) {
         console.log("Thumbnail Base64 From Server");
-        $processState.imageThumbnails[temp["ResponseData"]["name"]] =
-          temp["ResponseData"]["dataURL"];
+        processState.update(state => ({
+          ...state,
+          imageThumbnails: {
+            ...state.imageThumbnails,
+            [temp["ResponseData"]["name"]]: temp["ResponseData"]["dataURL"]
+          }
+        }));
       } else if (temp["ResponseType"] === "ImageBase64") {
         // base64 output handler
         console.log("Base64 From Server");
-        $processState.outputImage = temp["ResponseData"];
+        processState.update(state => ({
+          ...state,
+          outputImage: temp["ResponseData"]
+        }));
       } else if (temp["ResponseType"] === "Error") {
         // Error handler
         if (temp["ResponseData"]["critical"]) {
-          $serverError = {
+          serverError.set({
             sender: temp["ResponseData"]["sender"],
             message: temp["ResponseData"]["message"],
             trace: temp["ResponseData"]["trace"],
-          };
-          console.log({ SERVERERROR: $serverError });
+          });
+          console.log({ SERVERERROR: temp["ResponseData"] });
         }
       }
+      }
     } catch (e) {
-      console.log(e);
+      // Not JSON or parse error, ignore
     }
   }
 
-  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob) {
-    console.log("creating blob");
+  // Handle Process-specific blob messages (Thumbnails, Output images)
+  // ColorManaged images are handled centrally in stores.ts
+  $: if ($messageStore.length > 1 && $messageStore[0] instanceof Blob && binaryFor !== null) {
+    console.log("Processing blob for:", binaryFor);
     let blob = $messageStore[0].slice(0, $messageStore[0].size, binaryType);
     let temp = new Image();
     temp.src = URL.createObjectURL(blob);
 
     if (binaryFor === "Thumbnail") {
-      $processState.imageThumbnails[binaryName] = temp.src;
+      processState.update(state => ({
+        ...state,
+        imageThumbnails: {
+          ...state.imageThumbnails,
+          [binaryName]: temp.src
+        }
+      }));
     } else if (binaryFor === "Output") {
-      $processState.artStacks[0].colorTargetImage = {
-        dataURL: temp.src,
-        filename: binaryName,
-      };
-      $processState.outputImage = {
-        dataURL: temp.src,
-        name: binaryName,
-      };
-    } else if (binaryFor === "ColorManaged") {
-      $viewState.colorManagedImage = {
-        dataURL: temp.src,
-        name: binaryName,
-      };
-    }else if(binaryFor === "ColorManagedTarget"){ 
-      console.log("Got target!");
-      $viewState.colorManagedTargetImage = {
-        dataURL:temp.src,
-        name:binaryName
-      };
+      processState.update(state => ({
+        ...state,
+        artStacks: state.artStacks.map((stack, i) => 
+          i === 0 ? {
+            ...stack,
+            colorTargetImage: {
+              dataURL: temp.src,
+              filename: binaryName,
+            }
+          } : stack
+        ),
+        outputImage: {
+          dataURL: temp.src,
+          name: binaryName,
+        }
+      }));
     }
+    
+    // Clear the pending binary request
     binaryType = null;
     binaryName = null;
     binaryID = null;
+    binaryFor = null;
   }
 
   $: processRequest = {
@@ -216,66 +242,67 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
           art: $processState.artStacks[0].fields.imageA[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldA[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldA[0]?.name,
+          ...($processState.artStacks[0].fields.targetA.length !== 0 && 
+             $processState.artStacks[0].colorTarget?.refData !== undefined
+            ? { target: $processState.artStacks[0].fields.targetA[0]?.name }
+            : {}),
         },
         {
           art: $processState.artStacks[0].fields.imageB[0]?.[0]?.name,
           white: $processState.artStacks[0].fields.flatfieldB[0]?.name,
           dark: $processState.artStacks[0].fields.darkfieldB[0]?.name,
+          ...($processState.artStacks[0].fields.targetB.length !== 0 && 
+             $processState.artStacks[0].colorTarget?.refData !== undefined
+            ? { target: $processState.artStacks[0].fields.targetB[0]?.name }
+            : {}),
         },
       ],
       destinationDirectory: $processState.destDir,
       outputFileName: $processState.destFileName,
+      outputDirectory: $viewState.projectKey || $processState.destDir,
       sharpenString: $processState.artStacks[0].sharpenString,
-      targetLocation: $processState.artStacks[0].colorTarget,
+      batch: $processState.batch,
+      targetLocation: $processState.artStacks[0].colorTarget
+        ? {
+            ...$processState.artStacks[0].colorTarget,
+            refData: $processState.artStacks[0].colorTarget.refData
+              ? {
+                  ...$processState.artStacks[0].colorTarget.refData,
+                  standardObserver: 1931,
+                  illuminants: "D50",
+                }
+              : undefined,
+          }
+        : undefined,
+      ...($processState.artStacks[0].verificationTarget != null &&
+      Object.keys($processState.artStacks[0].verificationTarget).length > 0
+        ? {
+            verificationLocation: {
+              ...$processState.artStacks[0].verificationTarget,
+              refData: $processState.artStacks[0].verificationTarget.refData
+                ? {
+                    ...$processState.artStacks[0].verificationTarget.refData,
+                    standardObserver: 1931,
+                    illuminants: "D50",
+                  }
+                : undefined,
+            },
+          }
+        : {}),
     },
   };
 
   $: console.log($processState.artStacks[0].colorTarget);
   $: console.log({ processRequest });
 
-  $: if (processRequest != null) {
-  	if($viewState.projectKey != null) {
-	    processRequest.RequestData.outputDirectory = $viewState.projectKey;
-	}
-	processRequest.RequestData.batch = $processState.batch;
-    if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
-      processRequest.RequestData.targetLocation["refData"][
-        "standardObserver"
-      ] = 1931;
-      processRequest.RequestData.targetLocation["refData"]["illuminants"] =
-        "D50";
-
-      if ($processState.artStacks[0].fields.targetA.length !== 0) {
-        processRequest.RequestData.images[0]["target"] =
-          $processState.artStacks[0].fields.targetA[0]?.name;
-        processRequest.RequestData.images[1]["target"] =
-          $processState.artStacks[0].fields.targetB[0]?.name;
-      }
-    }
-    if (
-      $processState.artStacks[0].verificationTarget != null &&
-      Object.keys($processState.artStacks[0].verificationTarget).length > 0
-    ) {
-      console.log("Adding Verification to Process Request");
-      console.log($processState.artStacks[0].verificationTarget);
-      processRequest.RequestData["verificationLocation"] =
-        $processState.artStacks[0].verificationTarget;
-      if (processRequest.RequestData.targetLocation["refData"] !== undefined) {
-        processRequest.RequestData["verificationLocation"]["refData"][
-          "standardObserver"
-        ] = 1931;
-        processRequest.RequestData["verificationLocation"]["refData"][
-          "illuminants"
-        ] = "D50";
-      }
-    }
-  }
-
   function handleConfirm() {
     showDialog = false;
 
     if ($processState.currentTab !== tabs.length - 1) {
-      $processState.currentTab += 1;
+      processState.update(state => ({
+        ...state,
+        currentTab: state.currentTab + 1
+      }));
       console.log("Sending Process Request");
       console.log(processRequest);
       setTimeout(() => {
@@ -291,7 +318,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   {#if !tabs[$processState.currentTab].hidden}
     <nav class="dark:bg-gray-800/25">
       {#if $processState.currentTab !== 0}
-        <button id="backBtn" on:click={prevTab}>Back</button>
+        <Button id="backBtn" onClick={prevTab} variant="secondary" size="sm">Back</Button>
       {/if}
 
       <tabs>
@@ -310,51 +337,50 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   {/if}
   <Layout {tabs} bind:tabList />
   <botnav class="dark:bg-transparent">
-    {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
-      <button
-        on:click={() => {
-          if (!$processState.whitePatchFilled) {
-            showWhitePatchWarning = true;
-            return;
-          }
-          if ($processState.completedTabs[$processState.currentTab]) {
-            showDialog = true;
-            return;
-          }
-          showWhitePatchWarning = false;
-          showDialog = false;
-        }}
-        class="nextBtn">Begin Processing</button
-      >
-    {:else if tabs[$processState.currentTab].hidden}
-      <br />
-    {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options" &&  $processState.currentTab !== 0 }
-      <button on:click={nextTab} class="nextBtn">Next</button>
-    {/if}
+    <div class="nextBtn">
+      {#if tabs[$processState.currentTab + 1]?.name === "Processing"}
+        <Button
+          variant="success"
+          onClick={() => {
+            if (!$processState.whitePatchFilled) {
+              showWhitePatchWarning = true;
+              return;
+            }
+            if ($processState.completedTabs[$processState.currentTab]) {
+              console.log("Opening confirm dialog");
+              showDialog = true;
+              return;
+            }
+            showWhitePatchWarning = false;
+            showDialog = false;
+          }}
+        >Begin Processing</Button>
+      {:else if tabs[$processState.currentTab].hidden}
+        <br />
+      {:else if tabs[$processState.currentTab + 1]?.name !== "Advanced Options" &&  $processState.currentTab !== 0 }
+        <Button variant="success" onClick={nextTab}>Next</Button>
+      {/if}
+    </div>
   </botnav>
 
-  <div class={`confirmModal ${showWhitePatchWarning ? "show" : ""}`}>
-    <div class="warningDialog">
-      <p>Please select a white patch before continuing</p>
-      <div class="btnGroup">
-        <button class="cancel" on:click={() => (showWhitePatchWarning = false)}
-          >Close</button
-        >
-      </div>
-    </div>
-  </div>
+  <ConfirmDialog 
+    bind:show={showWhitePatchWarning}
+    message="Please select a white patch before continuing"
+    type="warning"
+    confirmLabel="Close"
+    cancelLabel=""
+    onConfirm={() => (showWhitePatchWarning = false)}
+  />
 
-  <div class={`confirmModal ${showDialog ? "show" : ""}`}>
-    <div class="confirmDialog">
-      <p>Are you sure you're ready to proceed?</p>
-      <div class="btnGroup">
-        <button class="cancel" on:click={() => (showDialog = false)}
-          >Cancel</button
-        >
-        <button class="confirm" on:click={handleConfirm}>Confirm</button>
-      </div>
-    </div>
-  </div>
+  <ConfirmDialog 
+    bind:show={showDialog}
+    message="Are you sure you're ready to proceed?"
+    type="info"
+    confirmLabel="Confirm"
+    cancelLabel="Cancel"
+    onConfirm={handleConfirm}
+    onCancel={() => (showDialog = false)}
+  />
 </main>
 
 <style lang="postcss" local>
@@ -362,6 +388,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     @apply relative h-full w-full overflow-hidden flex flex-col min-h-0;
   }
   nav {
+    background-color: var(--color-surface-sunken);
     @apply flex h-12;
   }
   botnav {
@@ -371,53 +398,12 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
     @apply flex-grow justify-center flex mr-[5vw];
   }
   .nextBtn {
-    @apply m-4 bg-green-700 hover:bg-green-600 focus:ring-green-600 transition-all;
+    @apply m-4;
   }
-  .page {
-    overflow: overlay;
-    @apply w-full h-full flex overflow-x-auto;
-  }
-
-  .confirmModal {
-    @apply absolute bg-black/75 z-50 items-center justify-center w-full h-full hidden;
-  }
-
-  .show {
-    @apply flex;
-  }
-
-  .confirmDialog {
-    @apply bg-gray-700 w-1/2 h-1/3 text-xl rounded-xl p-4 flex flex-col justify-between;
-  }
-
-  .confirmDialog p {
-    @apply bg-gray-800/25 rounded-md flex justify-center p-2 text-lg mt-10;
-  }
-
-  .warningDialog {
-    @apply bg-gray-700 w-1/3 h-1/6 text-xl rounded-xl p-4 flex flex-col justify-between;
-  }
-
-  .warning {
-    @apply text-red-500 font-bold text-2xl flex items-center justify-center;
-  }
-
-  .btnGroup {
-    @apply flex justify-end gap-2;
-  }
-
-  .confirm {
-    @apply bg-green-600 hover:bg-green-500 focus:ring-green-600 transition-all;
-  }
-
-  .cancel {
-    @apply bg-gray-500 hover:bg-blue-500/50 focus:ring-green-600 transition-all;
-  }
-  /* div {
-    @apply w-full h-full;
-  } */
   .tab {
-    @apply w-16 h-2 rounded-full bg-gray-400 self-center mx-2 ring-1 ring-gray-400
+    background-color: var(--color-interactive);
+    border: 1px solid var(--color-border);
+    @apply w-16 h-2 rounded-full self-center mx-2 ring-1 
           transition-all duration-700 ease-out;
   }
 
@@ -427,16 +413,7 @@ import BatchProcessingRoles from "@root/components/Process/Tabs/BatchProcessingR
   .completed {
     @apply bg-green-400 ring-green-400;
   }
-  #backBtn {
-    @apply absolute h-8 py-0 ml-2 my-2;
-  }
-  .tab.none {
-    @apply bg-gray-600;
-  }
-  .component {
-    @apply relative float-left flex-shrink-0 block;
-  }
-  .component:last-of-type {
-    @apply z-0;
+  :global(#backBtn) {
+    @apply absolute h-8 py-0 ml-8 my-2;
   }
 </style>

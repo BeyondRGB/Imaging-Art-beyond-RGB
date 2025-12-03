@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { currentPage, processState } from "@util/stores";
   import OpenSeadragon from "openseadragon";
   import { onDestroy, onMount } from "svelte";
-  let viewer;
-  let imageUrl;
-  export let srcUrl;
+  
+  let viewer: any = null;
+  let viewerReady: boolean = false;
+  let imageUrl: string = "";
+  export let srcUrl: string = "";
   export let identifier = "unique-identifier";
-  let imageId = identifier+"-seadragon-viewer";
+  let imageId = identifier + "-seadragon-viewer";
 
   const createViewer = () => {
     viewer = OpenSeadragon({
@@ -25,76 +26,82 @@
       zoomPerScroll: 1.15,
       visibilityRatio: 1,
       animationTime: 0.4,
-      // tileSources: {
-      //   type: "image",
-      //   url: placeholder,
-      // },
     });
 
     viewer.addHandler("zoom", handleZoom);
-  };
-
-  onDestroy(() => {
-    if (viewer) {
-      viewer.destroy();
-      viewer = null;
-      console.log("Image viewer destroyed");
-    }
-  });
-
-  const destoryViewer = () => {
-    if (viewer) {
-      viewer.destroy();
-      viewer = null;
-      console.log("Image viewer destroyed");
+    
+    // Mark viewer as ready and trigger any pending image load
+    viewerReady = true;
+    console.log(`[ImageViewer ${identifier}] Viewer created and ready`);
+    
+    // If srcUrl was set before viewer was ready, open it now
+    if (srcUrl && srcUrl.length > 0 && srcUrl !== imageUrl) {
+      openImage(srcUrl);
     }
   };
 
-  onMount(() => {
-    console.log("Image viewer Mount");
-    createViewer();
-  });
-  onDestroy(() => {
-    console.log("Image viewer Destroy");
-    destoryViewer();
-  });
+  const destroyViewer = () => {
+    if (viewer) {
+      viewer.destroy();
+      viewer = null;
+      viewerReady = false;
+      console.log(`[ImageViewer ${identifier}] Viewer destroyed`);
+    }
+  };
 
-  // $: if (viewer && $processState.artStacks[0].colorTargetImage?.dataURL) {
-  //   // console.log($processState.artStacks[0].colorTargetImage);
-  //   // imageUrl = $processState.artStacks[0].colorTargetImage?.dataURL;
+  function openImage(url: string) {
+    if (!viewer || !viewerReady) {
+      console.log(`[ImageViewer ${identifier}] Cannot open image, viewer not ready`);
+      return;
+    }
+    
+    console.log(`[ImageViewer ${identifier}] Opening image:`, url.substring(0, 50) + "...");
+    let temp = new Image();
+    temp.src = url;
+    imageUrl = temp.src;
 
-  //   viewer.open({
-  //     type: "image",
-  //     url: imageUrl,
-  //   });
-  // }
-  $: if ($processState.currentTab >= 6 || $currentPage === "Reports") {
-    if (viewer && !viewer.isOpen()) {
-      console.log("Opening Image");
-      console.log(viewer.isOpen());
+    try {
       viewer.open({
         type: "image",
         url: imageUrl,
       });
-    }
-  } else {
-    if (viewer) {
-      viewer.close();
+    } catch (e) {
+      console.error("OpenSeadragon Error:", e);
     }
   }
 
-  $: if (viewer) {
-    // console.log($processState.artStacks[0].colorTargetImage);
-    console.log("New Image (Image Viewer)");
-    let temp = new Image();
-    temp.src = srcUrl;
+  function closeImage() {
+    if (viewer && viewer.isOpen()) {
+      console.log(`[ImageViewer ${identifier}] Closing image`);
+      viewer.close();
+      imageUrl = "";
+    }
+  }
 
-    imageUrl = temp.src;
+  onMount(() => {
+    console.log(`[ImageViewer ${identifier}] Mount, srcUrl:`, srcUrl ? srcUrl.substring(0, 50) + "..." : "(empty)");
+    createViewer();
+  });
 
-    viewer.open({
-      type: "image",
-      url: imageUrl,
-    });
+  onDestroy(() => {
+    console.log(`[ImageViewer ${identifier}] Destroy`);
+    destroyViewer();
+  });
+
+  // Debug: log srcUrl changes
+  $: console.log(`[ImageViewer ${identifier}] srcUrl prop changed:`, srcUrl ? srcUrl.substring(0, 50) + "..." : "(empty)");
+
+  // React to srcUrl changes
+  $: {
+    if (viewerReady) {
+      if (srcUrl && srcUrl.length > 0) {
+        if (srcUrl !== imageUrl) {
+          openImage(srcUrl);
+        }
+      } else {
+        closeImage();
+      }
+    }
   }
 
   function handleZoom(e) {
@@ -112,7 +119,9 @@
 
 <style lang="postcss">
   main {
-    @apply w-full h-full ring-1 ring-gray-800 bg-gray-900/50 aspect-[3/2] shadow-lg;
+    background-color: var(--color-surface-base);
+    border: 1px solid var(--color-border);
+    @apply w-full h-full aspect-[3/2] shadow-lg;
   }
   .image-seadragon-viewer {
     @apply h-full w-full;

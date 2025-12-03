@@ -95,11 +95,22 @@
 
 <div class="scatter-charts">
     {#if dataAB?.length > 1 && ab}
-        a* vs b*
+        <div class="chart-title">a* vs b*</div>
         <AtomicVectorChart dataAB={dataAB}></AtomicVectorChart>
     {/if}
     {#if dataLC?.length > 1 && !ab}
-        L* vs C*
+        <div class="chart-title">L* vs C*</div>
         <AtomicVectorChart dataLC={dataLC}></AtomicVectorChart>
     {/if}
 </div>
+
+<style lang="postcss">
+  .scatter-charts {
+    @apply relative;
+  }
+  
+  .chart-title {
+    color: var(--color-text-primary);
+    @apply text-lg font-semibold mb-2;
+  }
+</style>

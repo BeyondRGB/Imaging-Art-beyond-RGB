@@ -89,34 +89,49 @@
 
 <style lang="postcss">
   .refDataBtn {
-    @apply bg-gray-700 z-50 text-sm flex justify-between items-center
-          gap-1 p-0 pl-3 rounded-lg hover:bg-gray-600 transition-colors;
+    background-color: var(--color-surface);
+    @apply z-50 text-sm flex justify-between items-center
+          gap-1 p-0 pl-3 rounded-lg transition-colors max-w-full overflow-hidden;
+  }
+  
+  .refDataBtn:hover {
+    background-color: var(--color-interactive-hover);
   }
   .invalid {
     @apply ring-2 ring-red-500;
   }
   .body {
-    @apply bg-gray-700 z-50 hidden fixed border border-gray-600;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    @apply z-50 hidden fixed;
   }
   .shown {
-    @apply block bg-gray-700 rounded-lg fixed shadow-xl;
+    @apply block rounded-lg fixed shadow-xl;
   }
   li {
-    @apply list-none text-gray-200 hover:text-gray-50 px-3 py-2 hover:bg-gray-600 rounded-md cursor-pointer;
+    color: var(--color-text-primary);
+    @apply list-none px-3 py-2 rounded-md cursor-pointer;
+  }
+  
+  li:hover {
+    background-color: var(--color-interactive-hover);
   }
   .background {
     @apply fixed top-0 left-0 w-full h-full z-10 block float-none;
   }
   .iconSqu {
-    @apply bg-gray-600 h-full w-full rounded-r-lg p-1.5 py-2;
+    background-color: var(--color-interactive);
+    @apply h-full w-full rounded-r-lg p-1.5 py-2;
   }
   .invalid .iconSqu {
     @apply bg-red-600;
   }
   .btnText {
-    @apply py-2 whitespace-nowrap text-gray-100;
+    color: var(--color-text-primary);
+    @apply py-2 truncate max-w-[200px];
   }
   .sep {
-    @apply bg-gray-600 h-px flex justify-center items-center mx-2 my-1;
+    background-color: var(--color-interactive);
+    @apply h-px flex justify-center items-center mx-2 my-1;
   }
 </style>

@@ -62,90 +62,75 @@
 		modal.set("Home");
 	}, 0);
 
-	appSettings.set({
-		theme: false,
-		sideNav: $appSettings.sideNav
-	});
-	let theme = "dark";
+	// Initialize theme from settings (default to LIGHT mode)
+	if ($appSettings.isDarkTheme === undefined) {
+		appSettings.set({
+			isDarkTheme: false,  // false = light mode, true = dark mode
+			sideNav: $appSettings.sideNav
+		});
+	}
 
-	document.documentElement.classList.add(theme);
-	document.body.classList.add(theme);
+	// Apply theme on initial load
+	function applyTheme(isDark: boolean) {
+		if (isDark) {
+			document.documentElement.classList.add("dark");
+			document.body.classList.add("dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+			document.body.classList.remove("dark");
+		}
+	}
 
-	// --- Theme Switching Logic (Disabled as light theme is incomplete) ---
-	// $: theme = $appSettings.theme ? "dark" : "";
-	// $: if (theme !== "") {
-	// 	console.log("Theme Change");
-	// 	document.documentElement.classList.add(theme);
-	// 	document.body.classList.add(theme);
-	// } else {
-	// 	document.documentElement.classList.remove("dark");
-	// 	document.body.classList.remove("dark");
-	// }
+	// Apply theme immediately on load
+	applyTheme($appSettings.isDarkTheme);
 
+	// Theme Switching Logic - Now enabled with centralized theme system
+	$: isDarkTheme = $appSettings.isDarkTheme ? "dark" : "";
+	$: if (isDarkTheme !== "") {
+		console.log("Theme Change: Dark Mode");
+		applyTheme(true);
+	} else {
+		console.log("Theme Change: Light Mode");
+		applyTheme(false);
+	}
+
+	// Optional: Auto-detect system theme preference
 	// const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-
 	// darkThemeMq.addEventListener("change", (e) => {
-	// 	appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// 	appSettings.set({ isDarkTheme: e.matches, sideNav: $appSettings.sideNav });
 	// });
-
 	// onDestroy(() => {
 	// 	darkThemeMq.removeEventListener("change", (e) => {
-	// 		appSettings.set({ theme: e.matches, sideNav: $appSettings.sideNav });
+	// 		appSettings.set({ isDarkTheme: e.matches, sideNav: $appSettings.sideNav });
 	// 	});
 	// });
 	// ------
-	let pages;
-	$: if (pages) {
-		let activePages = [];
-		Object.keys(routes).map((key) => {
-			if (routes[key].page && !routes[key].disabled) {
-				activePages.push(key);
-			}
-		});
-
-		let width = pages.scrollWidth;
-		let height = pages.scrollHeight;
-
-		if ($appSettings.sideNav) {
-			pages.scroll({
-				top:
-					activePages.findIndex((item) => item === $currentPage) *
-					(height / activePages.length),
-				left: 0,
-				behavior: "smooth",
-			});
-		} else {
-			pages.scroll({
-				top: 0,
-				left:
-					activePages.findIndex((item) => item === $currentPage) *
-					(width / activePages.length),
-				behavior: "smooth",
-			});
-		}
-	}
 </script>
 
-<main class={theme}>
-	<div class="app {theme}" class:sideMenu={$appSettings.sideNav}>
+<main class={isDarkTheme}>
+	<div class="app {isDarkTheme}" class:sideMenu={$appSettings.sideNav}>
 		<Menu {routes} />
 
-		<Page {routes} bind:pages />
+		<Page {routes} />
 	</div>
 </main>
 
 <style global lang="postcss">
+	@import './styles/theme.css';
+	
 	@tailwind base;
 	@tailwind components;
 	@tailwind utilities;
 	@tailwind variants;
+	
 	html,
 	body {
 		width: 100%;
 		height: 100%;
 		margin: 0 auto;
-		@apply bg-white dark:bg-gray-800 dark:border-gray-600 border-red-600 select-none
-						dark:text-gray-50 text-base;
+		background-color: var(--color-surface-base);
+		color: var(--color-text-primary);
+		@apply select-none text-base;
 	}
 	main {
 		height: 100%;
@@ -163,33 +148,5 @@
 
 	.sideMenu {
 		@apply flex flex-row;
-	}
-
-	button {
-		@apply hover:bg-blue-200 bg-gray-100 text-gray-900 dark:text-white rounded-lg 
-						self-center text-base px-3 py-1 transition-all dark:bg-gray-600 
-						dark:hover:bg-blue-500 dark:hover:text-white active:scale-95 shadow-sm 
-						dark:ring-gray-500 ring-1 ring-gray-300 dark:focus:ring-blue-500 focus:ring-2 
-						focus:ring-blue-300 duration-300;
-	}
-
-	/* width */
-	::-webkit-scrollbar {
-		@apply relative transition-all w-1;
-	}
-
-	/* Track */
-	::-webkit-scrollbar-track {
-		@apply bg-transparent;
-	}
-
-	/* Handle */
-	::-webkit-scrollbar-thumb {
-		@apply bg-gray-600 rounded-full;
-	}
-
-	/* Handle on hover */
-	::-webkit-scrollbar-thumb:hover {
-		@apply bg-gray-500;
 	}
 </style>
