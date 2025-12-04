@@ -1,5 +1,5 @@
 {
-  "name": "beyond-rgb",
+  "name": "beyond_rgb",
   "productName": "Beyond_RGB",
   "version": "2.3.0 - beta",
   "description": "Spectral image calibration",
@@ -26,7 +26,8 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "./assets/icon"
+        "icon": "./assets/icon",
+        "executableName":"beyond_rgb"
       },
       "makers": [
         {
@@ -42,12 +43,22 @@
           ]
         },
         {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "name": "@electron-forge/maker-flatpak",
+          "platforms":[
+            "linux"
+          ],
+          "modules": [
+            {
+              "name": "zypak",
+              "sources": [
+                {
+                  "type": "git",
+                  "url": "https://github.com/refi64/zypak",
+                  "tag": "v2024.01.17"
+                }
+              ]
+            }
+          ]
         }
       ]
     }
@@ -67,6 +78,7 @@
     "@electron-forge/cli": "^6.0.0-beta.61",
     "@electron-forge/maker-deb": "^6.0.0-beta.61",
     "@electron-forge/maker-rpm": "^6.0.0-beta.61",
+    "@electron-forge/maker-flatpak": "^6.0.0-beta.61",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.61",
     "@electron-forge/maker-zip": "^6.0.0-beta.61",
     "@floating-ui/dom": "^0.4.2",
