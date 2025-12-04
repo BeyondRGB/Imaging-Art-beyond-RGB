@@ -292,9 +292,6 @@
     },
   };
 
-  $: console.log($processState.artStacks[0].colorTarget);
-  $: console.log({ processRequest });
-
   function handleConfirm() {
     showDialog = false;
 
