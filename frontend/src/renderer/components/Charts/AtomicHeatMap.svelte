@@ -2,6 +2,7 @@
     import { chart } from "svelte-apexcharts";
     import { createEventDispatcher } from 'svelte';
     import { getCssVar } from "@util/cssUtils";
+    import { appSettings } from "@util/stores";
 
     const dispatch = createEventDispatcher();
 
@@ -111,9 +112,10 @@ function generateLegendRanges() {
 }
 
     const getOptions = function() {
-        // Get theme colors from CSS variables
-        const textColorPrimary = getCssVar('--color-text-primary') || '#ffffff';
-        const textColorSecondary = getCssVar('--color-text-secondary') || '#ffffff';
+        // Get theme colors from CSS variables with dark/light mode fallbacks
+        const isDark = $appSettings?.isDarkTheme ?? true;
+        const textColorPrimary = getCssVar('--color-text-primary') || (isDark ? '#ffffff' : '#1f2937');
+        const textColorSecondary = getCssVar('--color-text-secondary') || (isDark ? '#9ca3af' : '#6b7280');
         
         return {
             series: getData(),
@@ -228,7 +230,7 @@ function generateLegendRanges() {
 </script>
 
 <main>
-    {#key visionDeficiencyMode}
+    {#key [visionDeficiencyMode, $appSettings?.isDarkTheme]}
         <div use:chart={getOptions()}></div>
     {/key}
 </main>
