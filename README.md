@@ -18,6 +18,8 @@ Brendan Grau, Sungmin Kim, Keenan Miller, John Akey, Elijah Cooper
 Sam McQuate, Jacob Auger, Josh Greco, Robert Loos, Jonathan Pofcher
 ### Senior Project Team 4
 Ray Axmann, Noah Pelletier, Mitchell Sulkowski, Christopher Cabonilas, Cameron Robinson, Adam Cropp
+### Senior Project Team 5
+Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman, Jakob Langtry
 
 
 # Documentaion
