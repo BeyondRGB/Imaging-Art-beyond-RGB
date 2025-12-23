@@ -1,7 +1,7 @@
 {
   "name": "beyond-rgb",
-  "productName": "Beyond_RGB",
-  "version": "2.3.0 - beta",
+  "productName": "beyond-rgb",
+  "version": "2.3.0-beta",
   "description": "Spectral image calibration",
   "main": "src/main/index.js",
   "scripts": {
@@ -38,7 +38,8 @@
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "darwin",
+            "linux"
           ]
         },
         {

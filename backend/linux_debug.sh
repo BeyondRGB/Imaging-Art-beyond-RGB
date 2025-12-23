@@ -8,7 +8,7 @@ if [ -d ../frontend/res/ ]; then rm -rf ../frontend/res/; fi
 # Run CMake
 cmake -B ./build/Debug -S . -DCMAKE_BUILD_TYPE=Debug -DVCPKG_TARGET_TRIPLET=x64-linux
 if [ $? -ne 0 ]; then exit; fi
-cmake --build ./build/Debug # --config Debug
+cmake --build ./build/Debug -j$(nproc) # --config Debug
 if [ $? -ne 0 ]; then exit; fi
 
 # Copy executable over
