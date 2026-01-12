@@ -132,7 +132,7 @@ Ray Axmann, Noah Pelletier, Mitchell Sulkowski, Christopher Cabonilas, Cameron R
 - Because Apple is greedy, apps released using M1 macs will result in users seeing a message saying that the app is "damaged and cannot be opened"
   - Fix this by either signing the release of this application with your apple developer id or simply compiling and releasing the application with x64 (intel) architecture (note that M1 macs will still be able to run apps released this way).
 
-## Ubuntu (24.04 or later)
+## Ubuntu (tested on 24.04 and 25.04)
 
 ### Install tools
 - `sudo apt install git build-essential cmake curl zip unzip tar pkg-config autoconf autoconf-archive automake libtool libopencv-dev nodejs npm rpm`
