@@ -134,23 +134,27 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - Because Apple is greedy, apps released using M1 macs will result in users seeing a message saying that the app is "damaged and cannot be opened"
   - Fix this by either signing the release of this application with your apple developer id or simply compiling and releasing the application with x64 (intel) architecture (note that M1 macs will still be able to run apps released this way).
 
-## Ubuntu
+## Ubuntu (tested on 24.04 and 25.04)
 
 ### Install tools
-- `sudo apt install build-essential git cmake`
-- Node.js: https://nodejs.org/en/download/
+- `sudo apt install git build-essential cmake curl zip unzip tar pkg-config autoconf autoconf-archive automake libtool libopencv-dev nodejs npm rpm`
 - Make sure your editor is configured for `C++20` syntax
+- If you are on Ubuntu 24.04 LTS, you additionally need to install GCC 14:
+  - `sudo apt install gcc-14 g++-14`
+  - `sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14`
+  - `sudo sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14`
 
 ### Set-up
-- `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
+- `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB.git`
 - `cd Imaging-Art-beyond-RGB`
+- `git submodule sync`
+- `git submodule update --init --recursive`
+  - This includes the source code of a few other dependencies
 - `cd backend`
 - `sh linux_config_environment.sh`
-  - Vcpkg may fail and require you to install another command line tool.
-  - Once you install it, run the script again. It may fail again and require more command line tools to be installed.
-  - Locally install Vcpkg and our dependencies (\~10 GB and \~30 minutes)
+  - This locally installs Vcpkg and our dependencies, it will take a while (\~2 GB and \~10 minutes)
 - `cd ../frontend`
-- `npm ci`
+- `npm install`
 
 ### Backend build
 - `cd backend` from project root.
@@ -163,7 +167,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 ### Frontend build
 - `cd frontend` from project root.
 - If frontend configuration is ever changed, first run:
-  - `npm ci`
+  - `npm install`
 
 ### Run:
 - `cd frontend` from project root.
@@ -174,3 +178,6 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - `sh linux_release.sh`
 - `cd ../frontend`
 - `sh release_frontend.sh`
+- Built packages are in frontend/out/make/ for Debian/Ubuntu, Fedora, and as a generic zip file for other distributions.
+- LibOpenCV is required as an additional dependency if you install from these packages.
+  - `sudo apt install libopencv-dev` or equivalent

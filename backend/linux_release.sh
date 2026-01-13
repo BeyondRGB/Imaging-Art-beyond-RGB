@@ -8,7 +8,7 @@ if [ -d ../frontend/res/ ]; then rm -rf ../frontend/res/; fi
 # Run CMake
 cmake -B ./build/Release -S . -D CMAKE_BUILD_TYPE=Release -D VCPKG_TARGET_TRIPLET=x64-linux
 if [ $? -ne 0 ]; then exit; fi
-cmake --build ./build/Release # --config Release
+cmake --build ./build/Release -j$(nproc) #--config Release
 if [ $? -ne 0 ]; then exit; fi
 
 # Copy executable over
