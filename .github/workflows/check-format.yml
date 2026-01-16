@@ -15,16 +15,16 @@ jobs:
     name: Check frontend formatting
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Check frontend formatting
-        uses: creyD/prettier_action@v4.6
+      - uses: actions/setup-node@v4
         with:
-          dry: false
-          prettier_version: 2.6.2
-          prettier_options: --check .
-          prettier_plugins: "prettier-plugin-svelte"
-          working_directory: frontend/
-          # This is needed to install the Prettier Svelte plugin
-          allow_other_plugins: true
+          node-version: 20
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Check formatting
+        working-directory: frontend
+        run: npx prettier --check .
