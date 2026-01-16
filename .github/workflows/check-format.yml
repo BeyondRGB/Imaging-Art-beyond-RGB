@@ -17,7 +17,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Format frontend using Prettier
-        uses: actionsx/prettier@v3
+
+      - name: Check frontend formatting
+        uses: creyD/prettier@v4.3.0
         with:
-          args: --check .
+          prettier_options: --check .
+          # This is needed to install the Prettier Svelte plugin
+          allow_other_plugins: true
