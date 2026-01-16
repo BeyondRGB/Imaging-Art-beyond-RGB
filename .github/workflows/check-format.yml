@@ -11,8 +11,8 @@ permissions:
   checks: write
 
 jobs:
-  name: Check frontend formatting
   format:
+    name: Check frontend formatting
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repo
