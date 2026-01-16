@@ -1,9 +1,15 @@
-name: Autoformat
+name: Check format
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 jobs:
-  name: Autoformat frontend
+  name: Check frontend formatting
   format:
     runs-on: ubuntu-24.04
     steps:
