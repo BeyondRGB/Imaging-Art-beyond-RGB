@@ -1,7 +1,9 @@
 name: Check format
+
 on:
   pull_request:
-    types: [opened, synchronize]
+    branches:
+      - master
 
 permissions:
   contents: read
