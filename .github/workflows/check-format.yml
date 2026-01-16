@@ -22,7 +22,9 @@ jobs:
         uses: creyD/prettier_action@v4.6
         with:
           dry: false
-          prettier_options: --check ./frontend
+          prettier_version: 2.6.2
+          prettier_options: --check .
           prettier_plugins: "prettier-plugin-svelte"
+          working_directory: frontend/
           # This is needed to install the Prettier Svelte plugin
           allow_other_plugins: true
