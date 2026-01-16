@@ -14,6 +14,9 @@ jobs:
   format:
     name: Check frontend formatting
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ./frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -23,9 +26,7 @@ jobs:
           cache: "npm"
 
       - name: Install frontend dependencies
-        working-directory: frontend
         run: npm ci
 
       - name: Check formatting
-        working-directory: frontend
         run: npx prettier --check .
