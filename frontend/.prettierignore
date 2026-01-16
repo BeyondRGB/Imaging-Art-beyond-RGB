@@ -1,0 +1,11 @@
+assets/
+node_modules/
+lib/
+LICENSE
+out/
+public/
+res/
+package-lock.json
+.gitignore
+release_frontend.sh
+win10_release_frontend.bat

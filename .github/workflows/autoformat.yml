@@ -1,8 +1,9 @@
-name: Autoformat frontend
+name: Autoformat
 on:
-  pull_request: 
+  pull_request:
     types: [opened]
 jobs:
+  name: Autoformat frontend
   format:
     runs-on: ubuntu-24.04
     steps:

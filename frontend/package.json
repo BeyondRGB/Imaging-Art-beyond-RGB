@@ -10,6 +10,7 @@
     "build": "npm run svelte-build && electron-forge package",
     "publish": "npm run svelte-build && electron-forge publish",
     "lint": "echo \"No linting configured :D\"",
+    "format": "prettier --write .",
     "preview": "npm run svelte-build && electron-forge start",
     "electron-dev": "cross-env ELEC_ENV=dev electron-forge start",
     "electron-preview": "electron-forge start",
