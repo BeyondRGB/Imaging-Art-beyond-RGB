@@ -1,0 +1,14 @@
+name: Autoformat frontend
+on:
+  pull_request: 
+    types: [opened]
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Format frontend using Prettier
+        uses: actionsx/prettier@v3
+        with:
+          args: --check .
