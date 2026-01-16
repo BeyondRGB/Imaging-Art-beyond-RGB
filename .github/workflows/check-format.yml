@@ -23,6 +23,6 @@ jobs:
         with:
           dry: false
           prettier_options: --check ./frontend
-          prettier_plugins: ["prettier-plugin-svelte"]
+          prettier_plugins: "prettier-plugin-svelte"
           # This is needed to install the Prettier Svelte plugin
           allow_other_plugins: true
