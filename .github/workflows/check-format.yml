@@ -21,6 +21,7 @@ jobs:
       - name: Check frontend formatting
         uses: creyD/prettier_action@v4.6
         with:
-          prettier_options: --check .
+          dry: false
+          prettier_options: --check ./frontend
           # This is needed to install the Prettier Svelte plugin
           allow_other_plugins: true
