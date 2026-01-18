@@ -28,8 +28,8 @@ jobs:
             platform: macos
           - os: ubuntu-24.04
             platform: linux
-          - os: windows-latest #temporarily disabling windows for faster iteration
-            platform: windows
+          # - os: windows-latest #temporarily disabling windows for faster iteration
+          #   platform: windows
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -107,6 +107,18 @@ jobs:
             -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/backend/vcpkg/scripts/buildsystems/vcpkg.cmake
           cmake --build build/Debug -j$(nproc)
   test:
+    name: Test (${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            platform: macos
+          - os: ubuntu-24.04
+            platform: linux
+         #- os: windows-latest #temporarily disabling windows for faster iteration
+         #  platform: windows
     steps:
       - name: Install vcpkg dependencies (Windows)
         if: matrix.platform == 'windows'
