@@ -1,9 +1,12 @@
 name: CI Pipeline (new)
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [ feature/jack/new-ci-pipeline ]
   pull_request:
     branches: [ main, master, develop ]
-  workflow_dispatch:
+  
 
 env:
   VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
