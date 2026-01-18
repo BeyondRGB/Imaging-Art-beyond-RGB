@@ -28,9 +28,8 @@ jobs:
             platform: macos
           - os: ubuntu-24.04
             platform: linux
-          #- os: windows-latest #temporarily disabling windows for faster iteration
-          #  platform: windows
-
+          - os: windows-latest #temporarily disabling windows for faster iteration
+            platform: windows
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
