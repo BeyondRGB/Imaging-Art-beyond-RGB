@@ -44,7 +44,7 @@ jobs:
       # install and enable GCC/G++ 14 for ubuntu, since 24.04 doesn't have it by default
       - name: Install macOS dependencies
         if: matrix.platform == 'macos'
-        run: brew install cmake ninja
+        run: brew install cmake ninja pkg-config
 
       - name: Setup MSVC
         if: matrix.platform == 'windows'
