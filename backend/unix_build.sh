@@ -18,7 +18,11 @@ fi
 
 cd "$build_directory/${mode}" || exit
 
-cmake --build .
+if [ $(uname) = "Darwin" ]; then
+  cmake --build . -j$(sysctl -n hw.logicalcpu)
+else
+    cmake --build . -j$(nproc)
+fi
 
 if [ $? -ne 0 ]; then
     echo "Failed to build project."
