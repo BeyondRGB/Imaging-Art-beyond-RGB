@@ -4,6 +4,7 @@
 
 ReportRequest::~ReportRequest() {}
 
+
 void ReportRequest::run() {
     try {
         std::string filename = this->process_data_m->get_string("name");
