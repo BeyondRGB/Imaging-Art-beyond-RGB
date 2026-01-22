@@ -17,7 +17,7 @@
 		"svelte-dev": "vite",
 		"svelte-build": "vite build",
 		"svelte-start": "vite preview",
-		"prepare": "cd .. && husky"
+		"prepare": "cd .. && husky frontend/.husky"
 	},
 	"keywords": [],
 	"author": {
