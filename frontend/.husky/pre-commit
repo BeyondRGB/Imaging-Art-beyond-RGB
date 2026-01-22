@@ -1,31 +1,34 @@
+# Check for formatted backend files
+
 # Get staged C/C++ files
 FILES=$(git diff --cached --name-only --diff-filter=ACM \
     -- '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' '*.hxx')
 
 [ -z "$FILES" ] && exit 0
 
-NEEDS_FORMATTING=0
-
 for file in $FILES; do
 	# Compare staged file and formatter output
     if ! git show ":$file" \
         | clang-format -style=file -assume-filename="$file" \
         | diff -q - <(git show ":$file") >/dev/null; then
-        NEEDS_FORMATTING=1
-        break
+        echo "Backend files not formatted. Applying clang-format to invalid files. Stage formatted files and try again."
+
+        # Format changed backend files
+        clang-format -i -style=file $FILES
+
+        exit 1
     fi
 done
 
+# Check changed frontend files for valid format
+npx prettier --check $(git diff --cached --name-only --diff-filter=ACM \
+    -- '*.html' '*.js' '*.ts' '*.json' '*.svelte' '*.css')
 
-# Files are formatted
-if [ "$NEEDS_FORMATTING" -eq 0 ]; then
-    exit 0
+# Check if there's any unformatted files
+if [ $? -eq 1 ]; then
+  echo "Frontend files are not formatted correctly. Please run 'npm run format' to fix them."
+  exit 1
 fi
 
-echo "Backend files not formatted. Applying clang-format to invalid files. Stage formatted files and try again."
 
-# Format changed backend files
-clang-format -i -style=file $FILES
-
-exit 1
 
