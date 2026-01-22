@@ -6,141 +6,140 @@
 
 /* Light theme (default) - BRIGHT AND WHITE */
 :root {
-  /* Surface colors */
-  --color-surface-base: #ffffff;        /* Base page background - PURE WHITE */
-  --color-surface: #f5f5f5;             /* Component surface - Very light grey */
-  --color-surface-elevated: #ffffff;    /* Elevated elements (modals, dropdowns) - WHITE */
-  --color-surface-sunken: #e8e8e8;      /* Sunken elements (inputs) */
-  
-  /* Text colors */
-  --color-text-primary: #1a1a1a;        /* Primary text - Almost black */
-  --color-text-secondary: #4a4a4a;      /* Secondary text */
-  --color-text-tertiary: #6a6a6a;       /* Muted text */
-  --color-text-disabled: #9a9a9a;       /* Disabled text */
-  
-  /* Interactive states */
-  --color-interactive: #f0f0f0;         /* Buttons, switches base */
-  --color-interactive-hover: #e0e0e0;   /* Hover state */
-  --color-interactive-active: #d0d0d0;  /* Active/pressed state */
-  
-  /* Borders */
-  --color-border: #d0d0d0;
-  --color-border-focus: #2196F3;
-  
-  /* Overlays */
-  --color-overlay-light: rgba(0, 0, 0, 0.1);
-  --color-overlay-medium: rgba(0, 0, 0, 0.4);
-  --color-overlay-heavy: rgba(0, 0, 0, 0.7);
-  
-  /* Semantic colors */
-  --color-error: #dc2626;
-  --color-success: #16a34a;
-  --color-warning: #ea580c;
-  
-  /* Folder/File specific */
-  --color-folder-blue: rgb(59, 130, 246);
-  --color-folder-blue-bg: rgba(59, 130, 246, 0.08);
+	/* Surface colors */
+	--color-surface-base: #ffffff; /* Base page background - PURE WHITE */
+	--color-surface: #f5f5f5; /* Component surface - Very light grey */
+	--color-surface-elevated: #ffffff; /* Elevated elements (modals, dropdowns) - WHITE */
+	--color-surface-sunken: #e8e8e8; /* Sunken elements (inputs) */
+
+	/* Text colors */
+	--color-text-primary: #1a1a1a; /* Primary text - Almost black */
+	--color-text-secondary: #4a4a4a; /* Secondary text */
+	--color-text-tertiary: #6a6a6a; /* Muted text */
+	--color-text-disabled: #9a9a9a; /* Disabled text */
+
+	/* Interactive states */
+	--color-interactive: #f0f0f0; /* Buttons, switches base */
+	--color-interactive-hover: #e0e0e0; /* Hover state */
+	--color-interactive-active: #d0d0d0; /* Active/pressed state */
+
+	/* Borders */
+	--color-border: #d0d0d0;
+	--color-border-focus: #2196f3;
+
+	/* Overlays */
+	--color-overlay-light: rgba(0, 0, 0, 0.1);
+	--color-overlay-medium: rgba(0, 0, 0, 0.4);
+	--color-overlay-heavy: rgba(0, 0, 0, 0.7);
+
+	/* Semantic colors */
+	--color-error: #dc2626;
+	--color-success: #16a34a;
+	--color-warning: #ea580c;
+
+	/* Folder/File specific */
+	--color-folder-blue: rgb(59, 130, 246);
+	--color-folder-blue-bg: rgba(59, 130, 246, 0.08);
 }
 
 /* Dark theme */
 :root.dark {
-  /* Surface colors */
-  --color-surface-base: #1c1c1e;        /* Base page background */
-  --color-surface: #2c2c2e;             /* Component surface */
-  --color-surface-elevated: #3a3a3c;    /* Elevated elements */
-  --color-surface-sunken: #1c1c1e;      /* Sunken elements */
-  
-  /* Text colors */
-  --color-text-primary: #f2f2f7;        /* Primary text */
-  --color-text-secondary: #e5e5ea;      /* Secondary text */
-  --color-text-tertiary: #8e8e93;       /* Muted text */
-  --color-text-disabled: #636366;       /* Disabled text */
-  
-  /* Interactive states */
-  --color-interactive: #2c2c2e;         /* Buttons, switches base */
-  --color-interactive-hover: #48484a;   /* Hover state - more distinct from surface */
-  --color-interactive-active: #5a5a5c;  /* Active/pressed state */
-  
-  /* Borders */
-  --color-border: #3a3a3c;
-  --color-border-focus: #8e8e93;
-  
-  /* Overlays */
-  --color-overlay-light: rgba(0, 0, 0, 0.25);
-  --color-overlay-medium: rgba(0, 0, 0, 0.5);
-  --color-overlay-heavy: rgba(0, 0, 0, 0.75);
-  
-  /* Semantic colors */
-  --color-error: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #f97316;
+	/* Surface colors */
+	--color-surface-base: #1c1c1e; /* Base page background */
+	--color-surface: #2c2c2e; /* Component surface */
+	--color-surface-elevated: #3a3a3c; /* Elevated elements */
+	--color-surface-sunken: #1c1c1e; /* Sunken elements */
+
+	/* Text colors */
+	--color-text-primary: #f2f2f7; /* Primary text */
+	--color-text-secondary: #e5e5ea; /* Secondary text */
+	--color-text-tertiary: #8e8e93; /* Muted text */
+	--color-text-disabled: #636366; /* Disabled text */
+
+	/* Interactive states */
+	--color-interactive: #2c2c2e; /* Buttons, switches base */
+	--color-interactive-hover: #48484a; /* Hover state - more distinct from surface */
+	--color-interactive-active: #5a5a5c; /* Active/pressed state */
+
+	/* Borders */
+	--color-border: #3a3a3c;
+	--color-border-focus: #8e8e93;
+
+	/* Overlays */
+	--color-overlay-light: rgba(0, 0, 0, 0.25);
+	--color-overlay-medium: rgba(0, 0, 0, 0.5);
+	--color-overlay-heavy: rgba(0, 0, 0, 0.75);
+
+	/* Semantic colors */
+	--color-error: #ef4444;
+	--color-success: #22c55e;
+	--color-warning: #f97316;
 }
 
 /* Semantic utility classes */
 .bg-base {
-  background-color: var(--color-surface-base);
+	background-color: var(--color-surface-base);
 }
 
 .bg-surface {
-  background-color: var(--color-surface);
+	background-color: var(--color-surface);
 }
 
 .bg-elevated {
-  background-color: var(--color-surface-elevated);
+	background-color: var(--color-surface-elevated);
 }
 
 .bg-sunken {
-  background-color: var(--color-surface-sunken);
+	background-color: var(--color-surface-sunken);
 }
 
 .bg-interactive {
-  background-color: var(--color-interactive);
+	background-color: var(--color-interactive);
 }
 
 .bg-interactive:hover {
-  background-color: var(--color-interactive-hover);
+	background-color: var(--color-interactive-hover);
 }
 
 .bg-interactive:active {
-  background-color: var(--color-interactive-active);
+	background-color: var(--color-interactive-active);
 }
 
 .text-primary {
-  color: var(--color-text-primary);
+	color: var(--color-text-primary);
 }
 
 .text-secondary {
-  color: var(--color-text-secondary);
+	color: var(--color-text-secondary);
 }
 
 .text-tertiary {
-  color: var(--color-text-tertiary);
+	color: var(--color-text-tertiary);
 }
 
 .text-disabled {
-  color: var(--color-text-disabled);
+	color: var(--color-text-disabled);
 }
 
 .border-default {
-  border-color: var(--color-border);
+	border-color: var(--color-border);
 }
 
 /* Global scrollbar */
 ::-webkit-scrollbar {
-  width: 0.25rem;
-  height: 0.25rem;
+	width: 0.25rem;
+	height: 0.25rem;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+	background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--color-border);
-  border-radius: 9999px;
+	background-color: var(--color-border);
+	border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-interactive-hover);
+	background-color: var(--color-interactive-hover);
 }
-

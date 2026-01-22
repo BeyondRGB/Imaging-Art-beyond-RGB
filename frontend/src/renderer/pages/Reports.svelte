@@ -30,20 +30,20 @@
 	function handleP90Update(e) {
 		const rawVal = e.detail.p90;
 		console.log("Received p90 update:", rawVal, "typeof:", typeof rawVal);
-		
+
 		if (rawVal === null || rawVal === undefined) {
 			return;
 		}
 
 		// Convert to number
-		const num = typeof rawVal === 'number' ? rawVal : parseFloat(rawVal);
-		
+		const num = typeof rawVal === "number" ? rawVal : parseFloat(rawVal);
+
 		if (!isNaN(num)) {
 			p90Value = num;
 			console.log("p90Value set to:", p90Value);
 		}
 	}
-	
+
 	// Reactive formatted value for display
 	$: p90Display = p90Value !== null ? p90Value.toFixed(2) : "—";
 
@@ -89,11 +89,11 @@
 
 	// Track which projectKey we've loaded
 	let loadedProjectKey: string | null = null;
-	
+
 	// Function to load project data
 	function loadProject(projectKey: string) {
 		console.log(`Loading project: ${projectKey}, previous: ${loadedProjectKey}`);
-		
+
 		// Clear old report data if switching projects
 		if (loadedProjectKey !== null && loadedProjectKey !== projectKey) {
 			viewState.update(state => ({
@@ -105,10 +105,10 @@
 				colorManagedTargetImage: {
 					dataURL: "",
 					name: "Waiting...",
-				}
+				},
 			}));
 		}
-		
+
 		// Update tracking and fetch data
 		loadedProjectKey = projectKey;
 		requestColorManagedTargetImage(projectKey);
@@ -121,20 +121,20 @@
 		if (filePaths?.length > 0) {
 			const newProjectKey = filePaths[0];
 			console.log("New Project Key from file selector:", newProjectKey);
-			
+
 			// Reset loadedProjectKey to ensure the reactive statement triggers a fresh load
 			// This prevents race conditions where the old project data persists
 			loadedProjectKey = null;
-			
+
 			// Set the projectKey in viewState
 			// The reactive statement will handle calling loadProject
 			viewState.update(state => ({
 				...state,
-				projectKey: newProjectKey
+				projectKey: newProjectKey,
 			}));
 		}
 	}
-	
+
 	// Also handle when projectKey is set from elsewhere (e.g., returning to page)
 	$: if ($viewState.projectKey !== null && $viewState.projectKey !== loadedProjectKey) {
 		loadProject($viewState.projectKey);
@@ -144,7 +144,7 @@
 	$: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
 		try {
 			const message = $messageStore[0];
-			if (typeof message === 'string' && message.trim().length > 0) {
+			if (typeof message === "string" && message.trim().length > 0) {
 				let temp = JSON.parse(message);
 				if (temp["ResponseType"] === "Report") {
 					console.log("Report From Server");
@@ -153,25 +153,22 @@
 							...state,
 							reports: {
 								...state.reports,
-								calibration: temp["ResponseData"]["reports"]
-							}
+								calibration: temp["ResponseData"]["reports"],
+							},
 						}));
 					} else if (temp["ResponseData"]["reportType"] === "Verification") {
 						viewState.update(state => ({
 							...state,
 							reports: {
 								...state.reports,
-								verification: temp["ResponseData"]["reports"]
-							}
+								verification: temp["ResponseData"]["reports"],
+							},
 						}));
 					} else if (temp["ResponseData"]["reportType"] === "SpectralPickerMeasured") {
 						console.log("Spectrum Data From Server");
 						spectrumDataHeatMap_est = temp["ResponseData"]["estimated_spectrum"];
 						spectrumDataHeatMap_ref = temp["ResponseData"]["referenced_spectrum"];
-						combinedData = [
-							spectrumDataHeatMap_est, 
-							spectrumDataHeatMap_ref
-						];
+						combinedData = [spectrumDataHeatMap_est, spectrumDataHeatMap_ref];
 					}
 				}
 			}
@@ -181,9 +178,12 @@
 	}
 
 	// Debug: log when colorManagedTargetImage changes
-	$: console.log("[Reports] colorManagedTargetImage changed:", 
-		$viewState.colorManagedTargetImage.dataURL ? 
-		$viewState.colorManagedTargetImage.dataURL.substring(0, 50) + "..." : "(empty)");
+	$: console.log(
+		"[Reports] colorManagedTargetImage changed:",
+		$viewState.colorManagedTargetImage.dataURL
+			? $viewState.colorManagedTargetImage.dataURL.substring(0, 50) + "..."
+			: "(empty)"
+	);
 
 	$: isVerification =
 		$viewState.reports.verification != null &&
@@ -201,16 +201,15 @@
 			colorManagedTargetImage: {
 				dataURL: "",
 				name: "Waiting...",
-			}
+			},
 		}));
 		loadedProjectKey = null;
 	}
-
 </script>
 
 <main class="reports-main">
 	{#if $viewState.projectKey === null}
-		<EmptyState 
+		<EmptyState
 			title="Select a project file to import into BeyondRGB"
 			filter="project"
 			on:select={handleFileSelect}
@@ -225,7 +224,13 @@
 							: $viewState.projectKey?.split("/").at(-1)}
 					</div>
 					<div class="header-actions">
-						<Button variant="secondary" size="sm" onClick={() => { window.electron.openNewWindow() }}>View Another Report</Button>
+						<Button
+							variant="secondary"
+							size="sm"
+							onClick={() => {
+								window.electron.openNewWindow();
+							}}>View Another Report</Button
+						>
 						<CloseButton onClick={handleCloseReport} />
 					</div>
 				</div>
@@ -234,9 +239,13 @@
 					<div class="stats-grid">
 						<div class="stat-card">
 							<span class="stat-label">Mean ΔE</span>
-							<span class="stat-value">{parseFloat($viewState.reports.calibration["double_values"][0]["data"]).toFixed(4)}</span>
+							<span class="stat-value"
+								>{parseFloat($viewState.reports.calibration["double_values"][0]["data"]).toFixed(
+									4
+								)}</span
+							>
 						</div>
-						
+
 						<div class="stat-card">
 							<span class="stat-label">90th Percentile</span>
 							<span class="stat-value">{p90Display}</span>
@@ -245,14 +254,20 @@
 						{#if isVerification && $viewState.reports.verification?.["double_values"]?.[0]?.["data"] !== undefined}
 							<div class="stat-card">
 								<span class="stat-label">Verification Mean ΔE</span>
-								<span class="stat-value">{parseFloat($viewState.reports.verification["double_values"][0]["data"]).toFixed(4)}</span>
+								<span class="stat-value"
+									>{parseFloat($viewState.reports.verification["double_values"][0]["data"]).toFixed(
+										4
+									)}</span
+								>
 							</div>
-							
+
 							<div class="stat-card">
 								<span class="stat-label">Verification 90th %</span>
 								<span class="stat-value">
 									{#if $viewState.reports.verification?.["double_values"]?.[1]?.["data"] !== undefined}
-										{parseFloat($viewState.reports.verification["double_values"][1]["data"]).toFixed(2)}
+										{parseFloat(
+											$viewState.reports.verification["double_values"][1]["data"]
+										).toFixed(2)}
 									{:else}
 										—
 									{/if}
@@ -273,51 +288,43 @@
 							data={$viewState.reports.calibration}
 						/>
 						<div class="target-image-container">
-						  <ImageViewer srcUrl={$viewState.colorManagedTargetImage.dataURL} identifier="CM_target"/>
+							<ImageViewer
+								srcUrl={$viewState.colorManagedTargetImage.dataURL}
+								identifier="CM_target"
+							/>
 						</div>
-							{#if $currentPage === "Reports"}
-								<ExpandablePanel 
-									bind:expanded={expand}
-									position="right"
-									width="30vw"
-									handlePosition="50%"
-									zIndex={40}
-								>
-									<div class="box" id="brush">
-										<p>Click on a Heatmap box to view the Estimated vs. Reference Spectral Curve</p>
-									</div>
-									<div class="chart">
-										<LineChartMeasured
-											bind:data={combinedData}
-											bind:wavelengthArray
-											bind:trueShadowPos
-										/>
-									</div>
-								</ExpandablePanel>
-							{/if}
+						{#if $currentPage === "Reports"}
+							<ExpandablePanel
+								bind:expanded={expand}
+								position="right"
+								width="30vw"
+								handlePosition="50%"
+								zIndex={40}
+							>
+								<div class="box" id="brush">
+									<p>Click on a Heatmap box to view the Estimated vs. Reference Spectral Curve</p>
+								</div>
+								<div class="chart">
+									<LineChartMeasured
+										bind:data={combinedData}
+										bind:wavelengthArray
+										bind:trueShadowPos
+									/>
+								</div>
+							</ExpandablePanel>
+						{/if}
 					</div>
-					
+
 					<div class="report-item">
 						<!-- AB vector chart -->
-						<VectorChart
-							data={$viewState.reports.calibration}
-							matrix={"CM"}
-							ab={true}
-						/>
+						<VectorChart data={$viewState.reports.calibration} matrix={"CM"} ab={true} />
 					</div>
 					<div class="report-item">
 						<!-- LC vector chart -->
-						<VectorChart
-							data={$viewState.reports.calibration}
-							matrix={"CM"}
-							ab={false}
-						/>
+						<VectorChart data={$viewState.reports.calibration} matrix={"CM"} ab={false} />
 					</div>
 					<div class="report-item">
-						<LinearChart
-							data={$viewState.reports.calibration}
-							matrix={"CM"}
-						/>
+						<LinearChart data={$viewState.reports.calibration} matrix={"CM"} />
 					</div>
 				</div>
 			</div>
@@ -326,86 +333,86 @@
 </main>
 
 <style lang="postcss" global>
-  .reports-main {
-    @apply flex flex-col w-full h-full overflow-y-scroll overflow-x-hidden;
-  }
-  .art {
-    @apply flex flex-col relative;
-  }
-  .reports {
-    @apply w-full h-full flex flex-col gap-2;
-  }
-  .reportBody {
-    transform-origin: left top;
-    background-color: var(--color-surface);
-    @apply w-full h-full transition-all duration-300
+	.reports-main {
+		@apply flex flex-col w-full h-full overflow-y-scroll overflow-x-hidden;
+	}
+	.art {
+		@apply flex flex-col relative;
+	}
+	.reports {
+		@apply w-full h-full flex flex-col gap-2;
+	}
+	.reportBody {
+		transform-origin: left top;
+		background-color: var(--color-surface);
+		@apply w-full h-full transition-all duration-300
           rounded-b-2xl p-4 flex flex-col items-center justify-center gap-2;
 	}
 	.report-item {
 		background-color: var(--color-surface-base);
-    border: 1px solid var(--color-border);
+		border: 1px solid var(--color-border);
 		@apply h-full flex justify-center items-center p-4 rounded-xl max-w-full flex-wrap gap-4;
 	}
-	
+
 	.report-item > :global(*) {
 		@apply min-w-0 flex-shrink;
 	}
 	.dropdown-report-btn {
 		@apply w-full flex flex-col justify-center items-center z-50;
 	}
-  .report-header {
-    width: 100%;
-    background-color: var(--color-surface-base);
-    @apply sticky top-0 z-30 flex flex-col gap-3 px-6 py-4 -translate-y-full
+	.report-header {
+		width: 100%;
+		background-color: var(--color-surface-base);
+		@apply sticky top-0 z-30 flex flex-col gap-3 px-6 py-4 -translate-y-full
             transition-all delay-150 duration-300 ease-in;
-  }
-  .report-header.show {
-    @apply translate-y-0;
-  }
-  
-  .header-top-row {
-    @apply flex items-center justify-between gap-4;
-  }
-  
-  .header-actions {
-    @apply flex items-center gap-3;
-  }
-  
+	}
+	.report-header.show {
+		@apply translate-y-0;
+	}
+
+	.header-top-row {
+		@apply flex items-center justify-between gap-4;
+	}
+
+	.header-actions {
+		@apply flex items-center gap-3;
+	}
+
 	.report-name {
 		@apply text-2xl font-medium;
-    color: var(--color-text-primary);
+		color: var(--color-text-primary);
 	}
-  
-  .stats-grid {
-    @apply flex flex-wrap gap-6;
-  }
-  
-  .stat-card {
-    @apply flex flex-col gap-0.5;
-  }
-  
-  .stat-label {
-    color: var(--color-text-secondary);
-    @apply text-xs font-medium uppercase tracking-wider opacity-70;
-  }
-  
-  .stat-value {
-    color: var(--color-text-primary);
-    @apply text-xl font-semibold;
-  }
-  
-  .loading-text {
-    color: var(--color-text-secondary);
-    @apply text-base opacity-70;
-  }
+
+	.stats-grid {
+		@apply flex flex-wrap gap-6;
+	}
+
+	.stat-card {
+		@apply flex flex-col gap-0.5;
+	}
+
+	.stat-label {
+		color: var(--color-text-secondary);
+		@apply text-xs font-medium uppercase tracking-wider opacity-70;
+	}
+
+	.stat-value {
+		color: var(--color-text-primary);
+		@apply text-xl font-semibold;
+	}
+
+	.loading-text {
+		color: var(--color-text-secondary);
+		@apply text-base opacity-70;
+	}
 	.reports h2 {
 		@apply w-full text-3xl;
 	}
-  .target-image-container {
-    height: 450px;
-    max-width: 500px;
-    @apply flex-1 min-w-[300px] relative items-center flex justify-center;
-  }
+	.target-image-container {
+		height: 450px;
+		max-width: 500px;
+		@apply flex-1 min-w-[300px] relative items-center flex justify-center;
+	}
 
 	.brushBar {
 		@apply w-full h-2 rounded-xl;
@@ -413,7 +420,7 @@
 	.brushBar::-webkit-slider-thumb {
 		background-color: var(--color-interactive);
 		@apply w-4 h-4 cursor-pointer rounded-full outline outline-1;
-    outline-color: var(--color-border);
+		outline-color: var(--color-border);
 	}
 
 	.pixSize {
@@ -422,16 +429,18 @@
 	}
 
 	.chart {
-		background-color: var(--color-surface-elevated); @apply m-2 p-2 pb-4 rounded-lg pr-4;
+		background-color: var(--color-surface-elevated);
+		@apply m-2 p-2 pb-4 rounded-lg pr-4;
 	}
 
 	.box {
-		@apply m-2 shadow-md px-2 pt-1 rounded-lg p-2; background-color: var(--color-surface-elevated);
+		@apply m-2 shadow-md px-2 pt-1 rounded-lg p-2;
+		background-color: var(--color-surface-elevated);
 	}
 
 	.numberInput {
 		background-color: var(--color-surface-sunken);
-    border: 1px solid var(--color-border);
+		border: 1px solid var(--color-border);
 		@apply p-0.5 rounded-lg
           focus-visible:outline-blue-700 focus-visible:outline focus-visible:outline-2;
 	}

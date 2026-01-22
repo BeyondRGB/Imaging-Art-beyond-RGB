@@ -10,10 +10,10 @@
 
 class ImageCalibrator : public CompositComponent {
 
-public:
-    ImageCalibrator(const std::vector<std::shared_ptr<ImgProcessingComponent>>& components);
-    void execute(CommunicationObj* comms, btrgb::ArtObject* images);
-    
+  public:
+    ImageCalibrator(
+        const std::vector<std::shared_ptr<ImgProcessingComponent>> &components);
+    void execute(CommunicationObj *comms, btrgb::ArtObject *images);
 };
 
-#endif //BEYOND_RGB_BACKEND_IMAGECALIBRATOR_H
+#endif // BEYOND_RGB_BACKEND_IMAGECALIBRATOR_H

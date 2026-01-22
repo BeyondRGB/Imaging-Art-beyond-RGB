@@ -5,9 +5,9 @@
 #include <image_processing/ChannelSelector.h>
 #include <server/communication_obj.hpp>
 
-void ChannelSelector::execute(CommunicationObj* comms, btrgb::ArtObject* images) {
+void ChannelSelector::execute(CommunicationObj *comms,
+                              btrgb::ArtObject *images) {
     comms->send_info("", this->get_name());
-    //TODO add channel section logic here
-    //sleep_for(seconds(1));
+    // TODO add channel section logic here
+    // sleep_for(seconds(1));
 }
-

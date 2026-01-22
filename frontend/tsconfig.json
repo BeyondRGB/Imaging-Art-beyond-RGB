@@ -1,40 +1,21 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
-  "compilerOptions": {
-    "isolatedModules": true,
-    "baseUrl": "./",
-    "allowJs": true,
-    "outDir": "public",
-    "target": "es6",
-    "lib": ["es6", "dom"],
-    "types": ["cypress", "node"],
-    "paths": {
-      "@root/*": [
-        "src/renderer/*"
-      ],
-      "@components/*": [
-        "src/renderer/components/*"
-      ],
-      "@pages/*": [
-        "src/renderer/pages/*"
-      ],
-      "@util/*": [
-        "src/renderer/util/*"
-      ],
-      "@assets/*": [
-        "src/renderer/assets/*"
-      ],
-    },
-  },
-  "include": [
-    "./src/renderer/**/*",
-    "vite.config.ts",
-    "global.d.ts",
-    "**/*.ts"
-  ],
-  "exclude": [
-    "./node_modules/*",
-    "./__sapper__/*",
-    "./public/*",
-  ],
+	"extends": "@tsconfig/svelte/tsconfig.json",
+	"compilerOptions": {
+		"isolatedModules": true,
+		"baseUrl": "./",
+		"allowJs": true,
+		"outDir": "public",
+		"target": "es6",
+		"lib": ["es6", "dom"],
+		"types": ["cypress", "node"],
+		"paths": {
+			"@root/*": ["src/renderer/*"],
+			"@components/*": ["src/renderer/components/*"],
+			"@pages/*": ["src/renderer/pages/*"],
+			"@util/*": ["src/renderer/util/*"],
+			"@assets/*": ["src/renderer/assets/*"]
+		}
+	},
+	"include": ["./src/renderer/**/*", "vite.config.ts", "global.d.ts", "**/*.ts"],
+	"exclude": ["./node_modules/*", "./__sapper__/*", "./public/*"]
 }

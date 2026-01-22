@@ -1,7 +1,7 @@
 export {};
 
 declare global {
-  interface Window {
-    electron: any;
-  }
+	interface Window {
+		electron: any;
+	}
 }
