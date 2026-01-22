@@ -1,11 +1,9 @@
 #!/bin/sh
 #
-# An example hook script to verify what is about to be committed.
+# A hook script to verify what is about to be committed.
 # Called by "git commit" with no arguments.  The hook should
 # exit with non-zero status after issuing an appropriate message if
 # it wants to stop the commit.
-#
-# To enable this hook, rename this file to "pre-commit".
 
 if git rev-parse --verify HEAD >/dev/null 2>&1
 then
@@ -46,5 +44,37 @@ EOF
 	exit 1
 fi
 
+set -e
 
-exit 1
+# Get staged C/C++ files
+FILES=$(git diff --cached --name-only --diff-filter=ACM \
+    -- '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' '*.hxx')
+
+[ -z "$FILES" ] && exit 0
+
+NEEDS_FORMATTING=0
+
+for file in $FILES; do
+	# Compare staged file and formatter output
+    if ! git show ":$file" \
+        | clang-format -style=file -assume-filename="$file" \
+        | diff -q - <(git show ":$file") >/dev/null; then
+        NEEDS_FORMATTING=1
+        break
+    fi
+done
+
+
+# Files are formatted
+if [ "$NEEDS_FORMATTING" -eq 0 ]; then
+    exit 0
+fi
+
+echo "Backend files not formatted."
+echo "Applying clang-format to invalid files. Stage formatted files and try again."
+
+# Format changed backend files
+clang-format -i -style=file $FILES
+
+exit 0
+
