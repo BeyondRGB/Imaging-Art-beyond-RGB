@@ -11,7 +11,6 @@
 	import SpectralPicker from "@pages/SpectralPicker.svelte";
 	import Settings from "@pages/Settings.svelte";
 
-	
 	import {
 		HomeIcon,
 		SettingsIcon,
