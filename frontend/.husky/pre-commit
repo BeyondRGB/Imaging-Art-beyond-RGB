@@ -46,6 +46,4 @@ EOF
 	exit 1
 fi
 
-set -e
-
 exit 1
