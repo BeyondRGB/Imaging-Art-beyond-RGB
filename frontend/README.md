@@ -76,6 +76,10 @@
 
 5. Navigate to "Specs" and choose the test file that you wish to run
 
+## Formatting
+
+There is a git hook (`./frontend/.husky/pre-commit`) to check that frontend code files are formatted to the project's prettier standards. Use `npm run format` to format your files
+
 # Troubleshooting
 
 There have been reports that using the Git Bash command line on Windows specifically with this template will prevent the Electron app from rendering (packaged apps are fine). We recommend that on Windows, you use CMD.exe, PowerShell, or WSL.
