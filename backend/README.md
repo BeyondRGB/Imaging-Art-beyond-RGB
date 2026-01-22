@@ -9,6 +9,7 @@ The following describes the steps needed to get the back end environment of this
 ### Windows
 - Prerequisites
   - Install [Visual Studio](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019?target=_blank). The build system uses the compilers that come with Visual Studio, although it is posible to install your own compiler and not user VS, doing so has not been tested for our setup and may lead to unexpeced issues.<br>
+  - Install [LLVM Compiler](https://releases.llvm.org/). This compiler is used for clang-format, the backend formatter for the project. LLVM release 21.1.0 is confirmed to work (any releases afterwards have not been tested). Make to select to add to PATH during installation
   **Note:** it is not required to use the full IDE. Alternatively, you can install Python, VS Build Tools, and CMake independently.
   - (optional) Install [Python](https://www.python.org/downloads/): At time of writing, the most recent confirmed working version is Python 3.12.
   - (optional) Install **Visual Studio Build Tools** with [Chocolaty](https://chocolatey.org): In an administrator command line, run: ```choco install visualstudio2022-workload-vctools -y```
@@ -46,3 +47,9 @@ The following describes the steps needed to get the back end environment of this
 
 ### Linux
 - Linux builds not currently supported.
+
+## Additional Notes
+
+### Formatting
+
+There is a pre-commit git hook (found in git_hooks in the project's root directory) which verifies changed C++ files were formatted correctly.  If your files aren't formatted, the commit fails and the hook attempts to format them using PATH to find clang-format. The formatted files can then be staged for a valid commit.
