@@ -3,13 +3,12 @@
 
 #include "image_processing/results/results_formater.hpp"
 
-class MColorFormater : public ResultsFormater{
+class MColorFormater : public ResultsFormater {
 
-    private:
-    
-    public:
-        void write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type) override;
-    
+  private:
+  public:
+    void write_format(std::ostream &output_stream, CalibrationResults *results,
+                      ResultObjType format_type) override;
 };
 
 #endif // M_COLOR_FORMATER_H

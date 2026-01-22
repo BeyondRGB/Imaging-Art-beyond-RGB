@@ -3,19 +3,18 @@
 
 #include "image_processing/results/calibration_results.hpp"
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
-class ResultsFormater{
+class ResultsFormater {
 
-    public:
-    enum ResultObjType{
-        GENERAL, CALIBRATION, VERIFICATION
-    };
+  public:
+    enum ResultObjType { GENERAL, CALIBRATION, VERIFICATION };
 
     virtual ~ResultsFormater() {}
-    virtual void write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type) = 0;
-
+    virtual void write_format(std::ostream &output_stream,
+                              CalibrationResults *results,
+                              ResultObjType format_type) = 0;
 };
 
 #endif // RESULTS_FORMATER_H

@@ -1,25 +1,21 @@
 #ifndef REPORTREQUEST_H
 #define REPORTREQUEST_H
 
-#include <iostream>
 #include <fstream>
-#include <streambuf>
 #include <image_util/Image.hpp>
-#include <utils/jsonafiable.hpp>
+#include <iostream>
 #include <server/communication_obj.hpp>
+#include <streambuf>
+#include <utils/jsonafiable.hpp>
 
 #include "backend_process.hpp"
 
-
-
 class ReportRequest : public BackendProcess {
 
-public:
+  public:
     ReportRequest(std::string name) : BackendProcess(name) {};
     ~ReportRequest();
-	void run() override;
-    
+    void run() override;
 };
-
 
 #endif
