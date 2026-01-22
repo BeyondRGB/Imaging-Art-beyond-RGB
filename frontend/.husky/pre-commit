@@ -41,7 +41,7 @@ If you know what you are doing you can disable this check using:
 
   git config hooks.allownonascii true
 EOF
-	exit 1
+	exit 0
 fi
 
 set -e
@@ -76,5 +76,5 @@ echo "Applying clang-format to invalid files. Stage formatted files and try agai
 # Format changed backend files
 clang-format -i -style=file $FILES
 
-exit 0
+exit 1
 
