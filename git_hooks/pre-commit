@@ -58,7 +58,7 @@ NEEDS_FORMATTING=0
 
 for file in $FILES; do
     if ! git show ":$file" \
-        | clang-format -style=file \
+        | clang-format -style=file -assume-filename="$file" \
         | diff -q - <(git show ":$file") >/dev/null; then
         NEEDS_FORMATTING=1
         break
@@ -72,7 +72,7 @@ if [ "$NEEDS_FORMATTING" -eq 0 ]; then
 fi
 
 echo "Backend files not formatted."
-echo "Applying clang-format to invalid files."
+echo "Applying clang-format to invalid files. Stage formatted files and try again."
 
 # Format changed backend files
 clang-format -i -style=file $FILES
