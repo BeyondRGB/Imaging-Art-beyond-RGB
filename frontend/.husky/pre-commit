@@ -1,5 +1,3 @@
-set -e
-
 # Get staged C/C++ files
 FILES=$(git diff --cached --name-only --diff-filter=ACM \
     -- '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' '*.hxx')
