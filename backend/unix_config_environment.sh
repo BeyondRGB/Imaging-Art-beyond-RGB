@@ -1,5 +1,7 @@
 #!/bin/sh
-minimum_macOS_version=10.15
+if [ $(uname) = "Darwin" ]; then
+  minimum_macOS_version=10.15
+fi
 
 # If vcpkg not set-up, clone and bootstrap.
 if ! [ -d "vcpkg" ]; then

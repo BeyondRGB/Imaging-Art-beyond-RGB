@@ -4,7 +4,7 @@ mode=$1
 
 if ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
     echo "Mode not set to Debug or Release."
-    echo "usage: osx_build.sh [Debug | Release]"
+    echo "usage: unix_build.sh [Debug | Release]"
     exit
 fi
 
@@ -12,13 +12,17 @@ fi
 cmake -B "build/${mode}" -S . -D CMAKE_BUILD_TYPE=$mode
 
 if [ $? -ne 0 ]; then
-    echo "Failed to create cmake project. Make sure you have run ./osx_config_environment.sh."
+    echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh."
     exit
 fi
 
 cd "$build_directory/${mode}" || exit
 
-cmake --build .
+if [ $(uname) = "Darwin" ]; then
+  cmake --build . -j$(sysctl -n hw.logicalcpu)
+else
+    cmake --build . -j$(nproc)
+fi
 
 if [ $? -ne 0 ]; then
     echo "Failed to build project."
