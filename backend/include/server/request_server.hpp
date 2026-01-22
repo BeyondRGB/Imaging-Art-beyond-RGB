@@ -2,50 +2,49 @@
 #define REQUEST_SERVER_H
 
 #define _WEBSOCKETPP_CPP11_THREAD_
-#define _WEBSOCKETPP_CPP11_STRICT_ 
+#define _WEBSOCKETPP_CPP11_STRICT_
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
-#include <server/communication_obj.hpp>
 #include "process_manager.hpp"
+#include <server/communication_obj.hpp>
 
 typedef websocketpp::server<websocketpp::config::asio> server;
 typedef server::message_ptr message_ptr;
 
 /**
-* Class that establishes the server that will listen for requests from the front end
-*/
+ * Class that establishes the server that will listen for requests from the
+ * front end
+ */
 class RequestServer {
-	
-private:
-	server server_m;
-	ProcessManager process_manager_m;
-	/**
-	* Handler that gets called any time a new msg comes in on port_m
-	*/
-	void msg_handler(server* s, websocketpp::connection_hdl hdl, message_ptr msg);
 
+  private:
+    server server_m;
+    ProcessManager process_manager_m;
+    /**
+     * Handler that gets called any time a new msg comes in on port_m
+     */
+    void msg_handler(server *s, websocketpp::connection_hdl hdl,
+                     message_ptr msg);
 
-public:
-	RequestServer() {};
-	/**
-	* Initialize the server
-	*	Establish log settings
-	*	Sets Handelers
-	*	Sets port to listen on
-	*/
-	void init_server();
-	/**
-	* Starts server run loop
-	*/
-	void start_server();
+  public:
+    RequestServer() {};
+    /**
+     * Initialize the server
+     *	Establish log settings
+     *	Sets Handelers
+     *	Sets port to listen on
+     */
+    void init_server();
+    /**
+     * Starts server run loop
+     */
+    void start_server();
 
-	/**
-	* Shutdown server
-	*/
-	void shutdown();
-
-
+    /**
+     * Shutdown server
+     */
+    void shutdown();
 };
 
-#endif //REQUEST_SERVER_H
+#endif // REQUEST_SERVER_H

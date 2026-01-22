@@ -6,14 +6,14 @@
 namespace btrgb {
 
 class BitDepthFinder {
-    public:
-        int get_bit_depth(uint16_t* im, int width, int height, int channels);
-    private:
-        const int PIXEL_COUNT_THRESHOLD = 15;
-        inline int required_bits(uint16_t value);
+  public:
+    int get_bit_depth(uint16_t *im, int width, int height, int channels);
 
+  private:
+    const int PIXEL_COUNT_THRESHOLD = 15;
+    inline int required_bits(uint16_t value);
 };
 
-}
+} // namespace btrgb
 
 #endif

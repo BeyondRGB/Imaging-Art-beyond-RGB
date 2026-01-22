@@ -2,8 +2,10 @@
 
 #include "utils/calibration_util.hpp"
 
-void RCameraFormater::write_format(std::ostream &output_stream, CalibrationResults *results, ResultObjType format_type){
-    #define DELIM ","
+void RCameraFormater::write_format(std::ostream &output_stream,
+                                   CalibrationResults *results,
+                                   ResultObjType format_type) {
+#define DELIM ","
     cv::Mat R_camera;
     cv::Mat R_ref;
     double rmse;
@@ -14,21 +16,21 @@ void RCameraFormater::write_format(std::ostream &output_stream, CalibrationResul
 
     std::cout << "R_Camera" << std::endl;
 
-    try{
-        if(format_type == ResultObjType::CALIBRATION){
+    try {
+
+        if (format_type == ResultObjType::CALIBRATION) {
             R_camera = results->get_matrix(SP_R_camera);
             R_ref = results->get_matrix(SP_R_reference);
             rmse = results->get_double(SP_RMSE);
-        }
-        else if(format_type == ResultObjType::VERIFICATION){
+        } else if (format_type == ResultObjType::VERIFICATION) {
             R_camera = results->get_matrix(V_R_CAMERA);
             R_ref = results->get_matrix(V_R_reference);
             rmse = results->get_double(V_RMSE);
         }
-        
+
         row_count = results->get_int(GI_TARGET_ROWS);
         col_count = results->get_int(GI_TARGET_COLS);
-    }catch(ResultError e){
+    } catch (ResultError e) {
         throw e;
     }
 
@@ -46,26 +48,27 @@ void RCameraFormater::write_format(std::ostream &output_stream, CalibrationResul
     // Write RMSE
     output_stream << "RMSE" << DELIM << rmse;
 
-
-    #undef DELIM
-
+#undef DELIM
 }
 
-void RCameraFormater::write_header(std::ostream &output_stream, int row_count, int col_count, std::string delim){
+void RCameraFormater::write_header(std::ostream &output_stream, int row_count,
+                                   int col_count, std::string delim) {
     output_stream << "Wavelength (nm)" << delim;
-    for(int col = 0; col < col_count; col++){
-        for(int row = 0; row < row_count; row++){
-            output_stream << char(col+65) << ":" << row << delim;
+    for (int col = 0; col < col_count; col++) {
+        for (int row = 0; row < row_count; row++) {
+            output_stream << char(col + 65) << ":" << row << delim;
         }
     }
     output_stream << std::endl;
 }
 
-void RCameraFormater::write_matrix(std::ostream &output_stream, cv::Mat matrix, int row_count, int col_count, std::string delim){
-    for(int wavelen = 0; wavelen < matrix.rows; wavelen++){
+void RCameraFormater::write_matrix(std::ostream &output_stream, cv::Mat matrix,
+                                   int row_count, int col_count,
+                                   std::string delim) {
+    for (int wavelen = 0; wavelen < matrix.rows; wavelen++) {
         output_stream << INDEX_TO_WAVELEN(wavelen);
-        for(int col = 0; col < col_count; col++){
-            for(int row = 0; row < row_count; row++){
+        for (int col = 0; col < col_count; col++) {
+            for (int row = 0; row < row_count; row++) {
                 int mat_col = col + row * col_count;
                 output_stream << delim;
                 output_stream << matrix.at<double>(wavelen, mat_col);

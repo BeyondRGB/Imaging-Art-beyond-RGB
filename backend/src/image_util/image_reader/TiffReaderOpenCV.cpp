@@ -1,5 +1,5 @@
-#include <string.h>
 #include <image_util/image_reader/TiffReaderOpenCV.hpp>
+#include <string.h>
 
 namespace btrgb {
 
@@ -14,18 +14,18 @@ void TiffReaderOpenCV::recycle() {
     this->_channels = -1;
 }
 
-
 void TiffReaderOpenCV::open(std::string filename) {
-    
-    cv::Mat raw_im = cv::imread(filename, cv::ImreadModes::IMREAD_COLOR | cv::ImreadModes::IMREAD_ANYDEPTH);
 
-    if(raw_im.data == NULL)
+    cv::Mat raw_im = cv::imread(filename, cv::ImreadModes::IMREAD_COLOR |
+                                              cv::ImreadModes::IMREAD_ANYDEPTH);
+
+    if (raw_im.data == NULL)
         throw ReaderFailedToOpenFile();
 
-
-    if(raw_im.depth() != CV_16U) {
+    if (raw_im.depth() != CV_16U) {
         this->recycle();
-        throw std::runtime_error("[TiffReaderOpenCV] Only 16 bit tiffs are supported.");
+        throw std::runtime_error(
+            "[TiffReaderOpenCV] Only 16 bit tiffs are supported.");
     }
 
     cv::cvtColor(raw_im, this->_im, cv::COLOR_BGR2RGB);
@@ -36,20 +36,14 @@ void TiffReaderOpenCV::open(std::string filename) {
     this->_depth = 16;
 }
 
+void TiffReaderOpenCV::copyBitmapTo(void *buffer, uint32_t size) {
 
-
-void TiffReaderOpenCV::copyBitmapTo(void* buffer, uint32_t size) {
-
-    if( size < _width * _height * _channels * (_depth / 8) )
+    if (size < _width * _height * _channels * (_depth / 8))
         throw std::logic_error("[TiffReaderOpenCV] Buffer size is too small.");
-    
+
     memcpy(buffer, this->_im.data, size);
-
 }
 
+void TiffReaderOpenCV::copyBitmapTo(cv::Mat &im) { im = this->_im; }
 
-void TiffReaderOpenCV::copyBitmapTo(cv::Mat& im) {
-    im = this->_im;
-}
-
-}
+} // namespace btrgb
