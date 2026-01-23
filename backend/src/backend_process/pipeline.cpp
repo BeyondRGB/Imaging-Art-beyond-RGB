@@ -457,7 +457,7 @@ void Pipeline::init_verification(btrgb::ArtObject *images) {
         TargetData vd = this->build_target_data(verification_json);
         images->init_verification_data(vd);
         this->should_verify = true;
-        this->send_info("Verivication Targe Was Provided",
+        this->send_info("Verification Target Was provided",
                         this->get_process_name());
 
     } catch (ParsingError e) {
@@ -471,14 +471,14 @@ bool Pipeline::verify_targets(btrgb::ArtObject *images) {
     try {
         // Test Target
         images->get_target(TARGET(1), btrgb::TargetType::GENERAL_TARGET);
-        images->get_target(TARGET(1), btrgb::TargetType::VERIFICATION_TARGET);
+        if (this->should_verify == true) {
+            images->get_target(TARGET(1),
+                               btrgb::TargetType::VERIFICATION_TARGET);
+        }
     } catch (ColorTarget_MissmatchingRefData e) {
         this->report_error(this->get_process_name(), e.what(),
                            cpptrace::generate_trace());
         return false;
-    } catch (btrgb::ArtObj_VerificationDataNull e) {
-        this->report_error(this->get_process_name(), e.what(),
-                           cpptrace::generate_trace());
     }
     return true;
 }
