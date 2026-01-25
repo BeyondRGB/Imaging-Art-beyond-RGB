@@ -156,10 +156,12 @@ void Pipeline::init_general_info(btrgb::ArtObject *art_obj) {
     std::string coords =
         ref_data->get_color_patch(td.w_row, td.w_col)->get_name();
     results_obj->store_string(GI_WHITE_PATCH_COORDS, coords);
-    // Store input images
+
+    // Store input images by name, instead of path.
     for (const auto &[key, im] : *art_obj) {
         results_obj->store_string(key, im->getName());
     }
+
     // Store Filtering Options
     std::string option = this->get_sharpen_type();
     std::string option_string = "None";

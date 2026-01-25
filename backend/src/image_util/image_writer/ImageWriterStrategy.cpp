@@ -6,7 +6,7 @@ void ImageWriterStrategy::write(Image *im, std::string filename) {
 
     std::string fname;
     if (filename == "")
-        fname = im->getName();
+        fname = im->getPath();
     else
         fname = filename;
 

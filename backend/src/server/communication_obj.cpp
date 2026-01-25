@@ -78,13 +78,13 @@ void CommunicationObj::send_progress(double val, std::string sender) {
 void CommunicationObj::send_base64(btrgb::Image *image,
                                    enum btrgb::image_quality qual) {
     btrgb::binary_ptr_t bin = image->getEncodedPNG(qual);
-    this->send_base64(image->getName(), bin.get(), btrgb::PNG);
+    this->send_base64(image->getPath(), bin.get(), btrgb::PNG);
 }
 
 void CommunicationObj::send_binary(btrgb::Image *image,
                                    enum btrgb::image_quality qual) {
     btrgb::binary_ptr_t bin = image->getEncodedPNG(qual);
-    this->send_binary(image->getName(), bin.get(), btrgb::PNG);
+    this->send_binary(image->getPath(), bin.get(), btrgb::PNG);
 }
 
 void CommunicationObj::send_base64(std::string name,

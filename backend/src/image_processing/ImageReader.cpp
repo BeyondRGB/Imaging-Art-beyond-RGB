@@ -53,7 +53,7 @@ void ImageReader::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
         comms->send_info("Loading " + im->getName() + "...", this->get_name());
 
         /* Initialize image reader. */
-        if (btrgb::Image::is_tiff(im->getName()))
+        if (btrgb::Image::is_tiff(im->getPath()))
             this->_set_strategy(TIFF_LibTiff);
         else
             this->_set_strategy(RAW_LibRaw);
@@ -61,7 +61,7 @@ void ImageReader::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
         try {
             cv::Mat raw_im;
 
-            _reader->open(im->getName());
+            _reader->open(im->getPath());
             _reader->copyBitmapTo(raw_im);
             btrgb::exif tags = _reader->getExifData();
             _reader->recycle();
