@@ -12,7 +12,8 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECT
     elseif (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
         set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
     else()
-        message("Target architecture is unknown or different: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+        message("Target architecture is unknown or different: ${CMAKE_HOST_SYSTEM_PROCESSOR}, defaulting to arm64")
+        set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
     endif()
 endif()
 

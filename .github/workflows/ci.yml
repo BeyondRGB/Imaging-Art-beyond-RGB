@@ -63,6 +63,7 @@ jobs:
           path: |
             backend/vcpkg/installed
             backend/vcpkg/buildtrees
+            backend/vcpkg/vcpkg
           key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
           restore-keys: vcpkg-${{ matrix.platform }}-
 
@@ -74,7 +75,7 @@ jobs:
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
       
       - name: Install vcpkg dependencies (macOS)
-        if: ${{ (matrix.platform == 'macos') && (steps.cache.outputs.cache-hit != 'true') }}
+        if: matrix.platform == 'macos'
         working-directory: backend
         run: |
           chmod +x *.sh
@@ -99,7 +100,7 @@ jobs:
           cmake --build build/Debug -j$(sysctl -n hw.logicalcpu)
       
       - name: Install vcpkg dependencies (Linux)
-        if: ${{ (matrix.platform == 'linux') && (steps.cache.outputs.cache-hit != 'true') }}
+        if: matrix.platform == 'linux'
         working-directory: backend
         run: |
           chmod +x *.sh
