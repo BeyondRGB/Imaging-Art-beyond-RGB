@@ -7,12 +7,12 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems
 # Requires a check for the right architecture (x_86 or arm64) as well as making sure
 # it is not already defined to allow the user to override it using the command line.
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES )
-    if (CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+    if (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
         set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
-    elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+    elseif (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
         set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
     else()
-        message("Target architecture is unknown or different: ${CMAKE_SYSTEM_PROCESSOR}")
+        message("Target architecture is unknown or different: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
     endif()
 endif()
 
