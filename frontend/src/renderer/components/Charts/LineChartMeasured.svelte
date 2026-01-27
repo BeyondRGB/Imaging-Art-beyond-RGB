@@ -257,7 +257,9 @@
 </script>
 
 <div class="line-chart" id="EstSpecChart">
-	<div id="spectral-chart" use:chart={options} />
+	{#key $appSettings?.isDarkTheme}
+		<div id="spectral-chart" use:chart={options} />
+	{/key}
 	<Button variant="secondary" size="sm" onClick={downloadCSV} className="download-btn">
 		Download CSV
 	</Button>
