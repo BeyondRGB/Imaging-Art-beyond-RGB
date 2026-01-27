@@ -108,6 +108,17 @@
 </script>
 
 <main>
+	<!-- SVG gradient definition for progress circles -->
+	<svg width="0" height="0" style="position: absolute;">
+		<defs>
+			<linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+				<stop offset="0%" style="stop-color: rgb(224, 62, 62);" />
+				<stop offset="50%" style="stop-color: rgb(68, 217, 83);" />
+				<stop offset="100%" style="stop-color: rgb(66, 86, 215);" />
+			</linearGradient>
+		</defs>
+	</svg>
+
 	{#if $modal === "ProcessComplete"}
 		<Modal
 			component={ProcessCompleteModal}
@@ -154,26 +165,21 @@
 										{#each Object.keys(pipelineComponents[component1][component2]) as component3, i3}
 											{#if component3 !== "name"}
 												{#each Object.keys(pipelineComponents[component1][component2][component3]) as component4, i4}
+													{@const progressValue = pipelineComponents[component1][component2][component3][component4]['name'] in pipelineProgress
+																? pipelineProgress[pipelineComponents[component1][component2][component3][component4]['name']]
+																: 0}
 													<div
 														class="progress-circle"
-														class:completed={pipelineProgress[
-															pipelineComponents[component1][component2][component3][component4][
-																"name"
-															]
-														] === 1}
+														class:completed={progressValue === 1}
 													>
-														<div
-															class="progress-overlay"
-															style="--progress:{pipelineComponents[component1][component2][
-																component3
-															][component4]['name'] in pipelineProgress
-																? pipelineProgress[
-																		pipelineComponents[component1][component2][component3][
-																			component4
-																		]['name']
-																  ] * 100
-																: 0}"
-														/>
+														<svg class="progress-ring" viewBox="0 0 100 100">
+															<circle class="progress-ring-bg" cx="50" cy="50" r="45" />
+															<circle
+																class="progress-ring-fill"
+																cx="50" cy="50" r="45"
+																style="stroke-dashoffset: {282.7 * (1 - progressValue)}"
+															/>
+														</svg>
 														<div class="stepper">
 															<span class="sender"
 																>{pipelineComponents[component1][component2][component3][
@@ -186,28 +192,29 @@
 											{/if}
 										{/each}
 									{/if}
-									{#if pipelineComponents[component1][component2]["name"].includes("Results") || pipelineComponents[component1][component2]["name"].includes("Verifi")}
-										<div
-											class="progress-circle"
-											class:completed={pipelineProgress[
-												pipelineComponents[component1][component2]["name"]
-											] === 1}
-										>
-											<div
-												class="progress-overlay"
-												style="--progress:{pipelineComponents[component1][component2]['name'] in
-												pipelineProgress
-													? pipelineProgress[pipelineComponents[component1][component2]['name']] *
-													  100
-													: 0}"
+								{#if pipelineComponents[component1][component2]["name"].includes("Results") || pipelineComponents[component1][component2]["name"].includes("Verifi")}
+									{@const progressValue2 = pipelineComponents[component1][component2]['name'] in pipelineProgress
+										? pipelineProgress[pipelineComponents[component1][component2]['name']]
+										: 0}
+									<div
+										class="progress-circle"
+										class:completed={progressValue2 === 1}
+									>
+										<svg class="progress-ring" viewBox="0 0 100 100">
+											<circle class="progress-ring-bg" cx="50" cy="50" r="45" />
+											<circle
+												class="progress-ring-fill"
+												cx="50" cy="50" r="45"
+												style="stroke-dashoffset: {282.7 * (1 - progressValue2)}"
 											/>
-											<div class="stepper">
-												<span class="sender"
-													>{pipelineComponents[component1][component2]["name"]}</span
-												>
-											</div>
+										</svg>
+										<div class="stepper">
+											<span class="sender"
+												>{pipelineComponents[component1][component2]["name"]}</span
+											>
 										</div>
-									{/if}
+									</div>
+								{/if}
 								</div>
 							</Card>
 						{/each}
@@ -286,25 +293,32 @@
 		@apply w-[90%] text-base flex rounded-full justify-center items-center text-center;
 	}
 	.progress-circle {
-		background: linear-gradient(
-			90deg,
-			rgb(224, 62, 62) 0%,
-			rgb(68, 217, 83) 50%,
-			rgb(66, 86, 215) 100%
-		);
-		background-size: 400% 400%;
-		animation: gradient 5s ease infinite;
 		@apply h-[8vw] w-[8vw] rounded-full p-1 relative;
 	}
 
-	.progress-circle.completed {
-		background: 0;
-		@apply bg-green-500;
+	.progress-circle.completed .progress-ring-fill {
+		stroke: rgb(34, 197, 94); /* green-500 */
 	}
-	.progress-overlay {
-		background: conic-gradient(#0000 calc(var(--progress) * 1%), rgb(125, 123, 123) 0);
 
-		@apply w-full h-full absolute top-0 left-0 rounded-full;
+	.progress-ring {
+		@apply w-full h-full absolute top-0 left-0;
+		transform: rotate(-90deg); /* Start from top */
+	}
+
+	.progress-ring-bg {
+		fill: none;
+		stroke: rgb(125, 123, 123);
+		stroke-width: 10;
+	}
+
+	.progress-ring-fill {
+		fill: none;
+		stroke: url(#progressGradient);
+		stroke-width: 10;
+		stroke-linecap: round;
+		stroke-dasharray: 282.7; /* 2 * PI * 45 (radius) */
+		stroke-dashoffset: 282.7;
+		transition: stroke-dashoffset 0.5s ease-out;
 	}
 
 	:global(.waitingBox) {
@@ -341,21 +355,4 @@
 		@apply bg-red-500;
 	}
 
-	@keyframes gradient {
-		0% {
-			background-position: 0% 50%;
-		}
-		25% {
-			background-position: 50% 50%;
-		}
-		50% {
-			background-position: 100% 50%;
-		}
-		75% {
-			background-position: 50% 50%;
-		}
-		100% {
-			background-position: 0% 50%;
-		}
-	}
 </style>
