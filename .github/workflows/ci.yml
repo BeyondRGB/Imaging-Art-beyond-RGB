@@ -68,6 +68,7 @@ jobs:
             backend/vcpkg/vcpkg
             backend/vcpkg/scripts
             backend/vcpkg/ports
+            backend/vcpkg/.vcpkg-root
           key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
           restore-keys: vcpkg-${{ matrix.platform }}-
 
