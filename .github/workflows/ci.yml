@@ -61,9 +61,11 @@ jobs:
         id: cache
         with:
           path: |
+            backend/vcpkg/.git
             backend/vcpkg/installed
             backend/vcpkg/buildtrees
             backend/vcpkg/vcpkg
+            backend/vcpkg/scripts
           key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
           restore-keys: vcpkg-${{ matrix.platform }}-
 
