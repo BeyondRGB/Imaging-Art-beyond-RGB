@@ -2,7 +2,10 @@
 
 namespace btrgb {
 
-Image::Image(std::string name) { this->_name = name; }
+Image::Image(std::string path) {
+    this->_path = path;
+    this->_name = std::filesystem::path(path).filename();
+}
 
 Image::~Image() {
     /* Shouldn't have an effect, but it will help debug if
@@ -20,9 +23,13 @@ void Image::initImage(cv::Mat im) {
     this->_row_size = this->_width * this->_col_size;
 }
 
-std::string Image::getName() { return this->_name; }
+std::string Image::getName() {
+    return this->_name;
+}
 
-void Image::setName(std::string name) { this->_name = name; }
+std::string Image::getPath() {
+    return this->_path;
+}
 
 int Image::width() {
     _checkInit();
@@ -79,12 +86,12 @@ void Image::recycle() {
     this->_color_profile = none;
 }
 
-void inline Image::_checkInit() {
+void inline Image::_checkInit() const {
     if (this->_bitmap == nullptr)
         throw ImageNotInitialized(this->_name);
 }
 
-binary_ptr_t Image::getEncodedPNG(enum image_quality quality) {
+binary_ptr_t Image::getEncodedPNG(enum image_quality quality) const {
     std::vector<int> params;
     cv::Mat im;
 
@@ -168,7 +175,7 @@ void Image::setColorProfile(ColorSpace color_profile) {
     this->_color_profile = color_profile;
 }
 
-ColorSpace Image::getColorProfile() { return this->_color_profile; }
+ColorSpace Image::getColorProfile() const { return this->_color_profile; }
 
 void Image::setConversionMatrix(std::string key, cv::Mat m) {
 
@@ -197,15 +204,15 @@ cv::Mat Image::getConversionMatrix(std::string key) {
 }
 
 /* ====== static ======= */
-bool Image::is_tiff(std::string filename) {
-    if (!fs::is_regular_file(filename))
+bool Image::is_tiff(std::string path) {
+    if (!fs::is_regular_file(path))
         return false;
 
-    std::string::size_type i = filename.rfind('.');
+    const std::string::size_type i = path.rfind('.');
     if (i == std::string::npos)
         return false;
 
-    std::string ext = filename.substr(i + 1);
+    std::string ext = path.substr(i + 1);
     return ext == "tiff" || ext == "tif";
 }
 

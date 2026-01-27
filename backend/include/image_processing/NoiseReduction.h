@@ -3,7 +3,7 @@
 #define BEYOND_RGB_BACKEND_NOISEREDUCTION_H
 
 #include <image_processing/LeafComponent.h>
-#include <image_util //Image.hpp>
+#include <image_util/Image.hpp>
 
 class NoiseReduction : public LeafComponent {
   private:

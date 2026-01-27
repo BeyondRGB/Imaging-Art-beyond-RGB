@@ -8,7 +8,7 @@
 namespace fs = std::filesystem;
 
 #include <btrgb.hpp>
-#include <image_util //ColorProfiles.hpp>
+#include <image_util/ColorProfiles.hpp>
 
 /* Ways to loop:
 
@@ -66,7 +66,7 @@ enum image_quality { FAST, FULL };
 
 class Image {
   public:
-    Image(std::string filename);
+    Image(std::string path);
     ~Image();
 
     void initImage(cv::Mat im);
@@ -84,12 +84,13 @@ class Image {
     float *getPixelPointer(int row, int col);
 
     std::string getName();
-    void setName(std::string name);
 
-    binary_ptr_t getEncodedPNG(enum image_quality quality);
+    std::string getPath();
+
+    binary_ptr_t getEncodedPNG(enum image_quality quality) const;
 
     void setColorProfile(ColorSpace color_profile);
-    ColorSpace getColorProfile();
+    ColorSpace getColorProfile() const;
 
     void setExifTags(exif tags) { this->_tags = tags; }
     exif getExifTags() { return this->_tags; }
@@ -120,6 +121,8 @@ class Image {
 
   private:
     std::string _name;
+    std::string _path;
+
     float *_bitmap = nullptr;
     int _width = 0;
     int _height = 0;
@@ -131,7 +134,7 @@ class Image {
     ColorSpace _color_profile = none;
     std::unordered_map<std::string, cv::Mat> _conversions;
 
-    void _checkInit();
+    void _checkInit() const;
 };
 
 class ImageError : public std::exception {};
