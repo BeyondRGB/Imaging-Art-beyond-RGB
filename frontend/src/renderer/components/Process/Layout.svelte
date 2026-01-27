@@ -20,15 +20,20 @@
 
 <style lang="postcss">
 	.pages {
-		@apply w-full h-full flex overflow-hidden;
+		@apply w-full h-full overflow-hidden relative;
 	}
 	.item {
-		@apply flex-shrink-0 w-full h-full;
+		@apply w-full h-full;
 	}
 	/* Hide inactive tabs - visibility:hidden prevents focus */
+	/* position:absolute + z-index:-1 ensures they're always behind active tab */
 	.inactive {
 		visibility: hidden;
 		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: -1;
 		pointer-events: none;
+		opacity: 0;
 	}
 </style>
