@@ -104,15 +104,6 @@
 		}
 	}
 
-	$: if (tabList) {
-		let width = tabList.scrollWidth;
-
-		tabList.scroll({
-			top: 0,
-			left: $processState.currentTab * (width / tabs.length),
-			behavior: "smooth",
-		});
-	}
 
 	// Handle Process-specific messages (Thumbnails, Output images, HalfSizedPreview, etc.)
 	// Note: ColorManaged and ColorManagedTarget images are handled centrally in stores.ts
