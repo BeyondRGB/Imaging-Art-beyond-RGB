@@ -2,6 +2,7 @@
 	import { chart } from "svelte-apexcharts";
 	import { find, forEach } from "lodash";
 	import { getCssVar } from "@util/cssUtils";
+	import { appSettings } from "@util/stores";
 
 	export let dataAB;
 	export let dataLC;
@@ -45,8 +46,10 @@
 	};
 
 	const getOptions = function () {
-		const textColorPrimary = getCssVar("--color-text-primary") || "#ffffff";
-		const textColorSecondary = getCssVar("--color-text-secondary") || "#ffffff";
+		// Get theme colors with proper fallbacks for light/dark mode
+		const isDark = $appSettings?.isDarkTheme ?? true;
+		const textColorPrimary = getCssVar("--color-text-primary") || (isDark ? "#ffffff" : "#1f2937");
+		const textColorSecondary = getCssVar("--color-text-secondary") || (isDark ? "#9ca3af" : "#6b7280");
 
 		return {
 			series: getData(),
@@ -80,7 +83,7 @@
 			tooltip: {
 				shared: false,
 				intersect: true,
-				theme: "dark",
+				theme: isDark ? "dark" : "light",
 				x: {
 					show: false,
 				},
@@ -152,5 +155,7 @@
 </script>
 
 <main>
-	<div use:chart={getOptions()} />
+	{#key $appSettings?.isDarkTheme}
+		<div use:chart={getOptions()} />
+	{/key}
 </main>

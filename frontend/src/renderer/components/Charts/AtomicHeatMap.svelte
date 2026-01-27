@@ -165,9 +165,9 @@
 					highlightDataSeries: true,
 				},
 			},
-			tooltip: {
-				enabled: true,
-				theme: "dark",
+		tooltip: {
+			enabled: true,
+			theme: isDark ? "dark" : "light",
 				y: {
 					title: {
 						//todo keep????? y axis tooltip
