@@ -1,6 +1,7 @@
 #include <image_processing/SpectralCalibrator.h>
 #include <utils/calibration_util.hpp>
 #include <utils/time_tracker.hpp>
+#include <cpptrace/cpptrace.hpp>
 
 void SpectralCalibrator::execute(CommunicationObj *comms,
                                  btrgb::ArtObject *images) {
@@ -20,14 +21,13 @@ void SpectralCalibrator::execute(CommunicationObj *comms,
     }
 
     catch (const btrgb::ArtObj_ImageDoesNotExist &e) {
-        comms->send_info("Error: Flatfielding called out of order. Missing at "
-                         "least 1 image assignment.",
-                         this->get_name());
-        return;
+        std::string error_msg = "Flatfielding called out of order. Missing at least 1 image assignment.";
+        comms->send_error(this->get_name(), error_msg, cpptrace::generate_trace());
+        throw ImgProcessingComponent::error(error_msg, this->get_name());
     } catch (const std::logic_error &e) {
-        std::string error(e.what());
-        comms->send_info("Error: " + error, this->get_name());
-        return;
+        std::string error_msg = e.what();
+        comms->send_error(this->get_name(), error_msg, cpptrace::generate_trace());
+        throw ImgProcessingComponent::error(error_msg, this->get_name());
     }
 
     // Init Color Targets
