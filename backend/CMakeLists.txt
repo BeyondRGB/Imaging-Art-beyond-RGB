@@ -84,6 +84,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/backend_process/HalfSizePreview.cpp
         src/backend_process/OpenQualiaRequest.cpp
         src/backend_process/pipeline.cpp
+        src/backend_process/QRScanRequest.cpp
         src/backend_process/ReportRequest.cpp
         src/backend_process/SpectralPicker.cpp
         src/backend_process/SpectralPickerMeasured.cpp
@@ -156,6 +157,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/http_client.cpp
         src/utils/json.cpp
         src/utils/jsonafiable.cpp
+        src/utils/qr_detector.cpp
         src/utils/time_tracker.cpp
 )
 

@@ -3,6 +3,7 @@
 
 #include <backend_process/backend_process.hpp>
 #include <reference_data/oqm_parser.hpp>
+#include <utils/qr_detector.hpp>
 #include <string>
 #include <memory>
 
@@ -14,8 +15,9 @@
  * - Loading local OQM files
  * - Parsing OQM/CGATS format
  * - Converting to RefData-compatible CSV
+ * - Scanning QR codes from target images
  * 
- * Request format:
+ * Request format for FetchOpenQualia:
  * {
  *     "RequestType": "FetchOpenQualia",
  *     "RequestData": {
@@ -24,7 +26,15 @@
  *     }
  * }
  * 
- * Response format:
+ * Request format for ScanQRCode:
+ * {
+ *     "RequestType": "ScanQRCode",
+ *     "RequestData": {
+ *         "imagePath": "/path/to/target/image.tif"
+ *     }
+ * }
+ * 
+ * Response format for OpenQualiaLoaded:
  * {
  *     "ResponseType": "OpenQualiaLoaded",
  *     "ResponseData": {
@@ -34,6 +44,17 @@
  *         "measurementDate": "2024-01-15",
  *         "patchCount": 140,
  *         "csvPath": "/tmp/openqualia_xxx.csv",
+ *         "error": null
+ *     }
+ * }
+ * 
+ * Response format for QRCodeScanned:
+ * {
+ *     "ResponseType": "QRCodeScanned",
+ *     "ResponseData": {
+ *         "found": true,
+ *         "url": "https://...",
+ *         "isOpenQualia": true,
  *         "error": null
  *     }
  * }

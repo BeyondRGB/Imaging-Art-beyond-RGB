@@ -1,5 +1,6 @@
 #include <backend_process/ColorManagedImage.hpp>
 #include <backend_process/OpenQualiaRequest.hpp>
+#include <backend_process/QRScanRequest.hpp>
 #include <backend_process/ReportRequest.hpp>
 #include <backend_process/SpectralPicker.hpp>
 #include <backend_process/SpectralPickerMeasured.hpp>
@@ -71,6 +72,10 @@ ProcessManager::identify_process(std::string key) {
     else if (key == "FetchOpenQualia")
         process = std::shared_ptr<OpenQualiaRequest>(
             new OpenQualiaRequest(key));
+
+    else if (key == "ScanQRCode")
+        process = std::shared_ptr<QRScanRequest>(
+            new QRScanRequest(key));
 
     return process;
 }
