@@ -5,6 +5,7 @@
 	import { currentPage, appSettings, modal, serverError } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 	import RefDataModal from "@components/RefDataModal.svelte";
+	import OpenQualiaModal from "@components/OpenQualiaModal.svelte";
 	import ServerError from "@components/ServerError.svelte";
 
 	let showModal = false;
@@ -13,6 +14,7 @@
 		$modal === "Home" ||
 		$modal === "CustomRefData" ||
 		$modal === "CustomRefDataVer" ||
+		$modal === "OpenQualia" ||
 		$modal === "ServerError"
 	) {
 		showModal = true;
@@ -65,6 +67,14 @@
 	{:else if $modal === "CustomRefDataVer"}
 		<Modal
 			component={RefDataModal}
+			on:close={() => {
+				showModal = false;
+				$modal = null;
+			}}
+		/>
+	{:else if $modal === "OpenQualia"}
+		<Modal
+			component={OpenQualiaModal}
 			on:close={() => {
 				showModal = false;
 				$modal = null;

@@ -59,6 +59,12 @@ set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
 
+# Include cpp-httplib for HTTP requests (header-only)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpp-httplib)
+
+# Find OpenSSL for HTTPS support in cpp-httplib
+find_package(OpenSSL REQUIRED)
+
 # Configure cpptrace for macOS
 if(APPLE)
     set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use _Unwind for stack unwinding on macOS" FORCE)
@@ -76,6 +82,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/backend_process/backend_process.cpp
         src/backend_process/ColorManagedImage.cpp
         src/backend_process/HalfSizePreview.cpp
+        src/backend_process/OpenQualiaRequest.cpp
         src/backend_process/pipeline.cpp
         src/backend_process/ReportRequest.cpp
         src/backend_process/SpectralPicker.cpp
@@ -127,6 +134,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         # reference_data
         src/reference_data/color_patch.cpp
         src/reference_data/illuminants.cpp
+        src/reference_data/oqm_parser.cpp
         src/reference_data/ref_data.cpp
         src/reference_data/ref_data_array.cpp
         src/reference_data/standard_observer.cpp
@@ -145,6 +153,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/color_conversions.cpp
         src/utils/csv_parser.cpp
         src/utils/general_utils.cpp
+        src/utils/http_client.cpp
         src/utils/json.cpp
         src/utils/jsonafiable.cpp
         src/utils/time_tracker.cpp
@@ -183,6 +192,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE PNG::PNG)
+
+# OpenSSL for HTTPS support in cpp-httplib
+target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 
 # Pthreads & OpenMP, only required on Linux & Windows since macOS includes these in its compiler.
 if(NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "arm64-osx")

@@ -1,4 +1,5 @@
 #include <backend_process/ColorManagedImage.hpp>
+#include <backend_process/OpenQualiaRequest.hpp>
 #include <backend_process/ReportRequest.hpp>
 #include <backend_process/SpectralPicker.hpp>
 #include <backend_process/SpectralPickerMeasured.hpp>
@@ -66,6 +67,10 @@ ProcessManager::identify_process(std::string key) {
     else if (key == "SpectralPickerMeasured")
         process = std::shared_ptr<SpectralPickerMeasured>(
             new SpectralPickerMeasured(key));
+
+    else if (key == "FetchOpenQualia")
+        process = std::shared_ptr<OpenQualiaRequest>(
+            new OpenQualiaRequest(key));
 
     return process;
 }
