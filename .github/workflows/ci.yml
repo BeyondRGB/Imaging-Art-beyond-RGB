@@ -23,12 +23,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-26
-            platform: macos
+          # - os: macos-26 #temporarily disabling macos for faster iteration
+          #   platform: macos
           - os: ubuntu-24.04
             platform: linux
-          # - os: windows-latest #temporarily disabling windows for faster iteration
-          #   platform: windows
+          - os: windows-latest 
+            platform: windows
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,11 +45,16 @@ jobs:
       # install and enable GCC/G++ 14 for ubuntu, since 24.04 doesn't have it by default
       - name: Install macOS dependencies
         if: matrix.platform == 'macos'
-        run: brew install cmake ninja pkg-config
+        run: brew install cmake ninja pkg-config 
 
       - name: Setup MSVC
         if: matrix.platform == 'windows'
         uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Install pkg-config (Windows) # extra requirement for cmake on windows
+        if: matrix.platform == 'windows'
+        run: winget install bloodrock.pkg-config-lite --disable-interactivity --accept-source-agreements --accept-package-agreements
+        shell: powershell
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -213,111 +218,3 @@ jobs:
       # - name: Build Frontend
       #   working-directory: frontend
       #   run: npm run svelte-build
-
-      # - name: Run Cypress Tests
-      #   working-directory: frontend
-      #   env:
-      #     COVERAGE: 'true'
-      #   run: |
-      #     # Start dev server in background
-      #     npm run dev &
-      #     DEV_PID=$!
-      #     # Wait for server to be ready
-      #     for i in {1..30}; do
-      #       if curl -s http://localhost:3000 > /dev/null 2>&1; then
-      #         echo "Dev server is ready"
-      #         break
-      #       fi
-      #       if [ $i -eq 30 ]; then
-      #         echo "::error::Dev server failed to start"
-      #         kill $DEV_PID 2>/dev/null || true
-      #         exit 1
-      #       fi
-      #       sleep 2
-      #     done
-      #     # Run tests with coverage
-      #     if npm run test:coverage 2>&1 | tee cypress_output.log; then
-      #       TEST_EXIT_CODE=0
-      #     else
-      #       TEST_EXIT_CODE=${PIPESTATUS[0]}
-      #     fi
-          
-      #     # Parse Cypress output and create annotations
-      #     if [ $TEST_EXIT_CODE -eq 0 ]; then
-      #       echo "::notice::Frontend Cypress tests passed on ${{ matrix.platform }}"
-      #       # Extract test summary
-      #       TEST_SUMMARY=$(grep -E "Tests:|Passing:|Failing:" cypress_output.log | tail -3 || echo "")
-      #       if [ ! -z "$TEST_SUMMARY" ]; then
-      #         echo "$TEST_SUMMARY" | while read line; do
-      #           echo "::notice::$line"
-      #         done
-      #       fi
-      #     else
-      #       echo "::error::Frontend Cypress tests failed on ${{ matrix.platform }}"
-      #       # Extract failed test details
-      #       grep -E "FAILED|failing|error" cypress_output.log | while read line; do
-      #         echo "::error::$line"
-      #       done
-      #     fi
-          
-      #     # Kill dev server
-      #     kill $DEV_PID 2>/dev/null || true
-      #     exit $TEST_EXIT_CODE
-
-      # - name: Upload Frontend Coverage
-      #   if: always()
-      #   uses: codecov/codecov-action@v4
-      #   with:
-      #     files: frontend/coverage/lcov.info
-      #     flags: frontend,${{ matrix.platform }}
-      #     name: frontend-coverage-${{ matrix.platform }}
-      #     fail_ci_if_error: false
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     # Token is optional for public repos, but helps with protected branches
-
-      # - name: Test Summary (Unix)
-      #   if: always() && matrix.platform != 'windows'
-      #   run: |
-      #     echo "## Test Results Summary - ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
-      #     echo "" >> $GITHUB_STEP_SUMMARY
-      #     echo "### Backend Tests" >> $GITHUB_STEP_SUMMARY
-      #     if [ -f backend/build/Debug/test_output.log ]; then
-      #       echo '```' >> $GITHUB_STEP_SUMMARY
-      #       grep -E "All tests passed|test cases|assertions|FAILED" backend/build/Debug/test_output.log | tail -5 >> $GITHUB_STEP_SUMMARY || echo "Test output not available" >> $GITHUB_STEP_SUMMARY
-      #       echo '```' >> $GITHUB_STEP_SUMMARY
-      #     else
-      #       echo "Test output not available" >> $GITHUB_STEP_SUMMARY
-      #     fi
-      #     echo "" >> $GITHUB_STEP_SUMMARY
-      #     echo "### Frontend Tests" >> $GITHUB_STEP_SUMMARY
-      #     if [ -f frontend/cypress_output.log ]; then
-      #       echo '```' >> $GITHUB_STEP_SUMMARY
-      #       grep -E "Tests:|Passing:|Failing:" frontend/cypress_output.log | tail -5 >> $GITHUB_STEP_SUMMARY || echo "Test output not available" >> $GITHUB_STEP_SUMMARY
-      #       echo '```' >> $GITHUB_STEP_SUMMARY
-      #     else
-      #       echo "Test output not available" >> $GITHUB_STEP_SUMMARY
-      #     fi
-
-      # - name: Test Summary (Windows)
-      #   if: always() && matrix.platform == 'windows'
-      #   shell: cmd
-      #   run: |
-      #     echo ## Test Results Summary - windows >> %GITHUB_STEP_SUMMARY%
-      #     echo. >> %GITHUB_STEP_SUMMARY%
-      #     echo ### Backend Tests >> %GITHUB_STEP_SUMMARY%
-      #     if exist backend\build\Debug\test_output.log (
-      #       echo ``` >> %GITHUB_STEP_SUMMARY%
-      #       type backend\build\Debug\test_output.log | findstr /C:"All tests passed" /C:"test cases" /C:"assertions" /C:"FAILED" >> %GITHUB_STEP_SUMMARY% || echo Test output not available >> %GITHUB_STEP_SUMMARY%
-      #       echo ``` >> %GITHUB_STEP_SUMMARY%
-      #     ) else (
-      #       echo Test output not available >> %GITHUB_STEP_SUMMARY%
-      #     )
-      #     echo. >> %GITHUB_STEP_SUMMARY%
-      #     echo ### Frontend Tests >> %GITHUB_STEP_SUMMARY%
-      #     if exist frontend\cypress_output.log (
-      #       echo ``` >> %GITHUB_STEP_SUMMARY%
-      #       type frontend\cypress_output.log | findstr /C:"Tests:" /C:"Passing:" /C:"Failing:" >> %GITHUB_STEP_SUMMARY% || echo Test output not available >> %GITHUB_STEP_SUMMARY%
-      #       echo ``` >> %GITHUB_STEP_SUMMARY%
-      #     ) else (
-      #       echo Test output not available >> %GITHUB_STEP_SUMMARY%
-      #     )
