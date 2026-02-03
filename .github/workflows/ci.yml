@@ -134,7 +134,7 @@ jobs:
         shell: cmd
         run: |
           set VCPKG_ROOT=%CD%\vcpkg
-          call win10_config_environment.bat
+          call vcpkg_first_time_setup.bat
 
       - name: Build Backend with Tests (Windows)
         if: matrix.platform == 'windows'
