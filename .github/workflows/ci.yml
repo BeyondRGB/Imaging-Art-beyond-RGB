@@ -41,6 +41,7 @@ jobs:
         with:
           packages: build-essential cmake curl zip unzip tar pkg-config autoconf autoconf-archive automake libtool libopencv-dev linux-libc-dev gcc-14 g++-14 npm rpm lcov
           version: linux-apt-${{ hashFiles('backend/apt-dependencies.txt') }}
+          execute_install_scripts: true
 
       - name: Enable GCC-14 (Linux)
         if: matrix.platform == 'linux'
