@@ -4,7 +4,9 @@ namespace btrgb {
 
 Image::Image(std::string path) {
     this->_path = path;
-    this->_name = std::filesystem::path(path).filename();
+
+    // This static cast is needed! Clang and MSVC may say it is unnecessary, but GCC needs it.
+    this->_name = static_cast<std::string>(std::filesystem::path(path).filename());
 }
 
 Image::~Image() {
