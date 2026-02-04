@@ -1,34 +1,29 @@
 #include <image_util/image_writer/ImageWriter.hpp>
-#include <image_util/image_writer/LibpngWriter.hpp>
 #include <image_util/image_writer/LibTiffWriter.hpp>
+#include <image_util/image_writer/LibpngWriter.hpp>
 
 namespace btrgb {
 
-    ImageWriter::ImageWriter(enum output_type file_type) {
-        switch(file_type) {
+ImageWriter::ImageWriter(enum output_type file_type) {
+    switch (file_type) {
 
-            case PNG:
-                this->writer = new LibpngWriter();
-                break;
-            
-            default:
-            case TIFF:
-                this->writer = new LibTiffWriter();
-                break;
+    case PNG:
+        this->writer = new LibpngWriter();
+        break;
 
-        }
+    default:
+    case TIFF:
+        this->writer = new LibTiffWriter();
+        break;
     }
-
-    ImageWriter::~ImageWriter() {
-        delete this->writer;
-    }
-
-    void ImageWriter::write(Image* im, std::string filename) {
-        this->writer->write(im, filename);
-    }
-    
-    void ImageWriter::write(Image* im) {
-        this->writer->write(im);
-    }
-
 }
+
+ImageWriter::~ImageWriter() { delete this->writer; }
+
+void ImageWriter::write(Image *im, std::string filename) {
+    this->writer->write(im, filename);
+}
+
+void ImageWriter::write(Image *im) { this->writer->write(im); }
+
+} // namespace btrgb

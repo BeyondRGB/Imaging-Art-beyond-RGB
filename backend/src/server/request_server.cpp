@@ -1,9 +1,9 @@
 #include <server/globals_singleton.hpp>
 #include <server/request_server.hpp>
 
+using websocketpp::lib::bind;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
-using websocketpp::lib::bind;
 
 void RequestServer::init_server() {
     try {
@@ -16,19 +16,13 @@ void RequestServer::init_server() {
 
         // Register our message handler
         server_m.set_message_handler(
-            bind(&RequestServer::msg_handler, 
-                 this, 
-                 &server_m, 
-                 ::_1, 
-                 ::_2));
+            bind(&RequestServer::msg_handler, this, &server_m, ::_1, ::_2));
 
         // Listen on port given by frontend
         server_m.listen(GlobalsSingleton::get_instance()->get_port());
-    }
-    catch (websocketpp::exception const& e) {
+    } catch (websocketpp::exception const &e) {
         std::cout << e.what() << std::endl;
-    }
-    catch (...) {
+    } catch (...) {
         std::cout << "other exception" << std::endl;
     }
 }
@@ -40,30 +34,29 @@ void RequestServer::start_server() {
 
         // Start the ASIO io_service run loop
         server_m.run();
-    }
-    catch (websocketpp::exception const& e) {
+    } catch (websocketpp::exception const &e) {
         std::cout << e.what() << std::endl;
-    }
-    catch (...) {
+    } catch (...) {
         std::cout << "other exception" << std::endl;
     }
 }
 
-void RequestServer::msg_handler(server* s, websocketpp::connection_hdl hdl, message_ptr msg) {
-    
+void RequestServer::msg_handler(server *s, websocketpp::connection_hdl hdl,
+                                message_ptr msg) {
+
     if (msg->get_payload() == "shutdown") {
         this->shutdown();
         return;
     }
-    
-    std::shared_ptr<CommunicationObj> coms_obj = std::shared_ptr<CommunicationObj>(new CommunicationObj( s, hdl, msg));
+
+    std::shared_ptr<CommunicationObj> coms_obj =
+        std::shared_ptr<CommunicationObj>(new CommunicationObj(s, hdl, msg));
     this->process_manager_m.process_request(msg->get_payload(), coms_obj);
 }
 
-
 void RequestServer::shutdown() {
     std::cout << "Shutting down server." << std::endl;
-	//TODO look up to see if anything else needs to be done here
+    // TODO look up to see if anything else needs to be done here
     server_m.stop_listening();
     server_m.stop();
 }

@@ -1,19 +1,20 @@
 #ifndef BTRGB_IMAGE_H
 #define BTRGB_IMAGE_H
 
-#include <string>
-#include <opencv2/opencv.hpp>
 #include <filesystem>
+#include <opencv2/opencv.hpp>
+#include <string>
 #include <unordered_map>
 namespace fs = std::filesystem;
 
 #include <btrgb.hpp>
-#include <image_util//ColorProfiles.hpp>
+#include <image_util/ColorProfiles.hpp>
 
 /* Ways to loop:
 
     // Apply operation directly to mat.
     im->getMat() *= scaler;
+
 
     // Multi-threaded/parallel loop
     float scaler = ...
@@ -25,13 +26,9 @@ namespace fs = std::filesystem;
         pixel[B] *= scaler;
     });
     // Six channel image
-    im.forEach<cv::Vec<float,6>([](cv::Vec<float,6>& pixel, const int* pos) -> void {
-        for( int ch = 0; ch < 6; ch++)
-            pixel[ch] *= scaler;
-        pixel[R1] *= scaler;
-        pixel[G1] *= scaler;
-        pixel[B1] *= scaler;
-        pixel[R2] *= scaler;
+    im.forEach<cv::Vec<float,6>([](cv::Vec<float,6>& pixel, const int* pos) ->
+   void { for( int ch = 0; ch < 6; ch++) pixel[ch] *= scaler; pixel[R1] *=
+   scaler; pixel[G1] *= scaler; pixel[B1] *= scaler; pixel[R2] *= scaler;
         pixel[G2] *= scaler;
         pixel[B2] *= scaler;
     });
@@ -43,7 +40,7 @@ namespace fs = std::filesystem;
     float* pixel_ptr;
     for (row = 0; row < height; row++) {
         for (col = 0; col < width; col++) {
-            
+
             // Every channel
             for (ch = 0; ch < channels; ch++) {
                 pixel_value = im->getPixel(row, col, ch);
@@ -58,116 +55,118 @@ namespace fs = std::filesystem;
     }
 */
 
-
 namespace btrgb {
 
-    typedef std::unique_ptr<std::vector<uchar>> binary_ptr_t;
-    typedef std::unique_ptr<std::string> base64_ptr_t;
+typedef std::unique_ptr<std::vector<uchar>> binary_ptr_t;
+typedef std::unique_ptr<std::string> base64_ptr_t;
 
-    enum output_type {
-        PNG,
-        TIFF,
-        JPEG
+enum output_type { PNG, TIFF, JPEG };
+
+enum image_quality { FAST, FULL };
+
+class Image {
+  public:
+    Image(std::string path);
+    ~Image();
+
+    void initImage(cv::Mat im);
+
+    cv::Mat getMat();
+
+    int width();
+    int height();
+    int channels();
+    float *bitmap();
+
+    uint32_t getIndex(int row, int col, int ch);
+    void setPixel(int row, int col, int ch, float value);
+    float getPixel(int row, int col, int ch);
+    float *getPixelPointer(int row, int col);
+
+    std::string getName();
+
+    std::string getPath();
+
+    binary_ptr_t getEncodedPNG(enum image_quality quality) const;
+
+    void setColorProfile(ColorSpace color_profile);
+    ColorSpace getColorProfile() const;
+
+    void setExifTags(exif tags) { this->_tags = tags; }
+    exif getExifTags() { return this->_tags; }
+
+    void setConversionMatrix(std::string key, cv::Mat m);
+    cv::Mat getConversionMatrix(std::string key);
+    class ConversionsItr {
+      public:
+        typedef std::unordered_map<std::string, cv::Mat>::iterator conv_itr;
+        ConversionsItr(conv_itr b, conv_itr e) : _begin(b), _end(e) {}
+        conv_itr begin() noexcept { return _begin; };
+        conv_itr end() noexcept { return _end; };
+
+      private:
+        conv_itr _begin;
+        conv_itr _end;
     };
+    ConversionsItr getConversionsIterator() {
+        return ConversionsItr(_conversions.begin(), _conversions.end());
+    }
 
-    enum image_quality {
-        FAST, FULL
-    };
+    void recycle();
+    std::shared_ptr<int> _raw_bit_depth;
 
-    class Image {
-        public:
-            Image(std::string filename);
-            ~Image();
+    /* ====== static ======= */
+    static bool is_tiff(std::string filename);
+    static cv::Mat copyMatConvertDepth(cv::Mat input, int cv_depth);
 
-            void initImage(cv::Mat im);
+  private:
+    std::string _name;
+    std::string _path;
 
-            cv::Mat getMat();
+    float *_bitmap = nullptr;
+    int _width = 0;
+    int _height = 0;
+    int _channels = 0;
+    int _row_size = 0;
+    int _col_size = 0;
+    exif _tags;
+    cv::Mat _opencv_mat;
+    ColorSpace _color_profile = none;
+    std::unordered_map<std::string, cv::Mat> _conversions;
 
-            int width();
-            int height();
-            int channels();
-            float* bitmap();
+    void _checkInit() const;
+};
 
-            uint32_t getIndex(int row, int col, int ch);
-            void setPixel(int row, int col, int ch, float value);
-            float getPixel(int row, int col, int ch);
-            float* getPixelPointer(int row, int col);
+class ImageError : public std::exception {};
 
-            std::string getName();
-            void setName(std::string name);
+class ImageNotInitialized : public ImageError {
+  private:
+    std::string msg;
 
-            binary_ptr_t getEncodedPNG(enum image_quality quality);
+  public:
+    ImageNotInitialized(std::string msg) {
+        this->msg = "The Image \"" + msg + "\" has not been initialized.";
+    }
+    virtual char const *what() const noexcept { return this->msg.c_str(); }
+};
 
-            void setColorProfile(ColorSpace color_profile);
-            ColorSpace getColorProfile();
+class FailedToEncode : public ImageError {
+  public:
+    virtual char const *what() const noexcept {
+        return "[Image::to<Binary|Base64>OfType] OpenCV failed to encode "
+               "image.";
+    }
+};
 
-            void setExifTags(exif tags) {this->_tags = tags;}
-            exif getExifTags() {return this->_tags;}
-            
-            void setConversionMatrix(std::string key, cv::Mat m);
-            cv::Mat getConversionMatrix(std::string key);
-            class ConversionsItr {
-                public:
-                    typedef std::unordered_map<std::string, cv::Mat>::iterator conv_itr;
-                    ConversionsItr(conv_itr b, conv_itr e) : _begin(b), _end(e) {}
-                    conv_itr begin() noexcept {return _begin;};
-                    conv_itr end() noexcept {return _end;};
-                private:
-                    conv_itr _begin;
-                    conv_itr _end;
-            };
-            ConversionsItr getConversionsIterator() {
-                return ConversionsItr(_conversions.begin(), _conversions.end());
-            }
+class UnsupportedChannels : public ImageError {
+  public:
+    virtual char const *what() const noexcept {
+        return "Image::initBitmap(): The number of channels must be between 1 "
+               "and 10 inclusive.";
+    }
+};
 
-
-            void recycle();
-            std::shared_ptr<int> _raw_bit_depth;
-            
-            /* ====== static ======= */
-            static bool is_tiff(std::string filename);
-            static cv::Mat copyMatConvertDepth(cv::Mat input, int cv_depth);
-            
-
-        private:
-            std::string _name;
-            float* _bitmap = nullptr;
-            int _width = 0;
-            int _height = 0;
-            int _channels = 0;
-            int _row_size = 0;
-            int _col_size = 0;
-            exif _tags;
-            cv::Mat _opencv_mat;
-            ColorSpace _color_profile = none;
-            std::unordered_map<std::string, cv::Mat> _conversions;
-
-            void _checkInit();
-    };
-
-    class ImageError : public std::exception {};
-
-    class ImageNotInitialized : public ImageError {
-        private:
-            std::string msg;
-        public:
-            ImageNotInitialized(std::string msg) {
-                this->msg = "The Image \"" + msg + "\" has not been initialized.";
-            }
-            virtual char const * what() const noexcept { return  this->msg.c_str(); }
-    };
-
-    class FailedToEncode : public ImageError {
-        public:
-            virtual char const * what() const noexcept { return "[Image::to<Binary|Base64>OfType] OpenCV failed to encode image."; }
-    };
-
-    class UnsupportedChannels : public ImageError {
-        public:
-            virtual char const * what() const noexcept { return "Image::initBitmap(): The number of channels must be between 1 and 10 inclusive."; }
-    };
-    
-}
+} // namespace btrgb
 
 const int R = 0;
 const int G = 1;

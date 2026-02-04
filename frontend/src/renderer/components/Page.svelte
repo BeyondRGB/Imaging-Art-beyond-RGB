@@ -88,7 +88,7 @@
 		background-color: var(--color-surface-base);
 		@apply w-full h-full pt-0 relative overflow-hidden;
 	}
-	
+
 	.content {
 		@apply w-full h-full relative;
 	}

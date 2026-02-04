@@ -68,10 +68,10 @@
 
 	// Compute isDarkTheme based on preference
 	function computeIsDark(pref: ThemePreference): boolean {
-		if (pref === 'system') {
+		if (pref === "system") {
 			return systemThemeQuery.matches;
 		}
-		return pref === 'dark';
+		return pref === "dark";
 	}
 
 	// Update isDarkTheme in settings when preference or system changes
@@ -87,7 +87,7 @@
 
 	// Listen for system theme changes
 	function handleSystemThemeChange() {
-		if ($appSettings.themePreference === 'system') {
+		if ($appSettings.themePreference === "system") {
 			updateDarkTheme();
 		}
 	}
@@ -124,13 +124,13 @@
 </main>
 
 <style global lang="postcss">
-	@import './styles/theme.css';
-	
+	@import "./styles/theme.css";
+
 	@tailwind base;
 	@tailwind components;
 	@tailwind utilities;
 	@tailwind variants;
-	
+
 	html,
 	body {
 		width: 100%;
@@ -142,8 +142,7 @@
 	}
 	main {
 		height: 100%;
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-			Helvetica, Arial, sans-serif;
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	}
 
 	.app {
