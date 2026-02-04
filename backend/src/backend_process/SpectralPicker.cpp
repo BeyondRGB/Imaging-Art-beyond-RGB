@@ -23,7 +23,7 @@ void SpectralPicker::run() {
             local_file;
 
         if (!btrgb::Image::is_tiff(filename))
-            throw std::runtime_error("Spectral image is not a tiff file");
+            throw std::runtime_error("Spectral image is not a tiff file.");
 
         tiff_reader->open(filename);
         int width = tiff_reader->width();
@@ -34,7 +34,7 @@ void SpectralPicker::run() {
         int y = y_rel * width;
 
         if (x < 0 || x > width || y < 0 || y > height)
-            throw std::runtime_error("Invalid coordinates");
+            throw std::runtime_error("Invalid coordinates.");
 
         int left = (x - radius < 0 ? 0 : x - radius);
         int right = (x + radius >= width ? width - 1 : x + radius);
@@ -69,7 +69,7 @@ void SpectralPicker::run() {
         this->coms_obj_m->send_spectrum((float *)spectrum.data, spectrum.rows);
 
     } catch (const ParsingError &e) {
-        this->coms_obj_m->send_error("Invalid SpectralPicker JSON",
+        this->coms_obj_m->send_error("Invalid SpectralPicker JSON. Restart BeyondRGB to View the image.",
                                      "SpectralPicker",
                                      cpptrace::generate_trace());
     } catch (const std::exception &e) {

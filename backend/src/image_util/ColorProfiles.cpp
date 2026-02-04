@@ -18,8 +18,7 @@ void ColorProfiles::convert(cv::Mat im, void *from_profile_data,
         type = TYPE_RGB_FLT;
         break;
     default:
-        throw std::runtime_error(
-            "[ColorProfiles::convert] Mat type not supported.");
+        throw std::runtime_error("Image depth not not supported, image must be 16-bit, 8-bit or floating point decimal.");
     }
 
     cmsHPROFILE from_profile, to_profile;
@@ -43,7 +42,7 @@ void ColorProfiles::convert(cv::Mat im, ColorSpace from, ColorSpace to) {
 
     else if (im.channels() != 3)
         throw std::runtime_error(
-            "[ColorProfiles::convert] Only supports three-channel images.");
+            "Images can only be three-channels.");
 
     else if (from == ColorSpace::none)
         ColorProfiles::apply_gamma(im, ColorSpace::sRGB);

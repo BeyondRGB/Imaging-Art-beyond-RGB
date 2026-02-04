@@ -101,8 +101,7 @@ void SpectralPickerMeasured::run() {
 
         std::ifstream prj_file(prj_filename);
         if (!prj_file.is_open()) {
-            throw std::runtime_error("Failed to open project file: " +
-                                     prj_filename);
+            throw std::runtime_error("Failed to open project file: " + prj_filename);
         }
 
         auto json = jsoncons::json::parse(prj_file);
@@ -126,7 +125,8 @@ void SpectralPickerMeasured::run() {
         std::cout << "Finished processing." << std::endl;
     } catch (const std::exception &e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
-        this->coms_obj_m->send_error(this->get_process_name(), e.what(),
-                                     cpptrace::generate_trace());
+        this->coms_obj_m->send_error("Invalid SpectralPicker JSON. Restart BeyondRGB to View the image.",
+            this->get_process_name(),
+            cpptrace::generate_trace());
     }
 }
