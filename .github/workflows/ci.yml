@@ -94,7 +94,7 @@ jobs:
       - name: Build Backend with Tests (macOS)
         if: matrix.platform == 'macos'
         working-directory: backend
-        run: ./unix_build.sh
+        run: ./unix_build.sh Debug
         # cmake -B build/Debug -S . \
         #   -D CMAKE_BUILD_TYPE=Debug \
         #   -D ENABLE_TESTS=ON \
