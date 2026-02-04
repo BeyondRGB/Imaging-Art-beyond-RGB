@@ -24,10 +24,10 @@ jobs:
         include:
           - os: macos-26 # macOS builds not currently supported by CI
             platform: macos
-          # - os: ubuntu-24.04
-          #   platform: linux
-          # - os: windows-latest 
-          #   platform: windows
+          - os: ubuntu-24.04
+            platform: linux
+          - os: windows-latest 
+            platform: windows
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
