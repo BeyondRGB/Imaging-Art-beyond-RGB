@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 # VCPKG on macOS requires system architectures to be set, so set those here.
-# Requires a check for the right architecture (x_86 or arm64) as well as making sure
+# Requires a check for the right architecture (x86 or arm64) as well as making sure
 # it is not already defined to allow the user to override it using the command line.
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES)
     if (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
@@ -19,6 +19,7 @@ endif ()
 
 # Trace VCPKG package finding (Use for debugging VCPKG errors)
 set(VCPKG_TRACE_FIND_PACKAGE ON)
+message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
 project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.2.0)
 
