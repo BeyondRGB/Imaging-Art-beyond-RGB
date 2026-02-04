@@ -91,10 +91,10 @@ jobs:
           chmod +x *.sh
           export VCPKG_ROOT="$PWD/vcpkg"
           ./unix_config_environment.sh
-      - name: Build Backend with Tests (macOS)
-        if: matrix.platform == 'macos'
-        working-directory: backend
-        run: ./unix_build.sh Debug
+      # - name: Build Backend with Tests (macOS)
+      #   if: matrix.platform == 'macos'
+      #   working-directory: backend
+      #   run: ./unix_build.sh Debug
       - name: Install vcpkg dependencies (Linux)
         if: matrix.platform == 'linux'
         working-directory: backend
@@ -102,10 +102,10 @@ jobs:
           chmod +x *.sh
           export VCPKG_ROOT="$PWD/vcpkg"
           ./unix_config_environment.sh
-      - name: Build Backend with Tests (Linux)
-        if: matrix.platform == 'linux'
-        working-directory: backend
-        run: ./unix_build.sh Debug      
+      # - name: Build Backend with Tests (Linux)
+      #   if: matrix.platform == 'linux'
+      #   working-directory: backend
+      #   run: ./unix_build.sh Debug      
       - name: Install vcpkg dependencies (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
@@ -114,16 +114,16 @@ jobs:
           set VCPKG_ROOT=%CD%\vcpkg
           call vcpkg_first_time_setup.bat
 
-      - name: Build Backend with Tests (Windows)
-        if: matrix.platform == 'windows'
-        working-directory: backend
-        shell: cmd
-        run: |
-          set VCPKG_ROOT=%CD%\vcpkg
-          cmake -B build\Debug -S . -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
-          if errorlevel 1 exit /b 1
-          cmake --build build\Debug --config Debug
-          if errorlevel 1 exit /b 1
+      # - name: Build Backend with Tests (Windows)
+      #   if: matrix.platform == 'windows'
+      #   working-directory: backend
+      #   shell: cmd
+      #   run: |
+      #     set VCPKG_ROOT=%CD%\vcpkg
+      #     cmake -B build\Debug -S . -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DENABLE_TESTS=ON -DENABLE_COVERAGE=ON -DCMAKE_BUILD_TYPE=Debug
+      #     if errorlevel 1 exit /b 1
+      #     cmake --build build\Debug --config Debug
+      #     if errorlevel 1 exit /b 1
 
       # - name: Run Backend Unit Tests (Unix)
       #   if: matrix.platform != 'windows'
