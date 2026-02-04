@@ -95,13 +95,6 @@ jobs:
         if: matrix.platform == 'macos'
         working-directory: backend
         run: ./unix_build.sh Debug
-        # cmake -B build/Debug -S . \
-        #   -D CMAKE_BUILD_TYPE=Debug \
-        #   -D ENABLE_TESTS=ON \
-        #   -D ENABLE_COVERAGE=ON \
-        #   -D VCPKG_TARGET_TRIPLET=$VCPKG_TRIPLET \
-        #   -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/backend/vcpkg/scripts/buildsystems/vcpkg.cmake
-        # cmake --build build/Debug -j$(sysctl -n hw.logicalcpu)    
       - name: Install vcpkg dependencies (Linux)
         if: matrix.platform == 'linux'
         working-directory: backend
@@ -112,15 +105,7 @@ jobs:
       - name: Build Backend with Tests (Linux)
         if: matrix.platform == 'linux'
         working-directory: backend
-        run: |
-          cmake -B build/Debug -S . \
-            -D CMAKE_BUILD_TYPE=Debug \
-            -D ENABLE_TESTS=ON \
-            -D ENABLE_COVERAGE=ON \
-            -D VCPKG_TARGET_TRIPLET=x64-linux \
-            -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/backend/vcpkg/scripts/buildsystems/vcpkg.cmake
-          cmake --build build/Debug -j$(nproc)
-      
+        run: ./unix_build.sh Debug      
       - name: Install vcpkg dependencies (Windows)
         if: matrix.platform == 'windows'
         working-directory: backend
