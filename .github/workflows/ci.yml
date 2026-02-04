@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - os: macos-26 #temporarily disabling macos for faster iteration
+          # - os: macos-26 # macOS builds not currently supported by CI
           #   platform: macos
           - os: ubuntu-24.04
             platform: linux
@@ -34,18 +34,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
-      - name: Install and cache Linux dependencies (APT)
-        if: matrix.platform == 'linux'
-        uses: awalsh128/cache-apt-pkgs-action@latest
-        with:
-          packages: build-essential cmake curl zip unzip tar pkg-config autoconf autoconf-archive automake libtool libopencv-dev linux-libc-dev gcc-14 g++-14 npm rpm lcov
-          version: linux-apt-${{ hashFiles('backend/apt-dependencies.txt') }}
-          execute_install_scripts: true
 
-      - name: Enable GCC-14 (Linux)
+      - name: Install APT dependencies (Linux)
         if: matrix.platform == 'linux'
         run: |
+          sudo apt update
+          sudo apt install $(cat backend/apt-dependencies.txt)
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14
       # enable GCC/G++ 14 for ubuntu, since 24.04 doesn't have it by default
