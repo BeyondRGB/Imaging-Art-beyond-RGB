@@ -18,8 +18,8 @@ if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECT
 endif ()
 
 # Trace VCPKG package finding (Use for debugging VCPKG errors)
-set(VCPKG_TRACE_FIND_PACKAGE ON)
-message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
+#set(VCPKG_TRACE_FIND_PACKAGE ON)
+#message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
 project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.2.0)
 
