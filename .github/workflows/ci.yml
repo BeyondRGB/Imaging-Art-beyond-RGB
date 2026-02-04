@@ -90,13 +90,13 @@ jobs:
         run: |
           chmod +x *.sh
           export VCPKG_ROOT="$PWD/vcpkg"
-          ./unix_config_environment.sh
           # Determine architecture
           if [ "$(uname -m)" = "arm64" ]; then
             VCPKG_TRIPLET="arm64-osx"
           else
             VCPKG_TRIPLET="x64-osx"
           fi
+          ./unix_config_environment.sh
       - name: Build Backend with Tests (macOS)
         if: matrix.platform == 'macos'
         working-directory: backend
