@@ -48,8 +48,8 @@
 	const getOptions = function () {
 		// Get theme colors with proper fallbacks for light/dark mode
 		const isDark = $appSettings?.isDarkTheme ?? true;
-		const textColorPrimary = getCssVar("--color-text-primary") || (isDark ? "#ffffff" : "#1f2937");
-		const textColorSecondary = getCssVar("--color-text-secondary") || (isDark ? "#9ca3af" : "#6b7280");
+		const textColorPrimary = getCssVar("--color-text-primary", isDark ? "#ffffff" : "#1f2937");
+		const textColorSecondary = getCssVar("--color-text-secondary", isDark ? "#9ca3af" : "#6b7280");
 
 		return {
 			series: getData(),
