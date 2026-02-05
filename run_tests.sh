@@ -58,11 +58,7 @@ cd "${BACKEND_DIR}"
 # Check if vcpkg is configured
 if [ ! -d "vcpkg/installed" ]; then
     echo -e "${YELLOW}Warning: vcpkg not configured. Running config script...${NC}"
-    if [ "$PLATFORM" = "macos" ]; then
-        ./osx_config_environment.sh
-    else
-        ./linux_config_environment.sh
-    fi
+    ./unix_config_environment.sh
 fi
 
 # Build with tests and coverage flags
