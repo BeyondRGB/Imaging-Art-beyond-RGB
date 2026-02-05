@@ -19,7 +19,7 @@ for arg in "$@"; do
   esac
 done
 
-while getopts "tTm" opt; do
+while getopts "tTm:" opt; do
 	case "$opt" in
 		't') build_tests=true ;;
 #		'T') add_triplet=true ;;
@@ -29,11 +29,11 @@ while getopts "tTm" opt; do
 done
 
 if [ -z ${mode+x} ]; then
-	echo "Mode needs to be set to Debug or Release"
+	echo "Please supply a build mode."
 	usage
 	exit 1
 elif ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
-    echo "Mode needs to be set to Debug or Release"
+    echo "Mode needs to be set to Debug or Release. Currently set to: ${mode}"
     usage
     exit 1
 fi
@@ -56,16 +56,12 @@ if [ "$set_cmake_args" = false ]; then
     set --
 fi
 
-echo "$@"
-
 cmake -B "build/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@"
 
 if [ $? -ne 0 ]; then
-	echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh."
+	echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh"
 	exit
 fi
-
-exit
 
 cd "$build_directory/${mode}" || exit
 
