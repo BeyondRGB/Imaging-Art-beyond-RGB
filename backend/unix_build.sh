@@ -1,6 +1,13 @@
 #!/bin/sh
 build_directory="build"
 
+usage() {
+    echo "usage $0 [-t | --test] [-m | --mode] (Debug | Release)"
+    echo "Options:"
+    echo "  -t | --test           Build tests."
+    echo "  -m | --mode           Set the build can be: Debug | Release"
+}
+
 # Transform long options to short ones: https://stackoverflow.com/a/30026641
 for arg in "$@"; do
   shift
@@ -22,8 +29,13 @@ while getopts "tTm" opt; do
 done
 
 if [ -z ${mode+x} ]; then
-	echo "No mode specified"
+	echo "Mode needs to be set to Debug or Release"
+	usage
 	exit 1
+elif ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
+    echo "Mode needs to be set to Debug or Release"
+    usage
+    exit 1
 fi
 
 # Run CMake
