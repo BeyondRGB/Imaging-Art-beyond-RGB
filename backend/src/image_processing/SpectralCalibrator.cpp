@@ -22,11 +22,11 @@ void SpectralCalibrator::execute(CommunicationObj *comms,
 
     catch (const btrgb::ArtObj_ImageDoesNotExist &e) {
         std::string error_msg = "Flatfielding called out of order. Missing at least 1 image assignment.";
-        comms->send_error(this->get_name(), error_msg, cpptrace::generate_trace());
+        comms->send_error(error_msg, this->get_name(), cpptrace::generate_trace());
         throw ImgProcessingComponent::error(error_msg, this->get_name());
     } catch (const std::logic_error &e) {
         std::string error_msg = e.what();
-        comms->send_error(this->get_name(), error_msg, cpptrace::generate_trace());
+        comms->send_error(error_msg, this->get_name(), cpptrace::generate_trace());
         throw ImgProcessingComponent::error(error_msg, this->get_name());
     }
 
