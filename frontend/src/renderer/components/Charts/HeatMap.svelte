@@ -1,44 +1,44 @@
 <script>
-	import "@carbon/charts/styles.min.css";
-	import "carbon-components/css/carbon-components.min.css";
-	import { find } from "lodash";
-	import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
-	import Button from "@components/Button.svelte";
-	import SwitchRow from "@components/SwitchRow.svelte";
-	import { createEventDispatcher } from "svelte";
-	import { exportHeatmapCSV } from "@util/csvExport.js";
-	export let data;
+	// import "@carbon/charts/styles.min.css";
+	// import "carbon-components/css/carbon-components.min.css";
+	// import { find } from "lodash";
+	// import AtomicHeatMap from "@components/Charts/AtomicHeatMap.svelte";
+	// import Button from "@components/Button.svelte";
+	// import SwitchRow from "@components/SwitchRow.svelte";
+	// import { createEventDispatcher } from "svelte";
+	// import { exportHeatmapCSV } from "@util/csvExport.js";
+	// export let data;
 
-	const dispatch = createEventDispatcher();
+	// const dispatch = createEventDispatcher();
 
-	function handleDataPointSelect(event) {
-		// Re-dispatch the event to the parent
-		dispatch("datapointselect", event.detail);
-	}
+	// function handleDataPointSelect(event) {
+	// 	// Re-dispatch the event to the parent
+	// 	dispatch("datapointselect", event.detail);
+	// }
 
-	export let visionDeficiencyMode = false;
-	let mapData = [];
-	$: if (data?.matrix_values) {
-		const deltaE = find(data?.matrix_values, { name: "CM DeltaE Values" });
-		mapData = deltaE?.data.slice().reverse();
-	}
-	$: flattenedValues = mapData ? mapData.flat() : [];
-	$: sortedValues = flattenedValues.slice().sort((a, b) => a - b);
-	let p90obj = null;
+	// export let visionDeficiencyMode = false;
+	// let mapData = [];
+	// $: if (data?.matrix_values) {
+	// 	const deltaE = find(data?.matrix_values, { name: "CM DeltaE Values" });
+	// 	mapData = deltaE?.data.slice().reverse();
+	// }
+	// $: flattenedValues = mapData ? mapData.flat() : [];
+	// $: sortedValues = flattenedValues.slice().sort((a, b) => a - b);
+	// let p90obj = null;
 
-	$: p90obj = sortedValues.length ? sortedValues[Math.floor(0.9 * sortedValues.length) - 1] : null;
-	$: if (p90obj !== null) {
-		console.log("Dispatching p90update:", p90obj);
-		dispatch("p90update", { p90: p90obj });
-	}
+	// $: p90obj = sortedValues.length ? sortedValues[Math.floor(0.9 * sortedValues.length) - 1] : null;
+	// $: if (p90obj !== null) {
+	// 	console.log("Dispatching p90update:", p90obj);
+	// 	dispatch("p90update", { p90: p90obj });
+	// }
 
-	const exportCSV = function () {
-		exportHeatmapCSV(mapData, p90obj, "calibrationReport.csv");
-	};
+	// const exportCSV = function () {
+	// 	exportHeatmapCSV(mapData, p90obj, "calibrationReport.csv");
+	// };
 </script>
 
-{#if mapData?.length > 1}
-	<div class="heatmap-chart">
+<!-- {#if mapData?.length > 1} -->
+<!-- <div class="heatmap-chart">
 		<div class="heatmap-header">
 			<span class="heatmap-title">ΔE Heatmap</span>
 			<div class="heatmap-controls">
@@ -59,8 +59,10 @@
 				{visionDeficiencyMode}
 			/>
 		</div>
-	</div>
-{/if}
+	</div> -->
+<div>I'm a Heat Map</div>
+
+<!-- {/if} -->
 
 <style lang="postcss" global>
 	.heatmap-number-grid {

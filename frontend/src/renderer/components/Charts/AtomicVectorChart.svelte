@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
 	import { chart } from "svelte-apexcharts";
 	import { find, forEach } from "lodash";
 	import { getCssVar } from "@util/cssUtils";
@@ -153,4 +153,43 @@
 
 <main>
 	<div use:chart={getOptions()} />
+</main> -->
+
+<script>
+	import { onMount, onDestroy } from "svelte";
+	import { Deck } from "@deck.gl/core";
+	import { ScatterplotLayer } from "@deck.gl/layers";
+
+	let container;
+	let deckInstance;
+
+	const INITIAL_VIEW_STATE = {
+		latitude: 37.8,
+		longitude: -122.45,
+		zoom: 15,
+	};
+
+	onMount(() => {
+		deckInstance = new Deck({
+			parent: container,
+			initialViewState: INITIAL_VIEW_STATE,
+			controller: true,
+			layers: [
+				new ScatterplotLayer({
+					data: [{ position: [-122.45, 37.8], color: [255, 0, 0], radius: 100 }],
+					getPosition: d => d.position,
+					getFillColor: d => d.color,
+					getRadius: d => d.radius,
+				}),
+			],
+		});
+	});
+
+	onDestroy(() => {
+		deckInstance?.finalize();
+	});
+</script>
+
+<main>
+	<div bind:this={container} />
 </main>

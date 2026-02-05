@@ -1,52 +1,54 @@
 <script>
-	import "@carbon/charts/styles.min.css";
-	import "carbon-components/css/carbon-components.min.css";
-	import { ScatterChart } from "@carbon/charts-svelte";
-	import { lab2rgb } from "@util/lab2rgb";
+	// import "@carbon/charts/styles.min.css";
+	// import "carbon-components/css/carbon-components.min.css";
+	// import { ScatterChart } from "@carbon/charts-svelte";
+	// import { lab2rgb } from "@util/lab2rgb";
 
-	export let data;
-	export let matrix = "CM";
+	// export let data;
+	// export let matrix = "CM";
 
-	$: if (data?.["matrix_values"]) {
-		dataLL = [];
-		colors = {};
-		let chartData = [];
-		data["matrix_values"]
-			.find(ele => ele.name === `${matrix} L*_camera`)
-			["data"].map((row, i) => {
-				row.map((colData, k) => {
-					chartData = [
-						...chartData,
-						{
-							col: String.fromCharCode(k + 65),
-							row: i + 1,
-							lcam: data["matrix_values"].find(ele => ele.name === `${matrix} L*_camera`)["data"][
-								i
-							][k],
-							lref: data["matrix_values"].find(ele => ele.name === `${matrix} L*_ref`)["data"][i][
-								k
-							],
-						},
-					];
-				});
-			});
+	// $: if (data?.["matrix_values"]) {
+	// 	dataLL = [];
+	// 	colors = {};
+	// 	let chartData = [];
+	// 	data["matrix_values"]
+	// 		.find(ele => ele.name === `${matrix} L*_camera`)
+	// 		["data"].map((row, i) => {
+	// 			row.map((colData, k) => {
+	// 				chartData = [
+	// 					...chartData,
+	// 					{
+	// 						col: String.fromCharCode(k + 65),
+	// 						row: i + 1,
+	// 						lcam: data["matrix_values"].find(ele => ele.name === `${matrix} L*_camera`)["data"][
+	// 							i
+	// 						][k],
+	// 						lref: data["matrix_values"].find(ele => ele.name === `${matrix} L*_ref`)["data"][i][
+	// 							k
+	// 						],
+	// 					},
+	// 				];
+	// 			});
+	// 		});
 
-		chartData.map(value => {
-			let rgb = lab2rgb([(value.lcam + value.lref) / 2, 0, 0]);
-			dataLL.push({
-				group: `${value.col}:${value.row}`,
-				lref: value.lref,
-				lcam: value.lcam,
-			});
-			colors[`${value.col}:${value.row}`] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-		});
-	}
+	// 	chartData.map(value => {
+	// 		let rgb = lab2rgb([(value.lcam + value.lref) / 2, 0, 0]);
+	// 		dataLL.push({
+	// 			group: `${value.col}:${value.row}`,
+	// 			lref: value.lref,
+	// 			lcam: value.lcam,
+	// 		});
+	// 		colors[`${value.col}:${value.row}`] = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+	// 	});
+	// }
 
-	let dataLL = [];
-	let colors = {};
+	// let dataLL = [];
+	// let colors = {};
 </script>
 
-<div class="liner-chart">
+<div>I'm a Linear Chart</div>
+
+<!-- <div class="liner-chart">
 	<ScatterChart
 		data={dataLL}
 		options={{
@@ -88,7 +90,7 @@
 			},
 		}}
 	/>
-</div>
+</div> -->
 
 <!-- <div class="heatmap-number-grid">
   {#each valueGrid.reverse() as row, i}

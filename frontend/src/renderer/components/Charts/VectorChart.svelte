@@ -1,6 +1,6 @@
 <script>
-	import "@carbon/charts/styles.min.css";
-	import "carbon-components/css/carbon-components.min.css";
+	// import "@carbon/charts/styles.min.css";
+	// import "carbon-components/css/carbon-components.min.css";
 	import AtomicVectorChart from "@components/Charts/AtomicVectorChart.svelte";
 	import { lab2rgb } from "@util/lab2rgb";
 
@@ -85,6 +85,9 @@
 	}
 </script>
 
+<!-- <div>I'm a Vector Chart</div> -->
+<!-- <div bind:this={container} class="scatter-charts" /> -->
+
 <div class="scatter-charts">
 	{#if dataAB?.length > 1 && ab}
 		<div class="chart-title">a* vs b*</div>
@@ -98,7 +101,7 @@
 
 <style lang="postcss">
 	.scatter-charts {
-		@apply relative;
+		@apply relative w-full h-[400px];
 	}
 
 	.chart-title {
