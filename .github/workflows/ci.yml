@@ -22,8 +22,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - os: macos-26 # macOS builds not currently supported by CI
-          #   platform: macos
+          - os: macos-26 # macOS builds not currently supported by CI
+            platform: macos
           - os: ubuntu-24.04
             platform: linux
           - os: windows-latest 
@@ -91,24 +91,17 @@ jobs:
           chmod +x *.sh
           export VCPKG_ROOT="$PWD/vcpkg"
           ./unix_config_environment.sh
-          # Determine architecture
-          if [ "$(uname -m)" = "arm64" ]; then
-            VCPKG_TRIPLET="arm64-osx"
-          else
-            VCPKG_TRIPLET="x64-osx"
-          fi
       - name: Build Backend with Tests (macOS)
         if: matrix.platform == 'macos'
         working-directory: backend
-        run: |
-          cmake -B build/Debug -S . \
-            -D CMAKE_BUILD_TYPE=Debug \
-            -D ENABLE_TESTS=ON \
-            -D ENABLE_COVERAGE=ON \
-            -D VCPKG_TARGET_TRIPLET=$VCPKG_TRIPLET \
-            -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/backend/vcpkg/scripts/buildsystems/vcpkg.cmake
-          cmake --build build/Debug -j$(sysctl -n hw.logicalcpu)
-      
+        run: ./unix_build.sh Debug
+        # cmake -B build/Debug -S . \
+        #   -D CMAKE_BUILD_TYPE=Debug \
+        #   -D ENABLE_TESTS=ON \
+        #   -D ENABLE_COVERAGE=ON \
+        #   -D VCPKG_TARGET_TRIPLET=$VCPKG_TRIPLET \
+        #   -D CMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/backend/vcpkg/scripts/buildsystems/vcpkg.cmake
+        # cmake --build build/Debug -j$(sysctl -n hw.logicalcpu)    
       - name: Install vcpkg dependencies (Linux)
         if: matrix.platform == 'linux'
         working-directory: backend
