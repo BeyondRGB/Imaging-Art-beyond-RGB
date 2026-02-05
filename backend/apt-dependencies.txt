@@ -1,1 +1,1 @@
-build-essential cmake curl zip unzip tar pkg-config autoconf autoconf-archive automake libtool libopencv-dev linux-libc-dev gcc-14 g++-14 npm rpm lcov
+build-essential cmake curl zip unzip tar pkg-config autoconf autoconf-archive automake libtool libopencv-dev linux-libc-dev libltdl-dev gcc-14 g++-14 npm rpm lcov 
