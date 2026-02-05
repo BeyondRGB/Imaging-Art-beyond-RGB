@@ -21,7 +21,7 @@
 		let allImages = [];
 		each(imageStack, function (field) {
 			if (!isEmpty(field) && !isEmpty(field[0])) {
-				if(Array.isArray(field[0])) {
+				if (Array.isArray(field[0])) {
 					allImages.push(field[0][0]);
 				} else {
 					allImages.push(field[0]);

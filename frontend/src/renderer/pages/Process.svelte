@@ -104,7 +104,6 @@
 		}
 	}
 
-
 	// Handle Process-specific messages (Thumbnails, Output images, HalfSizedPreview, etc.)
 	// Note: ColorManaged and ColorManagedTarget images are handled centrally in stores.ts
 	$: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {

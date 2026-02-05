@@ -232,10 +232,7 @@ export function autoSortImages(images, externalStack) {
 	var suffix_score = 0;
 	each(images, function (image) {
 		var img_test_str = split(image.name.toLowerCase(), "-");
-		if (
-			img_test_str.length > 1 &&
-			split(img_test_str[img_test_str.length - 1], "_").length == 2
-		) {
+		if (img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], "_").length == 2) {
 			suffix_score = suffix_score += 1;
 		}
 	});
@@ -291,10 +288,7 @@ export function autoSortImages(images, externalStack) {
 		if (includeTarget) {
 			let bestTargetImage = maxBy(images, probabilityScoreProperties[1]);
 			images = filter(images, e => e !== bestTargetImage);
-			imageStack.bestTargetImages = [
-				bestTargetImage,
-				maxBy(images, probabilityScoreProperties[1]),
-			];
+			imageStack.bestTargetImages = [bestTargetImage, maxBy(images, probabilityScoreProperties[1])];
 			images = filter(images, e => e !== maxBy(images, probabilityScoreProperties[1]));
 		}
 
@@ -527,10 +521,7 @@ export function autoSortBatchImages(images, externalStack) {
 	var suffix_score = 0;
 	each(images, function (image) {
 		var img_test_str = split(image.name.toLowerCase(), "-");
-		if (
-			img_test_str.length > 1 &&
-			split(img_test_str[img_test_str.length - 1], "_").length == 2
-		) {
+		if (img_test_str.length > 1 && split(img_test_str[img_test_str.length - 1], "_").length == 2) {
 			suffix_score = suffix_score += 1;
 		}
 	});
@@ -578,10 +569,7 @@ export function autoSortBatchImages(images, externalStack) {
 		if (includeTarget) {
 			let bestTargetImage = maxBy(images, probabilityScoreProperties[1]);
 			images = filter(images, e => e !== bestTargetImage);
-			imageStack.bestTargetImages = [
-				bestTargetImage,
-				maxBy(images, probabilityScoreProperties[1]),
-			];
+			imageStack.bestTargetImages = [bestTargetImage, maxBy(images, probabilityScoreProperties[1])];
 			images = filter(images, e => e !== maxBy(images, probabilityScoreProperties[1]));
 		}
 
