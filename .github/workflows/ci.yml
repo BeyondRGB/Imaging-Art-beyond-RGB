@@ -75,7 +75,7 @@ jobs:
             backend/vcpkg/ports
             backend/vcpkg/.vcpkg-root
           key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
-          restore-keys: vcpkg-${{ matrix.platform }}-
+          restore-keys: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
 
       - name: Setup vcpkg cache integration
         uses: actions/github-script@v7
