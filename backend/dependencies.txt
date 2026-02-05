@@ -9,4 +9,4 @@ openssl
 zlib
 boost-lexical-cast
 boost-range
-opencv4[core]
+opencv4[core,contrib]
