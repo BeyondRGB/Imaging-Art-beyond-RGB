@@ -42,6 +42,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
   	- MSVC (latest)
   	- Windows 10 SDK
     - Uncheck/no need for Cmake and other defaults
+- Install [LLVM Compiler](https://releases.llvm.org/). This compiler is used for clang-format, the backend formatter for the project. LLVM release 21.1.0 is confirmed to work (any releases afterwards have not been tested). Make to select to add to PATH during installation
 - https://nodejs.org/en/
 	- Do not need/uncheck optional build tools (python and MSVC 2017)
 - Reboot or log-out and log-in
@@ -175,3 +176,8 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - Built packages are in frontend/out/make/ for Debian/Ubuntu, Fedora, and as a generic zip file for other distributions.
 - LibOpenCV is required as an additional dependency if you install from these packages.
   - `sudo apt install libopencv-dev` or equivalent
+
+## Additional Notes
+
+### Formatting
+There is a pre-commit git hook (found in ./husky folder in the project's frontend directory) which verifies changed C++ files were formatted correctly. If your files aren't formatted, the commit fails and the hook attempts to format using clang-format (found using PATH). The formatted files can then be staged for a valid commit.
