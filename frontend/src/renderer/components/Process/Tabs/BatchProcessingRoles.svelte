@@ -9,7 +9,7 @@
 	import Dropbox from "@components/Process/Dropbox.svelte";
 	import Button from "@components/Button.svelte";
 	import { get, isEmpty, each, includes } from "lodash";
-	import { autoSortBatchImages } from "@util/autoSortStandards.svelte";
+	import { autoSortBatchImages } from "@root/util/autoSortStandards";
 	import { countFields } from "@root/util/storesUtil";
 	import { modal } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
