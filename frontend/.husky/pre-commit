@@ -23,7 +23,7 @@ else
 fi
 
 cd frontend
-pwd
+
 # Get staged frontend files
 FILES=$(git diff --cached --name-only --diff-filter=ACM \
     -- '*.html' '*.svelte' '*.css' '*.ts' '*.js' '*.json')
