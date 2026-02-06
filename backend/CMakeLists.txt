@@ -29,6 +29,9 @@ configure_file(
         @ONLY)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
+# format!
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/clang-format.cmake)
+
 #------------------------------------------
 #Add VCPKG provided find_package Here
 #------------------------------------------

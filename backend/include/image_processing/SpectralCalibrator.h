@@ -100,9 +100,9 @@ class SpectralCalibrator : public LeafComponent {
 class WeightedErrorFunction : public cv::MinProblemSolver::Function {
 
   public:
-    WeightedErrorFunction(cv::Mat *ref_data, cv::Mat *input_array,
-                          cv::Mat *M_refl, cv::Mat *cp_carmera_sigs,
-                          cv::Mat *R_camera);
+    WeightedErrorFunction(int num_patches, cv::Mat *ref_data,
+                          cv::Mat *input_array, cv::Mat *M_refl,
+                          cv::Mat *cp_carmera_sigs, cv::Mat *R_camera);
     int getDims() const;
 
     /**
@@ -124,6 +124,7 @@ class WeightedErrorFunction : public cv::MinProblemSolver::Function {
   private:
     static int itteration_count; // Keeps track of how many itteration the
                                  // optimization completes
+    int num_patches;
     cv::Mat *ref_data;
     cv::Mat *input_array;
     cv::Mat *M_refl;

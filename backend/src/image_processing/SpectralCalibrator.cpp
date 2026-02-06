@@ -63,9 +63,12 @@ void SpectralCalibrator::execute(CommunicationObj *comms,
 
         comms->send_progress(0.4, this->get_name());
 
+        // get number of color patches for usage in calc_e1
+        int num_patches =
+            this->ref_data->get_row_count() * this->ref_data->get_col_count();
         // Create Custom WeightedErrorFunction used to minimize Z
         cv::Ptr<cv::MinProblemSolver::Function> ptr_F(new WeightedErrorFunction(
-            &ref_data_matrix, &this->input_array, &this->M_refl,
+            num_patches, &ref_data_matrix, &this->input_array, &this->M_refl,
             &this->color_patch_avgs, &this->R_camera));
 
         // Init MinProblemSolver
@@ -235,7 +238,7 @@ void SpectralCalibrator::store_spectral_img(btrgb::ArtObject *images) {
 
 int WeightedErrorFunction::itteration_count = 0;
 
-WeightedErrorFunction::WeightedErrorFunction(cv::Mat *ref_data,
+WeightedErrorFunction::WeightedErrorFunction(int num_patches, cv::Mat *ref_data,
                                              cv::Mat *input_array,
                                              cv::Mat *M_refl,
                                              cv::Mat *cp_carmera_sigs,
@@ -247,6 +250,7 @@ WeightedErrorFunction::WeightedErrorFunction(cv::Mat *ref_data,
      * SpectralCalibrator already has the resulting values See doc strings in
      * SpectralCalibrator for details on each of these matracies
      */
+    this->num_patches = num_patches;
     this->ref_data = ref_data;
     this->input_array = input_array;
     this->M_refl = M_refl;
@@ -329,7 +333,7 @@ double WeightedErrorFunction::calc_e1() const {
             // btrgb::calibration::enter_to_continue();
         }
     }
-    double sqroot = sqrt(sum);
+    double sqroot = sqrt(sum / this->num_patches);
     // std::cout << "e1 sum: " << sum << " sqroot: " << sqroot << "   ";
     return sqroot;
 }
