@@ -56,9 +56,8 @@
 
 	function getOptions() {
 		const isDark = $appSettings?.isDarkTheme ?? true;
-		const textColorPrimary = getCssVar("--color-text-primary") || (isDark ? "#ffffff" : "#1f2937");
-		const textColorSecondary =
-			getCssVar("--color-text-secondary") || (isDark ? "#9ca3af" : "#6b7280");
+		const textColorPrimary = getCssVar("--color-text-primary", isDark ? "#ffffff" : "#1f2937");
+		const textColorSecondary = getCssVar("--color-text-secondary", isDark ? "#9ca3af" : "#6b7280");
 		const gridColor = isDark ? "#6b7280" : "#d1d5db";
 
 		return {
@@ -257,7 +256,9 @@
 </script>
 
 <div class="line-chart" id="EstSpecChart">
-	<div id="spectral-chart" use:chart={options} />
+	{#key $appSettings?.isDarkTheme}
+		<div id="spectral-chart" use:chart={options} />
+	{/key}
 	<Button variant="secondary" size="sm" onClick={downloadCSV} className="download-btn">
 		Download CSV
 	</Button>
