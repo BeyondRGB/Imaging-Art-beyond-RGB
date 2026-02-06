@@ -2,6 +2,7 @@
 CMake include file that creates a custom target to apply standardized formatting to all C++ files in
 the project.
 Requires: clang-format (v. 12 or higher) is downloaded
+Original Source: https://github.com/RIT-EVT/EVT-core/blob/39b624b162a1b60c4e985a5a52ea63e68d3057fd/cmake/evt-core_clang-format.cmake
 ]]#
 
 include_guard(GLOBAL)
