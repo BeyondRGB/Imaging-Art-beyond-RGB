@@ -119,9 +119,7 @@ jobs:
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
-        run: |
-          set VCPKG_ROOT=%CD%\vcpkg
-          call win_build.bat -m Debug
+        run: call win_build.bat -m Debug
 
       # - name: Run Backend Unit Tests (Unix)
       #   if: matrix.platform != 'windows'

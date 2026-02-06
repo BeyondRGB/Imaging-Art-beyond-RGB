@@ -15,8 +15,7 @@ if errorlevel 1 (
 
 :: Check for vcpkg updates
 git pull --ff-only
-cmd /c .\vcpkg\bootstrap-vcpkg.bat
-cd ..
+call "bootstrap-vcpkg.bat"
 
 :: Install dependencies
-for /F "tokens=*" %%A in (dependencies.txt) do .\vcpkg\vcpkg.exe install %%A:x64-windows
+for /F "tokens=*" %%A in (../dependencies.txt) do .\vcpkg.exe install %%A:x64-windows
