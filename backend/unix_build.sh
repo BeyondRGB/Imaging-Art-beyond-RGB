@@ -1,5 +1,6 @@
 #!/bin/sh
-build_directory="build"
+buildDirectory="build"
+defaultReleaseMode="Debug"
 
 usage() {
     echo "usage $0 [-t | --test] [-m | --mode] (Debug | Release)"
@@ -21,7 +22,7 @@ done
 
 while getopts "tTm:" opt; do
 	case "$opt" in
-		't') build_tests=true ;;
+		't') buildTests=true ;;
 #		'T') add_triplet=true ;;
 		'm') mode=$OPTARG ;;
 		*) printf "Invalid argument: %s" "$opt" ;;
@@ -29,9 +30,7 @@ while getopts "tTm:" opt; do
 done
 
 if [ -z ${mode+x} ]; then
-	echo "Please supply a build mode."
-	usage
-	exit 1
+	mode="$defaultReleaseMode"
 elif ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
     echo "Mode needs to be set to Debug or Release. Currently set to: ${mode}"
     usage
@@ -39,31 +38,31 @@ elif ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
 fi
 
 # Run CMake
-set_cmake_args=false
+setCmakeArgs=false
 
 #if  [ "$add_triplet" = true ]; then
 #    set -- "-DVCPKG_TARGET_TRIPLET=$(uname -m)"
 #    set_cmake_args=true
 #fi
 
-if [ "$build_tests" = true ]; then
+if [ "$buildTests" = true ]; then
   set -- "-DENABLE_TESTS=ON" "-DENABLE_COVERAGE=ON"
-  set_cmake_args=true
+  setCmakeArgs=true
 fi
 
 # Clear arguments so we don't just pass the program arguments to cmake.
-if [ "$set_cmake_args" = false ]; then
+if [ "$setCmakeArgs" = false ]; then
     set --
 fi
 
-cmake -B "build/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@"
+cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@"
 
 if [ $? -ne 0 ]; then
 	echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh"
 	exit
 fi
 
-cd "$build_directory/${mode}" || exit
+cd "${buildDirectory}/${mode}" || exit
 
 if [ "$(uname)" = "Darwin" ]; then
 	cmake --build . -j"$(sysctl -n hw.logicalcpu)"
