@@ -3,6 +3,7 @@ name: Release App
 on:
   workflow_dispatch:
   push:
+    branches: [ 'feature/taylor/release-ci' ]
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
 
