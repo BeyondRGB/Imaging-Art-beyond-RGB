@@ -187,7 +187,7 @@ jobs:
         run: npm install
 
       - name: Build Frontend Release (macOS or Linux)
-        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}'
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
         working-directory: frontend
         run: ./release_frontend.sh 
 
