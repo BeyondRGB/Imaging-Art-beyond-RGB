@@ -206,6 +206,19 @@ interface PendingBinaryRequest {
 
 let pendingColorManagedBinary: PendingBinaryRequest | null = null;
 
+// Track blob URLs to revoke them when replaced (prevents memory leaks)
+let colorManagedBlobUrl: string | null = null;
+let colorManagedTargetBlobUrl: string | null = null;
+
+/**
+ * Revoke a blob URL if it exists to free memory
+ */
+function revokeBlobUrl(url: string | null): void {
+	if (url && url.startsWith("blob:")) {
+		URL.revokeObjectURL(url);
+	}
+}
+
 // Process incoming WebSocket message for ColorManaged images
 // Called directly from the WebSocket listener before messageStore is updated
 function handleColorManagedMessage(data: any): boolean {
@@ -259,9 +272,14 @@ function handleColorManagedMessage(data: any): boolean {
 
 		const blob = data.slice(0, data.size, pendingColorManagedBinary.binaryType);
 		const tempImg = new Image();
-		tempImg.src = URL.createObjectURL(blob);
+		const newBlobUrl = URL.createObjectURL(blob);
+		tempImg.src = newBlobUrl;
 
 		if (pendingColorManagedBinary.type === "ColorManaged") {
+			// Revoke previous blob URL to prevent memory leak
+			revokeBlobUrl(colorManagedBlobUrl);
+			colorManagedBlobUrl = newBlobUrl;
+
 			viewState.update(state => ({
 				...state,
 				colorManagedImage: {
@@ -271,6 +289,10 @@ function handleColorManagedMessage(data: any): boolean {
 			}));
 			console.log("[WS Handler] Updated colorManagedImage:", tempImg.src.substring(0, 50));
 		} else if (pendingColorManagedBinary.type === "ColorManagedTarget") {
+			// Revoke previous blob URL to prevent memory leak
+			revokeBlobUrl(colorManagedTargetBlobUrl);
+			colorManagedTargetBlobUrl = newBlobUrl;
+
 			viewState.update(state => ({
 				...state,
 				colorManagedTargetImage: {
@@ -339,6 +361,12 @@ export function requestColorManagedTargetImage(projectKey: string) {
 
 // Helper function to clear view state when closing a project
 export function clearProjectViewState() {
+	// Revoke blob URLs to prevent memory leaks
+	revokeBlobUrl(colorManagedBlobUrl);
+	revokeBlobUrl(colorManagedTargetBlobUrl);
+	colorManagedBlobUrl = null;
+	colorManagedTargetBlobUrl = null;
+
 	viewState.update(state => ({
 		...state,
 		projectKey: null,
