@@ -1,0 +1,194 @@
+name: Testing product building
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ main, master, develop ]
+  
+
+env:
+  VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  build:
+    name: Build and Test (${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-26
+            platform: macos
+          - os: ubuntu-24.04
+            platform: linux
+          - os: windows-latest 
+            platform: windows
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install APT dependencies (Linux)
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt update
+          sudo apt install $(cat backend/apt-dependencies.txt)
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14
+      # enable GCC/G++ 14 for ubuntu, since 24.04 doesn't have it by default
+
+      - name: Install macOS dependencies
+        if: matrix.platform == 'macos'
+        run: brew install cmake ninja pkg-config 
+
+      - name: Setup MSVC
+        if: matrix.platform == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Install pkg-config (Windows) # extra requirement for cmake on windows
+        if: matrix.platform == 'windows'
+        run: winget install bloodrock.pkg-config-lite --disable-interactivity --accept-source-agreements --accept-package-agreements
+        shell: powershell
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            backend/vcpkg/.git
+            backend/vcpkg/installed
+            backend/vcpkg/buildtrees
+            backend/vcpkg/triplets
+            backend/vcpkg/vcpkg
+            backend/vcpkg/scripts
+            backend/vcpkg/ports
+            backend/vcpkg/.vcpkg-root
+          key: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
+          restore-keys: vcpkg-${{ matrix.platform }}-${{ hashFiles('backend/dependencies.txt') }}
+
+      - name: Setup vcpkg cache integration
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+      
+      - name: Install vcpkg dependencies (macOS)
+        if: matrix.platform == 'macos'
+        working-directory: backend
+        run: |
+          chmod +x *.sh
+          export VCPKG_ROOT="$PWD/vcpkg"
+          ./unix_config_environment.sh
+      - name: Build Backend with Tests (macOS)
+        if: matrix.platform == 'macos'
+        working-directory: backend
+        run: ./unix_build.sh -m Release 
+
+      - name: Install vcpkg dependencies (Linux)
+        if: matrix.platform == 'linux'
+        working-directory: backend
+        run: |
+          chmod +x *.sh
+          export VCPKG_ROOT="$PWD/vcpkg"
+          ./unix_config_environment.sh
+      - name: Build Backend with Tests (Linux)
+        if: matrix.platform == 'linux'
+        working-directory: backend
+        run: ./unix_build.sh -m Release 
+     
+      - name: Install vcpkg dependencies (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: backend
+        shell: cmd
+        run: |
+          set VCPKG_ROOT=%CD%\vcpkg
+          call win_config_environment.bat
+      - name: Build Backend with Tests (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: backend
+        shell: cmd
+        run: call win_build.bat -m Debug
+
+      # - name: Run Backend Unit Tests (Unix)
+      #   if: matrix.platform != 'windows'
+      #   working-directory: backend/build/Debug
+      #   run: |
+      #     ./unit_tests 2>&1 | tee test_output.log
+      #     TEST_EXIT_CODE=${PIPESTATUS[0]}
+          
+      #     # Parse Catch2 output and create annotations
+      #     if [ $TEST_EXIT_CODE -eq 0 ]; then
+      #       echo "::notice::Backend tests passed on ${{ matrix.platform }}"
+      #       # Extract test summary
+      #       TEST_SUMMARY=$(grep -E "All tests passed|test cases|assertions" test_output.log | tail -1 || echo "")
+      #       if [ ! -z "$TEST_SUMMARY" ]; then
+      #         echo "::notice::$TEST_SUMMARY"
+      #       fi
+      #     else
+      #       echo "::error::Backend tests failed on ${{ matrix.platform }}"
+      #       # Extract failed test details
+      #       grep -E "FAILED|failed|error" test_output.log | while read line; do
+      #         echo "::error::$line"
+      #       done
+      #     fi
+          
+      #     exit $TEST_EXIT_CODE
+
+      # - name: Run Backend Unit Tests (Windows)
+      #   if: matrix.platform == 'windows'
+      #   working-directory: backend/build/Debug
+      #   shell: cmd
+      #   run: |
+      #     unit_tests.exe > test_output.log 2>&1
+      #     if errorlevel 1 (
+      #       echo ::error::Backend tests failed on windows
+      #       type test_output.log | findstr /C:"FAILED" /C:"failed" /C:"error"
+      #       exit /b 1
+      #     ) else (
+      #       echo ::notice::Backend tests passed on windows
+      #       type test_output.log | findstr /C:"All tests passed" /C:"test cases" /C:"assertions"
+      #     )
+
+      # - name: Generate Backend Coverage Report (Unix)
+      #   if: matrix.platform != 'windows'
+      #   working-directory: backend/build/Debug
+      #   run: |
+      #     lcov --capture --directory . --output-file coverage.info || true
+      #     lcov --remove coverage.info \
+      #       '/usr/*' \
+      #       '*/vcpkg/*' \
+      #       '*/submodules/*' \
+      #       '*/test/*' \
+      #       --output-file coverage.info || true
+      #     lcov --list coverage.info || true
+
+      # - name: Upload Backend Coverage (Unix)
+      #   if: matrix.platform != 'windows'
+      #   uses: codecov/codecov-action@v4
+      #   with:
+      #     file: backend/build/Debug/coverage.info
+      #     flags: backend,${{ matrix.platform }}
+      #     name: backend-coverage-${{ matrix.platform }}
+      #     fail_ci_if_error: false
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     # Token is optional for public repos, but helps with protected branches
+
+      # - name: Install Frontend Dependencies
+      #   working-directory: frontend
+      #   run: npm install
+
+      # - name: Build Frontend
+      #   working-directory: frontend
+      #   run: npm run svelte-build
