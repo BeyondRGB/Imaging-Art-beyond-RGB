@@ -165,7 +165,7 @@ jobs:
           - os: windows-11-arm
             paltform: windows
             arch: arm      
-    setps:
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
