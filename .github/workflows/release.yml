@@ -137,7 +137,6 @@ jobs:
         with:
           name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
           path: backend/build/Release
-          retention-days: 7
      
   release-frontend:
     needs: build-backend
