@@ -36,6 +36,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - https://gitforwindows.org/
   - Command line git is still needed for our scripts (even if you use GitHub desktop).
 - https://cmake.org/download/
+  - If cmake gives you pkg-config errors, run `winget install bloodrock.pkg-config-lite` and accept agreements
 - https://visualstudio.microsoft.com/downloads/?q=build+tools
   - Scroll down and install only the "Build Tools"
   - Within the installer, check "Desktop development with C++"
@@ -133,6 +134,8 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 ## Ubuntu (tested on 24.04 and 25.04)
 
 ### Install tools
+- Clone repository: `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB.git`
+- `cd Imaging-Art-beyond-RGB`
 - `sudo apt install $(cat backend/apt-dependencies.txt)` from project root.
 - Make sure your editor is configured for `C++20` syntax
 - If you are on Ubuntu 24.04 LTS, you additionally need to configure GCC 14:
@@ -140,8 +143,6 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
   - `sudo sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14`
 
 ### Set-up
-- `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB.git`
-- `cd Imaging-Art-beyond-RGB`
 - `git submodule sync`
 - `git submodule update --init --recursive`
   - This includes the source code of a few other dependencies
@@ -157,7 +158,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
   - `sh unix_config_environment.sh`
 - To build:
   - `sh unix_debug.sh` or `sh unix_release.sh`
-  - Build automatically copied to fronted for testing.
+  - Build automatically copied to frontend for testing.
 
 ### Frontend build
 - `cd frontend` from project root.
