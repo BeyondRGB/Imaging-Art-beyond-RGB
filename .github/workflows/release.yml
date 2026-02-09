@@ -34,12 +34,12 @@ jobs:
             arch: x86
           - os: ubuntu-24.04-arm
             platform: linux
-            arc: arm
+            arch: arm
           - os: windows-latest 
             platform: windows
             arch: x86
           - os: windows-11-arm
-            paltform: windows
+            platform: windows
             arch: arm
     steps:
       - name: Checkout repository
@@ -158,12 +158,12 @@ jobs:
             arch: x86
           - os: ubuntu-24.04-arm
             platform: linux
-            arc: arm
+            arch: arm
           - os: windows-latest 
             platform: windows
             arch: x86
           - os: windows-11-arm
-            paltform: windows
+            platform: windows
             arch: arm      
     steps:
       - name: Checkout repository
