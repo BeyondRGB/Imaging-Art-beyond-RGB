@@ -16,16 +16,16 @@ permissions:
   checks: write
 
 jobs:
-  build:
-    name: Build and Test (${{ matrix.platform }})
+  build-backend:
+    name: Build and Test Backend (${{ matrix.platform }} - ${{ matrix.arch }})
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - os: macos-26
             platform: macos
-            arch: arm
+            arch: arm64
           - os: macos-15-intel
             platform: macos
             arch: x86
@@ -34,7 +34,7 @@ jobs:
             arch: x86
           - os: ubuntu-24.04-arm
             platform: linux
-            arc: arm
+            arc: arm64
           - os: windows-latest 
             platform: windows
             arch: x86
@@ -68,11 +68,6 @@ jobs:
         if: matrix.platform == 'windows'
         run: winget install bloodrock.pkg-config-lite --disable-interactivity --accept-source-agreements --accept-package-agreements
         shell: powershell
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
 
       - name: Cache vcpkg
         uses: actions/cache@v4
@@ -135,12 +130,94 @@ jobs:
         if: matrix.platform == 'windows'
         working-directory: backend
         shell: cmd
-        run: call win_build.bat -m Debug
+        run: call win_build.bat -m Release
 
-      # - name: Install Frontend Dependencies
-      #   working-directory: frontend
-      #   run: npm install
+      - name: Upload built backend
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
+          path: backend/build/Release
+          retention-days: 7
+     
+  release-frontend:
+    needs: build-backend
+    name: Release Frontend (${{ matrix.platform }} - ${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: macos-26
+            platform: macos
+            arch: arm
+          - os: macos-15-intel
+            platform: macos
+            arch: x86
+          - os: ubuntu-24.04
+            platform: linux
+            arch: x86
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arc: arm
+          - os: windows-latest 
+            platform: windows
+            arch: x86
+          - os: windows-11-arm
+            paltform: windows
+            arch: arm      
+    setps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      # Download build from previous job
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
+          path: backend/build/
 
-      # - name: Build Frontend
-      #   working-directory: frontend
-      #   run: npm run svelte-build
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install Node Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build Frontend Release (macOS or Linux)
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}'
+        working-directory: frontend
+        run: ./release_frontend.sh 
+
+      - name: Build Frontend Release (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: frontend
+        shell: cmd
+        run: call win_release_frontend.bat
+
+      - name: Upload artifacts (macOS)
+        if: matrix.platform == 'macos'
+        uses: actions/upload-artifact@v6
+        with:
+          name: app-${{ matrix.os }}-${{ matrix.arch }}
+          path: out/make/zip/darwin/[arch]/*.zip
+      
+      - name: Upload artifacts (Windows)
+        if: matrix.platform == 'windows'
+        uses: actions/upload-artifact@v6
+        with:
+          name: app-${{ matrix.os }}-${{ matrix.arch }}
+          path: out/make/squirrel.windows/[arch]/*.exe
+     
+      - name: Upload artifacts (Linux)
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v6
+        with:
+          name: app-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            out/make/zip/linux/[arch]/*.zip
+            out/make/rpm/[arch]/*.rpm
+            out/make/deb/[arch]/*.deb

@@ -24,7 +24,7 @@ if "%parameter%" == "--mode"  (
 ) else if "%parameter%" == "-m" (
     shift
     if not "%argument%" == "" (
-        set releaseMode=%argument%s
+        set releaseMode=%argument%
         shift
     ) else (
         set releaseMode=%defaultReleaseMode%

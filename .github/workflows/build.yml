@@ -19,7 +19,7 @@ jobs:
     name: Build and Test (${{ matrix.platform }})
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         include:
           - os: macos-26
