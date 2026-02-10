@@ -23,18 +23,18 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - os: macos-26
-            platform: macos
-            arch: arm
-          - os: macos-15-intel
-            platform: macos
-            arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
+          # - os: macos-26
+          #   platform: macos
+          #   arch: arm
+          # - os: macos-15-intel
+          #   platform: macos
+          #   arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
           - os: windows-latest 
             platform: windows
             arch: x86
@@ -146,18 +146,18 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - os: macos-26
-            platform: macos
-            arch: arm
-          - os: macos-15-intel
-            platform: macos
-            arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
+          # - os: macos-26
+          #   platform: macos
+          #   arch: arm
+          # - os: macos-15-intel
+          #   platform: macos
+          #   arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
           - os: windows-latest 
             platform: windows
             arch: x86
@@ -208,7 +208,13 @@ jobs:
           name: beyond-rgb-${{ matrix.os }}-${{ matrix.arch }}
           path: frontend/out/make/zip/darwin/*/*.zip
           if-no-files-found: error
-      
+
+      - name: List windows archive locations
+        if: matrix.platform == 'windows'
+        working-directory: frontend/out
+        shell: cmd
+        run: tree
+
       - name: Upload artifacts (Windows)
         if: matrix.platform == 'windows'
         uses: actions/upload-artifact@v6
