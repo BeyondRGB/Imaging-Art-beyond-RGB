@@ -23,21 +23,21 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - os: macos-26
-            platform: macos
-            arch: arm
+          # - os: macos-26
+          #   platform: macos
+          #   arch: arm
           - os: macos-15-intel
             platform: macos
             arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
-          - os: windows-latest 
-            platform: windows
-            arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
+          # - os: windows-latest 
+          #   platform: windows
+          #   arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm
@@ -57,8 +57,8 @@ jobs:
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14
 
       - name: Install macOS dependencies
-        if: matrix.platform == 'macos'
-        run: brew install cmake ninja pkg-config 
+        if: ${{ matrix.platform == 'macos' || matrix.arch == 'x86' }}
+        run: brew install libjpeg
 
       - name: Setup MSVC
         if: matrix.platform == 'windows'
@@ -146,21 +146,21 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - os: macos-26
-            platform: macos
-            arch: arm
+          # - os: macos-26
+          #   platform: macos
+          #   arch: arm
           - os: macos-15-intel
             platform: macos
             arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
-          - os: windows-latest 
-            platform: windows
-            arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
+          # - os: windows-latest 
+          #   platform: windows
+          #   arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm      
