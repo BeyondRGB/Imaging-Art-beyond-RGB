@@ -58,7 +58,13 @@ jobs:
 
       - name: Install macOS dependencies
         if: ${{ matrix.platform == 'macos' || matrix.arch == 'x86' }}
-        run: brew install libjpeg
+        run: |
+          brew install libjpeg
+          echo 'export PATH="/usr/local/opt/jpeg/bin:$PATH"' >> /Users/runner/.bash_profile
+          echo 'LDFLAGS="-L/usr/local/opt/jpeg/lib"' >> /Users/runner/.bash_profile
+          echo 'export CPPFLAGS="-I/usr/local/opt/jpeg/include"' >> /Users/runner/.bash_profile
+          echo 'export PKG_CONFIG_PATH="/usr/local/opt/jpeg/lib/pkgconfig"' >> /Users/runner/.bash_profile
+          soruce /Users/runner/.bash_profile
 
       - name: Setup MSVC
         if: matrix.platform == 'windows'
