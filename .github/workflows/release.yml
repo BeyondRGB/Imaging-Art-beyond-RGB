@@ -56,21 +56,6 @@ jobs:
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14
           sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14
 
-      - name: Install macOS x86 dependencies
-        if: ${{ matrix.platform == 'macos' || matrix.arch == 'x86' }}
-        run: |
-          brew install libjpeg
-
-      - name: Export macOS x86 dependencies to environment
-        if: ${{ matrix.platform == 'macos' || matrix.arch == 'x86' }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('LDFLAGS', '-L/usr/local/opt/jpeg/lib');
-            core.exportVariable('CPPFLAGS', '-I/usr/local/opt/jpeg/include');
-            core.exportVariable('PKG_CONFIG_PATH', '/usr/local/opt/jpeg/lib/pkgconfig');
-            core.addPath('/usr/local/opt/jpeg/bin');
-
       - name: Setup MSVC
         if: matrix.platform == 'windows'
         uses: ilammy/msvc-dev-cmd@v1
