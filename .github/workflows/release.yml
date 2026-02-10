@@ -205,6 +205,11 @@ jobs:
           path: frontend/out/make/zip/darwin/[arch]/*.zip
           if-no-files-found: error 
       
+      - name: List backend directory
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
+        working-directory: frontend/out/make/zip/darwin/
+        run: ls -lua
+
       - name: Upload artifacts (Windows)
         if: matrix.platform == 'windows'
         uses: actions/upload-artifact@v6
