@@ -26,18 +26,18 @@ jobs:
           - os: macos-26
             platform: macos
             arch: arm
-          - os: macos-15-intel
-            platform: macos
-            arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
-          - os: windows-latest 
-            platform: windows
-            arch: x86
+          # - os: macos-15-intel
+          #   platform: macos
+          #   arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
+          # - os: windows-latest 
+          #   platform: windows
+          #   arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm
@@ -149,18 +149,18 @@ jobs:
           - os: macos-26
             platform: macos
             arch: arm
-          - os: macos-15-intel
-            platform: macos
-            arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
-          - os: windows-latest 
-            platform: windows
-            arch: x86
+          # - os: macos-15-intel
+          #   platform: macos
+          #   arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
+          # - os: windows-latest 
+          #   platform: windows
+          #   arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm      
@@ -179,7 +179,7 @@ jobs:
 
       - name: List backend directory
         if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
-        working-directory: backend/build
+        working-directory: backend/build/Release
         run: ls -lua
 
       - name: Setup Node.js
