@@ -12,10 +12,8 @@
 #define ILLUMINATNTS_SIZE REFLECTANCE_SIZE
 #define STANDARD_OBSERVER_SIZE REFLECTANCE_SIZE
 
-#define BASE_PATH "./" // relative to executable
-#define REF_DATA_PATH BASE_PATH "/res/ref_data/"
-#define ILLUMINANTS_FILE_PATH REF_DATA_PATH "Illuminants.csv"
-#define STANDARD_OBSERVER_1931_PATH REF_DATA_PATH "Standard_Observer_1931.csv"
-#define STANDARD_OBSERVER_1964_PATH REF_DATA_PATH "Standard_Observer_1964.csv"
+#define ILLUMINANTS_FILE_NAME "Illuminants.csv"
+#define STANDARD_OBSERVER_1931_FILE_NAME "Standard_Observer_1931.csv"
+#define STANDARD_OBSERVER_1964_FILE_NAME "Standard_Observer_1964.csv"
 
 #endif // !REF_DATA_DEFINE
