@@ -80,10 +80,11 @@ if errorlevel 1 (
     exit /b
 )
 
-cd ../..
+cd ..
 
 :: Copy .exe and libraries
 mkdir "..\frontend\lib\"
+echo Copy to ".\build\%releaseMode%\"
 Xcopy /y ".\build\%releaseMode%\" "..\frontend\lib\"
 
 :: Copy all backend resource files
