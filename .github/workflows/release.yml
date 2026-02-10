@@ -169,7 +169,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
+     
+      - name: Install macOS dependencies
+        if: matrix.platform == 'macos'
+        run: brew install tree
+
       # Download build from previous job
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -197,19 +201,20 @@ jobs:
         shell: cmd
         run: call win_release_frontend.bat
         
+            
+      - name: List backend directory
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
+        working-directory: frontend/out/make
+        run: tree .
+
       - name: Upload artifacts (macOS)
         if: matrix.platform == 'macos'
         uses: actions/upload-artifact@v6
         with:
           name: app-${{ matrix.os }}-${{ matrix.arch }}
           path: frontend/out/make/zip/darwin/[arch]/*.zip
-          if-no-files-found: error 
+          if-no-files-found: error
       
-      - name: List backend directory
-        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
-        working-directory: frontend/out/make/zip/darwin/
-        run: ls -lua
-
       - name: Upload artifacts (Windows)
         if: matrix.platform == 'windows'
         uses: actions/upload-artifact@v6
