@@ -18,7 +18,7 @@ void ReportRequest::run() {
         this->coms_obj_m->send_reports(verifcation_data.get_jsoncons(),
                                        "Verification");
     } catch (const std::exception &e) {
-        this->coms_obj_m->send_error("[ReportRequest] Invalid request.",
+        this->coms_obj_m->send_error("Invalid Calibration or Verification JSON. The BTRGB file may be corrupt, try to re-run BeyondRGB on your image.",
                                      "ReportRequest",
                                      cpptrace::generate_trace());
         return;

@@ -230,6 +230,7 @@ void Pipeline::run() {
         catch (const ParsingError &e) {
             this->report_error(this->get_process_name(), e.what(),
                                cpptrace::generate_trace());
+            return;
         }
     } else {
         try {
@@ -237,6 +238,7 @@ void Pipeline::run() {
         } catch (const std::exception &err) {
             this->report_error(this->get_process_name(), err.what(),
                                cpptrace::generate_trace());
+            return;
         }
     }
 
@@ -387,33 +389,17 @@ std::string Pipeline::get_registration_type() {
 }
 
 IlluminantType Pipeline::get_illuminant_type(Json target_data) {
-    // Defaults to D50
-    IlluminantType type = RefData::get_illuminant("");
-    try {
-        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
-        std::string illum_str =
-            ref_data.get_string(key_map[DataKey::Illuminants]);
-        type = RefData::get_illuminant(illum_str);
-    } catch (ParsingError e) {
-        std::string name = this->get_process_name();
-        this->report_error(name, e.what(), cpptrace::generate_trace());
-    }
-    return type;
+    Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
+    std::string illum_str =
+        ref_data.get_string(key_map[DataKey::Illuminants]);
+    return RefData::get_illuminant(illum_str);
 }
 
 ObserverType Pipeline::get_observer_type(Json target_data) {
-    // Defailts to 1931
-    ObserverType type = RefData::get_observer(1931);
-    try {
-        Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
-        int observer_num =
-            ref_data.get_number(key_map[DataKey::StandardObserver]);
-        type = RefData::get_observer(observer_num);
-    } catch (ParsingError e) {
-        std::string name = this->get_process_name();
-        this->report_error(name, e.what(), cpptrace::generate_trace());
-    }
-    return type;
+    Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
+    int observer_num =
+        ref_data.get_number(key_map[DataKey::StandardObserver]);
+    return RefData::get_observer(observer_num);
 }
 
 TargetData Pipeline::build_target_data(Json target_json) {

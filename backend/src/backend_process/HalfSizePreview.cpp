@@ -76,7 +76,7 @@ void HalfSizePreview::run() {
             reader->recycle();
         }
     } catch (const std::exception &e) {
-        this->coms_obj_m->send_error("[HalfSizePreview] Request failed.",
+        this->coms_obj_m->send_error("Preview image not available.",
                                      "HalfSizePreview",
                                      cpptrace::generate_trace());
         return;

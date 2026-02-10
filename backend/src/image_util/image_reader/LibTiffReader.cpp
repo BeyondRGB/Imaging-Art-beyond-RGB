@@ -101,7 +101,7 @@ void LibTiffReader::copyBitmapTo(cv::Mat &im) {
 cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w,
                                uint32_t h) {
     if (!this->_is_open)
-        throw std::runtime_error("[LibTiffReader] No file opened.");
+        throw std::runtime_error("No file opened, ensure you have a valid TIFF file.");
 
     int right = left + w;
     int bottom = top + h;
@@ -111,7 +111,7 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w,
     bool rb_valid =
         (right > 0) && (bottom > 0) && (right <= _width) && (bottom <= _height);
     if (!(lt_valid && rb_valid))
-        throw std::runtime_error("[LibTiffReader] Invalid coordinates.");
+        throw std::runtime_error("Invalid coordinates, ensure you have a valid TIFF file.");
 
     int sample_byte_size = this->_depth / 8;
 
@@ -121,24 +121,21 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w,
     uint32_t rows_per_strip = 0;
     TIFFGetField(this->_tiff, TIFFTAG_ROWSPERSTRIP, &rows_per_strip);
     if (rows_per_strip != 1)
-        throw std::runtime_error(
-            "[LibTiffReader] This tiff was not saved with one row per strip.");
+        throw std::runtime_error("This tiff was not saved with one row per strip, ensure you have a valid TIFF file.");
 
     uint32_t strip_size = TIFFStripSize(this->_tiff);
     if (strip_size != _width * _channels * sample_byte_size)
-        throw std::runtime_error(
-            "[LibTiffReader] Initial strip size assumption failed.");
+        throw std::runtime_error("Initial strip size assumption failed, ensure you have a valid TIFF file.");
 
     void *row_data = _TIFFmalloc(strip_size);
     if (!row_data)
-        throw std::runtime_error("[LibTiffReader] Memory error.");
+        throw std::runtime_error("Out of system memory. You can try to close all other programs on your computer to make space in memory, and re-process the image.");
 
     uint32_t row_index;
     uint32_t row_size;
     uint32_t total_strips = TIFFNumberOfStrips(this->_tiff);
     if (total_strips != this->_height)
-        throw std::runtime_error(
-            "[LibTiffReader] Strip count assumption failed.");
+        throw std::runtime_error("Strip count assumption failed, ensure you have a valid TIFF file.");
 
     void *crop_row = (char *)row_data + (left * _channels * sample_byte_size);
     int crop_row_size = w * _channels * sample_byte_size;
@@ -150,12 +147,9 @@ cv::Mat LibTiffReader::getCrop(uint32_t left, uint32_t top, uint32_t w,
 
         if (row_size != strip_size) {
             _TIFFfree(row_data);
-            if (row_size < 0)
-                throw std::runtime_error("[LibTiffReader] Failed to get row #" +
-                                         std::to_string(row_index));
-            else
-                throw std::runtime_error(
-                    "[LibTiffReader] Actual strip size assumption failed.");
+
+            throw std::runtime_error(
+                "[LibTiffReader] Actual strip size assumption failed.");
         }
 
         memcpy(mat_row, crop_row, crop_row_size);
@@ -190,12 +184,11 @@ std::string LibTiffReader::getColorSpaceString() {
 
 cv::Mat LibTiffReader::getConversionMatrix(std::string key) {
     if (!this->_is_open)
-        throw std::runtime_error("[LibTiffReader] No file opened.");
+        throw std::runtime_error("No file opened, ensure you have a valid TIFF file.");
 
     char *artist_tag;
     if (!TIFFGetField(this->_tiff, TIFFTAG_ARTIST, &artist_tag))
-        throw std::runtime_error(
-            "[LibTiffReader] Image does not have artist tag.");
+        throw std::runtime_error("Image does not have artist tag.");
 
     cv::Mat m;
 
@@ -203,8 +196,7 @@ cv::Mat LibTiffReader::getConversionMatrix(std::string key) {
         jsoncons::json custom_tag = jsoncons::json::parse(artist_tag);
         m = this->_extractMat(custom_tag[key]);
     } catch (const std::exception &e) {
-        throw std::runtime_error("[LibTiffReader] " + std::string(e.what()) +
-                                 " Invalid BTRGB Artist tag.\n");
+        throw std::runtime_error(std::string(e.what()) + " Invalid BTRGB Artist tag. ");
     }
 
     return m;
