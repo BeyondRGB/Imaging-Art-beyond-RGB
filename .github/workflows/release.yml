@@ -209,12 +209,6 @@ jobs:
           path: frontend/out/make/zip/darwin/*/*.zip
           if-no-files-found: error
 
-      - name: List windows archive locations
-        if: matrix.platform == 'windows'
-        working-directory: frontend\out
-        shell: powershell
-        run: tree
-
       - name: Upload artifacts (Windows)
         if: matrix.platform == 'windows'
         uses: actions/upload-artifact@v6

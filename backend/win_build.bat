@@ -59,21 +59,21 @@ if "%enableTests%" == "true" (
     set cmakeArgs=-DENABLE_TESTS=ON -DENABLE_COVERAGE=ON
 )
 
-cmake -B "%buildDirectory%"/"%releaseMode%" -S . -D CMAKE_BUILD_TYPE="%releaseMode%" !cmakeArgs!
+cmake -B "%buildDirectory%" -S . -D CMAKE_BUILD_TYPE="%releaseMode%" !cmakeArgs!
 
 if errorlevel 1 (
     echo Failed to create cmake project. Make sure you have run ./windows_config_environment.bat
     exit /b
 )
 
-cd "%buildDirectory%"/"%releaseMode%"
+cd "%buildDirectory%"
 
 if errorlevel 1 (
     echo Failed to navigate to build directory.
     exit /b
 )
 
-cmake --build . -j12 -- /m:%NUMBER_OF_PROCESSORS%
+cmake --build . -j12 --config "%releaseMode%" -- /m:%NUMBER_OF_PROCESSORS%
 
 if errorlevel 1 (
     echo Failed to build project
