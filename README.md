@@ -36,12 +36,14 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - https://gitforwindows.org/
   - Command line git is still needed for our scripts (even if you use GitHub desktop).
 - https://cmake.org/download/
+  - If cmake gives you pkg-config errors, run `winget install bloodrock.pkg-config-lite` and accept agreements
 - https://visualstudio.microsoft.com/downloads/?q=build+tools
   - Scroll down and install only the "Build Tools"
   - Within the installer, check "Desktop development with C++"
   	- MSVC (latest)
   	- Windows 10 SDK
     - Uncheck/no need for Cmake and other defaults
+- Install [LLVM Compiler](https://releases.llvm.org/). This compiler is used for clang-format, the backend formatter for the project. LLVM release 21.1.0 is confirmed to work (any releases afterwards have not been tested). Make to select to add to PATH during installation
 - https://nodejs.org/en/
 	- Do not need/uncheck optional build tools (python and MSVC 2017)
 - Reboot or log-out and log-in
@@ -50,13 +52,15 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 ### Clone our github repository
 - `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
 - `cd .\Imaging-Art-beyond-RGB\`
+- `git submodule sync`
+- `git submodule update --init --recursive`
 
 ### Set-up development & release environment:
 - `cd .\backend\`
 - `.\vcpkg_first_time_setup.bat`
-  - Locally install Vcpkg and our dependencies (\~10 GB and \~30 minutes)
+  - Locally install Vcpkg and our dependencies (\~17.5 GB and \~30 minutes)
 - `cd ..\frontend\`
-- `npm ci`
+- `npm install`
 
 ### Backend build
 - `cd .\backend\` from project root.
@@ -87,45 +91,42 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 ### Install tools
 - Xcode command line developer tools
 - Homebrew: https://brew.sh/
-- Git: `brew install git`
-- CMake: `brew install cmake`
-- pkgconfig: `brew install pkg-config`
-- Node.js: `brew install node`
+- Git and CMake dependencies: `brew install git cmake pkg-config node`
 - Make sure your editor is configured for `C++20` syntax
 
 ### Clone our github repository
 - `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
 - `cd Imaging-Art-beyond-RGB`
+- `git submodule sync`
+- `git submodule update --init --recursive`
 
 ### Set-up development & release environment:
 - `cd backend`
-- `sh osx_config_environment.sh`
-  - Locally install Vcpkg and our dependencies (\~10 GB and \~30 minutes)
+- `sh unix_config_environment.sh`
+  - Locally install Vcpkg and our dependencies (\~5 GB and \~15 minutes)
 - `cd ../frontend`
-- `npm ci`
+- `npm install`
 
 ### Backend build
 - `cd backend` from project root.
 - If an additional dependency is ever added to "dependencies.txt", first run:
-  - `sh osx_config_environment.sh`
+  - `sh unix_config_environment.sh`
 - To build:
-  - `sh osx_debug.sh` or `sh osx_release.sh`
+  - `sh unix_debug.sh` or `sh unix_release.sh`
   - Build automatically copied to frontend for testing.
-  - If you encounter an error with either of the above, crosscheck the specified architecture of your system with the `VCPKG_TARGET_TRIPLET` flag specified in both `osx_debug.sh` and `osx_release.sh`:
-    - For example, if you are using an M1 mac, replace `x64-osx` with `arm64-osx`
 
 ### Frontend build
 - `cd frontend` from project root.
 - If frontend configuration is ever changed, first run:
-  - `npm ci`
+  - `npm install`
 
 ### Run:
 - `cd frontend` from project root.
-- `npm run preview` or `npm run dev`
+- `npm run preview`
 
 ### Release
 - `cd backend` from project root.
-- `sh osx_release.sh`
+- `sh unix_release.sh`
 - `cd ../frontend`
 - `sh release_frontend.sh`
   - The release output can be found in "Imaging-Art-beyond-RGB\frontend\out\".
@@ -137,32 +138,30 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 ## Ubuntu (tested on 24.04 and 25.04)
 
 ### Install tools
-- `sudo apt install git build-essential cmake curl zip unzip tar pkg-config autoconf autoconf-archive automake libtool libopencv-dev nodejs npm rpm`
+- Clone repository: `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB.git`
+- `cd Imaging-Art-beyond-RGB`
+- `git submodule sync`
+- `git submodule update --init --recursive`
+- `sudo apt install $(cat backend/apt-dependencies.txt)` from project root.
 - Make sure your editor is configured for `C++20` syntax
-- If you are on Ubuntu 24.04 LTS, you additionally need to install GCC 14:
-  - `sudo apt install gcc-14 g++-14`
+- If you are on Ubuntu 24.04 LTS, you additionally need to configure GCC 14:
   - `sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14`
   - `sudo sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14`
 
 ### Set-up
-- `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB.git`
-- `cd Imaging-Art-beyond-RGB`
-- `git submodule sync`
-- `git submodule update --init --recursive`
-  - This includes the source code of a few other dependencies
 - `cd backend`
-- `sh linux_config_environment.sh`
-  - This locally installs Vcpkg and our dependencies, it will take a while (\~2 GB and \~10 minutes)
+- `sh unix_config_environment.sh`
+  - This locally installs Vcpkg and our dependencies, it will take a while (\~4.8 GB and \~10 minutes)
 - `cd ../frontend`
 - `npm install`
 
 ### Backend build
 - `cd backend` from project root.
 - If an additional dependency is ever added to "dependencies.txt", first run:
-  - `sh linux_config_environment.sh`
+  - `sh unix_config_environment.sh`
 - To build:
-  - `sh linux_debug.sh` or `sh linux_release.sh`
-  - Build automatically copied to fronted for testing.
+  - `sh unix_debug.sh` or `sh unix_release.sh`
+  - Build automatically copied to frontend for testing.
 
 ### Frontend build
 - `cd frontend` from project root.
@@ -171,13 +170,18 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 
 ### Run:
 - `cd frontend` from project root.
-- `npm run preview` or `npm run dev`
+- `npm run preview`
 
 ### Release
 - `cd backend` from project root.
-- `sh linux_release.sh`
+- `sh unix_release.sh`
 - `cd ../frontend`
 - `sh release_frontend.sh`
 - Built packages are in frontend/out/make/ for Debian/Ubuntu, Fedora, and as a generic zip file for other distributions.
 - LibOpenCV is required as an additional dependency if you install from these packages.
   - `sudo apt install libopencv-dev` or equivalent
+
+## Additional Notes
+
+### Formatting
+There is a pre-commit git hook (found in ./husky folder in the project's frontend directory) which verifies changed C++ files were formatted correctly. If your files aren't formatted, the commit fails and the hook attempts to format using clang-format (found using PATH). The formatted files can then be staged for a valid commit.

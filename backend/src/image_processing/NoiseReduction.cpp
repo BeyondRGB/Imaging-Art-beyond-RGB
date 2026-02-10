@@ -27,8 +27,8 @@ void NoiseReduction::execute(CommunicationObj *comms,
         target2 = images->getImage(TARGET(2));
         targets_found = true;
     } catch (std::exception e) {
-        comms->send_error("[Noise Reduction]",
-                          "No target was able to be found.",
+        comms->send_error("No target was able to be found.",
+                          "No target was able to be found. Restart BeyondRGB, and reprocess with Target Images.",
                           cpptrace::generate_trace());
         targets_found = false;
     }
