@@ -177,6 +177,11 @@ jobs:
           name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
           path: backend/build/
 
+      - name: List backend directory
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
+        working-directory: backend/build
+        run: ls -lua
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
