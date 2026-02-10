@@ -38,9 +38,9 @@ jobs:
           - os: windows-latest 
             platform: windows
             arch: x86
-          - os: windows-11-arm
-            platform: windows
-            arch: arm
+          # - os: windows-11-arm
+          #   platform: windows
+          #   arch: arm
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
