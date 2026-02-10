@@ -64,7 +64,7 @@ jobs:
           echo 'LDFLAGS="-L/usr/local/opt/jpeg/lib"' >> /Users/runner/.bash_profile
           echo 'export CPPFLAGS="-I/usr/local/opt/jpeg/include"' >> /Users/runner/.bash_profile
           echo 'export PKG_CONFIG_PATH="/usr/local/opt/jpeg/lib/pkgconfig"' >> /Users/runner/.bash_profile
-          soruce /Users/runner/.bash_profile
+          source /Users/runner/.bash_profile
 
       - name: Setup MSVC
         if: matrix.platform == 'windows'
