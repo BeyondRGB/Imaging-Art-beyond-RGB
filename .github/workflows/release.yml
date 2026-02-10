@@ -212,7 +212,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: app-${{ matrix.os }}-${{ matrix.arch }}
-          path: frontend/out/make/zip/darwin/[arch]/*.zip
+          path: frontend/out/make/zip/darwin/*/*.zip
           if-no-files-found: error
       
       - name: Upload artifacts (Windows)
@@ -220,7 +220,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: app-${{ matrix.os }}-${{ matrix.arch }}
-          path: frontend/out/make/squirrel.windows/[arch]/*.exe
+          path: frontend/out/make/squirrel.windows/*/*.exe
           if-no-files-found: error 
           
       - name: Upload artifacts (Linux)
@@ -229,7 +229,7 @@ jobs:
         with:
           name: app-${{ matrix.os }}-${{ matrix.arch }}
           path: |
-            frontend/out/make/zip/linux/[arch]/*.zip
-            frontend/out/make/rpm/[arch]/*.rpm
-            frontend/out/make/deb/[arch]/*.deb
+            frontend/out/make/zip/linux/*/*.zip
+            frontend/out/make/rpm/*/*.rpm
+            frontend/out/make/deb/*/*.deb
           if-no-files-found: error 
