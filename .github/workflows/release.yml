@@ -175,7 +175,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
-          path: backend/build/
+          path: backend/build/Release/
 
       - name: List backend directory
         if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
