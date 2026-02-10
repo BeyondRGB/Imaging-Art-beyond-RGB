@@ -56,10 +56,11 @@ if [ "$setCmakeArgs" = false ]; then
 fi
 
 cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@"
+commandResult = $?
 
-if [ $? -ne 0 ]; then
+if [ commandResult -ne 0 ]; then
 	echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh"
-	exit
+	exit commandResult
 fi
 
 cd "${buildDirectory}/${mode}" || exit
@@ -69,10 +70,11 @@ if [ "$(uname)" = "Darwin" ]; then
 else
 	cmake --build . -j"$(nproc)"
 fi
+commandResult = $?
 
-if [ $? -ne 0 ]; then
+if [ commandResult -ne 0 ]; then
 	echo "Failed to build project."
-	exit
+	exit commandResult
 fi
 
 # Go back to root of the script
