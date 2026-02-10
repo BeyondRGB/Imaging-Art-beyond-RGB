@@ -177,11 +177,6 @@ jobs:
           name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
           path: backend/build/Release/
 
-      - name: List backend directory
-        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
-        working-directory: backend/build/Release
-        run: ls -lua
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -201,27 +196,30 @@ jobs:
         working-directory: frontend
         shell: cmd
         run: call win_release_frontend.bat
-
+        
       - name: Upload artifacts (macOS)
         if: matrix.platform == 'macos'
         uses: actions/upload-artifact@v6
         with:
           name: app-${{ matrix.os }}-${{ matrix.arch }}
-          path: out/make/zip/darwin/[arch]/*.zip
+          path: frontend/out/make/zip/darwin/[arch]/*.zip
+          if-no-files-found: error 
       
       - name: Upload artifacts (Windows)
         if: matrix.platform == 'windows'
         uses: actions/upload-artifact@v6
         with:
           name: app-${{ matrix.os }}-${{ matrix.arch }}
-          path: out/make/squirrel.windows/[arch]/*.exe
-     
+          path: frontend/out/make/squirrel.windows/[arch]/*.exe
+          if-no-files-found: error 
+          
       - name: Upload artifacts (Linux)
         if: matrix.platform == 'linux'
         uses: actions/upload-artifact@v6
         with:
           name: app-${{ matrix.os }}-${{ matrix.arch }}
           path: |
-            out/make/zip/linux/[arch]/*.zip
-            out/make/rpm/[arch]/*.rpm
-            out/make/deb/[arch]/*.deb
+            frontend/out/make/zip/linux/[arch]/*.zip
+            frontend/out/make/rpm/[arch]/*.rpm
+            frontend/out/make/deb/[arch]/*.deb
+          if-no-files-found: error 
