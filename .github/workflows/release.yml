@@ -26,18 +26,18 @@ jobs:
           - os: macos-26
             platform: macos
             arch: arm
-          # - os: macos-15-intel
-          #   platform: macos
-          #   arch: x86
-          # - os: ubuntu-24.04
-          #   platform: linux
-          #   arch: x86
-          # - os: ubuntu-24.04-arm
-          #   platform: linux
-          #   arch: arm
-          # - os: windows-latest 
-          #   platform: windows
-          #   arch: x86
+          - os: macos-15-intel
+            platform: macos
+            arch: x86
+          - os: ubuntu-24.04
+            platform: linux
+            arch: x86
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm
+          - os: windows-latest 
+            platform: windows
+            arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm
@@ -149,18 +149,18 @@ jobs:
           - os: macos-26
             platform: macos
             arch: arm
-          # - os: macos-15-intel
-          #   platform: macos
-          #   arch: x86
-          # - os: ubuntu-24.04
-          #   platform: linux
-          #   arch: x86
-          # - os: ubuntu-24.04-arm
-          #   platform: linux
-          #   arch: arm
-          # - os: windows-latest 
-          #   platform: windows
-          #   arch: x86
+          - os: macos-15-intel
+            platform: macos
+            arch: x86
+          - os: ubuntu-24.04
+            platform: linux
+            arch: x86
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm
+          - os: windows-latest 
+            platform: windows
+            arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm      
@@ -201,17 +201,11 @@ jobs:
         shell: cmd
         run: call win_release_frontend.bat
         
-            
-      - name: List backend directory
-        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
-        working-directory: frontend/out/make
-        run: tree .
-
       - name: Upload artifacts (macOS)
         if: matrix.platform == 'macos'
         uses: actions/upload-artifact@v6
         with:
-          name: app-${{ matrix.os }}-${{ matrix.arch }}
+          name: beyond-rgb-${{ matrix.os }}-${{ matrix.arch }}
           path: frontend/out/make/zip/darwin/*/*.zip
           if-no-files-found: error
       
@@ -219,7 +213,7 @@ jobs:
         if: matrix.platform == 'windows'
         uses: actions/upload-artifact@v6
         with:
-          name: app-${{ matrix.os }}-${{ matrix.arch }}
+          name: beyond-rgb-${{ matrix.os }}-${{ matrix.arch }}
           path: frontend/out/make/squirrel.windows/*/*.exe
           if-no-files-found: error 
           
@@ -227,7 +221,7 @@ jobs:
         if: matrix.platform == 'linux'
         uses: actions/upload-artifact@v6
         with:
-          name: app-${{ matrix.os }}-${{ matrix.arch }}
+          name: beyond-rgb-${{ matrix.os }}-${{ matrix.arch }}
           path: |
             frontend/out/make/zip/linux/*/*.zip
             frontend/out/make/rpm/*/*.rpm
