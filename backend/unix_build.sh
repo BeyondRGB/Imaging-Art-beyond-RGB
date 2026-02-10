@@ -72,7 +72,7 @@ fi
 
 if [ $? -ne 0 ]; then
 	echo "Failed to build project."
-	exit
+	exit $?
 fi
 
 # Go back to root of the script

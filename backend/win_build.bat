@@ -24,7 +24,7 @@ if "%parameter%" == "--mode"  (
 ) else if "%parameter%" == "-m" (
     shift
     if not "%argument%" == "" (
-        set releaseMode=%argument%s
+        set releaseMode=%argument%
         shift
     ) else (
         set releaseMode=%defaultReleaseMode%
@@ -59,31 +59,32 @@ if "%enableTests%" == "true" (
     set cmakeArgs=-DENABLE_TESTS=ON -DENABLE_COVERAGE=ON
 )
 
-cmake -B "%buildDirectory%"/"%releaseMode%" -S . -D CMAKE_BUILD_TYPE="%releaseMode%" !cmakeArgs!
+cmake -B "%buildDirectory%" -S . -D CMAKE_BUILD_TYPE="%releaseMode%" !cmakeArgs!
 
 if errorlevel 1 (
     echo Failed to create cmake project. Make sure you have run ./windows_config_environment.bat
     exit /b
 )
 
-cd "%buildDirectory%"/"%releaseMode%"
+cd "%buildDirectory%"
 
 if errorlevel 1 (
     echo Failed to navigate to build directory.
     exit /b
 )
 
-cmake --build . -j12 -- /m:%NUMBER_OF_PROCESSORS%
+cmake --build . -j12 --config "%releaseMode%" -- /m:%NUMBER_OF_PROCESSORS%
 
 if errorlevel 1 (
     echo Failed to build project
     exit /b
 )
 
-cd ../..
+cd ..
 
 :: Copy .exe and libraries
 mkdir "..\frontend\lib\"
+echo Copy to ".\build\%releaseMode%\"
 Xcopy /y ".\build\%releaseMode%\" "..\frontend\lib\"
 
 :: Copy all backend resource files
