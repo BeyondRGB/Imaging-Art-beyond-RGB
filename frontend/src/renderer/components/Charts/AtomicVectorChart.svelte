@@ -158,17 +158,16 @@
 <script>
 	import { onMount, onDestroy } from "svelte";
 	import { Deck, OrthographicView } from "@deck.gl/core";
-	import { ScatterplotLayer } from "@deck.gl/layers";
+	import { ScatterplotLayer, LineLayer, TextLayer } from "@deck.gl/layers";
 
 	export let dataAB;
 	export let dataLC;
 
 	console.dir(dataLC);
 
-	// Build up the object to display
 	const parseRGB = rgb => rgb.match(/\d+/g).map(Number);
 
-	const createLayer = data =>
+	const createScatter = data =>
 		new ScatterplotLayer({
 			id: "scatter",
 			data,
@@ -180,7 +179,85 @@
 			getRadius: 3,
 
 			pickable: true,
+
+			stroked: true,
+			getLineColor: d => (d["actual"] ? [0, 0, 0] : [255, 255, 255]),
 		});
+
+	const createAxes = bounds => {
+		const { minX, maxX, minY, maxY } = bounds;
+
+		return new LineLayer({
+			id: "axes",
+			data: [
+				// X axis
+				{
+					sourcePosition: [minX, 0],
+					targetPosition: [maxX, 0],
+				},
+				// Y axis
+				{
+					sourcePosition: [0, minY],
+					targetPosition: [0, maxY],
+				},
+			],
+
+			getSourcePosition: d => d.sourcePosition,
+			getTargetPosition: d => d.targetPosition,
+
+			getColor: [180, 180, 180],
+			getWidth: 2,
+			widthUnits: "pixels",
+		});
+	};
+
+	const createTicks = bounds => {
+		const { minX, maxX, minY, maxY } = bounds;
+		const ticks = [];
+
+		const spacing = 100;
+
+		for (let x = minX; x <= maxX; x += spacing) {
+			ticks.push({
+				position: [x, 0],
+				text: `${x}`,
+			});
+		}
+
+		for (let y = minY; y <= maxY; y += spacing) {
+			ticks.push({
+				position: [0, y],
+				text: `${y}`,
+			});
+		}
+
+		return new TextLayer({
+			id: "ticks",
+			data: ticks,
+
+			getPosition: d => d.position,
+			getText: d => d.text,
+
+			getSize: 14,
+			sizeUnits: "pixels",
+
+			getColor: [220, 220, 220],
+			getTextAnchor: "middle",
+			getAlignmentBaseline: "top",
+		});
+	};
+
+	const getBounds = points => {
+		const xs = points.map(p => (dataAB ? p["a"] : p["l"]));
+		const ys = points.map(p => (dataAB ? p["b"] : p["c"]));
+
+		return {
+			minX: Math.min(...xs),
+			maxX: Math.max(...xs),
+			minY: Math.min(...ys),
+			maxY: Math.max(...ys),
+		};
+	};
 
 	let container;
 	let deckInstance;
@@ -197,13 +274,15 @@
 				zoom: 0,
 			},
 
-			layers: [createLayer(dataAB || dataLC)],
+			layers: [createScatter(dataAB || dataLC)],
 		});
 	});
 
 	$: if (deckInstance) {
+		const bounds = getBounds(dataAB ? dataAB : dataLC);
+
 		deckInstance.setProps({
-			layers: [createLayer(dataAB || dataLC)],
+			layers: [createAxes(bounds), createTicks(bounds), createScatter(dataAB || dataLC)],
 		});
 	}
 
