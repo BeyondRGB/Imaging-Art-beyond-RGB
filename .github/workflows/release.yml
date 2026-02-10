@@ -212,7 +212,7 @@ jobs:
       - name: List windows archive locations
         if: matrix.platform == 'windows'
         working-directory: frontend/out
-        shell: cmd
+        shell: powershell
         run: tree
 
       - name: Upload artifacts (Windows)
