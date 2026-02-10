@@ -8,11 +8,7 @@
 <!-- visibility:hidden prevents focus on elements inside -->
 <div class="pages" bind:this={tabList}>
 	{#each tabs as tab, i}
-		<div 
-			class="item" 
-			class:inactive={i !== $processState.currentTab}
-			data-tab-index={i}
-		>
+		<div class="item" class:inactive={i !== $processState.currentTab} data-tab-index={i}>
 			<svelte:component this={tab.component} />
 		</div>
 	{/each}

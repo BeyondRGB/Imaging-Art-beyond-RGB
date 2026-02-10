@@ -24,15 +24,17 @@ void ThumbnailLoader::run() {
 
             } catch (btrgb::ReaderFailedToOpenFile &e) {
                 this->coms_obj_m->send_error(
-                    "Failed to open file " + fname, "ThumbnailLoader",
+                    "Thumbnail not available: Failed to open file " + fname, "ThumbnailLoader",
                     cpptrace::generate_trace(), btrgb::BENING);
             } catch (std::runtime_error &e) {
-                this->coms_obj_m->send_error(e.what(), "ThumbnailLoader",
+                std::string error_message = std::format("Thumbnail not available: %s", e.what());
+
+                this->coms_obj_m->send_error(error_message, "ThumbnailLoader",
                                              cpptrace::generate_trace(),
                                              btrgb::BENING);
             } catch (...) {
                 this->coms_obj_m->send_error(
-                    "[ThumbnailLoader] Unknown error.", "ThumbnailLoader",
+                    "Thumbnail not available.", "ThumbnailLoader",
                     cpptrace::generate_trace(), btrgb::BENING);
             }
 
@@ -40,10 +42,11 @@ void ThumbnailLoader::run() {
             tiff_reader->recycle();
         }
     } catch (const std::exception &e) {
+        std::string error_message = std::format("Thumbnail not available: %s", e.what());
+
         this->coms_obj_m->send_error(
-            "[ThumbnailLoader] Invalid request.", "ThumbnailLoader",
+            error_message, "ThumbnailLoader",
             cpptrace::generate_trace(), btrgb::CRITICAL);
-        return;
     }
 }
 

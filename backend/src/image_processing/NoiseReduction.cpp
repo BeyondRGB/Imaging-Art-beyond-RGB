@@ -28,7 +28,7 @@ void NoiseReduction::execute(CommunicationObj *comms,
         targets_found = true;
     } catch (std::exception& e) {
         // Targets are optional for noise reduction - log warning but continue
-        comms->send_info("Warning: No target found, applying noise reduction to art images only.", this->get_name());
+        comms->send_info("Warning: No target was able to be found. Restart BeyondRGB, and reprocess with Target Images.", this->get_name());
         targets_found = false;
     }
 
