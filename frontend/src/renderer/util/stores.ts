@@ -35,6 +35,7 @@ function loadSettings() {
 export const currentPage = writable(null);
 export const appSettings = writable(loadSettings());
 export const modal = writable(null);
+export const openQualiaTargetType = writable<"calibration" | "verification">("calibration");
 
 // Persist settings to localStorage
 if (typeof window !== "undefined") {

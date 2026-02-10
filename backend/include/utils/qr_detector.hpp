@@ -20,6 +20,18 @@ struct QRDetectionResult {
 };
 
 /**
+ * @brief Region definition for focused QR scanning.
+ *
+ * Pixel coordinates are expected in the source image space.
+ */
+struct QRScanRegion {
+    double top;
+    double left;
+    double bottom;
+    double right;
+};
+
+/**
  * @brief QR code detector using OpenCV's QRCodeDetector
  * 
  * This class provides methods to detect and decode QR codes in images,
@@ -45,6 +57,21 @@ public:
      * @return QRDetectionResult containing the decoded text if found
      */
     QRDetectionResult detectFromMat(const cv::Mat& image);
+
+    /**
+     * @brief Detect and decode QR code from a region of interest.
+     *
+     * Useful for target-driven scans where QR labels are expected near a known
+     * target area. The region can optionally be expanded by marginPercent.
+     *
+     * @param image Source image
+     * @param region Region of interest in pixel coordinates
+     * @param marginPercent Margin expansion around region (e.g. 10.0 = 10%)
+     * @return QRDetectionResult containing decoded text if found
+     */
+    QRDetectionResult detectFromMatRegion(const cv::Mat& image,
+                                          const QRScanRegion& region,
+                                          double marginPercent = 10.0);
 
     /**
      * @brief Detect and decode all QR codes in an image

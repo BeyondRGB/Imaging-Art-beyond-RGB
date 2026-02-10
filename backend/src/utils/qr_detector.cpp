@@ -1,5 +1,7 @@
 #include <utils/qr_detector.hpp>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 
 namespace btrgb {
 
@@ -21,6 +23,88 @@ cv::Mat QRDetector::preprocessImage(const cv::Mat& image) {
     cv::normalize(processed, processed, 0, 255, cv::NORM_MINMAX);
     
     return processed;
+}
+
+QRDetectionResult QRDetector::detectFromMatRegion(const cv::Mat& image,
+                                                  const QRScanRegion& region,
+                                                  double marginPercent) {
+    QRDetectionResult result;
+    result.found = false;
+
+    if (image.empty()) {
+        result.error = "Empty image provided";
+        return result;
+    }
+
+    auto clampInt = [](int value, int minVal, int maxVal) {
+        return std::max(minVal, std::min(value, maxVal));
+    };
+
+    const int imgW = image.cols;
+    const int imgH = image.rows;
+
+    int left = static_cast<int>(std::round(region.left));
+    int right = static_cast<int>(std::round(region.right));
+    int top = static_cast<int>(std::round(region.top));
+    int bottom = static_cast<int>(std::round(region.bottom));
+
+    if (left > right) std::swap(left, right);
+    if (top > bottom) std::swap(top, bottom);
+
+    const int baseW = std::max(1, right - left);
+    const int baseH = std::max(1, bottom - top);
+    const double marginScale = std::max(0.0, marginPercent) / 100.0;
+    const int expandX = static_cast<int>(std::round(baseW * marginScale));
+    const int expandY = static_cast<int>(std::round(baseH * marginScale));
+
+    left = clampInt(left - expandX, 0, imgW - 1);
+    right = clampInt(right + expandX, 0, imgW);
+    top = clampInt(top - expandY, 0, imgH - 1);
+    bottom = clampInt(bottom + expandY, 0, imgH);
+
+    if (right <= left || bottom <= top) {
+        result.error = "Invalid scan region";
+        return result;
+    }
+
+    cv::Rect roi(left, top, right - left, bottom - top);
+    cv::Mat cropped = image(roi);
+    result = detectFromMat(cropped);
+
+    // Tiny QR codes can decode better when the cropped region is upscaled.
+    if (!result.found && (cropped.cols < 1200 || cropped.rows < 1200)) {
+        cv::Mat upscaled2x;
+        cv::resize(cropped, upscaled2x, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
+        auto upscaledResult = detectFromMat(upscaled2x);
+        if (upscaledResult.found) {
+            result = upscaledResult;
+            for (auto& point : result.boundingBox) {
+                point.x = static_cast<int>(std::round(point.x / 2.0));
+                point.y = static_cast<int>(std::round(point.y / 2.0));
+            }
+        } else {
+            cv::Mat upscaled4x;
+            cv::resize(cropped, upscaled4x, cv::Size(), 4.0, 4.0, cv::INTER_CUBIC);
+            auto upscaled4xResult = detectFromMat(upscaled4x);
+            if (upscaled4xResult.found) {
+                result = upscaled4xResult;
+                for (auto& point : result.boundingBox) {
+                    point.x = static_cast<int>(std::round(point.x / 4.0));
+                    point.y = static_cast<int>(std::round(point.y / 4.0));
+                }
+            }
+        }
+    }
+
+    // Re-project detected bounding box to original image coordinates.
+    if (result.found && !result.boundingBox.empty()) {
+        for (auto& point : result.boundingBox) {
+            point.x += left;
+            point.y += top;
+        }
+    }
+
+    return result;
 }
 
 QRDetectionResult QRDetector::detectFromFile(const std::string& imagePath) {

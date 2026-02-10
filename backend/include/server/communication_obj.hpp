@@ -57,6 +57,8 @@ class CommunicationObj {
 
     // void send_msg(std::string msg);
     void set_id(long newID);
+    unsigned long get_id() const;
+    void send_raw(std::string msg);
     /**
      * Function for sending a Information Message to the front end
      * @param msg: the message being sent to the front end

@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { customRefData, persistentCustomRefData, sendMessage, messageStore, processState } from "@util/stores";
-	import { modal } from "@util/stores";
 	import { CloudIcon, FileIcon, AlertCircleIcon, CheckCircleIcon, CameraIcon } from "svelte-feather-icons";
 	import FileSelector from "@components/FileSelector.svelte";
 	import Button from "@components/Button.svelte";
-	import { onDestroy } from "svelte";
+	import { onDestroy, onMount } from "svelte";
 
 	export let closeModal;
-	export let targetType = "calibration"; // 'calibration' or 'verification'
+	export let targetType: "calibration" | "verification" = "calibration";
 
 	let url = "";
 	let filePaths = [];
@@ -19,6 +18,19 @@
 	let requestId = null;
 	let qrScanRequestId = null;
 	let qrResult = null;
+	let hasTargetImage = false;
+	let autoDetectAttempted = false;
+	let useQrHint = false;
+	let qrMarginPercent = 10;
+	let qrHintTop = 0.0;
+	let qrHintLeft = 0.0;
+	let qrHintBottom = 1.0;
+	let qrHintRight = 1.0;
+	let qrScanTimeoutHandle: ReturnType<typeof setTimeout> | null = null;
+	let qrHintPreviewEl: HTMLDivElement | null = null;
+	let qrHintDragging = false;
+	let qrPreviewSrc = "";
+	let qrPreviewAvailable = false;
 
 	// Handle WebSocket responses
 	const unsubscribe = messageStore.subscribe(value => {
@@ -41,6 +53,7 @@
 			
 			// Handle QR scan response
 			if (data.ResponseType === "QRCodeScanned" && data.RequestID === qrScanRequestId) {
+				clearQrScanTimeout();
 				scanning = false;
 				
 				if (data.ResponseData.found) {
@@ -63,8 +76,89 @@
 	});
 
 	onDestroy(() => {
+		clearQrScanTimeout();
 		unsubscribe();
 	});
+
+	function clearQrScanTimeout() {
+		if (qrScanTimeoutHandle) {
+			clearTimeout(qrScanTimeoutHandle);
+			qrScanTimeoutHandle = null;
+		}
+	}
+
+	function startQrScanTimeout(requestId: number) {
+		clearQrScanTimeout();
+		qrScanTimeoutHandle = setTimeout(() => {
+			if (scanning && qrScanRequestId === requestId) {
+				scanning = false;
+				error = "QR scan timed out. Try again or use a QR area hint.";
+			}
+		}, 12000);
+	}
+
+	function clamp01(value: number): number {
+		return Math.min(1, Math.max(0, value));
+	}
+
+	function toNormalizedPoint(event: MouseEvent) {
+		if (!qrHintPreviewEl) return null;
+		const rect = qrHintPreviewEl.getBoundingClientRect();
+		const x = clamp01((event.clientX - rect.left) / rect.width);
+		const y = clamp01((event.clientY - rect.top) / rect.height);
+		return { x, y };
+	}
+
+	function startQrHintSelection(event: MouseEvent) {
+		if (!useQrHint || !qrHintPreviewEl || scanning || loading) return;
+		const point = toNormalizedPoint(event);
+		if (!point) return;
+		qrHintDragging = true;
+		qrHintTop = point.y;
+		qrHintBottom = point.y;
+		qrHintLeft = point.x;
+		qrHintRight = point.x;
+	}
+
+	function updateQrHintSelection(event: MouseEvent) {
+		if (!qrHintDragging) return;
+		const point = toNormalizedPoint(event);
+		if (!point) return;
+		const minY = Math.min(qrHintTop, point.y);
+		const maxY = Math.max(qrHintTop, point.y);
+		const minX = Math.min(qrHintLeft, point.x);
+		const maxX = Math.max(qrHintLeft, point.x);
+		qrHintTop = minY;
+		qrHintBottom = maxY;
+		qrHintLeft = minX;
+		qrHintRight = maxX;
+	}
+
+	function stopQrHintSelection() {
+		qrHintDragging = false;
+	}
+
+	function normalizeHintBounds() {
+		const top = Math.min(qrHintTop, qrHintBottom);
+		const bottom = Math.max(qrHintTop, qrHintBottom);
+		const left = Math.min(qrHintLeft, qrHintRight);
+		const right = Math.max(qrHintLeft, qrHintRight);
+		const nextTop = clamp01(top);
+		const nextBottom = clamp01(bottom);
+		const nextLeft = clamp01(left);
+		const nextRight = clamp01(right);
+		if (
+			nextTop !== qrHintTop ||
+			nextBottom !== qrHintBottom ||
+			nextLeft !== qrHintLeft ||
+			nextRight !== qrHintRight
+		) {
+			qrHintTop = nextTop;
+			qrHintBottom = nextBottom;
+			qrHintLeft = nextLeft;
+			qrHintRight = nextRight;
+		}
+	}
 
 	function validateUrl(url: string): boolean {
 		if (!url.startsWith("https://")) {
@@ -174,29 +268,75 @@
 			RequestType: "ScanQRCode",
 			RequestData: {
 				imagePath: qrImagePaths[0],
+				targetRegion: useQrHint
+					? {
+							top: qrHintTop,
+							left: qrHintLeft,
+							bottom: qrHintBottom,
+							right: qrHintRight,
+					  }
+					: null,
+				marginPercent: qrMarginPercent,
 			},
 		};
 		
 		console.log("[OpenQualia] Sending QR scan request:", msg);
 		sendMessage(JSON.stringify(msg));
+		startQrScanTimeout(qrScanRequestId);
 	}
 
 	function scanQRFromTargetImage() {
 		error = "";
 		qrResult = null;
 		
-		// Get the current target image path from processState
+		// Get the current target image path from processState.
+		// Prefer verification image stack when loading verification target data.
 		let targetImage = "";
+		const stack = $processState.artStacks[0];
 		
-		if ($processState.artStacks[0]?.fields?.targetA?.length > 0) {
-			targetImage = $processState.artStacks[0].fields.targetA[0].name;
-		} else if ($processState.artStacks[0]?.fields?.imageA?.[0]?.[0]?.name) {
-			targetImage = $processState.artStacks[0].fields.imageA[0][0].name;
+		if (targetType === "verification") {
+			if (stack?.fields?.targetB?.length > 0) {
+				targetImage = stack.fields.targetB[0].name;
+			} else if (stack?.fields?.imageB?.[0]?.[0]?.name) {
+				targetImage = stack.fields.imageB[0][0].name;
+			}
+		}
+
+		if (!targetImage && stack?.fields?.targetA?.length > 0) {
+			targetImage = stack.fields.targetA[0].name;
+		} else if (!targetImage && stack?.fields?.imageA?.[0]?.[0]?.name) {
+			targetImage = stack.fields.imageA[0][0].name;
 		}
 		
 		if (!targetImage) {
 			error = "No target image loaded. Please load images first.";
 			return;
+		}
+
+		let targetRegion = null;
+		const targetState: any =
+			targetType === "verification" ? stack?.verificationTarget : stack?.colorTarget;
+		if (useQrHint) {
+			targetRegion = {
+				top: qrHintTop,
+				left: qrHintLeft,
+				bottom: qrHintBottom,
+				right: qrHintRight,
+			};
+		} else if (
+			targetState &&
+			targetState.top != null &&
+			targetState.left != null &&
+			targetState.bottom != null &&
+			targetState.right != null
+		) {
+			targetRegion = {
+				top: targetState.top,
+				left: targetState.left,
+				bottom: targetState.bottom,
+				right: targetState.right,
+				resolution: targetState.resolution ?? 1,
+			};
 		}
 		
 		scanning = true;
@@ -207,17 +347,62 @@
 			RequestType: "ScanQRCode",
 			RequestData: {
 				imagePath: targetImage,
+				targetRegion,
+				marginPercent: qrMarginPercent,
 			},
 		};
 		
 		console.log("[OpenQualia] Scanning QR from target image:", msg);
 		sendMessage(JSON.stringify(msg));
+		startQrScanTimeout(qrScanRequestId);
 	}
 
-	// Check if we have a target image loaded
-	$: hasTargetImage = $processState.artStacks[0]?.fields?.targetA?.length > 0 || 
-		$processState.artStacks[0]?.fields?.imageA?.[0]?.[0]?.name;
+	// Check if we have a target image loaded for current target type.
+	$: {
+		const stack = $processState.artStacks[0];
+		if (targetType === "verification") {
+			hasTargetImage =
+				(stack?.fields?.targetB?.length ?? 0) > 0 ||
+				Boolean(stack?.fields?.imageB?.[0]?.[0]?.name) ||
+				(stack?.fields?.targetA?.length ?? 0) > 0 ||
+				Boolean(stack?.fields?.imageA?.[0]?.[0]?.name);
+		} else {
+			hasTargetImage =
+				(stack?.fields?.targetA?.length ?? 0) > 0 ||
+				Boolean(stack?.fields?.imageA?.[0]?.[0]?.name);
+		}
+	}
+
+	$: {
+		const stack = $processState.artStacks[0];
+		if (targetType === "verification") {
+			qrPreviewSrc =
+				stack?.verificationTargetImage?.dataURL ||
+				stack?.colorTargetImage?.dataURL ||
+				"";
+		} else {
+			qrPreviewSrc = stack?.colorTargetImage?.dataURL || "";
+		}
+		qrPreviewAvailable = Boolean(qrPreviewSrc);
+	}
+
+	onMount(() => {
+		// MVP auto-detect flow: attempt one scan as soon as modal opens.
+		if (!autoDetectAttempted && hasTargetImage) {
+			autoDetectAttempted = true;
+			scanQRFromTargetImage();
+		}
+	});
+
+	$: qrHintTop = Math.min(1, Math.max(0, qrHintTop));
+	$: qrHintLeft = Math.min(1, Math.max(0, qrHintLeft));
+	$: qrHintBottom = Math.min(1, Math.max(0, qrHintBottom));
+	$: qrHintRight = Math.min(1, Math.max(0, qrHintRight));
+	$: qrMarginPercent = Math.min(100, Math.max(0, qrMarginPercent));
+	$: normalizeHintBounds();
 </script>
+
+<svelte:window on:mousemove={updateQrHintSelection} on:mouseup={stopQrHintSelection} />
 
 <main>
 	<div class="modal-container">
@@ -262,6 +447,95 @@
 							</Button>
 						{/if}
 					</div>
+				</div>
+				<div class="qr-hint-box">
+					<label class="hint-toggle">
+						<input type="checkbox" bind:checked={useQrHint} />
+						<span>Use QR area hint (for tiny QR codes)</span>
+					</label>
+					{#if useQrHint}
+						<p class="hint-desc">Normalized image coords (0.0 to 1.0)</p>
+						{#if qrPreviewAvailable}
+							<div
+								class="hint-preview"
+								bind:this={qrHintPreviewEl}
+								on:mousedown={startQrHintSelection}
+							>
+								<img src={qrPreviewSrc} alt="Target preview for QR area selection" draggable="false" />
+								<div
+									class="hint-selection"
+									style="
+										top: {qrHintTop * 100}%;
+										left: {qrHintLeft * 100}%;
+										width: {Math.max(0.01, (qrHintRight - qrHintLeft) * 100)}%;
+										height: {Math.max(0.01, (qrHintBottom - qrHintTop) * 100)}%;
+									"
+								/>
+							</div>
+							<p class="hint-help">Drag on preview to define QR patch selection.</p>
+						{:else}
+							<p class="hint-missing">
+								Target preview not available yet. You can still enter coordinates manually.
+							</p>
+						{/if}
+						<div class="hint-grid">
+							<label>
+								Top
+								<input
+									type="number"
+									min="0"
+									max="1"
+									step="0.01"
+									bind:value={qrHintTop}
+									disabled={scanning || loading}
+								/>
+							</label>
+							<label>
+								Left
+								<input
+									type="number"
+									min="0"
+									max="1"
+									step="0.01"
+									bind:value={qrHintLeft}
+									disabled={scanning || loading}
+								/>
+							</label>
+							<label>
+								Bottom
+								<input
+									type="number"
+									min="0"
+									max="1"
+									step="0.01"
+									bind:value={qrHintBottom}
+									disabled={scanning || loading}
+								/>
+							</label>
+							<label>
+								Right
+								<input
+									type="number"
+									min="0"
+									max="1"
+									step="0.01"
+									bind:value={qrHintRight}
+									disabled={scanning || loading}
+								/>
+							</label>
+							<label class="margin-field">
+								Margin %
+								<input
+									type="number"
+									min="0"
+									max="100"
+									step="1"
+									bind:value={qrMarginPercent}
+									disabled={scanning || loading}
+								/>
+							</label>
+						</div>
+					{/if}
 				</div>
 				{#if qrResult}
 					<div class="qr-found">
@@ -516,5 +790,71 @@
 	.qr-found {
 		color: rgb(34, 197, 94);
 		@apply flex items-center gap-2 text-sm mt-2 font-medium;
+	}
+
+	.qr-hint-box {
+		@apply mt-3;
+	}
+
+	.hint-toggle {
+		@apply flex items-center gap-2 text-sm;
+		color: var(--color-text-secondary);
+	}
+
+	.hint-toggle input {
+		@apply w-4 h-4;
+	}
+
+	.hint-desc {
+		@apply text-xs mt-2 mb-2;
+		color: var(--color-text-tertiary);
+	}
+
+	.hint-grid {
+		@apply grid grid-cols-2 gap-2;
+	}
+
+	.hint-preview {
+		background-color: var(--color-surface-sunken);
+		border: 1px solid var(--color-border);
+		@apply relative rounded overflow-hidden mt-2 mb-2 cursor-crosshair;
+	}
+
+	.hint-preview img {
+		@apply block w-full;
+		max-height: 180px;
+		object-fit: contain;
+	}
+
+	.hint-selection {
+		border: 2px solid rgba(59, 130, 246, 0.95);
+		background: rgba(59, 130, 246, 0.2);
+		@apply absolute pointer-events-none;
+	}
+
+	.hint-help {
+		@apply text-xs mb-2;
+		color: var(--color-text-tertiary);
+	}
+
+	.hint-missing {
+		@apply text-xs mb-2;
+		color: var(--color-text-tertiary);
+	}
+
+	.hint-grid label {
+		@apply text-xs flex flex-col gap-1;
+		color: var(--color-text-secondary);
+	}
+
+	.hint-grid input {
+		background-color: var(--color-surface-sunken);
+		border: 1px solid var(--color-border);
+		color: var(--color-text-primary);
+		@apply px-2 py-1 rounded text-sm;
+	}
+
+	.margin-field {
+		@apply col-span-2;
 	}
 </style>

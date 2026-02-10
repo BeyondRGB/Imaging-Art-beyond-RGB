@@ -5,6 +5,7 @@
 		processState,
 		setTabCompleted,
 		modal,
+		openQualiaTargetType,
 		sendMessage,
 	} from "@util/stores";
 	import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
@@ -416,11 +417,8 @@
 
 	$: console.log({ LOADING: loading });
 
-	// Track which target (calibration or verification) is being edited with OpenQualia
-	let openQualiaTargetType = null;
-
 	function openOpenQualiaModal(targetType) {
-		openQualiaTargetType = targetType;
+		openQualiaTargetType.set(targetType);
 		modal.set("OpenQualia");
 	}
 

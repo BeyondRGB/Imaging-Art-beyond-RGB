@@ -73,7 +73,7 @@ ProcessManager::identify_process(std::string key) {
         process = std::shared_ptr<OpenQualiaRequest>(
             new OpenQualiaRequest(key));
 
-    else if (key == "ScanQRCode")
+    else if (key == "ScanQRCode" || key == "DetectOpenQualia")
         process = std::shared_ptr<QRScanRequest>(
             new QRScanRequest(key));
 

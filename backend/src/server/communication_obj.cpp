@@ -33,6 +33,10 @@ void CommunicationObj::send_bin(std::vector<uchar> &v) {
 
 void CommunicationObj::set_id(long newID) { id = newID; }
 
+unsigned long CommunicationObj::get_id() const { return id; }
+
+void CommunicationObj::send_raw(std::string msg) { send_msg(msg); }
+
 void CommunicationObj::send_info(std::string msg, std::string sender) {
     jsoncons::json info_body;
     info_body.insert_or_assign("RequestID", id);

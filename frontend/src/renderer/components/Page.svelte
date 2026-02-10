@@ -2,7 +2,7 @@
 	export let routes;
 	import { fade, fly } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";
-	import { currentPage, appSettings, modal, serverError } from "@util/stores";
+	import { currentPage, appSettings, modal, openQualiaTargetType, serverError } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 	import RefDataModal from "@components/RefDataModal.svelte";
 	import OpenQualiaModal from "@components/OpenQualiaModal.svelte";
@@ -75,6 +75,7 @@
 	{:else if $modal === "OpenQualia"}
 		<Modal
 			component={OpenQualiaModal}
+			targetType={$openQualiaTargetType}
 			on:close={() => {
 				showModal = false;
 				$modal = null;

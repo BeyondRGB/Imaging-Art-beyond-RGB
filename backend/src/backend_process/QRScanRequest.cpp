@@ -20,15 +20,76 @@ void QRScanRequest::run() {
         }
         
         std::cout << "[QRScan] Scanning image: " << imagePath << std::endl;
-        
-        // Try to find an OpenQualia URL
-        auto result = detector_.findOpenQualiaUrl(imagePath);
-        
-        if (result.has_value()) {
-            bool isOpenQualia = btrgb::QRDetector::isOpenQualiaUrl(result.value());
-            sendSuccessResponse(result.value(), isOpenQualia);
+
+        cv::Mat image = cv::imread(imagePath, cv::IMREAD_COLOR);
+        if (image.empty()) {
+            sendErrorResponse("Failed to load image");
+            return;
+        }
+
+        bool hasRegion = false;
+        btrgb::QRScanRegion region{};
+        double marginPercent = 10.0;
+
+        try {
+            Json regionJson = this->process_data_m->get_obj("targetRegion");
+            hasRegion = true;
+
+            double resolution = 1.0;
+            try {
+                resolution = regionJson.get_number("resolution");
+            } catch (...) {
+                // Optional; defaults to 1.0
+            }
+
+            const double top = regionJson.get_number("top");
+            const double left = regionJson.get_number("left");
+            const double bottom = regionJson.get_number("bottom");
+            const double right = regionJson.get_number("right");
+
+            // If coordinates look normalized (0..1), convert to pixel coordinates.
+            // Use explicit resolution when provided; otherwise derive from image dims.
+            const bool normalizedCoords =
+                top >= 0.0 && top <= 1.0 &&
+                left >= 0.0 && left <= 1.0 &&
+                bottom >= 0.0 && bottom <= 1.0 &&
+                right >= 0.0 && right <= 1.0;
+
+            if (normalizedCoords) {
+                const double scaleY = resolution > 1.0 ? resolution : static_cast<double>(image.rows);
+                const double scaleX = resolution > 1.0 ? resolution : static_cast<double>(image.cols);
+                region.top = top * scaleY;
+                region.left = left * scaleX;
+                region.bottom = bottom * scaleY;
+                region.right = right * scaleX;
+            } else {
+                region.top = top;
+                region.left = left;
+                region.bottom = bottom;
+                region.right = right;
+            }
+        } catch (...) {
+            hasRegion = false;
+        }
+
+        try {
+            marginPercent = this->process_data_m->get_number("marginPercent");
+        } catch (...) {
+            marginPercent = 10.0;
+        }
+
+        btrgb::QRDetectionResult scanResult;
+        if (hasRegion) {
+            scanResult = detector_.detectFromMatRegion(image, region, marginPercent);
         } else {
-            sendErrorResponse("No QR code found in image");
+            scanResult = detector_.detectFromMat(image);
+        }
+
+        if (scanResult.found) {
+            bool isOpenQualia = btrgb::QRDetector::isOpenQualiaUrl(scanResult.decodedText);
+            sendSuccessResponse(scanResult.decodedText, isOpenQualia);
+        } else {
+            sendErrorResponse(scanResult.error.empty() ? "No QR code found in image" : scanResult.error);
         }
         
     } catch (const std::exception& e) {
@@ -52,7 +113,7 @@ void QRScanRequest::sendSuccessResponse(const std::string& url, bool isOpenQuali
     
     std::string responseStr = response.as<std::string>();
     std::cout << "[QRScan] Sending success response: " << url << std::endl;
-    this->coms_obj_m->send_msg(responseStr);
+    this->coms_obj_m->send_raw(responseStr);
 }
 
 void QRScanRequest::sendErrorResponse(const std::string& error) {
@@ -70,5 +131,5 @@ void QRScanRequest::sendErrorResponse(const std::string& error) {
     
     std::string responseStr = response.as<std::string>();
     std::cerr << "[QRScan] Sending error response: " << error << std::endl;
-    this->coms_obj_m->send_msg(responseStr);
+    this->coms_obj_m->send_raw(responseStr);
 }
