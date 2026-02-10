@@ -211,7 +211,7 @@ jobs:
 
       - name: List windows archive locations
         if: matrix.platform == 'windows'
-        working-directory: frontend/out
+        working-directory: frontend\out
         shell: powershell
         run: tree
 
