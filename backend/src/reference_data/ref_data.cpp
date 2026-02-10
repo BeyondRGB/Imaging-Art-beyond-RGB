@@ -1,21 +1,20 @@
 #include <fstream>
 #include <iostream>
 #include <reference_data/ref_data.hpp>
-#include <server/globals_singleton.hpp>
+#include <utils/resource_paths.hpp>
 
 RefData::RefData(std::string file, IlluminantType illum_type,
                  ObserverType so_type) {
     this->observer = new StandardObserver(so_type);
     this->illuminants = new Illuminants(illum_type);
     this->white_pts = new WhitePoints(so_type, illum_type);
-    std::string path = REF_DATA_PATH;
     this->f_name = file;
     if (this->is_custom(file)) {
         std::cout << "Custom RefData: " << file << std::endl;
         this->read_in_data(file);
     } else {
         std::cout << "Standard RefData: " << file << std::endl;
-        this->read_in_data(path + file);
+        this->read_in_data(btrgb::paths::build_ref_data_file_path(file));
     }
     this->init_color_patches();
 }

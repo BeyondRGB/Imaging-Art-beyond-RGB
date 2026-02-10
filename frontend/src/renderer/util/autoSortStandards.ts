@@ -118,18 +118,19 @@ const probabilityScoreProperties = [
  * @param externalStack
  * @returns any remaining unsorted images
  */
-export function suffixSortImages(images, externalStack) {
+export function suffixSortImages(images, externalStack, includeTarget = true) {
 	if (size(images) < 6) {
 		return images;
 	}
 
 	// Create a mapping of known image types to the [[]]
-	let image_stack = new Map([
-		["target", [null, null]],
-		["image", [null, null]],
-		["darkfield", [null, null]],
-		["flatfield", [null, null]],
-	]);
+	let image_stack = new Map();
+	image_stack.set("image", [null, null]);
+	image_stack.set("darkfield", [null, null]);
+	image_stack.set("flatfield", [null, null]);
+	if (includeTarget) {
+		image_stack.set("target", [null, null]);
+	}
 
 	// List of endings- 'id's for the image- to the images
 	let image_id = [];
@@ -159,25 +160,32 @@ export function suffixSortImages(images, externalStack) {
 			// If the given suffix is in the array of suffixes, add it to the image stack,
 			//  where the key for the image stack belongs to the list of suffixes that the matched suffix is from
 			if (ind != -1) {
-				var temp = image_stack.get(suffixStandards[i][0]);
-				temp[image_id.indexOf(img_id)] = image;
-				image_stack.set(suffixStandards[i][0], temp);
+				const key = suffixStandards[i][0];
+				if (image_stack.has(key)) {
+					var temp = image_stack.get(key);
+					temp[image_id.indexOf(img_id)] = image;
+					image_stack.set(key, temp);
+				}
 			}
 		}
 	});
 
 	//Creating keys for the sorted array as well as the external stack, in order
-	var img_stck_keys = ["image", "target", "flatfield", "darkfield"];
-	var ext_stck_keys = [
-		"imageA",
-		"imageB",
-		"targetA",
-		"targetB",
-		"flatfieldA",
-		"flatfieldB",
-		"darkfieldA",
-		"darkfieldB",
-	];
+	var img_stck_keys = includeTarget
+		? ["image", "target", "flatfield", "darkfield"]
+		: ["image", "flatfield", "darkfield"];
+	var ext_stck_keys = includeTarget
+		? [
+				"imageA",
+				"imageB",
+				"targetA",
+				"targetB",
+				"flatfieldA",
+				"flatfieldB",
+				"darkfieldA",
+				"darkfieldB",
+		  ]
+		: ["imageA", "imageB", "flatfieldA", "flatfieldB", "darkfieldA", "darkfieldB"];
 	var ext_idx = 0;
 	// For a loop the length of the sorted array:
 	for (let i = 0; i < size(img_stck_keys); i++) {
@@ -202,6 +210,10 @@ export function suffixSortImages(images, externalStack) {
 			}
 		}
 		ext_idx += 2;
+	}
+	if (!includeTarget) {
+		externalStack.targetA = [];
+		externalStack.targetB = [];
 	}
 	console.log("SUFFIX AUTOSORT " + JSON.stringify(externalStack, null, 4));
 
@@ -247,7 +259,7 @@ export function autoSortImages(images, externalStack) {
 			image.imageA = false;
 		});
 		var remaining_images = null;
-		remaining_images = suffixSortImages(images, externalStack);
+		remaining_images = suffixSortImages(images, externalStack, includeTarget);
 		console.log("remaining images: ");
 		console.table(size(remaining_images));
 
