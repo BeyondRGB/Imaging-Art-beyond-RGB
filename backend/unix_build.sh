@@ -37,8 +37,9 @@ elif ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
     exit 1
 fi
 
-# Run CMake
-setCmakeArgs=false
+# Setup CMAKE arguments
+# Clear the program arguments, so we can use the space to pass arguments into CMAKE.
+set --
 
 #if  [ "$add_triplet" = true ]; then
 #    set -- "-DVCPKG_TARGET_TRIPLET=$(uname -m)"
@@ -47,15 +48,16 @@ setCmakeArgs=false
 
 if [ "$buildTests" = true ]; then
   set -- "-DENABLE_TESTS=ON" "-DENABLE_COVERAGE=ON"
-  setCmakeArgs=true
 fi
 
-# Clear arguments so we don't just pass the program arguments to cmake.
-if [ "$setCmakeArgs" = false ]; then
-    set --
-fi
+# Enable JPEG turbo for x86_64 macOS.
+# if  [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
+	# # Use "$@" to append to the existing set.
+	# set -- "$@" "-DBUILD_JPEG_TURBO_DISABLE=ON"
+# fi
 
-cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@"
+# Run CMake
+cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@" 
 
 commandResult=$?
 
