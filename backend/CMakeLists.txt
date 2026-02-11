@@ -4,10 +4,11 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 # Trace VCPKG package finding (Use for debugging VCPKG errors)
-#set(VCPKG_TRACE_FIND_PACKAGE ON)
-#message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
 project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.3.1)
+
+set(VCPKG_TRACE_FIND_PACKAGE ON)
+message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
 configure_file(
         ${CMAKE_SOURCE_DIR}/include/version.h.in
@@ -54,6 +55,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
 if (APPLE)
     set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use _Unwind for stack unwinding on macOS" FORCE)
 endif ()
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpptrace)
 
 # Create .exe
