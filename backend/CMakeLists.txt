@@ -22,19 +22,15 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 find_package(asio CONFIG REQUIRED)
 find_package(TIFF REQUIRED)
 find_package(jsoncons CONFIG REQUIRED)
-find_package(PNG REQUIRED)
 find_package(boost_lexical_cast CONFIG REQUIRED)
 find_package(boost_range CONFIG REQUIRED)
 
-find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
+# set(PNG_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/png")
+# find_package(PNG REQUIRED)
 
-set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
-find_package(OpenCV REQUIRED)
-
-include_directories(${OpenCV_INCLUDE_DIRS})
-
-set(PNG_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/png")
 find_package(PNG REQUIRED)
+
+find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 
 # LCMS and LibRAW
 find_package(lcms REQUIRED)
@@ -45,6 +41,12 @@ if (NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLE
     find_package(Threads REQUIRED)
     find_package(OpenMP REQUIRED)
 endif ()
+
+# set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
+# find_package(OpenCV REQUIRED)
+
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Include websocketpp AFTER vcpkg is configured
 set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
