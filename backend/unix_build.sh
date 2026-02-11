@@ -58,9 +58,9 @@ fi
 cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@"
 commandResult = $?
 
-if [ commandResult -ne 0 ]; then
+if [ "$commandResult" -ne 0 ]; then
 	echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh"
-	exit commandResult
+	exit "$commandResult"
 fi
 
 cd "${buildDirectory}/${mode}" || exit
@@ -72,9 +72,9 @@ else
 fi
 commandResult = $?
 
-if [ commandResult -ne 0 ]; then
+if [ "$commandResult" -ne 0 ]; then
 	echo "Failed to build project."
-	exit commandResult
+	exit "$commandResult"
 fi
 
 # Go back to root of the script
