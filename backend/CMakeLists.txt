@@ -42,10 +42,9 @@ if (NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLE
     find_package(OpenMP REQUIRED)
 endif ()
 
-# set(OpenCV_DIR "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
-# find_package(OpenCV REQUIRED)
-
+set(OpenCV_ROOT "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/opencv4")
 find_package(OpenCV REQUIRED)
+
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Include websocketpp AFTER vcpkg is configured
