@@ -26,7 +26,7 @@ jobs:
           # - os: macos-26
           #   platform: macos
           #   arch: arm
-          - os: macos-15-intel # Uses an x86_64 macOS 26 runner.
+          - os: macos-26-large # Uses an x86_64 macOS 26 runner.
             platform: macos
             arch: x86
           # - os: ubuntu-24.04
