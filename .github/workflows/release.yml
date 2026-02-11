@@ -23,9 +23,9 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          - os: macos-26
-            platform: macos
-            arch: arm
+          # - os: macos-26
+          #   platform: macos
+          #   arch: arm
           - os: macos-15-intel
             platform: macos
             arch: x86
