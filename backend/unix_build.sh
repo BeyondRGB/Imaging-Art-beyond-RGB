@@ -51,10 +51,10 @@ if [ "$buildTests" = true ]; then
 fi
 
 # Enable JPEG turbo for x86_64 macOS.
-# if  [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
-	# # Use "$@" to append to the existing set.
-	# set -- "$@" "-DBUILD_JPEG_TURBO_DISABLE=ON"
-# fi
+if  [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
+	# Use "$@" to append to the existing set.
+	set -- "$@" "-DBUILD_JPEG_TURBO_DISABLE=ON"
+fi
 
 # Run CMake
 cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@" 
