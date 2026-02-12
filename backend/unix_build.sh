@@ -13,32 +13,33 @@ usage() {
 for arg in "$@"; do
   shift
   case "$arg" in
-	'--test') set -- "$@" '-t'   ;;
-#	'--triplet') set -- "$@" '-T'   ;;
-	'--mode') set -- "$@" '-m'   ;;
-	*) set -- "$@" "$arg" ;;
+    '--test') set -- "$@" '-t'   ;;
+#    '--triplet') set -- "$@" '-T'   ;;
+    '--mode') set -- "$@" '-m'   ;;
+    *) set -- "$@" "$arg" ;;
   esac
 done
 
 while getopts "tTm:" opt; do
-	case "$opt" in
-		't') buildTests=true ;;
-#		'T') add_triplet=true ;;
-		'm') mode=$OPTARG ;;
-		*) printf "Invalid argument: %s" "$opt" ;;
-	esac
+    case "$opt" in
+        't') buildTests=true ;;
+#        'T') add_triplet=true ;;
+        'm') mode=$OPTARG ;;
+        *) printf "Invalid argument: %s" "$opt" ;;
+    esac
 done
 
 if [ -z ${mode+x} ]; then
-	mode="$defaultReleaseMode"
+    mode="$defaultReleaseMode"
 elif ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
     echo "Mode needs to be set to Debug or Release. Currently set to: ${mode}"
     usage
     exit 1
 fi
 
-# Run CMake
-setCmakeArgs=false
+# Setup CMAKE arguments
+# Clear the program arguments, so we can use the space to pass arguments into CMAKE.
+set --
 
 #if  [ "$add_triplet" = true ]; then
 #    set -- "-DVCPKG_TARGET_TRIPLET=$(uname -m)"
@@ -47,55 +48,58 @@ setCmakeArgs=false
 
 if [ "$buildTests" = true ]; then
   set -- "-DENABLE_TESTS=ON" "-DENABLE_COVERAGE=ON"
-  setCmakeArgs=true
 fi
 
-# Clear arguments so we don't just pass the program arguments to cmake.
-if [ "$setCmakeArgs" = false ]; then
-    set --
-fi
+# Enable JPEG turbo for x86_64 macOS.
+# if  [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
+    # # Use "$@" to append to the existing set.
+    # set -- "$@" "-DBUILD_JPEG_TURBO_DISABLE=ON"
+# fi
 
-cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@"
-commandResult = $?
+# Run CMake
+cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@" 
 
-if [ commandResult -ne 0 ]; then
-	echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh"
-	exit commandResult
+commandResult=$?
+
+if [ "$commandResult" -ne 0 ]; then
+    echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh"
+    exit "$commandResult"
 fi
 
 cd "${buildDirectory}/${mode}" || exit
 
 if [ "$(uname)" = "Darwin" ]; then
-	cmake --build . -j"$(sysctl -n hw.logicalcpu)"
+    cmake --build . -j"$(sysctl -n hw.logicalcpu)"
 else
-	cmake --build . -j"$(nproc)"
+    cmake --build . -j"$(nproc)"
 fi
-commandResult = $?
 
-if [ commandResult -ne 0 ]; then
-	echo "Failed to build project."
-	exit commandResult
+commandResult=$?
+
+if [ "$commandResult" -ne 0 ]; then
+    echo "Failed to build project."
+    exit "$commandResult"
 fi
 
 # Go back to root of the script
 cd ../.. || exit
 
 if [ -d ../frontend/ ]; then
-	# Make sure the release directory is gone so that the
-	# frontend does not automatically start the old executable.
-	echo "Removing old versions of the backend from the frontend."
-	if [ -d ../frontend/lib/ ]; then rm -rf ../frontend/lib/; fi
-	if [ -d ../frontend/res/ ]; then rm -rf ../frontend/res/; fi
+    # Make sure the release directory is gone so that the
+    # frontend does not automatically start the old executable.
+    echo "Removing old versions of the backend from the frontend."
+    if [ -d ../frontend/lib/ ]; then rm -rf ../frontend/lib/; fi
+    if [ -d ../frontend/res/ ]; then rm -rf ../frontend/res/; fi
 
-	echo "Copying executable to the frontend."
-	# Copy executable over
-	mkdir ../frontend/lib/
-	cp -v "build/${mode}/beyond-rgb-backend" ../frontend/lib/
+    echo "Copying executable to the frontend."
+    # Copy executable over
+    mkdir ../frontend/lib/
+    cp -v "build/${mode}/beyond-rgb-backend" ../frontend/lib/
 
-	echo "Copying resources to the frontend."
-	# Copy resource files over.
-	mkdir ../frontend/res/
-	cp -rv ./res/* ../frontend/res/
+    echo "Copying resources to the frontend."
+    # Copy resource files over.
+    mkdir ../frontend/res/
+    cp -rv ./res/* ../frontend/res/
 else
-	echo "! Could not find the frontend files to copy the backend into..."
+    echo "! Could not find the frontend files to copy the backend into..."
 fi
