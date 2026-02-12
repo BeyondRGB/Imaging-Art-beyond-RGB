@@ -30,6 +30,13 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 * [BeyondRGB Under The Hood](https://github.com/TristanKnox/Imaging-Art-beyond-RGB/wiki/BeyondRGB-Under-The-Hood)
 
 # Development and release environment set-up
+## All platforms
+- Clone repository (install git first if needed)
+- `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB`
+- `cd Imaging-Art-beyond-RGB`
+- `git submodule sync`
+- `git submodule update --init --recursive`
+
 ## Windows 10/11
 - This set-up process was tested on a clean install of Windows with no prior Visual Studio installations.
 ### Install tools
@@ -49,14 +56,8 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - Reboot or log-out and log-in
 - Make sure your editor is configured for `C++20` syntax
 
-### Clone our github repository
-- `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
-- `cd .\Imaging-Art-beyond-RGB\`
-- `git submodule sync`
-- `git submodule update --init --recursive`
-
 ### Set-up development & release environment:
-- `cd .\backend\`
+- `cd .\backend\` from project root.
 - `.\win_config_environment.bat`
   - Locally install Vcpkg and our dependencies (\~17.5 GB and \~30 minutes)
 - `cd ..\frontend\`
@@ -94,14 +95,8 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - Git and CMake dependencies: `brew install git cmake pkg-config node`
 - Make sure your editor is configured for `C++20` syntax
 
-### Clone our github repository
-- `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
-- `cd Imaging-Art-beyond-RGB`
-- `git submodule sync`
-- `git submodule update --init --recursive`
-
 ### Set-up development & release environment:
-- `cd backend`
+- `cd backend` from project root.
 - `sh unix_config_environment.sh`
   - Locally install Vcpkg and our dependencies (\~5 GB and \~15 minutes)
 - `cd ../frontend`
@@ -138,10 +133,6 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 ## Ubuntu (tested on 24.04 and 25.04)
 
 ### Install tools
-- Clone repository: `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB.git`
-- `cd Imaging-Art-beyond-RGB`
-- `git submodule sync`
-- `git submodule update --init --recursive`
 - `sudo apt install $(cat backend/apt-dependencies.txt)` from project root.
 - Make sure your editor is configured for `C++20` syntax
 - If you are on Ubuntu 24.04 LTS, you additionally need to configure GCC 14:
@@ -149,7 +140,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
   - `sudo sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14`
 
 ### Set-up
-- `cd backend`
+- `cd backend` from project root.
 - `sh unix_config_environment.sh`
   - This locally installs Vcpkg and our dependencies, it will take a while (\~4.8 GB and \~10 minutes)
 - `cd ../frontend`
