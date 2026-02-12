@@ -3,6 +3,20 @@ cmake_minimum_required(VERSION 3.16)
 # Sets the CMAKE Toolchain to the vcpkg installed using ./arch_config_environment
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
+# VCPKG on macOS requires system architectures to be set, so set those here.
+# Requires a check for the right architecture (x86 or arm64) as well as making sure
+# it is not already defined to allow the user to override it using the command line.
+if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin" AND NOT DEFINED CMAKE_OSX_ARCHITECTURES)
+    if (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+        set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+    elseif (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+        set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+    else ()
+        message("Target architecture is unknown or different: '${CMAKE_HOST_SYSTEM_PROCESSOR}', defaulting to arm64")
+        set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE INTERNAL "Cache the architectures so vcpkg knows what macOS architectures to build for" FORCE)
+    endif ()
+endif ()
+
 # Trace VCPKG package finding (Use for debugging VCPKG errors)
 #set(VCPKG_TRACE_FIND_PACKAGE ON)
 #message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
