@@ -10,18 +10,21 @@ if [ -z "$FILES" ]; then
     NEEDS_FORMATTING=0
 else
     for file in $FILES; do
+        tmp=$(mktemp)
+
+        # Make sure tmp file is deleted there's an unexcepted exit
+        trap 'rm -f "$tmp"' EXIT HUP INT TERM
+
         # Compare staged file and formatter output
-        tmp1=$(mktemp)
-        tmp2=$(mktemp)
-
-        git show ":$file" > "$tmp1"
-        clang-format -style=file -assume-filename="$file" "$tmp1" > "$tmp2"
-
-        if ! diff -q "$tmp1" "$tmp2" >/dev/null; then
-            echo "Formatting differs"
+        if ! clang-format -style=file -assume-filename="$file" "$tmp" \
+            | diff -q "$tmp" - >/dev/null
+        then
+            NEEDS_FORMATTING=1
+            ERROR_MSG="Backend file not formatted: "$file". Applying clang-format to invalid file."
+            clang-format -style=file -i "$file"
         fi
 
-        rm -f "$tmp1" "$tmp2"
+        rm -f "$tmp"
     done
 fi
 
@@ -34,9 +37,9 @@ FILES=$(git diff --cached --name-only --diff-filter=ACM \
 # Check format of staged frontend files
 if ! [ -z "$FILES" ]; then
     for file in $FILES; do
-        if ! npx prettier --check ../$file; then
+        if ! npx prettier --check --loglevel=silent ../$file; then
             NEEDS_FORMATTING=1
-            ERROR_MSG="$ERROR_MSG Frontend file not formatted: $file. Please run ""npm run format"" to format them."
+            ERROR_MSG="$ERROR_MSG Frontend file(s) not formatted. Please run ""npm run format"" to format frontend files."
             break
         fi
     done
@@ -49,4 +52,3 @@ fi
 
 echo $ERROR_MSG
 exit 1
-

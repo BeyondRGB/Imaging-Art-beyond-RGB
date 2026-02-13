@@ -33,7 +33,7 @@ class Communicator {
      * @param error: the error msg to report
      */
     void report_error(std::string reporter, std::string error,
-                  cpptrace::stacktrace trace);
+                      cpptrace::stacktrace trace);
 
   protected:
     std::shared_ptr<CommunicationObj> coms_obj_m;
