@@ -36,6 +36,10 @@ class CommunicationObj {
     websocketpp::connection_hdl connectionHandle_m;
     websocketpp::frame::opcode::value opcode_m;
     unsigned long id;
+
+
+
+    
     /**
      * Function for sending a message back to the front end
      * @param msg: the message string to send
