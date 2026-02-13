@@ -12,6 +12,10 @@ successfully set_coms_obj must be called
 */
 class Communicator {
 
+
+
+
+
   public:
     /**
      * Send a mesage to the front end
@@ -22,7 +26,7 @@ class Communicator {
      * Set the CommunicationObj to be used for sending messages
      * @param coms_obj: the CommunicationObj to set
      */
-    void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj);
+        void set_coms_obj(std::shared_ptr<CommunicationObj> coms_obj);
 
     /**
      * Report error
