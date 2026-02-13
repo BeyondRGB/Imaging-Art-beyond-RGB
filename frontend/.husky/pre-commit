@@ -4,29 +4,39 @@ NEEDS_FORMATTING=0
 # Get staged C/C++ files
 FILES=$(git diff --cached --name-only --diff-filter=ACM \
     -- '*.cpp' '*.cxx' '*.h' '*.hh' '*.hpp' '*.hxx')
+UNFORMATTED_BACKEND_FILES=""
 
 # Format backend files if needed
 if [ -z "$FILES" ]; then
     NEEDS_FORMATTING=0
 else
     for file in $FILES; do
-        tmp=$(mktemp)
+        # Write staged and formatted stage version to temp files
+        staged_tmp=$(mktemp) || exit 1
+        formatted_tmp=$(mktemp) || exit 1
+        trap 'rm -f "$staged_tmp" "$formatted_tmp"' EXIT HUP INT TERM
 
-        # Make sure tmp file is deleted there's an unexcepted exit
-        trap 'rm -f "$tmp"' EXIT HUP INT TERM
+        git show :"$file" > "$staged_tmp"
+        git show :"$file" \
+            | clang-format -style=file -assume-filename="$file" \
+            > "$formatted_tmp"
 
-        # Compare staged file and formatter output
-        if ! clang-format -style=file -assume-filename="$file" "$tmp" \
-            | diff -q "$tmp" - >/dev/null
-        then
+        # Compare staged vs formatted stage
+        if ! diff -q "$staged_tmp" "$formatted_tmp" >/dev/null 2>&1; then
             NEEDS_FORMATTING=1
-            ERROR_MSG="Backend file not formatted: "$file". Applying clang-format to invalid file."
-            clang-format -style=file -i "$file"
+            UNFORMATTED_BACKEND_FILES="$UNFORMATTED_BACKEND_FILES $file"
         fi
 
-        rm -f "$tmp"
+        rm -f "$staged_tmp" "$formatted_tmp"
     done
 fi
+
+if [ "$NEEDS_FORMATTING" -eq 1 ]; then
+    ERROR_MSG="Backend file(s) not formatted: $UNFORMATTED_BACKEND_FILES. Please run \"clang-format -style=file -i FILENAME\" on the invalid file(s)."
+fi
+
+# Reset trap
+trap - EXIT HUP INT TERM
 
 cd frontend
 
@@ -39,7 +49,7 @@ if ! [ -z "$FILES" ]; then
     for file in $FILES; do
         if ! npx prettier --check --loglevel=silent ../$file; then
             NEEDS_FORMATTING=1
-            ERROR_MSG="$ERROR_MSG Frontend file(s) not formatted. Please run ""npm run format"" to format frontend files."
+            ERROR_MSG="$ERROR_MSG Frontend file(s) not formatted. Please run \"npm run format\" to format frontend files."
             break
         fi
     done
