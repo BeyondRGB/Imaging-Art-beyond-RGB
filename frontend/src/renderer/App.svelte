@@ -41,7 +41,6 @@
 			isShown: true,
 			page: true,
 		},
-
 		Reports: {
 			text: "Calibration Reports",
 			component: Reports,
