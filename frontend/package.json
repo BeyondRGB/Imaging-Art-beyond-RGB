@@ -1,7 +1,7 @@
 {
 	"name": "beyond-rgb",
 	"productName": "beyond-rgb",
-	"version": "2.3.0",
+	"version": "2.3.1",
 	"description": "Spectral image calibration",
 	"main": "src/main/index.js",
 	"scripts": {

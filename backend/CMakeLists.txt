@@ -21,13 +21,16 @@ endif ()
 #set(VCPKG_TRACE_FIND_PACKAGE ON)
 #message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
-project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.2.0)
+project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.3.1)
 
 configure_file(
         ${CMAKE_SOURCE_DIR}/include/version.h.in
         ${CMAKE_SOURCE_DIR}/include/version.h
         @ONLY)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+
+# format!
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/clang-format.cmake)
 
 #------------------------------------------
 #Add VCPKG provided find_package Here
