@@ -1,6 +1,7 @@
 <script>
 	import { onMount, onDestroy } from "svelte";
 	import * as echarts from "echarts";
+	import { appSettings } from "@root/util/stores";
 
 	let container;
 	let chart;
@@ -42,14 +43,11 @@
 			) + 5; // plus some padding;
 
 		return {
-			backgroundColor: "#111",
-
 			grid: {
 				left: 60,
 				right: 20 + 40,
 				top: 40,
 				bottom: 60 + 40,
-				backgroundColor: "#444",
 			},
 
 			xAxis: {
@@ -57,11 +55,6 @@
 				name: dataAB ? "a*" : "C*",
 				nameLocation: "middle",
 				nameGap: 30,
-				axisLine: {
-					lineStyle: {
-						color: "#444",
-					},
-				},
 				min: dataAB ? -maxVal : 0,
 				max: maxVal,
 				splitLine: { show: true },
@@ -72,11 +65,6 @@
 				name: dataAB ? "b*" : "L*",
 				nameLocation: "middle",
 				nameGap: 40,
-				axisLine: {
-					lineStyle: {
-						color: "#444",
-					},
-				},
 				min: dataAB ? -maxVal : 0,
 				max: maxVal,
 				splitLine: { show: true },
@@ -92,13 +80,16 @@
 
 			tooltip: {
 				trigger: "item",
+
+				// The tooltip text, in HTML
 				formatter: params => {
 					const d = params.data;
 					return `
 					<div style="min-width:90px">
 						<div style="font-weight:700; margin-bottom:6px;">${d.group} ${
-						d.actual ? "Actual" : "Expected "
-					}</div>					</div>
+						d.actual ? "Image" : "Reference "
+					}</div>
+					</div>
 							<div style="display:flex; justify-content: space-between; gap:16px;">
 								<span>${dataAB ? "a*" : "C*"} =</span>
 								<span style="font-weight:600;">${d.value[0].toFixed(2)}</span>
@@ -116,7 +107,6 @@
 				},
 				label: {
 					show: true,
-					backgroundColor: "#444",
 				},
 			},
 
@@ -194,12 +184,7 @@
 	});
 </script>
 
-<!-- <main> -->
-<!-- {#key $appSettings?.isDarkTheme} -->
 <div bind:this={container} class="chart" />
-
-<!-- {/key} -->
-<!-- </main> -->
 
 <style>
 	.chart {
