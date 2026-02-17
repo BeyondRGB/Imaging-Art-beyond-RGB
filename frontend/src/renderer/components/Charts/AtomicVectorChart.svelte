@@ -1,161 +1,210 @@
 <script>
-	import { chart } from "svelte-apexcharts";
-	import { find, forEach } from "lodash";
-	import { getCssVar } from "@util/cssUtils";
-	import { appSettings } from "@util/stores";
+	import { onMount, onDestroy } from "svelte";
+	import * as echarts from "echarts";
+
+	let container;
+	let chart;
 
 	export let dataAB;
 	export let dataLC;
 
-	const colors = [];
-	const annotations = [];
-	let data = [];
-
-	const getData = function () {
-		forEach(dataAB || dataLC, function (item) {
-			let entry = find(data, { series: item.group });
-			if (!entry) {
-				entry = {
-					name: item.group,
-					series: item.group,
-					data: [],
-				};
-				data.push(entry);
-				colors.push(item.color);
-			}
-
-			entry.data.push({
-				y: item.b || item.l,
-				x: item.a || item.c,
-			});
-			annotations.push({
-				y: item.b || item.l,
-				x: item.a || item.c,
-				marker: {
-					fillColor: item.color,
-					strokeWidth: 1,
-					size: 3,
-					strokeColor: entry.data.length % 2 == 0 ? "#000" : "#FFF",
-				},
-			});
-			if ("B:4" == entry.series) {
-				console.log(item);
-			}
+	function buildOption(points) {
+		const pointsByGroup = new Map();
+		points.forEach(p => {
+			pointsByGroup.set(
+				p.group,
+				points.filter(otherP => otherP.group === p.group)
+			);
 		});
-		return data;
-	};
 
-	const getOptions = function () {
-		// Get theme colors with proper fallbacks for light/dark mode
-		const isDark = $appSettings?.isDarkTheme ?? true;
-		const textColorPrimary = getCssVar("--color-text-primary", isDark ? "#ffffff" : "#1f2937");
-		const textColorSecondary = getCssVar("--color-text-secondary", isDark ? "#9ca3af" : "#6b7280");
+		// For the lines
+		const lineSeries = Array.from(pointsByGroup.entries()).map(([_, ps]) => ({
+			type: "line",
+
+			data: ps.map(p => (dataAB ? [p["a"], p["b"]] : [p["c"], p["l"]])),
+
+			symbol: "none",
+
+			lineStyle: {
+				width: 4,
+				color: ps[0]["color"],
+				opacity: 0.7,
+			},
+
+			z: 1,
+			silent: true,
+		}));
+
+		// Compute axes bounds
+		const maxVal =
+			Math.max(
+				...[...points.map(p => (dataAB ? p.a : p.l)), ...points.map(p => (dataAB ? p.b : p.c))]
+			) + 5; // plus some padding;
 
 		return {
-			series: getData(),
-			markers: {
-				size: 5,
-				colors: colors,
-				strokeWidth: 0,
+			backgroundColor: "#111",
+
+			grid: {
+				left: 60,
+				right: 20 + 40,
+				top: 40,
+				bottom: 60 + 40,
+				backgroundColor: "#444",
 			},
-			annotations: {
-				points: annotations,
+
+			xAxis: {
+				type: "value",
+				name: dataAB ? "a*" : "C*",
+				nameLocation: "middle",
+				nameGap: 30,
+				axisLine: {
+					lineStyle: {
+						color: "#444",
+					},
+				},
+				min: dataAB ? -maxVal : 0,
+				max: maxVal,
+				splitLine: { show: true },
 			},
-			chart: {
-				animations: {
-					enabled: false,
+
+			yAxis: {
+				type: "value",
+				name: dataAB ? "b*" : "L*",
+				nameLocation: "middle",
+				nameGap: 40,
+				axisLine: {
+					lineStyle: {
+						color: "#444",
+					},
 				},
-				height: "700px",
-				width: "700px",
-				type: "line",
-				stroke: {
-					curve: "straight",
-				},
-				toolbar: {
-					// Hamburger menu which has exports such as CSV etc.
-					// I have had issues displaying this, I believe some unrelated global CSS is causing issues
-					show: false,
-				},
-				selection: {
-					enabled: false,
-				},
+				min: dataAB ? -maxVal : 0,
+				max: maxVal,
+				splitLine: { show: true },
 			},
+
+			// scroll zoom + drag zoom
+			dataZoom: [
+				{ type: "inside", xAxisIndex: 0 },
+				{ type: "inside", yAxisIndex: 0 },
+				{ type: "slider", xAxisIndex: 0 },
+				{ type: "slider", yAxisIndex: 0 },
+			],
+
 			tooltip: {
-				shared: false,
-				intersect: true,
-				theme: isDark ? "dark" : "light",
-				x: {
-					show: false,
+				trigger: "item",
+				formatter: params => {
+					const d = params.data;
+					return `
+					<div style="min-width:90px">
+						<div style="font-weight:700; margin-bottom:6px;">${d.group} ${
+						d.actual ? "Actual" : "Expected "
+					}</div>					</div>
+							<div style="display:flex; justify-content: space-between; gap:16px;">
+								<span>${dataAB ? "a*" : "C*"} =</span>
+								<span style="font-weight:600;">${d.value[0].toFixed(2)}</span>
+							</div>
+							<div style="display:flex; justify-content: space-between; gap:16px;">
+								<span>${dataAB ? "b*" : "L*"} =</span>
+								<span style="font-weight:600;">${d.value[1].toFixed(2)}</span>
+							</div>
+					</div>
+					`;
 				},
-				y: {
-					formatter: undefined,
-					title: {
-						formatter: function (seriesName) {
-							return seriesName;
+				axisPointer: {
+					type: "cross",
+					snap: true,
+				},
+				label: {
+					show: true,
+					backgroundColor: "#444",
+				},
+			},
+
+			series: [
+				...lineSeries,
+				// Actual point
+				{
+					type: "scatter",
+					name: "Color point",
+
+					symbolSize: 12,
+
+					data: points.map(p => ({
+						value: dataAB ? [p["a"], p["b"]] : [p["c"], p["l"]],
+						itemStyle: {
+							color: p["color"],
 						},
-					},
+						group: p.group,
+						actual: p.actual,
+					})),
+					z: 2,
 				},
-				z: {
-					show: false,
+
+				// Border
+				{
+					type: "scatter",
+
+					symbolSize: 10,
+
+					data: points.map(p => ({
+						value: dataAB ? [p["a"], p["b"]] : [p["c"], p["l"]],
+						itemStyle: {
+							color: p["actual"] ? "#000" : "#fff",
+						},
+					})),
+					z: 3,
+					silent: true,
 				},
-			},
-			legend: {
-				show: true,
-				labels: {
-					colors: [textColorPrimary, textColorPrimary],
+
+				// Point again
+				{
+					type: "scatter",
+
+					symbolSize: 7,
+
+					data: points.map(p => ({
+						value: dataAB ? [p["a"], p["b"]] : [p["c"], p["l"]],
+						itemStyle: {
+							color: p["color"],
+						},
+					})),
+					z: 4,
+					silent: true,
 				},
-				customLegendItems: ["Reference", "Image"],
-				markers: {
-					size: 5,
-					strokeWidth: 2,
-					strokeColor: textColorPrimary,
-					fillColors: [textColorPrimary, "#000"],
-				},
-			},
-			xaxis: {
-				labels: {
-					style: {
-						colors: textColorSecondary,
-					},
-				},
-				title: {
-					text: dataAB ? "a*" : "C*",
-					offsetY: 75,
-					style: {
-						color: textColorPrimary,
-					},
-				},
-			},
-			yaxis: {
-				labels: {
-					style: {
-						colors: textColorSecondary,
-					},
-					formatter: function (value, info) {
-						if (isFinite(info)) {
-							// This gets hit for each row (displayed as y-axis)
-							return value;
-						} else if (isFinite(info?.dataPointIndex)) {
-							// This gets hit for each individual point on the heatmap (displayed as tooltip value)
-							return info?.dataPointIndex % 2 ? "Expected" : "Actual";
-						}
-					},
-				},
-				title: {
-					text: dataAB ? "b*" : "L*",
-					style: {
-						color: textColorPrimary,
-					},
-				},
-				decimalsInFloat: 0,
-			},
-			colors: colors,
+			],
 		};
-	};
+	}
+
+	onMount(() => {
+		chart = echarts.init(container);
+
+		chart.setOption(buildOption(dataAB || dataLC));
+
+		window.addEventListener("resize", chart.resize);
+	});
+
+	// reactive update
+	$: if (chart) {
+		chart.setOption(buildOption(dataAB || dataLC));
+	}
+
+	onDestroy(() => {
+		window.removeEventListener("resize", chart.resize);
+		chart.dispose();
+	});
 </script>
 
-<main>
-	{#key $appSettings?.isDarkTheme}
-		<div use:chart={getOptions()} />
-	{/key}
-</main>
+<!-- <main> -->
+<!-- {#key $appSettings?.isDarkTheme} -->
+<div bind:this={container} class="chart" />
+
+<!-- {/key} -->
+<!-- </main> -->
+
+<style>
+	.chart {
+		width: 80vh;
+		height: 80vh;
+		flex: 1;
+	}
+</style>
