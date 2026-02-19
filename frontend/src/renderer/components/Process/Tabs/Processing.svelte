@@ -7,7 +7,6 @@
 		currentPage,
 		messageStore,
 		resetProcess,
-		batchImagesA,
 		modal,
 	} from "@util/stores";
 	import ImageViewer from "@components/ImageViewer.svelte";
@@ -20,6 +19,8 @@
 
 	let pipelineComponents = {};
 	let pipelineProgress = {};
+
+	let artImagesProcessed = 0;
 
 	function reset() {
 		pipelineComponents = {};
@@ -72,7 +73,13 @@
 
 	// Show modal when processing is complete
 	$: if ($processState.pipelineComplete) {
+		artImagesProcessed += 1
 		resetPart()
+
+		console.log(`Art Images Processed: ${artImagesProcessed}`);
+		if (artImagesProcessed == $processState.artImageCount) {
+			modal.set("ProcessComplete");
+		}
 	}
 
 	function closeCompletionModal() {
