@@ -21,8 +21,6 @@
 	let pipelineComponents = {};
 	let pipelineProgress = {};
 
-	let batchCount = 0;
-
 	function reset() {
 		pipelineComponents = {};
 		pipelineProgress = {};
@@ -34,13 +32,7 @@
 		pipelineProgress = {};
 	}
 
-	$: if ($processState.pipelineComplete && batchCount < $batchImagesA.length) {
-		resetPart();
-	}
-
 	$: if ($messageStore.length > 1 && !($messageStore[0] instanceof Blob)) {
-		//console.log($messageStore[0]);
-		console.log("New Message PROCESSING");
 		try {
 			let temp = JSON.parse($messageStore[0]);
 			if (temp["ResponseType"] === "CalibrationComplete") {
@@ -79,8 +71,8 @@
 	}
 
 	// Show modal when processing is complete
-	$: if ($processState.pipelineComplete && $modal !== "ProcessComplete") {
-		modal.set("ProcessComplete");
+	$: if ($processState.pipelineComplete) {
+		resetPart()
 	}
 
 	function closeCompletionModal() {
