@@ -122,7 +122,8 @@
 	{#if $modal === "ProcessComplete"}
 		<Modal
 			component={ProcessCompleteModal}
-			on:close={closeCompletionModal}
+			on:close={() => handleComplete(1)}
+			blocking={true}
 			size="medium"
 			onViewImage={() => handleComplete(0)}
 			onOpenFileLocation={openFileExplorer}
