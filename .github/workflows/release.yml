@@ -23,24 +23,24 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          # - os: macos-26
-          #   platform: macos
-          #   arch: arm
-          - os: macos-26-large # Uses an x86_64 macOS 26 runner.
+          - os: macos-26
             platform: macos
-            arch: x86
-          # - os: ubuntu-24.04
-          #   platform: linux
-          #   arch: x86
-          # - os: ubuntu-24.04-arm
-          #   platform: linux
-          #   arch: arm
-          # - os: windows-latest 
-          #   platform: windows
-          #   arch: x86
-          - os: windows-11-arm
-            platform: windows
             arch: arm
+          # - os: macos-26-large # Uses an x86_64 macOS 26 runner.
+          #   platform: macos
+          #   arch: x86
+          - os: ubuntu-24.04
+            platform: linux
+            arch: x86
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm
+          - os: windows-latest 
+            platform: windows
+            arch: x86
+          # - os: windows-11-arm
+          #   platform: windows
+          #   arch: arm
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -142,24 +142,24 @@ jobs:
       fail-fast: true
       matrix:
         include:
-          # - os: macos-26
-          #   platform: macos
-          #   arch: arm
-          - os: macos-15-intel
+          - os: macos-26
             platform: macos
+            arch: arm
+          # - os: macos-15-intel
+          #   platform: macos
+          #   arch: x86
+          - os: ubuntu-24.04
+            platform: linux
             arch: x86
-          # - os: ubuntu-24.04
-          #   platform: linux
-          #   arch: x86
-          # - os: ubuntu-24.04-arm
-          #   platform: linux
-          #   arch: arm
-          # - os: windows-latest 
-          #   platform: windows
-          #   arch: x86
-          - os: windows-11-arm
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm
+          - os: windows-latest 
             platform: windows
-            arch: arm      
+            arch: x86
+          # - os: windows-11-arm
+          #   platform: windows
+          #   arch: arm      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
