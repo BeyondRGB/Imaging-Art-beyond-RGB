@@ -1,5 +1,6 @@
 #include <reference_data/illuminants.hpp>
 #include <reference_data/ref_data_defines.hpp>
+#include <utils/resource_paths.hpp>
 
 Illuminants::Illuminants(IlluminantType type) {
     this->type = type;
@@ -12,7 +13,8 @@ Illuminants::~Illuminants() {
 }
 
 void Illuminants::init() {
-    std::string fpath = ILLUMINANTS_FILE_PATH;
+    std::string fpath =
+        btrgb::paths::build_ref_data_file_path(ILLUMINANTS_FILE_NAME);
     if (!this->open_file(fpath))
         throw std::runtime_error("[illuminants.cpp] Failed to open file: " +
                                  fpath);
