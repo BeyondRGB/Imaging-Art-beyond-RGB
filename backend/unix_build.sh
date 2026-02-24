@@ -41,15 +41,16 @@ fi
 # Clear the program arguments, so we can use the space to pass arguments into CMAKE.
 set --
 
+# This is commented out for now, mostly because we do not need to set the triplet any longer. This also shows how to extend this bash script with more optional cmake arguments.
 #if  [ "$add_triplet" = true ]; then
 #    set -- "-DVCPKG_TARGET_TRIPLET=$(uname -m)"
-#    set_cmake_args=true
 #fi
 
 if [ "$buildTests" = true ]; then
-  set -- "-DENABLE_TESTS=ON" "-DENABLE_COVERAGE=ON"
+  set -- "-DENABLE_TESTS=ON" "-DENABLE_COVERAGE=ON" # "$@"
 fi
 
+# Not necessary at the moment because macOS x86_64 builds are currently broken.
 # Enable JPEG turbo for x86_64 macOS.
 # if  [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
     # # Use "$@" to append to the existing set.
