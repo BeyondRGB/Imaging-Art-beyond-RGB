@@ -1,32 +1,85 @@
 #!/bin/sh
-build_directory="build"
-mode=$1
+buildDirectory="build"
+defaultReleaseMode="Debug"
 
-if ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
-    echo "Mode not set to Debug or Release."
-    echo "usage: unix_build.sh [Debug | Release]"
-    exit
+usage() {
+    echo "usage $0 [-t | --test] [-m | --mode] (Debug | Release)"
+    echo "Options:"
+    echo "  -t | --test           Build tests."
+    echo "  -m | --mode           Set the build can be: Debug | Release"
+}
+
+# Transform long options to short ones: https://stackoverflow.com/a/30026641
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    '--test') set -- "$@" '-t'   ;;
+#    '--triplet') set -- "$@" '-T'   ;;
+    '--mode') set -- "$@" '-m'   ;;
+    *) set -- "$@" "$arg" ;;
+  esac
+done
+
+while getopts "tTm:" opt; do
+    case "$opt" in
+        't') buildTests=true ;;
+#        'T') add_triplet=true ;;
+        'm') mode=$OPTARG ;;
+        *) printf "Invalid argument: %s" "$opt" ;;
+    esac
+done
+
+if [ -z ${mode+x} ]; then
+    mode="$defaultReleaseMode"
+elif ! [ "${mode}" = "Debug" ] && ! [ "${mode}" = "Release" ]; then
+    echo "Mode needs to be set to Debug or Release. Currently set to: ${mode}"
+    usage
+    exit 1
 fi
+
+# Setup CMAKE arguments
+# Clear the program arguments, so we can use the space to pass arguments into CMAKE.
+set --
+
+# This is commented out for now, mostly because we do not need to set the triplet any longer. This also shows how to extend this bash script with more optional cmake arguments.
+#if  [ "$add_triplet" = true ]; then
+#    set -- "-DVCPKG_TARGET_TRIPLET=$(uname -m)"
+#fi
+
+if [ "$buildTests" = true ]; then
+  set -- "-DENABLE_TESTS=ON" "-DENABLE_COVERAGE=ON" # "$@"
+fi
+
+# Not necessary at the moment because macOS x86_64 builds are currently broken.
+# Enable JPEG turbo for x86_64 macOS.
+# if  [ "$(uname)" = "Darwin" ] && [ "$(uname -m)" = "x86_64" ]; then
+    # # Use "$@" to append to the existing set.
+    # set -- "$@" "-DBUILD_JPEG_TURBO_DISABLE=ON"
+# fi
 
 # Run CMake
-cmake -B "build/${mode}" -S . -D CMAKE_BUILD_TYPE=$mode
+cmake -B "${buildDirectory}/${mode}" -S . -D CMAKE_BUILD_TYPE="$mode" "$@" 
 
-if [ $? -ne 0 ]; then
-    echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh."
-    exit
+commandResult=$?
+
+if [ "$commandResult" -ne 0 ]; then
+    echo "Failed to create cmake project. Make sure you have run ./unix_config_environment.sh"
+    exit "$commandResult"
 fi
 
-cd "$build_directory/${mode}" || exit
+cd "${buildDirectory}/${mode}" || exit
 
-if [ $(uname) = "Darwin" ]; then
-  cmake --build . -j$(sysctl -n hw.logicalcpu)
+if [ "$(uname)" = "Darwin" ]; then
+    cmake --build . -j"$(sysctl -n hw.logicalcpu)"
 else
-    cmake --build . -j$(nproc)
+    cmake --build . -j"$(nproc)"
 fi
 
-if [ $? -ne 0 ]; then
+commandResult=$?
+
+if [ "$commandResult" -ne 0 ]; then
     echo "Failed to build project."
-    exit
+    exit "$commandResult"
 fi
 
 # Go back to root of the script

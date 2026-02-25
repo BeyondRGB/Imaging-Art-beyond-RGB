@@ -32,7 +32,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 # Development and release environment set-up
 ## All platforms
 - Clone repository (install git first if needed)
-- `git clone https://github.com/TristanKnox/Imaging-Art-beyond-RGB`
+- `git clone https://github.com/BeyondRGB/Imaging-Art-beyond-RGB`
 - `cd Imaging-Art-beyond-RGB`
 - `git submodule sync`
 - `git submodule update --init --recursive`
@@ -58,17 +58,17 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 
 ### Set-up development & release environment:
 - `cd .\backend\` from project root.
-- `.\vcpkg_first_time_setup.bat`
+- `.\win_config_environment.bat`
   - Locally install Vcpkg and our dependencies (\~17.5 GB and \~30 minutes)
 - `cd ..\frontend\`
 - `npm install`
 
 ### Backend build
 - `cd .\backend\` from project root.
-- If an additional dependency is ever added to "dependencies.txt", first run:
-  - `.\config_depends.bat`
+- If an additional dependency is ever added to "dependencies.txt", run:
+  - `.\win_config_environment.bat`
 - To build:
-  - `.\win10_debug.bat` or `.\win10_release.bat`
+  - `.\win_build.bat -m Debug` or `.\win_build.bat -m Release`
   - Build automatically copied to fronted for testing.
 
 ### Fronted build
@@ -82,9 +82,9 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 
 ### Release
 - `cd .\backend\` from project root.
-- `.\win10_release.bat`
+- `.\win_build.bat -m Release`
 - `cd ..\frontend\`
-- `.\win10_release_frontend.bat`
+- `.\win_release_frontend.bat`
   - The release output can be found in "Imaging-Art-beyond-RGB\frontend\out\".
   - The release is a folder called "Beyond RGB-win32-x64" with an executable "Beyond RGB.exe".
 
@@ -107,7 +107,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - If an additional dependency is ever added to "dependencies.txt", first run:
   - `sh unix_config_environment.sh`
 - To build:
-  - `sh unix_debug.sh` or `sh unix_release.sh`
+  - `sh unix_build.sh -m Debug` or `sh unix_build.sh -m Release`
   - Build automatically copied to frontend for testing.
 
 ### Frontend build
@@ -121,9 +121,9 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 
 ### Release
 - `cd backend` from project root.
-- `sh unix_release.sh`
+- `sh unix_build.sh -m Release`
 - `cd ../frontend`
-- `sh release_frontend.sh`
+- `sh unix_release_frontend.sh`
   - The release output can be found in "Imaging-Art-beyond-RGB\frontend\out\".
 
 #### Mac Release issues
@@ -151,7 +151,7 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 - If an additional dependency is ever added to "dependencies.txt", first run:
   - `sh unix_config_environment.sh`
 - To build:
-  - `sh unix_debug.sh` or `sh unix_release.sh`
+  - `sh unix_build.sh -m Debug` or `sh unix_build.sh  -m Release`
   - Build automatically copied to frontend for testing.
 
 ### Frontend build
@@ -165,9 +165,9 @@ Jack Ganger-Spivak, Raynard Miot, Parker Noffke, Nat Manoucheri, Taylor Lineman,
 
 ### Release
 - `cd backend` from project root.
-- `sh unix_release.sh`
+- `sh unix_build.sh -m Release`
 - `cd ../frontend`
-- `sh release_frontend.sh`
+- `sh unix_release_frontend.sh`
 - Built packages are in frontend/out/make/ for Debian/Ubuntu, Fedora, and as a generic zip file for other distributions.
 - LibOpenCV is required as an additional dependency if you install from these packages.
   - `sudo apt install libopencv-dev` or equivalent

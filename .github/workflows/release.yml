@@ -1,0 +1,220 @@
+name: Release App
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  build-backend:
+    name: Build and Test Backend (${{ matrix.platform }} - ${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: macos-26
+            platform: macos
+            arch: arm
+          # - os: macos-26-large # Uses an x86_64 macOS 26 runner.
+          #   platform: macos
+          #   arch: x86
+          - os: ubuntu-24.04
+            platform: linux
+            arch: x86
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm
+          - os: windows-latest 
+            platform: windows
+            arch: x86
+          # - os: windows-11-arm
+          #   platform: windows
+          #   arch: arm
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install APT dependencies (Linux)
+        if: matrix.platform == 'linux'
+        # enable GCC/G++ 14 for ubuntu, since 24.04 doesn't have it by default
+        run: |
+          sudo apt update
+          sudo apt install $(cat backend/apt-dependencies.txt)
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-14 14
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 14
+
+      - name: Setup MSVC
+        if: matrix.platform == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Install pkg-config (Windows) # extra requirement for cmake on windows
+        if: matrix.platform == 'windows'
+        run: winget install bloodrock.pkg-config-lite --disable-interactivity --accept-source-agreements --accept-package-agreements
+        shell: powershell
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            backend/vcpkg/.git
+            backend/vcpkg/installed
+            backend/vcpkg/buildtrees
+            backend/vcpkg/triplets
+            backend/vcpkg/vcpkg
+            backend/vcpkg/scripts
+            backend/vcpkg/ports
+            backend/vcpkg/.vcpkg-root
+          key: vcpkg-${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('backend/dependencies.txt') }}
+          restore-keys: vcpkg-${{ matrix.platform }}-${{ matrix.arch }}-${{ hashFiles('backend/dependencies.txt') }}
+
+      - name: Setup vcpkg cache integration
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+      
+      - name: Install vcpkg dependencies (macOS)
+        if: matrix.platform == 'macos'
+        working-directory: backend
+        run: |
+          chmod +x *.sh
+          export VCPKG_ROOT="$PWD/vcpkg"
+          ./unix_config_environment.sh
+      
+      - name: Build Backend
+        if: matrix.platform == 'macos'
+        working-directory: backend
+        run: ./unix_build.sh -m Release 
+
+      - name: Install vcpkg dependencies (Linux)
+        if: matrix.platform == 'linux'
+        working-directory: backend
+        run: |
+          chmod +x *.sh
+          export VCPKG_ROOT="$PWD/vcpkg"
+          ./unix_config_environment.sh
+      
+      - name: Build Backend
+        if: matrix.platform == 'linux'
+        working-directory: backend
+        run: ./unix_build.sh -m Release 
+     
+      - name: Install vcpkg dependencies (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: backend
+        shell: cmd
+        run: |
+          set VCPKG_ROOT=%CD%\vcpkg
+          call win_config_environment.bat
+     
+      - name: Build Backend
+        if: matrix.platform == 'windows'
+        working-directory: backend
+        shell: cmd
+        run: call win_build.bat -m Release
+
+      - name: Upload built backend
+        uses: actions/upload-artifact@v6
+        with:
+          name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
+          path: backend/build/Release
+     
+  release-frontend:
+    needs: build-backend
+    name: Release Frontend (${{ matrix.platform }} - ${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: macos-26
+            platform: macos
+            arch: arm
+          # - os: macos-15-intel
+          #   platform: macos
+          #   arch: x86
+          - os: ubuntu-24.04
+            platform: linux
+            arch: x86
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm
+          - os: windows-latest 
+            platform: windows
+            arch: x86
+          # - os: windows-11-arm
+          #   platform: windows
+          #   arch: arm      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Download build from previous job
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
+          path: backend/build/Release/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install Node Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build Frontend Release (macOS or Linux)
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
+        working-directory: frontend
+        run: ./unix_release_frontend.sh 
+
+      - name: Build Frontend Release (Windows)
+        if: matrix.platform == 'windows'
+        working-directory: frontend
+        shell: cmd
+        run: call win_release_frontend.bat
+        
+      - name: Upload artifacts (macOS)
+        if: matrix.platform == 'macos'
+        uses: actions/upload-artifact@v6
+        with:
+          name: beyond-rgb-${{ matrix.os }}-${{ matrix.arch }}
+          path: frontend/out/make/zip/darwin/*/*.zip
+          if-no-files-found: error
+
+      - name: Upload artifacts (Windows)
+        if: matrix.platform == 'windows'
+        uses: actions/upload-artifact@v6
+        with:
+          name: beyond-rgb-${{ matrix.os }}-${{ matrix.arch }}
+          path: frontend/out/make/squirrel.windows/*/*.exe
+          if-no-files-found: error 
+          
+      - name: Upload artifacts (Linux)
+        if: matrix.platform == 'linux'
+        uses: actions/upload-artifact@v6
+        with:
+          name: beyond-rgb-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            frontend/out/make/zip/linux/*/*.zip
+            frontend/out/make/rpm/*/*.rpm
+            frontend/out/make/deb/*/*.deb
+          if-no-files-found: error 
