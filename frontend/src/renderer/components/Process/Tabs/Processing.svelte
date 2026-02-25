@@ -164,18 +164,24 @@
 										{#each Object.keys(pipelineComponents[component1][component2]) as component3, i3}
 											{#if component3 !== "name"}
 												{#each Object.keys(pipelineComponents[component1][component2][component3]) as component4, i4}
-													{@const progressValue = pipelineComponents[component1][component2][component3][component4]['name'] in pipelineProgress
-																? pipelineProgress[pipelineComponents[component1][component2][component3][component4]['name']]
-																: 0}
-													<div
-														class="progress-circle"
-														class:completed={progressValue === 1}
-													>
+													{@const progressValue =
+														pipelineComponents[component1][component2][component3][component4][
+															"name"
+														] in pipelineProgress
+															? pipelineProgress[
+																	pipelineComponents[component1][component2][component3][
+																		component4
+																	]["name"]
+															  ]
+															: 0}
+													<div class="progress-circle" class:completed={progressValue === 1}>
 														<svg class="progress-ring" viewBox="0 0 100 100">
 															<circle class="progress-ring-bg" cx="50" cy="50" r="45" />
 															<circle
 																class="progress-ring-fill"
-																cx="50" cy="50" r="45"
+																cx="50"
+																cy="50"
+																r="45"
 																style="stroke-dashoffset: {282.7 * (1 - progressValue)}"
 															/>
 														</svg>
@@ -191,29 +197,29 @@
 											{/if}
 										{/each}
 									{/if}
-								{#if pipelineComponents[component1][component2]["name"].includes("Results") || pipelineComponents[component1][component2]["name"].includes("Verifi")}
-									{@const progressValue2 = pipelineComponents[component1][component2]['name'] in pipelineProgress
-										? pipelineProgress[pipelineComponents[component1][component2]['name']]
-										: 0}
-									<div
-										class="progress-circle"
-										class:completed={progressValue2 === 1}
-									>
-										<svg class="progress-ring" viewBox="0 0 100 100">
-											<circle class="progress-ring-bg" cx="50" cy="50" r="45" />
-											<circle
-												class="progress-ring-fill"
-												cx="50" cy="50" r="45"
-												style="stroke-dashoffset: {282.7 * (1 - progressValue2)}"
-											/>
-										</svg>
-										<div class="stepper">
-											<span class="sender"
-												>{pipelineComponents[component1][component2]["name"]}</span
-											>
+									{#if pipelineComponents[component1][component2]["name"].includes("Results") || pipelineComponents[component1][component2]["name"].includes("Verifi")}
+										{@const progressValue2 =
+											pipelineComponents[component1][component2]["name"] in pipelineProgress
+												? pipelineProgress[pipelineComponents[component1][component2]["name"]]
+												: 0}
+										<div class="progress-circle" class:completed={progressValue2 === 1}>
+											<svg class="progress-ring" viewBox="0 0 100 100">
+												<circle class="progress-ring-bg" cx="50" cy="50" r="45" />
+												<circle
+													class="progress-ring-fill"
+													cx="50"
+													cy="50"
+													r="45"
+													style="stroke-dashoffset: {282.7 * (1 - progressValue2)}"
+												/>
+											</svg>
+											<div class="stepper">
+												<span class="sender"
+													>{pipelineComponents[component1][component2]["name"]}</span
+												>
+											</div>
 										</div>
-									</div>
-								{/if}
+									{/if}
 								</div>
 							</Card>
 						{/each}
@@ -353,5 +359,4 @@
 	.cont {
 		@apply bg-red-500;
 	}
-
 </style>
