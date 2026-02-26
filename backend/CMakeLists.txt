@@ -155,6 +155,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/general_utils.cpp
         src/utils/json.cpp
         src/utils/jsonafiable.cpp
+        src/utils/resource_paths.cpp
         src/utils/time_tracker.cpp
 )
 
