@@ -9,6 +9,8 @@
 	let modal;
 
 	export let minimal = false;
+	// locks the modal so clicking out of it doesn't close it
+	export let blocking = false;
 	export let customExit = false;
 	export let component;
 	export let size: "small" | "medium" | "large" | "fullscreen" = "medium";
@@ -60,7 +62,7 @@
 		class:opacity-light={backdropOpacity === "light"}
 		class:opacity-medium={backdropOpacity === "medium"}
 		class:opacity-heavy={backdropOpacity === "heavy"}
-		on:click={close}
+		on:click={() => {if (!blocking){ close()}}}
 		transition:fade={{ duration: 200 }}
 	/>
 {/if}
