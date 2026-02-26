@@ -73,8 +73,8 @@
 
 	// Show modal when processing is complete
 	$: if ($processState.pipelineComplete) {
-		artImagesProcessed += 1
-		resetPart()
+		artImagesProcessed += 1;
+		resetPart();
 
 		console.log(`Art Images Processed: ${artImagesProcessed}`);
 		if (artImagesProcessed == $processState.artImageCount) {
