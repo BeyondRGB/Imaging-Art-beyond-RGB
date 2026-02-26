@@ -171,6 +171,12 @@ jobs:
         with:
           name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
           path: backend/build/Release/
+      
+      # Set artifact permissions
+      - name: Install vcpkg dependencies (macOS or Linux)
+        if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
+        working-directory: backend
+        run: chown +x backend/build/Release/beyond-rgb-backend
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
