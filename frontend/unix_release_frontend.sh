@@ -18,5 +18,5 @@ then
 	npm run make
 
 else
-	echo Please build the backend release.
+	echo Backend Release build does not exist. Run Imaging-Art-beyond-RGB\backend\unix_build.sh with the -m Release flag and try again.
 fi
