@@ -21,7 +21,7 @@ endif ()
 #set(VCPKG_TRACE_FIND_PACKAGE ON)
 #message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
-project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.3.1)
+project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.4.0)
 
 configure_file(
         ${CMAKE_SOURCE_DIR}/include/version.h.in
