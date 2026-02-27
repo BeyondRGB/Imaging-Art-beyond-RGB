@@ -176,7 +176,7 @@ jobs:
       - name: Install vcpkg dependencies (macOS or Linux)
         if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
         working-directory: backend
-        run: chown +x backend/build/Release/beyond-rgb-backend
+        run: chown $(whoami) backend/build/Release/beyond-rgb-backend
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
