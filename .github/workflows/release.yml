@@ -28,15 +28,15 @@ jobs:
           # - os: macos-26-large # Uses an x86_64 macOS 26 runner.
           #   platform: macos
           #   arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
-          - os: windows-latest 
-            platform: windows
-            arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
+          # - os: windows-latest 
+          #   platform: windows
+          #   arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm
@@ -147,15 +147,15 @@ jobs:
           # - os: macos-15-intel
           #   platform: macos
           #   arch: x86
-          - os: ubuntu-24.04
-            platform: linux
-            arch: x86
-          - os: ubuntu-24.04-arm
-            platform: linux
-            arch: arm
-          - os: windows-latest 
-            platform: windows
-            arch: x86
+          # - os: ubuntu-24.04
+          #   platform: linux
+          #   arch: x86
+          # - os: ubuntu-24.04-arm
+          #   platform: linux
+          #   arch: arm
+          # - os: windows-latest 
+          #   platform: windows
+          #   arch: x86
           # - os: windows-11-arm
           #   platform: windows
           #   arch: arm      
@@ -176,7 +176,10 @@ jobs:
       - name: Install vcpkg dependencies (macOS or Linux)
         if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
         working-directory: backend
-        run: chown +x backend/build/Release/beyond-rgb-backend
+        run: |
+          brew install tree
+          tree .
+          chown +x backend/build/Release/beyond-rgb-backend
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
