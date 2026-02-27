@@ -131,7 +131,7 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
-          path: backend/build/Release
+          path: backend/build/Release/
      
   release-frontend:
     needs: build-backend
@@ -167,16 +167,17 @@ jobs:
 
       # Download build from previous job
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build-backend-${{ matrix.os }}-${{ matrix.arch }}
           path: backend/build/Release/
       
       # Set artifact permissions
-      - name: Install vcpkg dependencies (macOS or Linux)
+      - name: Set permissions of backend build (macOS & Linux)
         if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
-        working-directory: backend
-        run: chown $(whoami) backend/build/Release/beyond-rgb-backend
+        run: |
+          chown $(whoami) backend/build/Release/beyond-rgb-backend
+          chmod +x backend/build/Release/beyond-rgb-backend
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -187,7 +188,7 @@ jobs:
         working-directory: frontend
         run: npm install
 
-      - name: Build Frontend Release (macOS or Linux)
+      - name: Build Frontend Release (macOS & Linux)
         if: ${{ matrix.platform == 'macos' || matrix.platform == 'linux' }}
         working-directory: frontend
         run: ./unix_release_frontend.sh 
