@@ -149,95 +149,90 @@
 								</div>
 							{/each}
 						</div>
-						<br />
 					</div>
 				</div>
 			</div>
 		</panel>
 		<right>
-			<div class="centerFlexBox">
-				<div id="imageStack">
-					<div class="inputGroup">
-						<div class="imageLetter">A</div>
-						<div class="imageLetter">B</div>
+			<div class="rightContent">
+				<div class="centerFlexBox">
+					<div id="imageStack">
+						<div class="inputGroup">
+							<div class="imageLetter">A</div>
+							<div class="imageLetter">B</div>
+						</div>
+						<div class="text">Target</div>
+						<div class="inputGroup">
+							<div class="cell">
+								<Dropbox
+									type="image"
+									bind:items={imageStack.targetA}
+									singleItem={true}
+									showError={!!validationError}
+								/>
+							</div>
+							<div class="cell">
+								<Dropbox
+									type="image"
+									bind:items={imageStack.targetB}
+									singleItem={true}
+									showError={!!validationError}
+								/>
+							</div>
+						</div>
+						<div class="text">FlatField</div>
+						<div class="inputGroup">
+							<div class="cell">
+								<Dropbox
+									type="image"
+									bind:items={imageStack.flatfieldA}
+									singleItem={true}
+									showError={!!validationError}
+								/>
+							</div>
+							<div class="cell">
+								<Dropbox
+									type="image"
+									bind:items={imageStack.flatfieldB}
+									singleItem={true}
+									showError={!!validationError}
+								/>
+							</div>
+						</div>
+						<div class="text">DarkField</div>
+						<div class="inputGroup">
+							<div class="cell">
+								<Dropbox
+									type="image"
+									bind:items={imageStack.darkfieldA}
+									singleItem={true}
+									showError={!!validationError}
+								/>
+							</div>
+							<div class="cell">
+								<Dropbox
+									type="image"
+									bind:items={imageStack.darkfieldB}
+									singleItem={true}
+									showError={!!validationError}
+								/>
+							</div>
+						</div>
+						{#if validationError && imageStack && validate()}
+							<div class="errorText">
+								{validationError}
+							</div>
+						{/if}
 					</div>
-					<!-- <div class="text">Object</div>
-                    <div class="inputGroup">
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageA} singleItem={true} showError={!!validationError}/></div>
-                        <div class="cell"><Dropbox type="image" bind:items={imageStack.imageB} singleItem={true} showError={!!validationError}/></div>
-                    </div> -->
-					<div class="text">Target</div>
-					<div class="inputGroup">
-						<div class="cell">
-							<Dropbox
-								type="image"
-								bind:items={imageStack.targetA}
-								singleItem={true}
-								showError={!!validationError}
-							/>
-						</div>
-						<div class="cell">
-							<Dropbox
-								type="image"
-								bind:items={imageStack.targetB}
-								singleItem={true}
-								showError={!!validationError}
-							/>
-						</div>
-					</div>
-					<div class="text">FlatField</div>
-					<div class="inputGroup">
-						<div class="cell">
-							<Dropbox
-								type="image"
-								bind:items={imageStack.flatfieldA}
-								singleItem={true}
-								showError={!!validationError}
-							/>
-						</div>
-						<div class="cell">
-							<Dropbox
-								type="image"
-								bind:items={imageStack.flatfieldB}
-								singleItem={true}
-								showError={!!validationError}
-							/>
-						</div>
-					</div>
-					<div class="text">DarkField</div>
-					<div class="inputGroup">
-						<div class="cell">
-							<Dropbox
-								type="image"
-								bind:items={imageStack.darkfieldA}
-								singleItem={true}
-								showError={!!validationError}
-							/>
-						</div>
-						<div class="cell">
-							<Dropbox
-								type="image"
-								bind:items={imageStack.darkfieldB}
-								singleItem={true}
-								showError={!!validationError}
-							/>
-						</div>
-					</div>
-					{#if validationError && imageStack && validate()}
-						<div class="errorText">
-							{validationError}
-						</div>
-					{/if}
-					<br />
 				</div>
-				<div class="btnGroup">
-					<Button variant="secondary" size="md" onClick={() => submitSpecFileRoles(false)}
-						>Optional filtering</Button
-					>
-					<Button variant="success" size="md" onClick={() => submitSpecFileRoles(true)}
-						>Next: Skip optional filtering</Button
-					>
-				</div>
+			</div>
+			<div class="btnGroup">
+				<Button variant="secondary" size="md" onClick={() => submitSpecFileRoles(false)}
+					>Optional filtering</Button
+				>
+				<Button variant="success" size="md" onClick={() => submitSpecFileRoles(true)}
+					>Next: Skip optional filtering</Button
+				>
 			</div>
 		</right>
 	{/key}
@@ -245,86 +240,115 @@
 
 <style lang="postcss">
 	main {
-		@apply flex justify-between h-full w-full overflow-hidden;
+		@apply flex h-full w-full overflow-hidden;
 	}
 	panel {
-		width: 100%;
+		@apply flex flex-col h-full;
+		width: 50%;
 		background-color: var(--color-surface-elevated);
+		overflow: hidden;
 	}
 	right {
 		background-color: var(--color-surface);
-		@apply w-full h-full p-6 flex justify-center overflow-auto;
+		width: 50%;
+		@apply h-full p-6 flex flex-col;
+	}
+	.rightContent {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		width: 100%;
 	}
 	h1 {
 		color: var(--color-text-primary);
-		margin: 25px;
-		font-size: 35px;
-		width: 100%;
+		margin: 20px 25px 10px 25px;
+		font-size: 32px;
 	}
 	p {
 		color: var(--color-text-secondary);
-		margin: 25px;
-		font-size: 18px;
-		width: 100%;
+		margin: 0 25px 15px 25px;
+		font-size: 16px;
 	}
 	#imageStack {
 		background-color: var(--color-surface-base);
 		border: 1px solid var(--color-border);
-		margin-top: auto;
-		margin-bottom: auto;
-		border-radius: 30px;
+		border-radius: 20px;
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		padding: 20px 30px 25px 30px;
+		width: 100%;
+		align-self: stretch;
+	}
+	panel #imageStack {
+		min-height: 220px;
+	}
+	right #imageStack {
+		min-height: 360px;
 	}
 	.centerFlexBox {
 		display: flex;
 		flex-direction: column;
-		width: 80%;
+		align-items: stretch;
+		width: 100%;
+		max-width: 600px;
+		margin: 0 auto;
 	}
 	.inputGroup {
 		display: flex;
 		flex-direction: row;
-		height: auto;
 		gap: 20px;
 		width: 100%;
 		justify-content: center;
-		padding-top: 20px;
+		padding-top: 10px;
 	}
 	.cell {
-		width: 50%;
+		flex: 1;
+		min-width: 0;
 	}
 	.text {
 		color: var(--color-text-secondary);
 		text-align: center;
+		margin-top: 15px;
+		font-size: 14px;
 	}
 	.imageLetter {
 		color: var(--color-text-primary);
 		width: 50%;
-		margin-top: 20px;
 		text-align: center;
-		font-size: 30px;
+		font-size: 28px;
 	}
 	.errorText {
 		text-align: center;
 		color: var(--color-error);
+		margin-top: 10px;
 	}
 	.btnGroup {
 		@apply flex justify-end gap-2;
+		flex-shrink: 0;
+		padding-top: 20px;
+		width: 100%;
+		max-width: 600px;
+		align-self: center;
 	}
 	.leftHeader {
-		max-height: 300px;
+		flex-shrink: 0;
 	}
 	.leftBoxes {
-		margin-top: 5px;
-		max-height: calc(100% - 300px);
+		flex: 1;
 		overflow-y: auto;
-		scrollbar-width: 10px;
-		padding-left: 20px;
+		padding: 10px 20px 20px 20px;
+		display: flex;
+		justify-content: center;
 	}
 	.leftStartBox {
-		max-height: 100px;
+		max-height: 300px;
 		overflow-y: auto;
-		scrollbar-width: 5px;
+		margin: 0 25px;
+	}
+	.objectDropBoxes {
+		padding-bottom: 10px;
 	}
 </style>
