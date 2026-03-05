@@ -1,4 +1,8 @@
 const { app, BrowserWindow, dialog, ipcMain } = require("electron");
+if (require("electron-squirrel-startup")) {
+	app.quit();
+	return;
+}
 const path = require("path");
 const child_process = require("child_process");
 const { getPort } = require("get-port-please");
@@ -13,12 +17,6 @@ if (process.platform == "win32")
 	executablePath = path.join(__dirname, "../../lib/beyond-rgb-backend.exe");
 else {
 	executablePath = path.join(__dirname, "../../lib/beyond-rgb-backend");
-}
-
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require("electron-squirrel-startup")) {
-	// eslint-disable-line global-require
-	setTimeout(app.quit, 1000);
 }
 
 process.on("loaded", (event, args) => {
