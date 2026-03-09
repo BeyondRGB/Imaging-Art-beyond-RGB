@@ -5,7 +5,7 @@
 
 //namespace btrgb {
 
-  enum ProfileColorSpace { cs_Adobe_RGB_1998, cs_ProPhoto, cs_sRGB, cs_Wide_Gamut_RGB, cs_Linear_Wide_Gamut_RGB};
+  enum ProfileColorSpace { cs_Adobe_RGB_1998, cs_ProPhoto, cs_sRGB, cs_Wide_Gamut_RGB, cs_Linear_Normalized_XYZ};
 
   class CreateIccProfile
   {
@@ -30,7 +30,10 @@
   protected:
     // helper functions to create the base RGB profile and the MPE profile to be embedded in the hybrid profile
     CIccProfile* createRgbProfile(ProfileColorSpace space);
-    CIccProfile* createSpecProfile(ProfileColorSpace base_space, float *matrix, int num_in, int num_out, bool ignore_base_channels=true);
+
+    // if inv_matrix is provided then it must be the inverse of matrix and include entries for all channels (including ignored channels if matrix doesn't include them.
+    // If inv_matrix is not provided then no BToD3 tag will be created
+    CIccProfile* createSpecProfile(ProfileColorSpace base_space, float *matrix, int num_in, int num_out, bool ignore_base_channels=true, float *inv_matrix=nullptr);
 
     // data members
     size_t max_profile_size;
