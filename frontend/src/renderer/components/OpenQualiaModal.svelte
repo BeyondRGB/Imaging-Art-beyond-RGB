@@ -228,12 +228,27 @@
 
 	function useThisData() {
 		if (!result || !result.csvPath) return;
-		
+
+		const standardObserver = result.standardObserver || 1931;
+		const illuminants = result.illuminant || "D50";
+		const rows = result.rowCount || null;
+		const cols = result.colCount || null;
+		const whitePatch =
+			result.suggestedWhitePatchRow && result.suggestedWhitePatchCol
+				? {
+						row: result.suggestedWhitePatchRow,
+						col: result.suggestedWhitePatchCol,
+				  }
+				: null;
+
 		const refData = {
 			name: `OpenQualia: ${result.targetName} (${result.serialNumber})`,
 			fileName: result.csvPath,
-			standardObserver: 1931,
-			illuminants: "D50",
+			standardObserver,
+			illuminants,
+			rows,
+			cols,
+			whitePatch,
 		};
 		
 		if (targetType === "calibration") {
@@ -631,10 +646,38 @@
 							<span class="label">Measured:</span>
 							<span class="value">{result.measurementDate}</span>
 						</div>
+						{#if result.calibrationDate}
+							<div class="detail-row">
+								<span class="label">Calibrated:</span>
+								<span class="value">{result.calibrationDate}</span>
+							</div>
+						{/if}
 						<div class="detail-row">
 							<span class="label">Patches:</span>
 							<span class="value">{result.patchCount}</span>
 						</div>
+						{#if result.rowCount && result.colCount}
+							<div class="detail-row">
+								<span class="label">Layout:</span>
+								<span class="value">{result.rowCount} x {result.colCount}</span>
+							</div>
+						{/if}
+						{#if result.illuminant || result.standardObserver}
+							<div class="detail-row">
+								<span class="label">Viewing:</span>
+								<span class="value">
+									{result.illuminant || "D50"} / {result.standardObserver || 1931}
+								</span>
+							</div>
+						{/if}
+						{#if result.suggestedWhitePatchName}
+							<div class="detail-row">
+								<span class="label">White Patch:</span>
+								<span class="value">
+									{result.suggestedWhitePatchName}
+								</span>
+							</div>
+						{/if}
 					</div>
 				</div>
 			{/if}

@@ -94,14 +94,17 @@ HttpResponse HttpClient::fetch(const std::string& url, int timeoutSeconds) {
 
 HttpResponse HttpClient::fetchOpenQualia(const std::string& url) {
     std::string fetchUrl = url;
-    
-    // Append AccessMode=ActiveMeasurement if not present
-    if (url.find("AccessMode=") == std::string::npos) {
-        if (url.find('?') != std::string::npos) {
-            fetchUrl += "&AccessMode=ActiveMeasurement";
-        } else {
-            fetchUrl += "?AccessMode=ActiveMeasurement";
-        }
+
+    // OpenQualia programmatic clients should request ActiveMeasurement.
+    static const std::regex accessModeRegex(R"(([?&])AccessMode=[^&]*)");
+    std::smatch match;
+    if (std::regex_search(fetchUrl, match, accessModeRegex)) {
+        fetchUrl.replace(match.position(0), match.length(0),
+                         match[1].str() + "AccessMode=ActiveMeasurement");
+    } else if (fetchUrl.find('?') != std::string::npos) {
+        fetchUrl += "&AccessMode=ActiveMeasurement";
+    } else {
+        fetchUrl += "?AccessMode=ActiveMeasurement";
     }
     
     return fetch(fetchUrl);

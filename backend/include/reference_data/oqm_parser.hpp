@@ -16,12 +16,21 @@ struct OQMMetadata {
     std::string targetName;      // DESCRIPTOR field
     std::string serialNumber;    // SERIAL field
     std::string measurementDate; // CREATED field
+    std::string calibrationDate; // CALIBRATION_DATE field (optional)
     std::string originator;      // ORIGINATOR field (optional)
     std::string instrument;      // TARGET_INSTRUMENT field (optional)
+    std::string illuminant;      // ILLUMINANT field or MEASUREMENT_SOURCE fallback
+    int observerAngle;           // OBSERVER field or MEASUREMENT_SOURCE fallback
+    int standardObserver;        // BeyondRGB observer representation (1931/1964)
     int patchCount;              // NUMBER_OF_SETS
     int spectralBands;           // SPECTRAL_BANDS
     int spectralStartNm;         // SPECTRAL_START_NM
     int spectralEndNm;           // SPECTRAL_END_NM
+    int rowCount;               // Parsed target rows
+    int colCount;               // Parsed target columns
+    int suggestedWhitePatchRow; // 1-based positional row for UI convenience
+    int suggestedWhitePatchCol; // 1-based positional col for UI convenience
+    std::string suggestedWhitePatchName; // Original patch label
 };
 
 /**
@@ -101,6 +110,11 @@ private:
     void parseDataLine(const std::string& line);
 
     /**
+     * @brief Finalize parsed grid metadata once all patches are known
+     */
+    void finalizeLayout();
+
+    /**
      * @brief Convert patch name (e.g., "A1" or "A-1") to row/col
      */
     std::pair<int, int> patchNameToRowCol(const std::string& name) const;
@@ -110,20 +124,34 @@ private:
      */
     static std::string stripQuotes(const std::string& value);
 
+    /**
+     * @brief Convert a 2-degree/10-degree observer angle into BeyondRGB's
+     *        current observer representation.
+     */
+    static int mapObserverAngleToStandardObserver(int observerAngle);
+
     OQMMetadata metadata_;
     std::string error_;
 
     // Column indices in data section
     int sampleNameIndex_ = -1;
+    int sampleIdIndex_ = -1;
+    int labLIndex_ = -1;
+    int xyzYIndex_ = -1;
     std::vector<int> spectralIndices_; // Index of SPEC_XXX columns
     std::vector<int> wavelengths_;     // Corresponding wavelengths
 
     // Parsed patch data: patch_name -> [spectral_values]
     std::map<std::string, std::vector<double>> patchData_;
+    std::map<std::string, std::pair<int, int>> patchGridPosition_;
+    std::map<std::string, std::pair<int, int>> patchGridRawPosition_;
+    std::map<std::pair<int, int>, std::string> patchNameByPosition_;
+    std::map<std::string, double> patchLuminance_;
 
     // Grid dimensions (determined from patch names)
     int rowCount_ = 0;
     int colCount_ = 0;
+    int minRowLabel_ = 1;
 };
 
 /**

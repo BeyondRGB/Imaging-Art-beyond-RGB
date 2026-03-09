@@ -1,28 +1,162 @@
 #include <utils/qr_detector.hpp>
-#include <iostream>
+
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <iostream>
+#include <set>
 
 namespace btrgb {
+
+namespace {
+
+struct DetectionCandidate {
+    std::string label;
+    cv::Mat image;
+    double pointScale = 1.0;
+};
+
+cv::Mat to_grayscale(const cv::Mat& image) {
+    if (image.channels() == 3) {
+        cv::Mat gray;
+        cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+        return gray;
+    }
+
+    if (image.channels() == 4) {
+        cv::Mat gray;
+        cv::cvtColor(image, gray, cv::COLOR_BGRA2GRAY);
+        return gray;
+    }
+
+    return image.clone();
+}
+
+cv::Mat apply_clahe(const cv::Mat& input) {
+    cv::Mat normalized;
+    cv::normalize(input, normalized, 0, 255, cv::NORM_MINMAX);
+
+    auto clahe = cv::createCLAHE();
+    clahe->setClipLimit(3.0);
+    clahe->setTilesGridSize(cv::Size(8, 8));
+
+    cv::Mat enhanced;
+    clahe->apply(normalized, enhanced);
+    return enhanced;
+}
+
+cv::Mat adaptive_binarize(const cv::Mat& input) {
+    cv::Mat blurred;
+    cv::GaussianBlur(input, blurred, cv::Size(3, 3), 0.0);
+
+    cv::Mat thresholded;
+    cv::adaptiveThreshold(blurred, thresholded, 255,
+                          cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY,
+                          31, 5);
+    return thresholded;
+}
+
+double channel_contrast_score(const cv::Mat& channel) {
+    cv::Scalar mean;
+    cv::Scalar stddev;
+    cv::meanStdDev(channel, mean, stddev);
+    return stddev[0];
+}
+
+void scale_points(std::vector<cv::Point>& points, double factor) {
+    if (factor == 1.0) {
+        return;
+    }
+
+    for (auto& point : points) {
+        point.x = static_cast<int>(std::round(point.x * factor));
+        point.y = static_cast<int>(std::round(point.y * factor));
+    }
+}
+
+void add_candidate(std::vector<DetectionCandidate>& candidates,
+                   const std::string& label,
+                   const cv::Mat& image,
+                   double pointScale = 1.0) {
+    if (!image.empty()) {
+        candidates.push_back({label, image, pointScale});
+    }
+}
+
+std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image) {
+    std::vector<DetectionCandidate> candidates;
+    add_candidate(candidates, "original", image);
+
+    const cv::Mat grayscale = to_grayscale(image);
+    const cv::Mat enhancedGray = apply_clahe(grayscale);
+    add_candidate(candidates, "grayscale", grayscale);
+    add_candidate(candidates, "grayscale-clahe", enhancedGray);
+    add_candidate(candidates, "grayscale-clahe-threshold",
+                  adaptive_binarize(enhancedGray));
+
+    if (image.channels() == 3 || image.channels() == 4) {
+        cv::Mat bgrImage;
+        if (image.channels() == 4) {
+            cv::cvtColor(image, bgrImage, cv::COLOR_BGRA2BGR);
+        } else {
+            bgrImage = image;
+        }
+
+        std::vector<cv::Mat> channels;
+        cv::split(bgrImage, channels);
+
+        std::vector<std::pair<double, int>> rankedChannels;
+        for (int i = 0; i < static_cast<int>(channels.size()); ++i) {
+            rankedChannels.push_back({channel_contrast_score(channels[i]), i});
+        }
+
+        std::sort(rankedChannels.begin(), rankedChannels.end(),
+                  [](const auto& lhs, const auto& rhs) {
+                      return lhs.first > rhs.first;
+                  });
+
+        const std::array<const char*, 3> channelNames = {"blue", "green", "red"};
+        const int channelCount = std::min<int>(2, rankedChannels.size());
+        for (int i = 0; i < channelCount; ++i) {
+            const int channelIndex = rankedChannels[i].second;
+            const cv::Mat& channel = channels[channelIndex];
+            const cv::Mat enhancedChannel = apply_clahe(channel);
+            const std::string channelPrefix =
+                std::string(channelNames[channelIndex]) + "-channel";
+
+            add_candidate(candidates, channelPrefix, channel);
+            add_candidate(candidates, channelPrefix + "-clahe", enhancedChannel);
+            add_candidate(candidates, channelPrefix + "-clahe-threshold",
+                          adaptive_binarize(enhancedChannel));
+        }
+    }
+
+    if (image.cols > 4000 || image.rows > 4000) {
+        cv::Mat halfGray;
+        cv::resize(grayscale, halfGray, cv::Size(), 0.5, 0.5, cv::INTER_AREA);
+        add_candidate(candidates, "grayscale-half", halfGray, 2.0);
+        add_candidate(candidates, "grayscale-half-clahe",
+                      apply_clahe(halfGray), 2.0);
+
+        cv::Mat quarterGray;
+        cv::resize(grayscale, quarterGray, cv::Size(), 0.25, 0.25,
+                   cv::INTER_AREA);
+        add_candidate(candidates, "grayscale-quarter", quarterGray, 4.0);
+        add_candidate(candidates, "grayscale-quarter-clahe",
+                      apply_clahe(quarterGray), 4.0);
+    }
+
+    return candidates;
+}
+
+} // namespace
 
 QRDetector::QRDetector() : detector_() {
     // QRCodeDetector is ready to use after construction
 }
 
 cv::Mat QRDetector::preprocessImage(const cv::Mat& image) {
-    cv::Mat processed;
-    
-    // Convert to grayscale if color
-    if (image.channels() == 3 || image.channels() == 4) {
-        cv::cvtColor(image, processed, cv::COLOR_BGR2GRAY);
-    } else {
-        processed = image.clone();
-    }
-    
-    // Normalize to improve contrast
-    cv::normalize(processed, processed, 0, 255, cv::NORM_MINMAX);
-    
-    return processed;
+    return apply_clahe(to_grayscale(image));
 }
 
 QRDetectionResult QRDetector::detectFromMatRegion(const cv::Mat& image,
@@ -78,25 +212,19 @@ QRDetectionResult QRDetector::detectFromMatRegion(const cv::Mat& image,
         auto upscaledResult = detectFromMat(upscaled2x);
         if (upscaledResult.found) {
             result = upscaledResult;
-            for (auto& point : result.boundingBox) {
-                point.x = static_cast<int>(std::round(point.x / 2.0));
-                point.y = static_cast<int>(std::round(point.y / 2.0));
-            }
+            scale_points(result.boundingBox, 0.5);
         } else {
             cv::Mat upscaled4x;
-            cv::resize(cropped, upscaled4x, cv::Size(), 4.0, 4.0, cv::INTER_CUBIC);
+            cv::resize(cropped, upscaled4x, cv::Size(), 4.0, 4.0,
+                       cv::INTER_CUBIC);
             auto upscaled4xResult = detectFromMat(upscaled4x);
             if (upscaled4xResult.found) {
                 result = upscaled4xResult;
-                for (auto& point : result.boundingBox) {
-                    point.x = static_cast<int>(std::round(point.x / 4.0));
-                    point.y = static_cast<int>(std::round(point.y / 4.0));
-                }
+                scale_points(result.boundingBox, 0.25);
             }
         }
     }
 
-    // Re-project detected bounding box to original image coordinates.
     if (result.found && !result.boundingBox.empty()) {
         for (auto& point : result.boundingBox) {
             point.x += left;
@@ -110,161 +238,116 @@ QRDetectionResult QRDetector::detectFromMatRegion(const cv::Mat& image,
 QRDetectionResult QRDetector::detectFromFile(const std::string& imagePath) {
     QRDetectionResult result;
     result.found = false;
-    
+
     std::cout << "[QRDetector] Loading image: " << imagePath << std::endl;
-    
+
     cv::Mat image = cv::imread(imagePath, cv::IMREAD_COLOR);
     if (image.empty()) {
         result.error = "Failed to load image: " + imagePath;
         std::cerr << "[QRDetector] " << result.error << std::endl;
         return result;
     }
-    
+
     return detectFromMat(image);
 }
 
 QRDetectionResult QRDetector::detectFromMat(const cv::Mat& image) {
     QRDetectionResult result;
     result.found = false;
-    
+
     if (image.empty()) {
         result.error = "Empty image provided";
         return result;
     }
-    
+
     try {
-        // Try detection on original image first
-        std::vector<cv::Point> points;
-        std::string decoded = detector_.detectAndDecode(image, points);
-        
-        if (!decoded.empty()) {
-            result.found = true;
-            result.decodedText = decoded;
-            result.boundingBox = points;
-            std::cout << "[QRDetector] Found QR code: " << decoded << std::endl;
-            return result;
-        }
-        
-        // If not found, try with preprocessed image
-        cv::Mat processed = preprocessImage(image);
-        decoded = detector_.detectAndDecode(processed, points);
-        
-        if (!decoded.empty()) {
-            result.found = true;
-            result.decodedText = decoded;
-            result.boundingBox = points;
-            std::cout << "[QRDetector] Found QR code (preprocessed): " << decoded << std::endl;
-            return result;
-        }
-        
-        // Try with different scales if image is very large
-        if (image.cols > 4000 || image.rows > 4000) {
-            std::cout << "[QRDetector] Trying scaled detection for large image" << std::endl;
-            
-            // Try half scale
-            cv::Mat scaled;
-            cv::resize(image, scaled, cv::Size(), 0.5, 0.5, cv::INTER_AREA);
-            decoded = detector_.detectAndDecode(scaled, points);
-            
+        for (const auto& candidate : build_detection_candidates(image)) {
+            std::vector<cv::Point> points;
+            std::string decoded = detector_.detectAndDecode(candidate.image, points);
+
             if (!decoded.empty()) {
+                scale_points(points, candidate.pointScale);
                 result.found = true;
                 result.decodedText = decoded;
-                // Scale points back
-                for (auto& pt : points) {
-                    pt.x *= 2;
-                    pt.y *= 2;
-                }
                 result.boundingBox = points;
-                std::cout << "[QRDetector] Found QR code (scaled): " << decoded << std::endl;
-                return result;
-            }
-            
-            // Try quarter scale
-            cv::resize(image, scaled, cv::Size(), 0.25, 0.25, cv::INTER_AREA);
-            decoded = detector_.detectAndDecode(scaled, points);
-            
-            if (!decoded.empty()) {
-                result.found = true;
-                result.decodedText = decoded;
-                for (auto& pt : points) {
-                    pt.x *= 4;
-                    pt.y *= 4;
-                }
-                result.boundingBox = points;
-                std::cout << "[QRDetector] Found QR code (quarter scale): " << decoded << std::endl;
+                std::cout << "[QRDetector] Found QR code via "
+                          << candidate.label << ": " << decoded << std::endl;
                 return result;
             }
         }
-        
+
         result.error = "No QR code found in image";
         std::cout << "[QRDetector] No QR code found" << std::endl;
-        
+
     } catch (const cv::Exception& e) {
         result.error = std::string("OpenCV error: ") + e.what();
         std::cerr << "[QRDetector] " << result.error << std::endl;
     }
-    
+
     return result;
 }
 
 std::vector<QRDetectionResult> QRDetector::detectAllFromMat(const cv::Mat& image) {
     std::vector<QRDetectionResult> results;
-    
+
     if (image.empty()) {
         return results;
     }
-    
+
     try {
-        std::vector<std::string> decoded;
-        std::vector<cv::Point> points;
-        
-        // detectAndDecodeMulti returns all QR codes
-        bool success = detector_.detectAndDecodeMulti(image, decoded, points);
-        
-        if (success && !decoded.empty()) {
-            // Points are returned as groups of 4 for each QR code
+        std::set<std::string> seenDecodedText;
+        for (const auto& candidate : build_detection_candidates(image)) {
+            std::vector<std::string> decoded;
+            std::vector<cv::Point> points;
+
+            bool success =
+                detector_.detectAndDecodeMulti(candidate.image, decoded, points);
+
+            if (!success || decoded.empty()) {
+                continue;
+            }
+
             for (size_t i = 0; i < decoded.size(); i++) {
+                if (decoded[i].empty() || !seenDecodedText.insert(decoded[i]).second) {
+                    continue;
+                }
+
                 QRDetectionResult result;
                 result.found = true;
                 result.decodedText = decoded[i];
-                
-                // Extract bounding box for this QR code (4 points per QR)
+
                 if (points.size() >= (i + 1) * 4) {
                     for (size_t j = 0; j < 4; j++) {
                         result.boundingBox.push_back(points[i * 4 + j]);
                     }
+                    scale_points(result.boundingBox, candidate.pointScale);
                 }
-                
+
                 results.push_back(result);
-                std::cout << "[QRDetector] Found QR code " << (i + 1) << ": " 
+                std::cout << "[QRDetector] Found QR code " << results.size()
+                          << " via " << candidate.label << ": "
                           << decoded[i] << std::endl;
             }
         }
-        
+
     } catch (const cv::Exception& e) {
-        std::cerr << "[QRDetector] OpenCV error in multi-detect: " << e.what() << std::endl;
+        std::cerr << "[QRDetector] OpenCV error in multi-detect: " << e.what()
+                  << std::endl;
     }
-    
+
     return results;
 }
 
 bool QRDetector::isOpenQualiaUrl(const std::string& text) {
-    // Check for required OpenQualia URL components
-    if (text.find("http") != 0) {
+    if (text.find("https://") != 0) {
         return false;
     }
-    
+
     bool hasManufacturer = text.find("Manufacturer=") != std::string::npos;
     bool hasTargetType = text.find("TargetType=") != std::string::npos;
     bool hasTargetID = text.find("TargetID=") != std::string::npos;
-    
-    // Also check for common OpenQualia domains
-    bool hasKnownDomain = 
-        text.find("digitaltransitions.com") != std::string::npos ||
-        text.find("openqualia") != std::string::npos ||
-        text.find("targets.") != std::string::npos;
-    
-    return (hasManufacturer && hasTargetType && hasTargetID) || hasKnownDomain;
+
+    return hasManufacturer && hasTargetType && hasTargetID;
 }
 
 std::optional<std::string> QRDetector::findOpenQualiaUrl(const std::string& imagePath) {
@@ -273,28 +356,25 @@ std::optional<std::string> QRDetector::findOpenQualiaUrl(const std::string& imag
         std::cerr << "[QRDetector] Failed to load image: " << imagePath << std::endl;
         return std::nullopt;
     }
-    
-    // Try single detection first
+
     auto result = detectFromMat(image);
     if (result.found && isOpenQualiaUrl(result.decodedText)) {
         return result.decodedText;
     }
-    
-    // If single detection didn't find OpenQualia URL, try multi-detection
+
     auto allResults = detectAllFromMat(image);
     for (const auto& res : allResults) {
         if (res.found && isOpenQualiaUrl(res.decodedText)) {
             return res.decodedText;
         }
     }
-    
-    // Return whatever we found, even if not a known OpenQualia format
+
     if (result.found) {
-        std::cout << "[QRDetector] Found QR but not OpenQualia format: " 
+        std::cout << "[QRDetector] Found QR but not OpenQualia format: "
                   << result.decodedText << std::endl;
         return result.decodedText;
     }
-    
+
     return std::nullopt;
 }
 

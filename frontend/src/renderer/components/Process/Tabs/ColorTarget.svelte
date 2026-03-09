@@ -387,6 +387,18 @@
 			standardObserver: $customRefData.calibration.standardObserver,
 			illuminants: $customRefData.calibration.illuminants,
 		};
+		if ($customRefData.calibration.rows) {
+			colorTarget.rows = $customRefData.calibration.rows;
+		}
+		if ($customRefData.calibration.cols) {
+			colorTarget.cols = $customRefData.calibration.cols;
+		}
+		if ($customRefData.calibration.whitePatch?.row && $customRefData.calibration.whitePatch?.col) {
+			colorTarget.whitePatch = {
+				row: $customRefData.calibration.whitePatch.row,
+				col: $customRefData.calibration.whitePatch.col,
+			};
+		}
 		$customRefData.calibration = null;
 	}
 
@@ -398,6 +410,18 @@
 			standardObserver: $customRefData.verification.standardObserver,
 			illuminants: $customRefData.verification.illuminants,
 		};
+		if ($customRefData.verification.rows) {
+			verifyTarget.rows = $customRefData.verification.rows;
+		}
+		if ($customRefData.verification.cols) {
+			verifyTarget.cols = $customRefData.verification.cols;
+		}
+		if ($customRefData.verification.whitePatch?.row && $customRefData.verification.whitePatch?.col) {
+			verifyTarget.whitePatch = {
+				row: $customRefData.verification.whitePatch.row,
+				col: $customRefData.verification.whitePatch.col,
+			};
+		}
 		$customRefData.verification = null;
 	}
 

@@ -128,8 +128,17 @@ void OpenQualiaRequest::sendSuccessResponse(const btrgb::OQMMetadata& metadata,
     data["targetName"] = metadata.targetName;
     data["serialNumber"] = metadata.serialNumber;
     data["measurementDate"] = metadata.measurementDate;
+    data["calibrationDate"] = metadata.calibrationDate;
+    data["illuminant"] = metadata.illuminant;
+    data["observerAngle"] = metadata.observerAngle;
+    data["standardObserver"] = metadata.standardObserver;
     data["patchCount"] = metadata.patchCount;
     data["spectralBands"] = metadata.spectralBands;
+    data["rowCount"] = metadata.rowCount;
+    data["colCount"] = metadata.colCount;
+    data["suggestedWhitePatchRow"] = metadata.suggestedWhitePatchRow;
+    data["suggestedWhitePatchCol"] = metadata.suggestedWhitePatchCol;
+    data["suggestedWhitePatchName"] = metadata.suggestedWhitePatchName;
     data["csvPath"] = csvPath;
     data["error"] = jsoncons::json::null();
     
@@ -150,7 +159,16 @@ void OpenQualiaRequest::sendErrorResponse(const std::string& error) {
     data["targetName"] = "";
     data["serialNumber"] = "";
     data["measurementDate"] = "";
+    data["calibrationDate"] = "";
+    data["illuminant"] = "";
+    data["observerAngle"] = 0;
+    data["standardObserver"] = 1931;
     data["patchCount"] = 0;
+    data["rowCount"] = 0;
+    data["colCount"] = 0;
+    data["suggestedWhitePatchRow"] = 0;
+    data["suggestedWhitePatchCol"] = 0;
+    data["suggestedWhitePatchName"] = "";
     data["csvPath"] = "";
     data["error"] = error;
     
