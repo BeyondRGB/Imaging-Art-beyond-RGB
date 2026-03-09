@@ -210,11 +210,7 @@
 						bottom: Math.abs(eViewY - botPos),
 					};
 
-					// Looking at the code, I would guess that this block is supposed to add/remove rows and columns
-					// from the color and verification targets. Perhaps the user could've pressed a + or - button somewhere
-					// that would trigger this? As it is now, it doesn't do anything, since no elements within the
-					// viewport have the class names required to pass any of the if-statements, namely
-					// "inc", "dec", "top", "bottom", "left", or "right".
+					// This code supports the addition of new rows and columns via the target editor form
 					e.originalEvent.path.forEach(element => {
 						if (element.classList?.length > 0) {
 							if (element.classList[0] === "inc") {

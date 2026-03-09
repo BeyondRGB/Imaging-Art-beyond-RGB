@@ -21,6 +21,7 @@
 			a: value.a,
 			b: value.b,
 			color,
+			actual,
 		});
 		console.log();
 
@@ -29,6 +30,7 @@
 			l: value.l,
 			c: Math.sqrt(value.a * value.a + value.b * value.b),
 			color,
+			actual,
 		});
 	};
 

@@ -1,3 +1,4 @@
+@echo OFF
 
 if exist ..\backend\build\Release\*.exe (
 	@echo off
@@ -17,5 +18,5 @@ if exist ..\backend\build\Release\*.exe (
 	npm run make
 
 ) else (
-	echo Backend Release build does not exist. Run Imaging-Art-beyond-RGB\backend\win10_release.bat and try again
+	echo Backend Release build does not exist. Run Imaging-Art-beyond-RGB\backend\win_build.bat with the -m Release flag and try again.
 )

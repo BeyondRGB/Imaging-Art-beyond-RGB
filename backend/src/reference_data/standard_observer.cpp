@@ -1,11 +1,14 @@
 #include <reference_data/ref_data_defines.hpp>
 #include <reference_data/standard_observer.hpp>
+#include <utils/resource_paths.hpp>
 
 StandardObserver::StandardObserver(ObserverType type) {
     if (type == ObserverType::SO_1931)
-        this->init(STANDARD_OBSERVER_1931_PATH);
+        this->init(
+            btrgb::paths::build_ref_data_file_path(STANDARD_OBSERVER_1931_FILE_NAME));
     if (type == ObserverType::SO_1964)
-        this->init(STANDARD_OBSERVER_1964_PATH);
+        this->init(
+            btrgb::paths::build_ref_data_file_path(STANDARD_OBSERVER_1964_FILE_NAME));
 }
 
 StandardObserver::~StandardObserver() {

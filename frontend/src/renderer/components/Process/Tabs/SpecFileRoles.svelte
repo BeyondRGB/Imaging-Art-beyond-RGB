@@ -3,7 +3,7 @@
 	import Dropbox from "@components/Process/Dropbox.svelte";
 	import Button from "@components/Button.svelte";
 	import { get, isEmpty, each, includes } from "lodash";
-	import { autoSortImages } from "@util/autoSortStandards.svelte";
+	import { autoSortImages } from "@root/util/autoSortStandards";
 	import { modal } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 	import SortInfoModal from "@components/SortInfoModal.svelte";
@@ -21,7 +21,11 @@
 		let allImages = [];
 		each(imageStack, function (field) {
 			if (!isEmpty(field) && !isEmpty(field[0])) {
-				allImages.push(field[0]);
+				if (Array.isArray(field[0])) {
+					allImages.push(field[0][0]);
+				} else {
+					allImages.push(field[0]);
+				}
 			}
 		});
 		each($processState.imageFilePaths, function (image) {

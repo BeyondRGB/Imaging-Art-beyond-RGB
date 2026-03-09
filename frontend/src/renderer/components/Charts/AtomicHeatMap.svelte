@@ -167,7 +167,7 @@
 			},
 			tooltip: {
 				enabled: true,
-				theme: "dark",
+				theme: isDark ? "dark" : "light",
 				y: {
 					title: {
 						//todo keep????? y axis tooltip

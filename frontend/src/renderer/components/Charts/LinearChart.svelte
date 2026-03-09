@@ -3,9 +3,13 @@
 	import "carbon-components/css/carbon-components.min.css";
 	import { ScatterChart } from "@carbon/charts-svelte";
 	import { lab2rgb } from "@util/lab2rgb";
+	import { appSettings } from "@util/stores";
 
 	export let data;
 	export let matrix = "CM";
+
+	// Carbon Charts theme: "g100" for dark, "white" for light
+	$: chartTheme = $appSettings?.isDarkTheme ? "g100" : "white";
 
 	$: if (data?.["matrix_values"]) {
 		dataLL = [];
@@ -47,47 +51,50 @@
 </script>
 
 <div class="liner-chart">
-	<ScatterChart
-		data={dataLL}
-		options={{
-			title: "L*ref vs L*cam",
-			axes: {
-				bottom: {
-					title: "L*ref",
-					mapsTo: "lref",
-					ticks: {
-						values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+	{#key $appSettings?.isDarkTheme}
+		<ScatterChart
+			data={dataLL}
+			options={{
+				title: "L*ref vs L*cam",
+				theme: chartTheme,
+				axes: {
+					bottom: {
+						title: "L*ref",
+						mapsTo: "lref",
+						ticks: {
+							values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+						},
+						domain: [0, 100],
 					},
-					domain: [0, 100],
-				},
-				left: {
-					title: "L*cam",
-					mapsTo: "lcam",
-					ticks: {
-						values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+					left: {
+						title: "L*cam",
+						mapsTo: "lcam",
+						ticks: {
+							values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+						},
+						domain: [0, 100],
 					},
-					domain: [0, 100],
 				},
-			},
-			legend: {
-				enabled: false,
-			},
-			toolbar: {
-				enabled: true,
-				// controls: [
-				//   { type: "Show as table" },
-				//   { type: "Make Fullscreen" },
-				//   { type: "Zoom out" },
-				// ],
-				numberOfIcons: 1,
-			},
-			height: "700px",
-			resizable: true,
-			color: {
-				scale: colors,
-			},
-		}}
-	/>
+				legend: {
+					enabled: false,
+				},
+				toolbar: {
+					enabled: true,
+					// controls: [
+					//   { type: "Show as table" },
+					//   { type: "Make Fullscreen" },
+					//   { type: "Zoom out" },
+					// ],
+					numberOfIcons: 1,
+				},
+				height: "700px",
+				resizable: true,
+				color: {
+					scale: colors,
+				},
+			}}
+		/>
+	{/key}
 </div>
 
 <!-- <div class="heatmap-number-grid">

@@ -1,7 +1,7 @@
 #include <image_processing/PixelRegestor.h>
 #include <image_util/Image.hpp>
 #include <image_util/image_writer/ImageWriter.hpp>
-// #include <../../vcpkg/installed/arm64-osx/include/opencv4/opencv2/opencv.hpp>
+#include <opencv2/calib3d.hpp>
 
 using namespace cv;
 using namespace std;
@@ -170,7 +170,7 @@ int PixelRegestor::appy_regestration(CommunicationObj *comms,
     // Find homography
     prog = this->calc_progress(0.75, (float)cycle, (float)cycle_count);
     comms->send_progress(prog, this->get_name());
-    h = findHomography(points2, points1, RANSAC);
+    h = cv::findHomography(points2, points1, RANSAC);
 
     // Use homography to warp image
     // First param is image to be aligned, 2nd is storage for aliagned image,
