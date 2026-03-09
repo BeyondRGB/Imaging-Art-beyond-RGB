@@ -1,12 +1,14 @@
 describe("Home Page", () => {
 	it("Contains the correct elements", () => {
-		cy.visit("http://localhost:3000/");
+		cy.clearLocalStorage();
+		cy.visit("/");
 
-		cy.contains("Process");
-		cy.contains("Process a new RAW image set");
-		cy.contains("View");
-		cy.contains("View a previously-processed imaged set");
-		cy.contains("About");
-		cy.contains("About the program");
+		cy.contains("#homeContent button", "Process");
+		cy.contains("#homeContent", "Process a new RAW image set");
+		cy.contains("#homeContent button", "View");
+		cy.contains("#homeContent", "View a previously-processed imaged set");
+		cy.contains("#homeContent button", "Create Another Window");
+		cy.contains("#homeContent button", "About");
+		cy.contains("#homeContent", "About the program");
 	});
 });

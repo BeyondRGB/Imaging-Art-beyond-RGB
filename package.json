@@ -1,0 +1,9 @@
+{
+  "name": "imaging-art-beyond-rgb-workspace",
+  "private": true,
+  "scripts": {
+    "test:unit": "npm --prefix frontend run test:unit",
+    "test:e2e": "npm --prefix frontend run test:e2e --",
+    "test:coverage": "npm --prefix frontend run test:coverage --"
+  }
+}

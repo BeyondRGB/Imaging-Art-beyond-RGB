@@ -19,13 +19,6 @@ NC='\033[0m' # No Color
 # Cleanup function
 cleanup() {
     echo -e "\n${YELLOW}Cleaning up...${NC}"
-    # Kill frontend dev server if running
-    if [ ! -z "$FRONTEND_PID" ]; then
-        kill $FRONTEND_PID 2>/dev/null || true
-        wait $FRONTEND_PID 2>/dev/null || true
-    fi
-    # Kill any remaining node processes on port 3000
-    lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 }
 
 # Trap to ensure cleanup on exit
@@ -52,7 +45,7 @@ else
 fi
 
 # Step 1: Build backend with tests enabled
-echo -e "${GREEN}[1/5] Building backend with tests enabled...${NC}"
+echo -e "${GREEN}[1/6] Building backend with tests enabled...${NC}"
 cd "${BACKEND_DIR}"
 
 # Check if vcpkg is configured
@@ -87,7 +80,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Step 2: Run backend tests
-echo -e "\n${GREEN}[2/5] Running backend Catch2 tests...${NC}"
+echo -e "\n${GREEN}[2/6] Running backend Catch2 tests...${NC}"
 cd "${BUILD_DIR}"
 
 if [ ! -f "unit_tests" ]; then
@@ -106,7 +99,7 @@ fi
 echo -e "${GREEN}Backend tests passed!${NC}"
 
 # Step 3: Generate backend coverage report
-echo -e "\n${GREEN}[3/5] Generating backend coverage report...${NC}"
+echo -e "\n${GREEN}[3/6] Generating backend coverage report...${NC}"
 mkdir -p "${COVERAGE_DIR}/backend"
 
 # Collect coverage data using lcov (if available) or gcov
@@ -124,8 +117,8 @@ else
     echo -e "${YELLOW}Warning: lcov not found. Install lcov for coverage reports.${NC}"
 fi
 
-# Step 4: Install frontend dependencies and start dev server
-echo -e "\n${GREEN}[4/6] Setting up frontend and running Cypress tests...${NC}"
+# Step 4: Install frontend dependencies
+echo -e "\n${GREEN}[4/6] Setting up frontend and running frontend tests...${NC}"
 cd "${FRONTEND_DIR}"
 
 # Install dependencies if needed
@@ -134,29 +127,9 @@ if [ ! -d "node_modules" ]; then
     npm install
 fi
 
-# Start dev server in background with coverage enabled
-echo "Starting frontend dev server with coverage..."
-COVERAGE=true npm run dev > /dev/null 2>&1 &
-FRONTEND_PID=$!
-
-# Wait for server to be ready
-echo "Waiting for dev server to start..."
-sleep 5
-for i in 1 2 3 4 5 6 7 8 9 10; do
-    if curl -s http://localhost:3000 > /dev/null 2>&1; then
-        echo -e "${GREEN}Dev server is ready${NC}"
-        break
-    fi
-    if [ $i -eq 10 ]; then
-        echo -e "${RED}Dev server failed to start${NC}"
-        exit 1
-    fi
-    sleep 2
-done
-
-# Step 5: Run Cypress tests
-echo "Running Cypress tests with coverage..."
-npm run test:coverage || npm run test
+# Step 5: Run frontend tests
+echo -e "\n${GREEN}[5/6] Running frontend unit and Cypress tests...${NC}"
+npm run test:coverage
 FRONTEND_TEST_RESULT=$?
 
 if [ $FRONTEND_TEST_RESULT -ne 0 ]; then

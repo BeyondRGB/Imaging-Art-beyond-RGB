@@ -386,17 +386,24 @@ let socket;
 export async function connect() {
 	console.log({ "Attempting to Connect": socket });
 
+	const electronApi =
+		typeof window !== "undefined" && window.electron ? window.electron : undefined;
+	if (!electronApi?.getPort || !electronApi?.restartBackend) {
+		connectionState.set("Closed");
+		return;
+	}
+
 	// connect or restart
 	let ipcResponse = undefined;
 	let errorCount = 0;
 	do {
-		ipcResponse = await window.electron.getPort();
+		ipcResponse = await electronApi.getPort();
 
 		// if port is undefined, fully restart the backend (this means its crashed)
 		if (!ipcResponse || ipcResponse === 3000) {
 			errorCount++;
 			console.log(`Error occurred when reattaching backend. Error number ${errorCount}`);
-			await window.electron.restartBackend();
+			await electronApi.restartBackend();
 		}
 	} while (!ipcResponse && errorCount < 5);
 
@@ -444,12 +451,14 @@ connect();
 
 export function close() {
 	console.log("Closing all websocket listeners");
-	socket.close();
+	if (socket) {
+		socket.close();
+	}
 }
 
 let prevMessage;
 export const sendMessage = message => {
-	if (socket.readyState === 1) {
+	if (socket && socket.readyState === 1) {
 		console.log({ SendMessage: message });
 		prevMessage = message;
 		socket.send(message);
@@ -457,7 +466,7 @@ export const sendMessage = message => {
 };
 
 export const resendMessage = () => {
-	if (socket.readyState === 1) {
+	if (socket && socket.readyState === 1) {
 		console.log({ ReSendMessage: prevMessage });
 		socket.send(prevMessage);
 	}
