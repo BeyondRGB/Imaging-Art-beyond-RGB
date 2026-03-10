@@ -9,6 +9,7 @@
 
   class CreateIccProfile
   {
+  public:
     //max_size is the maximum size in bytes that the created profile can be, and should be large enough to hold the profile data created by createHybridProfile for the given input parameters
     CreateIccProfile(size_t max_size=1000000);
 
@@ -16,7 +17,7 @@
     ~CreateIccProfile();
 
     //matrix is expected to be in row major order with num_in columns and num_out rows, and should not include the base channels if ignore_base_channels is true
-    bool createHybridProfile(ProfileColorSpace space, float* matrix, int num_in, int num_out, bool ignore_base_channels=true);
+    bool createHybridProfile(ProfileColorSpace space, float* matrix, int num_in, int num_out, bool ignore_base_channels=true, float* inv_matrix = nullptr);
 
     //getProfileMem and getProfileSize should only be called after createHybridProfile returns true, and the returned memory should note be freed
     unsigned char *getProfileMem();

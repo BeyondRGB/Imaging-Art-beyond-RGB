@@ -23,7 +23,7 @@ CreateIccProfile::~CreateIccProfile()
     delete[] profile_mem;
 }
 
-bool CreateIccProfile::createHybridProfile(ProfileColorSpace space, float* matrix, int num_in, int num_out, bool hybrid_ignore_base_channels)
+bool CreateIccProfile::createHybridProfile(ProfileColorSpace space, float* matrix, int num_in, int num_out, bool hybrid_ignore_base_channels, float* inv_matrix)
 {
   if (hybrid_icc)
     return false;
@@ -32,7 +32,7 @@ bool CreateIccProfile::createHybridProfile(ProfileColorSpace space, float* matri
   if (!rgb_profile)
     return false;
 
-  CIccProfile* spec_profile = createSpecProfile(space, matrix, num_in, num_out, hybrid_ignore_base_channels);
+  CIccProfile* spec_profile = createSpecProfile(space, matrix, num_in, num_out, hybrid_ignore_base_channels, inv_matrix);
   if (!spec_profile) {
     delete rgb_profile;
   }
@@ -52,7 +52,7 @@ bool CreateIccProfile::createHybridProfile(ProfileColorSpace space, float* matri
   }
 
   CIccMemIO io;
-  io.Alloc(max_profile_size, true);
+  io.Attach(profile_mem, max_profile_size, true);
 
   if (!hybrid_icc->Write(&io)) {
     delete[] profile_mem;
@@ -287,7 +287,7 @@ CIccProfile* CreateIccProfile::createRgbProfile(ProfileColorSpace space)
   case cs_Linear_Normalized_XYZ:
     //Allocate profile description tag and attach to profile
     pText = new CIccTagMultiLocalizedUnicode();
-    pText->SetText("Hybrid Wide Gamut RGB");
+    pText->SetText("Hybrid Linear Normalized XYZ as RGB");
 
     pIcc->AttachTag(icSigProfileDescriptionTag, pText);
 
@@ -334,7 +334,7 @@ CIccProfile* CreateIccProfile::createRgbProfile(ProfileColorSpace space)
 
 CIccProfile* CreateIccProfile::createSpecProfile(ProfileColorSpace space, float *matrix, int num_in, int num_out, bool ignore_base, float *inv_matrix)
 {
-  int num_chan = ignore_base ? num_in : num_in + 3;
+  int num_chan = !ignore_base ? num_in : num_in + 3;
 
   CIccProfilePtr pIcc(new CIccProfile());
   CIccTagMultiLocalizedUnicode* pText;
@@ -345,6 +345,7 @@ CIccProfile* CreateIccProfile::createSpecProfile(ProfileColorSpace space, float 
   pIcc->m_Header.version = icVersionNumberV5_1;
   pIcc->m_Header.flags |= icEmbeddedProfileTrue;
   pIcc->m_Header.colorSpace = icNColorSpaceSig(icSigNChannelData, (num_chan&0xffff));
+  pIcc->m_Header.pcs = (icColorSpaceSignature)0;
   pIcc->m_Header.spectralPCS = icNColorSpaceSig(icSigReflectanceSpectralData, (num_out&0xffff));
 
   //setup spectral range by number of rows in matrix (num_out)
