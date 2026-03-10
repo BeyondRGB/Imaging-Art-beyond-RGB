@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+include(CheckCXXCompilerFlag)
+
 # Sets the CMAKE Toolchain to the vcpkg installed using ./arch_config_environment
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
@@ -36,6 +38,18 @@ function(enable_target_coverage target_name)
         target_link_options(${target_name} PRIVATE --coverage)
     else ()
         message(WARNING "Coverage is only configured for GCC and Clang toolchains.")
+    endif ()
+endfunction()
+
+function(apply_websocketpp_gcc_workaround target_name)
+    if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        return()
+    endif ()
+
+    check_cxx_compiler_flag("-Wno-template-id-cdtor" HAS_WNO_TEMPLATE_ID_CDTOR)
+    if (HAS_WNO_TEMPLATE_ID_CDTOR)
+        # websocketpp still uses template-ids on ctors/dtors, which newer GCC warns on in C++20.
+        target_compile_options(${target_name} PRIVATE -Wno-template-id-cdtor)
     endif ()
 endfunction()
 
@@ -227,6 +241,7 @@ endif ()
 
 # Set C++ standard
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+apply_websocketpp_gcc_workaround(${PROJECT_NAME})
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
     set_source_files_properties(src/compat/avx2_compat.cpp PROPERTIES COMPILE_OPTIONS "-mavx2")
