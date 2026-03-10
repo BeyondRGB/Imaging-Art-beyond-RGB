@@ -124,9 +124,6 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/backend_process/SpectralPickerMeasured.cpp
         src/backend_process/ThumbnailLoader.cpp
 
-        # compat
-        src/compat/avx2_compat.cpp
-
         # image_processing
         src/image_processing/BitDepthScaler.cpp
         src/image_processing/ChannelSelector.cpp
@@ -196,6 +193,11 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/time_tracker.cpp
 )
 
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+    target_sources(${PROJECT_NAME} PRIVATE src/compat/avx2_compat.c)
+    set_source_files_properties(src/compat/avx2_compat.c PROPERTIES COMPILE_OPTIONS "-mavx2")
+endif ()
+
 # Set all source include files (ie. *.h)
 target_include_directories(${PROJECT_NAME} PUBLIC "include/")
 
@@ -242,10 +244,6 @@ endif ()
 # Set C++ standard
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 apply_websocketpp_gcc_workaround(${PROJECT_NAME})
-
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
-    set_source_files_properties(src/compat/avx2_compat.cpp PROPERTIES COMPILE_OPTIONS "-mavx2")
-endif ()
 
 # weird fix for linux to remove malformed macro included in lib dependency
 # TODO: remove this with a better fix
