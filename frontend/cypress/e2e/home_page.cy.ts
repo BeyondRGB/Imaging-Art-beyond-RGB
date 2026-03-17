@@ -8,5 +8,9 @@ describe("Home Page", () => {
 		cy.contains("View a previously-processed imaged set");
 		cy.contains("About");
 		cy.contains("About the program");
+
+		cy.contains("About the program").click();
+		cy.contains("About Beyond RGB");
+		cy.contains("Version 2.4.0");
 	});
 });
