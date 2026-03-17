@@ -6,7 +6,7 @@
 		illuminants: string;
 	};
 
-	import { tick, onDestroy } from "svelte";
+	import { tick } from "svelte";
 	import {
 		computePosition,
 		autoPlacement,
