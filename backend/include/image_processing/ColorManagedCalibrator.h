@@ -126,7 +126,6 @@ class DeltaEFunction : public cv::MinProblemSolver::Function {
   public:
     DeltaEFunction(cv::Mat *opt_in, cv::Mat *cp_avgs, cv::Mat *offeset,
                    cv::Mat *M, RefData *ref_data, cv::Mat *delE_values);
-    double calc_noise();
     /**
      * @brief Every calculation propagates noise. The transformation matrix can be a
      * source of very large noise amplification. This noise can cause visible
@@ -137,6 +136,7 @@ class DeltaEFunction : public cv::MinProblemSolver::Function {
      * @return double (a number that quantifies how much the matrix amplifies
      *  visual noise in the image)
      */
+    double calc_noise() const;
 
     int getDims() const;
     /**
