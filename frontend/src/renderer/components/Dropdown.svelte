@@ -137,7 +137,7 @@
 		background-color: var(--color-interactive-hover);
 	}
 	.background {
-		@apply fixed top-0 left-0 w-full h-full z-10 block float-none;
+		@apply fixed top-0 left-0 w-full h-full z-20 block float-none;
 	}
 	.iconSqu {
 		background-color: var(--color-interactive);
