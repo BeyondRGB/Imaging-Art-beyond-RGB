@@ -667,11 +667,11 @@ double DeltaEFunction::calc_noise() const {
 
     // calc delta_beta
     for (int j = 0; j < 6; j++)
-        delta_alpha += std::pow(Mbar.at<double>(1, j) - Mbar.at<double>(2, j), 2);
+        delta_beta += std::pow(Mbar.at<double>(1, j) - Mbar.at<double>(2, j), 2);
 
     // calculate final noise
     return std::sqrt(
-        std::pow(deltaL, 2) + std::pow(delta_alpha, 2) + std::pow(delta_beta, 2)
+        deltaL + delta_alpha + delta_beta
     );
 }
 
