@@ -601,6 +601,10 @@ bool ColorManagedCalibrator::loadMatricesFromText(
     return true;
 }
 
+double DeltaEFunction::calc_noise() {
+    return 0;
+}
+
 double DeltaEFunction::calc(const double *x) const {
     this->itteration_count++;
 
@@ -665,10 +669,14 @@ double DeltaEFunction::calc(const double *x) const {
     double deltaE_sum = btrgb::calibration::compute_deltaE_sum(
         this->ref_data, xyz, this->delE_values);
 
+    // calculate the noise value to add to the deltaE
+    double noise = 0.1 * calc_noise(this->M);
+
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
-    return deltaE_avg;
+    double deltaE_noise = deltaE_avg + (0.1 * noise);
+    return deltaE_noise;
 }
 
 // Used for calculating deltaE_sum and resulting_avg_deltaE in batch requests
