@@ -642,7 +642,16 @@
 														calibrationTargetRotationAngle = parseFloat(event.target.value);
 													}}
 												/>
-												<span>{calibrationTargetRotationAngle}°</span>
+												<input
+													id="rotation-slider"
+													type="number"
+													min="-180"
+													max="180"
+													value={calibrationTargetRotationAngle}
+													on:input={e => {
+														calibrationTargetRotationAngle = parseFloat(event.target.value);
+													}}
+												/>
 											</div>
 										</div>
 									{:else if target !== "Add"}
