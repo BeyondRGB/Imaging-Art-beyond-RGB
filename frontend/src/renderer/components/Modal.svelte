@@ -62,7 +62,11 @@
 		class:opacity-light={backdropOpacity === "light"}
 		class:opacity-medium={backdropOpacity === "medium"}
 		class:opacity-heavy={backdropOpacity === "heavy"}
-		on:click={() => {if (!blocking){ close()}}}
+		on:click={() => {
+			if (!blocking) {
+				close();
+			}
+		}}
 		transition:fade={{ duration: 200 }}
 	/>
 {/if}
