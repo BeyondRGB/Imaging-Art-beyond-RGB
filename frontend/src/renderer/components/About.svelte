@@ -1,13 +1,17 @@
 <script lang="ts">
+	import packageJson from "../../../package.json";
 	import ScrollContainer from "@components/ScrollContainer.svelte";
 	import { CheckCircleIcon } from "svelte-feather-icons";
 	import { fade, fly } from "svelte/transition";
+
+	const appVersion = packageJson.version;
 </script>
 
 <main>
 	<div class="modal-header" in:fly={{ y: -20, duration: 400, delay: 100 }}>
 		<h1 class="title">About Beyond RGB</h1>
 		<p class="subtitle">Imaging Art beyond RGB</p>
+		<p class="version">Version {appVersion}</p>
 	</div>
 
 	<ScrollContainer maxHeight="65vh" className="body">
@@ -176,6 +180,11 @@
 	.subtitle {
 		color: var(--color-text-secondary);
 		@apply text-sm tracking-wider uppercase;
+	}
+
+	.version {
+		color: var(--color-text-primary);
+		@apply mt-3 inline-flex rounded-full border border-gray-600/40 px-3 py-1 text-xs font-semibold tracking-[0.2em];
 	}
 
 	:global(.body) {
