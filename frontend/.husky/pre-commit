@@ -32,7 +32,7 @@ else
 fi
 
 if [ "$NEEDS_FORMATTING" -eq 1 ]; then
-    ERROR_MSG="Backend file(s) not formatted: $UNFORMATTED_BACKEND_FILES. Please run \"clang-format -style=file -i FILENAME\" on the invalid file(s)."
+    ERROR_MSG="Backend file(s) not formatted: $UNFORMATTED_BACKEND_FILES. Please run \"clang-format -style=file -i FILEPATH\" on the invalid file(s)."
 fi
 
 # Reset trap

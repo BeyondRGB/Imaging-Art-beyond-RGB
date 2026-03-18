@@ -187,4 +187,7 @@ Frontend tests can also be run directly from `frontend/`:
 Backend unit tests are built by enabling `ENABLE_TESTS` during the backend CMake configure step, which is already handled by the provided test runner scripts.
 
 ### Formatting
-There is a pre-commit git hook (found in ./husky folder in the project's frontend directory) which verifies changed C++ files were formatted correctly. If your files aren't formatted, the commit fails and the hook attempts to format using clang-format (found using PATH). The formatted files can then be staged for a valid commit.
+There is a pre-commit git hook (found in ./husky folder in the project's frontend directory) which verifies source code file formatting. If the changed files aren't formatted, the commit fails and gives an explanation on what is not formatted.
+- To format a backend file, run `clang-format -style=file -i FILEPATH`
+- To format frontend files, run `npm run format` in the frontend directory
+
