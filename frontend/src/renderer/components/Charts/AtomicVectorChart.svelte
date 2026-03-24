@@ -50,6 +50,12 @@
 				bottom: 60 + 40,
 			},
 
+			legend: {
+				top: 10,
+				right: 10,
+				data: ["Reference", "Image"],
+			},
+
 			xAxis: {
 				type: "value",
 				name: dataAB ? "a*" : "C*",
@@ -160,6 +166,37 @@
 					})),
 					z: 4,
 					silent: true,
+				},
+
+				// Dummy legend points because reusing the actual ones wouldn't work.
+				// The real data points are mixed and funky.
+
+				// Legend: Reference (red fill, white border)
+				{
+					name: "Reference",
+					type: "scatter",
+					data: [[NaN, NaN]], // dummy (won't render meaningfully)
+					symbolSize: 12,
+					itemStyle: {
+						color: "#f00",
+						borderColor: "#fff",
+						borderWidth: 3,
+					},
+					z: 10,
+				},
+
+				// Legend: Image (red fill, black border)
+				{
+					name: "Image",
+					type: "scatter",
+					data: [[NaN, NaN]],
+					symbolSize: 12,
+					itemStyle: {
+						color: "#f00",
+						borderColor: "#000",
+						borderWidth: 3,
+					},
+					z: 10,
 				},
 			],
 		};
