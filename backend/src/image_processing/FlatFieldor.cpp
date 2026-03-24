@@ -74,7 +74,13 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
     art1copy->initImage(copy);
 
-    pixelOperation(height, width, channels, art1, white1, dark1,
+    pixelOperation(0, 0, height / 2, width / 2, channels, art1, white1, dark1,
+                   art1copy.get());
+    pixelOperation(0, width / 2, height / 2, width, channels, art1, white1, dark1,
+                   art1copy.get());
+    pixelOperation(height / 2, 0, height, width / 2, channels, art1, white1, dark1,
+                   art1copy.get());
+    pixelOperation(height / 2, width / 2, height, width, channels, art1, white1, dark1,
                    art1copy.get());
     comms->send_progress(0.5, this->get_name());
 
@@ -85,7 +91,13 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
     art2copy->initImage(copy2);
 
-    pixelOperation(height, width, channels, art2, white2, dark2,
+    pixelOperation(0, 0, height / 2, width / 2, channels, art2, white2, dark2,
+                   art2copy.get());
+    pixelOperation(0, width / 2, height / 2, width, channels, art2, white2, dark2,
+                   art2copy.get());
+    pixelOperation(height / 2, 0, height, width / 2, channels, art2, white2, dark2,
+                   art2copy.get());
+    pixelOperation(height / 2, width / 2, height, width, channels, art2, white2, dark2,
                    art2copy.get());
     comms->send_progress(1, this->get_name());
 
@@ -105,7 +117,14 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
         target1copy->initImage(tcopy);
 
-        pixelOperation(height, width, channels, target1, white1, dark1,
+
+        pixelOperation(0, 0, height / 2, width / 2, channels, target1, white1, dark1,
+                       target1copy.get());
+        pixelOperation(0, width / 2, height / 2, width, channels, target1, white1, dark1,
+                       target1copy.get());
+        pixelOperation(height / 2, 0, height, width / 2, channels, target1, white1, dark1,
+                       target1copy.get());
+        pixelOperation(height / 2, width / 2, height, width, channels, target1, white1, dark1,
                        target1copy.get());
 
         target1copy.reset(nullptr);
@@ -117,7 +136,13 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
         target2copy->initImage(tcopy2);
 
-        pixelOperation(height, width, channels, target2, white2, dark2,
+        pixelOperation(0, 0, height / 2, width / 2, channels, target2, white2, dark2,
+                       target2copy.get());
+        pixelOperation(0,  width / 2, height / 2, width, channels, target2, white2, dark2,
+                       target2copy.get());
+        pixelOperation(height / 2, 0, height, width / 2, channels, target2, white2, dark2,
+                       target2copy.get());
+        pixelOperation(height / 2, width / 2, height, width, channels, target2, white2, dark2,
                        target2copy.get());
 
         target2copy.reset(nullptr);
@@ -163,9 +188,9 @@ void ::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef) {
  * @param d1: dark1 image
  * @param d2 : dark2 image
  */
-void ::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image *a,
-                                   btrgb::Image *wh, btrgb::Image *d,
-                                   btrgb::Image *ac) {
+void ::FlatFieldor::pixelOperation(int row, int col, int h, int wid, int c, 
+                                   btrgb::Image *a, btrgb::Image *wh, 
+                                   btrgb::Image *d, btrgb::Image *ac) {
     // For loop is for every pixel in the image, and gets a corrisponding pixel
     // from white and dark images Every Channel value for each pixel needs to be
     // adjusted based on the w for that group of images
@@ -174,8 +199,8 @@ void ::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image *a,
     int uncorrectedCounter = 0;
 
     double wPix, dPix, aPix, newPixel;
-    for (currRow = 0; currRow < h; currRow++) {
-        for (currCol = 0; currCol < wid; currCol++) {
+    for (currRow = row; currRow < h; currRow++) {
+        for (currCol = col; currCol < wid; currCol++) {
             for (ch = 0; ch < c; ch++) {
 
                 // Get pixel from all three images
