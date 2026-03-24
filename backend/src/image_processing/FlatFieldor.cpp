@@ -74,14 +74,18 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
     art1copy->initImage(copy);
 
-    pixelOperation(0, 0, height / 2, width / 2, channels, art1, white1, dark1,
+    std::thread awd10(pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, art1, white1, dark1,
                    art1copy.get());
-    pixelOperation(0, width / 2, height / 2, width, channels, art1, white1, dark1,
+    std::thread awd11(pixelOperation, this->w, 0, width / 2, height / 2, width, channels, art1, white1, dark1,
                    art1copy.get());
-    pixelOperation(height / 2, 0, height, width / 2, channels, art1, white1, dark1,
+    std::thread awd12(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, art1, white1, dark1,
                    art1copy.get());
-    pixelOperation(height / 2, width / 2, height, width, channels, art1, white1, dark1,
+    std::thread awd13(pixelOperation, this->w, height / 2, width / 2, height, width, channels, art1, white1, dark1,
                    art1copy.get());
+    awd10.join();
+    awd11.join();
+    awd12.join();
+    awd13.join();
     comms->send_progress(0.5, this->get_name());
 
     art1copy.reset(nullptr);
@@ -91,14 +95,18 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
     art2copy->initImage(copy2);
 
-    pixelOperation(0, 0, height / 2, width / 2, channels, art2, white2, dark2,
+    std::thread awd20(&pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, art2, white2, dark2,
                    art2copy.get());
-    pixelOperation(0, width / 2, height / 2, width, channels, art2, white2, dark2,
+    std::thread awd21(&pixelOperation, this->w, 0, width / 2, height / 2, width, channels, art2, white2, dark2,
                    art2copy.get());
-    pixelOperation(height / 2, 0, height, width / 2, channels, art2, white2, dark2,
+    std::thread awd22(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, art2, white2, dark2,
                    art2copy.get());
-    pixelOperation(height / 2, width / 2, height, width, channels, art2, white2, dark2,
+    std::thread awd23(pixelOperation, this->w, height / 2, width / 2, height, width, channels, art2, white2, dark2,
                    art2copy.get());
+    awd20.join();
+    awd21.join();
+    awd22.join();
+    awd23.join();
     comms->send_progress(1, this->get_name());
 
     art2copy.reset(nullptr);
@@ -117,15 +125,18 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
         target1copy->initImage(tcopy);
 
-
-        pixelOperation(0, 0, height / 2, width / 2, channels, target1, white1, dark1,
+        std::thread twd10(pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, target1, white1, dark1,
                        target1copy.get());
-        pixelOperation(0, width / 2, height / 2, width, channels, target1, white1, dark1,
+        std::thread twd11(pixelOperation, this->w, 0, width / 2, height / 2, width, channels, target1, white1, dark1,
                        target1copy.get());
-        pixelOperation(height / 2, 0, height, width / 2, channels, target1, white1, dark1,
+        std::thread twd12(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, target1, white1, dark1,
                        target1copy.get());
-        pixelOperation(height / 2, width / 2, height, width, channels, target1, white1, dark1,
+        std::thread twd13(pixelOperation, this->w, height / 2, width / 2, height, width, channels, target1, white1, dark1,
                        target1copy.get());
+        twd10.join();
+        twd11.join();
+        twd12.join();
+        twd13.join();
 
         target1copy.reset(nullptr);
 
@@ -136,14 +147,18 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
         target2copy->initImage(tcopy2);
 
-        pixelOperation(0, 0, height / 2, width / 2, channels, target2, white2, dark2,
+        std::thread twd20(pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, target2, white2, dark2,
                        target2copy.get());
-        pixelOperation(0,  width / 2, height / 2, width, channels, target2, white2, dark2,
+        std::thread twd21(pixelOperation, this->w, 0,  width / 2, height / 2, width, channels, target2, white2, dark2,
                        target2copy.get());
-        pixelOperation(height / 2, 0, height, width / 2, channels, target2, white2, dark2,
+        std::thread twd22(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, target2, white2, dark2,
                        target2copy.get());
-        pixelOperation(height / 2, width / 2, height, width, channels, target2, white2, dark2,
+        std::thread twd23(pixelOperation, this->w, height / 2, width / 2, height, width, channels, target2, white2, dark2,
                        target2copy.get());
+        twd20.join();
+        twd21.join();
+        twd22.join();
+        twd23.join();
 
         target2copy.reset(nullptr);
     }
@@ -188,7 +203,7 @@ void ::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef) {
  * @param d1: dark1 image
  * @param d2 : dark2 image
  */
-void ::FlatFieldor::pixelOperation(int row, int col, int h, int wid, int c, 
+void ::FlatFieldor::pixelOperation(float w, int row, int col, int h, int wid, int c, 
                                    btrgb::Image *a, btrgb::Image *wh, 
                                    btrgb::Image *d, btrgb::Image *ac) {
     // For loop is for every pixel in the image, and gets a corrisponding pixel
@@ -260,7 +275,7 @@ void ::FlatFieldor::pixelOperation(int row, int col, int h, int wid, int c,
 
                     // Perform flatfielding on these new values
                     newPixel =
-                        this->w *
+                        w *
                         (double(artPixelTotalValue - darkPixeTotallValue) /
                          double(whitePixeTotallValue - darkPixeTotallValue));
 
@@ -282,7 +297,7 @@ void ::FlatFieldor::pixelOperation(int row, int col, int h, int wid, int c,
                 // Normal pixels flatfield as normal
                 else {
                     newPixel =
-                        this->w * (double(aPix - dPix) / double(wPix - dPix));
+                        w * (double(aPix - dPix) / double(wPix - dPix));
                     a->setPixel(currRow, currCol, ch, newPixel);
                 }
             }
