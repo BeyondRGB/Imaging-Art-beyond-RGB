@@ -9,6 +9,8 @@ let freePort = undefined;
 let executablePath;
 let loader;
 
+const isDevelopment = true;
+
 if (process.platform == "win32")
 	executablePath = path.join(__dirname, "../../lib/beyond-rgb-backend.exe");
 else {
@@ -24,7 +26,11 @@ if (require("electron-squirrel-startup")) {
 process.on("loaded", (event, args) => {
 	console.log("LOADED");
 	console.log(app.getAppPath());
-	createBackendContext();
+	if (isDevelopment) {
+		connectToDevBackendContext();
+	} else {
+		createBackendContext();
+	}
 });
 
 app.on("before-quit", function () {
@@ -37,7 +43,9 @@ ipcMain.handle("ipc-getPort", async (event, arg) => {
 });
 
 ipcMain.handle("ipc-restartBackend", async (event, arg) => {
-	createBackendContext();
+	if (!isDevelopment) {
+		createBackendContext();
+	}
 });
 
 //Use the shell to open the File explorer as a separate process,
@@ -98,6 +106,11 @@ ipcMain.handle("ipc-Dialog", async (event, arg) => {
 		});
 	return dia;
 });
+
+const connectToDevBackendContext = () => {
+	// Default backend port for development
+	freePort = 9002;
+};
 
 const createBackendContext = () => {
 	// once port is received, it returns from .then() and continues forth

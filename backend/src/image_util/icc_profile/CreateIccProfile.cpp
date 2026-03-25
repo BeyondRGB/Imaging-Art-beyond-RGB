@@ -1,4 +1,6 @@
-#include <image_util/profile_creator/CreateIccProfile.hpp>
+#include <image_util/icc_profile/CreateIccProfile.hpp>
+#include <iostream>
+#include <ostream>
 
 #include <IccProfLib/IccIO.h>
 #include <IccProfLib/IccMpeBasic.h>
@@ -16,45 +18,40 @@ CreateIccProfile::CreateIccProfile(size_t max_size) {
 }
 
 CreateIccProfile::~CreateIccProfile() {
-    if (hybrid_icc)
-        delete hybrid_icc;
-
-    if (profile_mem)
-        delete[] profile_mem;
+    delete hybrid_icc;
+    delete[] profile_mem;
 }
 
-bool CreateIccProfile::createHybridProfile(ProfileColorSpace space,
-                                           float *matrix, int num_in,
-                                           int num_out,
-                                           bool hybrid_ignore_base_channels,
-                                           float *inv_matrix) {
-    if (hybrid_icc)
-        return false;
+bool CreateIccProfile::createHybridProfile(const ProfileColorSpace space,
+                                           float *matrix, const int num_in,
+                                           const int num_out,
+                                           bool ignore_base_channels,
+                                           const float *inv_matrix) {
+    if (hybrid_icc) {
+        delete hybrid_icc;
+        delete[] profile_mem;
+    }
 
     CIccProfile *rgb_profile = createRgbProfile(space);
-    if (!rgb_profile)
-        return false;
 
-    CIccProfile *spec_profile =
-        createSpecProfile(space, matrix, num_in, num_out,
-                          hybrid_ignore_base_channels, inv_matrix);
+    if (!rgb_profile) {
+        return false;
+    }
+
+    CIccProfile *spec_profile = createSpecProfile(
+        space, matrix, num_in, num_out, ignore_base_channels, inv_matrix);
     if (!spec_profile) {
         delete rgb_profile;
     }
 
     // Allocate IO tag, attach spec_profile to it, and embed it in rgb profile
-    CIccTagEmbeddedProfile *pTag = new CIccTagEmbeddedProfile();
+    auto *pTag = new CIccTagEmbeddedProfile();
     pTag->SetProfile(spec_profile);
     rgb_profile->AttachTag(icSigEmbeddedV5ProfileTag, pTag);
 
     hybrid_icc = rgb_profile;
 
     profile_mem = new unsigned char[max_profile_size];
-
-    if (!profile_mem) {
-        delete hybrid_icc;
-        return false;
-    }
 
     CIccMemIO io;
     io.Attach(profile_mem, max_profile_size, true);
@@ -74,12 +71,10 @@ unsigned char *CreateIccProfile::getProfileMem() const { return profile_mem; }
 
 size_t CreateIccProfile::getProfileSize() const { return profile_size; }
 
-CIccProfile *CreateIccProfile::createRgbProfile(ProfileColorSpace space) {
-    CIccProfilePtr pIcc(new CIccProfile());
+CIccProfile *CreateIccProfile::createRgbProfile(const ProfileColorSpace space) {
+    const auto pIcc = new CIccProfile();
     CIccTagCurve *pCurveGamma;
     CIccTagParametricCurve *pCurve;
-    CIccTagXYZ *pXYZ;
-    CIccTagMultiLocalizedUnicode *pText;
     icFloatNumber *param;
 
     // Set up the profile header
@@ -90,13 +85,13 @@ CIccProfile *CreateIccProfile::createRgbProfile(ProfileColorSpace space) {
     pIcc->m_Header.pcs = icSigXYZData;
 
     // Allocate copyright tag and attach to profile
-    pText = new CIccTagMultiLocalizedUnicode();
+    auto *pText = new CIccTagMultiLocalizedUnicode();
     pText->SetText("Copyright (C) 2026 BeyondRGB");
 
     pIcc->AttachTag(icSigCopyrightTag, pText);
 
     // Allocate media white point tag and attach to profile
-    pXYZ = new CIccTagXYZ();
+    auto *pXYZ = new CIccTagXYZ();
     (*pXYZ)[0].X = icDtoF(0.96420288);
     (*pXYZ)[0].Y = icDtoF(1.00000000);
     (*pXYZ)[0].Z = icDtoF(0.82487488);
@@ -330,13 +325,14 @@ CIccProfile *CreateIccProfile::createRgbProfile(ProfileColorSpace space) {
     return pIcc;
 }
 
-CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
+CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace base_space,
                                                  float *matrix, int num_in,
-                                                 int num_out, bool ignore_base,
-                                                 float *inv_matrix) {
-    int num_chan = !ignore_base ? num_in : num_in + 3;
+                                                 int num_out,
+                                                 bool ignore_base_channels,
+                                                 const float *inv_matrix) {
+    int num_chan = !ignore_base_channels ? num_in : num_in + 3;
 
-    CIccProfilePtr pIcc(new CIccProfile());
+    auto pIcc = new CIccProfile();
     CIccTagMultiLocalizedUnicode *pText;
 
     // Set up the profile header
@@ -346,7 +342,7 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
     pIcc->m_Header.flags |= icEmbeddedProfileTrue;
     pIcc->m_Header.colorSpace =
         icNColorSpaceSig(icSigNChannelData, (num_chan & 0xffff));
-    pIcc->m_Header.pcs = (icColorSpaceSignature)0;
+    pIcc->m_Header.pcs = static_cast<icColorSpaceSignature>(0);
     pIcc->m_Header.spectralPCS =
         icNColorSpaceSig(icSigReflectanceSpectralData, (num_out & 0xffff));
 
@@ -384,7 +380,7 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
     pIcc->AttachTag(icSigCopyrightTag, pText);
 
     // Allocate media white point tag and attach to profile
-    CIccTagFloat32 *pWhiteTag = new CIccTagFloat32();
+    auto *pWhiteTag = new CIccTagFloat32();
     pWhiteTag->SetSize(num_out);
     for (int i = 0; i < num_out; i++) {
         (*pWhiteTag)[i] = 1.0;
@@ -399,8 +395,7 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
     pIcc->AttachTag(icSigProfileDescriptionTag, pText);
 
     // Allocate spectral viewing conditions and attach to profile
-    CIccTagSpectralViewingConditions *pCond =
-        new CIccTagSpectralViewingConditions();
+    auto *pCond = new CIccTagSpectralViewingConditions();
 
     icFloatNumber lum = 203.0;
     pCond->m_illuminantXYZ.X = icDtoF(0.96420288f * lum);
@@ -421,15 +416,14 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
     pIcc->AttachTag(icSigSpectralViewingConditionsTag, pCond);
 
     // Populate DToB3 tag and attach to profile
-    CIccTagMultiProcessElement *pMulti =
-        new CIccTagMultiProcessElement(num_chan, num_out);
+    auto *pMulti = new CIccTagMultiProcessElement(num_chan, num_out);
 
-    if (ignore_base) {
+    if (ignore_base_channels) {
         // if ignoring the base profile channels, then just add a matrix element
         // with zero columns for the base channels and the provided data and no
         // curves
 
-        CIccMpeMatrix *pMatrix = new CIccMpeMatrix();
+        auto *pMatrix = new CIccMpeMatrix();
         pMatrix->SetSize(num_chan, num_out);
         icFloatNumber *pData = pMatrix->GetMatrix();
         icFloatNumber *pRow = matrix;
@@ -446,14 +440,14 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
 
         pMulti->Attach(pMatrix);
     } else {
-        CIccMpeCurveSet *pCurves = new CIccMpeCurveSet(num_chan);
+        auto *pCurves = new CIccMpeCurveSet(num_chan);
         CIccSegmentedCurve *pCurve;
         CIccFormulaCurveSegment *pSegment;
         icFloatNumber zeroClip[4] = {1.00000f, 0.00000f, 0.00000f, 0.0000f};
 
         int i;
 
-        switch (space) {
+        switch (base_space) {
         case cs_Adobe_RGB_1998:
             pCurve = new CIccSegmentedCurve();
 
@@ -659,8 +653,9 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
 
         icFloatNumber *pData = pMatrix->GetMatrix();
         int size_matrix = num_chan * num_out;
-        for (int i = 0; i < size_matrix; i++)
+        for (int i = 0; i < size_matrix; i++) {
             pData[i] = matrix[i];
+        }
 
         // add matrix to MPE
         pMulti->Attach(pMatrix);
@@ -672,9 +667,8 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
         int i;
 
         // also add the inverse matrix as a BToD3 tag
-        CIccTagMultiProcessElement *pMultiInv =
-            new CIccTagMultiProcessElement(num_out, num_chan);
-        CIccMpeMatrix *pMatrixInv = new CIccMpeMatrix();
+        auto *pMultiInv = new CIccTagMultiProcessElement(num_out, num_chan);
+        auto *pMatrixInv = new CIccMpeMatrix();
         pMatrixInv->SetSize(num_out, num_chan);
         icFloatNumber *pData = pMatrixInv->GetMatrix();
         int size_matrix = num_chan * num_out;
@@ -682,12 +676,12 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
             pData[i] = inv_matrix[i];
         pMultiInv->Attach(pMatrixInv);
 
-        CIccMpeCurveSet *pCurves = new CIccMpeCurveSet(num_chan);
+        auto *pCurves = new CIccMpeCurveSet(num_chan);
         CIccSegmentedCurve *pCurve;
         CIccFormulaCurveSegment *pSegment;
         icFloatNumber zeroClip[4] = {1.00000f, 0.00000f, 0.00000f, 0.0000f};
 
-        switch (space) {
+        switch (base_space) {
         case cs_Adobe_RGB_1998:
             pCurve = new CIccSegmentedCurve();
 
@@ -884,8 +878,9 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace space,
             return nullptr;
         }
 
-        if (pMultiInv)
+        if (pMultiInv) {
             pIcc->AttachTag(icSigBToD3Tag, pMultiInv);
+        }
     }
 
     return pIcc;

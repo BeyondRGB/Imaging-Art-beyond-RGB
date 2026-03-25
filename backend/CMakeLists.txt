@@ -122,8 +122,9 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/image_util/image_writer/LibpngWriter.cpp
         src/image_util/image_writer/LibTiffWriter.cpp
 
-        # image_util / profile_creator
-        src/image_util/profile_creator/CreateIccProfile.cpp
+        # image_util / icc_profile
+        src/image_util/icc_profile/CreateIccProfile.cpp
+        src/image_util/icc_profile/WriteIccProfile.cpp
 
         # reference_data
         src/reference_data/color_patch.cpp

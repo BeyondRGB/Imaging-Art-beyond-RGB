@@ -1,5 +1,5 @@
-#include "version.h"
 #include <image_util/image_writer/LibTiffWriter.hpp>
+#include <version.h>
 
 namespace btrgb {
 

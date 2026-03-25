@@ -5,6 +5,10 @@
 #include <image_processing/results/m_spectral_formater.hpp>
 #include <image_processing/results/r_camera_fromater.hpp>
 
+#include <image_util/icc_profile/CreateIccProfile.hpp>
+
+#include "image_util/icc_profile/WriteIccProfile.h"
+
 ResultsProcessor::~ResultsProcessor() {
     if (nullptr != this->formater) {
         delete this->formater;
@@ -41,6 +45,7 @@ void ResultsProcessor::execute(CommunicationObj *comms,
     // Output Results
     this->output_btrgb_results(images);
     this->output_user_results(images);
+    this->output_icc_max(images);
 
     comms->send_progress(0.2, this->get_name());
 
@@ -63,7 +68,7 @@ void ResultsProcessor::output_images(btrgb::ArtObject *images) {
     }
 
     try {
-        // Write CM Calibrated Image
+        // Write CM Calibrated Target
         images->outputImageAs(btrgb::TIFF, "ColorManagedTarget",
                               this->CM_target_f_name);
     } catch (std::exception e) {
@@ -185,6 +190,38 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject *images) {
     f_name = this->GI_f_name;
     this->write_formated_results(f_name, FormatType::GEN_INFO, general_info,
                                  ResultObjType::GENERAL);
+}
+
+void ResultsProcessor::output_icc_max(btrgb::ArtObject *images) const {
+    auto *profile = new btrgb::CreateIccProfile();
+
+    CalibrationResults *r =
+        images->get_results_obj(btrgb::ResultType::CALIBRATION);
+
+    cv::Mat spectral_matrix = r->get_matrix(SP_M_refl);
+    // If the matrix is not continuous, retrieving a pointer (.ptr<float>) will
+    // return garbage data. To fix this, we clone it which creates a continuous
+    // array of size total()*elemSize() in memory.
+    cv::Mat continuous_spectral_matrix = spectral_matrix.isContinuous()
+                                             ? spectral_matrix
+                                             : spectral_matrix.clone();
+
+    auto *flattenedMatrix = continuous_spectral_matrix.ptr<float>();
+
+    const int input_channels = continuous_spectral_matrix.cols;
+    const int output_channels = continuous_spectral_matrix.rows;
+
+    bool success =
+        profile->createHybridProfile(btrgb::cs_ProPhoto, flattenedMatrix,
+                                     input_channels, output_channels, false);
+
+    if (success) {
+        auto *iccProfile = profile->getHybridProfile();
+        btrgb::WriteIccProfile::write(iccProfile,
+                                      this->output_dir + "CM_max.icc");
+    } else {
+        std::cerr << "Failed to create hybrid profile." << std::endl;
+    }
 }
 
 std::string ResultsProcessor::build_output_name(std::string name,

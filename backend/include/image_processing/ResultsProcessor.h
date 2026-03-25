@@ -48,6 +48,8 @@ class ResultsProcessor : public LeafComponent {
      */
     void output_images(btrgb::ArtObject *images);
 
+    void output_icc_max(btrgb::ArtObject *images) const;
+
     std::string build_output_name(std::string name, std::string extention = "");
 
     void set_formater(FormatType type);

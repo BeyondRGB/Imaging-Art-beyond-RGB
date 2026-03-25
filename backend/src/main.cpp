@@ -9,8 +9,7 @@ void testFunc() {}
 
 int main(int argc, char **argv) {
     CMDArgManager::process_args(argc, argv);
-    bool test =
-        true; // Set to true if you want to test something and bypass the server
+
     if (GlobalsSingleton::get_instance()->is_test()) {
         testFunc();
         std::cout << "Exit" << std::endl;
