@@ -33,10 +33,7 @@
 	}
 
 	const colors = [
-		"#0a9400",
-		"#199a00",
 		"#2a9f00",
-		"#3ca500",
 		"#4eab00",
 		"#62b000",
 		"#77b600",
@@ -52,7 +49,10 @@
 		"#ee5700",
 		"#f44100",
 		"#f92a00",
-		"#ff1200",
+		"#f92a00",
+		"#f92a00",
+		"#f92a00",
+		"#f92a00",
 	];
 
 	const grayScale = [
@@ -85,35 +85,16 @@
 				from: i / 2,
 				to: i / 2 + 0.5,
 				color: visionDeficiencyMode ? grayScale[i] : colors[i],
+				name: i / 2,
 			});
 		}
 		result[result.length - 1].to = Number.MAX_SAFE_INTEGER;
 		return result;
 	}
 
-	function generateLegendRanges() {
-		const rangeData = ranges(); // Get full color ranges
-		const result = [];
-
-		const step = 2; // Merge every 2 ranges to create 10 values
-
-		for (let i = 0; i < 10; i++) {
-			let from = rangeData[i * step].from;
-			let to = rangeData[i * step + step - 1]?.to || rangeData[rangeData.length - 1].to; // Make sure range goes to 10
-
-			result.push({
-				label: (i + 1).toString(), // Display whole numbers 1-10
-				color: rangeData[i * step].color, // Use color from paired ranges
-			});
-		}
-
-		return result;
-	}
-
 	const getOptions = function () {
 		// Get theme colors from CSS variables with dark/light mode fallbacks
 		const isDark = $appSettings?.isDarkTheme ?? true;
-		const textColorPrimary = getCssVar("--color-text-primary") || (isDark ? "#ffffff" : "#1f2937");
 		const textColorSecondary =
 			getCssVar("--color-text-secondary") || (isDark ? "#9ca3af" : "#6b7280");
 
@@ -141,28 +122,6 @@
 				},
 				selection: {
 					enabled: true,
-				},
-			},
-			legend: {
-				show: true,
-				position: "top",
-				horizontalAlign: "center",
-				customLegendItems: generateLegendRanges().map(range => range.label),
-				markers: {
-					fillColors: generateLegendRanges().map(range => range.color),
-				},
-				labels: {
-					colors: textColorPrimary,
-					formatter: function (value, index) {
-						let legendRanges = generateLegendRanges();
-						return legendRanges[index]?.label || "";
-					},
-				},
-				onItemClick: {
-					toggleDataSeries: false,
-				},
-				onItemHover: {
-					highlightDataSeries: true,
 				},
 			},
 			tooltip: {
