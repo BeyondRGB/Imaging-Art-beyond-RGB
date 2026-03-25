@@ -34,21 +34,13 @@
 
 	const colors = [
 		"#2a9f00",
-		"#4eab00",
 		"#62b000",
-		"#77b600",
 		"#8dbb00",
-		"#a4c100",
 		"#bdc700",
-		"#ccc300",
 		"#d2b300",
-		"#d8a300",
 		"#dd9200",
-		"#e37f00",
 		"#e86c00",
-		"#ee5700",
 		"#f44100",
-		"#f92a00",
 		"#f92a00",
 		"#f92a00",
 		"#f92a00",
@@ -57,35 +49,27 @@
 
 	const grayScale = [
 		"#ffffff",
-		"#efefef",
 		"#d3d3d3",
-		"#c1c1c1",
 		"#b5b5b5",
-		"#9e9e9e",
 		"#898989",
-		"#767676",
 		"#585858",
-		"#4c4c4c",
 		"#4a4a4a",
-		"#4c4c4c",
-		"#383838",
 		"#383838",
 		"#313131",
-		"#2a2a2a",
 		"#1c1c1c",
-		"#191919",
 		"#171717",
+		"#000000",
 		"#000000",
 	];
 
 	function ranges() {
 		const result = [];
-		for (let i = 0; i < 20; i++) {
+		for (let i = 0; i < 11; i++) {
 			result.push({
-				from: i / 2,
-				to: i / 2 + 0.5,
+				from: i,
+				to: i + 1,
 				color: visionDeficiencyMode ? grayScale[i] : colors[i],
-				name: i / 2,
+				name: i,
 			});
 		}
 		result[result.length - 1].to = Number.MAX_SAFE_INTEGER;
