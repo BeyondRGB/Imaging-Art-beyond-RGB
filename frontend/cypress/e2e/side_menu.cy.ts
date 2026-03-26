@@ -1,18 +1,21 @@
 describe("Side Menu", () => {
 	beforeEach(() => {
-		cy.visit("http://localhost:3000/");
+		cy.clearLocalStorage();
+		cy.visit("/");
 	});
 
 	it("Settings button works", () => {
-		cy.get(".homeContent .homeBtn").contains("Process").click();
-		cy.get(".ctlBtns .feather-settings").click();
-		cy.get(".settings").should("contain", "Settings");
-		cy.get(".closeDia").click();
-		cy.get(".modal").should("not.exist");
+		cy.contains("#homeContent button", "Process").click();
+		cy.get("#homeContent").should("not.exist");
+		cy.get('[data-cy="nav-settings"]').click();
+		cy.get('[role="dialog"]').should("exist");
+		cy.get(".close-button").should("be.visible");
+		cy.get(".close-button").click();
+		cy.get(".close-button").should("not.exist");
 	});
 	it("Home button works", () => {
-		cy.get(".homeContent .homeBtn").contains("Process").click();
-		cy.get(".ctlBtns .feather-home").click();
-		cy.get(".homeBtn").contains("Process").should("be.visible");
+		cy.contains("#homeContent button", "Process").click();
+		cy.get('[data-cy="nav-home"]').click();
+		cy.contains("#homeContent button", "Process").should("be.visible");
 	});
 });
