@@ -29,6 +29,8 @@
 	let qrScanTimeoutHandle: ReturnType<typeof setTimeout> | null = null;
 	let qrHintPreviewEl: HTMLDivElement | null = null;
 	let qrHintDragging = false;
+	let qrHintAnchorX = 0.0;
+	let qrHintAnchorY = 0.0;
 	let qrPreviewSrc = "";
 	let qrPreviewAvailable = false;
 
@@ -114,6 +116,8 @@
 		const point = toNormalizedPoint(event);
 		if (!point) return;
 		qrHintDragging = true;
+		qrHintAnchorX = point.x;
+		qrHintAnchorY = point.y;
 		qrHintTop = point.y;
 		qrHintBottom = point.y;
 		qrHintLeft = point.x;
@@ -124,14 +128,10 @@
 		if (!qrHintDragging) return;
 		const point = toNormalizedPoint(event);
 		if (!point) return;
-		const minY = Math.min(qrHintTop, point.y);
-		const maxY = Math.max(qrHintTop, point.y);
-		const minX = Math.min(qrHintLeft, point.x);
-		const maxX = Math.max(qrHintLeft, point.x);
-		qrHintTop = minY;
-		qrHintBottom = maxY;
-		qrHintLeft = minX;
-		qrHintRight = maxX;
+		qrHintTop = Math.min(qrHintAnchorY, point.y);
+		qrHintBottom = Math.max(qrHintAnchorY, point.y);
+		qrHintLeft = Math.min(qrHintAnchorX, point.x);
+		qrHintRight = Math.max(qrHintAnchorX, point.x);
 	}
 
 	function stopQrHintSelection() {

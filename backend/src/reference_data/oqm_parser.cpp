@@ -141,17 +141,21 @@ void OQMParser::parseKeyword(const std::string& line) {
     } else if (keyword == "ILLUMINANT") {
         metadata_.illuminant = value;
     } else if (keyword == "OBSERVER") {
-        metadata_.observerAngle = std::stoi(value);
-        metadata_.standardObserver =
-            mapObserverAngleToStandardObserver(metadata_.observerAngle);
+        try {
+            metadata_.observerAngle = std::stoi(value);
+            metadata_.standardObserver =
+                mapObserverAngleToStandardObserver(metadata_.observerAngle);
+        } catch (...) {
+            // Non-numeric OBSERVER value; ignore.
+        }
     } else if (keyword == "NUMBER_OF_SETS") {
-        metadata_.patchCount = std::stoi(value);
+        try { metadata_.patchCount = std::stoi(value); } catch (...) {}
     } else if (keyword == "SPECTRAL_BANDS") {
-        metadata_.spectralBands = std::stoi(value);
+        try { metadata_.spectralBands = std::stoi(value); } catch (...) {}
     } else if (keyword == "SPECTRAL_START_NM") {
-        metadata_.spectralStartNm = static_cast<int>(std::stod(value));
+        try { metadata_.spectralStartNm = static_cast<int>(std::stod(value)); } catch (...) {}
     } else if (keyword == "SPECTRAL_END_NM") {
-        metadata_.spectralEndNm = static_cast<int>(std::stod(value));
+        try { metadata_.spectralEndNm = static_cast<int>(std::stod(value)); } catch (...) {}
     }
 }
 

@@ -56,6 +56,22 @@ cv::Mat adaptive_binarize(const cv::Mat& input) {
     return thresholded;
 }
 
+cv::Mat morphological_cleanup(const cv::Mat& binary) {
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+    cv::Mat cleaned;
+    cv::morphologyEx(binary, cleaned, cv::MORPH_CLOSE, kernel);
+    cv::morphologyEx(cleaned, cleaned, cv::MORPH_OPEN, kernel);
+    return cleaned;
+}
+
+cv::Mat unsharp_mask(const cv::Mat& input, double sigma, double strength) {
+    cv::Mat blurred;
+    cv::GaussianBlur(input, blurred, cv::Size(0, 0), sigma);
+    cv::Mat sharpened;
+    cv::addWeighted(input, 1.0 + strength, blurred, -strength, 0, sharpened);
+    return sharpened;
+}
+
 double channel_contrast_score(const cv::Mat& channel) {
     cv::Scalar mean;
     cv::Scalar stddev;
@@ -91,8 +107,25 @@ std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image)
     const cv::Mat enhancedGray = apply_clahe(grayscale);
     add_candidate(candidates, "grayscale", grayscale);
     add_candidate(candidates, "grayscale-clahe", enhancedGray);
-    add_candidate(candidates, "grayscale-clahe-threshold",
-                  adaptive_binarize(enhancedGray));
+
+    const cv::Mat binarizedGray = adaptive_binarize(enhancedGray);
+    add_candidate(candidates, "grayscale-clahe-threshold", binarizedGray);
+    add_candidate(candidates, "grayscale-clahe-threshold-morph",
+                  morphological_cleanup(binarizedGray));
+
+    // Inverted (negative) grayscale — helps when QR is light-on-dark.
+    cv::Mat invertedGray;
+    cv::bitwise_not(enhancedGray, invertedGray);
+    add_candidate(candidates, "grayscale-clahe-inverted", invertedGray);
+    add_candidate(candidates, "grayscale-clahe-inverted-threshold",
+                  adaptive_binarize(invertedGray));
+
+    // Unsharp mask for low-contrast images.
+    const cv::Mat sharpened = unsharp_mask(grayscale, 3.0, 1.5);
+    const cv::Mat sharpenedClahe = apply_clahe(sharpened);
+    add_candidate(candidates, "grayscale-unsharp-clahe", sharpenedClahe);
+    add_candidate(candidates, "grayscale-unsharp-clahe-threshold",
+                  adaptive_binarize(sharpenedClahe));
 
     if (image.channels() == 3 || image.channels() == 4) {
         cv::Mat bgrImage;
@@ -102,6 +135,7 @@ std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image)
             bgrImage = image;
         }
 
+        // --- BGR channel isolation (all 3 channels, ranked by contrast) ---
         std::vector<cv::Mat> channels;
         cv::split(bgrImage, channels);
 
@@ -116,7 +150,7 @@ std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image)
                   });
 
         const std::array<const char*, 3> channelNames = {"blue", "green", "red"};
-        const int channelCount = std::min<int>(2, rankedChannels.size());
+        const int channelCount = static_cast<int>(rankedChannels.size());
         for (int i = 0; i < channelCount; ++i) {
             const int channelIndex = rankedChannels[i].second;
             const cv::Mat& channel = channels[channelIndex];
@@ -126,9 +160,45 @@ std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image)
 
             add_candidate(candidates, channelPrefix, channel);
             add_candidate(candidates, channelPrefix + "-clahe", enhancedChannel);
+
+            const cv::Mat binarizedChannel = adaptive_binarize(enhancedChannel);
             add_candidate(candidates, channelPrefix + "-clahe-threshold",
-                          adaptive_binarize(enhancedChannel));
+                          binarizedChannel);
+            add_candidate(candidates, channelPrefix + "-clahe-threshold-morph",
+                          morphological_cleanup(binarizedChannel));
         }
+
+        // --- LAB color space: L channel isolates luminance from chrominance ---
+        cv::Mat labImage;
+        cv::cvtColor(bgrImage, labImage, cv::COLOR_BGR2Lab);
+        std::vector<cv::Mat> labChannels;
+        cv::split(labImage, labChannels);
+
+        const cv::Mat& lChannel = labChannels[0];
+        const cv::Mat lClahe = apply_clahe(lChannel);
+        add_candidate(candidates, "lab-L", lChannel);
+        add_candidate(candidates, "lab-L-clahe", lClahe);
+
+        const cv::Mat lBinarized = adaptive_binarize(lClahe);
+        add_candidate(candidates, "lab-L-clahe-threshold", lBinarized);
+        add_candidate(candidates, "lab-L-clahe-threshold-morph",
+                      morphological_cleanup(lBinarized));
+
+        // --- HSV color space: V channel for brightness ---
+        cv::Mat hsvImage;
+        cv::cvtColor(bgrImage, hsvImage, cv::COLOR_BGR2HSV);
+        std::vector<cv::Mat> hsvChannels;
+        cv::split(hsvImage, hsvChannels);
+
+        const cv::Mat& vChannel = hsvChannels[2];
+        const cv::Mat vClahe = apply_clahe(vChannel);
+        add_candidate(candidates, "hsv-V", vChannel);
+        add_candidate(candidates, "hsv-V-clahe", vClahe);
+
+        const cv::Mat vBinarized = adaptive_binarize(vClahe);
+        add_candidate(candidates, "hsv-V-clahe-threshold", vBinarized);
+        add_candidate(candidates, "hsv-V-clahe-threshold-morph",
+                      morphological_cleanup(vBinarized));
     }
 
     if (image.cols > 4000 || image.rows > 4000) {
