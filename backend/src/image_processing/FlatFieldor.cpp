@@ -13,6 +13,9 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     btrgb::Image *target2;
     RefData *reference;
 
+    // threads
+    std::thread threads[MAX_THREADS];
+
     bool target_found = false;
 
     comms->send_info("", this->get_name());
@@ -74,18 +77,30 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
     art1copy->initImage(copy);
 
-    std::thread awd10(pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, art1, white1, dark1,
-                   art1copy.get());
-    std::thread awd11(pixelOperation, this->w, 0, width / 2, height / 2, width, channels, art1, white1, dark1,
-                   art1copy.get());
-    std::thread awd12(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, art1, white1, dark1,
-                   art1copy.get());
-    std::thread awd13(pixelOperation, this->w, height / 2, width / 2, height, width, channels, art1, white1, dark1,
-                   art1copy.get());
-    awd10.join();
-    awd11.join();
-    awd12.join();
-    awd13.join();
+    // how high each section of the image should be
+    int chunk_height = height / MAX_THREADS;
+    for (int t = 0; t < MAX_THREADS; t++)
+    {
+        std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
+        " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
+        threads[t] = std::thread(
+            pixelOperation,
+            this->w,
+            // we render in strips, so we only change height
+            (t * chunk_height), 0,
+            // if on the last chunk, capture remainder of the image in the case of odd num pixels
+            (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width, 
+            // actual image resolutions, etc
+            height, width, channels, art1, white1, dark1, art1copy.get()
+        );
+    }
+    // wait for threads to complete
+    for (int t = 0; t < MAX_THREADS; t++)
+    {
+        threads[t].join();
+        std::cout << "Join thread " << t << " complete!" << std::endl;
+
+    } 
     comms->send_progress(0.5, this->get_name());
 
     art1copy.reset(nullptr);
@@ -95,18 +110,25 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
     art2copy->initImage(copy2);
 
-    std::thread awd20(&pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, art2, white2, dark2,
-                   art2copy.get());
-    std::thread awd21(&pixelOperation, this->w, 0, width / 2, height / 2, width, channels, art2, white2, dark2,
-                   art2copy.get());
-    std::thread awd22(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, art2, white2, dark2,
-                   art2copy.get());
-    std::thread awd23(pixelOperation, this->w, height / 2, width / 2, height, width, channels, art2, white2, dark2,
-                   art2copy.get());
-    awd20.join();
-    awd21.join();
-    awd22.join();
-    awd23.join();
+    for (int t = 0; t < MAX_THREADS; t++)
+    {
+        std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
+        " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
+        // if on the last thread to create, set its height to the remainder of the
+        threads[t] = std::thread(
+            pixelOperation,
+            this->w,
+            // we render in strips, so we only change height
+            (t * chunk_height), 0,
+            // if on the last chunk, capture remainder of the image in the case of odd num pixels
+            (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width, 
+            // actual image resolutions, etc
+            height, width, channels, art2, white2, dark2, art2copy.get()
+        );
+    }
+    // wait for threads to complete
+    for (int t = 0; t < MAX_THREADS; t++)
+        threads[t].join(); 
     comms->send_progress(1, this->get_name());
 
     art2copy.reset(nullptr);
@@ -125,18 +147,26 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
         target1copy->initImage(tcopy);
 
-        std::thread twd10(pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, target1, white1, dark1,
-                       target1copy.get());
-        std::thread twd11(pixelOperation, this->w, 0, width / 2, height / 2, width, channels, target1, white1, dark1,
-                       target1copy.get());
-        std::thread twd12(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, target1, white1, dark1,
-                       target1copy.get());
-        std::thread twd13(pixelOperation, this->w, height / 2, width / 2, height, width, channels, target1, white1, dark1,
-                       target1copy.get());
-        twd10.join();
-        twd11.join();
-        twd12.join();
-        twd13.join();
+        // thread
+        for (int t = 0; t < MAX_THREADS; t++)
+        {
+            std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
+            " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
+            // if on the last thread to create, set its height to the remainder of the
+            threads[t] = std::thread(
+                pixelOperation,
+                this->w,
+                // we render in strips, so we only change height
+                (t * chunk_height), 0,
+                // if on the last chunk, capture remainder of the image in the case of odd num pixels
+                (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width, 
+                // actual image resolutions, etc
+                height, width, channels, target1, white1, dark1, target1copy.get()
+            );
+        }
+        // wait for threads to complete
+        for (int t = 0; t < MAX_THREADS; t++)
+            threads[t].join(); 
 
         target1copy.reset(nullptr);
 
@@ -147,18 +177,26 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
         target2copy->initImage(tcopy2);
 
-        std::thread twd20(pixelOperation, this->w, 0, 0, height / 2, width / 2, channels, target2, white2, dark2,
-                       target2copy.get());
-        std::thread twd21(pixelOperation, this->w, 0,  width / 2, height / 2, width, channels, target2, white2, dark2,
-                       target2copy.get());
-        std::thread twd22(pixelOperation, this->w, height / 2, 0, height, width / 2, channels, target2, white2, dark2,
-                       target2copy.get());
-        std::thread twd23(pixelOperation, this->w, height / 2, width / 2, height, width, channels, target2, white2, dark2,
-                       target2copy.get());
-        twd20.join();
-        twd21.join();
-        twd22.join();
-        twd23.join();
+        // thread
+        for (int t = 0; t < MAX_THREADS; t++)
+        {
+            std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
+            " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
+            // if on the last thread to create, set its height to the remainder of the
+            threads[t] = std::thread(
+                pixelOperation,
+                this->w,
+                // we render in strips, so we only change height
+                (t * chunk_height), 0,
+                // if on the last chunk, capture remainder of the image in the case of odd num pixels
+                (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width, 
+                // actual image resolutions, etc
+                height, width, channels, target2, white2, dark2, target2copy.get()
+            );
+        }
+        // wait for threads to complete
+        for (int t = 0; t < MAX_THREADS; t++)
+            threads[t].join(); 
 
         target2copy.reset(nullptr);
     }
@@ -203,7 +241,8 @@ void ::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef) {
  * @param d1: dark1 image
  * @param d2 : dark2 image
  */
-void ::FlatFieldor::pixelOperation(float w, int row, int col, int h, int wid, int c, 
+void ::FlatFieldor::pixelOperation(float w, int row, int col, int img_hei, 
+                                   int img_wid, int chunk_hei, int chunk_wid, int c, 
                                    btrgb::Image *a, btrgb::Image *wh, 
                                    btrgb::Image *d, btrgb::Image *ac) {
     // For loop is for every pixel in the image, and gets a corrisponding pixel
@@ -214,8 +253,8 @@ void ::FlatFieldor::pixelOperation(float w, int row, int col, int h, int wid, in
     int uncorrectedCounter = 0;
 
     double wPix, dPix, aPix, newPixel;
-    for (currRow = row; currRow < h; currRow++) {
-        for (currCol = col; currCol < wid; currCol++) {
+    for (currRow = row; currRow < chunk_hei; currRow++) {
+        for (currCol = col; currCol < chunk_wid; currCol++) {
             for (ch = 0; ch < c; ch++) {
 
                 // Get pixel from all three images
@@ -243,9 +282,9 @@ void ::FlatFieldor::pixelOperation(float w, int row, int col, int h, int wid, in
                     // make sure the selection area doesn't go over the edge
                     int left = (currCol - radius < 0 ? 0 : currCol - radius);
                     int right =
-                        (currCol + radius >= wid ? wid - 1 : currCol + radius);
+                        (currCol + radius >= img_wid ? img_wid - 1 : currCol + radius);
                     int top = (currRow - radius < 0 ? 0 : currRow - radius);
-                    int bot = (currRow + radius > h ? h : currRow + radius);
+                    int bot = (currRow + radius > img_hei ? img_hei : currRow + radius);
 
                     for (auto xIndex : boost::irange(left, right)) {
                         for (auto yIndex : boost::irange(top, bot)) {

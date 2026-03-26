@@ -23,6 +23,7 @@
 #define BTRGB_M_OPT "M_opt"
 #define BTRGB_OFFSET_OPT "Offset_opt"
 #define BTRGB_M_REFL_OPT "M_refl_opt"
+#define MAX_THREADS 4
 
 /* ============[ CONSTANTS and TYPES ]============ */
 namespace btrgb {

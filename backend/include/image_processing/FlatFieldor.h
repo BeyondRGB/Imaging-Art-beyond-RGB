@@ -8,7 +8,7 @@ class FlatFieldor : public LeafComponent {
   private:
     float w;
     void wCalc(float pAvg, float wAvg, double yRef);
-    static void pixelOperation(float w, int row, int col, int h, int wid, int c, btrgb::Image *a,
+    static void pixelOperation(float w, int row, int col, int img_hei, int img_wid, int chunk_hei, int chunk_wid, int c, btrgb::Image *a,
                         btrgb::Image *wh, btrgb::Image *d, btrgb::Image *ac);
 
   public:
