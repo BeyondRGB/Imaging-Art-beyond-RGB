@@ -7,7 +7,8 @@ describe("Settings", () => {
 	});
 
 	it("switches between dark and light theme preferences", () => {
-		cy.contains("button.theme-option", "Dark").click();
+		cy.contains("button.theme-option", "Dark").as('darkbtn');
+		cy.get('@darkbtn').click();
 		cy.get("html").should("have.class", "dark");
 		cy.window().then(win => {
 			const saved = JSON.parse(win.localStorage.getItem("appSettings") || "{}");

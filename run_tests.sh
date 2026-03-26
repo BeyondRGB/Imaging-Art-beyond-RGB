@@ -72,7 +72,11 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Building backend..."
-cmake --build "${BUILD_DIR}"
+if [ "$(uname)" = "Darwin" ]; then
+    cmake --build "${BUILD_DIR}" -j"$(sysctl -n hw.logicalcpu)"
+else
+    cmake --build "${BUILD_DIR}" -j"$(nproc)"
+fi
 
 if [ $? -ne 0 ]; then
     echo -e "${RED}Failed to build backend${NC}"
@@ -124,7 +128,7 @@ cd "${FRONTEND_DIR}"
 # Install dependencies if needed
 if [ ! -d "node_modules" ]; then
     echo "Installing frontend dependencies..."
-    npm install
+    npm ci # don't override package lock
 fi
 
 # Step 5: Run frontend tests

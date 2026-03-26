@@ -40,7 +40,7 @@ if errorlevel 1 (
 )
 
 echo Building backend...
-cmake --build "%BUILD_DIR%" --config %BUILD_MODE%
+cmake --build "%BUILD_DIR%" -j12 --config %BUILD_MODE% -- /m:%NUMBER_OF_PROCESSORS%
 
 if errorlevel 1 (
     echo Failed to build backend
@@ -81,7 +81,7 @@ cd /d "%FRONTEND_DIR%"
 REM Install dependencies if needed
 if not exist "node_modules" (
     echo Installing frontend dependencies...
-    call npm install
+    call npm ci
 )
 
 REM Step 5: Run Cypress tests
