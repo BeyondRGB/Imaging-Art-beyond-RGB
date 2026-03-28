@@ -119,6 +119,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/image_util/ColorProfiles.cpp
         src/image_util/ColorTarget.cpp
         src/image_util/Image.cpp
+        src/image_util/ImageLoader.cpp
 
         # image_util / image_reader
         src/image_util/image_reader/LibRawReader.cpp
@@ -159,7 +160,8 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/time_tracker.cpp
 
         # utils statics
-        src/utils/threading_statics/flatfield_static.cpp
+        src/utils/threading_statics/flatfield_static.cpp 
+        src/utils/threading_statics/image_reader_static.cpp 
 )
 
 # Set all source include files (ie. *.h)
