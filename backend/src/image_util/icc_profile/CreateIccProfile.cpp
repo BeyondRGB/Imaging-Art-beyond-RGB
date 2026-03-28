@@ -71,121 +71,163 @@ namespace btrgb {
 
     size_t CreateIccProfile::getProfileSize() const { return profile_size; }
 
-    struct RGGTags {
-        CIccTagXYZ red;
-        CIccTagXYZ green;
-        CIccTagXYZ blue;
+    struct RGBTags {
+        CIccTagXYZ *red;
+        CIccTagXYZ *green;
+        CIccTagXYZ *blue;
     };
 
-    RGGTags createRGBTags(const ProfileColorSpace colorSpace) {
-        RGGTags tags = { };
-
+    void createRGBTags(RGBTags* tags, const ProfileColorSpace colorSpace) {
         switch (colorSpace) {
             case cs_Adobe_RGB_1998:
                 // Attach red XYZ primary to profile
-                tags.red = CIccTagXYZ();
-                tags.red.GetXYZ(0)->X = icDtoF(0.60974);
-                tags.red.GetXYZ(0)->Y = icDtoF(0.31111);
-                tags.red.GetXYZ(0)->Z = icDtoF(0.01947);
+                tags->red = new CIccTagXYZ();
+                tags->red->GetXYZ(0)->X = icDtoF(0.60974);
+                tags->red->GetXYZ(0)->Y = icDtoF(0.31111);
+                tags->red->GetXYZ(0)->Z = icDtoF(0.01947);
 
                 // Attach green XYZ primary to profile
-                tags.green = CIccTagXYZ();
-                tags.green.GetXYZ(0)->X = icDtoF(0.20528);
-                tags.green.GetXYZ(0)->Y = icDtoF(0.62567);
-                tags.green.GetXYZ(0)->Z = icDtoF(0.06087);
+                tags->green = new  CIccTagXYZ();
+                tags->green->GetXYZ(0)->X = icDtoF(0.20528);
+                tags->green->GetXYZ(0)->Y = icDtoF(0.62567);
+                tags->green->GetXYZ(0)->Z = icDtoF(0.06087);
 
                 // Attach blue XYZ primary to profile
-                tags.blue = CIccTagXYZ();
-                tags.blue.GetXYZ(0)->X = icDtoF(0.14919);
-                tags.blue.GetXYZ(0)->Y = icDtoF(0.06322);
-                tags.blue.GetXYZ(0)->Z = icDtoF(0.74457);
+                tags->blue = new CIccTagXYZ();
+                tags->blue->GetXYZ(0)->X = icDtoF(0.14919);
+                tags->blue->GetXYZ(0)->Y = icDtoF(0.06322);
+                tags->blue->GetXYZ(0)->Z = icDtoF(0.74457);
                 break;
             case cs_ProPhoto:
                 // Attach red XYZ primary to profile
-                tags.red = CIccTagXYZ();
-                tags.red.GetXYZ(0)->X = icDtoF(0.398818969727);
-                tags.red.GetXYZ(0)->Y = icDtoF(0.144012451172);
-                tags.red.GetXYZ(0)->Z = icDtoF(0);
+                tags->red = new CIccTagXYZ();
+                tags->red->GetXYZ(0)->X = icDtoF(0.398818969727);
+                tags->red->GetXYZ(0)->Y = icDtoF(0.144012451172);
+                tags->red->GetXYZ(0)->Z = icDtoF(0);
 
                 // Attach green XYZ primary to profile
-                tags.green = CIccTagXYZ();
-                tags.green.GetXYZ(0)->X = icDtoF(0.067596435547);
-                tags.green.GetXYZ(0)->Y = icDtoF(0.355926513672);
-                tags.green.GetXYZ(0)->Z = icDtoF(0);
+                tags->green = new CIccTagXYZ();
+                tags->green->GetXYZ(0)->X = icDtoF(0.067596435547);
+                tags->green->GetXYZ(0)->Y = icDtoF(0.355926513672);
+                tags->green->GetXYZ(0)->Z = icDtoF(0);
 
                 // Attach blue XYZ primary to profile
-                tags.blue = CIccTagXYZ();
-                tags.blue.GetXYZ(0)->X = icDtoF(0.015670776367);
-                tags.blue.GetXYZ(0)->Y = icDtoF(0.000518798828);
-                tags.blue.GetXYZ(0)->Z = icDtoF(0.412048339844);
+                tags->blue = new CIccTagXYZ();
+                tags->blue->GetXYZ(0)->X = icDtoF(0.015670776367);
+                tags->blue->GetXYZ(0)->Y = icDtoF(0.000518798828);
+                tags->blue->GetXYZ(0)->Z = icDtoF(0.412048339844);
                 break;
             case cs_sRGB:
                 // Attach red XYZ primary to profile
-                tags.red = CIccTagXYZ();
-                tags.red.GetXYZ(0)->X = icDtoF(0.436065673828);
-                tags.red.GetXYZ(0)->Y = icDtoF(0.222488403320);
-                tags.red.GetXYZ(0)->Z = icDtoF(0.013916015625);
+                tags->red = new CIccTagXYZ();
+                tags->red->GetXYZ(0)->X = icDtoF(0.436065673828);
+                tags->red->GetXYZ(0)->Y = icDtoF(0.222488403320);
+                tags->red->GetXYZ(0)->Z = icDtoF(0.013916015625);
 
                 // Attach green XYZ primary to profile
-                tags.green = CIccTagXYZ();
-                tags.green.GetXYZ(0)->X = icDtoF(0.385147094727);
-                tags.green.GetXYZ(0)->Y = icDtoF(0.716873168945);
-                tags.green.GetXYZ(0)->Z = icDtoF(0.097076416016);
+                tags->green = new CIccTagXYZ();
+                tags->green->GetXYZ(0)->X = icDtoF(0.385147094727);
+                tags->green->GetXYZ(0)->Y = icDtoF(0.716873168945);
+                tags->green->GetXYZ(0)->Z = icDtoF(0.097076416016);
 
                 // Attach blue XYZ primary to profile
-                tags.blue = CIccTagXYZ();
-                tags.blue.GetXYZ(0)->X = icDtoF(0.143066406250);
-                tags.blue.GetXYZ(0)->Y = icDtoF(0.060607910156);
-                tags.blue.GetXYZ(0)->Z = icDtoF(0.714096069336);
+                tags->blue = new CIccTagXYZ();
+                tags->blue->GetXYZ(0)->X = icDtoF(0.143066406250);
+                tags->blue->GetXYZ(0)->Y = icDtoF(0.060607910156);
+                tags->blue->GetXYZ(0)->Z = icDtoF(0.714096069336);
                 break;
             case cs_Wide_Gamut_RGB:
                 // Attach red XYZ primary to profile
-                tags.red = CIccTagXYZ();
-                tags.red.GetXYZ(0)->X = icDtoF(0.7579);
-                tags.red.GetXYZ(0)->Y = icDtoF(0.4430);
-                tags.red.GetXYZ(0)->Z = icDtoF(0);
+                tags->red = new CIccTagXYZ();
+                tags->red->GetXYZ(0)->X = icDtoF(0.7579);
+                tags->red->GetXYZ(0)->Y = icDtoF(0.4430);
+                tags->red->GetXYZ(0)->Z = icDtoF(0);
 
                 // Attach green XYZ primary to profile
-                tags.green = CIccTagXYZ();
-                tags.green.GetXYZ(0)->X = icDtoF(0.2230);
-                tags.green.GetXYZ(0)->Y = icDtoF(0.5137);
-                tags.green.GetXYZ(0)->Z = icDtoF(0.1708);
+                tags->green = new CIccTagXYZ();
+                tags->green->GetXYZ(0)->X = icDtoF(0.2230);
+                tags->green->GetXYZ(0)->Y = icDtoF(0.5137);
+                tags->green->GetXYZ(0)->Z = icDtoF(0.1708);
 
                 // Attach blue XYZ primary to profile
-                tags.blue = CIccTagXYZ();
-                tags.blue.GetXYZ(0)->X = icDtoF(0);
-                tags.blue.GetXYZ(0)->Y = icDtoF(0.0433);
-                tags.blue.GetXYZ(0)->Z = icDtoF(0.6541);
+                tags->blue = new CIccTagXYZ();
+                tags->blue->GetXYZ(0)->X = icDtoF(0);
+                tags->blue->GetXYZ(0)->Y = icDtoF(0.0433);
+                tags->blue->GetXYZ(0)->Z = icDtoF(0.6541);
                 break;
             case cs_Linear_Normalized_XYZ:
-                tags.red = CIccTagXYZ();
-                tags.red.GetXYZ(0)->X = icDtoF(0.96420288);
-                tags.red.GetXYZ(0)->Y = icDtoF(0);
-                tags.red.GetXYZ(0)->Z = icDtoF(0);
+                tags->red = new CIccTagXYZ();
+                tags->red->GetXYZ(0)->X = icDtoF(0.96420288);
+                tags->red->GetXYZ(0)->Y = icDtoF(0);
+                tags->red->GetXYZ(0)->Z = icDtoF(0);
 
                 // Attach green XYZ primary to profile
-                tags.green = CIccTagXYZ();
-                tags.green.GetXYZ(0)->X = icDtoF(0);
-                tags.green.GetXYZ(0)->Y = icDtoF(1);
-                tags.green.GetXYZ(0)->Z = icDtoF(0);
+                tags->green = new CIccTagXYZ();
+                tags->green->GetXYZ(0)->X = icDtoF(0);
+                tags->green->GetXYZ(0)->Y = icDtoF(1);
+                tags->green->GetXYZ(0)->Z = icDtoF(0);
 
                 // Attach blue XYZ primary to profile
-                tags.blue = CIccTagXYZ();
-                tags.blue.GetXYZ(0)->X = icDtoF(0);
-                tags.blue.GetXYZ(0)->Y = icDtoF(0);
-                tags.blue.GetXYZ(0)->Z = icDtoF(0.82487488);
+                tags->blue = new CIccTagXYZ();
+                tags->blue->GetXYZ(0)->X = icDtoF(0);
+                tags->blue->GetXYZ(0)->Y = icDtoF(0);
+                tags->blue->GetXYZ(0)->Z = icDtoF(0.82487488);
                 break;
             default:
                 break;
         }
-        return tags;
+    }
+
+    void createParametricCurve(CIccTagParametricCurve* parametricCurve, const ProfileColorSpace colorSpace) {
+        parametricCurve->SetFunctionType(3);
+        icFloatNumber *param = parametricCurve->GetParams();
+
+        switch (colorSpace) {
+            case cs_ProPhoto:
+                param[0] = 1.80000;
+                param[1] = 1.00000;
+                param[2] = 0.00000;
+                param[3] = 0.0625;
+                param[4] = 0.03125;
+                break;
+            case cs_sRGB:
+                param[0] = 2.4; // gamma
+                param[1] = 0.947867298578199; // a
+                param[2] = 0.0521327014218010; // b
+                param[3] = 0.077399380804954; // c
+                param[4] = 0.04045; // d
+                break;
+            case cs_Wide_Gamut_RGB:
+                param[0] = 3.0;
+                param[1] = 1.121991404;
+                param[2] = 0.137931034;
+                param[3] = 0.144084508;
+                param[4] = 0.061467064;
+                break;
+            default:
+                break;
+        }
+    }
+
+    std::string getProfileName(const ProfileColorSpace colorSpace) {
+        switch (colorSpace) {
+            case cs_Adobe_RGB_1998:
+                return "Hybrid aRGB";
+            case cs_ProPhoto:
+                return "Hybrid Pro Photo RGB";
+            case cs_sRGB:
+                return "Hybrid aRGB";
+            case cs_Wide_Gamut_RGB:
+                return "Hybrid Wide Gamut RGB";
+            case cs_Linear_Normalized_XYZ:
+                return "Hybrid Linear Normalized XYZ as RGB";
+        }
+
+        return "Unkown Space";
     }
 
     CIccProfile *CreateIccProfile::createRgbProfile(const ProfileColorSpace space) {
         const auto pIcc = new CIccProfile();
-        CIccTagCurve *pCurveGamma;
-        CIccTagParametricCurve *pCurve;
-        icFloatNumber *param;
 
         // Set up the profile header
         pIcc->InitHeader();
@@ -208,113 +250,37 @@ namespace btrgb {
 
         pIcc->AttachTag(icSigMediaWhitePointTag, pXYZ);
 
-        switch (space) {
-            case cs_Adobe_RGB_1998:
-                // Allocate profile description tag and attach to profile
-                pText = new CIccTagMultiLocalizedUnicode();
-                pText->SetText("Hybrid aRGB");
+        pText = new CIccTagMultiLocalizedUnicode();
+        pText->SetText(getProfileName(space).c_str());
 
-                pIcc->AttachTag(icSigProfileDescriptionTag, pText);
+        pIcc->AttachTag(icSigProfileDescriptionTag, pText);
 
-                // Allocate Tone Reproduction Curve(s) and attach to profile
-                pCurveGamma = new CIccTagCurve();
-                pCurveGamma->SetGamma(563.0f / 256.0f);
+        auto *tags = new RGBTags();
+        createRGBTags(tags, space);
 
-                pIcc->AttachTag(icSigRedTRCTag, pCurveGamma);
-                pIcc->AttachTag(icSigGreenTRCTag, pCurveGamma);
-                pIcc->AttachTag(icSigBlueTRCTag, pCurveGamma);
-                break;
-            case cs_ProPhoto:
-                // Allocate profile description tag and attach to profile
-                pText = new CIccTagMultiLocalizedUnicode();
-                pText->SetText("Hybrid Pro Photo RGB");
+        pIcc->AttachTag(icSigRedMatrixColumnTag, tags->red);
+        pIcc->AttachTag(icSigGreenMatrixColumnTag, tags->green);
+        pIcc->AttachTag(icSigBlueMatrixColumnTag, tags->blue);
 
-                pIcc->AttachTag(icSigProfileDescriptionTag, pText);
-
-                // Allocate Tone Reproduction Curve(s) and attach to profile
-                pCurve = new CIccTagParametricCurve();
-                pCurve->SetFunctionType(3);
-                param = pCurve->GetParams();
-                param[0] = 1.80000;
-                param[1] = 1.00000;
-                param[2] = 0.00000;
-                param[3] = 0.0625;
-                param[4] = 0.03125;
-
-                pIcc->AttachTag(icSigRedTRCTag, pCurve);
-                pIcc->AttachTag(icSigGreenTRCTag, pCurve);
-                pIcc->AttachTag(icSigBlueTRCTag, pCurve);
-                break;
-            case cs_sRGB:
-                // Allocate profile description tag and attach to profile
-                pText = new CIccTagMultiLocalizedUnicode();
-                pText->SetText("Hybrid aRGB");
-
-                pIcc->AttachTag(icSigProfileDescriptionTag, pText);
-
-                // Allocate Tone Reproduction Curve(s) and attach to profile
-                pCurve = new CIccTagParametricCurve();
-                pCurve->SetFunctionType(3);
-                param = pCurve->GetParams();
-                param[0] = 2.4; // gamma
-                param[1] = 0.947867298578199; // a
-                param[2] = 0.0521327014218010; // b
-                param[3] = 0.077399380804954; // c
-                param[4] = 0.04045; // d
-
-                pIcc->AttachTag(icSigRedTRCTag, pCurve);
-                pIcc->AttachTag(icSigGreenTRCTag, pCurve);
-                pIcc->AttachTag(icSigBlueTRCTag, pCurve);
-                break;
-
-            case cs_Wide_Gamut_RGB:
-                // Allocate profile description tag and attach to profile
-                pText = new CIccTagMultiLocalizedUnicode();
-                pText->SetText("Hybrid Wide Gamut RGB");
-
-                pIcc->AttachTag(icSigProfileDescriptionTag, pText);
-
-                // Allocate Tone Reproduction Curve(s) and attach to profile
-                pCurve = new CIccTagParametricCurve();
-                pCurve->SetFunctionType(3);
-                param = pCurve->GetParams();
-                param[0] = 3.0;
-                param[1] = 1.121991404;
-                param[2] = 0.137931034;
-                param[3] = 0.144084508;
-                param[4] = 0.061467064;
-
-                pIcc->AttachTag(icSigRedTRCTag, pCurve);
-                pIcc->AttachTag(icSigGreenTRCTag, pCurve);
-                pIcc->AttachTag(icSigBlueTRCTag, pCurve);
-                break;
-
-            case cs_Linear_Normalized_XYZ:
-                // Allocate profile description tag and attach to profile
-                pText = new CIccTagMultiLocalizedUnicode();
-                pText->SetText("Hybrid Linear Normalized XYZ as RGB");
-
-                pIcc->AttachTag(icSigProfileDescriptionTag, pText);
-
-                // Allocate Tone Reproduction Curve(s) and attach to profile
-                pCurveGamma = new CIccTagCurve();
-                pCurveGamma->SetGamma(1.0f);
-
-                pIcc->AttachTag(icSigRedTRCTag, pCurveGamma);
-                pIcc->AttachTag(icSigGreenTRCTag, pCurveGamma);
-                pIcc->AttachTag(icSigBlueTRCTag, pCurveGamma);
-                break;
-            default:
-                delete pIcc;
-                return nullptr;
+        // These three color spaces use a parametric curves, so attach one to the profile.
+        if (space == cs_ProPhoto || space == cs_sRGB || space == cs_Wide_Gamut_RGB) {
+            auto *pCurveParametric = new CIccTagParametricCurve();
+            createParametricCurve(pCurveParametric, space);
+            pIcc->AttachTag(icSigRedTRCTag, pCurveParametric);
+            pIcc->AttachTag(icSigGreenTRCTag, pCurveParametric);
+            pIcc->AttachTag(icSigBlueTRCTag, pCurveParametric);
         }
 
+        // These two color spaces use a gamma curve, so attach one to the profile.
+        if (space == cs_Adobe_RGB_1998 || space == cs_Linear_Normalized_XYZ) {
+            auto *pCurveGamma = new CIccTagCurve();
+            pCurveGamma->SetGamma(space == cs_Adobe_RGB_1998 ? (563.0f / 256.0f) : 1.0f);
 
-        auto [red, green, blue] = createRGBTags(space);
+            pIcc->AttachTag(icSigRedTRCTag, pCurveGamma);
+            pIcc->AttachTag(icSigGreenTRCTag, pCurveGamma);
+            pIcc->AttachTag(icSigBlueTRCTag, pCurveGamma);
 
-        pIcc->AttachTag(icSigRedMatrixColumnTag, &red);
-        pIcc->AttachTag(icSigGreenMatrixColumnTag, &green);
-        pIcc->AttachTag(icSigBlueMatrixColumnTag, &blue);
+        }
 
         return pIcc;
     }
