@@ -157,6 +157,9 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/jsonafiable.cpp
         src/utils/resource_paths.cpp
         src/utils/time_tracker.cpp
+
+        # utils statics
+        src/utils/threading_statics/flatfield_static.cpp
 )
 
 # Set all source include files (ie. *.h)
