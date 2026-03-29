@@ -4,8 +4,11 @@
 #include <IccProfLib/IccProfile.h>
 
 namespace btrgb {
+
+#define VALIDATE_COLOR_SPACE(space) if (space > ProfileColorSpace::cs_Linear_Normalized_XYZ || space < 0) { return nullptr; }
+
 enum ProfileColorSpace {
-    cs_Adobe_RGB_1998,
+    cs_Adobe_RGB_1998 = 0,
     cs_ProPhoto,
     cs_sRGB,
     cs_Wide_Gamut_RGB,
@@ -13,7 +16,7 @@ enum ProfileColorSpace {
 };
 
 class CreateIccProfile {
-  public:
+public:
     // max_size is the maximum size in bytes that the created profile can be,
     // and should be large enough to hold the profile data created by
     // createHybridProfile for the given input parameters
@@ -23,12 +26,14 @@ class CreateIccProfile {
     // should not free the memory returned by getProfileMem
     ~CreateIccProfile();
 
-    // matrix is expected to be in row major order with num_in columns and
+    // dataMatrix is expected to be in row major order with num_in columns and
     // num_out rows, and should not include the base channels if
     // ignore_base_channels is true
-    bool createHybridProfile(ProfileColorSpace space, float *matrix,
-                             int num_input_channels, int num_output_channels,
-                             bool ignore_base_channels = true,
+    bool createHybridProfile(ProfileColorSpace space,
+                             const float *dataMatrix,
+                             int numInputChannels,
+                             int numOutputChannels,
+                             bool ignore_base_channels,
                              const float *inv_matrix = nullptr);
 
     // getProfileMem and getProfileSize should only be called after
@@ -44,19 +49,20 @@ class CreateIccProfile {
     // object.
     [[nodiscard]] CIccProfile *getHybridProfile() const { return hybrid_icc; }
 
-  protected:
+protected:
     // helper functions to create the base RGB profile and the MPE profile to be
     // embedded in the hybrid profile
     static CIccProfile *createRgbProfile(ProfileColorSpace space);
 
-    // if inv_matrix is provided then it must be the inverse of matrix and
-    // include entries for all channels (including ignored channels if matrix
+    // if inv_matrix is provided then it must be the inverse of dataMatrix and
+    // include entries for all channels (including ignored channels if dataMatrix
     // doesn't include them. If inv_matrix is not provided then no BToD3 tag
     // will be created
-    static CIccProfile *createSpecProfile(ProfileColorSpace base_space,
-                                          float *matrix, int num_input_channels,
-                                          int num_output_channels,
-                                          bool ignore_base_channels = true,
+    static CIccProfile *createSpecProfile(ProfileColorSpace baseSpace,
+                                          const float *dataMatrix,
+                                          int numInputChannels,
+                                          int numOutputChannels,
+                                          bool ignore_base_channels,
                                           const float *inv_matrix = nullptr);
 
     // data members
