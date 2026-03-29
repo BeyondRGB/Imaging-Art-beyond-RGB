@@ -1,5 +1,6 @@
 #include <string>
 
+#include <utils/threading_statics/image_reader_static.hpp>
 #include <image_util/ImageLoader.hpp>
 #include <image_processing/ImageReader.h>
 #include <image_util/BitDepthFinder.hpp>
@@ -8,9 +9,12 @@
 #include <image_util/image_reader/LibTiffReader.hpp>
 #include <image_util/image_reader/TiffReaderOpenCV.hpp>
 
+// sets aside memory for the static mutex (cpp static members are globally defined in namespace)
+std::mutex ImageLoader::comms_mutex;
+
 ImageLoader::ImageLoader(CommunicationObj *comms, btrgb::ArtObject *images, std::string name,
-                        std::string key, btrgb::Image *im, btrgb::BitDepthFinder *util,
-                        std::shared_ptr<int> bit_depth) {
+                         std::string key, btrgb::Image *im, btrgb::BitDepthFinder *util,
+                         std::shared_ptr<int> bit_depth, int total_images) {
     this->comms = comms;
     this->images = images; 
     this->name = name;
@@ -18,6 +22,7 @@ ImageLoader::ImageLoader(CommunicationObj *comms, btrgb::ArtObject *images, std:
     this->im = im;
     this->util = util;
     this->bit_depth = bit_depth;
+    this->total_images = total_images;
 }
 
 ImageLoader::~ImageLoader() { delete this->_reader; }
@@ -64,7 +69,7 @@ void ImageLoader::_average_greens(cv::Mat &input, cv::Mat &output) {
 
 void ImageLoader::load_image() 
 {
-    this->comms->send_info("Loading " + this->im->getName() + "...", name);
+    this->comms->send_info("Loading " + this->im->getName() + "...", this->name);
 
     /* Initialize image reader. */
     if (btrgb::Image::is_tiff(im->getPath()))
@@ -75,10 +80,10 @@ void ImageLoader::load_image()
     try {
         cv::Mat raw_im;
 
-        _reader->open(this->im->getPath());
-        _reader->copyBitmapTo(raw_im);
-        btrgb::exif tags = _reader->getExifData();
-        _reader->recycle();
+        this->_reader->open(this->im->getPath());
+        this->_reader->copyBitmapTo(raw_im);
+        btrgb::exif tags = this->_reader->getExifData();
+        this->_reader->recycle();
 
         if (raw_im.depth() != CV_16U)
             throw std::runtime_error(" Image must be 16 bit.");
@@ -86,11 +91,11 @@ void ImageLoader::load_image()
         /* Find bit depth if image is white field #1. */
         if (key == "white1") {
 
-            *bit_depth =
-                util->get_bit_depth((uint16_t *)raw_im.data, raw_im.cols,
+            *this->bit_depth =
+                this->util->get_bit_depth((uint16_t *)raw_im.data, raw_im.cols,
                                     raw_im.rows, raw_im.channels());
 
-            if (*bit_depth < 0)
+            if (*this->bit_depth < 0)
                 throw std::runtime_error(
                     " Bit depth detection of 'white1' failed.");
 
@@ -113,13 +118,13 @@ void ImageLoader::load_image()
             result_im = float_im;
 
         /* Init btrgb::Image object. */
-        im->initImage(result_im);
-        im->_raw_bit_depth = bit_depth;
-        im->setExifTags(tags);
-
+        this->im->initImage(result_im);
+        this->im->_raw_bit_depth = bit_depth;
+        this->im->setExifTags(tags);
+        btrgb::imagereader::update_reading_progress(this->comms, &comms_mutex, this->name, this->total_images);
     } catch (const std::exception &e) {
         throw ImgProcessingComponent::error(std::string(e.what()) + " (" +
-                                                im->getName() + ")",
-                                            name);
+                                                this->im->getName() + ")",
+                                            this->name);
     }
 }
