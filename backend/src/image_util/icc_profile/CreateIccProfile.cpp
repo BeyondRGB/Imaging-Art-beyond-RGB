@@ -366,7 +366,7 @@ struct CurveProfile {
         FunctionParameters params;
     };
 
-    Segment linear; // empty if no linear segment
+    Segment linear; // Empty if no linear segment
     Segment gamma;
     bool hasLinear;
 };
@@ -376,22 +376,25 @@ struct ColorSpaceCurveProfiles {
     CurveProfile inverse;
 };
 
-static const std::unordered_map<ProfileColorSpace, ColorSpaceCurveProfiles> profiles =
+static const std::unordered_map<ProfileColorSpace, ColorSpaceCurveProfiles>
+profiles =
 {
     {cs_Adobe_RGB_1998, {
-        // Normal: A gamma 2.2 curve with no offset.
+         // Normal: A gamma 2.2 curve with no offset.
          {{}, {icMaxFloat32Number, {563.0f / 256.0f, 1.0f, 0.0f, 0.0f}}, false},
-        // Inverse: A gamma (1 / 2.2) curve with no offset.
+         // Inverse: A gamma (1 / 2.2) curve with no offset.
          {{}, {icMaxFloat32Number, {256.0f / 563.0f, 1.0f, 0.0f, 0.0f}}, false},
      }},
     {cs_ProPhoto, {
-         { // Normal Profile
+         {
+             // Normal Profile
              // A linear curve from 0 to 0.13 with a slope of 0.0625 (1/16) to avoid a hard cut-off at 0.0.
              {0.03125f, {1.0f, 0.0625f, 0.0f, 0.0f}},
              // A gamma 1.8 curve with no offset
              {icMaxFloat32Number, {1.8f, 1.0f, 0.0f, 0.0f}}, true
          },
-         { // Inverse Profile
+         {
+             // Inverse Profile
              // A linear curve from 0 to 0.001953125 with a slope of 16 to avoid a hard cut-off at 0.0.
              {0.001953125f, {1.0f, 16.0f, 0.0f, 0.0f}},
              // A gamma (1 / 1.8) curve with no offset
@@ -400,13 +403,17 @@ static const std::unordered_map<ProfileColorSpace, ColorSpaceCurveProfiles> prof
          },
      }},
     {cs_sRGB, {
-         { // Normal Profile
+         {
+             // Normal Profile
              // A linear curve from 0 to 0.04045 with slope of 0.077399380804954 to avoid a hard cutoff at 0.0, then apply a gamma 2.4 curve with no offset
              {0.04045f, {1.0f, 0.077399380804954f, 0.0f, 0.0f}},
              // A gamma 2.4 curve with a slight offset
-             {icMaxFloat32Number, {2.4f, 0.947867298578199f, 0.0521327014218010f, 0.0f}}, true
+             {icMaxFloat32Number, {2.4f, 0.947867298578199f,
+                                   0.0521327014218010f, 0.0f}},
+             true
          },
-         { // Inverse Profile
+         {
+             // Inverse Profile
              // A linear curve from 0 to 0.0031308 with slope of 12.92 to avoid a hard cut off at 0.0.
              {0.0031308f, {1.0f, 12.92f, 0.0f, 0.0f}},
              // A gamma (1 / 2.4) curve with a slight offset
@@ -437,25 +444,35 @@ void attachGammaCurve(CIccTagMultiProcessElement *multiProcessTag,
 
     //.Find the ColorSpaceProfile that matches this Color Space.
     const auto iterator = profiles.find(adjustedColorSpace);
-    if (iterator == profiles.end()) return;
+    if (iterator == profiles.end())
+        return;
 
     // If we are attaching an inverse curve, get the profile's inverse Profile or its normal profile if not inverse.
-    const auto&[linearSegment, gammaSegment, hasLinear] = inverse ? iterator->second.inverse : iterator->second.normal;
+    const auto &[linearSegment, gammaSegment, hasLinear] = inverse
+        ? iterator->second.inverse
+        : iterator->second.normal;
 
     // If the color space should apply a linear segment, do that here.
     if (hasLinear) {
-        curveSegmentFormula = new CIccFormulaCurveSegment(0.0f, linearSegment.end);
-        applyFormula(curveSegmentFormula, linearSegment.params, false, segmentedCurve, curveSet);
+        curveSegmentFormula = new CIccFormulaCurveSegment(
+            0.0f, linearSegment.end);
+        applyFormula(curveSegmentFormula, linearSegment.params, false,
+                     segmentedCurve, curveSet);
     }
 
     // Apply the gamma curve. If there was a linear profile we need to adjust the start.
-    curveSegmentFormula = new CIccFormulaCurveSegment(hasLinear ? linearSegment.end : 0.0f, gammaSegment.end);
-    applyFormula(curveSegmentFormula, gammaSegment.params, true, segmentedCurve, curveSet);
+    curveSegmentFormula = new CIccFormulaCurveSegment(
+        hasLinear ? linearSegment.end : 0.0f, gammaSegment.end);
+    applyFormula(curveSegmentFormula, gammaSegment.params, true, segmentedCurve,
+                 curveSet);
 
     // The rest of the channels are assumed to be linear, so set them up with a simple gamma 1.0 curve with no clipping
     segmentedCurve = new CIccSegmentedCurve();
-    curveSegmentFormula = new CIccFormulaCurveSegment(icMinFloat32Number, icMaxFloat32Number);
-    applyFormula(curveSegmentFormula,  FunctionParameters{1.0f, 1.0f, 0.0f, 0.0f},  true, segmentedCurve, curveSet, totalNumberOfChannels);
+    curveSegmentFormula = new CIccFormulaCurveSegment(
+        icMinFloat32Number, icMaxFloat32Number);
+    applyFormula(curveSegmentFormula,
+                 FunctionParameters{1.0f, 1.0f, 0.0f, 0.0f}, true,
+                 segmentedCurve, curveSet, totalNumberOfChannels);
 
     // Finally, attach the curve set we made.
     multiProcessTag->Attach(curveSet);
