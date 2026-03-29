@@ -13,13 +13,13 @@ echo === Running All Tests ===
 echo.
 
 REM Step 1: Build backend with tests enabled
-echo [1/5] Building backend with tests enabled...
+echo [1/6] Building backend with tests enabled...
 cd /d "%BACKEND_DIR%"
 
 REM Check if vcpkg is configured
 if not exist "vcpkg\installed" (
     echo Warning: vcpkg not configured. Running config script...
-    call win10_config_environment.bat
+    call win_config_environment.bat
 )
 
 REM Build with tests and coverage flags
@@ -40,7 +40,7 @@ if errorlevel 1 (
 )
 
 echo Building backend...
-cmake --build "%BUILD_DIR%" --config %BUILD_MODE%
+cmake --build "%BUILD_DIR%" -j12 --config %BUILD_MODE% -- /m:%NUMBER_OF_PROCESSORS%
 
 if errorlevel 1 (
     echo Failed to build backend
@@ -49,7 +49,7 @@ if errorlevel 1 (
 
 REM Step 2: Run backend tests
 echo.
-echo [2/5] Running backend Catch2 tests...
+echo [2/6] Running backend Catch2 tests...
 cd /d "%BUILD_DIR%\%BUILD_MODE%"
 
 if not exist "unit_tests.exe" (
@@ -67,52 +67,28 @@ echo Backend tests passed!
 
 REM Step 3: Generate backend coverage report
 echo.
-echo [3/5] Generating backend coverage report...
+echo [3/6] Generating backend coverage report...
 if not exist "%COVERAGE_DIR%\backend" mkdir "%COVERAGE_DIR%\backend"
 
 REM Note: Coverage tools (lcov/gcov) may need to be installed separately on Windows
 echo Backend coverage data generated in %BUILD_DIR%
 
-REM Step 4: Install frontend dependencies and start dev server
+REM Step 4: Install frontend dependencies
 echo.
-echo [4/5] Setting up frontend and running Cypress tests...
+echo [4/6] Setting up frontend and running frontend tests...
 cd /d "%FRONTEND_DIR%"
 
 REM Install dependencies if needed
 if not exist "node_modules" (
     echo Installing frontend dependencies...
-    call npm install
+    call npm ci
 )
-
-REM Start dev server in background
-echo Starting frontend dev server with coverage...
-set COVERAGE=true
-start /B npm run dev > nul 2>&1
-
-REM Wait for server to be ready
-echo Waiting for dev server to start...
-timeout /t 5 /nobreak > nul
-set /a count=0
-:wait_loop
-curl -s http://localhost:3000 > nul 2>&1
-if errorlevel 1 (
-    set /a count+=1
-    if !count! geq 10 (
-        echo Dev server failed to start
-        exit /b 1
-    )
-    timeout /t 2 /nobreak > nul
-    goto wait_loop
-)
-echo Dev server is ready
 
 REM Step 5: Run Cypress tests
-echo Running Cypress tests with coverage...
-call npm run test:coverage || call npm run test
+echo [5/6] Running frontend unit and Cypress tests...
+call npm run test:coverage
 if errorlevel 1 (
     echo Frontend tests failed
-    REM Kill any node processes
-    taskkill /F /IM node.exe > nul 2>&1
     exit /b 1
 )
 
@@ -121,13 +97,10 @@ echo Frontend tests passed!
 REM Step 6: Generate frontend coverage report (if coverage plugin is configured)
 if exist "%FRONTEND_DIR%\coverage" (
     echo.
-    echo [5/5] Frontend coverage report available at %FRONTEND_DIR%\coverage
+    echo [6/6] Frontend coverage report available at %FRONTEND_DIR%\coverage
     if not exist "%COVERAGE_DIR%\frontend" mkdir "%COVERAGE_DIR%\frontend"
     xcopy /E /I /Y "%FRONTEND_DIR%\coverage\*" "%COVERAGE_DIR%\frontend\" > nul 2>&1
 )
-
-REM Cleanup - kill node processes
-taskkill /F /IM node.exe > nul 2>&1
 
 REM Summary
 echo.

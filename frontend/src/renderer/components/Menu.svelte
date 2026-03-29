@@ -48,18 +48,22 @@
 			{/each}
 		</div>
 		<div class="ctlBtns">
-			<button on:click={() => modal.set("Home")}>
+			<button data-cy="nav-home" on:click={() => modal.set("Home")}>
 				<svelte:component this={routes["Home"].icon} size="1.75x" />
 			</button>
 
-			<button on:click={() => modal.set("Settings")}>
+			<button data-cy="nav-settings" on:click={() => modal.set("Settings")}>
 				<svelte:component this={routes["Settings"].icon} size="1.75x" />
 			</button>
 
 			{#if $connectionState === "Connected"}
 				<div class="status-indicator connected" />
 			{:else}
-				<button on:click={() => connect()} class="reconnect-btn disconnected">
+				<button
+					data-cy="nav-reconnect"
+					on:click={() => connect()}
+					class="reconnect-btn disconnected"
+				>
 					<RefreshCwIcon size="1.75x" />
 				</button>
 			{/if}
