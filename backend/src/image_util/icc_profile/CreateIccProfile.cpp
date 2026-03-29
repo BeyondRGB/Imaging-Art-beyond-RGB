@@ -320,10 +320,10 @@ bool loadSpectralRanges(CIccProfile *profile, int numChannelsOut) {
     }
 }
 
-void loadNoBaseChannelMatrix(CIccTagMultiProcessElement *multiProcessTag,
-                             const int numInputChannels,
-                             const int numOutputChannels,
-                             const float *dataMatrix) {
+void attachNoBaseChannelMatrix(CIccTagMultiProcessElement *multiProcessTag,
+                               const int numInputChannels,
+                               const int numOutputChannels,
+                               const float *dataMatrix) {
     auto *matrix = new CIccMpeMatrix();
 
     matrix->SetSize(numInputChannels, numOutputChannels);
@@ -348,7 +348,7 @@ using FunctionParameters = std::array<icFloatNumber, 4>;
 void applyFormula(CIccFormulaCurveSegment *curveFormula,
                   FunctionParameters parameters, const bool shareCurve,
                   CIccSegmentedCurve *segmentedCurve, CIccMpeCurveSet *curveSet,
-                  int otherCurves = 3) {
+                  const int otherCurves = 3) {
     curveFormula->SetFunction(0, 4, parameters.data());
     segmentedCurve->Insert(curveFormula);
 
@@ -360,83 +360,117 @@ void applyFormula(CIccFormulaCurveSegment *curveFormula,
     }
 }
 
-void loadGammaCurve(CIccTagMultiProcessElement *multiProcessTag,
-                    const ProfileColorSpace colorSpace,
-                    CIccSegmentedCurve *segmentedCurve,
-                    CIccMpeCurveSet *curveSet, const int numInputChannels) {
+struct ProfileGammaParameters {
+    FunctionParameters gamma;
+    icFloatNumber functionStart;
+    icFloatNumber functionEnd;
+};
+
+void attachGammaCurve(CIccTagMultiProcessElement *multiProcessTag,
+                      const ProfileColorSpace colorSpace,
+                      CIccSegmentedCurve *segmentedCurve,
+                      CIccMpeCurveSet *curveSet,
+                      const int totalNumberOfChannels,
+                      const bool inverse = false) {
     CIccFormulaCurveSegment *curveSegmentFormula;
 
+    // TODO: Replace with a data lookup pattern.
     switch (colorSpace) {
     case cs_Adobe_RGB_1998:
-    case cs_Wide_Gamut_RGB:
-        // Apply a gamma 2.2 curve with no offset
-        curveSegmentFormula = new CIccFormulaCurveSegment(
-            0.0f, icMaxFloat32Number);
-        applyFormula(curveSegmentFormula,
-                     FunctionParameters{563.0f / 256.0f, 1.0f, 0.0f, 0.0f},
-                     true, segmentedCurve, curveSet);
+    case cs_Wide_Gamut_RGB: {
+        // Apply a gamma 2.2 (1/2.2 if inverse) curve with no offset
+        const icFloatNumber gamma = inverse ? (256.0f / 563.0f) : (563.0f / 256.0f);
+        curveSegmentFormula = new CIccFormulaCurveSegment(0, icMaxFloat32Number);
+        applyFormula(curveSegmentFormula, {gamma, 1.0f, 0.0f, 0.0f}, true, segmentedCurve, curveSet);
+    }
         break;
-    case cs_ProPhoto:
-        // A linear curve from 0 to 0.13 with a slope of 0.0625 (1/16) to avoid a hard cut-off at 0.0, then apply a gamma 1.8 curve with no offset
-        curveSegmentFormula = new CIccFormulaCurveSegment(0.0f, 0.03125f);
+    case cs_ProPhoto: {
+        // Regular: A linear curve from 0 to 0.13 with a slope of 0.0625 (1/16) to avoid a hard cut-off at 0.0.
+        // Inverse: A linear curve from 0 to 0.001953125 with a slope of 16 to avoid a hard cut-off at 0.0.
+        const icFloatNumber linearEnd = inverse ? 0.001953125f : 0.03125f;
+        const icFloatNumber linearSlope = inverse ? 16.0f : 0.0625f;
+
+        curveSegmentFormula = new CIccFormulaCurveSegment(0.0f, linearEnd);
         applyFormula(curveSegmentFormula,
-                     FunctionParameters{1.0f, 0.0625f, 0.0f, 0.0f}, false,
+                     FunctionParameters{1.0f, linearSlope, 0.0f, 0.0f}, false,
                      segmentedCurve, curveSet);
 
-        // Apply a gamma 1.8 curve with no offset
-        curveSegmentFormula = new CIccFormulaCurveSegment(
-            0.03125f, icMaxFloat32Number);
-        applyFormula(curveSegmentFormula,
-                     FunctionParameters{1.8f, 1.0f, 0.0f, 0.0f}, true,
-                     segmentedCurve, curveSet);
-        break;
-    case cs_sRGB:
-        // linear from 0 to 0.04045 with slope of 0.077399380804954 to avoid a hard cutoff at 0.0, then apply a gamma 2.4 curve with no offset
-        curveSegmentFormula = new CIccFormulaCurveSegment(0.0f, 0.04045f);
-        applyFormula(curveSegmentFormula,
-                     FunctionParameters{1.0f, 0.077399380804954, 0.0f, 0.0f},
-                     false, segmentedCurve, curveSet);
+        const icFloatNumber gamma = inverse ? 0.555557250977f : 1.8f;
 
-        // then apply a gamma 2.4 curve with a slight offset
-        curveSegmentFormula = new CIccFormulaCurveSegment(
-            0.04045f, icMaxFloat32Number);
+        // Apply a gamma 1.8 (1/1.8 if if inverse) curve with no offset
+        curveSegmentFormula = new CIccFormulaCurveSegment(linearEnd, icMaxFloat32Number);
         applyFormula(curveSegmentFormula,
-                     FunctionParameters{2.4f, 0.947867298578199,
-                                        0.0521327014218010, 0.0f}, true,
+                     FunctionParameters{gamma, 1.0f, 0.0f, 0.0f}, true,
                      segmentedCurve, curveSet);
+    }
+
+        break;
+    case cs_sRGB: {
+        // Regular: A linear curve from 0 to 0.04045 with slope of 0.077399380804954 to avoid a hard cutoff at 0.0, then apply a gamma 2.4 curve with no offset
+        // Inverse: A linear curve from 0 to 0.0031308 with slope of 12.92 to avoid a hard cut off at 0.0.
+        const icFloatNumber linearEnd = inverse ? 0.0031308f : 0.04045f;
+        const icFloatNumber linearSlope = inverse ? 12.92f : 0.077399380804954f;
+
+        curveSegmentFormula = new CIccFormulaCurveSegment(0.0f, linearEnd);
+        applyFormula(curveSegmentFormula,
+                     FunctionParameters{1.0f, linearSlope, 0.0f, 0.0f}, false,
+                     segmentedCurve, curveSet);
+
+        // Apply a gamma 2.4 curve with a slight offset
+        curveSegmentFormula = new CIccFormulaCurveSegment(linearEnd, icMaxFloat32Number);
+        const FunctionParameters gammaParams = inverse ? FunctionParameters{1.0f / 2.4f, 1.055f, 0.0f, -0.055f} : FunctionParameters{2.4f, 0.947867298578199f, 0.0521327014218010f, 0.0f  };
+        applyFormula(curveSegmentFormula, gammaParams, true, segmentedCurve, curveSet);
+    }
         break;
     default:
-        // We do not need to do anything for cs_Linear_Normalized_XYZ, so exit with false.
+        // We do not need to do anything for cs_Linear_Normalized_XYZ, so exit..
         return;
     }
 
+    // This is always true, but it makes the codebase easier to understand if it is here.
     if (colorSpace != cs_Linear_Normalized_XYZ) {
         // The rest of the channels are assumed to be linear, so set them up with a simple gamma 1.0 curve with no clipping
         segmentedCurve = new CIccSegmentedCurve();
         curveSegmentFormula = new CIccFormulaCurveSegment(
             icMinFloat32Number, icMaxFloat32Number);
         applyFormula(curveSegmentFormula,
-                     FunctionParameters{1.0000f, 1.00000f, 0.00000f, 0.0000f},
-                     true, segmentedCurve, curveSet, numInputChannels);
+                     FunctionParameters{1.0f, 1.0f, 0.0f, 0.0f},
+                     true, segmentedCurve, curveSet, totalNumberOfChannels);
     }
 
     multiProcessTag->Attach(curveSet);
 }
 
-CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace baseSpace,
-                                                 const float *dataMatrix,
-                                                 int numInputChannels,
-                                                 int numOutputChannels,
-                                                 bool ignore_base_channels,
-                                                 const float *inv_matrix) {
+void attachMatrix(CIccTagMultiProcessElement *multiProcessTag,
+                  const float *dataMatrix, const int totalNumberOfChannels,
+                  const int numOutputChannels) {
+    auto *profileDataMatrix = new CIccMpeMatrix();
+
+    profileDataMatrix->SetSize(totalNumberOfChannels, numOutputChannels);
+
+    const int matrixSize = totalNumberOfChannels * numOutputChannels;
+    for (int i = 0; i < matrixSize; i++) {
+        profileDataMatrix->GetMatrix()[i] = dataMatrix[i];
+    }
+
+    // Add the dataMatrix to the multiprocessing element tag.
+    multiProcessTag->Attach(profileDataMatrix);
+}
+
+CIccProfile *CreateIccProfile::createSpecProfile(
+    const ProfileColorSpace baseSpace,
+    const float *dataMatrix,
+    const int numInputChannels,
+    const int numOutputChannels,
+    const bool ignore_base_channels,
+    const float *inverseMatrix) {
     VALIDATE_COLOR_SPACE(baseSpace);
 
-    int num_chan = !ignore_base_channels
-                       ? numInputChannels
-                       : numInputChannels + 3;
+    const int totalNumberOfChannels = !ignore_base_channels
+                                          ? numInputChannels
+                                          : numInputChannels + 3;
 
-    auto iccProfile = new CIccProfile();
-    CIccTagMultiLocalizedUnicode *pText;
+    const auto iccProfile = new CIccProfile();
 
     // Set up the profile header
     iccProfile->InitHeader();
@@ -444,14 +478,14 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace baseSpace,
     iccProfile->m_Header.version = icVersionNumberV5_1;
     iccProfile->m_Header.flags |= icEmbeddedProfileTrue;
     iccProfile->m_Header.colorSpace =
-        icNColorSpaceSig(icSigNChannelData, (num_chan & 0xffff));
+        icNColorSpaceSig(icSigNChannelData, (totalNumberOfChannels & 0xffff));
     iccProfile->m_Header.pcs = static_cast<icColorSpaceSignature>(0);
     iccProfile->m_Header.spectralPCS =
         icNColorSpaceSig(icSigReflectanceSpectralData,
                          (numOutputChannels & 0xffff));
 
     // Allocate copyright tag and attach to profile
-    pText = new CIccTagMultiLocalizedUnicode();
+    auto *pText = new CIccTagMultiLocalizedUnicode();
     pText->SetText("Copyright (C) 2026 BeyondRGB");
 
     iccProfile->AttachTag(icSigCopyrightTag, pText);
@@ -500,262 +534,56 @@ CIccProfile *CreateIccProfile::createSpecProfile(ProfileColorSpace baseSpace,
 
     // Populate DToB3 tag and attach to profile
     auto *multiProcessTag = new CIccTagMultiProcessElement(
-        num_chan, numOutputChannels);
+        totalNumberOfChannels, numOutputChannels);
 
     if (ignore_base_channels) {
-        // if ignoring the base profile channels, then just add a dataMatrix element
-        // with zero columns for the base channels and the provided data and no
-        // curves
-        loadNoBaseChannelMatrix(multiProcessTag, numInputChannels,
-                                numOutputChannels, dataMatrix);
+        // If we are ignoring the base profile channels, then just add a dataMatrix element with zero columns for the base channels and the provided data and no curves
+        attachNoBaseChannelMatrix(multiProcessTag, numInputChannels,
+                                  numOutputChannels, dataMatrix);
     } else {
-        auto *curveSet = new CIccMpeCurveSet(num_chan);
+        auto *curveSet = new CIccMpeCurveSet(totalNumberOfChannels);
         auto *segmentedCurve = new CIccSegmentedCurve();
 
         // clip the shadows to 0.0
         auto *shadowCurveFormula = new CIccFormulaCurveSegment(
             icMinFloat32Number, 0.0f);
         applyFormula(shadowCurveFormula,
-                     FunctionParameters{1.00000f, 0.00000f, 0.00000f, 0.0000f},
+                     FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
                      false, segmentedCurve, curveSet);
 
-        loadGammaCurve(multiProcessTag, baseSpace, segmentedCurve, curveSet,
-                       numInputChannels);
+        // Load gamma curves based on the color space.
+        attachGammaCurve(multiProcessTag, baseSpace, segmentedCurve, curveSet,
+                         totalNumberOfChannels);
 
-        // allocate a matrix element to go after the curves in the MPE and
-        // populate with the provided dataMatrix data
-        auto *profileDataMatrix = new CIccMpeMatrix();
-        profileDataMatrix->SetSize(num_chan, numOutputChannels);
-
-        icFloatNumber *pData = profileDataMatrix->GetMatrix();
-        const int matrixSize = num_chan * numOutputChannels;
-        for (int i = 0; i < matrixSize; i++) {
-            pData[i] = dataMatrix[i];
-        }
-
-        // add dataMatrix to MPE
-        multiProcessTag->Attach(profileDataMatrix);
+        // Attach the data matrix to the end of the multi process tag.
+        attachMatrix(multiProcessTag, dataMatrix, totalNumberOfChannels,
+                     numOutputChannels);
     }
 
     iccProfile->AttachTag(icSigDToB3Tag, multiProcessTag);
 
-    if (inv_matrix) {
-        int i;
+    if (inverseMatrix) {
+        auto *inverseMultiProcessTag = new CIccTagMultiProcessElement(
+            numOutputChannels, totalNumberOfChannels);
 
-        // also add the inverse dataMatrix as a BToD3 tag
-        auto *pMultiInv = new CIccTagMultiProcessElement(
-            numOutputChannels, num_chan);
-        auto *pMatrixInv = new CIccMpeMatrix();
-        pMatrixInv->SetSize(numOutputChannels, num_chan);
-        icFloatNumber *pData = pMatrixInv->GetMatrix();
-        int size_matrix = num_chan * numOutputChannels;
-        for (i = 0; i < size_matrix; i++)
-            pData[i] = inv_matrix[i];
-        pMultiInv->Attach(pMatrixInv);
+        // Attach the data matrix to the start of the multi process tag.
+        attachMatrix(inverseMultiProcessTag, inverseMatrix,
+                     totalNumberOfChannels, numOutputChannels);
 
-        auto *pCurves = new CIccMpeCurveSet(num_chan);
-        CIccSegmentedCurve *pCurve;
-        CIccFormulaCurveSegment *pSegment;
-        icFloatNumber zeroClip[4] = {1.00000f, 0.00000f, 0.00000f, 0.0000f};
+        auto *curveSet = new CIccMpeCurveSet(totalNumberOfChannels);
+        auto *segmentedCurve = new CIccSegmentedCurve();
 
-        switch (baseSpace) {
-        case cs_Adobe_RGB_1998:
-            pCurve = new CIccSegmentedCurve();
+        // Clip shadows to 0.0.
+        auto *shadowCurveFormula = new CIccFormulaCurveSegment(
+            icMinFloat32Number, 0.0f);
+        applyFormula(shadowCurveFormula,
+                     FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
+                     false, segmentedCurve, curveSet);
 
-            // clip the shadows to 0.0
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number, 0.0f);
-            pSegment->SetFunction(0, 4, zeroClip);
-            pCurve->Insert(pSegment);
+        // Attach the inverse gamma curve tag to the profile
+        attachGammaCurve(inverseMultiProcessTag, baseSpace, segmentedCurve, curveSet, totalNumberOfChannels, true);
 
-            // then apply a gamma 1/2.2 curve with no offset
-            pSegment = new CIccFormulaCurveSegment(0.0f, icMaxFloat32Number); {
-                icFloatNumber params[4] = {
-                    256.0 / 563.0f, 1.00000f, 0.00000f,
-                    0.0000f
-                };
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the curve for all 3 base channels since they are the same
-            for (i = 0; i < 3; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            // The rest of the channels are assumed to be linear, so set them up
-            // with a simple gamma 1.0 curve with no clipping
-            pCurve = new CIccSegmentedCurve();
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number,
-                                                   icMaxFloat32Number); {
-                icFloatNumber params[4] = {
-                    1.0000f, 1.00000f, 0.00000f,
-                    0.0000f
-                };
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the same curve for all non-base channels
-            for (; i < num_chan; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            pMultiInv->Attach(pCurves);
-            break;
-
-        case cs_ProPhoto:
-            pCurve = new CIccSegmentedCurve();
-
-            // clip the shadows to 0.0
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number, 0.0f);
-            pSegment->SetFunction(0, 4, zeroClip);
-            pCurve->Insert(pSegment);
-
-            // linear from 0 to 0.001953125 with slope of 16 to avoid a
-            // hard cut off at 0.0
-            pSegment = new CIccFormulaCurveSegment(0.0f, 0.001953125f); {
-                icFloatNumber params[4] = {1.0f, 16.0f, 0.00000f, 0.0000f};
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // then apply a gamma 1/1.8 curve with no offset
-            pSegment =
-                new CIccFormulaCurveSegment(0.001953125f, icMaxFloat32Number); {
-                icFloatNumber params[4] = {
-                    0.555557250977f, 1.00000f, 0.00000f,
-                    0.0000f
-                };
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the curve for all 3 base channels since they are the same
-            for (i = 0; i < 3; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            // The rest of the channels are assumed to be linear, so set them up
-            // with a simple gamma 1.0 curve with no clipping
-            pCurve = new CIccSegmentedCurve();
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number,
-                                                   icMaxFloat32Number); {
-                icFloatNumber params[4] = {1.0, 1.0, 0.0, 0.0};
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the same curve for all non-base channels
-            for (; i < num_chan; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            multiProcessTag->Attach(pCurves);
-            break;
-
-        case cs_sRGB:
-            pCurve = new CIccSegmentedCurve();
-
-            // clip the shadows to 0.0
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number, 0.0f);
-            pSegment->SetFunction(0, 4, zeroClip);
-            pCurve->Insert(pSegment);
-
-            // linear from 0 to 0.0031308 with slope of 12.92 to avoid a
-            // hard cut off at 0.0
-            pSegment = new CIccFormulaCurveSegment(0.0f, 0.0031308f); {
-                icFloatNumber params[4] = {1.0f, 12.92f, 0.00000f, 0.0000f};
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // then apply a gamma 1/2.4 curve with slight offset
-            pSegment =
-                new CIccFormulaCurveSegment(0.0031308f, icMaxFloat32Number); {
-                icFloatNumber params[4] = {1.0f / 2.4f, 1.055f, 0.0f, -0.055f};
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the curve for all 3 base channels since they are the same
-            for (i = 0; i < 3; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            // The rest of the channels are assumed to be linear, so set them up
-            // with a simple gamma 1.0 curve with no clipping
-            pCurve = new CIccSegmentedCurve();
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number,
-                                                   icMaxFloat32Number); {
-                icFloatNumber params[4] = {1.0f, 1.0f, 0.0f, 0.0f};
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the same curve for all non-base channels
-            for (; i < num_chan; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            multiProcessTag->Attach(pCurves);
-            break;
-
-        case cs_Wide_Gamut_RGB:
-            pCurve = new CIccSegmentedCurve();
-
-            // clip the shadows to 0.0
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number, 0.0f);
-            pSegment->SetFunction(0, 4, zeroClip);
-            pCurve->Insert(pSegment);
-
-            // then apply a gamma 1/2.2 curve with no offset
-            pSegment = new CIccFormulaCurveSegment(0.0f, icMaxFloat32Number); {
-                icFloatNumber params[4] = {
-                    256.0 / 563.0f, 1.00000f, 0.00000f,
-                    0.0000f
-                };
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the curve for all 3 base channels since they are the same
-            for (i = 0; i < 3; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            // The rest of the channels are assumed to be linear, so set them up
-            // with a simple gamma 1.0 curve with no clipping
-            pCurve = new CIccSegmentedCurve();
-            pSegment = new CIccFormulaCurveSegment(icMinFloat32Number,
-                                                   icMaxFloat32Number); {
-                icFloatNumber params[4] = {1.0f, 1.0f, 0.0f, 0.0f};
-                pSegment->SetFunction(0, 4, params);
-            }
-            pCurve->Insert(pSegment);
-
-            // share the same curve for all non-base channels
-            for (; i < num_chan; i++) {
-                pCurves->SetCurve(i, pCurve);
-            }
-
-            multiProcessTag->Attach(pCurves);
-            break;
-
-        case cs_Linear_Normalized_XYZ:
-            // No need for any 1-d curves since the base channels are linear and
-            // the rest of the channels are assumed to be linear as well
-            break;
-
-        default:
-            delete pCurves;
-            delete multiProcessTag;
-            pMultiInv = nullptr;
-            return nullptr;
-        }
-
-        if (pMultiInv) {
-            iccProfile->AttachTag(icSigBToD3Tag, pMultiInv);
-        }
+        iccProfile->AttachTag(icSigBToD3Tag, inverseMultiProcessTag);
     }
 
     return iccProfile;

@@ -54,16 +54,16 @@ protected:
     // embedded in the hybrid profile
     static CIccProfile *createRgbProfile(ProfileColorSpace space);
 
-    // if inv_matrix is provided then it must be the inverse of dataMatrix and
+    // if inverseMatrix is provided then it must be the inverse of dataMatrix and
     // include entries for all channels (including ignored channels if dataMatrix
-    // doesn't include them. If inv_matrix is not provided then no BToD3 tag
+    // doesn't include them. If inverseMatrix is not provided then no BToD3 tag
     // will be created
     static CIccProfile *createSpecProfile(ProfileColorSpace baseSpace,
                                           const float *dataMatrix,
                                           int numInputChannels,
                                           int numOutputChannels,
                                           bool ignore_base_channels,
-                                          const float *inv_matrix = nullptr);
+                                          const float *inverseMatrix = nullptr);
 
     // data members
     size_t max_profile_size;
