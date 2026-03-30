@@ -11,21 +11,16 @@ namespace pixelregestor {
  * @param comms the communications object to send progress updates to
  * @param img1 the first base image
  * @param img2 the second base image
- * @param matchfloat this is where the output matrix is to be stored
- * @param row the row to take a subset from
- * @param col the col to take a subset from
- * @param subset_height height of subset of the image to register
- * @param subset_width width of subset of the image to register
  * @param cycle the current cycle of regestration
  * @param cycle_count total number of cycles in regestration
  * @param name name of the process to update in comms
- * @param f future to set and return value with
+ * @param RegistrationFactor the factor mode of registration
+ * @param p future to set and return value with
  * @returns int number of good matches
  */
 void apply_regestration(CommunicationObj *comms,
-                      btrgb::Image *img1, btrgb::Image *img2, cv::Mat matchfloat,
+                      btrgb::Image *img1, btrgb::Image *img2,
                       int cycle, int cycle_count,
-                      int row, int col, int subset_height, int subset_width,
                       std::string output, std::string name,
                       std::string RegistrationFactor, std::promise<int> && p);
 

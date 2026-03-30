@@ -9,17 +9,14 @@
 static std::mutex comms_mutex;
 
 void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
-                                            btrgb::Image *img1, btrgb::Image *img2, cv::Mat matchfloat,
+                                            btrgb::Image *img1, btrgb::Image *img2,
                                             int cycle, int cycle_count,
-                                            int row, int col, int subset_height, int subset_width,
                                             std::string output, std::string name,
                                             std::string RegistrationFactor, std::promise<int> && p) {
     // takes a subset of the image to process
-    cv::Mat im1 = img1->getMat()(cv::Rect(col, row, subset_width, subset_height));
+    cv::Mat im1 = img1->getMat();
     // takes a subset of the image to process
-    cv::Mat im2 = img2->getMat()(cv::Rect(col, row, subset_width, subset_height));
-    // takes a subset of the image to process
-    cv::Mat matchfloat_subset = matchfloat(cv::Rect(col, row, subset_width * 2, subset_height));
+    cv::Mat im2 = img2->getMat();
 
     // Check that there is actual data in them
     if (!im1.data || !im2.data) {
@@ -113,12 +110,23 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
     }
 
     // Draw top matches and send to front end
+    cv::Mat matchfloat;
     cv::Mat imMatches;
     drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
     cv::Mat imS;
     cv::resize(imMatches, imS, cv::Size(), 0.25, 0.25);
-    // cv::imwrite("matches.tiff", imMatches); 
-    imMatches.convertTo(matchfloat_subset, CV_32FC3, 1.0 / 0xFF); 
+    imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF); 
+    std::unique_ptr<btrgb::Image> btrgb_matches(new btrgb::Image("matches"));
+    btrgb_matches->initImage(matchfloat);
+    comms_mutex.lock();
+    comms->send_binary(btrgb_matches.get(), btrgb::FULL);
+    comms_mutex.unlock();
+    btrgb::ImageWriter(btrgb::TIFF)
+        .write(btrgb_matches.get(),
+                output +
+                    "_matches"); // Output matches as a TIFF in the output folder
+
+    btrgb_matches.reset(nullptr);
 
     // Find homography
     comms_mutex.lock();
@@ -142,7 +150,6 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
     // Print estimated homography, prolly want to store this somewhere for
     // report?
     std::cout << "Estimated homography : \n" << h;
-
     
     comms_mutex.lock();
     prog = btrgb::pixelregestor::calc_progress(.15, (float)cycle, (float)cycle_count);
@@ -154,13 +161,7 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
 float btrgb::pixelregestor::calc_progress(float progress, float cycle,
                                    float cycle_count) {
     static double prog = 0;
-    // figure out 
     float overall_perc = (1 / cycle_count) * progress;
     prog += overall_perc;
     return prog;
 }
-// float PixelRegestor::calc_progress(float progress, float cycle,
-//                                    float cycle_count) {
-//     float offset = (cycle - 1) / cycle_count;
-//     return progress / cycle_count + offset;
-// }
