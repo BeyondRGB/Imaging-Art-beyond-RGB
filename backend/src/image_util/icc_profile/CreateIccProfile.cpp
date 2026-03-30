@@ -2,6 +2,7 @@
 #include <iostream>
 #include <ostream>
 #include <unordered_map>
+#include <array>
 
 #include <IccProfLib/IccIO.h>
 #include <IccProfLib/IccMpeBasic.h>
