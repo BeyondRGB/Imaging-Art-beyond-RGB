@@ -1,18 +1,17 @@
-#include <future> 
+#include <future>
 
-#include <utils/threading_statics/pixel_regestor_static.hpp>
 #include <image_processing/PixelRegestor.h>
 #include <image_util/Image.hpp>
 #include <image_util/image_writer/ImageWriter.hpp>
 #include <opencv2/calib3d.hpp>
+#include <utils/threading_statics/pixel_regestor_static.hpp>
 
 static std::mutex comms_mutex;
 
-void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
-                                            btrgb::Image *img1, btrgb::Image *img2,
-                                            int cycle, int cycle_count,
-                                            std::string output, std::string name,
-                                            std::string RegistrationFactor, std::promise<int> && p) {
+void btrgb::pixelregestor::apply_regestration(
+    CommunicationObj *comms, btrgb::Image *img1, btrgb::Image *img2, int cycle,
+    int cycle_count, std::string output, std::string name,
+    std::string RegistrationFactor, std::promise<int> &&p) {
     // takes a subset of the image to process
     cv::Mat im1 = img1->getMat();
     // takes a subset of the image to process
@@ -49,7 +48,8 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
 
     // Make a copy of the data in 8bit format to allow orb dection
     comms_mutex.lock();
-    prog = btrgb::pixelregestor::calc_progress(0.10, (float)cycle, (float)cycle_count);
+    prog = btrgb::pixelregestor::calc_progress(0.10, (float)cycle,
+                                               (float)cycle_count);
     comms->send_progress(prog, name);
     comms_mutex.unlock();
     im1.convertTo(im18, CV_8UC3, 255);
@@ -67,7 +67,8 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
 
     // Detect ORB features and compute descriptors.
     comms_mutex.lock();
-    prog = btrgb::pixelregestor::calc_progress(0.15, (float)cycle, (float)cycle_count);
+    prog = btrgb::pixelregestor::calc_progress(0.15, (float)cycle,
+                                               (float)cycle_count);
     comms->send_progress(prog, name);
     comms_mutex.unlock();
     cv::Ptr<cv::Feature2D> orb = cv::ORB::create(MAX_FEATURES);
@@ -76,7 +77,8 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
 
     // Match features.
     comms_mutex.lock();
-    prog = btrgb::pixelregestor::calc_progress(0.05, (float)cycle, (float)cycle_count);
+    prog = btrgb::pixelregestor::calc_progress(0.05, (float)cycle,
+                                               (float)cycle_count);
     comms->send_progress(prog, name);
     comms_mutex.unlock();
     std::vector<cv::DMatch> matches;
@@ -105,7 +107,7 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
         if (abs(p2.x - p1.x) < threshold && abs(p2.y - p1.y) < threshold) {
             points1.push_back(p1);
             points2.push_back(p2);
-            good_matches.push_back(matches[i]); 
+            good_matches.push_back(matches[i]);
         }
     }
 
@@ -115,7 +117,7 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
     drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
     cv::Mat imS;
     cv::resize(imMatches, imS, cv::Size(), 0.25, 0.25);
-    imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF); 
+    imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);
     std::unique_ptr<btrgb::Image> btrgb_matches(new btrgb::Image("matches"));
     btrgb_matches->initImage(matchfloat);
     comms_mutex.lock();
@@ -123,14 +125,15 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
     comms_mutex.unlock();
     btrgb::ImageWriter(btrgb::TIFF)
         .write(btrgb_matches.get(),
-                output +
-                    "_matches"); // Output matches as a TIFF in the output folder
+               output +
+                   "_matches"); // Output matches as a TIFF in the output folder
 
     btrgb_matches.reset(nullptr);
 
     // Find homography
     comms_mutex.lock();
-    prog = btrgb::pixelregestor::calc_progress(0.45, (float)cycle, (float)cycle_count);
+    prog = btrgb::pixelregestor::calc_progress(0.45, (float)cycle,
+                                               (float)cycle_count);
     comms->send_progress(prog, name);
     comms_mutex.unlock();
     h = cv::findHomography(points2, points1, cv::RANSAC);
@@ -139,7 +142,8 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
     // First param is image to be aligned, 2nd is storage for aliagned image,
     // third is homography, fourth is size of orginal img
     comms_mutex.lock();
-    prog = btrgb::pixelregestor::calc_progress(0.1, (float)cycle, (float)cycle_count);
+    prog = btrgb::pixelregestor::calc_progress(0.1, (float)cycle,
+                                               (float)cycle_count);
     comms->send_progress(prog, name);
     comms_mutex.unlock();
     warpPerspective(im2, im2reg, h, im1.size());
@@ -150,16 +154,17 @@ void btrgb::pixelregestor::apply_regestration(CommunicationObj *comms,
     // Print estimated homography, prolly want to store this somewhere for
     // report?
     std::cout << "Estimated homography : \n" << h;
-    
+
     comms_mutex.lock();
-    prog = btrgb::pixelregestor::calc_progress(.15, (float)cycle, (float)cycle_count);
+    prog = btrgb::pixelregestor::calc_progress(.15, (float)cycle,
+                                               (float)cycle_count);
     comms->send_progress(prog, name);
     comms_mutex.unlock();
     p.set_value(good_matches.size());
 }
 
 float btrgb::pixelregestor::calc_progress(float progress, float cycle,
-                                   float cycle_count) {
+                                          float cycle_count) {
     static double prog = 0;
     float overall_perc = (1 / cycle_count) * progress;
     prog += overall_perc;

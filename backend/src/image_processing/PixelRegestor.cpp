@@ -42,26 +42,25 @@ void PixelRegestor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
 
     // threading futures and promises
     std::promise<int> img_registration_promise = std::promise<int>();
-    std::future<int> img_registration_future = img_registration_promise.get_future();
+    std::future<int> img_registration_future =
+        img_registration_promise.get_future();
     std::promise<int> target_registration_promise = std::promise<int>();
-    std::future<int> target_registration_future = target_registration_promise.get_future();
+    std::future<int> target_registration_future =
+        target_registration_promise.get_future();
     std::thread img_registration_thread;
     std::thread target_registration_thread;
-    
-    img_registration_thread = 
-        std::thread(
-            btrgb::pixelregestor::apply_regestration,
-            comms, img1, img2, 0, regestration_count, output + "img", this->get_name(), 
-            this->RegistrationFactor, std::move(img_registration_promise)
-        );
+
+    // create a thread for the two image renderers
+    img_registration_thread = std::thread(
+        btrgb::pixelregestor::apply_regestration, comms, img1, img2, 0,
+        regestration_count, output + "img", this->get_name(),
+        this->RegistrationFactor, std::move(img_registration_promise));
 
     if (found_target) {
-        target_registration_thread = 
-            std::thread(
-                btrgb::pixelregestor::apply_regestration,
-                comms, img1, img2, 1, regestration_count, "target", this->get_name(), 
-                this->RegistrationFactor, std::move(target_registration_promise)
-            );
+        target_registration_thread = std::thread(
+            btrgb::pixelregestor::apply_regestration, comms, img1, img2, 1,
+            regestration_count, "target", this->get_name(),
+            this->RegistrationFactor, std::move(target_registration_promise));
     }
 
     // join and acquire futures (money go UP)

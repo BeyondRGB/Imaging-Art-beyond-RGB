@@ -1,4 +1,4 @@
-#include <string> 
+#include <string>
 
 #include <image_processing/ImageReader.h>
 #include <image_util/BitDepthFinder.hpp>
@@ -23,13 +23,13 @@ void ImageReader::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     std::vector<std::thread *> threads;
     comms->send_progress(0, this->get_name());
     for (const auto &[key, im] : *images) {
-        ImageLoader *l = new ImageLoader(comms, images, this->get_name(), key, im, &util, bit_depth, total);
+        ImageLoader *l = new ImageLoader(comms, images, this->get_name(), key,
+                                         im, &util, bit_depth, total);
         this->_loaders.push_back(l);
         threads.push_back(new std::thread(btrgb::imagereader::load_image, l));
     }
     // join threads
-    for (std::thread *t : threads)
-    {
+    for (std::thread *t : threads) {
         t->join();
         delete t;
     }

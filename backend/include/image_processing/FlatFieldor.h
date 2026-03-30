@@ -8,7 +8,7 @@ class FlatFieldor : public LeafComponent {
   private:
     float w;
     void wCalc(float pAvg, float wAvg, double yRef);
-    
+
   public:
     FlatFieldor() : LeafComponent("Flat Fielding") {}
     void execute(CommunicationObj *comms, btrgb::ArtObject *images) override;

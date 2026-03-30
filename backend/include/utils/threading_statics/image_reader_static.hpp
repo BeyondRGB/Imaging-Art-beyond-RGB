@@ -15,7 +15,8 @@ namespace imagereader {
  * @param total_images this value is only normally known to the image reader, is
  *  provided to allow proper statistics of progress
  */
-void update_reading_progress(CommunicationObj *comms, std::mutex *comms_mutex, std::string name, int total_images);
+void update_reading_progress(CommunicationObj *comms, std::mutex *comms_mutex,
+                             std::string name, int total_images);
 
 /**
  * @brief static method to allow image loading to be threaded

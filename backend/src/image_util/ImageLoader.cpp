@@ -1,22 +1,24 @@
 #include <string>
 
-#include <utils/threading_statics/image_reader_static.hpp>
-#include <image_util/ImageLoader.hpp>
 #include <image_processing/ImageReader.h>
 #include <image_util/BitDepthFinder.hpp>
 #include <image_util/Image.hpp>
+#include <image_util/ImageLoader.hpp>
 #include <image_util/image_reader/LibRawReader.hpp>
 #include <image_util/image_reader/LibTiffReader.hpp>
 #include <image_util/image_reader/TiffReaderOpenCV.hpp>
+#include <utils/threading_statics/image_reader_static.hpp>
 
-// sets aside memory for the static mutex (cpp static members are globally defined in namespace)
+// sets aside memory for the static mutex (cpp static members are globally
+// defined in namespace)
 std::mutex ImageLoader::comms_mutex;
 
-ImageLoader::ImageLoader(CommunicationObj *comms, btrgb::ArtObject *images, std::string name,
-                         std::string key, btrgb::Image *im, btrgb::BitDepthFinder *util,
+ImageLoader::ImageLoader(CommunicationObj *comms, btrgb::ArtObject *images,
+                         std::string name, std::string key, btrgb::Image *im,
+                         btrgb::BitDepthFinder *util,
                          std::shared_ptr<int> bit_depth, int total_images) {
     this->comms = comms;
-    this->images = images; 
+    this->images = images;
     this->name = name;
     this->key = key;
     this->im = im;
@@ -67,9 +69,9 @@ void ImageLoader::_average_greens(cv::Mat &input, cv::Mat &output) {
     cv::mixChannels(&input, 1, &output, 1, from_to, 3);
 }
 
-void ImageLoader::load_image() 
-{
-    this->comms->send_info("Loading " + this->im->getName() + "...", this->name);
+void ImageLoader::load_image() {
+    this->comms->send_info("Loading " + this->im->getName() + "...",
+                           this->name);
 
     /* Initialize image reader. */
     if (btrgb::Image::is_tiff(im->getPath()))
@@ -93,7 +95,7 @@ void ImageLoader::load_image()
 
             *this->bit_depth =
                 this->util->get_bit_depth((uint16_t *)raw_im.data, raw_im.cols,
-                                    raw_im.rows, raw_im.channels());
+                                          raw_im.rows, raw_im.channels());
 
             if (*this->bit_depth < 0)
                 throw std::runtime_error(
@@ -110,7 +112,7 @@ void ImageLoader::load_image()
         raw_im.convertTo(float_im, CV_32F, 1.0 / 0xFFFF);
 
         /* If there are four channels, assume the 2nd & 4th channels
-            * are both greens and average them. */
+         * are both greens and average them. */
         cv::Mat result_im;
         if (float_im.channels() == 4)
             this->_average_greens(float_im, result_im);
@@ -121,7 +123,8 @@ void ImageLoader::load_image()
         this->im->initImage(result_im);
         this->im->_raw_bit_depth = bit_depth;
         this->im->setExifTags(tags);
-        btrgb::imagereader::update_reading_progress(this->comms, &comms_mutex, this->name, this->total_images);
+        btrgb::imagereader::update_reading_progress(
+            this->comms, &comms_mutex, this->name, this->total_images);
     } catch (const std::exception &e) {
         throw ImgProcessingComponent::error(std::string(e.what()) + " (" +
                                                 this->im->getName() + ")",

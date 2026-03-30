@@ -1,10 +1,10 @@
-#include <utils/threading_statics/flatfield_static.hpp>
 #include <boost/range/irange.hpp>
 #include <iostream>
+#include <utils/threading_statics/flatfield_static.hpp>
 
-void btrgb::flatfield::pixelOperation(float w, int row, int col, int img_hei, 
-                                      int img_wid, int chunk_hei, int chunk_wid, int c, 
-                                      btrgb::Image *a, btrgb::Image *wh, 
+void btrgb::flatfield::pixelOperation(float w, int row, int col, int img_hei,
+                                      int img_wid, int chunk_hei, int chunk_wid,
+                                      int c, btrgb::Image *a, btrgb::Image *wh,
                                       btrgb::Image *d, btrgb::Image *ac) {
     // For loop is for every pixel in the image, and gets a corrisponding pixel
     // from white and dark images Every Channel value for each pixel needs to be
@@ -43,9 +43,11 @@ void btrgb::flatfield::pixelOperation(float w, int row, int col, int img_hei,
                     // make sure the selection area doesn't go over the edge
                     int left = (currCol - radius < 0 ? 0 : currCol - radius);
                     int right =
-                        (currCol + radius >= img_wid ? img_wid - 1 : currCol + radius);
+                        (currCol + radius >= img_wid ? img_wid - 1
+                                                     : currCol + radius);
                     int top = (currRow - radius < 0 ? 0 : currRow - radius);
-                    int bot = (currRow + radius > img_hei ? img_hei : currRow + radius);
+                    int bot = (currRow + radius > img_hei ? img_hei
+                                                          : currRow + radius);
 
                     for (auto xIndex : boost::irange(left, right)) {
                         for (auto yIndex : boost::irange(top, bot)) {
@@ -96,8 +98,7 @@ void btrgb::flatfield::pixelOperation(float w, int row, int col, int img_hei,
 
                 // Normal pixels flatfield as normal
                 else {
-                    newPixel =
-                        w * (double(aPix - dPix) / double(wPix - dPix));
+                    newPixel = w * (double(aPix - dPix) / double(wPix - dPix));
                     a->setPixel(currRow, currCol, ch, newPixel);
                 }
             }

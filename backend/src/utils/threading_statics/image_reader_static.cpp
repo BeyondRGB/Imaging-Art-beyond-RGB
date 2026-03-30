@@ -2,8 +2,10 @@
 
 #include <utils/threading_statics/image_reader_static.hpp>
 
-void btrgb::imagereader::update_reading_progress(CommunicationObj *comms, std::mutex *comms_mutex, std::string name, int total_images)
-{
+void btrgb::imagereader::update_reading_progress(CommunicationObj *comms,
+                                                 std::mutex *comms_mutex,
+                                                 std::string name,
+                                                 int total_images) {
     // starts at 0, slowly increments
     static int count = 0;
 
@@ -13,7 +15,4 @@ void btrgb::imagereader::update_reading_progress(CommunicationObj *comms, std::m
     comms_mutex->unlock();
 }
 
-void btrgb::imagereader::load_image(ImageLoader *l)
-{
-    l->load_image();
-}
+void btrgb::imagereader::load_image(ImageLoader *l) { l->load_image(); }

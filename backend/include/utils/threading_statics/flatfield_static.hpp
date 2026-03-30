@@ -18,10 +18,9 @@ namespace flatfield {
  * @param d1: dark1 image
  * @param d2 : dark2 image
  */
-void pixelOperation(float w, int row, int col, int img_hei, 
-                                   int img_wid, int chunk_hei, int chunk_wid, int c, 
-                                   btrgb::Image *a, btrgb::Image *wh, 
-                                   btrgb::Image *d, btrgb::Image *ac);
+void pixelOperation(float w, int row, int col, int img_hei, int img_wid,
+                    int chunk_hei, int chunk_wid, int c, btrgb::Image *a,
+                    btrgb::Image *wh, btrgb::Image *d, btrgb::Image *ac);
 
 } // namespace flatfield
 } // namespace btrgb
