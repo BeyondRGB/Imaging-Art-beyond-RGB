@@ -3,6 +3,7 @@
 #include <ostream>
 #include <unordered_map>
 #include <array>
+// Needed for memset on GCC.
 #include <cstring>
 
 #include <IccProfLib/IccIO.h>
