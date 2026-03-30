@@ -8,6 +8,7 @@
 #include <image_util/icc_profile/CreateIccProfile.hpp>
 
 #include "image_util/icc_profile/WriteIccProfile.h"
+#include <image_util/icc_profile/WriteIccProfile.h>
 
 ResultsProcessor::~ResultsProcessor() {
     if (nullptr != this->formater) {

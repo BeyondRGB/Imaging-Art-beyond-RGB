@@ -13,7 +13,7 @@ let freePort = undefined;
 let executablePath;
 let loader;
 
-const isDevelopment = true;
+const isDevelopment = false;
 
 if (process.platform == "win32")
 	executablePath = path.join(__dirname, "../../lib/beyond-rgb-backend.exe");
