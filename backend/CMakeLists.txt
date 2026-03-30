@@ -162,6 +162,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         # utils statics
         src/utils/threading_statics/flatfield_static.cpp 
         src/utils/threading_statics/image_reader_static.cpp 
+        src/utils/threading_statics/pixel_regestor_static.cpp 
 )
 
 # Set all source include files (ie. *.h)

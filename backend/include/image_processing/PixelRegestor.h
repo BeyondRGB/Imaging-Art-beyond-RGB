@@ -15,10 +15,16 @@ class PixelRegestor : public LeafComponent {
         : LeafComponent("Registering"),
           RegistrationFactor(RegistrationFactor) {};
     void execute(CommunicationObj *comms, btrgb::ArtObject *images) override;
-    int appy_regestration(CommunicationObj *comms, btrgb::Image *img1,
-                          btrgb::Image *img2, int cycle, int cycle_count,
-                          std::string output);
-    float calc_progress(float progress, float cycle, float cycle_count);
+
+  private:
+    /**
+     * @brief the threading results in images being generated in parts, this stitches
+     *  them back together and then sends them to the client
+     * @param comms the reference to the communications object to send data through
+     * @param output the path of where the images should be saved
+     * @param matchfloat this is the matrix output pixels are saved to
+     */
+    void send_image(CommunicationObj *comms, std::string output, cv::Mat matchfloat);
 };
 
 #endif // BEYOND_RGB_BACKEND_PIXELREGESTOR_H

@@ -82,8 +82,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     int chunk_height = height / MAX_THREADS;
     for (int t = 0; t < MAX_THREADS; t++)
     {
-        std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
-        " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
         threads[t] = std::thread(
             btrgb::flatfield::pixelOperation,
             this->w,
@@ -99,8 +97,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     for (int t = 0; t < MAX_THREADS; t++)
     {
         threads[t].join();
-        std::cout << "Join thread " << t << " complete!" << std::endl;
-
     } 
     comms->send_progress(0.5, this->get_name());
 
@@ -113,8 +109,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
 
     for (int t = 0; t < MAX_THREADS; t++)
     {
-        std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
-        " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
         // if on the last thread to create, set its height to the remainder of the
         threads[t] = std::thread(
             btrgb::flatfield::pixelOperation,
@@ -151,8 +145,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
         // thread
         for (int t = 0; t < MAX_THREADS; t++)
         {
-            std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
-            " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
             // if on the last thread to create, set its height to the remainder of the
             threads[t] = std::thread(
                 btrgb::flatfield::pixelOperation,
@@ -181,8 +173,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
         // thread
         for (int t = 0; t < MAX_THREADS; t++)
         {
-            std::cout << "Thread num: " << t << " Height: " << (t * chunk_height) << " / " << height << 
-            " GOING UNTIL " << ((t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height)) << std::endl;
             // if on the last thread to create, set its height to the remainder of the
             threads[t] = std::thread(
                 btrgb::flatfield::pixelOperation,
