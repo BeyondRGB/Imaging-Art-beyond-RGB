@@ -3,6 +3,7 @@
 #include <ostream>
 #include <unordered_map>
 #include <array>
+#include <cstring>
 
 #include <IccProfLib/IccIO.h>
 #include <IccProfLib/IccMpeBasic.h>
