@@ -344,7 +344,7 @@ void attachNoBaseChannelMatrix(CIccTagMultiProcessElement *multiProcessTag,
     multiProcessTag->Attach(matrix);
 }
 
-using FunctionParameters = std::array<icFloatNumber, 4>;
+typedef std::array<icFloatNumber, 4> FunctionParameters;
 
 void applyFormula(CIccFormulaCurveSegment *curveFormula,
                   FunctionParameters parameters, const bool shareCurve,
