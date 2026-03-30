@@ -1,6 +1,7 @@
 #include <image_util/icc_profile/CreateIccProfile.hpp>
 #include <iostream>
 #include <ostream>
+#include <unordered_map>
 
 #include <IccProfLib/IccIO.h>
 #include <IccProfLib/IccMpeBasic.h>
@@ -375,6 +376,7 @@ struct ColorSpaceCurveProfiles {
     CurveProfile normal;
     CurveProfile inverse;
 };
+
 
 static const std::unordered_map<ProfileColorSpace, ColorSpaceCurveProfiles>
 profiles =
