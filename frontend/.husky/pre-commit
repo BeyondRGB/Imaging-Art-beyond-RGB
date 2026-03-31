@@ -49,7 +49,7 @@ if ! [ -z "$FILES" ]; then
     for file in $FILES; do
         if ! npx prettier --check --loglevel=silent ../$file; then
             NEEDS_FORMATTING=1
-            ERROR_MSG="$ERROR_MSG Frontend file(s) not formatted. Please run \"npm run format\" to format frontend files."
+            ERROR_MSG="$ERROR_MSG Frontend file(s) not formatted. Please run \"npm --prefix frontend run format\" from the repo root, or run \"npm run format\" inside the frontend directory."
             break
         fi
     done
