@@ -33,6 +33,7 @@
 	let qrHintAnchorY = 0.0;
 	let qrPreviewSrc = "";
 	let qrPreviewAvailable = false;
+	const qrScanTimeoutMs = 20000;
 
 	// Handle WebSocket responses
 	const unsubscribe = messageStore.subscribe(value => {
@@ -94,9 +95,9 @@
 		qrScanTimeoutHandle = setTimeout(() => {
 			if (scanning && qrScanRequestId === requestId) {
 				scanning = false;
-				error = "QR scan timed out. Try again or use a QR area hint.";
+				error = "QR scan timed out after 20 seconds. Try again or use a QR area hint.";
 			}
-		}, 12000);
+		}, qrScanTimeoutMs);
 	}
 
 	function clamp01(value: number): number {

@@ -71,6 +71,7 @@ find_package(jsoncons CONFIG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(boost_lexical_cast CONFIG REQUIRED)
 find_package(boost_range CONFIG REQUIRED)
+find_package(httplib CONFIG REQUIRED)
 
 if (ENABLE_TESTS)
     find_package(Catch2 CONFIG REQUIRED)
@@ -100,12 +101,6 @@ endif ()
 set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
-
-# Include cpp-httplib for HTTP requests (header-only)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpp-httplib)
-
-# Find OpenSSL for HTTPS support in cpp-httplib
-find_package(OpenSSL REQUIRED)
 
 # Configure cpptrace for macOS
 if (APPLE)
@@ -242,8 +237,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE PNG::PNG)
-# OpenSSL for HTTPS support in cpp-httplib
-target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+target_link_libraries(${PROJECT_NAME} PRIVATE httplib::httplib)
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::lexical_cast)
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::range)
 

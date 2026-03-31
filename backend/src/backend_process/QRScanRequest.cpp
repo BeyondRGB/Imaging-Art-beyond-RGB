@@ -113,7 +113,7 @@ void QRScanRequest::sendSuccessResponse(const std::string& url, bool isOpenQuali
     
     std::string responseStr = response.as<std::string>();
     std::cout << "[QRScan] Sending success response: " << url << std::endl;
-    this->coms_obj_m->send_raw(responseStr);
+    this->coms_obj_m->send_msg(responseStr);
 }
 
 void QRScanRequest::sendErrorResponse(const std::string& error) {
@@ -131,5 +131,5 @@ void QRScanRequest::sendErrorResponse(const std::string& error) {
     
     std::string responseStr = response.as<std::string>();
     std::cerr << "[QRScan] Sending error response: " << error << std::endl;
-    this->coms_obj_m->send_raw(responseStr);
+    this->coms_obj_m->send_msg(responseStr);
 }

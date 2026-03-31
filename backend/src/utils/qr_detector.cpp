@@ -6,9 +6,7 @@
 #include <iostream>
 #include <set>
 
-namespace btrgb {
-
-namespace {
+namespace { // File-local QR preprocessing helpers.
 
 struct DetectionCandidate {
     std::string label;
@@ -221,18 +219,19 @@ std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image)
 
 } // namespace
 
-QRDetector::QRDetector() : detector_() {
+btrgb::QRDetector::QRDetector() : detector_() {
     // QRCodeDetector is ready to use after construction
 }
 
-cv::Mat QRDetector::preprocessImage(const cv::Mat& image) {
+cv::Mat btrgb::QRDetector::preprocessImage(const cv::Mat& image) {
     return apply_clahe(to_grayscale(image));
 }
 
-QRDetectionResult QRDetector::detectFromMatRegion(const cv::Mat& image,
-                                                  const QRScanRegion& region,
-                                                  double marginPercent) {
-    QRDetectionResult result;
+btrgb::QRDetectionResult btrgb::QRDetector::detectFromMatRegion(
+    const cv::Mat& image,
+    const btrgb::QRScanRegion& region,
+    double marginPercent) {
+    btrgb::QRDetectionResult result;
     result.found = false;
 
     if (image.empty()) {
@@ -305,8 +304,9 @@ QRDetectionResult QRDetector::detectFromMatRegion(const cv::Mat& image,
     return result;
 }
 
-QRDetectionResult QRDetector::detectFromFile(const std::string& imagePath) {
-    QRDetectionResult result;
+btrgb::QRDetectionResult btrgb::QRDetector::detectFromFile(
+    const std::string& imagePath) {
+    btrgb::QRDetectionResult result;
     result.found = false;
 
     std::cout << "[QRDetector] Loading image: " << imagePath << std::endl;
@@ -321,8 +321,9 @@ QRDetectionResult QRDetector::detectFromFile(const std::string& imagePath) {
     return detectFromMat(image);
 }
 
-QRDetectionResult QRDetector::detectFromMat(const cv::Mat& image) {
-    QRDetectionResult result;
+btrgb::QRDetectionResult btrgb::QRDetector::detectFromMat(
+    const cv::Mat& image) {
+    btrgb::QRDetectionResult result;
     result.found = false;
 
     if (image.empty()) {
@@ -357,8 +358,9 @@ QRDetectionResult QRDetector::detectFromMat(const cv::Mat& image) {
     return result;
 }
 
-std::vector<QRDetectionResult> QRDetector::detectAllFromMat(const cv::Mat& image) {
-    std::vector<QRDetectionResult> results;
+std::vector<btrgb::QRDetectionResult> btrgb::QRDetector::detectAllFromMat(
+    const cv::Mat& image) {
+    std::vector<btrgb::QRDetectionResult> results;
 
     if (image.empty()) {
         return results;
@@ -382,7 +384,7 @@ std::vector<QRDetectionResult> QRDetector::detectAllFromMat(const cv::Mat& image
                     continue;
                 }
 
-                QRDetectionResult result;
+                btrgb::QRDetectionResult result;
                 result.found = true;
                 result.decodedText = decoded[i];
 
@@ -408,7 +410,7 @@ std::vector<QRDetectionResult> QRDetector::detectAllFromMat(const cv::Mat& image
     return results;
 }
 
-bool QRDetector::isOpenQualiaUrl(const std::string& text) {
+bool btrgb::QRDetector::isOpenQualiaUrl(const std::string& text) {
     if (text.find("https://") != 0) {
         return false;
     }
@@ -420,7 +422,8 @@ bool QRDetector::isOpenQualiaUrl(const std::string& text) {
     return hasManufacturer && hasTargetType && hasTargetID;
 }
 
-std::optional<std::string> QRDetector::findOpenQualiaUrl(const std::string& imagePath) {
+std::optional<std::string> btrgb::QRDetector::findOpenQualiaUrl(
+    const std::string& imagePath) {
     cv::Mat image = cv::imread(imagePath, cv::IMREAD_COLOR);
     if (image.empty()) {
         std::cerr << "[QRDetector] Failed to load image: " << imagePath << std::endl;
@@ -447,5 +450,3 @@ std::optional<std::string> QRDetector::findOpenQualiaUrl(const std::string& imag
 
     return std::nullopt;
 }
-
-} // namespace btrgb

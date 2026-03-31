@@ -14,6 +14,7 @@ struct HttpResponse {
     int statusCode;
     std::string body;
     std::string error;
+    std::string contentType;
 };
 
 /**
@@ -65,6 +66,14 @@ private:
     };
     
     static std::optional<UrlComponents> parseUrl(const std::string& url);
+    static std::string setOrReplaceQueryParam(const std::string& url,
+                                              const std::string& key,
+                                              const std::string& value);
+    static std::string normalizeDropboxDownloadUrl(const std::string& url);
+    static bool responseLooksLikeHtml(const HttpResponse& response);
+    static std::optional<std::string> extractDownloadUrlFromHtml(
+        const std::string& baseUrl,
+        const std::string& body);
 };
 
 } // namespace btrgb

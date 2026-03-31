@@ -4,6 +4,7 @@ tiff
 asio
 jsoncons
 libpng
+cpp-httplib[openssl]
 cppcodec
 openssl
 zlib

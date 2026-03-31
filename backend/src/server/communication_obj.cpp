@@ -20,22 +20,48 @@ CommunicationObj::CommunicationObj(const CommunicationObj &other) {
 }
 
 void CommunicationObj::send_msg(std::string msg) {
-    server_m->send(connectionHandle_m, msg, opcode_m);
+    if (server_m == nullptr) {
+        std::cerr << "[CommunicationObj] Cannot send message: server is null"
+                  << std::endl;
+        return;
+    }
+
+    try {
+        server_m->send(connectionHandle_m, msg, opcode_m);
+    } catch (const websocketpp::exception& e) {
+        std::cerr << "[CommunicationObj] Failed to send websocket message: "
+                  << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "[CommunicationObj] Failed to send websocket message: "
+                  << e.what() << std::endl;
+    }
 }
 
 void CommunicationObj::send_bin(std::vector<uchar> &v) {
+    if (server_m == nullptr) {
+        std::cerr << "[CommunicationObj] Cannot send binary message: server is null"
+                  << std::endl;
+        return;
+    }
+
     const void *binToSend = (void *)v.data();
     // Need to find out how to send bin without this send, since it needs a
     // string for what it is sending
-    server_m->send(connectionHandle_m, binToSend, v.size(),
-                   websocketpp::frame::opcode::binary);
+    try {
+        server_m->send(connectionHandle_m, binToSend, v.size(),
+                       websocketpp::frame::opcode::binary);
+    } catch (const websocketpp::exception& e) {
+        std::cerr << "[CommunicationObj] Failed to send websocket binary: "
+                  << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "[CommunicationObj] Failed to send websocket binary: "
+                  << e.what() << std::endl;
+    }
 }
 
 void CommunicationObj::set_id(long newID) { id = newID; }
 
 unsigned long CommunicationObj::get_id() const { return id; }
-
-void CommunicationObj::send_raw(std::string msg) { send_msg(msg); }
 
 void CommunicationObj::send_info(std::string msg, std::string sender) {
     jsoncons::json info_body;
