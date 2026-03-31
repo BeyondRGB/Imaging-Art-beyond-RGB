@@ -1,11 +1,5 @@
 <script lang="ts">
-	import {
-		processState,
-		batchProcessState,
-		batchImagesA,
-		batchImagesB,
-		setTabCompleted,
-	} from "@util/stores";
+	import { processState, batchProcessState, setTabCompleted } from "@util/stores";
 	import Dropbox from "@components/Process/Dropbox.svelte";
 	import Button from "@components/Button.svelte";
 	import { get, isEmpty, each, includes } from "lodash";
@@ -16,8 +10,6 @@
 	import SortInfoModal from "@components/SortInfoModal.svelte";
 
 	let imageStack = get($processState, "artStacks[0].fields");
-	let artImageStackA = get($batchImagesA);
-	let artImageStackB = get($batchImagesB, "artStacks[0].fields.imageB");
 	let artImageCount = 1;
 
 	let rerenderToggle = false;
@@ -53,10 +45,6 @@
 		return allImages;
 	};
 
-	const showTargetDropZones = function () {
-		return getAllImages().length > 6;
-	};
-
 	const autoSort = function () {
 		processState.update(state => ({
 			...state,
@@ -66,26 +54,22 @@
 	};
 
 	const validate = function () {
-		console.log($batchProcessState);
-		console.log(imageStack);
 		if (
-			(showTargetDropZones() && (isEmpty(imageStack?.targetA) || isEmpty(imageStack?.targetB))) ||
 			isEmpty(imageStack?.imageA) ||
 			isEmpty(imageStack?.imageB) ||
+			isEmpty(imageStack?.targetA) ||
+			isEmpty(imageStack?.targetB) ||
 			isEmpty(imageStack?.flatfieldA) ||
 			isEmpty(imageStack?.flatfieldB) ||
 			isEmpty(imageStack?.darkfieldA) ||
 			isEmpty(imageStack?.darkfieldB)
 		) {
 			return "Please ensure each dropzone is assigned an image.";
-		} else {
-			return null;
 		}
-		return validationError;
+		return null;
 	};
 
 	const submitSpecFileRoles = function (skipOptionalFiltering) {
-		validate();
 		if ((validationError = validate())) {
 			return;
 		}
@@ -107,248 +91,417 @@
 			}}
 		/>
 	{/if}
+
 	{#key rerenderToggle}
-		<panel>
-			<div class="leftHeader">
-				<h1>Specify Image Roles Batch</h1>
-				<p>Drag and drop each image into its appropriate role</p>
-				<div class="leftStartBox">
-					<Dropbox bind:items={$processState.imageFilePaths} type="image" singleItem={false} />
+		<!-- Left Panel: Pool + Object Images -->
+		<left>
+			<!-- Pool Zone -->
+			<div class="pool-zone">
+				<div class="pool-header">
+					<div class="pool-title">
+						<h2>Assign Image Roles</h2>
+						<span
+							class="unassigned-badge"
+							class:empty-pool={$processState.imageFilePaths.length === 0}
+						>
+							{#if $processState.imageFilePaths.length > 0}
+								<span class="badge-dot" />
+								{$processState.imageFilePaths.length} unassigned
+							{:else}
+								<svg class="check-icon" viewBox="0 0 16 16" fill="none">
+									<path
+										d="M3 8.5L6.5 12L13 4"
+										stroke="currentColor"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+								</svg>
+								All assigned
+							{/if}
+						</span>
+					</div>
+					<Button variant="secondary" size="sm" onClick={autoSort}>Auto-sort images</Button>
 				</div>
-				<div class="btnGroup" style="margin: 50px 65px 2px 0;">
-					<Button variant="secondary" size="md" onClick={autoSort}>Auto-sort images</Button>
-				</div>
+				{#if $processState.imageFilePaths.length > 0}
+					<div class="pool-dropbox">
+						<Dropbox
+							bind:items={$processState.imageFilePaths}
+							type="image"
+							singleItem={false}
+							fullWidth={true}
+						/>
+					</div>
+				{/if}
 			</div>
-			<div class="leftBoxes">
-				<div class="centerFlexBox">
-					<div id="imageStack">
-						<div class="inputGroup">
-							<div class="imageLetter">A</div>
-							<div class="imageLetter">B</div>
+
+			<!-- Object Images -->
+			<div class="object-zone">
+				<div class="group-label">Object Images</div>
+				<div class="column-headers">
+					<div class="role-label-spacer" />
+					<div class="col-header">A</div>
+					<div class="col-header">B</div>
+				</div>
+				{#each Array(artImageCount) as _, index (index)}
+					<div class="role-lane lane-object">
+						<div class="role-label">
+							{#if artImageCount > 1}Object {index + 1}{:else}Object{/if}
 						</div>
-						<div class="objectDropBoxes">
-							<div class="text">Object</div>
-							{#each Array(artImageCount) as _, index (index)}
-								<div class="inputGroup">
-									<div class="cell">
-										<Dropbox
-											type="image"
-											bind:items={imageStack.imageA[index]}
-											singleItem={true}
-											showError={!!validationError}
-										/>
-									</div>
-									<div class="cell">
-										<Dropbox
-											type="image"
-											bind:items={imageStack.imageB[index]}
-											singleItem={true}
-											showError={!!validationError}
-										/>
-									</div>
-								</div>
-							{/each}
+						<div class="drop-cell">
+							<Dropbox
+								type="image"
+								bind:items={imageStack.imageA[index]}
+								singleItem={true}
+								showError={!!validationError}
+								fullWidth={true}
+							/>
+						</div>
+						<div class="drop-cell">
+							<Dropbox
+								type="image"
+								bind:items={imageStack.imageB[index]}
+								singleItem={true}
+								showError={!!validationError}
+								fullWidth={true}
+							/>
 						</div>
 					</div>
-				</div>
+				{/each}
 			</div>
-		</panel>
+		</left>
+
+		<!-- Right Panel: Calibration + Actions -->
 		<right>
-			<div class="rightContent">
-				<div class="centerFlexBox">
-					<div id="imageStack">
-						<div class="inputGroup">
-							<div class="imageLetter">A</div>
-							<div class="imageLetter">B</div>
-						</div>
-						<div class="text">Target</div>
-						<div class="inputGroup">
-							<div class="cell">
-								<Dropbox
-									type="image"
-									bind:items={imageStack.targetA}
-									singleItem={true}
-									showError={!!validationError}
-								/>
-							</div>
-							<div class="cell">
-								<Dropbox
-									type="image"
-									bind:items={imageStack.targetB}
-									singleItem={true}
-									showError={!!validationError}
-								/>
-							</div>
-						</div>
-						<div class="text">FlatField</div>
-						<div class="inputGroup">
-							<div class="cell">
-								<Dropbox
-									type="image"
-									bind:items={imageStack.flatfieldA}
-									singleItem={true}
-									showError={!!validationError}
-								/>
-							</div>
-							<div class="cell">
-								<Dropbox
-									type="image"
-									bind:items={imageStack.flatfieldB}
-									singleItem={true}
-									showError={!!validationError}
-								/>
-							</div>
-						</div>
-						<div class="text">DarkField</div>
-						<div class="inputGroup">
-							<div class="cell">
-								<Dropbox
-									type="image"
-									bind:items={imageStack.darkfieldA}
-									singleItem={true}
-									showError={!!validationError}
-								/>
-							</div>
-							<div class="cell">
-								<Dropbox
-									type="image"
-									bind:items={imageStack.darkfieldB}
-									singleItem={true}
-									showError={!!validationError}
-								/>
-							</div>
-						</div>
-						{#if validationError && imageStack && validate()}
-							<div class="errorText">
-								{validationError}
-							</div>
-						{/if}
+			<div class="calibration-zone">
+				<div class="group-label">Calibration Images</div>
+				<div class="column-headers">
+					<div class="role-label-spacer" />
+					<div class="col-header">A</div>
+					<div class="col-header">B</div>
+				</div>
+
+				<!-- Target -->
+				<div class="role-lane lane-target">
+					<div class="role-label">Target</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.targetA}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.targetB}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+				</div>
+
+				<!-- Flat Field -->
+				<div class="role-lane lane-flatfield">
+					<div class="role-label">Flat Field</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.flatfieldA}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.flatfieldB}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+				</div>
+
+				<!-- Dark Field -->
+				<div class="role-lane lane-darkfield">
+					<div class="role-label">Dark Field</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.darkfieldA}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.darkfieldB}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
 					</div>
 				</div>
 			</div>
-			<div class="btnGroup">
-				<Button variant="secondary" size="md" onClick={() => submitSpecFileRoles(false)}
-					>Optional filtering</Button
-				>
-				<Button variant="success" size="md" onClick={() => submitSpecFileRoles(true)}
-					>Next: Skip optional filtering</Button
-				>
+
+			<!-- Action Bar -->
+			<div class="action-bar">
+				{#if validationError}
+					<div class="error-msg">
+						<svg class="error-icon" viewBox="0 0 16 16" fill="none">
+							<circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5" />
+							<path d="M8 4.5V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+							<circle cx="8" cy="11.5" r="0.75" fill="currentColor" />
+						</svg>
+						{validationError}
+					</div>
+				{/if}
+				<div class="action-buttons">
+					<Button variant="secondary" size="md" onClick={() => submitSpecFileRoles(false)}>
+						Optional filtering
+					</Button>
+					<Button variant="success" size="md" onClick={() => submitSpecFileRoles(true)}>
+						Next: Skip optional filtering
+					</Button>
+				</div>
 			</div>
 		</right>
 	{/key}
 </main>
 
 <style lang="postcss">
+	/* ── Main Split Container ── */
 	main {
 		@apply flex h-full w-full overflow-hidden;
 	}
-	panel {
-		@apply flex flex-col h-full;
+
+	/* ── Left Panel: Pool + Objects ── */
+	left {
+		@apply flex flex-col h-full overflow-hidden;
 		width: 50%;
 		background-color: var(--color-surface-elevated);
-		overflow: hidden;
 	}
-	right {
-		background-color: var(--color-surface);
-		width: 50%;
-		@apply h-full p-6 flex flex-col;
+
+	.pool-zone {
+		@apply flex-shrink-0;
+		padding: 16px 20px 12px;
+		border-bottom: 1px solid var(--color-border);
 	}
-	.rightContent {
-		flex: 1;
-		min-height: 0;
-		overflow-y: auto;
-		display: flex;
-		align-items: flex-start;
-		justify-content: center;
-		width: 100%;
+
+	:global(:root.dark) .pool-zone {
+		border-bottom-color: rgba(255, 255, 255, 0.08);
 	}
-	h1 {
+
+	.pool-header {
+		@apply flex items-center justify-between mb-2;
+	}
+
+	.pool-title {
+		@apply flex items-center gap-3;
+	}
+
+	.pool-title h2 {
 		color: var(--color-text-primary);
-		margin: 20px 25px 10px 25px;
-		font-size: 32px;
+		font-size: 20px;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		margin: 0;
 	}
-	p {
-		color: var(--color-text-secondary);
-		margin: 0 25px 15px 25px;
-		font-size: 16px;
+
+	.unassigned-badge {
+		@apply flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full;
+		background-color: var(--color-surface-sunken);
+		color: var(--color-warning);
+		border: 1px solid var(--color-border);
+		transition: all 0.3s ease;
 	}
-	#imageStack {
+
+	:global(:root.dark) .unassigned-badge {
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+
+	.unassigned-badge.empty-pool {
+		color: var(--color-success);
+	}
+
+	.badge-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background-color: var(--color-warning);
+		animation: pulse-dot 2s ease-in-out infinite;
+	}
+
+	@keyframes pulse-dot {
+		0%,
+		100% {
+			opacity: 1;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.5;
+			transform: scale(0.75);
+		}
+	}
+
+	.check-icon {
+		width: 14px;
+		height: 14px;
+	}
+
+	.pool-dropbox {
+		max-height: 100px;
+		overflow-y: auto;
+		border: 1px solid var(--color-border);
+		border-radius: 10px;
+		background-color: var(--color-surface-sunken);
+		padding: 4px;
+	}
+
+	:global(:root.dark) .pool-dropbox {
+		border-color: rgba(255, 255, 255, 0.08);
+	}
+
+	.object-zone {
+		@apply flex-1 overflow-y-auto;
+		min-height: 0;
+		padding: 16px 20px;
+	}
+
+	/* ── Right Panel: Calibration + Actions ── */
+	right {
+		@apply flex flex-col h-full;
+		width: 50%;
+		background-color: var(--color-surface);
+	}
+
+	.calibration-zone {
+		@apply flex-1;
+		padding: 16px 20px;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	/* ── Shared: Column Headers & Labels ── */
+	.group-label {
+		color: var(--color-text-tertiary);
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		margin-bottom: 8px;
+		padding-left: 4px;
+	}
+
+	.column-headers {
+		@apply flex items-center gap-3 mb-2;
+		padding: 0 4px;
+	}
+
+	.role-label-spacer {
+		width: 72px;
+		flex-shrink: 0;
+	}
+
+	.col-header {
+		@apply flex-1 text-center font-semibold;
+		font-size: 14px;
+		color: var(--color-text-tertiary);
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+	}
+
+	/* ── Role Lanes ── */
+	.role-lane {
+		@apply flex items-center gap-3 rounded-lg;
+		padding: 8px 12px;
+		margin-bottom: 6px;
+		border-left: 3px solid var(--color-border);
 		background-color: var(--color-surface-base);
 		border: 1px solid var(--color-border);
-		border-radius: 20px;
-		display: flex;
-		flex-direction: column;
-		padding: 20px 30px 25px 30px;
-		width: 100%;
-		align-self: stretch;
+		border-left-width: 3px;
+		transition: background-color 0.15s ease, box-shadow 0.15s ease;
 	}
-	panel #imageStack {
-		min-height: 220px;
+
+	:global(:root.dark) .role-lane {
+		border-color: rgba(255, 255, 255, 0.1);
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	}
-	right #imageStack {
-		min-height: 360px;
+
+	.role-lane:hover {
+		background-color: var(--color-surface-elevated);
+		box-shadow: 0 1px 4px var(--color-overlay-light);
 	}
-	.centerFlexBox {
-		display: flex;
-		flex-direction: column;
-		align-items: stretch;
-		width: 100%;
-		max-width: 600px;
-		margin: 0 auto;
+
+	:global(:root.dark) .role-lane:hover {
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+		border-color: rgba(255, 255, 255, 0.15);
 	}
-	.inputGroup {
-		display: flex;
-		flex-direction: row;
-		gap: 20px;
-		width: 100%;
-		justify-content: center;
-		padding-top: 10px;
+
+	/* Color-coded left borders per role type */
+	.lane-object {
+		border-left-color: #3b82f6;
 	}
-	.cell {
-		flex: 1;
+	.lane-target {
+		border-left-color: #eab308;
+	}
+	.lane-flatfield {
+		border-left-color: #a8a29e;
+	}
+	.lane-darkfield {
+		border-left-color: #525252;
+	}
+
+	:global(:root.dark) .lane-darkfield {
+		border-left-color: #78716c;
+	}
+
+	.role-label {
+		width: 72px;
+		flex-shrink: 0;
+		color: var(--color-text-secondary);
+		font-size: 13px;
+		font-weight: 500;
+	}
+
+	.drop-cell {
+		@apply flex-1;
 		min-width: 0;
 	}
-	.text {
-		color: var(--color-text-secondary);
-		text-align: center;
-		margin-top: 15px;
-		font-size: 14px;
+
+	/* ── Action Bar ── */
+	.action-bar {
+		@apply flex-shrink-0 flex items-center justify-between;
+		padding: 12px 20px;
+		border-top: 1px solid var(--color-border);
+		background-color: var(--color-surface-elevated);
 	}
-	.imageLetter {
-		color: var(--color-text-primary);
-		width: 50%;
-		text-align: center;
-		font-size: 28px;
+
+	:global(:root.dark) .action-bar {
+		border-top-color: rgba(255, 255, 255, 0.08);
 	}
-	.errorText {
-		text-align: center;
+
+	.error-msg {
+		@apply flex items-center gap-2 text-sm;
 		color: var(--color-error);
-		margin-top: 10px;
 	}
-	.btnGroup {
-		@apply flex justify-end gap-2;
-		flex-shrink: 0;
-		padding-top: 20px;
-		width: 100%;
-		max-width: 600px;
-		align-self: center;
-	}
-	.leftHeader {
+
+	.error-icon {
+		width: 16px;
+		height: 16px;
 		flex-shrink: 0;
 	}
-	.leftBoxes {
-		flex: 1;
-		overflow-y: auto;
-		padding: 10px 20px 20px 20px;
-		display: flex;
-		justify-content: center;
-	}
-	.leftStartBox {
-		max-height: 300px;
-		overflow-y: auto;
-		margin: 0 25px;
-	}
-	.objectDropBoxes {
-		padding-bottom: 10px;
+
+	.action-buttons {
+		@apply flex gap-2 ml-auto;
 	}
 </style>

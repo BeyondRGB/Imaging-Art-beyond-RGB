@@ -10,6 +10,7 @@
 	export let singleItem = true;
 	export let showError = false;
 	export let dragDisabled = false;
+	export let fullWidth = false;
 
 	function handleSort(e) {
 		items = e.detail.items;
@@ -17,7 +18,11 @@
 </script>
 
 <main>
-	<div class="sectionStyle {showError && singleItem && isEmpty(items) ? 'errorStyle' : ''}">
+	<div
+		class="sectionStyle {showError && singleItem && isEmpty(items) ? 'errorStyle' : ''} {fullWidth
+			? 'fullWidth'
+			: ''}"
+	>
 		<section
 			use:dndzone={{
 				items,
@@ -34,6 +39,9 @@
 					<ImageBubble filename={item.name} minimal />
 				</card>
 			{/each}
+			{#if items.length === 0 && singleItem}
+				<span class="placeholder">Drop image here</span>
+			{/if}
 		</section>
 	</div>
 </main>
@@ -58,9 +66,18 @@
 		border-radius: 10px;
 		margin: auto;
 	}
+	.fullWidth {
+		width: 100%;
+	}
 	.errorStyle {
 		background-color: var(--color-error);
 		border-color: var(--color-error);
+	}
+	.placeholder {
+		color: var(--color-text-disabled);
+		font-size: 12px;
+		user-select: none;
+		pointer-events: none;
 	}
 	card {
 		background-color: var(--color-surface-sunken);
