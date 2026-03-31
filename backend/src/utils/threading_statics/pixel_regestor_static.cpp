@@ -114,7 +114,7 @@ void btrgb::pixelregestor::apply_regestration(
     // Draw top matches and send to front end
     cv::Mat matchfloat;
     cv::Mat imMatches;
-    drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
+    cv::drawMatches(im18, keypoints1, im28, keypoints2, good_matches, imMatches);
     cv::Mat imS;
     cv::resize(imMatches, imS, cv::Size(), 0.25, 0.25);
     imMatches.convertTo(matchfloat, CV_32FC3, 1.0 / 0xFF);

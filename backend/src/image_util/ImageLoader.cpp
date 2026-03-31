@@ -16,16 +16,9 @@ std::mutex ImageLoader::comms_mutex;
 ImageLoader::ImageLoader(CommunicationObj *comms, btrgb::ArtObject *images,
                          std::string name, std::string key, btrgb::Image *im,
                          btrgb::BitDepthFinder *util,
-                         std::shared_ptr<int> bit_depth, int total_images) {
-    this->comms = comms;
-    this->images = images;
-    this->name = name;
-    this->key = key;
-    this->im = im;
-    this->util = util;
-    this->bit_depth = bit_depth;
-    this->total_images = total_images;
-}
+                         std::shared_ptr<int> bit_depth, int total_images)
+    : comms(comms), images(images), name(name), key(key), im(im), util(util),
+      bit_depth(bit_depth), total_images(total_images) {}
 
 ImageLoader::~ImageLoader() { delete this->_reader; }
 

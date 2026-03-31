@@ -23,7 +23,7 @@
 #define BTRGB_M_OPT "M_opt"
 #define BTRGB_OFFSET_OPT "Offset_opt"
 #define BTRGB_M_REFL_OPT "M_refl_opt"
-// can return 0 if non computable, so default to 4 if non existant
+
 #define MAX_THREADS (4)
 
 /* ============[ CONSTANTS and TYPES ]============ */
