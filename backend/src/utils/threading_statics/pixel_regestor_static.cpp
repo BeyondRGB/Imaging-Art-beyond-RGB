@@ -168,5 +168,7 @@ float btrgb::pixelregestor::calc_progress(float progress, float cycle,
     static double prog = 0;
     float overall_perc = (1 / cycle_count) * progress;
     prog += overall_perc;
+    if (prog > 1)
+        prog = 1;
     return prog;
 }
