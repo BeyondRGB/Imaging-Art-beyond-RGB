@@ -15,26 +15,26 @@
 
 namespace btrgb::icc {
 IccProfile::IccProfile(size_t max_size) {
-    max_profile_size = max_size;
-    hybrid_icc = nullptr;
-    profile_mem = nullptr;
-    profile_size = 0;
+    maxProfileSize = max_size;
+    hybridICCProfile = nullptr;
+    profileMemory = nullptr;
+    profileSize = 0;
 }
 
 IccProfile::~IccProfile() {
-    delete hybrid_icc;
-    delete[] profile_mem;
+    delete hybridICCProfile;
+    delete[] profileMemory;
 }
 
 bool IccProfile::createHybridProfile(const ProfileColorSpace space,
                                      const float *dataMatrix,
                                      const int numInputChannels,
                                      const int numOutputChannels,
-                                     const bool ignore_base_channels,
-                                     const float *inv_matrix) {
-    if (hybrid_icc) {
-        delete hybrid_icc;
-        delete[] profile_mem;
+                                     const bool ignoreBaseChannels,
+                                     const float *inverseMatrix) {
+    if (hybridICCProfile) {
+        delete hybridICCProfile;
+        delete[] profileMemory;
     }
 
     CIccProfile *rgb_profile = createRgbProfile(space);
@@ -45,7 +45,7 @@ bool IccProfile::createHybridProfile(const ProfileColorSpace space,
 
     CIccProfile *spec_profile = createSpecProfile(
         space, dataMatrix, numInputChannels, numOutputChannels,
-        ignore_base_channels, inv_matrix);
+        ignoreBaseChannels, inverseMatrix);
     if (!spec_profile) {
         delete rgb_profile;
     }
@@ -55,7 +55,11 @@ bool IccProfile::createHybridProfile(const ProfileColorSpace space,
     pTag->SetProfile(spec_profile);
     rgb_profile->AttachTag(icSigEmbeddedV5ProfileTag, pTag);
 
-    hybrid_icc = rgb_profile;
+    hybridICCProfile = rgb_profile;
+
+    // Cache the profile memory.
+    getProfileMem();
+
     return true;
 }
 
@@ -486,11 +490,11 @@ CIccProfile *IccProfile::createSpecProfile(
     const float *dataMatrix,
     const int numInputChannels,
     const int numOutputChannels,
-    const bool ignore_base_channels,
+    const bool ignoreBaseChannels,
     const float *inverseMatrix) {
     VALIDATE_COLOR_SPACE(baseSpace);
 
-    const int totalNumberOfChannels = !ignore_base_channels
+    const int totalNumberOfChannels = !ignoreBaseChannels
                                           ? numInputChannels
                                           : numInputChannels + 3;
 
@@ -560,7 +564,7 @@ CIccProfile *IccProfile::createSpecProfile(
     auto *multiProcessTag = new CIccTagMultiProcessElement(
         totalNumberOfChannels, numOutputChannels);
 
-    if (ignore_base_channels) {
+    if (ignoreBaseChannels) {
         // If we are ignoring the base profile channels, then just add a dataMatrix element with zero columns for the base channels and the provided data and no curves
         attachNoBaseChannelMatrix(multiProcessTag, numInputChannels,
                                   numOutputChannels, dataMatrix);
@@ -617,40 +621,42 @@ CIccProfile *IccProfile::createSpecProfile(
 
 
 unsigned char *IccProfile::getProfileMem() {
-    if (profile_mem)
-        return profile_mem;
-    if (!hybrid_icc) {
+    if (profileMemory)
+        return profileMemory;
+    if (!hybridICCProfile) {
         throw std::runtime_error(
             "No hybrid profile available to save. Run btrgb::icc::IccProfile::createHybridProfile.");
     }
 
-    profile_mem = new unsigned char[max_profile_size];
+    profileMemory = new unsigned char[maxProfileSize];
 
     CIccMemIO io;
-    io.Attach(profile_mem, max_profile_size, true);
+    io.Attach(profileMemory, maxProfileSize, true);
 
-    if (!hybrid_icc->Write(&io)) {
-        delete[] profile_mem;
+    if (!hybridICCProfile->Write(&io)) {
+        delete[] profileMemory;
         return nullptr;
     }
 
-    profile_size = io.GetLength();
+    profileSize = io.GetLength();
 
-    return profile_mem;
+    return profileMemory;
 }
 
-size_t IccProfile::getProfileSize() const { return profile_size; }
+size_t IccProfile::getProfileSize() const {
+    return profileSize;
+}
 
-void IccProfile::write(const std::string &filename) const {
-    if (!hybrid_icc) {
+void IccProfile::write(const std::string &path) const {
+    if (!hybridICCProfile) {
         throw std::runtime_error(
             "No hybrid profile available to save. Run btrgb::icc::IccProfile::createHybridProfile.");
     }
 
     auto *iccIO = new CIccFileIO();
-    iccIO->Open(filename.c_str(), "wb");
+    iccIO->Open(path.c_str(), "wb");
 
-    hybrid_icc->Write(iccIO, icVersionBasedID);
+    hybridICCProfile->Write(iccIO, icVersionBasedID);
 
     iccIO->Close();
 }

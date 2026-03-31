@@ -5,6 +5,7 @@
 
 namespace btrgb::icc {
 
+// An enum that validates if a given ProfileColorSpace enum is valid.
 #define VALIDATE_COLOR_SPACE(space) if (space > ProfileColorSpace::cs_Linear_Normalized_XYZ || space < 0) { return nullptr; }
 
 enum ProfileColorSpace {
@@ -17,26 +18,41 @@ enum ProfileColorSpace {
 
 class IccProfile {
 public:
-    // max_size is the maximum size in bytes that the created profile can be,
-    // and should be large enough to hold the profile data created by
-    // createHybridProfile for the given input parameters
-    IccProfile(size_t max_size = 1000000);
+    /**
+     * Sets up an IccProfile, but does not create one. For creation call @fn createHybridProfile.
+     * @param max_size The maximum size in bytes that the created profile can be.
+     */
+    explicit IccProfile(size_t max_size = 1000000);
 
-    // destructor will free the memory allocated for the profile, so the caller
-    // should not free the memory returned by getProfileMem
+    /**
+     * Destructor will free the memory allocated for the profile, so the caller should not free the memory returned by getProfileMem.
+     */
     ~IccProfile();
 
-    // dataMatrix is expected to be in row major order with num_in columns and
-    // num_out rows, and should not include the base channels if
-    // ignore_base_channels is true
+    /**
+     * @brief Create a hybrid rgb & spectral Icc Profile.
+     *
+     * @param space The color space to generate an IccProfile for.
+     * @param dataMatrix data in row major order with @param numInputChannels columns and @param numOutputChannels rows. Should not include base channels if @param ignoreBaseChannels is set.
+     * @param numInputChannels The number of input channels for the given data.
+     * @param numOutputChannels The number of output channels for the given data.
+     * @param ignoreBaseChannels Should we ignore the base channels? If so, dataMatrix should not include base channels.
+     * @param inverseMatrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
+     * @return If creation of the profile was successful, true. The created profile can be accessed using @fn getHybridProfile.
+     */
     bool createHybridProfile(ProfileColorSpace space,
                              const float *dataMatrix,
                              int numInputChannels,
                              int numOutputChannels,
-                             bool ignore_base_channels,
-                             const float *inv_matrix = nullptr);
+                             bool ignoreBaseChannels,
+                             const float *inverseMatrix = nullptr);
 
-    void write(const std::string &filename) const;
+    /**
+     * Writes the binary IccProfile to the given file path.
+     *
+     * @param path the full system path to the file to write to.
+     */
+    void write(const std::string &path) const;
 
     /**
      * @brief Retrieves raw icc profile memory so it can be saved into TIFF images.
@@ -61,7 +77,7 @@ public:
      *
      * @return The internal CIccProfile object, owned by this class.
      */
-    [[nodiscard]] CIccProfile *getHybridProfile() const { return hybrid_icc; }
+    [[nodiscard]] CIccProfile *getHybridProfile() const { return hybridICCProfile; }
 
 protected:
     /**
@@ -72,39 +88,36 @@ protected:
      */
     static CIccProfile *createRgbProfile(ProfileColorSpace space);
 
-    // if inverseMatrix is provided then it must be the inverse of dataMatrix and
-    // include entries for all channels (including ignored channels if dataMatrix
-    // doesn't include them. If inverseMatrix is not provided then no BToD3 tag
-    // will be created
     /**
+     * @brief Create a spectral icc profile for the given space & data.
      *
-     * @param baseSpace
-     * @param dataMatrix
-     * @param numInputChannels
-     * @param numOutputChannels
-     * @param ignore_base_channels
-     * @param inverseMatrix
-     * @return
+     * @note If inverseMatrix is not provided, then no BToD3 tag will be created
+     *
+     * @param baseSpace The color space to generate an spectral profile for.
+     * @param dataMatrix data in row major order with @param numInputChannels columns and @param numOutputChannels rows. Should not include base channels if @param ignoreBaseChannels is set.
+     * @param numInputChannels The number of input channels for the given data.
+     * @param numOutputChannels The number of output channels for the given data.
+     * @param ignoreBaseChannels Should we ignore the base channels? If so, dataMatrix should not include base channels.
+     * @param inverseMatrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
+     * @return A spectral CIccProfile.
      */
     static CIccProfile *createSpecProfile(ProfileColorSpace baseSpace,
                                           const float *dataMatrix,
                                           int numInputChannels,
                                           int numOutputChannels,
-                                          bool ignore_base_channels,
+                                          bool ignoreBaseChannels,
                                           const float *inverseMatrix = nullptr);
 
-    /**
-     *
-     * @param icc_profile
-     * @param filename
-     */
-    static void write(CIccProfile *icc_profile, const std::string &filename);
 
     // MARK: Data Members
-    size_t max_profile_size;
-    CIccProfile *hybrid_icc;
-    unsigned char *profile_mem;
-    size_t profile_size;
+    /// The maximum size that the icc profile can be.
+    size_t maxProfileSize;
+    /// A reference to the created hybrid icc profile.
+    CIccProfile *hybridICCProfile;
+    /// The raw memory of the profile, populated after calling getProfileMem.
+    unsigned char *profileMemory;
+    /// The size of the profile, populated after calling getProfileMem
+    size_t profileSize;
 };
 }; // namespace btrgb
 
