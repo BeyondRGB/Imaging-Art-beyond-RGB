@@ -32,6 +32,7 @@
 		console.log("Received p90 update:", rawVal, "typeof:", typeof rawVal);
 
 		if (rawVal === null || rawVal === undefined) {
+			p90Value = null;
 			return;
 		}
 
@@ -96,6 +97,7 @@
 
 		// Clear old report data if switching projects
 		if (loadedProjectKey !== null && loadedProjectKey !== projectKey) {
+			p90Value = null;
 			viewState.update(state => ({
 				...state,
 				reports: {
@@ -190,6 +192,7 @@
 		$viewState.reports.verification["double_values"].length > 0;
 
 	function handleCloseReport() {
+		p90Value = null;
 		// Clear only report-specific data, preserve colorManagedImage for Image Viewer
 		viewState.update(state => ({
 			...state,
