@@ -9,6 +9,38 @@
 	export let dataAB;
 	export let dataLC;
 
+	let isDark = $appSettings?.isDarkTheme;
+
+	let axisColor = isDark ? "#ddd" : "#333";
+	let legendColor = isDark ? "#eee" : "#222";
+
+	function makeLegendDotDataUri({ fill = "#f00", ring = "#fff" } = {}) {
+		const svg = `
+		<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+			<!-- outer colored dot -->
+			<circle cx="16" cy="16" r="16" fill="${fill}" />
+
+			<!-- inner ring -->
+			<circle cx="16" cy="16" r="12" fill="none" stroke="${ring}" stroke-width="4" />
+
+			<!-- center colored dot again so the ring looks inset -->
+			<circle cx="16" cy="16" r="10" fill="${fill}" />
+		</svg>
+	`.trim();
+
+		return `image://data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+	}
+
+	const referenceLegendIcon = makeLegendDotDataUri({
+		fill: "#f00",
+		ring: "#fff",
+	});
+
+	const estimateLegendIcon = makeLegendDotDataUri({
+		fill: "#f00",
+		ring: "#000",
+	});
+
 	function buildOption(points) {
 		const pointsByGroup = new Map();
 		points.forEach(p => {
@@ -53,7 +85,22 @@
 			legend: {
 				top: 10,
 				right: 10,
-				data: ["Reference", "Image"],
+				itemWidth: 18,
+				itemHeight: 18,
+
+				data: [
+					{
+						name: "Reference",
+						icon: referenceLegendIcon,
+					},
+					{
+						name: "Estimate",
+						icon: estimateLegendIcon,
+					},
+				],
+				textStyle: {
+					color: legendColor,
+				},
 			},
 
 			xAxis: {
@@ -64,6 +111,14 @@
 				min: dataAB ? -maxVal : 0,
 				max: maxVal,
 				splitLine: { show: true },
+
+				axisLabel: {
+					color: axisColor,
+				},
+
+				nameTextStyle: {
+					color: axisColor,
+				},
 			},
 
 			yAxis: {
@@ -74,6 +129,14 @@
 				min: dataAB ? -maxVal : 0,
 				max: maxVal,
 				splitLine: { show: true },
+
+				axisLabel: {
+					color: axisColor,
+				},
+
+				nameTextStyle: {
+					color: axisColor,
+				},
 			},
 
 			// scroll zoom + drag zoom
@@ -93,7 +156,7 @@
 					return `
 					<div style="min-width:90px">
 						<div style="font-weight:700; margin-bottom:6px;">${d.group} ${
-						d.actual ? "Image" : "Reference "
+						d.actual ? "Estimate" : "Reference "
 					}</div>
 					</div>
 							<div style="display:flex; justify-content: space-between; gap:16px;">
@@ -187,7 +250,7 @@
 
 				// Legend: Image (red fill, black border)
 				{
-					name: "Image",
+					name: "Estimate",
 					type: "scatter",
 					data: [[NaN, NaN]],
 					symbolSize: 12,
@@ -212,6 +275,11 @@
 
 	// reactive update
 	$: if (chart) {
+		isDark = $appSettings?.isDarkTheme;
+
+		axisColor = isDark ? "#ddd" : "#333";
+		legendColor = isDark ? "#eee" : "#222";
+
 		chart.setOption(buildOption(dataAB || dataLC));
 	}
 
