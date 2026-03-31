@@ -8,15 +8,18 @@ namespace flatfield {
 
 /**
  * Updates the pixels based on the w calculation for both given images
- * @param h: height of images
- * @param wid: width of images
+ * @param w: white patch
+ * @param row row to begin the operation on
+ * @param col col to begin the operation on
+ * @param img_hei: height of images
+ * @param img_wid: width of images
+ * @param chunk_hei: height of the chunk we wish to operate on
+ * @param chunk_wid: width of the chunk we wish to operate on
  * @param c: channel count
- * @param a1: art1 image
- * @param a2: art2 image
- * @param wh1: white1 image
- * @param wh2: white2 image
- * @param d1: dark1 image
- * @param d2 : dark2 image
+ * @param a: art1 image
+ * @param wh: white1 image
+ * @param d : dark1 image
+ * @param ac : art copy image
  */
 void pixelOperation(float w, int row, int col, int img_hei, int img_wid,
                     int chunk_hei, int chunk_wid, int c, btrgb::Image *a,

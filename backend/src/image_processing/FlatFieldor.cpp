@@ -3,6 +3,25 @@
 #include <iostream>
 #include <utils/threading_statics/flatfield_static.hpp>
 
+void FlatFieldor::create_threads(std::thread **threads, btrgb::Image *a,
+                                 btrgb::Image *wh, btrgb::Image *d,
+                                 btrgb::Image *ac, int height, int width,
+                                 int channels) {
+    // how high each section of the image should be
+    int chunk_height = height / MAX_THREADS;
+    for (int t = 0; t < MAX_THREADS; t++) {
+        threads[t] = new std::thread(
+            btrgb::flatfield::pixelOperation, this->w,
+            // we render in strips, so we only change height
+            (t * chunk_height), 0,
+            // if on the last chunk, capture remainder of the image in the case
+            // of odd num pixels
+            (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width,
+            // actual image resolutions, etc
+            height, width, channels, a, wh, d, ac);
+    }
+}
+
 void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     btrgb::Image *art1;
     btrgb::Image *art2;
@@ -13,9 +32,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     btrgb::Image *target1;
     btrgb::Image *target2;
     RefData *reference;
-
-    // threads
-    std::thread threads[MAX_THREADS];
 
     bool target_found = false;
 
@@ -78,22 +94,15 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
     art1copy->initImage(copy);
 
-    // how high each section of the image should be
-    int chunk_height = height / MAX_THREADS;
-    for (int t = 0; t < MAX_THREADS; t++) {
-        threads[t] = std::thread(
-            btrgb::flatfield::pixelOperation, this->w,
-            // we render in strips, so we only change height
-            (t * chunk_height), 0,
-            // if on the last chunk, capture remainder of the image in the case
-            // of odd num pixels
-            (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width,
-            // actual image resolutions, etc
-            height, width, channels, art1, white1, dark1, art1copy.get());
-    }
+    // thread array
+    std::thread *threads[MAX_THREADS];
+
+    this->create_threads(threads, art1, white1, dark1, art1copy.get(), height,
+                         width, channels);
     // wait for threads to complete
     for (int t = 0; t < MAX_THREADS; t++) {
-        threads[t].join();
+        threads[t]->join();
+        delete threads[t];
     }
     comms->send_progress(0.5, this->get_name());
 
@@ -104,22 +113,13 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
     art2copy->initImage(copy2);
 
-    for (int t = 0; t < MAX_THREADS; t++) {
-        // if on the last thread to create, set its height to the remainder of
-        // the
-        threads[t] = std::thread(
-            btrgb::flatfield::pixelOperation, this->w,
-            // we render in strips, so we only change height
-            (t * chunk_height), 0,
-            // if on the last chunk, capture remainder of the image in the case
-            // of odd num pixels
-            (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width,
-            // actual image resolutions, etc
-            height, width, channels, art2, white2, dark2, art2copy.get());
-    }
+    this->create_threads(threads, art2, white2, dark2, art2copy.get(), height,
+                         width, channels);
     // wait for threads to complete
-    for (int t = 0; t < MAX_THREADS; t++)
-        threads[t].join();
+    for (int t = 0; t < MAX_THREADS; t++) {
+        threads[t]->join();
+        delete threads[t];
+    }
     comms->send_progress(1, this->get_name());
 
     art2copy.reset(nullptr);
@@ -136,27 +136,15 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             new btrgb::Image("target1copy"));
         cv::Mat tcopy =
             btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
-        target1copy->initImage(tcopy);
+        target1copy->initImage(tcopy); 
 
-        // thread
-        for (int t = 0; t < MAX_THREADS; t++) {
-            // if on the last thread to create, set its height to the remainder
-            // of the
-            threads[t] = std::thread(
-                btrgb::flatfield::pixelOperation, this->w,
-                // we render in strips, so we only change height
-                (t * chunk_height), 0,
-                // if on the last chunk, capture remainder of the image in the
-                // case of odd num pixels
-                (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height),
-                width,
-                // actual image resolutions, etc
-                height, width, channels, target1, white1, dark1,
-                target1copy.get());
-        }
+        this->create_threads(threads, target1, white1, dark1, target1copy.get(),
+                             height, width, channels);
         // wait for threads to complete
-        for (int t = 0; t < MAX_THREADS; t++)
-            threads[t].join();
+        for (int t = 0; t < MAX_THREADS; t++) {
+            threads[t]->join();
+            delete threads[t];
+        }
 
         target1copy.reset(nullptr);
 
@@ -166,26 +154,14 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
         cv::Mat tcopy2 =
             btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
         target2copy->initImage(tcopy2);
-
-        // thread
-        for (int t = 0; t < MAX_THREADS; t++) {
-            // if on the last thread to create, set its height to the remainder
-            // of the
-            threads[t] = std::thread(
-                btrgb::flatfield::pixelOperation, this->w,
-                // we render in strips, so we only change height
-                (t * chunk_height), 0,
-                // if on the last chunk, capture remainder of the image in the
-                // case of odd num pixels
-                (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height),
-                width,
-                // actual image resolutions, etc
-                height, width, channels, target2, white2, dark2,
-                target2copy.get());
-        }
+ 
+        this->create_threads(threads, target2, white2, dark2, target2copy.get(),
+                             height, width, channels);
         // wait for threads to complete
-        for (int t = 0; t < MAX_THREADS; t++)
-            threads[t].join();
+        for (int t = 0; t < MAX_THREADS; t++) {
+            threads[t]->join();
+            delete threads[t];
+        }
 
         target2copy.reset(nullptr);
     }
@@ -200,9 +176,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     images->deleteImage("dark2");
 
     comms->send_progress(1, this->get_name());
-    // Outputs TIFFs for each image group for after this step, temporary
-    // images->outputImageAs(btrgb::TIFF, "art1", "art1_ff");
-    // images->outputImageAs(btrgb::TIFF, "art2", "art2_ff");
 }
 
 /**
