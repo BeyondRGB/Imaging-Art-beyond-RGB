@@ -144,9 +144,8 @@ void OpenQualiaRequest::sendSuccessResponse(const btrgb::OQMMetadata& metadata,
     
     response["ResponseData"] = data;
     
-    std::string responseStr = response.as<std::string>();
     std::cout << "[OpenQualia] Sending success response" << std::endl;
-    this->coms_obj_m->send_msg(responseStr);
+    this->coms_obj_m->send_json(response);
 }
 
 void OpenQualiaRequest::sendErrorResponse(const std::string& error) {
@@ -174,9 +173,8 @@ void OpenQualiaRequest::sendErrorResponse(const std::string& error) {
     
     response["ResponseData"] = data;
     
-    std::string responseStr = response.as<std::string>();
     std::cerr << "[OpenQualia] Sending error response: " << error << std::endl;
-    this->coms_obj_m->send_msg(responseStr);
+    this->coms_obj_m->send_json(response);
 }
 
 std::string OpenQualiaRequest::generateTempCsvPath() const {

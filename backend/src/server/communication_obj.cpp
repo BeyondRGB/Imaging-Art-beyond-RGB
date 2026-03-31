@@ -63,6 +63,12 @@ void CommunicationObj::set_id(long newID) { id = newID; }
 
 unsigned long CommunicationObj::get_id() const { return id; }
 
+void CommunicationObj::send_json(const jsoncons::json &body) {
+    std::string msg;
+    body.dump(msg);
+    send_msg(msg);
+}
+
 void CommunicationObj::send_info(std::string msg, std::string sender) {
     jsoncons::json info_body;
     info_body.insert_or_assign("RequestID", id);
@@ -71,9 +77,7 @@ void CommunicationObj::send_info(std::string msg, std::string sender) {
     response_data.insert_or_assign("message", msg);
     response_data.insert_or_assign("sender", sender);
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 }
 
 void CommunicationObj::send_error(std::string msg, std::string sender,
@@ -87,9 +91,7 @@ void CommunicationObj::send_error(std::string msg, std::string sender,
     response_data.insert_or_assign("trace", trace.to_string());
     response_data.insert_or_assign("critical", critical);
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 }
 
 void CommunicationObj::send_progress(double val, std::string sender) {
@@ -100,9 +102,7 @@ void CommunicationObj::send_progress(double val, std::string sender) {
     response_data.insert_or_assign("value", val);
     response_data.insert_or_assign("sender", sender);
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 }
 
 void CommunicationObj::send_base64(btrgb::Image *image,
@@ -129,9 +129,7 @@ void CommunicationObj::send_base64(std::string name,
     response_data.insert_or_assign("dataURL", *b64);
     response_data.insert_or_assign("name", name);
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 };
 
 void CommunicationObj::send_binary(std::string name,
@@ -155,9 +153,7 @@ void CommunicationObj::send_binary(std::string name,
     }
     response_data.insert_or_assign("name", name);
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 
     /* Temporarily add binID on and send. */
     send_bin(*direct_binary);
@@ -174,9 +170,7 @@ void CommunicationObj::send_reports(jsoncons::json reports,
     response_data.insert_or_assign("reportType", report_type);
     response_data.insert_or_assign("reports", reports);
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 }
 
 void CommunicationObj::send_spectrum(float *data, int size) {
@@ -189,9 +183,7 @@ void CommunicationObj::send_spectrum(float *data, int size) {
     for (int i = 0; i < size; i++)
         response_data["spectrum"][i] = data[i];
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 }
 
 void CommunicationObj::send_spectrum_measured(float *estimated_data,
@@ -211,9 +203,7 @@ void CommunicationObj::send_spectrum_measured(float *estimated_data,
         response_data["referenced_spectrum"][i] = reference_data[i];
 
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 }
 
 void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list) {
@@ -223,9 +213,7 @@ void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list) {
     jsoncons::json response_data;
     response_data.insert_or_assign("component_json", compoents_list);
     info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_json(info_body);
 }
 
 btrgb::base64_ptr_t
