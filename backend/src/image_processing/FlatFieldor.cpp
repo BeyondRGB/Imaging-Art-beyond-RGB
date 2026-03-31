@@ -72,7 +72,11 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     // Image set 1-----------------------------------------------------------
     std::unique_ptr<btrgb::Image> art1copy(new btrgb::Image("art1copy"));
     cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
-    art1copy->initImage(copy);
+    cv::Mat post_lowpass;
+    // Perform low-pass filter
+    cv::GaussianBlur(copy, post_lowpass, cv::Size(9, 9), 5);
+
+    art1copy->initImage(post_lowpass);
 
     pixelOperation(height, width, channels, art1, white1, dark1,
                    art1copy.get());
