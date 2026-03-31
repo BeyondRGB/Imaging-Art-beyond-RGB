@@ -5,10 +5,7 @@
 #include <image_processing/results/m_spectral_formater.hpp>
 #include <image_processing/results/r_camera_fromater.hpp>
 
-#include <image_util/icc_profile/CreateIccProfile.hpp>
-
-#include "image_util/icc_profile/WriteIccProfile.h"
-#include <image_util/icc_profile/WriteIccProfile.h>
+#include <image_util/icc_profile/IccProfile.hpp>
 
 ResultsProcessor::~ResultsProcessor() {
     if (nullptr != this->formater) {
@@ -194,7 +191,7 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject *images) {
 }
 
 void ResultsProcessor::output_icc_max(btrgb::ArtObject *images) const {
-    auto *profile = new btrgb::icc::CreateIccProfile();
+    auto *profile = new btrgb::icc::IccProfile();
 
     CalibrationResults *r =
         images->get_results_obj(btrgb::ResultType::CALIBRATION);
@@ -217,9 +214,7 @@ void ResultsProcessor::output_icc_max(btrgb::ArtObject *images) const {
                                      input_channels, output_channels, false);
 
     if (success) {
-        auto *iccProfile = profile->getHybridProfile();
-        btrgb::icc::WriteIccProfile::write(iccProfile,
-                                      this->output_dir + "CM_max.icc");
+        profile->write(this->output_dir + "CM_max.icc");
     } else {
         std::cerr << "Failed to create hybrid profile." << std::endl;
     }

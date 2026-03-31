@@ -157,8 +157,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/image_util/image_writer/LibTiffWriter.cpp
 
         # image_util / icc_profile
-        src/image_util/icc_profile/CreateIccProfile.cpp
-        src/image_util/icc_profile/WriteIccProfile.cpp
+        src/image_util/icc_profile/IccProfile.cpp
 
         # reference_data
         src/reference_data/color_patch.cpp

@@ -1,4 +1,4 @@
-#include <image_util/icc_profile/CreateIccProfile.hpp>
+#include <image_util/icc_profile/IccProfile.hpp>
 #include <iostream>
 #include <ostream>
 #include <unordered_map>
@@ -14,24 +14,24 @@
 #include <IccProfLib/IccUtil.h>
 
 namespace btrgb::icc {
-CreateIccProfile::CreateIccProfile(size_t max_size) {
+IccProfile::IccProfile(size_t max_size) {
     max_profile_size = max_size;
     hybrid_icc = nullptr;
     profile_mem = nullptr;
     profile_size = 0;
 }
 
-CreateIccProfile::~CreateIccProfile() {
+IccProfile::~IccProfile() {
     delete hybrid_icc;
     delete[] profile_mem;
 }
 
-bool CreateIccProfile::createHybridProfile(const ProfileColorSpace space,
-                                           const float *dataMatrix,
-                                           const int numInputChannels,
-                                           const int numOutputChannels,
-                                           const bool ignore_base_channels,
-                                           const float *inv_matrix) {
+bool IccProfile::createHybridProfile(const ProfileColorSpace space,
+                                     const float *dataMatrix,
+                                     const int numInputChannels,
+                                     const int numOutputChannels,
+                                     const bool ignore_base_channels,
+                                     const float *inv_matrix) {
     if (hybrid_icc) {
         delete hybrid_icc;
         delete[] profile_mem;
@@ -56,26 +56,8 @@ bool CreateIccProfile::createHybridProfile(const ProfileColorSpace space,
     rgb_profile->AttachTag(icSigEmbeddedV5ProfileTag, pTag);
 
     hybrid_icc = rgb_profile;
-
-    profile_mem = new unsigned char[max_profile_size];
-
-    CIccMemIO io;
-    io.Attach(profile_mem, max_profile_size, true);
-
-    if (!hybrid_icc->Write(&io)) {
-        delete[] profile_mem;
-        delete hybrid_icc;
-
-        return false;
-    }
-    profile_size = io.GetLength();
-
     return true;
 }
-
-unsigned char *CreateIccProfile::getProfileMem() const { return profile_mem; }
-
-size_t CreateIccProfile::getProfileSize() const { return profile_size; }
 
 struct RGBTags {
     CIccTagXYZ *red;
@@ -233,7 +215,7 @@ std::string getProfileName(const ProfileColorSpace colorSpace) {
     return "Unkown Space";
 }
 
-CIccProfile *CreateIccProfile::createRgbProfile(const ProfileColorSpace space) {
+CIccProfile *IccProfile::createRgbProfile(const ProfileColorSpace space) {
     VALIDATE_COLOR_SPACE(space);
 
     const auto pIcc = new CIccProfile();
@@ -499,7 +481,7 @@ void attachMatrix(CIccTagMultiProcessElement *multiProcessTag,
     multiProcessTag->Attach(profileDataMatrix);
 }
 
-CIccProfile *CreateIccProfile::createSpecProfile(
+CIccProfile *IccProfile::createSpecProfile(
     const ProfileColorSpace baseSpace,
     const float *dataMatrix,
     const int numInputChannels,
@@ -632,4 +614,45 @@ CIccProfile *CreateIccProfile::createSpecProfile(
 
     return iccProfile;
 }
+
+
+unsigned char *IccProfile::getProfileMem() {
+    if (profile_mem)
+        return profile_mem;
+    if (!hybrid_icc) {
+        throw std::runtime_error(
+            "No hybrid profile available to save. Run btrgb::icc::IccProfile::createHybridProfile.");
+    }
+
+    profile_mem = new unsigned char[max_profile_size];
+
+    CIccMemIO io;
+    io.Attach(profile_mem, max_profile_size, true);
+
+    if (!hybrid_icc->Write(&io)) {
+        delete[] profile_mem;
+        return nullptr;
+    }
+
+    profile_size = io.GetLength();
+
+    return profile_mem;
+}
+
+size_t IccProfile::getProfileSize() const { return profile_size; }
+
+void IccProfile::write(const std::string &filename) const {
+    if (!hybrid_icc) {
+        throw std::runtime_error(
+            "No hybrid profile available to save. Run btrgb::icc::IccProfile::createHybridProfile.");
+    }
+
+    auto *iccIO = new CIccFileIO();
+    iccIO->Open(filename.c_str(), "wb");
+
+    hybrid_icc->Write(iccIO, icVersionBasedID);
+
+    iccIO->Close();
+}
+
 } // namespace btrgb

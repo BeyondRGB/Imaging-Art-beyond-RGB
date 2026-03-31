@@ -15,16 +15,16 @@ enum ProfileColorSpace {
     cs_Linear_Normalized_XYZ
 };
 
-class CreateIccProfile {
+class IccProfile {
 public:
     // max_size is the maximum size in bytes that the created profile can be,
     // and should be large enough to hold the profile data created by
     // createHybridProfile for the given input parameters
-    CreateIccProfile(size_t max_size = 1000000);
+    IccProfile(size_t max_size = 1000000);
 
     // destructor will free the memory allocated for the profile, so the caller
     // should not free the memory returned by getProfileMem
-    ~CreateIccProfile();
+    ~IccProfile();
 
     // dataMatrix is expected to be in row major order with num_in columns and
     // num_out rows, and should not include the base channels if
@@ -36,28 +36,56 @@ public:
                              bool ignore_base_channels,
                              const float *inv_matrix = nullptr);
 
-    // getProfileMem and getProfileSize should only be called after
-    // createHybridProfile returns true, and the returned memory should note be
-    // freed
-    unsigned char *getProfileMem() const;
+    void write(const std::string &filename) const;
 
-    size_t getProfileSize() const;
+    /**
+     * @brief Retrieves raw icc profile memory so it can be saved into TIFF images.
+     * You are required to run @fn createHybridProfile before this will return anything.
+     *
+     * @return The raw icc profile memory.
+     */
+    unsigned char *getProfileMem();
 
-    // get access to the created profile object, which will be owned by this
-    // class and should not be deleted by the caller. This is provided for
-    // advanced use cases where the caller may want to access the profile
-    // object.
+    /**
+     * @brief Retrieves size of the raw icc profile memory.
+     * You are required to run @fn createHybridProfile before this will return anything.
+     *
+     * @return The size of the profile's memory.
+     */
+    [[nodiscard]] size_t getProfileSize() const;
+
+    /**
+     * Get access to the created profile object, which will be owned by this
+     * class and should not be deleted by the caller. This is provided for
+     * advanced use cases where the caller may want to access the profile object.
+     *
+     * @return The internal CIccProfile object, owned by this class.
+     */
     [[nodiscard]] CIccProfile *getHybridProfile() const { return hybrid_icc; }
 
 protected:
-    // helper functions to create the base RGB profile and the MPE profile to be
-    // embedded in the hybrid profile
+    /**
+     * Helper functions to create the base RGB profile and the MPE profile to be embedded in the hybrid profile
+     *
+     * @param space The color space that the iccProfile should use.
+     * @return An RGB CIccProfile for the specified color space.
+     */
     static CIccProfile *createRgbProfile(ProfileColorSpace space);
 
     // if inverseMatrix is provided then it must be the inverse of dataMatrix and
     // include entries for all channels (including ignored channels if dataMatrix
     // doesn't include them. If inverseMatrix is not provided then no BToD3 tag
     // will be created
+    /**
+     *
+     * @param baseSpace
+     * @param dataMatrix
+     * @param numInputChannels
+     * @param numOutputChannels
+     * @param ignore_base_channels
+     * @param inverseMatrix
+     * @return
+     */
     static CIccProfile *createSpecProfile(ProfileColorSpace baseSpace,
                                           const float *dataMatrix,
                                           int numInputChannels,
@@ -65,7 +93,14 @@ protected:
                                           bool ignore_base_channels,
                                           const float *inverseMatrix = nullptr);
 
-    // data members
+    /**
+     *
+     * @param icc_profile
+     * @param filename
+     */
+    static void write(CIccProfile *icc_profile, const std::string &filename);
+
+    // MARK: Data Members
     size_t max_profile_size;
     CIccProfile *hybrid_icc;
     unsigned char *profile_mem;
