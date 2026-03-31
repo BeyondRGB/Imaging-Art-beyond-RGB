@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+include(CheckCXXCompilerFlag)
+
 # Sets the CMAKE Toolchain to the vcpkg installed using ./arch_config_environment
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
@@ -23,6 +25,34 @@ endif ()
 
 project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.4.0)
 
+option(ENABLE_TESTS "Build backend unit tests" OFF)
+option(ENABLE_COVERAGE "Enable backend coverage instrumentation" OFF)
+
+function(enable_target_coverage target_name)
+    if (NOT ENABLE_COVERAGE)
+        return()
+    endif ()
+
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${target_name} PRIVATE -O0 -g --coverage)
+        target_link_options(${target_name} PRIVATE --coverage)
+    else ()
+        message(WARNING "Coverage is only configured for GCC and Clang toolchains.")
+    endif ()
+endfunction()
+
+function(apply_websocketpp_gcc_workaround target_name)
+    if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        return()
+    endif ()
+
+    check_cxx_compiler_flag("-Wno-template-id-cdtor" HAS_WNO_TEMPLATE_ID_CDTOR)
+    if (HAS_WNO_TEMPLATE_ID_CDTOR)
+        # websocketpp still uses template-ids on ctors/dtors, which newer GCC warns on in C++20.
+        target_compile_options(${target_name} PRIVATE -Wno-template-id-cdtor)
+    endif ()
+endfunction()
+
 configure_file(
         ${CMAKE_SOURCE_DIR}/include/version.h.in
         ${CMAKE_SOURCE_DIR}/include/version.h
@@ -41,6 +71,10 @@ find_package(jsoncons CONFIG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(boost_lexical_cast CONFIG REQUIRED)
 find_package(boost_range CONFIG REQUIRED)
+
+if (ENABLE_TESTS)
+    find_package(Catch2 CONFIG REQUIRED)
+endif ()
 
 find_path(CPPCODEC_INCLUDE_DIRS "cppcodec/base32_crockford.hpp")
 
@@ -159,6 +193,11 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/time_tracker.cpp
 )
 
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+    target_sources(${PROJECT_NAME} PRIVATE src/compat/avx2_compat.c)
+    set_source_files_properties(src/compat/avx2_compat.c PROPERTIES COMPILE_OPTIONS "-mavx2")
+endif ()
+
 # Set all source include files (ie. *.h)
 target_include_directories(${PROJECT_NAME} PUBLIC "include/")
 
@@ -204,6 +243,7 @@ endif ()
 
 # Set C++ standard
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
+apply_websocketpp_gcc_workaround(${PROJECT_NAME})
 
 # weird fix for linux to remove malformed macro included in lib dependency
 # TODO: remove this with a better fix
@@ -212,5 +252,58 @@ if (UNIX AND NOT APPLE)
     if (current_defs)
         list(FILTER current_defs EXCLUDE REGEX "^-pthread$")
         set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_DEFINITIONS "${current_defs}")
+    endif ()
+endif ()
+
+if (ENABLE_TESTS)
+    enable_testing()
+
+    add_executable(unit_tests
+            test/unit_utils.cpp
+            src/server/globals_singleton.cpp
+            src/utils/cmd_arg_manager.cpp
+            src/utils/csv_parser.cpp
+            src/utils/general_utils.cpp
+            src/utils/resource_paths.cpp
+    )
+
+    target_include_directories(unit_tests PRIVATE "include/")
+    target_link_libraries(unit_tests PRIVATE Catch2::Catch2WithMain)
+    target_link_libraries(unit_tests PRIVATE Boost::lexical_cast)
+    set_property(TARGET unit_tests PROPERTY CXX_STANDARD 20)
+    enable_target_coverage(unit_tests)
+
+    add_test(NAME backend_unit_tests COMMAND unit_tests)
+
+    if (ENABLE_COVERAGE)
+        find_program(LCOV_BIN lcov)
+        find_program(GENHTML_BIN genhtml)
+
+        if (LCOV_BIN AND GENHTML_BIN)
+            set(COVERAGE_DIR "${CMAKE_BINARY_DIR}/coverage")
+            set(COVERAGE_BASE "${COVERAGE_DIR}/base.info")
+            set(COVERAGE_TEST "${COVERAGE_DIR}/test.info")
+            set(COVERAGE_TOTAL "${COVERAGE_DIR}/total.info")
+            set(COVERAGE_FILTERED "${COVERAGE_DIR}/filtered.info")
+            set(COVERAGE_HTML_DIR "${COVERAGE_DIR}/html")
+
+            add_custom_target(coverage
+                    COMMAND ${CMAKE_COMMAND} -E rm -rf "${COVERAGE_DIR}"
+                    COMMAND ${CMAKE_COMMAND} -E make_directory "${COVERAGE_DIR}"
+                    COMMAND ${LCOV_BIN} --directory . --zerocounters
+                    COMMAND ${LCOV_BIN} --directory . --capture --initial --output-file "${COVERAGE_BASE}"
+                    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+                    COMMAND ${LCOV_BIN} --directory . --capture --output-file "${COVERAGE_TEST}"
+                    COMMAND ${LCOV_BIN} --add-tracefile "${COVERAGE_BASE}" --add-tracefile "${COVERAGE_TEST}" --output-file "${COVERAGE_TOTAL}"
+                    COMMAND ${LCOV_BIN} --extract "${COVERAGE_TOTAL}" "${CMAKE_SOURCE_DIR}/src/utils/*" "${CMAKE_SOURCE_DIR}/src/server/globals_singleton.cpp" --output-file "${COVERAGE_FILTERED}"
+                    COMMAND ${GENHTML_BIN} "${COVERAGE_FILTERED}" --output-directory "${COVERAGE_HTML_DIR}"
+                    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+                    DEPENDS unit_tests
+                    COMMENT "Generating backend coverage report"
+                    VERBATIM
+            )
+        else ()
+            message(WARNING "lcov/genhtml not found. Coverage target will not be available.")
+        endif ()
     endif ()
 endif ()
