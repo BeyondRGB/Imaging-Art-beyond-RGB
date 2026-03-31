@@ -18,6 +18,9 @@ import {
 	clearTabsAfter,
 } from "../src/renderer/util/stores.ts";
 import { get } from "svelte/store";
+import backendLifecycle from "../src/main/backendLifecycle.js";
+
+const { registerAppLifecycleHandlers, terminateBackendProcess } = backendLifecycle;
 
 test("compareTwoStrings returns exact matches and similarity scores", () => {
 	assert.equal(compareTwoStrings("beyond rgb", "beyond rgb"), 1);
@@ -226,4 +229,116 @@ test("store helpers reset and update process completion state", () => {
 
 test("connectionState falls back to closed when Electron APIs are unavailable", () => {
 	assert.equal(get(connectionState), "Closed");
+});
+
+test("terminateBackendProcess ignores missing loaders", () => {
+	assert.equal(terminateBackendProcess(undefined), undefined);
+	assert.equal(terminateBackendProcess(null), undefined);
+	assert.equal(terminateBackendProcess({}), undefined);
+});
+
+test("terminateBackendProcess kills detached POSIX process groups first", () => {
+	const calls: Array<Array<number | string>> = [];
+
+	terminateBackendProcess(
+		{ pid: 321 },
+		{
+			platform: "darwin",
+			kill(pid: number, signal?: string) {
+				calls.push(signal ? [pid, signal] : [pid]);
+			},
+		}
+	);
+
+	assert.deepEqual(calls, [[-321, "SIGTERM"]]);
+});
+
+test("terminateBackendProcess falls back to direct pid kill without crashing", () => {
+	const calls: Array<Array<number | string>> = [];
+	const logs: string[] = [];
+
+	terminateBackendProcess(
+		{ pid: 654 },
+		{
+			platform: "darwin",
+			logger: {
+				log(message: string) {
+					logs.push(message);
+				},
+			},
+			kill(pid: number, signal?: string) {
+				calls.push(signal ? [pid, signal] : [pid]);
+				if (pid < 0) {
+					const error = new Error("group missing") as NodeJS.ErrnoException;
+					error.code = "EPERM";
+					throw error;
+				}
+				if (pid > 0) {
+					const error = new Error("process missing") as NodeJS.ErrnoException;
+					error.code = "ESRCH";
+					throw error;
+				}
+			},
+		}
+	);
+
+	assert.deepEqual(calls, [
+		[-654, "SIGTERM"],
+		[654, "SIGTERM"],
+	]);
+	assert.deepEqual(logs, []);
+});
+
+test("terminateBackendProcess logs unexpected Windows kill failures", () => {
+	const logs: string[] = [];
+
+	terminateBackendProcess(
+		{ pid: 777 },
+		{
+			platform: "win32",
+			logger: {
+				log(message: string) {
+					logs.push(message);
+				},
+			},
+			kill() {
+				const error = new Error("permission denied") as NodeJS.ErrnoException;
+				error.code = "EPERM";
+				throw error;
+			},
+		}
+	);
+
+	assert.equal(logs.length, 1);
+	assert.match(logs[0], /Failed to terminate backend process 777/);
+});
+
+test("registerAppLifecycleHandlers wires app quit behavior", () => {
+	const events = new Map<string, Function>();
+	let quitCalls = 0;
+	let cleanupCalls = 0;
+
+	registerAppLifecycleHandlers(
+		{
+			on(eventName: string, handler: Function) {
+				events.set(`on:${eventName}`, handler);
+			},
+			once(eventName: string, handler: Function) {
+				events.set(`once:${eventName}`, handler);
+			},
+			quit() {
+				quitCalls += 1;
+			},
+		},
+		() => {
+			cleanupCalls += 1;
+		}
+	);
+
+	events.get("on:window-all-closed")?.();
+	events.get("once:will-quit")?.();
+	events.get("once:will-quit")?.();
+
+	assert.equal(quitCalls, 1);
+	assert.equal(cleanupCalls, 1);
 });
