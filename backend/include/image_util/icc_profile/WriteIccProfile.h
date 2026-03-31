@@ -7,7 +7,7 @@
 
 #include <IccProfLib/IccProfile.h>
 
-namespace btrgb {
+namespace btrgb::icc {
 class WriteIccProfile {
   public:
     static void write(CIccProfile *icc_profile, const std::string &filename);

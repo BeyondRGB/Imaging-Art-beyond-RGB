@@ -194,7 +194,7 @@ void ResultsProcessor::output_user_results(btrgb::ArtObject *images) {
 }
 
 void ResultsProcessor::output_icc_max(btrgb::ArtObject *images) const {
-    auto *profile = new btrgb::CreateIccProfile();
+    auto *profile = new btrgb::icc::CreateIccProfile();
 
     CalibrationResults *r =
         images->get_results_obj(btrgb::ResultType::CALIBRATION);
@@ -213,12 +213,12 @@ void ResultsProcessor::output_icc_max(btrgb::ArtObject *images) const {
     const int output_channels = continuous_spectral_matrix.rows;
 
     bool success =
-        profile->createHybridProfile(btrgb::cs_ProPhoto, flattenedMatrix,
+        profile->createHybridProfile(btrgb::icc::cs_ProPhoto, flattenedMatrix,
                                      input_channels, output_channels, false);
 
     if (success) {
         auto *iccProfile = profile->getHybridProfile();
-        btrgb::WriteIccProfile::write(iccProfile,
+        btrgb::icc::WriteIccProfile::write(iccProfile,
                                       this->output_dir + "CM_max.icc");
     } else {
         std::cerr << "Failed to create hybrid profile." << std::endl;

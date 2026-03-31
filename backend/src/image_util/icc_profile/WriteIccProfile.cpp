@@ -7,7 +7,7 @@
 
 #include "IccProfLib/IccIO.h"
 
-namespace btrgb {
+namespace btrgb::icc {
 void WriteIccProfile::write(CIccProfile *icc_profile,
                             const std::string &filename) {
     auto *iccIO = new CIccFileIO();

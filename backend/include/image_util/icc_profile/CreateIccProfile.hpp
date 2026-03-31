@@ -3,7 +3,7 @@
 
 #include <IccProfLib/IccProfile.h>
 
-namespace btrgb {
+namespace btrgb::icc {
 
 #define VALIDATE_COLOR_SPACE(space) if (space > ProfileColorSpace::cs_Linear_Normalized_XYZ || space < 0) { return nullptr; }
 

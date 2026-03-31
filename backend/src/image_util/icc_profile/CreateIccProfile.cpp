@@ -13,7 +13,7 @@
 #include <IccProfLib/IccTagMPE.h>
 #include <IccProfLib/IccUtil.h>
 
-namespace btrgb {
+namespace btrgb::icc {
 CreateIccProfile::CreateIccProfile(size_t max_size) {
     max_profile_size = max_size;
     hybrid_icc = nullptr;
