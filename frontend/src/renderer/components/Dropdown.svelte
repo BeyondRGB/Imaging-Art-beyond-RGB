@@ -6,7 +6,16 @@
 		illuminants: string;
 	};
 
-	import { computePosition, autoPlacement, shift, offset, flip, inline } from "@floating-ui/dom";
+	import { tick } from "svelte";
+	import {
+		computePosition,
+		autoPlacement,
+		autoUpdate,
+		shift,
+		offset,
+		flip,
+		inline,
+	} from "@floating-ui/dom";
 	import { ChevronDownIcon, ChevronUpIcon } from "svelte-feather-icons";
 	export let values: Array<DropdownOption>;
 	export let selected: DropdownOption;
@@ -17,29 +26,51 @@
 	export let spaceLast = false;
 	let btnRef;
 	let popRef;
+	let cleanupAutoUpdate: (() => void) | null = null;
+
+	function moveToBody() {
+		if (popRef && popRef.parentNode !== document.body) {
+			document.body.appendChild(popRef);
+		}
+	}
+
+	function cleanupPositioning() {
+		if (cleanupAutoUpdate) {
+			cleanupAutoUpdate();
+			cleanupAutoUpdate = null;
+		}
+	}
+
+	async function updateDropdownPosition() {
+		await tick(); // Make sure any pending UI updates complete first
+		if (!btnRef || !popRef) return;
+
+		moveToBody();
+
+		computePosition(btnRef, popRef, {
+			strategy: "fixed",
+			placement: "bottom-start",
+			middleware: [offset(4), flip(), shift({ padding: 8 }), inline()],
+		}).then(({ x, y }) => {
+			Object.assign(popRef.style, {
+				left: "0",
+				top: "0",
+				transform: `translate(${Math.round(x)}px, ${Math.round(y)}px)`,
+			});
+		});
+	}
 
 	const toggleDropdown = () => {
 		if (show) {
 			show = false;
-		} else {
-			show = true;
-			computePosition(btnRef, popRef, {
-				strategy: "fixed",
-				placement: "bottom",
-				middleware: [
-					offset({
-						mainAxis: 4,
-						// crossAxis: -50,
-					}),
-					inline(),
-				],
-			}).then(({ x, y }) => {
-				Object.assign(popRef.style, {
-					left: "0",
-					top: "0",
-					transform: `translate(${Math.round(x)}px,${Math.round(y)}px)`,
-				});
-			});
+			cleanupPositioning();
+			return;
+		}
+
+		show = true;
+
+		if (btnRef && popRef) {
+			cleanupAutoUpdate = autoUpdate(btnRef, popRef, updateDropdownPosition);
 		}
 	};
 </script>
@@ -68,6 +99,7 @@
 			on:click={() => {
 				selected = value;
 				show = false;
+				cleanupPositioning();
 			}}
 		>
 			{value.name}
@@ -105,7 +137,7 @@
 		background-color: var(--color-interactive-hover);
 	}
 	.background {
-		@apply fixed top-0 left-0 w-full h-full z-10 block float-none;
+		@apply fixed top-0 left-0 w-full h-full z-20 block float-none;
 	}
 	.iconSqu {
 		background-color: var(--color-interactive);
