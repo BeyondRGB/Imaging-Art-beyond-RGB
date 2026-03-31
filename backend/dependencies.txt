@@ -10,3 +10,4 @@ zlib
 boost-lexical-cast
 boost-range
 opencv4
+catch2
