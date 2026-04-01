@@ -210,7 +210,7 @@ void ResultsProcessor::output_icc_max(btrgb::ArtObject *images) const {
     const int output_channels = continuous_spectral_matrix.rows;
 
     bool success =
-        profile->createHybridProfile(btrgb::icc::cs_ProPhoto, flattenedMatrix,
+        profile->createHybridProfile(btrgb::ProPhoto, flattenedMatrix,
                                      input_channels, output_channels, false);
 
     if (success) {

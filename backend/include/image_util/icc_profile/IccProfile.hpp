@@ -1,20 +1,14 @@
 #ifndef CREATEICCPROFILE_H
 #define CREATEICCPROFILE_H
 
+#include "image_util/ColorProfiles.hpp"
+
 #include <IccProfLib/IccProfile.h>
 
 namespace btrgb::icc {
 
 // An enum that validates if a given ProfileColorSpace enum is valid.
-#define VALIDATE_COLOR_SPACE(space) if (space > ProfileColorSpace::cs_Linear_Normalized_XYZ || space < 0) { return nullptr; }
-
-enum ProfileColorSpace {
-    cs_Adobe_RGB_1998 = 0,
-    cs_ProPhoto,
-    cs_sRGB,
-    cs_Wide_Gamut_RGB,
-    cs_Linear_Normalized_XYZ
-};
+#define VALIDATE_COLOR_SPACE(space) if (space > ColorSpace::none || space < 0) { return nullptr; }
 
 class IccProfile {
 public:
@@ -40,7 +34,7 @@ public:
      * @param inverseMatrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
      * @return If creation of the profile was successful, true. The created profile can be accessed using @fn getHybridProfile.
      */
-    bool createHybridProfile(ProfileColorSpace space,
+    bool createHybridProfile(ColorSpace space,
                              const float *dataMatrix,
                              int numInputChannels,
                              int numOutputChannels,
@@ -86,7 +80,7 @@ protected:
      * @param space The color space that the iccProfile should use.
      * @return An RGB CIccProfile for the specified color space.
      */
-    static CIccProfile *createRgbProfile(ProfileColorSpace space);
+    static CIccProfile *createRgbProfile(ColorSpace space);
 
     /**
      * @brief Create a spectral icc profile for the given space & data.
@@ -101,7 +95,7 @@ protected:
      * @param inverseMatrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
      * @return A spectral CIccProfile.
      */
-    static CIccProfile *createSpecProfile(ProfileColorSpace baseSpace,
+    static CIccProfile *createSpecProfile(ColorSpace baseSpace,
                                           const float *dataMatrix,
                                           int numInputChannels,
                                           int numOutputChannels,

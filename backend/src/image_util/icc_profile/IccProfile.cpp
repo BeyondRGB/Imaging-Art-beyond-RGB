@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <array>
 // Needed for memset on GCC.
+#include <image_util/ColorProfiles.hpp>
+
 #include <cstring>
 
 #include <IccProfLib/IccIO.h>
@@ -26,7 +28,7 @@ IccProfile::~IccProfile() {
     delete[] profileMemory;
 }
 
-bool IccProfile::createHybridProfile(const ProfileColorSpace space,
+bool IccProfile::createHybridProfile(const ColorSpace space,
                                      const float *dataMatrix,
                                      const int numInputChannels,
                                      const int numOutputChannels,
@@ -69,9 +71,9 @@ struct RGBTags {
     CIccTagXYZ *blue;
 };
 
-void createRGBTags(RGBTags *tags, const ProfileColorSpace colorSpace) {
+void createRGBTags(RGBTags *tags, const ColorSpace colorSpace) {
     switch (colorSpace) {
-    case cs_Adobe_RGB_1998:
+    case Adobe_RGB_1998:
         // Attach red XYZ primary to profile
         tags->red = new CIccTagXYZ();
         tags->red->GetXYZ(0)->X = icDtoF(0.60974);
@@ -90,7 +92,7 @@ void createRGBTags(RGBTags *tags, const ProfileColorSpace colorSpace) {
         tags->blue->GetXYZ(0)->Y = icDtoF(0.06322);
         tags->blue->GetXYZ(0)->Z = icDtoF(0.74457);
         break;
-    case cs_ProPhoto:
+    case ProPhoto:
         // Attach red XYZ primary to profile
         tags->red = new CIccTagXYZ();
         tags->red->GetXYZ(0)->X = icDtoF(0.398818969727);
@@ -109,7 +111,7 @@ void createRGBTags(RGBTags *tags, const ProfileColorSpace colorSpace) {
         tags->blue->GetXYZ(0)->Y = icDtoF(0.000518798828);
         tags->blue->GetXYZ(0)->Z = icDtoF(0.412048339844);
         break;
-    case cs_sRGB:
+    case sRGB:
         // Attach red XYZ primary to profile
         tags->red = new CIccTagXYZ();
         tags->red->GetXYZ(0)->X = icDtoF(0.436065673828);
@@ -128,7 +130,7 @@ void createRGBTags(RGBTags *tags, const ProfileColorSpace colorSpace) {
         tags->blue->GetXYZ(0)->Y = icDtoF(0.060607910156);
         tags->blue->GetXYZ(0)->Z = icDtoF(0.714096069336);
         break;
-    case cs_Wide_Gamut_RGB:
+    case Wide_Gamut_RGB:
         // Attach red XYZ primary to profile
         tags->red = new CIccTagXYZ();
         tags->red->GetXYZ(0)->X = icDtoF(0.7579);
@@ -147,7 +149,7 @@ void createRGBTags(RGBTags *tags, const ProfileColorSpace colorSpace) {
         tags->blue->GetXYZ(0)->Y = icDtoF(0.0433);
         tags->blue->GetXYZ(0)->Z = icDtoF(0.6541);
         break;
-    case cs_Linear_Normalized_XYZ:
+    case Linear_Normalized_XYZ:
         tags->red = new CIccTagXYZ();
         tags->red->GetXYZ(0)->X = icDtoF(0.96420288);
         tags->red->GetXYZ(0)->Y = icDtoF(0);
@@ -171,26 +173,26 @@ void createRGBTags(RGBTags *tags, const ProfileColorSpace colorSpace) {
 }
 
 void createParametricCurve(CIccTagParametricCurve *parametricCurve,
-                           const ProfileColorSpace colorSpace) {
+                           const ColorSpace colorSpace) {
     parametricCurve->SetFunctionType(3);
     icFloatNumber *param = parametricCurve->GetParams();
 
     switch (colorSpace) {
-    case cs_ProPhoto:
+    case ProPhoto:
         param[0] = 1.80000;
         param[1] = 1.00000;
         param[2] = 0.00000;
         param[3] = 0.0625;
         param[4] = 0.03125;
         break;
-    case cs_sRGB:
+    case sRGB:
         param[0] = 2.4; // gamma
         param[1] = 0.947867298578199; // a
         param[2] = 0.0521327014218010; // b
         param[3] = 0.077399380804954; // c
         param[4] = 0.04045; // d
         break;
-    case cs_Wide_Gamut_RGB:
+    case Wide_Gamut_RGB:
         param[0] = 3.0;
         param[1] = 1.121991404;
         param[2] = 0.137931034;
@@ -202,24 +204,26 @@ void createParametricCurve(CIccTagParametricCurve *parametricCurve,
     }
 }
 
-std::string getProfileName(const ProfileColorSpace colorSpace) {
+std::string getProfileName(const ColorSpace colorSpace) {
     switch (colorSpace) {
-    case cs_Adobe_RGB_1998:
+    case Adobe_RGB_1998:
         return "Hybrid aRGB";
-    case cs_ProPhoto:
+    case ProPhoto:
         return "Hybrid Pro Photo RGB";
-    case cs_sRGB:
+    case sRGB:
         return "Hybrid aRGB";
-    case cs_Wide_Gamut_RGB:
+    case Wide_Gamut_RGB:
         return "Hybrid Wide Gamut RGB";
-    case cs_Linear_Normalized_XYZ:
+    case Linear_Normalized_XYZ:
         return "Hybrid Linear Normalized XYZ as RGB";
+    case none:
+    default:
+        return "Unknown Space";
     }
 
-    return "Unkown Space";
 }
 
-CIccProfile *IccProfile::createRgbProfile(const ProfileColorSpace space) {
+CIccProfile *IccProfile::createRgbProfile(const ColorSpace space) {
     VALIDATE_COLOR_SPACE(space);
 
     const auto pIcc = new CIccProfile();
@@ -258,8 +262,8 @@ CIccProfile *IccProfile::createRgbProfile(const ProfileColorSpace space) {
     pIcc->AttachTag(icSigBlueMatrixColumnTag, tags->blue);
 
     // These three color spaces use a parametric curves, so attach one to the profile.
-    if (space == cs_ProPhoto || space == cs_sRGB || space ==
-        cs_Wide_Gamut_RGB) {
+    if (space == ProPhoto || space == sRGB || space ==
+        Wide_Gamut_RGB) {
         auto *pCurveParametric = new CIccTagParametricCurve();
         createParametricCurve(pCurveParametric, space);
         pIcc->AttachTag(icSigRedTRCTag, pCurveParametric);
@@ -268,9 +272,9 @@ CIccProfile *IccProfile::createRgbProfile(const ProfileColorSpace space) {
     }
 
     // These two color spaces use a gamma curve, so attach one to the profile.
-    if (space == cs_Adobe_RGB_1998 || space == cs_Linear_Normalized_XYZ) {
+    if (space == Adobe_RGB_1998 || space == Linear_Normalized_XYZ) {
         auto *pCurveGamma = new CIccTagCurve();
-        pCurveGamma->SetGamma(space == cs_Adobe_RGB_1998
+        pCurveGamma->SetGamma(space == Adobe_RGB_1998
                                   ? (563.0f / 256.0f)
                                   : 1.0f);
 
@@ -367,16 +371,16 @@ struct ColorSpaceCurveProfiles {
 };
 
 
-static const std::unordered_map<ProfileColorSpace, ColorSpaceCurveProfiles>
+static const std::unordered_map<ColorSpace, ColorSpaceCurveProfiles>
 profiles =
 {
-    {cs_Adobe_RGB_1998, {
+    {Adobe_RGB_1998, {
          // Normal: A gamma 2.2 curve with no offset.
          {{}, {icMaxFloat32Number, {563.0f / 256.0f, 1.0f, 0.0f, 0.0f}}, false},
          // Inverse: A gamma (1 / 2.2) curve with no offset.
          {{}, {icMaxFloat32Number, {256.0f / 563.0f, 1.0f, 0.0f, 0.0f}}, false},
      }},
-    {cs_ProPhoto, {
+    {ProPhoto, {
          {
              // Normal Profile
              // A linear curve from 0 to 0.13 with a slope of 0.0625 (1/16) to avoid a hard cut-off at 0.0.
@@ -393,7 +397,7 @@ profiles =
              true
          },
      }},
-    {cs_sRGB, {
+    {sRGB, {
          {
              // Normal Profile
              // A linear curve from 0 to 0.04045 with slope of 0.077399380804954 to avoid a hard cutoff at 0.0, then apply a gamma 2.4 curve with no offset
@@ -415,22 +419,22 @@ profiles =
 };
 
 void attachGammaCurve(CIccTagMultiProcessElement *multiProcessTag,
-                      const ProfileColorSpace colorSpace,
+                      const ColorSpace colorSpace,
                       CIccSegmentedCurve *segmentedCurve,
                       CIccMpeCurveSet *curveSet,
                       const int totalNumberOfChannels,
                       const bool inverse = false) {
-    if (colorSpace == cs_Linear_Normalized_XYZ) {
+    if (colorSpace == Linear_Normalized_XYZ) {
         return;
     }
 
     CIccFormulaCurveSegment *curveSegmentFormula;
 
-    ProfileColorSpace adjustedColorSpace = colorSpace;
+    ColorSpace adjustedColorSpace = colorSpace;
 
     // Wide gamut is processed the same as adobe rgb so change it for the profile lookup.
-    if (colorSpace == cs_Wide_Gamut_RGB) {
-        adjustedColorSpace = cs_Adobe_RGB_1998;
+    if (colorSpace == Wide_Gamut_RGB) {
+        adjustedColorSpace = Adobe_RGB_1998;
     }
 
     //.Find the ColorSpaceProfile that matches this Color Space.
@@ -486,7 +490,7 @@ void attachMatrix(CIccTagMultiProcessElement *multiProcessTag,
 }
 
 CIccProfile *IccProfile::createSpecProfile(
-    const ProfileColorSpace baseSpace,
+    const ColorSpace baseSpace,
     const float *dataMatrix,
     const int numInputChannels,
     const int numOutputChannels,
