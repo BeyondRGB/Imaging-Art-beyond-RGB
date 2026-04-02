@@ -143,11 +143,12 @@ std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image)
         }
 
         std::sort(rankedChannels.begin(), rankedChannels.end(),
-                  [](const auto& lhs, const auto& rhs) {
+                  [](const std::pair<double, int>& lhs,
+                     const std::pair<double, int>& rhs) {
                       return lhs.first > rhs.first;
                   });
 
-        const std::array<const char*, 3> channelNames = {"blue", "green", "red"};
+        const std::array<std::string, 3> channelNames = {"blue", "green", "red"};
         const int channelCount = static_cast<int>(rankedChannels.size());
         for (int i = 0; i < channelCount; ++i) {
             const int channelIndex = rankedChannels[i].second;

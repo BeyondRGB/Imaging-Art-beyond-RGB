@@ -99,35 +99,23 @@ void QRScanRequest::run() {
 }
 
 void QRScanRequest::sendSuccessResponse(const std::string& url, bool isOpenQualia) {
-    jsoncons::json response;
-    response["ResponseType"] = "QRCodeScanned";
-    response["RequestID"] = this->coms_obj_m->get_id();
-    
     jsoncons::json data;
     data["found"] = true;
     data["url"] = url;
     data["isOpenQualia"] = isOpenQualia;
     data["error"] = jsoncons::json::null();
-    
-    response["ResponseData"] = data;
-    
+
     std::cout << "[QRScan] Sending success response: " << url << std::endl;
-    this->coms_obj_m->send_json(response);
+    this->coms_obj_m->send_response("QRCodeScanned", data);
 }
 
 void QRScanRequest::sendErrorResponse(const std::string& error) {
-    jsoncons::json response;
-    response["ResponseType"] = "QRCodeScanned";
-    response["RequestID"] = this->coms_obj_m->get_id();
-    
     jsoncons::json data;
     data["found"] = false;
     data["url"] = "";
     data["isOpenQualia"] = false;
     data["error"] = error;
-    
-    response["ResponseData"] = data;
-    
+
     std::cerr << "[QRScan] Sending error response: " << error << std::endl;
-    this->coms_obj_m->send_json(response);
+    this->coms_obj_m->send_response("QRCodeScanned", data);
 }

@@ -8,23 +8,24 @@
 
 namespace btrgb {
 
-namespace {
+namespace { // File-local HTTP parsing and download-resolution helpers.
+
+void replace_all(std::string& text,
+                 const std::string& from,
+                 const std::string& to) {
+    size_t startPos = 0;
+    while ((startPos = text.find(from, startPos)) != std::string::npos) {
+        text.replace(startPos, from.size(), to);
+        startPos += to.size();
+    }
+}
 
 std::string decodeHtmlEntities(std::string value) {
-    auto replaceAll = [](std::string& text, const std::string& from,
-                         const std::string& to) {
-        size_t startPos = 0;
-        while ((startPos = text.find(from, startPos)) != std::string::npos) {
-            text.replace(startPos, from.size(), to);
-            startPos += to.size();
-        }
-    };
-
-    replaceAll(value, "&amp;", "&");
-    replaceAll(value, "&quot;", "\"");
-    replaceAll(value, "&#39;", "'");
-    replaceAll(value, "&lt;", "<");
-    replaceAll(value, "&gt;", ">");
+    replace_all(value, "&amp;", "&");
+    replace_all(value, "&quot;", "\"");
+    replace_all(value, "&#39;", "'");
+    replace_all(value, "&lt;", "<");
+    replace_all(value, "&gt;", ">");
     return value;
 }
 
@@ -44,6 +45,8 @@ std::optional<std::string> resolveUrl(const std::string& baseUrl,
         return candidateUrl;
     }
 
+    // Matches scheme://host[:port][/path] so relative links can be resolved
+    // against the original download page.
     std::regex urlRegex(R"(^(https?)://([^/:]+)(?::(\d+))?(/.*)?$)");
     std::smatch matches;
     if (!std::regex_match(baseUrl, matches, urlRegex)) {
@@ -67,7 +70,7 @@ std::optional<std::string> resolveUrl(const std::string& baseUrl,
 } // namespace
 
 std::optional<HttpClient::UrlComponents> HttpClient::parseUrl(const std::string& url) {
-    // Simple URL parser for https://host:port/path format
+    // Matches scheme://host[:port][/path] and leaves policy decisions to fetch().
     std::regex urlRegex(R"(^(https?)://([^/:]+)(?::(\d+))?(/.*)?$)");
     std::smatch matches;
     
@@ -95,13 +98,14 @@ HttpResponse HttpClient::fetch(const std::string& url, int timeoutSeconds) {
     response.success = false;
     response.statusCode = 0;
     
-    auto components = parseUrl(url);
+    std::optional<UrlComponents> components = parseUrl(url);
     if (!components) {
         response.error = "Invalid URL format";
         return response;
     }
     
-    // Only allow HTTPS for security
+    // URL parsing is generic, but remote OpenQualia fetches are restricted to
+    // HTTPS so measurement retrieval stays on encrypted transport.
     if (components->scheme != "https") {
         response.error = "Only HTTPS URLs are supported";
         return response;
@@ -121,10 +125,10 @@ HttpResponse HttpClient::fetch(const std::string& url, int timeoutSeconds) {
         std::cout << "[HTTP] Fetching: " << url << std::endl;
         
         // Make GET request
-        auto result = client.Get(components->path.c_str());
-        
+        httplib::Result result = client.Get(components->path.c_str());
+
         if (!result) {
-            auto err = result.error();
+            httplib::Error err = result.error();
             response.error = "Request failed: " + httplib::to_string(err);
             std::cerr << "[HTTP] " << response.error << std::endl;
             return response;
@@ -244,13 +248,19 @@ bool HttpClient::responseLooksLikeHtml(const HttpResponse& response) {
 std::optional<std::string> HttpClient::extractDownloadUrlFromHtml(
     const std::string& baseUrl,
     const std::string& body) {
+    // Keep these compiled once because they are used on every HTML download-page
+    // fallback and the patterns are fixed.
     static const std::array<std::regex, 4> patterns = {
+        // Common anchor targets for raw/download links.
         std::regex(R"(href\s*=\s*["']([^"']*(?:raw=1|dl=1|download|\.oqm)[^"']*)["'])",
                    std::regex::icase),
+        // Meta refresh redirects that point at the measurement file.
         std::regex(R"(content\s*=\s*["'][^"']*url=([^"']+)["'])",
                    std::regex::icase),
+        // Script-driven redirects used by some file hosting pages.
         std::regex(R"(window\.location(?:\.href)?\s*=\s*["']([^"']+)["'])",
                    std::regex::icase),
+        // Direct absolute URLs embedded in page content.
         std::regex(R"(https://[^"'\s>]+(?:raw=1|dl=1|download|\.oqm)[^"'\s<]*)",
                    std::regex::icase),
     };

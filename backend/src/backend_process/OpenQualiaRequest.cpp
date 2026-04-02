@@ -67,7 +67,7 @@ std::string OpenQualiaRequest::fetchFromUrl(const std::string& url) {
     }
     
     // Fetch the file
-    auto response = btrgb::HttpClient::fetchOpenQualia(url);
+    btrgb::HttpResponse response = btrgb::HttpClient::fetchOpenQualia(url);
     
     if (!response.success) {
         sendErrorResponse("Failed to fetch from URL: " + response.error);
@@ -119,10 +119,6 @@ void OpenQualiaRequest::processOQMContent(const std::string& content,
 
 void OpenQualiaRequest::sendSuccessResponse(const btrgb::OQMMetadata& metadata,
                                             const std::string& csvPath) {
-    jsoncons::json response;
-    response["ResponseType"] = "OpenQualiaLoaded";
-    response["RequestID"] = this->coms_obj_m->get_id();
-    
     jsoncons::json data;
     data["success"] = true;
     data["targetName"] = metadata.targetName;
@@ -141,18 +137,12 @@ void OpenQualiaRequest::sendSuccessResponse(const btrgb::OQMMetadata& metadata,
     data["suggestedWhitePatchName"] = metadata.suggestedWhitePatchName;
     data["csvPath"] = csvPath;
     data["error"] = jsoncons::json::null();
-    
-    response["ResponseData"] = data;
-    
+
     std::cout << "[OpenQualia] Sending success response" << std::endl;
-    this->coms_obj_m->send_json(response);
+    this->coms_obj_m->send_response("OpenQualiaLoaded", data);
 }
 
 void OpenQualiaRequest::sendErrorResponse(const std::string& error) {
-    jsoncons::json response;
-    response["ResponseType"] = "OpenQualiaLoaded";
-    response["RequestID"] = this->coms_obj_m->get_id();
-    
     jsoncons::json data;
     data["success"] = false;
     data["targetName"] = "";
@@ -170,11 +160,9 @@ void OpenQualiaRequest::sendErrorResponse(const std::string& error) {
     data["suggestedWhitePatchName"] = "";
     data["csvPath"] = "";
     data["error"] = error;
-    
-    response["ResponseData"] = data;
-    
+
     std::cerr << "[OpenQualia] Sending error response: " << error << std::endl;
-    this->coms_obj_m->send_json(response);
+    this->coms_obj_m->send_response("OpenQualiaLoaded", data);
 }
 
 std::string OpenQualiaRequest::generateTempCsvPath() const {
@@ -182,8 +170,10 @@ std::string OpenQualiaRequest::generateTempCsvPath() const {
     std::filesystem::path tempDir = std::filesystem::temp_directory_path();
     
     // Generate unique filename
-    auto now = std::chrono::system_clock::now();
-    auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+    std::chrono::time_point<std::chrono::system_clock> now =
+        std::chrono::system_clock::now();
+    std::chrono::milliseconds::rep timestamp =
+        std::chrono::duration_cast<std::chrono::milliseconds>(
         now.time_since_epoch()).count();
     
     std::random_device rd;

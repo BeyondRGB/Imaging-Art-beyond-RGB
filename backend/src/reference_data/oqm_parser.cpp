@@ -7,18 +7,14 @@
 #include <iostream>
 #include <cctype>
 #include <limits>
-#include <unordered_map>
 
 namespace btrgb {
 
-namespace {
+namespace { // File-local OQM parsing helpers.
 
-std::string to_upper(std::string value) {
-    std::transform(value.begin(), value.end(), value.begin(),
-                   [](unsigned char c) { return static_cast<char>(std::toupper(c)); });
-    return value;
-}
-
+// Converts a zero-based column index into spreadsheet labels such as A, Z, AA.
+// The decrement after division is what makes Z roll over to AA correctly, and
+// the do/while ensures index 0 still produces "A".
 std::string column_label_from_index(int index) {
     std::string label;
     int value = index;
@@ -30,6 +26,7 @@ std::string column_label_from_index(int index) {
 }
 
 bool is_letter_number_patch_name(const std::string& value) {
+    // Matches patch labels like A1, A-1, or AA12.
     static const std::regex patchRegex(R"(^[A-Za-z]+-?\d+$)");
     return std::regex_match(value, patchRegex);
 }
@@ -52,6 +49,8 @@ int map_observer_angle_to_standard_observer(int observerAngle) {
 }
 
 void parse_measurement_source(const std::string& value, OQMMetadata& metadata) {
+    // Pull embedded tokens like "Illumination=D50 ObserverAngle=2" from the
+    // MEASUREMENT_SOURCE field when dedicated keywords are not present.
     static const std::regex illumRegex(R"((?:^|\s)Illumination=([^\s]+))");
     static const std::regex observerRegex(R"((?:^|\s)ObserverAngle=([0-9]+))");
     std::smatch match;
@@ -71,87 +70,19 @@ void parse_measurement_source(const std::string& value, OQMMetadata& metadata) {
 std::string build_csv_patch_name(const std::string& originalName,
                                  int rowIndex,
                                  int colIndex) {
+    // Matches labels like A1 or A-1 so the CSV header can normalize them to A:1.
     static const std::regex patchRegex(R"(^([A-Za-z]+)-?(\d+)$)");
     std::smatch match;
     if (std::regex_match(originalName, match, patchRegex)) {
-        return to_upper(match[1].str()) + ":" + match[2].str();
+        std::string columnLabel = match[1].str();
+        std::transform(columnLabel.begin(), columnLabel.end(), columnLabel.begin(),
+                       [](unsigned char c) {
+                           return static_cast<char>(std::toupper(c));
+                       });
+        return columnLabel + ":" + match[2].str();
     }
 
     return column_label_from_index(colIndex) + ":" + std::to_string(rowIndex + 1);
-}
-
-enum class KeywordKind {
-    Unknown,
-    Descriptor,
-    Serial,
-    Created,
-    CalibrationDate,
-    Originator,
-    TargetInstrument,
-    MeasurementSource,
-    Illuminant,
-    Observer,
-    NumberOfSets,
-    SpectralBands,
-    SpectralStartNm,
-    SpectralEndNm,
-};
-
-KeywordKind lookup_keyword_kind(const std::string& keyword) {
-    static const std::unordered_map<std::string, KeywordKind> keywordKinds = {
-        {"DESCRIPTOR", KeywordKind::Descriptor},
-        {"SERIAL", KeywordKind::Serial},
-        {"CREATED", KeywordKind::Created},
-        {"CALIBRATION_DATE", KeywordKind::CalibrationDate},
-        {"ORIGINATOR", KeywordKind::Originator},
-        {"TARGET_INSTRUMENT", KeywordKind::TargetInstrument},
-        {"MEASUREMENT_SOURCE", KeywordKind::MeasurementSource},
-        {"ILLUMINANT", KeywordKind::Illuminant},
-        {"OBSERVER", KeywordKind::Observer},
-        {"NUMBER_OF_SETS", KeywordKind::NumberOfSets},
-        {"SPECTRAL_BANDS", KeywordKind::SpectralBands},
-        {"SPECTRAL_START_NM", KeywordKind::SpectralStartNm},
-        {"SPECTRAL_END_NM", KeywordKind::SpectralEndNm},
-    };
-
-    const std::unordered_map<std::string, KeywordKind>::const_iterator keywordIt =
-        keywordKinds.find(keyword);
-    if (keywordIt == keywordKinds.end()) {
-        return KeywordKind::Unknown;
-    }
-
-    return keywordIt->second;
-}
-
-enum class DataFieldKind {
-    Unknown,
-    SampleName,
-    SampleId,
-    LabL,
-    XyzY,
-    Spectral,
-};
-
-DataFieldKind lookup_data_field_kind(const std::string& field) {
-    static const std::unordered_map<std::string, DataFieldKind> dataFieldKinds = {
-        {"SAMPLE_NAME", DataFieldKind::SampleName},
-        {"SAMPLE_ID", DataFieldKind::SampleId},
-        {"LAB_L", DataFieldKind::LabL},
-        {"XYZ_Y", DataFieldKind::XyzY},
-    };
-
-    if (field.find("SPEC_") == 0 || field.find("nm") == 0 ||
-        field.find("SPECTRAL_NM") == 0) {
-        return DataFieldKind::Spectral;
-    }
-
-    const std::unordered_map<std::string, DataFieldKind>::const_iterator fieldIt =
-        dataFieldKinds.find(field);
-    if (fieldIt == dataFieldKinds.end()) {
-        return DataFieldKind::Unknown;
-    }
-
-    return fieldIt->second;
 }
 
 std::string get_token_or_empty(const std::vector<std::string>& tokens, int index) {
@@ -162,6 +93,24 @@ std::string get_token_or_empty(const std::vector<std::string>& tokens, int index
     return "";
 }
 
+bool try_parse_int(const std::string& value, int& parsedValue) {
+    try {
+        parsedValue = std::stoi(value);
+        return true;
+    } catch (const std::exception&) {
+        return false;
+    }
+}
+
+bool try_parse_double(const std::string& value, double& parsedValue) {
+    try {
+        parsedValue = std::stod(value);
+        return true;
+    } catch (const std::exception&) {
+        return false;
+    }
+}
+
 bool try_parse_luminance(const std::vector<std::string>& tokens,
                          int index,
                          double& luminance) {
@@ -169,12 +118,7 @@ bool try_parse_luminance(const std::vector<std::string>& tokens,
         return false;
     }
 
-    try {
-        luminance = std::stod(tokens[index]);
-        return true;
-    } catch (...) {
-        return false;
-    }
+    return try_parse_double(tokens[index], luminance);
 }
 
 } // namespace
@@ -221,66 +165,47 @@ void OQMParser::parseKeyword(const std::string& line) {
     }
     value = stripQuotes(value);
     
-    switch (lookup_keyword_kind(keyword)) {
-        case KeywordKind::Descriptor:
-            metadata_.targetName = value;
-            break;
-        case KeywordKind::Serial:
-            metadata_.serialNumber = value;
-            break;
-        case KeywordKind::Created:
-            metadata_.measurementDate = value;
-            break;
-        case KeywordKind::CalibrationDate:
-            metadata_.calibrationDate = value;
-            break;
-        case KeywordKind::Originator:
-            metadata_.originator = value;
-            break;
-        case KeywordKind::TargetInstrument:
-            metadata_.instrument = value;
-            break;
-        case KeywordKind::MeasurementSource:
-            parse_measurement_source(value, metadata_);
-            break;
-        case KeywordKind::Illuminant:
-            metadata_.illuminant = value;
-            break;
-        case KeywordKind::Observer:
-            try {
-                metadata_.observerAngle = std::stoi(value);
-                metadata_.standardObserver =
-                    mapObserverAngleToStandardObserver(metadata_.observerAngle);
-            } catch (...) {
-                // Non-numeric OBSERVER value; ignore.
-            }
-            break;
-        case KeywordKind::NumberOfSets:
-            try {
-                metadata_.patchCount = std::stoi(value);
-            } catch (...) {
-            }
-            break;
-        case KeywordKind::SpectralBands:
-            try {
-                metadata_.spectralBands = std::stoi(value);
-            } catch (...) {
-            }
-            break;
-        case KeywordKind::SpectralStartNm:
-            try {
-                metadata_.spectralStartNm = static_cast<int>(std::stod(value));
-            } catch (...) {
-            }
-            break;
-        case KeywordKind::SpectralEndNm:
-            try {
-                metadata_.spectralEndNm = static_cast<int>(std::stod(value));
-            } catch (...) {
-            }
-            break;
-        case KeywordKind::Unknown:
-            break;
+    int parsedInt = 0;
+    double parsedDouble = 0.0;
+
+    if (keyword == "DESCRIPTOR") {
+        metadata_.targetName = value;
+    } else if (keyword == "SERIAL") {
+        metadata_.serialNumber = value;
+    } else if (keyword == "CREATED") {
+        metadata_.measurementDate = value;
+    } else if (keyword == "CALIBRATION_DATE") {
+        metadata_.calibrationDate = value;
+    } else if (keyword == "ORIGINATOR") {
+        metadata_.originator = value;
+    } else if (keyword == "TARGET_INSTRUMENT") {
+        metadata_.instrument = value;
+    } else if (keyword == "MEASUREMENT_SOURCE") {
+        parse_measurement_source(value, metadata_);
+    } else if (keyword == "ILLUMINANT") {
+        metadata_.illuminant = value;
+    } else if (keyword == "OBSERVER") {
+        if (try_parse_int(value, parsedInt)) {
+            metadata_.observerAngle = parsedInt;
+            metadata_.standardObserver =
+                mapObserverAngleToStandardObserver(metadata_.observerAngle);
+        }
+    } else if (keyword == "NUMBER_OF_SETS") {
+        if (try_parse_int(value, parsedInt)) {
+            metadata_.patchCount = parsedInt;
+        }
+    } else if (keyword == "SPECTRAL_BANDS") {
+        if (try_parse_int(value, parsedInt)) {
+            metadata_.spectralBands = parsedInt;
+        }
+    } else if (keyword == "SPECTRAL_START_NM") {
+        if (try_parse_double(value, parsedDouble)) {
+            metadata_.spectralStartNm = static_cast<int>(parsedDouble);
+        }
+    } else if (keyword == "SPECTRAL_END_NM") {
+        if (try_parse_double(value, parsedDouble)) {
+            metadata_.spectralEndNm = static_cast<int>(parsedDouble);
+        }
     }
 }
 
@@ -294,31 +219,24 @@ void OQMParser::parseDataFormat(const std::vector<std::string>& formatLines) {
     
     int index = 0;
     for (const std::string& field : formatLines) {
-        switch (lookup_data_field_kind(field)) {
-            case DataFieldKind::SampleName:
-                sampleNameIndex_ = index;
-                break;
-            case DataFieldKind::SampleId:
-                sampleIdIndex_ = index;
-                break;
-            case DataFieldKind::LabL:
-                labLIndex_ = index;
-                break;
-            case DataFieldKind::XyzY:
-                xyzYIndex_ = index;
-                break;
-            case DataFieldKind::Spectral: {
-                std::regex numRegex(R"(\d+)");
-                std::smatch match;
-                if (std::regex_search(field, match, numRegex)) {
-                    int wavelength = std::stoi(match[0]);
-                    spectralIndices_.push_back(index);
-                    wavelengths_.push_back(wavelength);
-                }
-                break;
+        if (field == "SAMPLE_NAME") {
+            sampleNameIndex_ = index;
+        } else if (field == "SAMPLE_ID") {
+            sampleIdIndex_ = index;
+        } else if (field == "LAB_L") {
+            labLIndex_ = index;
+        } else if (field == "XYZ_Y") {
+            xyzYIndex_ = index;
+        } else if (field.find("SPEC_") == 0 || field.find("nm") == 0 ||
+                   field.find("SPECTRAL_NM") == 0) {
+            std::regex numRegex(R"(\d+)");
+            std::smatch match;
+            int wavelength = 0;
+            if (std::regex_search(field, match, numRegex) &&
+                try_parse_int(match[0].str(), wavelength)) {
+                spectralIndices_.push_back(index);
+                wavelengths_.push_back(wavelength);
             }
-            case DataFieldKind::Unknown:
-                break;
         }
 
         index++;
@@ -328,14 +246,17 @@ void OQMParser::parseDataFormat(const std::vector<std::string>& formatLines) {
 }
 
 std::pair<int, int> OQMParser::patchNameToRowCol(const std::string& name) const {
-    // Parse patch names like "A1", "A-1", "B2", etc.
-    // Letter = column, Number = row
+    // Matches patch labels like A1, A-1, or AA12 where letters encode the
+    // column and digits encode the row.
     std::regex patchRegex(R"(([A-Za-z]+)-?(\d+))");
     std::smatch match;
     
     if (std::regex_match(name, match, patchRegex)) {
         std::string colLetter = match[1].str();
-        int rowNum = std::stoi(match[2].str());
+        int rowNum = 0;
+        if (!try_parse_int(match[2].str(), rowNum)) {
+            return {-1, -1};
+        }
         
         // Convert letter to column index (A=0, B=1, ..., AA=26).
         int colNum = 0;
@@ -347,12 +268,11 @@ std::pair<int, int> OQMParser::patchNameToRowCol(const std::string& name) const 
     }
     
     // If not letter-number format, try sequential number
-    try {
-        int seqNum = std::stoi(name);
+    int seqNum = 0;
+    if (try_parse_int(name, seqNum)) {
         return {seqNum - 1, 0};
-    } catch (...) {
-        return {-1, -1};
     }
+    return {-1, -1};
 }
 
 void OQMParser::parseDataLine(const std::string& line) {
@@ -389,10 +309,10 @@ void OQMParser::parseDataLine(const std::string& line) {
     
     for (int idx : spectralIndices_) {
         if (idx < static_cast<int>(tokens.size())) {
-            try {
-                double val = std::stod(tokens[idx]);
+            double val = 0.0;
+            if (try_parse_double(tokens[idx], val)) {
                 spectralValues.push_back(normalize_reflectance_value(val));
-            } catch (...) {
+            } else {
                 spectralValues.push_back(0.0);
             }
         }

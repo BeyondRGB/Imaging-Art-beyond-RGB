@@ -57,6 +57,9 @@ public:
 private:
     /**
      * @brief Parse URL into host, port, and path components
+     *
+     * This parser accepts both HTTP and HTTPS URLs. Transport policy is
+     * enforced by fetch(), which currently allows HTTPS only.
      */
     struct UrlComponents {
         std::string scheme;
