@@ -1,19 +1,28 @@
 describe("Select Processing Type and Import Images Tab", () => {
 	beforeEach(() => {
-		cy.visit("http://localhost:3000/");
-		cy.get(".homeContent .homeBtn").contains("Process").click();
+		cy.clearLocalStorage();
+		cy.visit("/");
+		cy.contains("#homeContent button", "Process").click();
 	});
 
 	it("Batch Processing button works", () => {
-		cy.get("#selectProcessingTypes .homeBtn").contains("Batch Processing").click();
+		cy.contains("#selectProcessingTypesContent button", "Batch Processing").click();
 
-		cy.get("right").get(".custom-dropzone").contains("Drag and Drop Files Here");
-		cy.get("left").contains("Import Images");
+		cy.contains("button", "Back").should("be.visible");
+		cy.contains(".custom-dropzone", "Drag and Drop Files Here").should("be.visible");
+		cy.contains("h1", "Import Images").should("be.visible");
+		cy.contains("button", "Back").click();
+		cy.contains("#selectProcessingTypesContent button", "Batch Processing").should("be.visible");
 	});
 	it("Single Image Processing button works", () => {
-		cy.get("#selectProcessingTypes .homeBtn").contains("Single Image Processing").click();
+		cy.contains("#selectProcessingTypesContent button", "Single Image Processing").click();
 
-		cy.get("right").get(".custom-dropzone").contains("Drag and Drop Files Here");
-		cy.get("left").contains("Import Images");
+		cy.contains("button", "Back").should("be.visible");
+		cy.contains(".custom-dropzone", "Drag and Drop Files Here").should("be.visible");
+		cy.contains("h1", "Import Images").should("be.visible");
+		cy.contains("button", "Back").click();
+		cy.contains("#selectProcessingTypesContent button", "Single Image Processing").should(
+			"be.visible"
+		);
 	});
 });
