@@ -17,37 +17,37 @@
 
 namespace btrgb::icc {
 IccProfile::IccProfile(size_t max_size) {
-    maxProfileSize = max_size;
-    hybridICCProfile = nullptr;
-    profileMemory = nullptr;
-    profileSize = 0;
+    max_profile_size = max_size;
+    hybrid_icc_profile = nullptr;
+    profile_memory = nullptr;
+    profile_size = 0;
 }
 
 IccProfile::~IccProfile() {
-    delete hybridICCProfile;
-    delete[] profileMemory;
+    delete hybrid_icc_profile;
+    delete[] profile_memory;
 }
 
-bool IccProfile::createHybridProfile(const ColorSpace space,
-                                     const float *dataMatrix,
-                                     const int numInputChannels,
-                                     const int numOutputChannels,
-                                     const bool ignoreBaseChannels,
-                                     const float *inverseMatrix) {
-    if (hybridICCProfile) {
-        delete hybridICCProfile;
-        delete[] profileMemory;
+bool IccProfile::create_hybrid_profile(const ColorSpace space,
+                                     const float *data_matrix,
+                                     const int num_input_channels,
+                                     const int num_output_channels,
+                                     const bool ignore_ignore_base_channels,
+                                     const float *inverse_matrix) {
+    if (hybrid_icc_profile) {
+        delete hybrid_icc_profile;
+        delete[] profile_memory;
     }
 
-    CIccProfile *rgb_profile = createRgbProfile(space);
+    CIccProfile *rgb_profile = create_rgb_profile(space);
 
     if (!rgb_profile) {
         return false;
     }
 
-    CIccProfile *spec_profile = createSpecProfile(
-        space, dataMatrix, numInputChannels, numOutputChannels,
-        ignoreBaseChannels, inverseMatrix);
+    CIccProfile *spec_profile = create_spec_profile(
+        space, data_matrix, num_input_channels, num_output_channels,
+        ignore_ignore_base_channels, inverse_matrix);
     if (!spec_profile) {
         delete rgb_profile;
     }
@@ -57,10 +57,10 @@ bool IccProfile::createHybridProfile(const ColorSpace space,
     pTag->SetProfile(spec_profile);
     rgb_profile->AttachTag(icSigEmbeddedV5ProfileTag, pTag);
 
-    hybridICCProfile = rgb_profile;
+    hybrid_icc_profile = rgb_profile;
 
     // Cache the profile memory.
-    getProfileMem();
+    get_profile_mem();
 
     return true;
 }
@@ -71,8 +71,8 @@ struct RGBTags {
     CIccTagXYZ *blue;
 };
 
-void createRGBTags(RGBTags *tags, const ColorSpace colorSpace) {
-    switch (colorSpace) {
+void create_rgb_tags(RGBTags *tags, const ColorSpace color_space) {
+    switch (color_space) {
     case Adobe_RGB_1998:
         // Attach red XYZ primary to profile
         tags->red = new CIccTagXYZ();
@@ -172,12 +172,12 @@ void createRGBTags(RGBTags *tags, const ColorSpace colorSpace) {
     }
 }
 
-void createParametricCurve(CIccTagParametricCurve *parametricCurve,
-                           const ColorSpace colorSpace) {
-    parametricCurve->SetFunctionType(3);
-    icFloatNumber *param = parametricCurve->GetParams();
+void create_parametric_curve(CIccTagParametricCurve *parametric_curve,
+                           const ColorSpace color_space) {
+    parametric_curve->SetFunctionType(3);
+    icFloatNumber *param = parametric_curve->GetParams();
 
-    switch (colorSpace) {
+    switch (color_space) {
     case ProPhoto:
         param[0] = 1.80000;
         param[1] = 1.00000;
@@ -204,8 +204,8 @@ void createParametricCurve(CIccTagParametricCurve *parametricCurve,
     }
 }
 
-std::string getProfileName(const ColorSpace colorSpace) {
-    switch (colorSpace) {
+std::string get_profile_name(const ColorSpace color_space) {
+    switch (color_space) {
     case Adobe_RGB_1998:
         return "Hybrid aRGB";
     case ProPhoto:
@@ -223,7 +223,7 @@ std::string getProfileName(const ColorSpace colorSpace) {
 
 }
 
-CIccProfile *IccProfile::createRgbProfile(const ColorSpace space) {
+CIccProfile *IccProfile::create_rgb_profile(const ColorSpace space) {
     VALIDATE_COLOR_SPACE(space);
 
     const auto pIcc = new CIccProfile();
@@ -250,12 +250,12 @@ CIccProfile *IccProfile::createRgbProfile(const ColorSpace space) {
     pIcc->AttachTag(icSigMediaWhitePointTag, pXYZ);
 
     pText = new CIccTagMultiLocalizedUnicode();
-    pText->SetText(getProfileName(space).c_str());
+    pText->SetText(get_profile_name(space).c_str());
 
     pIcc->AttachTag(icSigProfileDescriptionTag, pText);
 
     auto *tags = new RGBTags();
-    createRGBTags(tags, space);
+    create_rgb_tags(tags, space);
 
     pIcc->AttachTag(icSigRedMatrixColumnTag, tags->red);
     pIcc->AttachTag(icSigGreenMatrixColumnTag, tags->green);
@@ -265,7 +265,7 @@ CIccProfile *IccProfile::createRgbProfile(const ColorSpace space) {
     if (space == ProPhoto || space == sRGB || space ==
         Wide_Gamut_RGB) {
         auto *pCurveParametric = new CIccTagParametricCurve();
-        createParametricCurve(pCurveParametric, space);
+        create_parametric_curve(pCurveParametric, space);
         pIcc->AttachTag(icSigRedTRCTag, pCurveParametric);
         pIcc->AttachTag(icSigGreenTRCTag, pCurveParametric);
         pIcc->AttachTag(icSigBlueTRCTag, pCurveParametric);
@@ -287,69 +287,69 @@ CIccProfile *IccProfile::createRgbProfile(const ColorSpace space) {
 }
 
 
-bool loadSpectralRanges(CIccProfile *profile, int numChannelsOut) {
-    switch (numChannelsOut) {
+bool load_spectral_ranges(CIccProfile *profile, int num_channels_out) {
+    switch (num_channels_out) {
     case 36:
         profile->m_Header.spectralRange.start = icFtoF16(380.0f);
         profile->m_Header.spectralRange.end = icFtoF16(730.0f);
-        profile->m_Header.spectralRange.steps = numChannelsOut;
+        profile->m_Header.spectralRange.steps = num_channels_out;
         return true;
     case 31:
         profile->m_Header.spectralRange.start = icFtoF16(400.0f);
         profile->m_Header.spectralRange.end = icFtoF16(700.0f);
-        profile->m_Header.spectralRange.steps = numChannelsOut;
+        profile->m_Header.spectralRange.steps = num_channels_out;
         return true;
     case 17:
         profile->m_Header.spectralRange.start = icFtoF16(380.0f);
         profile->m_Header.spectralRange.end = icFtoF16(720.0f);
-        profile->m_Header.spectralRange.steps = numChannelsOut;
+        profile->m_Header.spectralRange.steps = num_channels_out;
         return true;
     case 15:
         profile->m_Header.spectralRange.start = icFtoF16(400.0f);
         profile->m_Header.spectralRange.end = icFtoF16(700.0f);
-        profile->m_Header.spectralRange.steps = numChannelsOut;
+        profile->m_Header.spectralRange.steps = num_channels_out;
         return true;
     default:
         return false;
     }
 }
 
-void attachNoBaseChannelMatrix(CIccTagMultiProcessElement *multiProcessTag,
-                               const int numInputChannels,
-                               const int numOutputChannels,
-                               const float *dataMatrix) {
+void attach_no_base_channel_matrix(CIccTagMultiProcessElement *multi_process_tag,
+                               const int num_input_channels,
+                               const int num_output_channels,
+                               const float *data_matrix) {
     auto *matrix = new CIccMpeMatrix();
 
-    matrix->SetSize(numInputChannels, numOutputChannels);
+    matrix->SetSize(num_input_channels, num_output_channels);
     icFloatNumber *pData = matrix->GetMatrix();
-    const icFloatNumber *pRow = dataMatrix;
+    const icFloatNumber *pRow = data_matrix;
 
-    for (int r = 0; r < numOutputChannels; r++) {
+    for (int r = 0; r < num_output_channels; r++) {
         memset(
             pData, 0,
             3 * sizeof(icFloatNumber)); // zero out the base profile columns
         pData += 3;
-        for (int c = 0; c < numInputChannels; c++) {
+        for (int c = 0; c < num_input_channels; c++) {
             *pData++ = *pRow++;
         }
     }
 
-    multiProcessTag->Attach(matrix);
+    multi_process_tag->Attach(matrix);
 }
 
 typedef std::array<icFloatNumber, 4> FunctionParameters;
 
-void applyFormula(CIccFormulaCurveSegment *curveFormula,
-                  FunctionParameters parameters, const bool shareCurve,
-                  CIccSegmentedCurve *segmentedCurve, CIccMpeCurveSet *curveSet,
-                  const int otherCurves = 3) {
-    curveFormula->SetFunction(0, 4, parameters.data());
-    segmentedCurve->Insert(curveFormula);
+void apply_formula(CIccFormulaCurveSegment *curve_formula,
+                  FunctionParameters parameters, const bool share_curve,
+                  CIccSegmentedCurve *segmented_curve, CIccMpeCurveSet *curve_set,
+                  const int other_curves = 3) {
+    curve_formula->SetFunction(0, 4, parameters.data());
+    segmented_curve->Insert(curve_formula);
 
-    if (shareCurve) {
+    if (share_curve) {
         // share the curve for all 3 base channels since they are the same
-        for (int i = 0; i < otherCurves; i++) {
-            curveSet->SetCurve(i, segmentedCurve);
+        for (int i = 0; i < other_curves; i++) {
+            curve_set->SetCurve(i, segmented_curve);
         }
     }
 }
@@ -418,27 +418,27 @@ profiles =
      }},
 };
 
-void attachGammaCurve(CIccTagMultiProcessElement *multiProcessTag,
-                      const ColorSpace colorSpace,
-                      CIccSegmentedCurve *segmentedCurve,
-                      CIccMpeCurveSet *curveSet,
-                      const int totalNumberOfChannels,
+void attach_gamma_curve(CIccTagMultiProcessElement *multi_process_tag,
+                      const ColorSpace color_space,
+                      CIccSegmentedCurve *segmented_curve,
+                      CIccMpeCurveSet *curve_set,
+                      const int total_number_of_channels,
                       const bool inverse = false) {
-    if (colorSpace == Linear_Normalized_XYZ) {
+    if (color_space == Linear_Normalized_XYZ) {
         return;
     }
 
-    CIccFormulaCurveSegment *curveSegmentFormula;
+    CIccFormulaCurveSegment *curve_formula;
 
-    ColorSpace adjustedColorSpace = colorSpace;
+    ColorSpace adjusted_color_space = color_space;
 
     // Wide gamut is processed the same as adobe rgb so change it for the profile lookup.
-    if (colorSpace == Wide_Gamut_RGB) {
-        adjustedColorSpace = Adobe_RGB_1998;
+    if (color_space == Wide_Gamut_RGB) {
+        adjusted_color_space = Adobe_RGB_1998;
     }
 
     //.Find the ColorSpaceProfile that matches this Color Space.
-    const auto iterator = profiles.find(adjustedColorSpace);
+    const auto iterator = profiles.find(adjusted_color_space);
     if (iterator == profiles.end())
         return;
 
@@ -449,218 +449,218 @@ void attachGammaCurve(CIccTagMultiProcessElement *multiProcessTag,
 
     // If the color space should apply a linear segment, do that here.
     if (hasLinear) {
-        curveSegmentFormula = new CIccFormulaCurveSegment(
+        curve_formula = new CIccFormulaCurveSegment(
             0.0f, linearSegment.end);
-        applyFormula(curveSegmentFormula, linearSegment.params, false,
-                     segmentedCurve, curveSet);
+        apply_formula(curve_formula, linearSegment.params, false,
+                     segmented_curve, curve_set);
     }
 
     // Apply the gamma curve. If there was a linear profile we need to adjust the start.
-    curveSegmentFormula = new CIccFormulaCurveSegment(
+    curve_formula = new CIccFormulaCurveSegment(
         hasLinear ? linearSegment.end : 0.0f, gammaSegment.end);
-    applyFormula(curveSegmentFormula, gammaSegment.params, true, segmentedCurve,
-                 curveSet);
+    apply_formula(curve_formula, gammaSegment.params, true, segmented_curve,
+                 curve_set);
 
     // The rest of the channels are assumed to be linear, so set them up with a simple gamma 1.0 curve with no clipping
-    segmentedCurve = new CIccSegmentedCurve();
-    curveSegmentFormula = new CIccFormulaCurveSegment(
+    segmented_curve = new CIccSegmentedCurve();
+    curve_formula = new CIccFormulaCurveSegment(
         icMinFloat32Number, icMaxFloat32Number);
-    applyFormula(curveSegmentFormula,
+    apply_formula(curve_formula,
                  FunctionParameters{1.0f, 1.0f, 0.0f, 0.0f}, true,
-                 segmentedCurve, curveSet, totalNumberOfChannels);
+                 segmented_curve, curve_set, total_number_of_channels);
 
     // Finally, attach the curve set we made.
-    multiProcessTag->Attach(curveSet);
+    multi_process_tag->Attach(curve_set);
 }
 
-void attachMatrix(CIccTagMultiProcessElement *multiProcessTag,
-                  const float *dataMatrix, const int totalNumberOfChannels,
-                  const int numOutputChannels) {
-    auto *profileDataMatrix = new CIccMpeMatrix();
+void attach_matrix(CIccTagMultiProcessElement *multi_process_tag,
+                  const float *data_matrix, const int total_number_of_channels,
+                  const int num_output_channels) {
+    auto *profile_data_matrix = new CIccMpeMatrix();
 
-    profileDataMatrix->SetSize(totalNumberOfChannels, numOutputChannels);
+    profile_data_matrix->SetSize(total_number_of_channels, num_output_channels);
 
-    const int matrixSize = totalNumberOfChannels * numOutputChannels;
-    for (int i = 0; i < matrixSize; i++) {
-        profileDataMatrix->GetMatrix()[i] = dataMatrix[i];
+    const int matrix_size = total_number_of_channels * num_output_channels;
+    for (int i = 0; i < matrix_size; i++) {
+        profile_data_matrix->GetMatrix()[i] = data_matrix[i];
     }
 
-    // Add the dataMatrix to the multiprocessing element tag.
-    multiProcessTag->Attach(profileDataMatrix);
+    // Add the data_matrix to the multiprocessing element tag.
+    multi_process_tag->Attach(profile_data_matrix);
 }
 
-CIccProfile *IccProfile::createSpecProfile(
-    const ColorSpace baseSpace,
-    const float *dataMatrix,
-    const int numInputChannels,
-    const int numOutputChannels,
-    const bool ignoreBaseChannels,
-    const float *inverseMatrix) {
-    VALIDATE_COLOR_SPACE(baseSpace);
+CIccProfile *IccProfile::create_spec_profile(
+    const ColorSpace base_space,
+    const float *data_matrix,
+    const int num_input_channels,
+    const int num_output_channels,
+    const bool ignore_base_channels,
+    const float *inverse_matrix) {
+    VALIDATE_COLOR_SPACE(base_space);
 
-    const int totalNumberOfChannels = !ignoreBaseChannels
-                                          ? numInputChannels
-                                          : numInputChannels + 3;
+    const int total_number_of_channels = !ignore_base_channels
+                                          ? num_input_channels
+                                          : num_input_channels + 3;
 
-    const auto iccProfile = new CIccProfile();
+    const auto icc_profile = new CIccProfile();
 
     // Set up the profile header
-    iccProfile->InitHeader();
-    iccProfile->m_Header.deviceClass = icSigDisplayClass;
-    iccProfile->m_Header.version = icVersionNumberV5_1;
-    iccProfile->m_Header.flags |= icEmbeddedProfileTrue;
-    iccProfile->m_Header.colorSpace =
-        icNColorSpaceSig(icSigNChannelData, (totalNumberOfChannels & 0xffff));
-    iccProfile->m_Header.pcs = static_cast<icColorSpaceSignature>(0);
-    iccProfile->m_Header.spectralPCS =
+    icc_profile->InitHeader();
+    icc_profile->m_Header.deviceClass = icSigDisplayClass;
+    icc_profile->m_Header.version = icVersionNumberV5_1;
+    icc_profile->m_Header.flags |= icEmbeddedProfileTrue;
+    icc_profile->m_Header.colorSpace =
+        icNColorSpaceSig(icSigNChannelData, (total_number_of_channels & 0xffff));
+    icc_profile->m_Header.pcs = static_cast<icColorSpaceSignature>(0);
+    icc_profile->m_Header.spectralPCS =
         icNColorSpaceSig(icSigReflectanceSpectralData,
-                         (numOutputChannels & 0xffff));
+                         (num_output_channels & 0xffff));
 
     // Allocate copyright tag and attach to profile
     auto *pText = new CIccTagMultiLocalizedUnicode();
     pText->SetText("Copyright (C) 2026 BeyondRGB");
 
-    iccProfile->AttachTag(icSigCopyrightTag, pText);
+    icc_profile->AttachTag(icSigCopyrightTag, pText);
 
-    // Load the spectral ranges into the profile. If it fails (numOutputChannels is invalid) fail out of the function.
-    if (!loadSpectralRanges(iccProfile, numOutputChannels)) {
-        delete iccProfile;
+    // Load the spectral ranges into the profile. If it fails (num_output_channels is invalid) fail out of the function.
+    if (!load_spectral_ranges(icc_profile, num_output_channels)) {
+        delete icc_profile;
         return nullptr;
     }
 
     // Allocate media white point tag and attach to profile
     auto *pWhiteTag = new CIccTagFloat32();
-    pWhiteTag->SetSize(numOutputChannels);
-    for (int i = 0; i < numOutputChannels; i++) {
+    pWhiteTag->SetSize(num_output_channels);
+    for (int i = 0; i < num_output_channels; i++) {
         (*pWhiteTag)[i] = 1.0;
     }
 
-    iccProfile->AttachTag(icSigSpectralWhitePointTag, pWhiteTag);
+    icc_profile->AttachTag(icSigSpectralWhitePointTag, pWhiteTag);
 
     // Allocate profile description tag and attach to profile
     pText = new CIccTagMultiLocalizedUnicode();
     pText->SetText("BeyondRGB to spectra");
 
-    iccProfile->AttachTag(icSigProfileDescriptionTag, pText);
+    icc_profile->AttachTag(icSigProfileDescriptionTag, pText);
 
     // Allocate spectral viewing conditions and attach to profile
-    auto *pCond = new CIccTagSpectralViewingConditions();
+    auto *viewing_conditions = new CIccTagSpectralViewingConditions();
 
     icFloatNumber lum = 203.0;
-    pCond->m_illuminantXYZ.X = icDtoF(0.96420288f * lum);
-    pCond->m_illuminantXYZ.Y = icDtoF(1.00000000f * lum);
-    pCond->m_illuminantXYZ.Z = icDtoF(0.82487488f * lum);
+    viewing_conditions->m_illuminantXYZ.X = icDtoF(0.96420288f * lum);
+    viewing_conditions->m_illuminantXYZ.Y = icDtoF(1.00000000f * lum);
+    viewing_conditions->m_illuminantXYZ.Z = icDtoF(0.82487488f * lum);
 
-    pCond->m_surroundXYZ.X = icDtoF(0.96420288f * lum);
-    pCond->m_surroundXYZ.Y = icDtoF(1.00000000f * lum);
-    pCond->m_surroundXYZ.Z = icDtoF(0.82487488f * lum);
+    viewing_conditions->m_surroundXYZ.X = icDtoF(0.96420288f * lum);
+    viewing_conditions->m_surroundXYZ.Y = icDtoF(1.00000000f * lum);
+    viewing_conditions->m_surroundXYZ.Z = icDtoF(0.82487488f * lum);
 
     icSpectralRange range;
     range.start = icFtoF16(380.0);
     range.end = icFtoF16(730.0);
     range.steps = 71;
-    pCond->setIlluminant(icIlluminantD50, range, nullptr, 5000);
-    pCond->setObserver(icStdObs1931TwoDegrees, range, nullptr);
+    viewing_conditions->setIlluminant(icIlluminantD50, range, nullptr, 5000);
+    viewing_conditions->setObserver(icStdObs1931TwoDegrees, range, nullptr);
 
-    iccProfile->AttachTag(icSigSpectralViewingConditionsTag, pCond);
+    icc_profile->AttachTag(icSigSpectralViewingConditionsTag, viewing_conditions);
 
     // Populate DToB3 tag and attach to profile
-    auto *multiProcessTag = new CIccTagMultiProcessElement(
-        totalNumberOfChannels, numOutputChannels);
+    auto *multi_process_tag = new CIccTagMultiProcessElement(
+        total_number_of_channels, num_output_channels);
 
-    if (ignoreBaseChannels) {
-        // If we are ignoring the base profile channels, then just add a dataMatrix element with zero columns for the base channels and the provided data and no curves
-        attachNoBaseChannelMatrix(multiProcessTag, numInputChannels,
-                                  numOutputChannels, dataMatrix);
+    if (ignore_base_channels) {
+        // If we are ignoring the base profile channels, then just add a data_matrix element with zero columns for the base channels and the provided data and no curves
+        attach_no_base_channel_matrix(multi_process_tag, num_input_channels,
+                                  num_output_channels, data_matrix);
     } else {
-        auto *curveSet = new CIccMpeCurveSet(totalNumberOfChannels);
-        auto *segmentedCurve = new CIccSegmentedCurve();
+        auto *curve_set = new CIccMpeCurveSet(total_number_of_channels);
+        auto *segmented_curve = new CIccSegmentedCurve();
 
         // clip the shadows to 0.0
-        auto *shadowCurveFormula = new CIccFormulaCurveSegment(
+        auto *curve_formula = new CIccFormulaCurveSegment(
             icMinFloat32Number, 0.0f);
-        applyFormula(shadowCurveFormula,
+        apply_formula(curve_formula,
                      FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
-                     false, segmentedCurve, curveSet);
+                     false, segmented_curve, curve_set);
 
         // Load gamma curves based on the color space.
-        attachGammaCurve(multiProcessTag, baseSpace, segmentedCurve, curveSet,
-                         totalNumberOfChannels);
+        attach_gamma_curve(multi_process_tag, base_space, segmented_curve, curve_set,
+                         total_number_of_channels);
 
         // Attach the data matrix to the end of the multi process tag.
-        attachMatrix(multiProcessTag, dataMatrix, totalNumberOfChannels,
-                     numOutputChannels);
+        attach_matrix(multi_process_tag, data_matrix, total_number_of_channels,
+                     num_output_channels);
     }
 
-    iccProfile->AttachTag(icSigDToB3Tag, multiProcessTag);
+    icc_profile->AttachTag(icSigDToB3Tag, multi_process_tag);
 
-    if (inverseMatrix) {
-        auto *inverseMultiProcessTag = new CIccTagMultiProcessElement(
-            numOutputChannels, totalNumberOfChannels);
+    if (inverse_matrix) {
+        auto *inverse_multi_process_tag = new CIccTagMultiProcessElement(
+            num_output_channels, total_number_of_channels);
 
         // Attach the data matrix to the start of the multi process tag.
-        attachMatrix(inverseMultiProcessTag, inverseMatrix,
-                     totalNumberOfChannels, numOutputChannels);
+        attach_matrix(inverse_multi_process_tag, inverse_matrix,
+                     total_number_of_channels, num_output_channels);
 
-        auto *curveSet = new CIccMpeCurveSet(totalNumberOfChannels);
-        auto *segmentedCurve = new CIccSegmentedCurve();
+        auto *curve_set = new CIccMpeCurveSet(total_number_of_channels);
+        auto *segmented_curve = new CIccSegmentedCurve();
 
         // Clip shadows to 0.0.
-        auto *shadowCurveFormula = new CIccFormulaCurveSegment(
+        auto *curve_formula = new CIccFormulaCurveSegment(
             icMinFloat32Number, 0.0f);
-        applyFormula(shadowCurveFormula,
+        apply_formula(curve_formula,
                      FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
-                     false, segmentedCurve, curveSet);
+                     false, segmented_curve, curve_set);
 
         // Attach the inverse gamma curve tag to the profile
-        attachGammaCurve(inverseMultiProcessTag, baseSpace, segmentedCurve,
-                         curveSet, totalNumberOfChannels, true);
+        attach_gamma_curve(inverse_multi_process_tag, base_space, segmented_curve,
+                         curve_set, total_number_of_channels, true);
 
         // Attach the inverse multi process tag to the icc profile.
-        iccProfile->AttachTag(icSigBToD3Tag, inverseMultiProcessTag);
+        icc_profile->AttachTag(icSigBToD3Tag, inverse_multi_process_tag);
     }
 
-    return iccProfile;
+    return icc_profile;
 }
 
 
-unsigned char *IccProfile::getProfileMem() {
-    if (profileMemory)
-        return profileMemory;
-    if (!hybridICCProfile) {
+unsigned char *IccProfile::get_profile_mem() {
+    if (profile_memory)
+        return profile_memory;
+    if (!hybrid_icc_profile) {
         throw std::runtime_error(
-            "No hybrid profile available to save. Run btrgb::icc::IccProfile::createHybridProfile.");
+            "No hybrid profile available to save. Run btrgb::icc::IccProfile::create_hybrid_profile.");
     }
 
-    profileMemory = new unsigned char[maxProfileSize];
+    profile_memory = new unsigned char[max_profile_size];
 
     CIccMemIO io;
-    io.Attach(profileMemory, maxProfileSize, true);
+    io.Attach(profile_memory, max_profile_size, true);
 
-    if (!hybridICCProfile->Write(&io)) {
-        delete[] profileMemory;
+    if (!hybrid_icc_profile->Write(&io)) {
+        delete[] profile_memory;
         return nullptr;
     }
 
-    profileSize = io.GetLength();
+    profile_size = io.GetLength();
 
-    return profileMemory;
+    return profile_memory;
 }
 
-size_t IccProfile::getProfileSize() const {
-    return profileSize;
+size_t IccProfile::get_profile_size() const {
+    return profile_size;
 }
 
 void IccProfile::write(const std::string &path) const {
-    if (!hybridICCProfile) {
+    if (!hybrid_icc_profile) {
         throw std::runtime_error(
-            "No hybrid profile available to save. Run btrgb::icc::IccProfile::createHybridProfile.");
+            "No hybrid profile available to save. Run btrgb::icc::IccProfile::create_hybrid_profile.");
     }
 
     auto *iccIO = new CIccFileIO();
     iccIO->Open(path.c_str(), "wb");
 
-    hybridICCProfile->Write(iccIO, icVersionBasedID);
+    hybrid_icc_profile->Write(iccIO, icVersionBasedID);
 
     iccIO->Close();
 }

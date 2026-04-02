@@ -19,7 +19,7 @@ public:
     explicit IccProfile(size_t max_size = 1000000);
 
     /**
-     * Destructor will free the memory allocated for the profile, so the caller should not free the memory returned by getProfileMem.
+     * Destructor will free the memory allocated for the profile, so the caller should not free the memory returned by get_profile_mem.
      */
     ~IccProfile();
 
@@ -27,19 +27,19 @@ public:
      * @brief Create a hybrid rgb & spectral Icc Profile.
      *
      * @param space The color space to generate an IccProfile for.
-     * @param dataMatrix data in row major order with @param numInputChannels columns and @param numOutputChannels rows. Should not include base channels if @param ignoreBaseChannels is set.
-     * @param numInputChannels The number of input channels for the given data.
-     * @param numOutputChannels The number of output channels for the given data.
-     * @param ignoreBaseChannels Should we ignore the base channels? If so, dataMatrix should not include base channels.
-     * @param inverseMatrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
+     * @param data_matrix data in row major order with @param num_input_channels columns and @param num_output_channels rows. Should not include base channels if @param ignore_ignore_base_channels is set.
+     * @param num_input_channels The number of input channels for the given data.
+     * @param num_output_channels The number of output channels for the given data.
+     * @param ignore_ignore_base_channels Should we ignore the base channels? If so, dataMatrix should not include base channels.
+     * @param inverse_matrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
      * @return If creation of the profile was successful, true. The created profile can be accessed using @fn getHybridProfile.
      */
-    bool createHybridProfile(ColorSpace space,
-                             const float *dataMatrix,
-                             int numInputChannels,
-                             int numOutputChannels,
-                             bool ignoreBaseChannels,
-                             const float *inverseMatrix = nullptr);
+    bool create_hybrid_profile(ColorSpace space,
+                             const float *data_matrix,
+                             int num_input_channels,
+                             int num_output_channels,
+                             bool ignore_ignore_base_channels,
+                             const float *inverse_matrix = nullptr);
 
     /**
      * Writes the binary IccProfile to the given file path.
@@ -54,7 +54,7 @@ public:
      *
      * @return The raw icc profile memory.
      */
-    unsigned char *getProfileMem();
+    unsigned char *get_profile_mem();
 
     /**
      * @brief Retrieves size of the raw icc profile memory.
@@ -62,7 +62,7 @@ public:
      *
      * @return The size of the profile's memory.
      */
-    [[nodiscard]] size_t getProfileSize() const;
+    [[nodiscard]] size_t get_profile_size() const;
 
     /**
      * Get access to the created profile object, which will be owned by this
@@ -71,7 +71,7 @@ public:
      *
      * @return The internal CIccProfile object, owned by this class.
      */
-    [[nodiscard]] CIccProfile *getHybridProfile() const { return hybridICCProfile; }
+    [[nodiscard]] CIccProfile *get_hybrid_profile() const { return hybrid_icc_profile; }
 
 protected:
     /**
@@ -80,38 +80,38 @@ protected:
      * @param space The color space that the iccProfile should use.
      * @return An RGB CIccProfile for the specified color space.
      */
-    static CIccProfile *createRgbProfile(ColorSpace space);
+    static CIccProfile *create_rgb_profile(ColorSpace space);
 
     /**
      * @brief Create a spectral icc profile for the given space & data.
      *
      * @note If inverseMatrix is not provided, then no BToD3 tag will be created
      *
-     * @param baseSpace The color space to generate an spectral profile for.
-     * @param dataMatrix data in row major order with @param numInputChannels columns and @param numOutputChannels rows. Should not include base channels if @param ignoreBaseChannels is set.
-     * @param numInputChannels The number of input channels for the given data.
-     * @param numOutputChannels The number of output channels for the given data.
-     * @param ignoreBaseChannels Should we ignore the base channels? If so, dataMatrix should not include base channels.
-     * @param inverseMatrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
+     * @param base_space The color space to generate an spectral profile for.
+     * @param data_matrix data in row major order with @param num_input_channels columns and @param num_output_channels rows. Should not include base channels if @param ignore_base_channels is set.
+     * @param num_input_channels The number of input channels for the given data.
+     * @param num_output_channels The number of output channels for the given data.
+     * @param ignore_base_channels Should we ignore the base channels? If so, dataMatrix should not include base channels.
+     * @param inverse_matrix If inverseMatrix is provided, then it must be the inverse of dataMatrix and include entries for all channels (including ignored channels if dataMatrix doesn't include them).
      * @return A spectral CIccProfile.
      */
-    static CIccProfile *createSpecProfile(ColorSpace baseSpace,
-                                          const float *dataMatrix,
-                                          int numInputChannels,
-                                          int numOutputChannels,
-                                          bool ignoreBaseChannels,
-                                          const float *inverseMatrix = nullptr);
+    static CIccProfile *create_spec_profile(ColorSpace base_space,
+                                          const float *data_matrix,
+                                          int num_input_channels,
+                                          int num_output_channels,
+                                          bool ignore_base_channels,
+                                          const float *inverse_matrix = nullptr);
 
 
     // MARK: Data Members
     /// The maximum size that the icc profile can be.
-    size_t maxProfileSize;
+    size_t max_profile_size;
     /// A reference to the created hybrid icc profile.
-    CIccProfile *hybridICCProfile;
-    /// The raw memory of the profile, populated after calling getProfileMem.
-    unsigned char *profileMemory;
-    /// The size of the profile, populated after calling getProfileMem
-    size_t profileSize;
+    CIccProfile *hybrid_icc_profile;
+    /// The raw memory of the profile, populated after calling get_profile_mem.
+    unsigned char *profile_memory;
+    /// The size of the profile, populated after calling get_profile_mem
+    size_t profile_size;
 };
 }; // namespace btrgb
 

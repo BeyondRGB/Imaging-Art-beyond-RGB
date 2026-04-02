@@ -87,10 +87,10 @@ void LibTiffWriter::_write(Image *im, std::string filename) {
         const int numInputChannels = m.cols;
         const int numOutputChannels = m.rows;
 
-        createdProfile = profile->createHybridProfile(im->getColorProfile(), flattenedMatrix, numInputChannels, numOutputChannels, false);
+        createdProfile = profile->create_hybrid_profile(im->getColorProfile(), flattenedMatrix, numInputChannels, numOutputChannels, false);
 
         if (createdProfile) {
-            TIFFSetField(img_out, TIFFTAG_ICCPROFILE, profile->getProfileSize(), profile->getProfileMem());
+            TIFFSetField(img_out, TIFFTAG_ICCPROFILE, profile->get_profile_size(), profile->get_profile_mem());
         }
     } catch(std::runtime_error error) {
         std::cout << "[LibTiffWriter::_write] Did not create icc-profile for (" << im->getName() << ")" << error.what() << std::endl;
