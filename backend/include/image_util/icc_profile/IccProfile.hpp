@@ -6,6 +6,70 @@
 #include <IccProfLib/IccProfile.h>
 
 namespace btrgb::icc {
+typedef std::array<icFloatNumber, 4> FunctionParameters;
+
+struct CurveProfile {
+    struct Segment {
+        icFloatNumber end;
+        FunctionParameters params;
+    };
+
+    Segment linear; // Empty if no linear segment
+    Segment gamma;
+    bool hasLinear;
+};
+
+struct ColorSpaceCurveProfiles {
+    CurveProfile normal;
+    CurveProfile inverse;
+};
+
+static const std::unordered_map<ColorSpace, ColorSpaceCurveProfiles>
+profiles =
+{
+    {Adobe_RGB_1998, {
+         // Normal: A gamma 2.2 curve with no offset.
+         {{}, {icMaxFloat32Number, {563.0f / 256.0f, 1.0f, 0.0f, 0.0f}}, false},
+         // Inverse: A gamma (1 / 2.2) curve with no offset.
+         {{}, {icMaxFloat32Number, {256.0f / 563.0f, 1.0f, 0.0f, 0.0f}}, false},
+     }},
+    {ProPhoto, {
+         {
+             // Normal Profile
+             // A linear curve from 0 to 0.13 with a slope of 0.0625 (1/16) to avoid a hard cut-off at 0.0.
+             {0.03125f, {1.0f, 0.0625f, 0.0f, 0.0f}},
+             // A gamma 1.8 curve with no offset
+             {icMaxFloat32Number, {1.8f, 1.0f, 0.0f, 0.0f}}, true
+         },
+         {
+             // Inverse Profile
+             // A linear curve from 0 to 0.001953125 with a slope of 16 to avoid a hard cut-off at 0.0.
+             {0.001953125f, {1.0f, 16.0f, 0.0f, 0.0f}},
+             // A gamma (1 / 1.8) curve with no offset
+             {icMaxFloat32Number, {0.555557250977f, 1.0f, 0.0f, 0.0f}},
+             true
+         },
+     }},
+    {sRGB, {
+         {
+             // Normal Profile
+             // A linear curve from 0 to 0.04045 with slope of 0.077399380804954 to avoid a hard cutoff at 0.0, then apply a gamma 2.4 curve with no offset
+             {0.04045f, {1.0f, 0.077399380804954f, 0.0f, 0.0f}},
+             // A gamma 2.4 curve with a slight offset
+             {icMaxFloat32Number, {2.4f, 0.947867298578199f,
+                                   0.0521327014218010f, 0.0f}},
+             true
+         },
+         {
+             // Inverse Profile
+             // A linear curve from 0 to 0.0031308 with slope of 12.92 to avoid a hard cut off at 0.0.
+             {0.0031308f, {1.0f, 12.92f, 0.0f, 0.0f}},
+             // A gamma (1 / 2.4) curve with a slight offset
+             {icMaxFloat32Number, {1.0f / 2.4f, 1.055f, 0.0f, -0.055f}},
+             true
+         },
+     }},
+};
 
 // An enum that validates if a given ProfileColorSpace enum is valid.
 #define VALIDATE_COLOR_SPACE(space) if (space > ColorSpace::none || space < 0) { return nullptr; }
@@ -35,11 +99,11 @@ public:
      * @return If creation of the profile was successful, true. The created profile can be accessed using @fn getHybridProfile.
      */
     bool create_hybrid_profile(ColorSpace space,
-                             const float *data_matrix,
-                             int num_input_channels,
-                             int num_output_channels,
-                             bool ignore_ignore_base_channels,
-                             const float *inverse_matrix = nullptr);
+                               const float *data_matrix,
+                               int num_input_channels,
+                               int num_output_channels,
+                               bool ignore_ignore_base_channels,
+                               const float *inverse_matrix = nullptr);
 
     /**
      * Writes the binary IccProfile to the given file path.
@@ -71,7 +135,9 @@ public:
      *
      * @return The internal CIccProfile object, owned by this class.
      */
-    [[nodiscard]] CIccProfile *get_hybrid_profile() const { return hybrid_icc_profile; }
+    [[nodiscard]] CIccProfile *get_hybrid_profile() const {
+        return hybrid_icc_profile;
+    }
 
 protected:
     /**
@@ -96,11 +162,12 @@ protected:
      * @return A spectral CIccProfile.
      */
     static CIccProfile *create_spec_profile(ColorSpace base_space,
-                                          const float *data_matrix,
-                                          int num_input_channels,
-                                          int num_output_channels,
-                                          bool ignore_base_channels,
-                                          const float *inverse_matrix = nullptr);
+                                            const float *data_matrix,
+                                            int num_input_channels,
+                                            int num_output_channels,
+                                            bool ignore_base_channels,
+                                            const float *inverse_matrix =
+                                                nullptr);
 
 
     // MARK: Data Members
