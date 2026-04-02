@@ -48,8 +48,10 @@ bool IccProfile::create_hybrid_profile(const ColorSpace space,
     CIccProfile *spec_profile = create_spec_profile(
         space, data_matrix, num_input_channels, num_output_channels,
         ignore_ignore_base_channels, inverse_matrix);
+
     if (!spec_profile) {
         delete rgb_profile;
+        return false;
     }
 
     // Allocate IO tag, attach spec_profile to it, and embed it in rgb profile
