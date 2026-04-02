@@ -29,11 +29,11 @@ IccProfile::~IccProfile() {
 }
 
 bool IccProfile::create_hybrid_profile(const ColorSpace space,
-                                     const float *data_matrix,
-                                     const int num_input_channels,
-                                     const int num_output_channels,
-                                     const bool ignore_ignore_base_channels,
-                                     const float *inverse_matrix) {
+                                       const float *data_matrix,
+                                       const int num_input_channels,
+                                       const int num_output_channels,
+                                       const bool ignore_ignore_base_channels,
+                                       const float *inverse_matrix) {
     if (hybrid_icc_profile) {
         delete hybrid_icc_profile;
         delete[] profile_memory;
@@ -173,7 +173,7 @@ void create_rgb_tags(RGBTags *tags, const ColorSpace color_space) {
 }
 
 void create_parametric_curve(CIccTagParametricCurve *parametric_curve,
-                           const ColorSpace color_space) {
+                             const ColorSpace color_space) {
     parametric_curve->SetFunctionType(3);
     icFloatNumber *param = parametric_curve->GetParams();
 
@@ -314,10 +314,11 @@ bool load_spectral_ranges(CIccProfile *profile, int num_channels_out) {
     }
 }
 
-void attach_no_base_channel_matrix(CIccTagMultiProcessElement *multi_process_tag,
-                               const int num_input_channels,
-                               const int num_output_channels,
-                               const float *data_matrix) {
+void attach_no_base_channel_matrix(
+    CIccTagMultiProcessElement *multi_process_tag,
+    const int num_input_channels,
+    const int num_output_channels,
+    const float *data_matrix) {
     auto *matrix = new CIccMpeMatrix();
 
     matrix->SetSize(num_input_channels, num_output_channels);
@@ -340,9 +341,10 @@ void attach_no_base_channel_matrix(CIccTagMultiProcessElement *multi_process_tag
 typedef std::array<icFloatNumber, 4> FunctionParameters;
 
 void apply_formula(CIccFormulaCurveSegment *curve_formula,
-                  FunctionParameters parameters, const bool share_curve,
-                  CIccSegmentedCurve *segmented_curve, CIccMpeCurveSet *curve_set,
-                  const int other_curves = 3) {
+                   FunctionParameters parameters, const bool share_curve,
+                   CIccSegmentedCurve *segmented_curve,
+                   CIccMpeCurveSet *curve_set,
+                   const int other_curves = 3) {
     curve_formula->SetFunction(0, 4, parameters.data());
     segmented_curve->Insert(curve_formula);
 
@@ -419,11 +421,11 @@ profiles =
 };
 
 void attach_gamma_curve(CIccTagMultiProcessElement *multi_process_tag,
-                      const ColorSpace color_space,
-                      CIccSegmentedCurve *segmented_curve,
-                      CIccMpeCurveSet *curve_set,
-                      const int total_number_of_channels,
-                      const bool inverse = false) {
+                        const ColorSpace color_space,
+                        CIccSegmentedCurve *segmented_curve,
+                        CIccMpeCurveSet *curve_set,
+                        const int total_number_of_channels,
+                        const bool inverse = false) {
     if (color_space == Linear_Normalized_XYZ) {
         return;
     }
@@ -452,30 +454,30 @@ void attach_gamma_curve(CIccTagMultiProcessElement *multi_process_tag,
         curve_formula = new CIccFormulaCurveSegment(
             0.0f, linearSegment.end);
         apply_formula(curve_formula, linearSegment.params, false,
-                     segmented_curve, curve_set);
+                      segmented_curve, curve_set);
     }
 
     // Apply the gamma curve. If there was a linear profile we need to adjust the start.
     curve_formula = new CIccFormulaCurveSegment(
         hasLinear ? linearSegment.end : 0.0f, gammaSegment.end);
     apply_formula(curve_formula, gammaSegment.params, true, segmented_curve,
-                 curve_set);
+                  curve_set);
 
     // The rest of the channels are assumed to be linear, so set them up with a simple gamma 1.0 curve with no clipping
     segmented_curve = new CIccSegmentedCurve();
     curve_formula = new CIccFormulaCurveSegment(
         icMinFloat32Number, icMaxFloat32Number);
     apply_formula(curve_formula,
-                 FunctionParameters{1.0f, 1.0f, 0.0f, 0.0f}, true,
-                 segmented_curve, curve_set, total_number_of_channels);
+                  FunctionParameters{1.0f, 1.0f, 0.0f, 0.0f}, true,
+                  segmented_curve, curve_set, total_number_of_channels);
 
     // Finally, attach the curve set we made.
     multi_process_tag->Attach(curve_set);
 }
 
 void attach_matrix(CIccTagMultiProcessElement *multi_process_tag,
-                  const float *data_matrix, const int total_number_of_channels,
-                  const int num_output_channels) {
+                   const float *data_matrix, const int total_number_of_channels,
+                   const int num_output_channels) {
     auto *profile_data_matrix = new CIccMpeMatrix();
 
     profile_data_matrix->SetSize(total_number_of_channels, num_output_channels);
@@ -499,8 +501,8 @@ CIccProfile *IccProfile::create_spec_profile(
     VALIDATE_COLOR_SPACE(base_space);
 
     const int total_number_of_channels = !ignore_base_channels
-                                          ? num_input_channels
-                                          : num_input_channels + 3;
+                                             ? num_input_channels
+                                             : num_input_channels + 3;
 
     const auto icc_profile = new CIccProfile();
 
@@ -510,7 +512,8 @@ CIccProfile *IccProfile::create_spec_profile(
     icc_profile->m_Header.version = icVersionNumberV5_1;
     icc_profile->m_Header.flags |= icEmbeddedProfileTrue;
     icc_profile->m_Header.colorSpace =
-        icNColorSpaceSig(icSigNChannelData, (total_number_of_channels & 0xffff));
+        icNColorSpaceSig(icSigNChannelData,
+                         (total_number_of_channels & 0xffff));
     icc_profile->m_Header.pcs = static_cast<icColorSpaceSignature>(0);
     icc_profile->m_Header.spectralPCS =
         icNColorSpaceSig(icSigReflectanceSpectralData,
@@ -562,7 +565,8 @@ CIccProfile *IccProfile::create_spec_profile(
     viewing_conditions->setIlluminant(icIlluminantD50, range, nullptr, 5000);
     viewing_conditions->setObserver(icStdObs1931TwoDegrees, range, nullptr);
 
-    icc_profile->AttachTag(icSigSpectralViewingConditionsTag, viewing_conditions);
+    icc_profile->AttachTag(icSigSpectralViewingConditionsTag,
+                           viewing_conditions);
 
     // Populate DToB3 tag and attach to profile
     auto *multi_process_tag = new CIccTagMultiProcessElement(
@@ -571,7 +575,7 @@ CIccProfile *IccProfile::create_spec_profile(
     if (ignore_base_channels) {
         // If we are ignoring the base profile channels, then just add a data_matrix element with zero columns for the base channels and the provided data and no curves
         attach_no_base_channel_matrix(multi_process_tag, num_input_channels,
-                                  num_output_channels, data_matrix);
+                                      num_output_channels, data_matrix);
     } else {
         auto *curve_set = new CIccMpeCurveSet(total_number_of_channels);
         auto *segmented_curve = new CIccSegmentedCurve();
@@ -580,16 +584,17 @@ CIccProfile *IccProfile::create_spec_profile(
         auto *curve_formula = new CIccFormulaCurveSegment(
             icMinFloat32Number, 0.0f);
         apply_formula(curve_formula,
-                     FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
-                     false, segmented_curve, curve_set);
+                      FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
+                      false, segmented_curve, curve_set);
 
         // Load gamma curves based on the color space.
-        attach_gamma_curve(multi_process_tag, base_space, segmented_curve, curve_set,
-                         total_number_of_channels);
+        attach_gamma_curve(multi_process_tag, base_space, segmented_curve,
+                           curve_set,
+                           total_number_of_channels);
 
         // Attach the data matrix to the end of the multi process tag.
         attach_matrix(multi_process_tag, data_matrix, total_number_of_channels,
-                     num_output_channels);
+                      num_output_channels);
     }
 
     icc_profile->AttachTag(icSigDToB3Tag, multi_process_tag);
@@ -600,7 +605,7 @@ CIccProfile *IccProfile::create_spec_profile(
 
         // Attach the data matrix to the start of the multi process tag.
         attach_matrix(inverse_multi_process_tag, inverse_matrix,
-                     total_number_of_channels, num_output_channels);
+                      total_number_of_channels, num_output_channels);
 
         auto *curve_set = new CIccMpeCurveSet(total_number_of_channels);
         auto *segmented_curve = new CIccSegmentedCurve();
@@ -609,12 +614,13 @@ CIccProfile *IccProfile::create_spec_profile(
         auto *curve_formula = new CIccFormulaCurveSegment(
             icMinFloat32Number, 0.0f);
         apply_formula(curve_formula,
-                     FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
-                     false, segmented_curve, curve_set);
+                      FunctionParameters{1.0f, 0.0f, 0.0f, 0.0f},
+                      false, segmented_curve, curve_set);
 
         // Attach the inverse gamma curve tag to the profile
-        attach_gamma_curve(inverse_multi_process_tag, base_space, segmented_curve,
-                         curve_set, total_number_of_channels, true);
+        attach_gamma_curve(inverse_multi_process_tag, base_space,
+                           segmented_curve,
+                           curve_set, total_number_of_channels, true);
 
         // Attach the inverse multi process tag to the icc profile.
         icc_profile->AttachTag(icSigBToD3Tag, inverse_multi_process_tag);
