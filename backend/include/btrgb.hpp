@@ -24,6 +24,8 @@
 #define BTRGB_OFFSET_OPT "Offset_opt"
 #define BTRGB_M_REFL_OPT "M_refl_opt"
 
+// did not systematically determine threads per machine as its not precise
+// decided on 4 to try and align with the concept of a quad tree
 #define MAX_THREADS (4)
 
 /* ============[ CONSTANTS and TYPES ]============ */
