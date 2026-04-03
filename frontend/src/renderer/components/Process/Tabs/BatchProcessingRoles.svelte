@@ -93,20 +93,20 @@
 	{/if}
 
 	{#key rerenderToggle}
-		<!-- Left Panel: Pool + Object Images -->
+		<!-- Left Panel: Unassigned Pool (top) + Calibration (bottom) -->
 		<left>
-			<!-- Pool Zone -->
+			<!-- Unassigned Image Pool -->
 			<div class="pool-zone">
 				<div class="pool-header">
 					<div class="pool-title">
-						<h2>Assign Image Roles</h2>
+						<span class="group-label" style="margin-bottom: 0;">Unassigned Images</span>
 						<span
 							class="unassigned-badge"
 							class:empty-pool={$processState.imageFilePaths.length === 0}
 						>
 							{#if $processState.imageFilePaths.length > 0}
 								<span class="badge-dot" />
-								{$processState.imageFilePaths.length} unassigned
+								{$processState.imageFilePaths.length}
 							{:else}
 								<svg class="check-icon" viewBox="0 0 16 16" fill="none">
 									<path
@@ -117,25 +117,105 @@
 										stroke-linejoin="round"
 									/>
 								</svg>
-								All assigned
 							{/if}
 						</span>
 					</div>
-					<Button variant="secondary" size="sm" onClick={autoSort}>Auto-sort images</Button>
+					<Button variant="secondary" size="sm" onClick={autoSort}>Auto-sort</Button>
 				</div>
-				{#if $processState.imageFilePaths.length > 0}
-					<div class="pool-dropbox">
+				<div class="pool-dropbox">
+					<Dropbox
+						bind:items={$processState.imageFilePaths}
+						type="image"
+						singleItem={false}
+						fullWidth={true}
+					/>
+				</div>
+			</div>
+
+			<!-- Calibration Images (bottom of left panel) -->
+			<div class="calibration-zone">
+				<div class="group-label">Calibration Images</div>
+				<div class="column-headers">
+					<div class="role-label-spacer" />
+					<div class="col-header">A</div>
+					<div class="col-header">B</div>
+				</div>
+
+				<div class="role-lane lane-target">
+					<div class="role-label">Target</div>
+					<div class="drop-cell">
 						<Dropbox
-							bind:items={$processState.imageFilePaths}
 							type="image"
-							singleItem={false}
+							bind:items={imageStack.targetA}
+							singleItem={true}
+							showError={!!validationError}
 							fullWidth={true}
 						/>
 					</div>
-				{/if}
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.targetB}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+				</div>
+
+				<div class="role-lane lane-flatfield">
+					<div class="role-label">Flat Field</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.flatfieldA}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.flatfieldB}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+				</div>
+
+				<div class="role-lane lane-darkfield">
+					<div class="role-label">Dark Field</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.darkfieldA}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+					<div class="drop-cell">
+						<Dropbox
+							type="image"
+							bind:items={imageStack.darkfieldB}
+							singleItem={true}
+							showError={!!validationError}
+							fullWidth={true}
+						/>
+					</div>
+				</div>
+			</div>
+		</left>
+
+		<!-- Right Panel: Header + Object Images + Actions -->
+		<right>
+			<div class="right-header">
+				<h2>Assign Image Roles</h2>
 			</div>
 
-			<!-- Object Images -->
+			<!-- Object Images (scrollable) -->
 			<div class="object-zone">
 				<div class="group-label">Object Images</div>
 				<div class="column-headers">
@@ -169,87 +249,6 @@
 					</div>
 				{/each}
 			</div>
-		</left>
-
-		<!-- Right Panel: Calibration + Actions -->
-		<right>
-			<div class="calibration-zone">
-				<div class="group-label">Calibration Images</div>
-				<div class="column-headers">
-					<div class="role-label-spacer" />
-					<div class="col-header">A</div>
-					<div class="col-header">B</div>
-				</div>
-
-				<!-- Target -->
-				<div class="role-lane lane-target">
-					<div class="role-label">Target</div>
-					<div class="drop-cell">
-						<Dropbox
-							type="image"
-							bind:items={imageStack.targetA}
-							singleItem={true}
-							showError={!!validationError}
-							fullWidth={true}
-						/>
-					</div>
-					<div class="drop-cell">
-						<Dropbox
-							type="image"
-							bind:items={imageStack.targetB}
-							singleItem={true}
-							showError={!!validationError}
-							fullWidth={true}
-						/>
-					</div>
-				</div>
-
-				<!-- Flat Field -->
-				<div class="role-lane lane-flatfield">
-					<div class="role-label">Flat Field</div>
-					<div class="drop-cell">
-						<Dropbox
-							type="image"
-							bind:items={imageStack.flatfieldA}
-							singleItem={true}
-							showError={!!validationError}
-							fullWidth={true}
-						/>
-					</div>
-					<div class="drop-cell">
-						<Dropbox
-							type="image"
-							bind:items={imageStack.flatfieldB}
-							singleItem={true}
-							showError={!!validationError}
-							fullWidth={true}
-						/>
-					</div>
-				</div>
-
-				<!-- Dark Field -->
-				<div class="role-lane lane-darkfield">
-					<div class="role-label">Dark Field</div>
-					<div class="drop-cell">
-						<Dropbox
-							type="image"
-							bind:items={imageStack.darkfieldA}
-							singleItem={true}
-							showError={!!validationError}
-							fullWidth={true}
-						/>
-					</div>
-					<div class="drop-cell">
-						<Dropbox
-							type="image"
-							bind:items={imageStack.darkfieldB}
-							singleItem={true}
-							showError={!!validationError}
-							fullWidth={true}
-						/>
-					</div>
-				</div>
-			</div>
 
 			<!-- Action Bar -->
 			<div class="action-bar">
@@ -282,49 +281,52 @@
 		@apply flex h-full w-full overflow-hidden;
 	}
 
-	/* ── Left Panel: Pool + Objects ── */
+	/* ── Left Panel: Calibration + Pool ── */
 	left {
-		@apply flex flex-col h-full overflow-hidden;
+		@apply flex flex-col h-full;
 		width: 50%;
 		background-color: var(--color-surface-elevated);
 	}
 
+	/* ── Unassigned Pool (top of left panel, fills remaining space) ── */
 	.pool-zone {
-		@apply flex-shrink-0;
-		padding: 16px 20px 12px;
-		border-bottom: 1px solid var(--color-border);
+		@apply flex-1 flex flex-col;
+		min-height: 0;
+		padding: 16px 20px;
 	}
 
-	:global(:root.dark) .pool-zone {
-		border-bottom-color: rgba(255, 255, 255, 0.08);
+	/* ── Calibration Zone (bottom of left panel, compact) ── */
+	.calibration-zone {
+		@apply flex-shrink-0;
+		padding: 12px 20px 16px;
+		border-top: 1px solid var(--color-border);
+	}
+
+	:global(:root.dark) .calibration-zone {
+		border-top-color: rgba(255, 255, 255, 0.06);
 	}
 
 	.pool-header {
-		@apply flex items-center justify-between mb-2;
+		@apply flex items-center justify-between mb-2 flex-shrink-0;
 	}
 
 	.pool-title {
-		@apply flex items-center gap-3;
-	}
-
-	.pool-title h2 {
-		color: var(--color-text-primary);
-		font-size: 20px;
-		font-weight: 600;
-		letter-spacing: -0.01em;
-		margin: 0;
+		@apply flex items-center gap-2;
 	}
 
 	.unassigned-badge {
-		@apply flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full;
+		@apply flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full;
 		background-color: var(--color-surface-sunken);
 		color: var(--color-warning);
 		border: 1px solid var(--color-border);
 		transition: all 0.3s ease;
+		min-width: 22px;
+		justify-content: center;
 	}
 
 	:global(:root.dark) .unassigned-badge {
 		border-color: rgba(255, 255, 255, 0.1);
+		background-color: rgba(255, 255, 255, 0.05);
 	}
 
 	.unassigned-badge.empty-pool {
@@ -332,8 +334,8 @@
 	}
 
 	.badge-dot {
-		width: 6px;
-		height: 6px;
+		width: 5px;
+		height: 5px;
 		border-radius: 50%;
 		background-color: var(--color-warning);
 		animation: pulse-dot 2s ease-in-out infinite;
@@ -352,43 +354,54 @@
 	}
 
 	.check-icon {
-		width: 14px;
-		height: 14px;
+		width: 12px;
+		height: 12px;
 	}
 
 	.pool-dropbox {
-		max-height: 100px;
-		overflow-y: auto;
-		border: 1px solid var(--color-border);
+		@apply flex-1 overflow-y-auto;
+		min-height: 60px;
+		border: 1px dashed var(--color-border);
 		border-radius: 10px;
-		background-color: var(--color-surface-sunken);
 		padding: 4px;
 	}
 
 	:global(:root.dark) .pool-dropbox {
-		border-color: rgba(255, 255, 255, 0.08);
+		border-color: rgba(255, 255, 255, 0.12);
 	}
 
-	.object-zone {
-		@apply flex-1 overflow-y-auto;
-		min-height: 0;
-		padding: 16px 20px;
+	/* Remove the inner Dropbox container styling so it's transparent inside the pool */
+	.pool-dropbox :global(.sectionStyle) {
+		background-color: transparent !important;
+		border: none !important;
+		width: 100% !important;
+		border-radius: 0 !important;
 	}
 
-	/* ── Right Panel: Calibration + Actions ── */
+	/* ── Right Panel: Header + Objects + Actions ── */
 	right {
 		@apply flex flex-col h-full;
 		width: 50%;
 		background-color: var(--color-surface);
 	}
 
-	.calibration-zone {
-		@apply flex-1;
-		padding: 16px 20px;
+	.right-header {
+		@apply flex-shrink-0;
+		padding: 16px 20px 0;
+	}
+
+	.right-header h2 {
+		color: var(--color-text-primary);
+		font-size: 20px;
+		font-weight: 600;
+		letter-spacing: -0.01em;
+		margin: 0 0 4px;
+	}
+
+	.object-zone {
+		@apply flex-1 overflow-y-auto;
 		min-height: 0;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+		padding: 12px 20px;
 	}
 
 	/* ── Shared: Column Headers & Labels ── */
@@ -425,7 +438,6 @@
 		@apply flex items-center gap-3 rounded-lg;
 		padding: 8px 12px;
 		margin-bottom: 6px;
-		border-left: 3px solid var(--color-border);
 		background-color: var(--color-surface-base);
 		border: 1px solid var(--color-border);
 		border-left-width: 3px;
@@ -434,7 +446,7 @@
 
 	:global(:root.dark) .role-lane {
 		border-color: rgba(255, 255, 255, 0.1);
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
 	}
 
 	.role-lane:hover {
@@ -443,11 +455,11 @@
 	}
 
 	:global(:root.dark) .role-lane:hover {
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-		border-color: rgba(255, 255, 255, 0.15);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+		border-color: rgba(255, 255, 255, 0.18);
 	}
 
-	/* Color-coded left borders per role type */
+	/* Color-coded left borders */
 	.lane-object {
 		border-left-color: #3b82f6;
 	}
@@ -461,8 +473,18 @@
 		border-left-color: #525252;
 	}
 
+	/* Brighter, more saturated border colors for dark mode */
+	:global(:root.dark) .lane-object {
+		border-left-color: #60a5fa;
+	}
+	:global(:root.dark) .lane-target {
+		border-left-color: #facc15;
+	}
+	:global(:root.dark) .lane-flatfield {
+		border-left-color: #d6d3d1;
+	}
 	:global(:root.dark) .lane-darkfield {
-		border-left-color: #78716c;
+		border-left-color: #a8a29e;
 	}
 
 	.role-label {
@@ -487,7 +509,8 @@
 	}
 
 	:global(:root.dark) .action-bar {
-		border-top-color: rgba(255, 255, 255, 0.08);
+		border-top-color: rgba(255, 255, 255, 0.06);
+		background-color: rgba(255, 255, 255, 0.03);
 	}
 
 	.error-msg {
