@@ -39,9 +39,13 @@
 			if (temp["ResponseType"] === "CalibrationComplete") {
 				// Project Key handler
 				console.log("CalibrationComplete Project Key From Server");
+				const newProjectKey = temp["ResponseData"]["path"];
 				viewState.update(state => ({
 					...state,
-					projectKey: temp["ResponseData"]["path"],
+					projectKey: newProjectKey,
+					batchProjectKeys: state.batchProjectKeys.includes(newProjectKey)
+						? state.batchProjectKeys
+						: [...state.batchProjectKeys, newProjectKey],
 				}));
 				processState.update(state => ({
 					...state,

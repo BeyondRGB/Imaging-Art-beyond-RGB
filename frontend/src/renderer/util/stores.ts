@@ -53,6 +53,7 @@ export const persistentCustomRefData = writable({
 
 export const viewState = writable({
 	projectKey: null,
+	batchProjectKeys: [] as string[],
 
 	colorManagedImage: { dataURL: "", name: "Waiting..." },
 	colorManagedTargetImage: { dataURL: "", name: "Waiting..." },

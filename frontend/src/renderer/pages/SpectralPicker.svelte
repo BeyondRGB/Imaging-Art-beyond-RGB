@@ -32,6 +32,49 @@
 
 	let loading = false;
 	let expand = false; // Start collapsed like master
+	let selectedBatchIndex = -1;
+
+	// Track which batch image is selected
+	// Auto-select last batch image and ensure projectKey is set
+	$: if (
+		$currentPage === "SpecPicker" &&
+		$viewState.batchProjectKeys.length > 0 &&
+		selectedBatchIndex < 0
+	) {
+		selectedBatchIndex = $viewState.batchProjectKeys.length - 1;
+		// If projectKey is null but we have batch keys, load the last one
+		if ($viewState.projectKey === null) {
+			viewState.update(state => ({
+				...state,
+				projectKey: state.batchProjectKeys[state.batchProjectKeys.length - 1],
+			}));
+		}
+	}
+
+	function selectBatchImage(index) {
+		selectedBatchIndex = index;
+		const key = $viewState.batchProjectKeys[index];
+		if (key && key !== $viewState.projectKey) {
+			// Set the new project key — the existing reactive block at
+			// line ~124 handles clearing old state and requesting the new image
+			viewState.update(state => ({
+				...state,
+				projectKey: key,
+			}));
+			spectrumData = [];
+			loading = true;
+		}
+	}
+
+	function getBatchImageName(projectKey) {
+		const parts = projectKey.split("/");
+		const filename = parts[parts.length - 1];
+		// Strip .btrgb extension and BeyondRGB_ prefix
+		return filename
+			.replace(/\.btrgb$/i, "")
+			.replace(/^BeyondRGB_/i, "")
+			.replace(/_/g, " ");
+	}
 
 	let wavelengthArray = Array.from({ length: 36 }, (x, i) => i * 10 + 380);
 
@@ -145,134 +188,154 @@
 	function closeImage() {
 		// Clear all project state using the centralized helper
 		clearProjectViewState();
+		viewState.update(state => ({ ...state, batchProjectKeys: [] }));
 		showBrush = false;
 		spectrumData = [];
 		oldProjectKey = null;
+		selectedBatchIndex = -1;
 	}
 </script>
 
 <main>
-	{#if $viewState.projectKey === null}
+	{#if $viewState.projectKey === null && $viewState.batchProjectKeys.length === 0}
 		<EmptyState
 			title="Select a project file to import into BeyondRGB"
 			filter="project"
 			on:select={handleFileSelect}
 		/>
-	{/if}
-	<div class="content" id="picker-content">
-		<div class="viewer-layout">
-			<div class="image-section">
-				<button
-					class="fullBtn"
-					on:click={() => {
-						if (isFullScreen) {
-							document.exitFullscreen();
-							isFullScreen = false;
-						} else {
-							document.querySelector(".image-section").requestFullscreen();
-							isFullScreen = true;
-						}
-					}}
-				>
-					{#if isFullScreen}
-						<Minimize2Icon size="1.25x" />
-					{:else}
-						<Maximize2Icon size="1.25x" />
-					{/if}
-				</button>
-				<button class="closeBtn" on:click={closeImage}>
-					<XIcon size="1.25x" />
-				</button>
-
-				<div class="image-container">
-					{#if loading}
-						<div class="loading">
-							<div class="loading-box">Loading<span class="loader" /></div>
-						</div>
-					{/if}
-
-					<SpecPickViewer
-						bind:shadowPos
-						bind:trueShadowPos
-						bind:trueSize
-						bind:showBrush
-						bind:size
-						bind:loading
-					/>
+	{:else}
+		<div class="content" id="picker-content">
+			{#if $viewState.batchProjectKeys.length > 1}
+				<div class="batch-strip">
+					<div class="batch-strip-label">Batch Results</div>
+					<div class="batch-strip-items">
+						{#each $viewState.batchProjectKeys as key, i}
+							<button
+								class="batch-thumb"
+								class:active={i === selectedBatchIndex}
+								on:click={() => selectBatchImage(i)}
+							>
+								<span class="batch-thumb-index">{i + 1}</span>
+								<span class="batch-thumb-name">{getBatchImageName(key)}</span>
+							</button>
+						{/each}
+					</div>
 				</div>
-			</div>
+			{/if}
+			<div class="viewer-layout">
+				<div class="image-section">
+					<button
+						class="fullBtn"
+						on:click={() => {
+							if (isFullScreen) {
+								document.exitFullscreen();
+								isFullScreen = false;
+							} else {
+								document.querySelector(".image-section").requestFullscreen();
+								isFullScreen = true;
+							}
+						}}
+					>
+						{#if isFullScreen}
+							<Minimize2Icon size="1.25x" />
+						{:else}
+							<Maximize2Icon size="1.25x" />
+						{/if}
+					</button>
+					<button class="closeBtn" on:click={closeImage}>
+						<XIcon size="1.25x" />
+					</button>
 
-			<div class="drawer-wrapper" class:open={expand}>
-				<button class="drawer-toggle" on:click={() => (expand = !expand)}>
-					{#if expand}
-						<ChevronRightIcon size="1.25x" />
-					{:else}
-						<ChevronLeftIcon size="1.25x" />
-					{/if}
-				</button>
+					<div class="image-container">
+						{#if loading}
+							<div class="loading">
+								<div class="loading-box">Loading<span class="loader" /></div>
+							</div>
+						{/if}
 
-				<div class="drawer-panel">
-					<div class="spectral-panel">
-						<div class="panel-section">
-							<SwitchRow
-								label="Enable Spectral Picker"
-								description="Show the sampling brush on the image preview"
-								bind:checked={showBrush}
-								ariaLabel="Toggle spectral picker"
-							/>
-							<SwitchRow
-								label="Stack Spectral Curves"
-								description="Keep previous spectra visible when sampling"
-								bind:checked={stackCurves}
-								ariaLabel="Toggle stacking spectral curves"
-							/>
-						</div>
+						<SpecPickViewer
+							bind:shadowPos
+							bind:trueShadowPos
+							bind:trueSize
+							bind:showBrush
+							bind:size
+							bind:loading
+						/>
+					</div>
+				</div>
 
-						<div class="panel-section brush-section">
-							<div class="panel-heading">Brush Size</div>
-							<div class="brush-controls">
-								<label class="brush-label" for="brush-size">Set brush size</label>
-								<div class="brush-slider">
-									<input
-										id="brush-size"
-										class="brushBar"
-										type="range"
-										min="0.001"
-										max="0.03"
-										step=".0005"
-										bind:value={size}
-									/>
-									<div class="pixSize">
-										<span>{trueSize ? parseFloat(trueSize).toFixed(1) : "0.0"}</span>
-										<span>px</span>
+				<div class="drawer-wrapper" class:open={expand}>
+					<button class="drawer-toggle" on:click={() => (expand = !expand)}>
+						{#if expand}
+							<ChevronRightIcon size="1.25x" />
+						{:else}
+							<ChevronLeftIcon size="1.25x" />
+						{/if}
+					</button>
+
+					<div class="drawer-panel">
+						<div class="spectral-panel">
+							<div class="panel-section">
+								<SwitchRow
+									label="Enable Spectral Picker"
+									description="Show the sampling brush on the image preview"
+									bind:checked={showBrush}
+									ariaLabel="Toggle spectral picker"
+								/>
+								<SwitchRow
+									label="Stack Spectral Curves"
+									description="Keep previous spectra visible when sampling"
+									bind:checked={stackCurves}
+									ariaLabel="Toggle stacking spectral curves"
+								/>
+							</div>
+
+							<div class="panel-section brush-section">
+								<div class="panel-heading">Brush Size</div>
+								<div class="brush-controls">
+									<label class="brush-label" for="brush-size">Set brush size</label>
+									<div class="brush-slider">
+										<input
+											id="brush-size"
+											class="brushBar"
+											type="range"
+											min="0.001"
+											max="0.03"
+											step=".0005"
+											bind:value={size}
+										/>
+										<div class="pixSize">
+											<span>{trueSize ? parseFloat(trueSize).toFixed(1) : "0.0"}</span>
+											<span>px</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
 
-						{#if expand}
-							<div class="panel-section chart-section">
-								<Card
-									variant="elevated"
-									padding="md"
-									rounded={true}
-									shadow="medium"
-									className="chart-card"
-								>
-									<LineChart
-										bind:data={spectrumData}
-										bind:wavelengthArray
-										bind:trueShadowPos
-										stack={stackCurves}
-									/>
-								</Card>
-							</div>
-						{/if}
+							{#if expand}
+								<div class="panel-section chart-section">
+									<Card
+										variant="elevated"
+										padding="md"
+										rounded={true}
+										shadow="medium"
+										className="chart-card"
+									>
+										<LineChart
+											bind:data={spectrumData}
+											bind:wavelengthArray
+											bind:trueShadowPos
+											stack={stackCurves}
+										/>
+									</Card>
+								</div>
+							{/if}
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	{/if}
 </main>
 
 <style lang="postcss">
@@ -280,11 +343,83 @@
 		@apply flex h-full w-full justify-center flex-col relative;
 	}
 	.content {
-		@apply w-full h-full flex justify-center items-center p-6;
+		@apply w-full h-full flex flex-col items-center p-6;
+	}
+
+	/* ── Batch Results Thumbnail Strip ── */
+	.batch-strip {
+		@apply flex-shrink-0 w-full flex items-center gap-3 mb-3;
+	}
+
+	.batch-strip-label {
+		color: var(--color-text-tertiary);
+		font-size: 11px;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.batch-strip-items {
+		@apply flex gap-2 overflow-x-auto flex-1;
+		scrollbar-width: thin;
+		padding-bottom: 2px;
+	}
+
+	.batch-thumb {
+		@apply flex items-center gap-2 px-3 py-1.5 rounded-lg cursor-pointer flex-shrink-0;
+		background-color: var(--color-surface-elevated);
+		border: 1px solid var(--color-border);
+		color: var(--color-text-secondary);
+		font-size: 13px;
+		transition: all 0.15s ease;
+	}
+
+	:global(:root.dark) .batch-thumb {
+		border-color: rgba(255, 255, 255, 0.1);
+	}
+
+	.batch-thumb:hover {
+		background-color: var(--color-interactive-hover);
+		border-color: var(--color-border-focus);
+	}
+
+	.batch-thumb.active {
+		background-color: var(--color-surface-base);
+		border-color: #3b82f6;
+		color: var(--color-text-primary);
+		box-shadow: 0 0 0 1px #3b82f6;
+	}
+
+	:global(:root.dark) .batch-thumb.active {
+		border-color: #60a5fa;
+		box-shadow: 0 0 0 1px #60a5fa;
+	}
+
+	.batch-thumb-index {
+		@apply flex items-center justify-center w-5 h-5 rounded-full text-xs font-bold;
+		background-color: var(--color-overlay-light);
+		color: var(--color-text-tertiary);
+	}
+
+	.batch-thumb.active .batch-thumb-index {
+		background-color: #3b82f6;
+		color: white;
+	}
+
+	:global(:root.dark) .batch-thumb.active .batch-thumb-index {
+		background-color: #60a5fa;
+	}
+
+	.batch-thumb-name {
+		@apply truncate;
+		max-width: 180px;
 	}
 
 	.viewer-layout {
-		@apply w-full h-full flex gap-0;
+		@apply w-full flex-1 flex gap-0;
+		min-height: 0;
 	}
 
 	.image-section {
