@@ -137,8 +137,14 @@
 		}
 	}
 
-	// Also handle when projectKey is set from elsewhere (e.g., returning to page)
-	$: if ($viewState.projectKey !== null && $viewState.projectKey !== loadedProjectKey) {
+	// Only fetch reports when the user is actually on the Reports page
+	// Without this guard, batch processing triggers report fetches for every
+	// CalibrationComplete, flooding the websocket and crashing the backend
+	$: if (
+		$currentPage === "Reports" &&
+		$viewState.projectKey !== null &&
+		$viewState.projectKey !== loadedProjectKey
+	) {
 		loadProject($viewState.projectKey);
 	}
 
