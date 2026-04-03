@@ -12,6 +12,17 @@
 	let imageStack = get($processState, "artStacks[0].fields");
 	let artImageCount = 1;
 
+	const catColors = [
+		"#3b82f6",
+		"#8b5cf6",
+		"#06b6d4",
+		"#f59e0b",
+		"#10b981",
+		"#ec4899",
+		"#6366f1",
+		"#14b8a6",
+	];
+
 	let rerenderToggle = false;
 	let validationError = null;
 
@@ -54,9 +65,8 @@
 	};
 
 	const validate = function () {
+		// Check calibration images
 		if (
-			isEmpty(imageStack?.imageA) ||
-			isEmpty(imageStack?.imageB) ||
 			isEmpty(imageStack?.targetA) ||
 			isEmpty(imageStack?.targetB) ||
 			isEmpty(imageStack?.flatfieldA) ||
@@ -64,7 +74,17 @@
 			isEmpty(imageStack?.darkfieldA) ||
 			isEmpty(imageStack?.darkfieldB)
 		) {
-			return "Please ensure each dropzone is assigned an image.";
+			return "Please ensure each calibration dropzone is assigned an image.";
+		}
+		// Check every object pair — each must have both A and B
+		for (let i = 0; i < artImageCount; i++) {
+			if (isEmpty(imageStack?.imageA?.[i]) || isEmpty(imageStack?.imageB?.[i])) {
+				return (
+					"Object " +
+					(artImageCount > 1 ? i + 1 + " is" : "is") +
+					" missing an image. Each object needs both A and B."
+				);
+			}
 		}
 		return null;
 	};
@@ -224,7 +244,7 @@
 					<div class="col-header">B</div>
 				</div>
 				{#each Array(artImageCount) as _, index (index)}
-					<div class="role-lane lane-object">
+					<div class="role-lane lane-object" style="border-left-color: {catColors[index % 8]}">
 						<div class="role-label">
 							{#if artImageCount > 1}Object {index + 1}{:else}Object{/if}
 						</div>
@@ -235,6 +255,7 @@
 								singleItem={true}
 								showError={!!validationError}
 								fullWidth={true}
+								colorIndex={index % 8}
 							/>
 						</div>
 						<div class="drop-cell">
@@ -244,6 +265,7 @@
 								singleItem={true}
 								showError={!!validationError}
 								fullWidth={true}
+								colorIndex={index % 8}
 							/>
 						</div>
 					</div>
@@ -461,7 +483,7 @@
 
 	/* Color-coded left borders */
 	.lane-object {
-		border-left-color: #3b82f6;
+		/* border-left-color set via inline style for categorical colors */
 	}
 	.lane-target {
 		border-left-color: #eab308;
@@ -473,10 +495,7 @@
 		border-left-color: #525252;
 	}
 
-	/* Brighter, more saturated border colors for dark mode */
-	:global(:root.dark) .lane-object {
-		border-left-color: #60a5fa;
-	}
+	/* Dark mode overrides for calibration lane borders */
 	:global(:root.dark) .lane-target {
 		border-left-color: #facc15;
 	}
