@@ -601,6 +601,80 @@ bool ColorManagedCalibrator::loadMatricesFromText(
     return true;
 }
 
+double DeltaEFunction::calc_noise() const {
+    /**
+     * The noise param A is only calculated for a middle gray patch
+     * This value remains constant. For a middle gray, the value below
+     *  is equivalent to
+     *
+     * Ygray  ^−2/3   18.4 ^ -2/3
+     * ------------ = ------------
+     * Ywhite ^ 1/3   100  ^  1/3
+     *
+     * This value is constant and is the same for every operation, hence
+     * the magic numbers
+     */
+    const double A = std::pow(std::cbrt(18.4), -2) / std::cbrt(100);
+
+    /**
+     * every delta has its own const param, and the formulas
+     *  for each delta are shown below
+     *
+     * deltaL*N^2 = (116A/3)^2 * \sum_{1}^{6} (m'2,n)^2
+     * deltaL*alpha^2 = (500A/3)^2 * \sum_{1}^{6} (m'1,n - m'2,n)^2
+     * deltaL*beta^2 = (200A/3)^2 * \sum_{1}^{6} (m2,n - m3,n)^2
+     */
+    // params
+    const double DELTAL_PARAM = std::pow(((116 * A) / 3), 2);
+    const double DELTA_ALPHA_PARAM = std::pow(((500 * A) / 3), 2);
+    const double DELTA_BETA_PARAM = std::pow(((200 * A) / 3), 2);
+    // deltas!
+    double deltaL = 0;
+    double delta_alpha = 0;
+    double delta_beta = 0;
+
+    // calc rescaling values that would make the sum each row of matrix M equal to 1
+    cv::Mat_<double> inverse_sums = cv::Mat_<double>(1, 3);
+    for (int i = 0; i < 3; i++)
+    {
+        double sum = 0;
+        for (int j = 0; j < 6; j++)
+        {
+            sum += this->M->at<double>(i, j);
+        }
+        inverse_sums.at<double>(0, i) = (1. / sum);
+    }
+
+    // M' represensts the matrix using the rescaling values
+    cv::Mat_<double> Mbar = this->M->clone();
+    // rescale each row of the matrix
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 6; j++)
+        {
+            // rescale m i,j
+            Mbar.at<double>(i, j) *= inverse_sums.at<double>(0, i);
+        }
+    }
+
+    // calc deltaL
+    for (int j = 0; j < 6; j++)
+        deltaL += std::pow(Mbar.at<double>(1, j), 2);
+
+    // calc delta_alpha
+    for (int j = 0; j < 6; j++)
+        delta_alpha += std::pow(Mbar.at<double>(0, j) - Mbar.at<double>(1, j), 2);
+
+    // calc delta_beta
+    for (int j = 0; j < 6; j++)
+        delta_beta += std::pow(Mbar.at<double>(1, j) - Mbar.at<double>(2, j), 2);
+
+    // calculate final noise
+    return std::sqrt(
+        deltaL + delta_alpha + delta_beta
+    );
+}
+
 double DeltaEFunction::calc(const double *x) const {
     this->itteration_count++;
 
@@ -665,10 +739,14 @@ double DeltaEFunction::calc(const double *x) const {
     double deltaE_sum = btrgb::calibration::compute_deltaE_sum(
         this->ref_data, xyz, this->delE_values);
 
+    // calculate the noise value to add to the deltaE
+    double noise = 0.1 * this->calc_noise();
+
     // Calculate the Average DeltaE
     int patch_count = row_count * col_count;
     double deltaE_avg = deltaE_sum / patch_count;
-    return deltaE_avg;
+    double deltaE_noise = deltaE_avg + (0.1 * noise);
+    return deltaE_noise;
 }
 
 // Used for calculating deltaE_sum and resulting_avg_deltaE in batch requests

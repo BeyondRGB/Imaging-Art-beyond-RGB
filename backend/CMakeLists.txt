@@ -153,6 +153,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/image_util/ColorProfiles.cpp
         src/image_util/ColorTarget.cpp
         src/image_util/Image.cpp
+        src/image_util/ImageLoader.cpp
 
         # image_util / image_reader
         src/image_util/image_reader/LibRawReader.cpp
@@ -191,6 +192,11 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/jsonafiable.cpp
         src/utils/resource_paths.cpp
         src/utils/time_tracker.cpp
+
+        # utils statics
+        src/utils/threading_statics/flatfield_static.cpp 
+        src/utils/threading_statics/image_reader_static.cpp 
+        src/utils/threading_statics/pixel_regestor_static.cpp 
 )
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
