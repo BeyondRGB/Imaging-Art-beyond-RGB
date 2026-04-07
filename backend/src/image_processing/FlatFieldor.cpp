@@ -1,6 +1,26 @@
 #include <boost/range/irange.hpp>
 #include <image_processing/FlatFieldor.h>
 #include <iostream>
+#include <utils/threading_statics/flatfield_static.hpp>
+
+void FlatFieldor::create_threads(std::thread **threads, btrgb::Image *a,
+                                 btrgb::Image *wh, btrgb::Image *d,
+                                 btrgb::Image *ac, int height, int width,
+                                 int channels) {
+    // how high each section of the image should be
+    int chunk_height = height / MAX_THREADS;
+    for (int t = 0; t < MAX_THREADS; t++) {
+        threads[t] = new std::thread(
+            btrgb::flatfield::pixelOperation, this->w,
+            // we render in strips, so we only change height
+            (t * chunk_height), 0,
+            // if on the last chunk, capture remainder of the image in the case
+            // of odd num pixels
+            (t == MAX_THREADS - 1) ? height : ((t + 1) * chunk_height), width,
+            // actual image resolutions, etc
+            height, width, channels, a, wh, d, ac);
+    }
+}
 
 void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     btrgb::Image *art1;
@@ -78,8 +98,16 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
 
     art1copy->initImage(post_lowpass);
 
-    pixelOperation(height, width, channels, art1, white1, dark1,
-                   art1copy.get());
+    // thread array
+    std::thread *threads[MAX_THREADS];
+
+    this->create_threads(threads, art1, white1, dark1, art1copy.get(), height,
+                         width, channels);
+    // wait for threads to complete
+    for (int t = 0; t < MAX_THREADS; t++) {
+        threads[t]->join();
+        delete threads[t];
+    }
     comms->send_progress(0.5, this->get_name());
 
     art1copy.reset(nullptr);
@@ -89,8 +117,13 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
     art2copy->initImage(copy2);
 
-    pixelOperation(height, width, channels, art2, white2, dark2,
-                   art2copy.get());
+    this->create_threads(threads, art2, white2, dark2, art2copy.get(), height,
+                         width, channels);
+    // wait for threads to complete
+    for (int t = 0; t < MAX_THREADS; t++) {
+        threads[t]->join();
+        delete threads[t];
+    }
     comms->send_progress(1, this->get_name());
 
     art2copy.reset(nullptr);
@@ -107,10 +140,15 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             new btrgb::Image("target1copy"));
         cv::Mat tcopy =
             btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
-        target1copy->initImage(tcopy);
+        target1copy->initImage(tcopy); 
 
-        pixelOperation(height, width, channels, target1, white1, dark1,
-                       target1copy.get());
+        this->create_threads(threads, target1, white1, dark1, target1copy.get(),
+                             height, width, channels);
+        // wait for threads to complete
+        for (int t = 0; t < MAX_THREADS; t++) {
+            threads[t]->join();
+            delete threads[t];
+        }
 
         target1copy.reset(nullptr);
 
@@ -120,9 +158,14 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
         cv::Mat tcopy2 =
             btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
         target2copy->initImage(tcopy2);
-
-        pixelOperation(height, width, channels, target2, white2, dark2,
-                       target2copy.get());
+ 
+        this->create_threads(threads, target2, white2, dark2, target2copy.get(),
+                             height, width, channels);
+        // wait for threads to complete
+        for (int t = 0; t < MAX_THREADS; t++) {
+            threads[t]->join();
+            delete threads[t];
+        }
 
         target2copy.reset(nullptr);
     }
@@ -137,9 +180,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     images->deleteImage("dark2");
 
     comms->send_progress(1, this->get_name());
-    // Outputs TIFFs for each image group for after this step, temporary
-    // images->outputImageAs(btrgb::TIFF, "art1", "art1_ff");
-    // images->outputImageAs(btrgb::TIFF, "art2", "art2_ff");
 }
 
 /**
@@ -153,126 +193,6 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
 void ::FlatFieldor::wCalc(float pAvg, float wAvg, double yRef) {
     // w values are constants based on the y value and patch value averages
     this->w = ((yRef * (wAvg / pAvg)) / 100);
-}
-
-/**
- * Updates the pixels based on the w calculation for both given images
- * @param h: height of images
- * @param wid: width of images
- * @param c: channel count
- * @param a1: art1 image
- * @param a2: art2 image
- * @param wh1: white1 image
- * @param wh2: white2 image
- * @param d1: dark1 image
- * @param d2 : dark2 image
- */
-void ::FlatFieldor::pixelOperation(int h, int wid, int c, btrgb::Image *a,
-                                   btrgb::Image *wh, btrgb::Image *d,
-                                   btrgb::Image *ac) {
-    // For loop is for every pixel in the image, and gets a corrisponding pixel
-    // from white and dark images Every Channel value for each pixel needs to be
-    // adjusted based on the w for that group of images
-    int currRow, currCol, ch;
-    int stuckPixelCounter = 0;
-    int uncorrectedCounter = 0;
-
-    double wPix, dPix, aPix, newPixel;
-    for (currRow = 0; currRow < h; currRow++) {
-        for (currCol = 0; currCol < wid; currCol++) {
-            for (ch = 0; ch < c; ch++) {
-
-                // Get pixel from all three images
-                wPix = wh->getPixel(currRow, currCol, ch);
-                dPix = d->getPixel(currRow, currCol, ch);
-                aPix = ac->getPixel(currRow, currCol, ch);
-
-                // If pixel in white and dark targets are equal pixel is stuck /
-                // dead
-                if (double(wPix == dPix)) {
-
-                    stuckPixelCounter++;
-
-                    // Radius to perform dead pixel correction
-                    int radius = 2;
-
-                    // Hold the final average value
-                    double artPixelTotalValue = 0.0;
-                    double whitePixeTotallValue = 0.0;
-                    double darkPixeTotallValue = 0.0;
-
-                    // Total number of neighboring pixels looked at
-                    int pixelCount = 0;
-
-                    // make sure the selection area doesn't go over the edge
-                    int left = (currCol - radius < 0 ? 0 : currCol - radius);
-                    int right =
-                        (currCol + radius >= wid ? wid - 1 : currCol + radius);
-                    int top = (currRow - radius < 0 ? 0 : currRow - radius);
-                    int bot = (currRow + radius > h ? h : currRow + radius);
-
-                    for (auto xIndex : boost::irange(left, right)) {
-                        for (auto yIndex : boost::irange(top, bot)) {
-
-                            // Grab the values
-                            double artPixel = ac->getPixel(yIndex, xIndex, ch);
-                            double whitePixel =
-                                wh->getPixel(yIndex, xIndex, ch);
-                            double darkPixel = d->getPixel(yIndex, xIndex, ch);
-
-                            if (whitePixel != darkPixel) {
-                                // Neighbor is not dead, so use to correct
-                                pixelCount++;
-                                artPixelTotalValue += artPixel;
-                                whitePixeTotallValue += whitePixel;
-                                darkPixeTotallValue += darkPixel;
-                            } else {
-                                // Neighbor pixel is dead do nothing
-                            }
-                        }
-                    }
-
-                    // Average values
-                    artPixelTotalValue = artPixelTotalValue / pixelCount;
-                    whitePixeTotallValue = whitePixeTotallValue / pixelCount;
-                    darkPixeTotallValue = darkPixeTotallValue / pixelCount;
-
-                    // Perform flatfielding on these new values
-                    newPixel =
-                        this->w *
-                        (double(artPixelTotalValue - darkPixeTotallValue) /
-                         double(whitePixeTotallValue - darkPixeTotallValue));
-
-                    // Final sanity checks, ensure no invalid values get by
-                    // NAN catch just set to 0;
-                    if (newPixel != newPixel) {
-                        uncorrectedCounter++;
-                        newPixel = 0;
-                    }
-                    // INF catch just set to 0;
-                    if (isinf(newPixel)) {
-                        uncorrectedCounter++;
-                        newPixel = 0;
-                    }
-                    // Done set pixel in artwork
-                    a->setPixel(currRow, currCol, ch, newPixel);
-                }
-
-                // Normal pixels flatfield as normal
-                else {
-                    newPixel =
-                        this->w * (double(aPix - dPix) / double(wPix - dPix));
-                    a->setPixel(currRow, currCol, ch, newPixel);
-                }
-            }
-        }
-    }
-    int corrected = stuckPixelCounter - uncorrectedCounter;
-    std::cout << "Stuck/Dead Pixels Detected - " << stuckPixelCounter / 3
-              << "\n";
-    std::cout << "Stuck/Dead Pixels Corrected - " << corrected / 3 << "\n";
-    std::cout << "Stuck/Dead Pixels Uncorrected - " << uncorrectedCounter / 3
-              << "\n";
 }
 
 void FlatFieldor::store_results(btrgb::ArtObject *images) {
