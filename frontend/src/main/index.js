@@ -7,6 +7,7 @@ const path = require("path");
 const child_process = require("child_process");
 const { getPort } = require("get-port-please");
 const { shell } = require("electron");
+const { registerAppLifecycleHandlers, terminateBackendProcess } = require("./backendLifecycle");
 
 // Undefined to start, as we can't guarantee any port is free to start
 let freePort = undefined;
@@ -31,9 +32,13 @@ process.on("loaded", (event, args) => {
 	}
 });
 
-app.on("before-quit", function () {
+const stopBackend = () => {
+	loader = terminateBackendProcess(loader);
+};
+
+registerAppLifecycleHandlers(app, () => {
 	console.log("Quiting");
-	process.kill(loader.pid);
+	stopBackend();
 });
 
 ipcMain.handle("ipc-getPort", async (event, arg) => {
@@ -116,13 +121,7 @@ const createBackendContext = () => {
 	getPort({ host: "127.0.0.1", random: true })
 		.then(port => {
 			// kill backend if already running
-			if (loader) {
-				try {
-					process.kill(loader.pid);
-				} catch (_) {
-					console.log(`Process with pid ${loader.pid} already killed`);
-				}
-			}
+			stopBackend();
 
 			// set new port
 			freePort = port;
@@ -133,6 +132,12 @@ const createBackendContext = () => {
 				[`--app_root=${app.getAppPath()}`, `--port=${freePort}`],
 				{ detached: true }
 			);
+			const activeLoader = loader;
+			loader.once("exit", () => {
+				if (loader === activeLoader) {
+					loader = undefined;
+				}
+			});
 			loader.stdout.on("data", data => {
 				console.log(`[Backend stdout]\n${data}`);
 			});
