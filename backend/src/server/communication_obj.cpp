@@ -20,59 +20,80 @@ CommunicationObj::CommunicationObj(const CommunicationObj &other) {
 }
 
 void CommunicationObj::send_msg(std::string msg) {
-    server_m->send(connectionHandle_m, msg, opcode_m);
+    if (server_m == nullptr) {
+        std::cerr << "[CommunicationObj] Cannot send message: server is null"
+                  << std::endl;
+        return;
+    }
+
+    try {
+        server_m->send(connectionHandle_m, msg, opcode_m);
+    } catch (const std::exception& e) {
+        std::cerr << "[CommunicationObj] Failed to send websocket message: "
+                  << e.what() << std::endl;
+    }
 }
 
 void CommunicationObj::send_bin(std::vector<uchar> &v) {
+    if (server_m == nullptr) {
+        std::cerr << "[CommunicationObj] Cannot send binary message: server is null"
+                  << std::endl;
+        return;
+    }
+
     const void *binToSend = (void *)v.data();
     // Need to find out how to send bin without this send, since it needs a
     // string for what it is sending
-    server_m->send(connectionHandle_m, binToSend, v.size(),
-                   websocketpp::frame::opcode::binary);
+    try {
+        server_m->send(connectionHandle_m, binToSend, v.size(),
+                       websocketpp::frame::opcode::binary);
+    } catch (const std::exception& e) {
+        std::cerr << "[CommunicationObj] Failed to send websocket binary: "
+                  << e.what() << std::endl;
+    }
 }
 
 void CommunicationObj::set_id(long newID) { id = newID; }
 
+unsigned long CommunicationObj::get_id() const { return id; }
+
+void CommunicationObj::send_json(const jsoncons::json &body) {
+    std::string msg;
+    body.dump(msg);
+    send_msg(msg);
+}
+
+void CommunicationObj::send_response(const std::string &responseType,
+                                     const jsoncons::json &responseData) {
+    jsoncons::json responseBody;
+    responseBody.insert_or_assign("RequestID", id);
+    responseBody.insert_or_assign("ResponseType", responseType);
+    responseBody.insert_or_assign("ResponseData", responseData);
+    send_json(responseBody);
+}
+
 void CommunicationObj::send_info(std::string msg, std::string sender) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "Info");
     jsoncons::json response_data;
     response_data.insert_or_assign("message", msg);
     response_data.insert_or_assign("sender", sender);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("Info", response_data);
 }
 
 void CommunicationObj::send_error(std::string msg, std::string sender,
                                   cpptrace::stacktrace trace, bool critical) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "Error");
     jsoncons::json response_data;
     response_data.insert_or_assign("message", msg);
     response_data.insert_or_assign("sender", sender);
     response_data.insert_or_assign("trace", trace.to_string());
     response_data.insert_or_assign("critical", critical);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("Error", response_data);
 }
 
 void CommunicationObj::send_progress(double val, std::string sender) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "Progress");
     jsoncons::json response_data;
     response_data.insert_or_assign("value", val);
     response_data.insert_or_assign("sender", sender);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("Progress", response_data);
 }
 
 void CommunicationObj::send_base64(btrgb::Image *image,
@@ -90,27 +111,16 @@ void CommunicationObj::send_binary(btrgb::Image *image,
 void CommunicationObj::send_base64(std::string name,
                                    std::vector<uchar> *direct_binary,
                                    enum btrgb::output_type type) {
-
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "ImageBase64");
     jsoncons::json response_data;
     btrgb::base64_ptr_t b64 = this->createDataURL(type, direct_binary);
     response_data.insert_or_assign("dataURL", *b64);
     response_data.insert_or_assign("name", name);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("ImageBase64", response_data);
 };
 
 void CommunicationObj::send_binary(std::string name,
                                    std::vector<uchar> *direct_binary,
                                    enum btrgb::output_type type) {
-
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "ImageBinary");
     jsoncons::json response_data;
     switch (type) {
     case btrgb::PNG:
@@ -124,10 +134,7 @@ void CommunicationObj::send_binary(std::string name,
             "[CommunicationObj::send_binary] Invalid image type. ");
     }
     response_data.insert_or_assign("name", name);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("ImageBinary", response_data);
 
     /* Temporarily add binID on and send. */
     send_bin(*direct_binary);
@@ -137,38 +144,23 @@ void CommunicationObj::send_binary(std::string name,
 
 void CommunicationObj::send_reports(jsoncons::json reports,
                                     std::string report_type) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "Report");
     jsoncons::json response_data;
     response_data.insert_or_assign("reportType", report_type);
     response_data.insert_or_assign("reports", reports);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("Report", response_data);
 }
 
 void CommunicationObj::send_spectrum(float *data, int size) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "SpectralPicker");
     jsoncons::json response_data;
     response_data["size"] = size;
     response_data["spectrum"] = jsoncons::json::make_array(size);
     for (int i = 0; i < size; i++)
         response_data["spectrum"][i] = data[i];
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("SpectralPicker", response_data);
 }
 
 void CommunicationObj::send_spectrum_measured(float *estimated_data,
                                               float *reference_data, int size) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "Report");
     jsoncons::json response_data;
     response_data.insert_or_assign("reportType", "SpectralPickerMeasured");
     response_data["size"] = size;
@@ -180,22 +172,13 @@ void CommunicationObj::send_spectrum_measured(float *estimated_data,
     for (int i = 0; i < size; i++)
         response_data["referenced_spectrum"][i] = reference_data[i];
 
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("Report", response_data);
 }
 
 void CommunicationObj::send_pipeline_components(jsoncons::json compoents_list) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "PipelineComponents");
     jsoncons::json response_data;
     response_data.insert_or_assign("component_json", compoents_list);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("PipelineComponents", response_data);
 }
 
 btrgb::base64_ptr_t
@@ -226,13 +209,7 @@ CommunicationObj::createDataURL(enum btrgb::output_type type,
 }
 
 void CommunicationObj::send_post_calibration_msg(std::string results_path) {
-    jsoncons::json info_body;
-    info_body.insert_or_assign("RequestID", id);
-    info_body.insert_or_assign("ResponseType", "CalibrationComplete");
     jsoncons::json response_data;
     response_data.insert_or_assign("path", results_path);
-    info_body.insert_or_assign("ResponseData", response_data);
-    std::string all_info;
-    info_body.dump(all_info);
-    send_msg(all_info);
+    send_response("CalibrationComplete", response_data);
 }

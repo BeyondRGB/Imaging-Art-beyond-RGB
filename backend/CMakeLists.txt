@@ -71,6 +71,7 @@ find_package(jsoncons CONFIG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(boost_lexical_cast CONFIG REQUIRED)
 find_package(boost_range CONFIG REQUIRED)
+find_package(httplib CONFIG REQUIRED)
 
 if (ENABLE_TESTS)
     find_package(Catch2 CONFIG REQUIRED)
@@ -118,7 +119,9 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/backend_process/backend_process.cpp
         src/backend_process/ColorManagedImage.cpp
         src/backend_process/HalfSizePreview.cpp
+        src/backend_process/OpenQualiaRequest.cpp
         src/backend_process/pipeline.cpp
+        src/backend_process/QRScanRequest.cpp
         src/backend_process/ReportRequest.cpp
         src/backend_process/SpectralPicker.cpp
         src/backend_process/SpectralPickerMeasured.cpp
@@ -170,6 +173,7 @@ target_sources(${PROJECT_NAME} PRIVATE
         # reference_data
         src/reference_data/color_patch.cpp
         src/reference_data/illuminants.cpp
+        src/reference_data/oqm_parser.cpp
         src/reference_data/ref_data.cpp
         src/reference_data/ref_data_array.cpp
         src/reference_data/standard_observer.cpp
@@ -188,8 +192,10 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/utils/color_conversions.cpp
         src/utils/csv_parser.cpp
         src/utils/general_utils.cpp
+        src/utils/http_client.cpp
         src/utils/json.cpp
         src/utils/jsonafiable.cpp
+        src/utils/qr_detector.cpp
         src/utils/resource_paths.cpp
         src/utils/time_tracker.cpp
 
@@ -237,7 +243,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${LibRaw_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LibRaw_r_LIBRARIES} lcms::lcms)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE PNG::PNG)
-
+target_link_libraries(${PROJECT_NAME} PRIVATE httplib::httplib)
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::lexical_cast)
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::range)
 
