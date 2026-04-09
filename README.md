@@ -1,4 +1,7 @@
-![Welcome](https://user-images.githubusercontent.com/43253719/166149703-4f02ed65-2c90-40c4-8b81-436f621770fb.PNG)
+<div align="center">
+  <img align="center" src="frontend/src/renderer/assets/TextLogo.svg" />
+</div>
+
 
 # Imaging-Art-Beyond-RGB-Project
 
