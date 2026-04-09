@@ -39,9 +39,13 @@
 			if (temp["ResponseType"] === "CalibrationComplete") {
 				// Project Key handler
 				console.log("CalibrationComplete Project Key From Server");
+				const newProjectKey = temp["ResponseData"]["path"];
 				viewState.update(state => ({
 					...state,
-					projectKey: temp["ResponseData"]["path"],
+					projectKey: newProjectKey,
+					batchProjectKeys: state.batchProjectKeys.includes(newProjectKey)
+						? state.batchProjectKeys
+						: [...state.batchProjectKeys, newProjectKey],
 				}));
 				processState.update(state => ({
 					...state,
@@ -62,9 +66,24 @@
 	}
 
 	function handleComplete(id) {
+		// Save projectKey before reset — reset clears processState but not viewState,
+		// however we want to ensure the key survives for the image viewer
+		const savedProjectKey = $viewState.projectKey;
+		const savedBatchKeys = $viewState.batchProjectKeys;
+
 		if (id === 0) {
 			reset();
-			console.log({ RESETTING: $currentPage });
+			// Restore viewState keys that reset may have indirectly cleared
+			viewState.update(state => ({
+				...state,
+				projectKey: savedProjectKey,
+				batchProjectKeys: savedBatchKeys,
+			}));
+			console.log({
+				RESETTING: $currentPage,
+				projectKey: savedProjectKey,
+				batchKeys: savedBatchKeys,
+			});
 			currentPage.set("SpecPicker");
 		} else if (id === 1) {
 			reset();
