@@ -1,5 +1,8 @@
-#include "version.h"
 #include <image_util/image_writer/LibTiffWriter.hpp>
+
+#include <image_util/icc_profile/IccProfile.hpp>
+
+#include <version.h>
 
 namespace btrgb {
 
@@ -28,6 +31,7 @@ void LibTiffWriter::_write(Image *im, std::string filename) {
 
     cv::Mat im_16u;
     im->getMat().convertTo(im_16u, CV_16U, 0xFFFF);
+
     uint16_t *bitmap = (uint16_t *)im_16u.data;
 
     /* ==============[ Open tiff file for writing ]================== */
@@ -66,25 +70,47 @@ void LibTiffWriter::_write(Image *im, std::string filename) {
     }
 
     /* Set color profile. */
-    switch (im->getColorProfile()) {
+    // If the matrix is not continuous, retrieving a pointer (.ptr<float>) will
+    // return garbage data. To fix this, we clone it which creates a continuous
+    // array of size total()*elemSize() in memory.
 
-    case none:
-        break;
+    bool createdProfile = false;
+    try {
+        auto *profile = new icc::IccProfile();
 
-    case ColorSpace::ProPhoto:
-        TIFFSetField(img_out, TIFFTAG_ICCPROFILE, ProPhoto_icm_size,
-                     ProPhoto_icm_data);
-        break;
+        // for (const auto &w[key, m] : im->getConversionsIterator()) {
+        //     std::cout << "[LibTiffWriter::_write] " << filename << " " << key << " " << m.rows << " " << m.cols << std::endl;
+        // }
 
-    case ColorSpace::Adobe_RGB_1998:
-        TIFFSetField(img_out, TIFFTAG_ICCPROFILE, AdobeRGB1998_icc_size,
-                     AdobeRGB1998_icc_data);
-        break;
+        cv::Mat m = im->getConversionMatrix(BTRGB_M_REFL_OPT);
+        auto *flattenedMatrix = m.ptr<float>();
+        const int numInputChannels = m.cols;
+        const int numOutputChannels = m.rows;
 
-    case ColorSpace::sRGB:
-    case ColorSpace::Wide_Gamut_RGB:
-    default:
-        throw std::logic_error("[LibTiffWriter] Invalid color profile.");
+        createdProfile = profile->create_hybrid_profile(im->getColorProfile(), flattenedMatrix, numInputChannels, numOutputChannels, false);
+
+        if (createdProfile) {
+            TIFFSetField(img_out, TIFFTAG_ICCPROFILE, profile->get_profile_size(), profile->get_profile_mem());
+        }
+    } catch(std::runtime_error error) {
+        std::cout << "[LibTiffWriter::_write] Did not create icc-profile for (" << im->getName() << ")" << error.what() << std::endl;
+    }
+
+    if (!createdProfile) {
+        switch (im->getColorProfile()) {
+        case none:
+            break;
+        case ColorSpace::ProPhoto:
+            TIFFSetField(img_out, TIFFTAG_ICCPROFILE, ProPhoto_icm_size, ProPhoto_icm_data);
+            break;
+        case ColorSpace::Adobe_RGB_1998:
+            TIFFSetField(img_out, TIFFTAG_ICCPROFILE, AdobeRGB1998_icc_size, AdobeRGB1998_icc_data);
+            break;
+        case ColorSpace::sRGB:
+        case ColorSpace::Wide_Gamut_RGB:
+        default:
+            throw std::logic_error("[LibTiffWriter] Invalid color profile.");
+        }
     }
 
     /* Set custom application tags as artist. */

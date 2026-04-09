@@ -78,7 +78,7 @@ if errorlevel 1 (
     exit /b
 )
 
-cmake --build . -j12 --config "%releaseMode%" -- /m:%NUMBER_OF_PROCESSORS%
+cmake --build . -j12 --config "%releaseMode%" -- /m /maxcpucount
 
 if errorlevel 1 (
     echo Failed to build project
