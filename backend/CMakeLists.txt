@@ -71,6 +71,7 @@ find_package(jsoncons CONFIG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(boost_lexical_cast CONFIG REQUIRED)
 find_package(boost_range CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 if (ENABLE_TESTS)
     find_package(Catch2 CONFIG REQUIRED)
@@ -95,17 +96,6 @@ if (NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLE
     find_package(Threads REQUIRED)
     find_package(OpenMP REQUIRED)
 endif ()
-
-# Include websocketpp AFTER vcpkg is configured
-set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
-set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp)
-
-# Configure cpptrace for macOS
-if (APPLE)
-    set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use _Unwind for stack unwinding on macOS" FORCE)
-endif ()
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpptrace)
 
 # Create .exe
 add_executable(${PROJECT_NAME})
@@ -167,6 +157,9 @@ target_sources(${PROJECT_NAME} PRIVATE
         src/image_util/image_writer/LibpngWriter.cpp
         src/image_util/image_writer/LibTiffWriter.cpp
 
+        # image_util / icc_profile
+        src/image_util/icc_profile/IccProfile.cpp
+
         # reference_data
         src/reference_data/color_patch.cpp
         src/reference_data/illuminants.cpp
@@ -207,22 +200,39 @@ endif ()
 # Set all source include files (ie. *.h)
 target_include_directories(${PROJECT_NAME} PUBLIC "include/")
 
+# Configure cpptrace for macOS
+if (APPLE)
+    set(CPPTRACE_UNWIND_WITH_UNWIND ON CACHE BOOL "Use _Unwind for stack unwinding on macOS" FORCE)
+endif ()
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/cpptrace)
+
 # adds stacktraces via cpptrace
 target_link_libraries(${PROJECT_NAME} PRIVATE
         cpptrace::cpptrace
 )
 
-# adds websocketpp as a target lib for compilation
+# Include websocketpp AFTER vcpkg is configured
+set(BUILD_TESTS OFF CACHE BOOL "Disable tests in websocketpp" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Disable examples in websocketpp" FORCE)
 
+# adds websocketpp as a target lib for compilation
 target_include_directories(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/submodules/websocketpp
 )
+
 # adds extra modes for compilation, since we dont use boost and asio instead, we need these
 target_compile_definitions(${PROJECT_NAME} PRIVATE
         ASIO_STANDALONE
         WEBSOCKETPP_NO_BOOST
         _WEBSOCKETPP_CPP11_STL_
 )
+
+# Include IccProfLib from iccDEV.
+# Note: This is not the best way to do this, we are including just one of the libraries instead of the whole thing. This is because of a bug in the iccDEV cmake which breaks it being included as a submodule of another project. This may be fixed one day, but at this moment, it is not.
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules")
+find_package(iccDEV REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE IccProfLib2)
+
 # VCPKG provided target_link_libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE asio::asio)
 target_link_libraries(${PROJECT_NAME} PRIVATE jsoncons)
@@ -240,6 +250,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE PNG::PNG)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::lexical_cast)
 target_link_libraries(${PROJECT_NAME} PRIVATE Boost::range)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 # Pthreads & OpenMP, only required on Linux & Windows since macOS includes these in its compiler.
 if (NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "x64-osx" AND NOT ${VCPKG_TARGET_TRIPLET} STREQUAL "arm64-osx")
