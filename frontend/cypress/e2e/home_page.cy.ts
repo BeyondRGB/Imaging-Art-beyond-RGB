@@ -19,6 +19,6 @@ describe("Home Page", () => {
 
 		cy.contains("About the program").click();
 		cy.contains("About Beyond RGB");
-		cy.contains("Version 2.4.0");
+		cy.contains("Version 2.5.0");
 	});
 });
