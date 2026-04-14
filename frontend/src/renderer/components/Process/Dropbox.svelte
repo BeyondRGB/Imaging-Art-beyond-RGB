@@ -2,6 +2,7 @@
 	import { dndzone } from "svelte-dnd-action";
 	import { flip } from "svelte/animate";
 	import ImageBubble from "@components/Process/ImageBubble.svelte";
+	import { BATCH_OBJECT_ACCENT_COLORS } from "@util/batchRoleColors";
 	import { isEmpty } from "lodash";
 	const flipDurationMs = 200;
 
@@ -11,20 +12,12 @@
 	export let showError = false;
 	export let dragDisabled = false;
 	export let fullWidth = false;
-	export let colorIndex = -1;
+	export let roleColorIndex = -1;
 
-	const catColors = [
-		"#3b82f6",
-		"#8b5cf6",
-		"#06b6d4",
-		"#f59e0b",
-		"#10b981",
-		"#ec4899",
-		"#6366f1",
-		"#14b8a6",
-	];
-
-	$: cardColor = colorIndex >= 0 ? catColors[colorIndex % catColors.length] : "";
+	$: cardColor =
+		roleColorIndex >= 0
+			? BATCH_OBJECT_ACCENT_COLORS[roleColorIndex % BATCH_OBJECT_ACCENT_COLORS.length]
+			: "";
 
 	function handleSort(e) {
 		items = e.detail.items;

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { processState, batchProcessState, setTabCompleted } from "@util/stores";
+	import { processState, setTabCompleted } from "@util/stores";
+	import { BATCH_OBJECT_ACCENT_COLORS } from "@util/batchRoleColors";
 	import Dropbox from "@components/Process/Dropbox.svelte";
 	import Button from "@components/Button.svelte";
 	import { get, isEmpty, each, includes } from "lodash";
@@ -11,17 +12,6 @@
 
 	let imageStack = get($processState, "artStacks[0].fields");
 	let artImageCount = 1;
-
-	const catColors = [
-		"#3b82f6",
-		"#8b5cf6",
-		"#06b6d4",
-		"#f59e0b",
-		"#10b981",
-		"#ec4899",
-		"#6366f1",
-		"#14b8a6",
-	];
 
 	let rerenderToggle = false;
 	let validationError = null;
@@ -244,7 +234,12 @@
 					<div class="col-header">B</div>
 				</div>
 				{#each Array(artImageCount) as _, index (index)}
-					<div class="role-lane lane-object" style="border-left-color: {catColors[index % 8]}">
+					<div
+						class="role-lane lane-object"
+						style="border-left-color: {BATCH_OBJECT_ACCENT_COLORS[
+							index % BATCH_OBJECT_ACCENT_COLORS.length
+						]}"
+					>
 						<div class="role-label">
 							{#if artImageCount > 1}Object {index + 1}{:else}Object{/if}
 						</div>
@@ -255,7 +250,7 @@
 								singleItem={true}
 								showError={!!validationError}
 								fullWidth={true}
-								colorIndex={index % 8}
+								roleColorIndex={index}
 							/>
 						</div>
 						<div class="drop-cell">
@@ -265,7 +260,7 @@
 								singleItem={true}
 								showError={!!validationError}
 								fullWidth={true}
-								colorIndex={index % 8}
+								roleColorIndex={index}
 							/>
 						</div>
 					</div>
@@ -306,7 +301,8 @@
 	/* ── Left Panel: Calibration + Pool ── */
 	left {
 		@apply flex flex-col h-full;
-		width: 50%;
+		width: 54%;
+		min-width: 0;
 		background-color: var(--color-surface-elevated);
 	}
 
@@ -403,7 +399,8 @@
 	/* ── Right Panel: Header + Objects + Actions ── */
 	right {
 		@apply flex flex-col h-full;
-		width: 50%;
+		width: 46%;
+		min-width: 0;
 		background-color: var(--color-surface);
 	}
 
