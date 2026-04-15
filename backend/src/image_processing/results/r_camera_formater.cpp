@@ -17,7 +17,6 @@ void RCameraFormater::write_format(std::ostream &output_stream,
     std::cout << "R_Camera" << std::endl;
 
     try {
-
         if (format_type == ResultObjType::CALIBRATION) {
             R_camera = results->get_matrix(SP_R_camera);
             R_ref = results->get_matrix(SP_R_reference);
@@ -30,8 +29,9 @@ void RCameraFormater::write_format(std::ostream &output_stream,
 
         row_count = results->get_int(GI_TARGET_ROWS);
         col_count = results->get_int(GI_TARGET_COLS);
-    } catch (ResultError e) {
-        throw e;
+    } catch (ResultError &e) {
+        std::cerr << "Error Reading R_Camera " << e.what() << std::endl;
+        throw;
     }
 
     // Clip negative reflectance values to zero
@@ -47,6 +47,8 @@ void RCameraFormater::write_format(std::ostream &output_stream,
     this->write_matrix(output_stream, R_ref, row_count, col_count, DELIM);
     // Write RMSE
     output_stream << "RMSE" << DELIM << rmse;
+
+    std::cout << "R_Camera Done" << std::endl;
 
 #undef DELIM
 }

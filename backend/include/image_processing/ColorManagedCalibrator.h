@@ -126,6 +126,18 @@ class DeltaEFunction : public cv::MinProblemSolver::Function {
   public:
     DeltaEFunction(cv::Mat *opt_in, cv::Mat *cp_avgs, cv::Mat *offeset,
                    cv::Mat *M, RefData *ref_data, cv::Mat *delE_values);
+    /**
+     * @brief Every calculation propagates noise. The transformation matrix can be a
+     * source of very large noise amplification. This noise can cause visible
+     * artifacts in the image and makes it very hard to reproduce results. Including
+     * the noise parameter as part of the cost function in the optimization penalizes
+     * matrices that would significantly increase noise.
+     *
+     * @return double (a number that quantifies how much the matrix amplifies
+     *  visual noise in the image)
+     */
+    double calc_noise() const;
+
     int getDims() const;
     /**
      * @brief The function that the MinProblemSolver calls during optimization

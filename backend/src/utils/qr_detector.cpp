@@ -1,4 +1,5 @@
 #include <utils/qr_detector.hpp>
+#include <utils/http_client.hpp>
 
 #include <algorithm>
 #include <array>
@@ -15,26 +16,22 @@ struct DetectionCandidate {
 };
 
 cv::Mat to_grayscale(const cv::Mat& image) {
-    if (image.channels() == 3) {
-        cv::Mat gray;
-        cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
-        return gray;
+    if (image.channels() == 1) {
+        return image.clone();
     }
 
-    if (image.channels() == 4) {
-        cv::Mat gray;
-        cv::cvtColor(image, gray, cv::COLOR_BGRA2GRAY);
-        return gray;
-    }
-
-    return image.clone();
+    const int conversionCode =
+        image.channels() == 4 ? cv::COLOR_BGRA2GRAY : cv::COLOR_BGR2GRAY;
+    cv::Mat gray;
+    cv::cvtColor(image, gray, conversionCode);
+    return gray;
 }
 
 cv::Mat apply_clahe(const cv::Mat& input) {
     cv::Mat normalized;
     cv::normalize(input, normalized, 0, 255, cv::NORM_MINMAX);
 
-    auto clahe = cv::createCLAHE();
+    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
     clahe->setClipLimit(3.0);
     clahe->setTilesGridSize(cv::Size(8, 8));
 
@@ -77,12 +74,20 @@ double channel_contrast_score(const cv::Mat& channel) {
     return stddev[0];
 }
 
+bool is_supported_channel_count(int channelCount) {
+    return channelCount == 1 || channelCount == 3 || channelCount == 4;
+}
+
+std::string unsupported_channel_count_error(int channelCount) {
+    return "Unsupported image channel count: " + std::to_string(channelCount);
+}
+
 void scale_points(std::vector<cv::Point>& points, double factor) {
     if (factor == 1.0) {
         return;
     }
 
-    for (auto& point : points) {
+    for (cv::Point& point : points) {
         point.x = static_cast<int>(std::round(point.x * factor));
         point.y = static_cast<int>(std::round(point.y * factor));
     }
@@ -220,11 +225,10 @@ std::vector<DetectionCandidate> build_detection_candidates(const cv::Mat& image)
 
 } // namespace
 
-btrgb::QRDetector::QRDetector() : detector_() {
-    // QRCodeDetector is ready to use after construction
-}
-
 cv::Mat btrgb::QRDetector::preprocessImage(const cv::Mat& image) {
+    if (!is_supported_channel_count(image.channels())) {
+        return cv::Mat();
+    }
     return apply_clahe(to_grayscale(image));
 }
 
@@ -239,10 +243,6 @@ btrgb::QRDetectionResult btrgb::QRDetector::detectFromMatRegion(
         result.error = "Empty image provided";
         return result;
     }
-
-    auto clampInt = [](int value, int minVal, int maxVal) {
-        return std::max(minVal, std::min(value, maxVal));
-    };
 
     const int imgW = image.cols;
     const int imgH = image.rows;
@@ -261,10 +261,10 @@ btrgb::QRDetectionResult btrgb::QRDetector::detectFromMatRegion(
     const int expandX = static_cast<int>(std::round(baseW * marginScale));
     const int expandY = static_cast<int>(std::round(baseH * marginScale));
 
-    left = clampInt(left - expandX, 0, imgW - 1);
-    right = clampInt(right + expandX, 0, imgW);
-    top = clampInt(top - expandY, 0, imgH - 1);
-    bottom = clampInt(bottom + expandY, 0, imgH);
+    left = std::clamp(left - expandX, 0, imgW - 1);
+    right = std::clamp(right + expandX, 0, imgW);
+    top = std::clamp(top - expandY, 0, imgH - 1);
+    bottom = std::clamp(bottom + expandY, 0, imgH);
 
     if (right <= left || bottom <= top) {
         result.error = "Invalid scan region";
@@ -279,7 +279,7 @@ btrgb::QRDetectionResult btrgb::QRDetector::detectFromMatRegion(
     if (!result.found && (cropped.cols < 1200 || cropped.rows < 1200)) {
         cv::Mat upscaled2x;
         cv::resize(cropped, upscaled2x, cv::Size(), 2.0, 2.0, cv::INTER_CUBIC);
-        auto upscaledResult = detectFromMat(upscaled2x);
+        btrgb::QRDetectionResult upscaledResult = detectFromMat(upscaled2x);
         if (upscaledResult.found) {
             result = upscaledResult;
             scale_points(result.boundingBox, 0.5);
@@ -287,7 +287,7 @@ btrgb::QRDetectionResult btrgb::QRDetector::detectFromMatRegion(
             cv::Mat upscaled4x;
             cv::resize(cropped, upscaled4x, cv::Size(), 4.0, 4.0,
                        cv::INTER_CUBIC);
-            auto upscaled4xResult = detectFromMat(upscaled4x);
+            btrgb::QRDetectionResult upscaled4xResult = detectFromMat(upscaled4x);
             if (upscaled4xResult.found) {
                 result = upscaled4xResult;
                 scale_points(result.boundingBox, 0.25);
@@ -296,7 +296,7 @@ btrgb::QRDetectionResult btrgb::QRDetector::detectFromMatRegion(
     }
 
     if (result.found && !result.boundingBox.empty()) {
-        for (auto& point : result.boundingBox) {
+        for (cv::Point& point : result.boundingBox) {
             point.x += left;
             point.y += top;
         }
@@ -332,8 +332,13 @@ btrgb::QRDetectionResult btrgb::QRDetector::detectFromMat(
         return result;
     }
 
+    if (!is_supported_channel_count(image.channels())) {
+        result.error = unsupported_channel_count_error(image.channels());
+        return result;
+    }
+
     try {
-        for (const auto& candidate : build_detection_candidates(image)) {
+        for (const DetectionCandidate& candidate : build_detection_candidates(image)) {
             std::vector<cv::Point> points;
             std::string decoded = detector_.detectAndDecode(candidate.image, points);
 
@@ -367,9 +372,16 @@ std::vector<btrgb::QRDetectionResult> btrgb::QRDetector::detectAllFromMat(
         return results;
     }
 
+    if (!is_supported_channel_count(image.channels())) {
+        std::cerr << "[QRDetector] "
+                  << unsupported_channel_count_error(image.channels())
+                  << std::endl;
+        return results;
+    }
+
     try {
         std::set<std::string> seenDecodedText;
-        for (const auto& candidate : build_detection_candidates(image)) {
+        for (const DetectionCandidate& candidate : build_detection_candidates(image)) {
             std::vector<std::string> decoded;
             std::vector<cv::Point> points;
 
@@ -412,15 +424,7 @@ std::vector<btrgb::QRDetectionResult> btrgb::QRDetector::detectAllFromMat(
 }
 
 bool btrgb::QRDetector::isOpenQualiaUrl(const std::string& text) {
-    if (text.find("https://") != 0) {
-        return false;
-    }
-
-    bool hasManufacturer = text.find("Manufacturer=") != std::string::npos;
-    bool hasTargetType = text.find("TargetType=") != std::string::npos;
-    bool hasTargetID = text.find("TargetID=") != std::string::npos;
-
-    return hasManufacturer && hasTargetType && hasTargetID;
+    return btrgb::HttpClient::isValidOpenQualiaUrl(text);
 }
 
 std::optional<std::string> btrgb::QRDetector::findOpenQualiaUrl(
@@ -431,13 +435,13 @@ std::optional<std::string> btrgb::QRDetector::findOpenQualiaUrl(
         return std::nullopt;
     }
 
-    auto result = detectFromMat(image);
+    btrgb::QRDetectionResult result = detectFromMat(image);
     if (result.found && isOpenQualiaUrl(result.decodedText)) {
         return result.decodedText;
     }
 
-    auto allResults = detectAllFromMat(image);
-    for (const auto& res : allResults) {
+    std::vector<btrgb::QRDetectionResult> allResults = detectAllFromMat(image);
+    for (const btrgb::QRDetectionResult& res : allResults) {
         if (res.found && isOpenQualiaUrl(res.decodedText)) {
             return res.decodedText;
         }

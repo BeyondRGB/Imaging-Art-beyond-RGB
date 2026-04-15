@@ -390,15 +390,13 @@ std::string Pipeline::get_registration_type() {
 
 IlluminantType Pipeline::get_illuminant_type(Json target_data) {
     Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
-    std::string illum_str =
-        ref_data.get_string(key_map[DataKey::Illuminants]);
+    std::string illum_str = ref_data.get_string(key_map[DataKey::Illuminants]);
     return RefData::get_illuminant(illum_str);
 }
 
 ObserverType Pipeline::get_observer_type(Json target_data) {
     Json ref_data = target_data.get_obj(key_map[DataKey::ReferenceData]);
-    int observer_num =
-        ref_data.get_number(key_map[DataKey::StandardObserver]);
+    int observer_num = ref_data.get_number(key_map[DataKey::StandardObserver]);
     return RefData::get_observer(observer_num);
 }
 

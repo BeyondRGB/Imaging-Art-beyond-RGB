@@ -72,7 +72,8 @@ private:
     static std::string setOrReplaceQueryParam(const std::string& url,
                                               const std::string& key,
                                               const std::string& value);
-    static std::string normalizeDropboxDownloadUrl(const std::string& url);
+    static std::optional<std::string> normalizeDropboxDownloadUrl(
+        const std::string& url);
     static bool responseLooksLikeHtml(const HttpResponse& response);
     static std::optional<std::string> extractDownloadUrlFromHtml(
         const std::string& baseUrl,

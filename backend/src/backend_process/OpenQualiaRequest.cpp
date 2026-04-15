@@ -10,49 +10,44 @@
 
 void OpenQualiaRequest::run() {
     std::cout << "[OpenQualia] Processing request" << std::endl;
-    
+
+    std::string url = "";
+    std::string filePath = "";
+
     try {
-        // Get request parameters
-        std::string url = "";
-        std::string filePath = "";
-        
-        try {
-            url = this->process_data_m->get_string("url");
-        } catch (...) {
-            // url not provided
-        }
-        
-        try {
-            filePath = this->process_data_m->get_string("filePath");
-        } catch (...) {
-            // filePath not provided
-        }
-        
-        std::string content;
-        std::string source;
-        
+        url = this->process_data_m->get_string("url");
+    } catch (...) {
+        // url not provided
+    }
+
+    try {
+        filePath = this->process_data_m->get_string("filePath");
+    } catch (...) {
+        // filePath not provided
+    }
+
+    try {
         if (!url.empty()) {
-            // Fetch from URL
             std::cout << "[OpenQualia] Fetching from URL: " << url << std::endl;
-            content = fetchFromUrl(url);
-            source = "url";
-        } else if (!filePath.empty()) {
-            // Load from file
+            const std::string content = fetchFromUrl(url);
+            if (content.empty()) {
+                return;
+            }
+            processOQMContent(content, "url");
+            return;
+        }
+
+        if (!filePath.empty()) {
             std::cout << "[OpenQualia] Loading from file: " << filePath << std::endl;
-            content = loadFromFile(filePath);
-            source = "file";
-        } else {
-            sendErrorResponse("No URL or file path provided");
+            const std::string content = loadFromFile(filePath);
+            if (content.empty()) {
+                return;
+            }
+            processOQMContent(content, "file");
             return;
         }
-        
-        if (content.empty()) {
-            // Error already sent by fetch/load function
-            return;
-        }
-        
-        processOQMContent(content, source);
-        
+
+        sendErrorResponse("No URL or file path provided");
     } catch (const std::exception& e) {
         std::cerr << "[OpenQualia] Exception: " << e.what() << std::endl;
         sendErrorResponse(std::string("Exception: ") + e.what());
@@ -86,6 +81,7 @@ std::string OpenQualiaRequest::loadFromFile(const std::string& filePath) {
     
     std::stringstream buffer;
     buffer << file.rdbuf();
+    file.close();
     return buffer.str();
 }
 

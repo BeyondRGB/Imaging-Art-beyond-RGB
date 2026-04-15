@@ -198,9 +198,10 @@ void Image::setConversionMatrix(std::string key, cv::Mat m) {
 }
 
 cv::Mat Image::getConversionMatrix(std::string key) {
-    if (this->_conversions.contains(key))
+    if (this->_conversions.contains(key)) {
         throw std::runtime_error(
-            "[Image::setConversionMatrix] Conversion matrix does not exists.");
+               "[Image::getConversionMatrix] Conversion matrix does not exists.");
+    }
 
     return this->_conversions[key];
 }

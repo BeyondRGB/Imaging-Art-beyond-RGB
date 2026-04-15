@@ -29,10 +29,6 @@ std::string decodeHtmlEntities(std::string value) {
     return value;
 }
 
-bool startsWith(const std::string& value, const std::string& prefix) {
-    return value.rfind(prefix, 0) == 0;
-}
-
 std::optional<std::string> resolveUrl(const std::string& baseUrl,
                                       std::string candidateUrl) {
     if (candidateUrl.empty()) {
@@ -41,8 +37,12 @@ std::optional<std::string> resolveUrl(const std::string& baseUrl,
 
     candidateUrl = decodeHtmlEntities(candidateUrl);
 
-    if (startsWith(candidateUrl, "https://")) {
+    if (candidateUrl.rfind("https://", 0) == 0) {
         return candidateUrl;
+    }
+
+    if (candidateUrl.rfind("http://", 0) == 0) {
+        return std::nullopt;
     }
 
     // Matches scheme://host[:port][/path] so relative links can be resolved
@@ -56,11 +56,11 @@ std::optional<std::string> resolveUrl(const std::string& baseUrl,
     const std::string scheme = matches[1].str();
     const std::string host = matches[2].str();
 
-    if (startsWith(candidateUrl, "//")) {
+    if (candidateUrl.rfind("//", 0) == 0) {
         return scheme + ":" + candidateUrl;
     }
 
-    if (startsWith(candidateUrl, "/")) {
+    if (candidateUrl.rfind("/", 0) == 0) {
         return scheme + "://" + host + candidateUrl;
     }
 
@@ -158,7 +158,18 @@ HttpResponse HttpClient::fetch(const std::string& url, int timeoutSeconds) {
 HttpResponse HttpClient::fetchOpenQualia(const std::string& url) {
     std::string fetchUrl = setOrReplaceQueryParam(url, "AccessMode",
                                                   "ActiveMeasurement");
-    fetchUrl = normalizeDropboxDownloadUrl(fetchUrl);
+    std::optional<std::string> normalizedFetchUrl =
+        normalizeDropboxDownloadUrl(fetchUrl);
+    if (!normalizedFetchUrl) {
+        HttpResponse malformedUrlResponse{};
+        malformedUrlResponse.success = false;
+        malformedUrlResponse.statusCode = 0;
+        malformedUrlResponse.error =
+            "Malformed URL after Dropbox download normalization";
+        return malformedUrlResponse;
+    }
+
+    fetchUrl = *normalizedFetchUrl;
 
     HttpResponse response = fetch(fetchUrl);
     if (!response.success) {
@@ -179,7 +190,15 @@ HttpResponse HttpClient::fetchOpenQualia(const std::string& url) {
 
     std::cout << "[HTTP] Resolved download page to: " << *downloadUrl
               << std::endl;
-    return fetch(normalizeDropboxDownloadUrl(*downloadUrl));
+    std::optional<std::string> normalizedDownloadUrl =
+        normalizeDropboxDownloadUrl(*downloadUrl);
+    if (!normalizedDownloadUrl) {
+        response.success = false;
+        response.error = "Malformed download URL extracted from HTML page";
+        return response;
+    }
+
+    return fetch(*normalizedDownloadUrl);
 }
 
 bool HttpClient::isValidOpenQualiaUrl(const std::string& url) {
@@ -215,10 +234,11 @@ std::string HttpClient::setOrReplaceQueryParam(const std::string& url,
     return updatedUrl;
 }
 
-std::string HttpClient::normalizeDropboxDownloadUrl(const std::string& url) {
+std::optional<std::string> HttpClient::normalizeDropboxDownloadUrl(
+    const std::string& url) {
     std::optional<UrlComponents> components = parseUrl(url);
     if (!components) {
-        return url;
+        return std::nullopt;
     }
 
     if (components->host.find("dropbox.com") == std::string::npos) {

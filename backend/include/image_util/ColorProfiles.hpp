@@ -6,7 +6,14 @@
 
 namespace btrgb {
 
-enum ColorSpace { Adobe_RGB_1998, ProPhoto, sRGB, Wide_Gamut_RGB, none };
+enum ColorSpace {
+    Adobe_RGB_1998,
+    ProPhoto,
+    sRGB,
+    Wide_Gamut_RGB,
+    Linear_Normalized_XYZ,
+    none
+};
 
 class ColorProfiles {
   public:

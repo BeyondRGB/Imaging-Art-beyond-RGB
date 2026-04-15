@@ -124,12 +124,6 @@ private:
      */
     static std::string stripQuotes(const std::string& value);
 
-    /**
-     * @brief Convert a 2-degree/10-degree observer angle into BeyondRGB's
-     *        current observer representation.
-     */
-    static int mapObserverAngleToStandardObserver(int observerAngle);
-
     OQMMetadata metadata_;
     std::string error_;
 

@@ -7,11 +7,14 @@ const path = require("path");
 const child_process = require("child_process");
 const { getPort } = require("get-port-please");
 const { shell } = require("electron");
+const { registerAppLifecycleHandlers, terminateBackendProcess } = require("./backendLifecycle");
 
 // Undefined to start, as we can't guarantee any port is free to start
 let freePort = undefined;
 let executablePath;
 let loader;
+
+const isDevelopment = false;
 
 if (process.platform == "win32")
 	executablePath = path.join(__dirname, "../../lib/beyond-rgb-backend.exe");
@@ -22,12 +25,20 @@ else {
 process.on("loaded", (event, args) => {
 	console.log("LOADED");
 	console.log(app.getAppPath());
-	createBackendContext();
+	if (isDevelopment) {
+		connectToDevBackendContext();
+	} else {
+		createBackendContext();
+	}
 });
 
-app.on("before-quit", function () {
+const stopBackend = () => {
+	loader = terminateBackendProcess(loader);
+};
+
+registerAppLifecycleHandlers(app, () => {
 	console.log("Quiting");
-	process.kill(loader.pid);
+	stopBackend();
 });
 
 ipcMain.handle("ipc-getPort", async (event, arg) => {
@@ -35,7 +46,9 @@ ipcMain.handle("ipc-getPort", async (event, arg) => {
 });
 
 ipcMain.handle("ipc-restartBackend", async (event, arg) => {
-	createBackendContext();
+	if (!isDevelopment) {
+		createBackendContext();
+	}
 });
 
 //Use the shell to open the File explorer as a separate process,
@@ -97,19 +110,18 @@ ipcMain.handle("ipc-Dialog", async (event, arg) => {
 	return dia;
 });
 
+const connectToDevBackendContext = () => {
+	// Default backend port for development
+	freePort = 9002;
+};
+
 const createBackendContext = () => {
 	// once port is received, it returns from .then() and continues forth
 	// has to be done the line after, otherwise returns promise while awaiting
 	getPort({ host: "127.0.0.1", random: true })
 		.then(port => {
 			// kill backend if already running
-			if (loader) {
-				try {
-					process.kill(loader.pid);
-				} catch (_) {
-					console.log(`Process with pid ${loader.pid} already killed`);
-				}
-			}
+			stopBackend();
 
 			// set new port
 			freePort = port;
@@ -120,6 +132,12 @@ const createBackendContext = () => {
 				[`--app_root=${app.getAppPath()}`, `--port=${freePort}`],
 				{ detached: true }
 			);
+			const activeLoader = loader;
+			loader.once("exit", () => {
+				if (loader === activeLoader) {
+					loader = undefined;
+				}
+			});
 			loader.stdout.on("data", data => {
 				console.log(`[Backend stdout]\n${data}`);
 			});

@@ -86,8 +86,9 @@ void QRScanRequest::run() {
         }
 
         if (scanResult.found) {
-            bool isOpenQualia = btrgb::QRDetector::isOpenQualiaUrl(scanResult.decodedText);
-            sendSuccessResponse(scanResult.decodedText, isOpenQualia);
+            sendSuccessResponse(
+                scanResult.decodedText,
+                btrgb::QRDetector::isOpenQualiaUrl(scanResult.decodedText));
         } else {
             sendErrorResponse(scanResult.error.empty() ? "No QR code found in image" : scanResult.error);
         }

@@ -15,10 +15,6 @@ class PixelRegestor : public LeafComponent {
         : LeafComponent("Registering"),
           RegistrationFactor(RegistrationFactor) {};
     void execute(CommunicationObj *comms, btrgb::ArtObject *images) override;
-    int appy_regestration(CommunicationObj *comms, btrgb::Image *img1,
-                          btrgb::Image *img2, int cycle, int cycle_count,
-                          std::string output);
-    float calc_progress(float progress, float cycle, float cycle_count);
 };
 
 #endif // BEYOND_RGB_BACKEND_PIXELREGESTOR_H

@@ -39,7 +39,7 @@ struct QRScanRegion {
  */
 class QRDetector {
 public:
-    QRDetector();
+    QRDetector() = default;
     ~QRDetector() = default;
 
     /**

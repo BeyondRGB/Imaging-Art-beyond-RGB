@@ -188,7 +188,7 @@ void OQMParser::parseKeyword(const std::string& line) {
         if (try_parse_int(value, parsedInt)) {
             metadata_.observerAngle = parsedInt;
             metadata_.standardObserver =
-                mapObserverAngleToStandardObserver(metadata_.observerAngle);
+                map_observer_angle_to_standard_observer(metadata_.observerAngle);
         }
     } else if (keyword == "NUMBER_OF_SETS") {
         if (try_parse_int(value, parsedInt)) {
@@ -344,7 +344,9 @@ void OQMParser::finalizeLayout() {
     colCount_ = 0;
     minRowLabel_ = std::numeric_limits<int>::max();
 
-    for (const auto& [patchName, position] : patchGridRawPosition_) {
+    for (const std::pair<const std::string, std::pair<int, int>>& entry :
+         patchGridRawPosition_) {
+        const std::pair<int, int>& position = entry.second;
         minRowLabel_ = std::min(minRowLabel_, position.first);
     }
 
@@ -354,7 +356,9 @@ void OQMParser::finalizeLayout() {
 
     if (patchGridRawPosition_.empty()) {
         int sequentialRow = 0;
-        for (const auto& [patchName, _] : patchData_) {
+        for (const std::pair<const std::string, std::vector<double>>& entry :
+             patchData_) {
+            const std::string& patchName = entry.first;
             patchGridPosition_[patchName] = {sequentialRow, 0};
             patchNameByPosition_[{sequentialRow, 0}] = patchName;
             rowCount_ = sequentialRow + 1;
@@ -363,7 +367,10 @@ void OQMParser::finalizeLayout() {
         }
     }
 
-    for (const auto& [patchName, rawPosition] : patchGridRawPosition_) {
+    for (const std::pair<const std::string, std::pair<int, int>>& entry :
+         patchGridRawPosition_) {
+        const std::string& patchName = entry.first;
+        const std::pair<int, int>& rawPosition = entry.second;
         int normalizedRow = rawPosition.first - minRowLabel_;
         int normalizedCol = rawPosition.second;
 
@@ -388,13 +395,16 @@ void OQMParser::finalizeLayout() {
 
     if (metadata_.standardObserver == 0) {
         metadata_.standardObserver =
-            mapObserverAngleToStandardObserver(metadata_.observerAngle);
+            map_observer_angle_to_standard_observer(metadata_.observerAngle);
     }
 
     double brightestValue = -std::numeric_limits<double>::infinity();
     std::string brightestPatch;
-    for (const auto& [patchName, luminance] : patchLuminance_) {
-        auto position = patchGridPosition_.find(patchName);
+    for (const std::pair<const std::string, double>& entry : patchLuminance_) {
+        const std::string& patchName = entry.first;
+        const double luminance = entry.second;
+        std::map<std::string, std::pair<int, int>>::const_iterator position =
+            patchGridPosition_.find(patchName);
         if (position == patchGridPosition_.end()) {
             continue;
         }
@@ -405,7 +415,10 @@ void OQMParser::finalizeLayout() {
     }
 
     if (!brightestPatch.empty()) {
-        const auto [row, col] = patchGridPosition_.at(brightestPatch);
+        const std::pair<int, int>& brightestPosition =
+            patchGridPosition_.at(brightestPatch);
+        const int row = brightestPosition.first;
+        const int col = brightestPosition.second;
         metadata_.suggestedWhitePatchRow = row + 1;
         metadata_.suggestedWhitePatchCol = col + 1;
         metadata_.suggestedWhitePatchName = brightestPatch;
@@ -506,8 +519,9 @@ std::string OQMParser::toRefDataCSV() const {
     std::vector<std::string> orderedPatches;
     for (int col = 0; col < colCount_; col++) {
         for (int row = 0; row < rowCount_; row++) {
-            const auto position = std::make_pair(row, col);
-            const auto patchNameIt = patchNameByPosition_.find(position);
+            const std::pair<int, int> position = std::make_pair(row, col);
+            const std::map<std::pair<int, int>, std::string>::const_iterator
+                patchNameIt = patchNameByPosition_.find(position);
             const std::string patchName =
                 patchNameIt != patchNameByPosition_.end() ? patchNameIt->second : "";
             csv << "," << build_csv_patch_name(patchName, row, col);
@@ -520,10 +534,12 @@ std::string OQMParser::toRefDataCSV() const {
     for (size_t w = 0; w < wavelengths_.size(); w++) {
         csv << wavelengths_[w];
         
-        for (const auto& patchKey : orderedPatches) {
+        for (const std::string& patchKey : orderedPatches) {
             csv << ",";
-            if (!patchKey.empty() && patchData_.count(patchKey)) {
-                const auto& values = patchData_.at(patchKey);
+            std::map<std::string, std::vector<double>>::const_iterator patchIt =
+                patchData_.find(patchKey);
+            if (!patchKey.empty() && patchIt != patchData_.end()) {
+                const std::vector<double>& values = patchIt->second;
                 if (w < values.size()) {
                     csv << values[w];
                 } else {
@@ -555,10 +571,6 @@ bool OQMParser::writeToCSV(const std::string& outputPath) const {
     
     std::cout << "[OQM] Wrote CSV to: " << outputPath << std::endl;
     return true;
-}
-
-int OQMParser::mapObserverAngleToStandardObserver(int observerAngle) {
-    return map_observer_angle_to_standard_observer(observerAngle);
 }
 
 } // namespace btrgb
