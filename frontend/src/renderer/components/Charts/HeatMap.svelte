@@ -27,7 +27,7 @@
 	let p90obj = null;
 
 	$: p90obj = sortedValues.length ? sortedValues[Math.floor(0.9 * sortedValues.length) - 1] : null;
-	$: if (p90obj !== null) {
+	$: {
 		console.log("Dispatching p90update:", p90obj);
 		dispatch("p90update", { p90: p90obj });
 	}
