@@ -95,8 +95,9 @@
 
 	.body {
 		background-color: var(--color-overlay-heavy);
+		z-index: 50;
 		@apply w-0 opacity-0 fixed max-w-[35vw] p-1
-           group-hover:w-full group-hover:opacity-100 rounded-md transition-all 
+           group-hover:w-full group-hover:opacity-100 rounded-md transition-all
            bottom-0 left-24 delay-100;
 	}
 	img {
