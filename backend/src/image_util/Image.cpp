@@ -180,10 +180,9 @@ void Image::setColorProfile(ColorSpace color_profile) {
 ColorSpace Image::getColorProfile() const { return this->_color_profile; }
 
 void Image::setConversionMatrix(std::string key, cv::Mat m) {
-
-    if (this->_conversions.contains(key))
-        throw std::runtime_error(
-            "[Image::setConversionMatrix] Conversion matrix already exists.");
+    if (this->_conversions.contains(key)) {
+        throw std::runtime_error("[Image::setConversionMatrix] Conversion matrix already exists.");
+    }
 
     /* Only store as 32 bit floating point. */
     if (m.type() == CV_64FC1)
@@ -198,7 +197,7 @@ void Image::setConversionMatrix(std::string key, cv::Mat m) {
 }
 
 cv::Mat Image::getConversionMatrix(std::string key) {
-    if (this->_conversions.contains(key)) {
+    if (!this->_conversions.contains(key)) {
         throw std::runtime_error(
                "[Image::getConversionMatrix] Conversion matrix does not exists.");
     }
