@@ -88,20 +88,30 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     wCalc(patAvg, whiteAvg, yVal);
 
     // Perform flatfielding and dead pixel cleanup
-
-    // Image set 1-----------------------------------------------------------
-    std::unique_ptr<btrgb::Image> art1copy(new btrgb::Image("art1copy"));
-    cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
-    cv::Mat post_lowpass;
-    // Perform low-pass filter
-    cv::GaussianBlur(copy, post_lowpass, cv::Size(9, 9), 5);
-
-    art1copy->initImage(post_lowpass);
-
     // thread array
     std::thread *threads[MAX_THREADS];
 
-    this->create_threads(threads, art1, white1, dark1, art1copy.get(), height,
+    // blur whitefields
+    // TODO: Thread these to add a performance boost
+    std::unique_ptr<btrgb::Image> white1copy(new btrgb::Image("white1copy"));
+    cv::Mat w1copy = btrgb::Image::copyMatConvertDepth(white1->getMat(), CV_32F);
+    cv::Mat post_lowpass1;
+    std::unique_ptr<btrgb::Image> white2copy(new btrgb::Image("white2copy"));
+    cv::Mat w2copy = btrgb::Image::copyMatConvertDepth(white2->getMat(), CV_32F);
+    cv::Mat post_lowpass2;
+    // apply gaussian blur to whitefields simultaneously
+    cv::GaussianBlur(w1copy, post_lowpass1, cv::Size(9, 9), 5);
+    cv::GaussianBlur(w2copy, post_lowpass2, cv::Size(9, 9), 5);
+    white1copy->initImage(post_lowpass1);
+    white2copy->initImage(post_lowpass2);
+    
+    // Image set 1-----------------------------------------------------------
+    std::unique_ptr<btrgb::Image> art1copy(new btrgb::Image("art1copy"));
+    cv::Mat copy = btrgb::Image::copyMatConvertDepth(art1->getMat(), CV_32F);
+
+    art1copy->initImage(copy);
+
+    this->create_threads(threads, art1, white1copy.get(), dark1, art1copy.get(), height,
                          width, channels);
     // wait for threads to complete
     for (int t = 0; t < MAX_THREADS; t++) {
@@ -117,7 +127,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
     cv::Mat copy2 = btrgb::Image::copyMatConvertDepth(art2->getMat(), CV_32F);
     art2copy->initImage(copy2);
 
-    this->create_threads(threads, art2, white2, dark2, art2copy.get(), height,
+    this->create_threads(threads, art2, white2copy.get(), dark2, art2copy.get(), height,
                          width, channels);
     // wait for threads to complete
     for (int t = 0; t < MAX_THREADS; t++) {
@@ -142,7 +152,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target1->getMat(), CV_32F);
         target1copy->initImage(tcopy); 
 
-        this->create_threads(threads, target1, white1, dark1, target1copy.get(),
+        this->create_threads(threads, target1, white1copy.get(), dark1, target1copy.get(),
                              height, width, channels);
         // wait for threads to complete
         for (int t = 0; t < MAX_THREADS; t++) {
@@ -159,7 +169,7 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
             btrgb::Image::copyMatConvertDepth(target2->getMat(), CV_32F);
         target2copy->initImage(tcopy2);
  
-        this->create_threads(threads, target2, white2, dark2, target2copy.get(),
+        this->create_threads(threads, target2, white2copy.get(), dark2, target2copy.get(),
                              height, width, channels);
         // wait for threads to complete
         for (int t = 0; t < MAX_THREADS; t++) {
@@ -172,6 +182,10 @@ void FlatFieldor::execute(CommunicationObj *comms, btrgb::ArtObject *images) {
 
     // Store Results
     this->store_results(images);
+
+    // reset whitefield ptrs
+    white1copy.reset(nullptr);
+    white2copy.reset(nullptr);
 
     // Removes the white and dark images from the art object
     images->deleteImage("white1");
