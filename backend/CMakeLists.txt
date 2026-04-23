@@ -23,7 +23,7 @@ endif ()
 #set(VCPKG_TRACE_FIND_PACKAGE ON)
 #message("TRIPLET: ${VCPKG_TARGET_TRIPLET}")
 
-project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.5.0)
+project(beyond-rgb-backend DESCRIPTION "Imaging Art Beyond RGB" VERSION 2.5.1)
 
 option(ENABLE_TESTS "Build backend unit tests" OFF)
 option(ENABLE_COVERAGE "Enable backend coverage instrumentation" OFF)
