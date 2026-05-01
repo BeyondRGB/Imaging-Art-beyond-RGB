@@ -5,15 +5,17 @@
 		processState,
 		setTabCompleted,
 		modal,
+		openQualiaTargetType,
 		sendMessage,
 	} from "@util/stores";
 	import ColorTargetViewer from "@components/Process/ColorTargetViewer.svelte";
 
-	import { PlusCircleIcon, XIcon, AlertTriangleIcon } from "svelte-feather-icons";
+	import { PlusCircleIcon, XIcon, AlertTriangleIcon, CloudIcon } from "svelte-feather-icons";
 	import Dropdown from "@root/components/Dropdown.svelte";
 	import Card from "@components/Card.svelte";
 	import ScrollContainer from "@components/ScrollContainer.svelte";
 	import TextInputRow from "@components/TextInputRow.svelte";
+	import Button from "@components/Button.svelte";
 
 	let colorTarget;
 	let colorPos;
@@ -385,6 +387,18 @@
 			standardObserver: $customRefData.calibration.standardObserver,
 			illuminants: $customRefData.calibration.illuminants,
 		};
+		if ($customRefData.calibration.rows) {
+			colorTarget.rows = $customRefData.calibration.rows;
+		}
+		if ($customRefData.calibration.cols) {
+			colorTarget.cols = $customRefData.calibration.cols;
+		}
+		if ($customRefData.calibration.whitePatch?.row && $customRefData.calibration.whitePatch?.col) {
+			colorTarget.whitePatch = {
+				row: $customRefData.calibration.whitePatch.row,
+				col: $customRefData.calibration.whitePatch.col,
+			};
+		}
 		$customRefData.calibration = null;
 	}
 
@@ -396,6 +410,18 @@
 			standardObserver: $customRefData.verification.standardObserver,
 			illuminants: $customRefData.verification.illuminants,
 		};
+		if ($customRefData.verification.rows) {
+			verifyTarget.rows = $customRefData.verification.rows;
+		}
+		if ($customRefData.verification.cols) {
+			verifyTarget.cols = $customRefData.verification.cols;
+		}
+		if ($customRefData.verification.whitePatch?.row && $customRefData.verification.whitePatch?.col) {
+			verifyTarget.whitePatch = {
+				row: $customRefData.verification.whitePatch.row,
+				col: $customRefData.verification.whitePatch.col,
+			};
+		}
 		$customRefData.verification = null;
 	}
 
@@ -414,6 +440,11 @@
 	}
 
 	$: console.log({ LOADING: loading });
+
+	function openOpenQualiaModal(targetType) {
+		openQualiaTargetType.set(targetType);
+		modal.set("OpenQualia");
+	}
 
 	$: if (
 		colorTarget &&
@@ -533,12 +564,23 @@
 											{/if}
 											Reference Data:</span
 										>
-										<Dropdown
-											values={i === 0 ? buildCalibrationRefData() : buildVerificationRefData()}
-											bind:selected={target.refData}
-											invalid={target.refData.fileName === "---None---.csv"}
-											spaceLast
-										/>
+										<div class="refDataControls">
+											<Dropdown
+												values={i === 0 ? buildCalibrationRefData() : buildVerificationRefData()}
+												bind:selected={target.refData}
+												invalid={target.refData.fileName === "---None---.csv"}
+												spaceLast
+											/>
+											<Button
+												variant="secondary"
+												size="sm"
+												onClick={() => openOpenQualiaModal(i === 0 ? 'calibration' : 'verification')}
+												className="openqualia-btn"
+											>
+												<CloudIcon size="1x" />
+												<span>OpenQualia</span>
+											</Button>
+										</div>
 									</div>
 									<div class="sizeDiv">
 										<span>Selection Area Size:</span>
@@ -922,7 +964,13 @@
 		transform: none;
 	}
 	.refDataDiv {
-		@apply flex justify-between items-center;
+		@apply flex flex-col gap-2;
+	}
+	.refDataControls {
+		@apply flex items-center gap-2;
+	}
+	:global(.openqualia-btn) {
+		@apply flex items-center gap-1 whitespace-nowrap !important;
 	}
 	.break {
 		@apply w-full h-1 bg-black border-2;

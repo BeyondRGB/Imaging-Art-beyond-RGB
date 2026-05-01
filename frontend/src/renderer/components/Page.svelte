@@ -2,9 +2,10 @@
 	export let routes;
 	import { fade, fly } from "svelte/transition";
 	import { cubicOut } from "svelte/easing";
-	import { currentPage, appSettings, modal, serverError } from "@util/stores";
+	import { currentPage, appSettings, modal, openQualiaTargetType, serverError } from "@util/stores";
 	import Modal from "@components/Modal.svelte";
 	import RefDataModal from "@components/RefDataModal.svelte";
+	import OpenQualiaModal from "@components/OpenQualiaModal.svelte";
 	import ServerError from "@components/ServerError.svelte";
 
 	let showModal = false;
@@ -13,6 +14,7 @@
 		$modal === "Home" ||
 		$modal === "CustomRefData" ||
 		$modal === "CustomRefDataVer" ||
+		$modal === "OpenQualia" ||
 		$modal === "ServerError"
 	) {
 		showModal = true;
@@ -65,6 +67,15 @@
 	{:else if $modal === "CustomRefDataVer"}
 		<Modal
 			component={RefDataModal}
+			on:close={() => {
+				showModal = false;
+				$modal = null;
+			}}
+		/>
+	{:else if $modal === "OpenQualia"}
+		<Modal
+			component={OpenQualiaModal}
+			targetType={$openQualiaTargetType}
 			on:close={() => {
 				showModal = false;
 				$modal = null;

@@ -43,6 +43,7 @@ class CommunicationObj {
      */
     void send_msg(std::string msg);
     void send_bin(std::vector<uchar> &v);
+    void send_json(const jsoncons::json &body);
 
     btrgb::base64_ptr_t createDataURL(enum btrgb::output_type type,
                                       std::vector<uchar> *direct_binary);
@@ -56,8 +57,10 @@ class CommunicationObj {
      */
     CommunicationObj(const CommunicationObj &other);
 
-    // void send_msg(std::string msg);
     void set_id(long newID);
+    unsigned long get_id() const;
+    void send_response(const std::string &responseType,
+                       const jsoncons::json &responseData);
     /**
      * Function for sending a Information Message to the front end
      * @param msg: the message being sent to the front end
